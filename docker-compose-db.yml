@@ -1,0 +1,16 @@
+# docker-compose up -d
+
+# Use root/example as user/password credentials
+version: '3.1'
+name: wow-auction-house
+services:
+  database:
+    build:
+      context: docker/database
+      dockerfile: docker/DB_Dockerfile
+    image: mariadb
+    ports:
+      - "54000:3306"
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: root

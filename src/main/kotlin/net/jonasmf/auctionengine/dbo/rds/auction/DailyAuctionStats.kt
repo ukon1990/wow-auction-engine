@@ -1,0 +1,43 @@
+package net.jonasmf.auctionengine.dbo.rds.auction
+
+import jakarta.persistence.EmbeddedId
+import jakarta.persistence.Entity
+
+@Entity
+data class DailyAuctionStats(
+    @EmbeddedId
+    val id: AuctionStatsId,
+
+    // Fields for each day of the month
+    val minHour01: Short? = null, val min01: Long? = null, val avg01: Long? = null, val max01: Long? = null, val minQuantity01: Long? = null, val avgQuantity01: Long? = null, val maxQuantity01: Long? = null,
+    val minHour02: Short? = null, val min02: Long? = null, val avg02: Long? = null, val max02: Long? = null, val minQuantity02: Long? = null, val avgQuantity02: Long? = null, val maxQuantity02: Long? = null,
+    val minHour03: Short? = null, val min03: Long? = null, val avg03: Long? = null, val max03: Long? = null, val minQuantity03: Long? = null, val avgQuantity03: Long? = null, val maxQuantity03: Long? = null,
+    val minHour04: Short? = null, val min04: Long? = null, val avg04: Long? = null, val max04: Long? = null, val minQuantity04: Long? = null, val avgQuantity04: Long? = null, val maxQuantity04: Long? = null,
+    val minHour05: Short? = null, val min05: Long? = null, val avg05: Long? = null, val max05: Long? = null, val minQuantity05: Long? = null, val avgQuantity05: Long? = null, val maxQuantity05: Long? = null,
+    val minHour06: Short? = null, val min06: Long? = null, val avg06: Long? = null, val max06: Long? = null, val minQuantity06: Long? = null, val avgQuantity06: Long? = null, val maxQuantity06: Long? = null,
+    val minHour07: Short? = null, val min07: Long? = null, val avg07: Long? = null, val max07: Long? = null, val minQuantity07: Long? = null, val avgQuantity07: Long? = null, val maxQuantity07: Long? = null,
+    val minHour08: Short? = null, val min08: Long? = null, val avg08: Long? = null, val max08: Long? = null, val minQuantity08: Long? = null, val avgQuantity08: Long? = null, val maxQuantity08: Long? = null,
+    val minHour09: Short? = null, val min09: Long? = null, val avg09: Long? = null, val max09: Long? = null, val minQuantity09: Long? = null, val avgQuantity09: Long? = null, val maxQuantity09: Long? = null,
+    val minHour10: Short? = null, val min10: Long? = null, val avg10: Long? = null, val max10: Long? = null, val minQuantity10: Long? = null, val avgQuantity10: Long? = null, val maxQuantity10: Long? = null,
+    val minHour11: Short? = null, val min11: Long? = null, val avg11: Long? = null, val max11: Long? = null, val minQuantity11: Long? = null, val avgQuantity11: Long? = null, val maxQuantity11: Long? = null,
+    val minHour12: Short? = null, val min12: Long? = null, val avg12: Long? = null, val max12: Long? = null, val minQuantity12: Long? = null, val avgQuantity12: Long? = null, val maxQuantity12: Long? = null,
+    val minHour13: Short? = null, val min13: Long? = null, val avg13: Long? = null, val max13: Long? = null, val minQuantity13: Long? = null, val avgQuantity13: Long? = null, val maxQuantity13: Long? = null,
+    val minHour14: Short? = null, val min14: Long? = null, val avg14: Long? = null, val max14: Long? = null, val minQuantity14: Long? = null, val avgQuantity14: Long? = null, val maxQuantity14: Long? = null,
+    val minHour15: Short? = null, val min15: Long? = null, val avg15: Long? = null, val max15: Long? = null, val minQuantity15: Long? = null, val avgQuantity15: Long? = null, val maxQuantity15: Long? = null,
+    val minHour16: Short? = null, val min16: Long? = null, val avg16: Long? = null, val max16: Long? = null, val minQuantity16: Long? = null, val avgQuantity16: Long? = null, val maxQuantity16: Long? = null,
+    val minHour17: Short? = null, val min17: Long? = null, val avg17: Long? = null, val max17: Long? = null, val minQuantity17: Long? = null, val avgQuantity17: Long? = null, val maxQuantity17: Long? = null,
+    val minHour18: Short? = null, val min18: Long? = null, val avg18: Long? = null, val max18: Long? = null, val minQuantity18: Long? = null, val avgQuantity18: Long? = null, val maxQuantity18: Long? = null,
+    val minHour19: Short? = null, val min19: Long? = null, val avg19: Long? = null, val max19: Long? = null, val minQuantity19: Long? = null, val avgQuantity19: Long? = null, val maxQuantity19: Long? = null,
+    val minHour20: Short? = null, val min20: Long? = null, val avg20: Long? = null, val max20: Long? = null, val minQuantity20: Long? = null, val avgQuantity20: Long? = null, val maxQuantity20: Long? = null,
+    val minHour21: Short? = null, val min21: Long? = null, val avg21: Long? = null, val max21: Long? = null, val minQuantity21: Long? = null, val avgQuantity21: Long? = null, val maxQuantity21: Long? = null,
+    val minHour22: Short? = null, val min22: Long? = null, val avg22: Long? = null, val max22: Long? = null, val minQuantity22: Long? = null, val avgQuantity22: Long? = null, val maxQuantity22: Long? = null,
+    val minHour23: Short? = null, val min23: Long? = null, val avg23: Long? = null, val max23: Long? = null, val minQuantity23: Long? = null, val avgQuantity23: Long? = null, val maxQuantity23: Long? = null,
+    val minHour24: Short? = null, val min24: Long? = null, val avg24: Long? = null, val max24: Long? = null, val minQuantity24: Long? = null, val avgQuantity24: Long? = null, val maxQuantity24: Long? = null,
+    val minHour25: Short? = null, val min25: Long? = null, val avg25: Long? = null, val max25: Long? = null, val minQuantity25: Long? = null, val avgQuantity25: Long? = null, val maxQuantity25: Long? = null,
+    val minHour26: Short? = null, val min26: Long? = null, val avg26: Long? = null, val max26: Long? = null, val minQuantity26: Long? = null, val avgQuantity26: Long? = null, val maxQuantity26: Long? = null,
+    val minHour27: Short? = null, val min27: Long? = null, val avg27: Long? = null, val max27: Long? = null, val minQuantity27: Long? = null, val avgQuantity27: Long? = null, val maxQuantity27: Long? = null,
+    val minHour28: Short? = null, val min28: Long? = null, val avg28: Long? = null, val max28: Long? = null, val minQuantity28: Long? = null, val avgQuantity28: Long? = null, val maxQuantity28: Long? = null,
+    val minHour29: Short? = null, val min29: Long? = null, val avg29: Long? = null, val max29: Long? = null, val minQuantity29: Long? = null, val avgQuantity29: Long? = null, val maxQuantity29: Long? = null,
+    val minHour30: Short? = null, val min30: Long? = null, val avg30: Long? = null, val max30: Long? = null, val minQuantity30: Long? = null, val avgQuantity30: Long? = null, val maxQuantity30: Long? = null,
+    val minHour31: Short? = null, val min31: Long? = null, val avg31: Long? = null, val max31: Long? = null, val minQuantity31: Long? = null, val avgQuantity31: Long? = null, val maxQuantity31: Long? = null
+)
