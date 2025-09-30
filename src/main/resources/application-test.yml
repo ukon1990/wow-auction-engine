@@ -1,0 +1,19 @@
+cloud:
+  aws:
+    region:
+      static: eu-west-1
+    credentials:
+      access-key: dummy-access-key
+      secret-key: dummy-secret-key
+blizzard:
+  client-id: dummy-client-id
+  client-secret: dummy-client-secret
+  token-url: http://localhost/mock-blizzard/token
+  base-url: http://localhost/mock-blizzard/api/
+amazon:
+  aws:
+    credentials:
+      accesskey: dummy-access-key
+      secretkey: dummy-secret-key
+  dynamodb:
+    endpoint: ""
