@@ -21,7 +21,7 @@ data class AuctionItemDTO(
         return AuctionItem(
             id = null,
             itemId = id,
-            modifiers = modifiers?.map { it.toDBO() },
+            modifiers = modifiers?.map { it.toDBO() }?.toMutableList(),
             context = context,
             petBreedId = pet_breed_id,
             petLevel = pet_level,

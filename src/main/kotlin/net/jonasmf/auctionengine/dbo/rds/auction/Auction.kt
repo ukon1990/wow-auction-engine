@@ -22,7 +22,7 @@ data class AuctionItemModifier(
     @Id
     val id: Long? = null,
     val type: String,
-    val value: Int
+    val value: Int,
 )
 
 @Entity
@@ -31,8 +31,8 @@ data class AuctionItem(
     @Id
     val id: Long? = null,
     val itemId: Int,
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    val modifiers: List<AuctionItemModifier>? = null,
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    val modifiers: MutableList<AuctionItemModifier>? = mutableListOf(),
     val context: Int?,
     val petBreedId: Int?,
     val petLevel: Int?,
@@ -44,10 +44,8 @@ data class AuctionItem(
 data class Auction(
     @EmbeddedId
     val id: AuctionId,
-
     @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.REMOVE])
     val item: AuctionItem,
-
     val quantity: Long,
     val unitPrice: Long?,
     val timeLeft: AuctionTimeLeft,
