@@ -1,7 +1,6 @@
 package net.jonasmf.auctionengine.service
 
 import NameSpace
-import com.amazonaws.services.s3.AmazonS3
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
@@ -9,6 +8,7 @@ import net.jonasmf.auctionengine.dbo.rds.auction.Auction as AuctionDBO
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItem as AuctionItemDBO
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItemModifier as AuctionItemModifierDBO
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
+import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.repository.rds.AuctionItemModifierRepository
 import net.jonasmf.auctionengine.dto.auction.AuctionData
@@ -38,6 +38,7 @@ class BlizzardAuctionService(
     private val auctionItemRepository: AuctionItemRepository,
     private val realmService: ConnectedRealmService,
     private val auctionItemModifierRepository: AuctionItemModifierRepository,
+    private val updateHistoryService: ConnectedRealmUpdateHistoryService,
 ) {
     private val webClient: WebClient = webClientWithAuth
     
@@ -110,7 +111,8 @@ class BlizzardAuctionService(
                 }
                 
                 try {
-                    processAuctionsInBatches(data.auctions, connectedRealm, connectedRealmId, startTime)
+                    val updateHistory = updateHistoryService.startUpdate(connectedRealm, auctionCount, lastModified)
+                    processAuctionsInBatches(data.auctions, connectedRealm, connectedRealmId, updateHistory, startTime)
                     realmService.updateLatestDump(connectedRealmId, lastModified)
                     LOG.info("Successfully processed $auctionCount auctions for $connectedRealmId in ${System.currentTimeMillis() - startTime}ms")
                 } catch (e: Exception) {
@@ -128,9 +130,10 @@ class BlizzardAuctionService(
 
     @Transactional
     private fun processAuctionsInBatches(
-        auctions: List<AuctionDTO>, 
-        connectedRealm: ConnectedRealm, 
-        connectedRealmId: Int, 
+        auctions: List<AuctionDTO>,
+        connectedRealm: ConnectedRealm,
+        connectedRealmId: Int,
+        updateHistory: ConnectedRealmUpdateHistory,
         startTime: Long
     ) {
         val totalAuctions = auctions.size
@@ -203,14 +206,14 @@ class BlizzardAuctionService(
                 if (item == null) {
                     throw IllegalStateException("Item not found for key: $itemKey")
                 }
-                
-                auctionDTO.toDBO(connectedRealm).copy(item = item)
+
+                auctionDTO.toDBO(connectedRealm, updateHistory).copy(item = item)
             }
             val auctionMappingElapsed = System.currentTimeMillis() - auctionMappingStartTime
             LOG.info("Mapped ${auctionDbos.size} auctions for realm $connectedRealmId in ${auctionMappingElapsed}ms")
             
             LOG.info("Processing ${auctionDbos.size} auctions for realm $connectedRealmId")
-            saveAuctionsInBatches(auctionDbos, connectedRealm, connectedRealmId, startTime)
+            saveAuctionsInBatches(auctionDbos, connectedRealm, connectedRealmId, updateHistory, startTime)
             
             val modifiersExtractionStartTime = System.currentTimeMillis()
             val modifiers = auctionDbos.flatMap { auction ->
@@ -268,9 +271,10 @@ class BlizzardAuctionService(
     }
 
     private fun saveAuctionsInBatches(
-        auctionDbos: List<AuctionDBO>, 
-        connectedRealm: ConnectedRealm, 
-        connectedRealmId: Int, 
+        auctionDbos: List<AuctionDBO>,
+        connectedRealm: ConnectedRealm,
+        connectedRealmId: Int,
+        updateHistory: ConnectedRealmUpdateHistory,
         startTime: Long
     ) {
         val batches = auctionDbos.chunked(BATCH_SIZE)
@@ -297,13 +301,14 @@ class BlizzardAuctionService(
                             val upsertedCount = auctionRepository.upsertAuction(
                                 id = auction.id.id,
                                 connectedRealmId = auction.id.connectedRealm.id,
-                                itemId = auction.item.id ?: 0L,
+                                itemId = auction.item.id ?: throw IllegalStateException("Auction item missing identifier for auction ${auction.id.id}"),
                                 quantity = auction.quantity,
                                 unitPrice = auction.unitPrice,
                                 timeLeft = auction.timeLeft.ordinal,
                                 buyout = auction.buyout,
                                 firstSeen = auction.firstSeen,
-                                lastSeen = auction.lastSeen
+                                lastSeen = auction.lastSeen,
+                                updateHistoryId = updateHistory.id
                             )
                             
                             if (upsertedCount > 0) {
@@ -381,21 +386,29 @@ class BlizzardAuctionService(
 
     @Transactional
     fun saveAuction(auction: AuctionDTO, connectedRealm: ConnectedRealm) {
-        if (auction == null) {
-            LOG.error("Encountered a null auction entity")
-            return
-        }
-
         try {
-            val auctionDbo = auction.toDBO(connectedRealm)
-            
+            val updateHistory = updateHistoryService.startUpdate(connectedRealm, 1, ZonedDateTime.now())
+            val auctionDbo = auction.toDBO(connectedRealm, updateHistory)
+
             auctionDbo.item.modifiers?.forEach { modifier ->
                 auctionItemModifierRepository.save(modifier)
             }
-            auctionItemRepository.save(auctionDbo.item)
-            auctionRepository.save(auctionDbo)
-            
-            LOG.debug("Successfully saved auction ${auctionDbo.id.id} for item ${auctionDbo.item.id}")
+            val savedItem = auctionItemRepository.save(auctionDbo.item)
+
+            auctionRepository.upsertAuction(
+                id = auctionDbo.id.id,
+                connectedRealmId = connectedRealm.id,
+                itemId = savedItem.id ?: throw IllegalStateException("Failed to persist auction item for ${auction.id}"),
+                quantity = auctionDbo.quantity,
+                unitPrice = auctionDbo.unitPrice,
+                timeLeft = auctionDbo.timeLeft.ordinal,
+                buyout = auctionDbo.buyout,
+                firstSeen = auctionDbo.firstSeen,
+                lastSeen = auctionDbo.lastSeen,
+                updateHistoryId = updateHistory.id,
+            )
+
+            LOG.debug("Successfully upserted auction ${auctionDbo.id.id} for item ${savedItem.id}")
         } catch (e: Exception) {
             if (e.message?.contains("Duplicate entry") == true) {
                 LOG.debug("Skipping duplicate auction ${auction.id} for realm ${connectedRealm.id}")

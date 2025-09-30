@@ -3,14 +3,16 @@ package net.jonasmf.auctionengine.dbo.rds.auction
 import jakarta.persistence.*
 import net.jonasmf.auctionengine.constant.AuctionTimeLeft
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
+import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import org.springframework.beans.factory.annotation.Value
 import java.time.ZonedDateTime
 
 @Embeddable
 data class AuctionId(
+    @Column(name = "id")
     val id: Long,
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "connectedRealmId", insertable = false, updatable = false)
+    @JoinColumn(name = "connected_realm_id")
     val connectedRealm: ConnectedRealm,
 )
 
@@ -53,4 +55,7 @@ data class Auction(
     @Value("CURRENT_TIMESTAMP")
     val firstSeen: ZonedDateTime?,
     val lastSeen: ZonedDateTime?,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "update_history_id")
+    val updateHistory: ConnectedRealmUpdateHistory,
 )

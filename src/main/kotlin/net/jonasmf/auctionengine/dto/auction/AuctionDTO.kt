@@ -4,6 +4,7 @@ import net.jonasmf.auctionengine.constant.AuctionTimeLeft
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionId
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
+import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 
 data class AuctionDTO(
     val id: Long,
@@ -13,7 +14,7 @@ data class AuctionDTO(
     val buyout: Long?, // Realm price
     val time_left: AuctionTimeLeft
 ) {
-    fun toDBO(connectedRealm: ConnectedRealm): Auction {
+    fun toDBO(connectedRealm: ConnectedRealm, updateHistory: ConnectedRealmUpdateHistory): Auction {
         return Auction(
             id = AuctionId(
                 id = id,
@@ -26,6 +27,7 @@ data class AuctionDTO(
             timeLeft = time_left,
             firstSeen = null,
             lastSeen = null,
+            updateHistory = updateHistory,
         )
     }
 }

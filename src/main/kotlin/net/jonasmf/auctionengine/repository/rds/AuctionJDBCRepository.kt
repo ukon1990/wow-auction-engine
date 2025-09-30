@@ -16,6 +16,7 @@ data class UpsertAuctionParams(
     val buyout: Long?,
     val firstSeen: ZonedDateTime?,
     val lastSeen: ZonedDateTime?,
+    val updateHistoryId: Long,
 )
 
 @Repository
@@ -31,11 +32,11 @@ class AuctionJDBCRepository(
         var totalRows = 0
 
         auctions.chunked(chunkSize).forEach { chunk ->
-            val placeholders = chunk.joinToString(",") { "(?, ?, ?, ?, ?, ?, ?, ?, ?)" }
+            val placeholders = chunk.joinToString(",") { "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" }
 
             val sqlPrefix = (
                 "INSERT INTO auction (id, connected_realm_id, item_id, quantity, " +
-                    "unit_price, time_left, buyout, first_seen, last_seen) VALUES "
+                    "unit_price, time_left, buyout, first_seen, last_seen, update_history_id) VALUES "
             )
             val updateClause = (
                 " ON DUPLICATE KEY UPDATE " +
@@ -43,7 +44,8 @@ class AuctionJDBCRepository(
                     "unit_price = VALUES(unit_price), " +
                     "time_left = VALUES(time_left), " +
                     "buyout = VALUES(buyout), " +
-                    "last_seen = VALUES(last_seen)"
+                    "last_seen = VALUES(last_seen), " +
+                    "update_history_id = VALUES(update_history_id)"
             )
 
             val sql =
@@ -53,7 +55,7 @@ class AuctionJDBCRepository(
                     .append(updateClause)
                     .toString()
 
-            val params = ArrayList<Any?>(chunk.size * 9)
+            val params = ArrayList<Any?>(chunk.size * 10)
             for (auction in chunk) {
                 params.add(auction.id)
                 params.add(auction.connectedRealmId)
@@ -64,6 +66,7 @@ class AuctionJDBCRepository(
                 params.add(auction.buyout)
                 params.add(auction.firstSeen?.let { Timestamp.from(it.toInstant()) })
                 params.add(auction.lastSeen?.let { Timestamp.from(it.toInstant()) })
+                params.add(auction.updateHistoryId)
             }
 
             totalRows += jdbcTemplate.update(sql, *params.toTypedArray())

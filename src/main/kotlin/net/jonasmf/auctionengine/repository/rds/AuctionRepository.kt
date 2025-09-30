@@ -16,14 +16,15 @@ interface AuctionRepository : JpaRepository<Auction, AuctionId> {
     @Transactional
     @Query(
         """
-        INSERT INTO auction (id, connected_realm_id, item_id, quantity, unit_price, time_left, buyout, first_seen, last_seen)
-        VALUES (:id, :connectedRealmId, :itemId, :quantity, :unitPrice, :timeLeft, :buyout, :firstSeen, :lastSeen)
+        INSERT INTO auction (id, connected_realm_id, item_id, quantity, unit_price, time_left, buyout, first_seen, last_seen, update_history_id)
+        VALUES (:id, :connectedRealmId, :itemId, :quantity, :unitPrice, :timeLeft, :buyout, :firstSeen, :lastSeen, :updateHistoryId)
         ON DUPLICATE KEY UPDATE
             quantity = VALUES(quantity),
             unit_price = VALUES(unit_price),
             time_left = VALUES(time_left),
             buyout = VALUES(buyout),
-            last_seen = VALUES(last_seen)
+            last_seen = VALUES(last_seen),
+            update_history_id = VALUES(update_history_id)
     """,
         nativeQuery = true,
     )
@@ -37,5 +38,6 @@ interface AuctionRepository : JpaRepository<Auction, AuctionId> {
         @Param("buyout") buyout: Long?,
         @Param("firstSeen") firstSeen: ZonedDateTime?,
         @Param("lastSeen") lastSeen: ZonedDateTime?,
+        @Param("updateHistoryId") updateHistoryId: Long,
     ): Int
 }

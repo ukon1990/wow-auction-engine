@@ -68,14 +68,12 @@ class AuctionProcessorUtility(
         connectedRealm: ConnectedRealm,
         ahTypeId: Int
     ) {
-        val auction = auctionDTO.toDBO(connectedRealm)
-        // Create a properly formed AuctionStatsId
         val statsId = AuctionStatsId(
             connectedRealm = connectedRealm,
             gameBuildVersion = GameBuildVersion.RETAIL,
-            itemId = auction.item.itemId,
+            itemId = auctionDTO.item.id,
             date = LocalDate.now(),
-            petSpeciesId = auction.item.petSpeciesId
+            petSpeciesId = auctionDTO.item.pet_species_id
         )
         val hourlyStat = HourlyAuctionStats(
             id = statsId,
@@ -141,13 +139,12 @@ class AuctionProcessorUtility(
         connectedRealm: ConnectedRealm,
         ahTypeId: Int
     ) {
-        val auction = auctionDTO.toDBO(connectedRealm)
         val statsId = AuctionStatsId(
             connectedRealm = connectedRealm,
             gameBuildVersion = GameBuildVersion.RETAIL,
-            itemId = auction.item.itemId,
+            itemId = auctionDTO.item.id,
             date = LocalDate.now(),
-            petSpeciesId = auction.item.petSpeciesId
+            petSpeciesId = auctionDTO.item.pet_species_id
         )
         val dailyStat = DailyAuctionStats(
             id = statsId
