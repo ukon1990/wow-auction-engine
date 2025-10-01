@@ -18,20 +18,19 @@ class ConnectedRealmUpdateHistoryService(
         auctionCount: Int,
         lastModified: ZonedDateTime,
     ): ConnectedRealmUpdateHistory {
-        // Er dt noen hensikt med dette?
-        // Også burde compound nøkkelen være annerledes. connected_realm_id + lastModified
-        repository.deactivateActive(connectedRealm.id)
-
         val history =
             ConnectedRealmUpdateHistory(
                 auctionCount = auctionCount,
-                isActive = true,
-                lastModified = lastModified,
-                updateTimestamp = ZonedDateTime.now(),
+                lastModified = lastModified.toOffsetDateTime(),
+                updateTimestamp = ZonedDateTime.now().toOffsetDateTime(),
                 connectedRealm = connectedRealm,
             )
 
-        val existing = repository.findByConnectedRealmIdAndUpdateTimestamp(connectedRealm.id, lastModified)
+        val existing =
+            repository.findByConnectedRealmIdAndUpdateTimestamp(
+                connectedRealm.id,
+                lastModified.toOffsetDateTime(),
+            )
 
         return existing ?: repository.save(history)
     }
