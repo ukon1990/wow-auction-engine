@@ -12,23 +12,27 @@ import java.time.ZonedDateTime
 class ConnectedRealmUpdateHistoryService(
     private val repository: ConnectedRealmUpdateHistoryRepository,
 ) {
-
     @Transactional
     fun startUpdate(
         connectedRealm: ConnectedRealm,
         auctionCount: Int,
         lastModified: ZonedDateTime,
     ): ConnectedRealmUpdateHistory {
+        // Er dt noen hensikt med dette?
+        // Også burde compound nøkkelen være annerledes. connected_realm_id + lastModified
         repository.deactivateActive(connectedRealm.id)
 
-        val history = ConnectedRealmUpdateHistory(
-            auctionCount = auctionCount,
-            isActive = true,
-            lastModified = lastModified.toLocalDateTime(),
-            updateTimestamp = LocalDateTime.now(),
-            connectedRealm = connectedRealm,
-        )
+        val history =
+            ConnectedRealmUpdateHistory(
+                auctionCount = auctionCount,
+                isActive = true,
+                lastModified = lastModified,
+                updateTimestamp = ZonedDateTime.now(),
+                connectedRealm = connectedRealm,
+            )
 
-        return repository.save(history)
+        val existing = repository.findByConnectedRealmIdAndUpdateTimestamp(connectedRealm.id, lastModified)
+
+        return existing ?: repository.save(history)
     }
 }

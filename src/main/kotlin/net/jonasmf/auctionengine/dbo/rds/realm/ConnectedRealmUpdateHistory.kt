@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @Entity
 @Table(name = "connected_realm_update_history")
@@ -19,8 +20,8 @@ data class ConnectedRealmUpdateHistory(
     val id: Long = 0,
     val auctionCount: Int,
     var isActive: Boolean,
-    val lastModified: LocalDateTime,
-    val updateTimestamp: LocalDateTime,
+    val lastModified: ZonedDateTime,
+    val updateTimestamp: ZonedDateTime,
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.MERGE])
     @JoinColumn(name = "connected_realm_id")
     val connectedRealm: ConnectedRealm,
