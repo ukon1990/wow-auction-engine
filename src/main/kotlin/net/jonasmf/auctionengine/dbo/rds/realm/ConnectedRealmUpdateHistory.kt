@@ -36,6 +36,8 @@ data class ConnectedRealmUpdateHistory(
     var lastModified: OffsetDateTime? = null,
     @Column(columnDefinition = "DATETIME(6)")
     var updateTimestamp: OffsetDateTime? = null,
+    @Column(columnDefinition = "DATETIME(6)")
+    var completedTimestamp: OffsetDateTime? = null,
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.MERGE])
     @JoinColumn(name = "connected_realm_id")
     val connectedRealm: ConnectedRealm,

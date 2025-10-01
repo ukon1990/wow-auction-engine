@@ -33,4 +33,17 @@ class ConnectedRealmUpdateHistoryService(
 
         return existing ?: repository.save(history)
     }
+
+    fun setUpdateToCompleted(
+        connectedRealmId: Int,
+        lastModified: ZonedDateTime,
+    ): Boolean {
+        val updatedRows =
+            repository.updateCompletedTimeForConnectedRealmAndLastModified(
+                connectedRealmId,
+                lastModified.toOffsetDateTime(),
+                ZonedDateTime.now().toOffsetDateTime(),
+            )
+        return updatedRows > 0
+    }
 }

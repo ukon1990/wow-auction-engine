@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.repository.rds
 
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
@@ -11,8 +12,8 @@ import java.time.OffsetDateTime
 interface ConnectedRealmUpdateHistoryRepository : JpaRepository<ConnectedRealmUpdateHistory, Long> {
     @Query(
         """
-        select h from ConnectedRealmUpdateHistory h 
-        where h.connectedRealm.id = :connectedRealmId 
+        select h from ConnectedRealmUpdateHistory h
+        where h.connectedRealm.id = :connectedRealmId
         and h.lastModified = :updateTimestamp
     """,
     )
@@ -20,4 +21,18 @@ interface ConnectedRealmUpdateHistoryRepository : JpaRepository<ConnectedRealmUp
         @Param("connectedRealmId") connectedRealmId: Int,
         @Param("updateTimestamp") updateTimestamp: OffsetDateTime,
     ): ConnectedRealmUpdateHistory?
+
+    @Modifying
+    @Query(
+        """
+        update ConnectedRealmUpdateHistory h
+        set h.completedTimestamp = :completedTimestamp
+        where h.connectedRealm.id = :connectedRealmId and h.lastModified = :lastModified
+    """,
+    )
+    fun updateCompletedTimeForConnectedRealmAndLastModified(
+        @Param("connectedRealmId") connectedRealmId: Int,
+        @Param("lastModified") lastModified: OffsetDateTime,
+        @Param("completedTimestamp") completedTimestamp: OffsetDateTime,
+    ): Int
 }

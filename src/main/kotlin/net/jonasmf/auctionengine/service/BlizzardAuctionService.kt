@@ -122,6 +122,7 @@ class BlizzardAuctionService(
                     val updateHistory = updateHistoryService.startUpdate(connectedRealm, auctionCount, lastModified)
                     processAuctionsInBatches(data.auctions, connectedRealm, connectedRealmId, updateHistory, startTime)
                     realmService.updateLatestDump(connectedRealmId, lastModified)
+                    updateHistoryService.setUpdateToCompleted(connectedRealmId, lastModified)
                     LOG.info(
                         "Successfully processed $auctionCount auctions for $connectedRealmId in ${System.currentTimeMillis() - startTime}ms",
                     )
