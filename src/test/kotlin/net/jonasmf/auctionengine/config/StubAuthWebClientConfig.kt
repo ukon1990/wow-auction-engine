@@ -13,20 +13,22 @@ import reactor.core.publisher.Mono
 
 @TestConfiguration(proxyBeanMethods = false)
 class StubAuthWebClientConfig {
-
     @Bean
     @Primary
     fun stubAuthWebClient(): WebClient {
-        val exchangeFunction = ExchangeFunction { _ ->
-            Mono.just(
-                ClientResponse.create(HttpStatus.OK)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .body("""{"access_token":"stub-token","expires_in":3600,"token_type":"Bearer"}""")
-                    .build()
-            )
-        }
+        val exchangeFunction =
+            ExchangeFunction { _ ->
+                Mono.just(
+                    ClientResponse
+                        .create(HttpStatus.OK)
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .body("""{"access_token":"stub-token","expires_in":3600,"token_type":"Bearer"}""")
+                        .build(),
+                )
+            }
 
-        return WebClient.builder()
+        return WebClient
+            .builder()
             .exchangeFunction(exchangeFunction)
             .build()
     }

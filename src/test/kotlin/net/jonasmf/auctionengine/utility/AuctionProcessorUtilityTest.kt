@@ -7,10 +7,8 @@ import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
 import net.jonasmf.auctionengine.repository.rds.DailyAuctionStatsRepository
 import net.jonasmf.auctionengine.repository.rds.HourlyAuctionStatsRepository
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 
 class AuctionProcessorUtilityTest {
     private lateinit var dailyRepo: DailyAuctionStatsRepository
@@ -33,53 +31,57 @@ class AuctionProcessorUtilityTest {
 
     @Test
     fun `processAuctions with single auction saves stats`() {
-        val auction = AuctionDTO(
-            id = 1L,
-            item = AuctionItemDTO(
-                id = 100,
-                modifiers = null,
-                context = null,
-                pet_breed_id = null,
-                pet_level = null,
-                pet_quality_id = null,
-                pet_species_id = null
-            ),
-            quantity = 5,
-            unit_price = 12345L,
-            buyout = 12345L,
-            time_left = net.jonasmf.auctionengine.constant.AuctionTimeLeft.LONG
-        )
+        val auction =
+            AuctionDTO(
+                id = 1L,
+                item =
+                    AuctionItemDTO(
+                        id = 100,
+                        modifiers = null,
+                        context = null,
+                        pet_breed_id = null,
+                        pet_level = null,
+                        pet_quality_id = null,
+                        pet_species_id = null,
+                    ),
+                quantity = 5,
+                unit_price = 12345L,
+                buyout = 12345L,
+                time_left = net.jonasmf.auctionengine.constant.AuctionTimeLeft.LONG,
+            )
         val auctions = listOf(auction)
-        
+
         utility.processAuctions(auctions, System.currentTimeMillis(), 2, 3)
-        
+
         verify { hourlyRepo.saveAll(any<List<HourlyAuctionStats>>()) }
         verify { dailyRepo.saveAll(any<List<DailyAuctionStats>>()) }
     }
 
     @Test
     fun `processAuctions with multiple auctions saves correct stats count`() {
-        val auctions = (1..10).map {
-            AuctionDTO(
-                id = it.toLong(),
-                item = AuctionItemDTO(
-                    id = 100 + it,
-                    modifiers = null,
-                    context = null,
-                    pet_breed_id = null,
-                    pet_level = null,
-                    pet_quality_id = null,
-                    pet_species_id = null
-                ),
-                quantity = it * 2L,
-                unit_price = it * 1000L,
-                buyout = it * 1000L,
-                time_left = net.jonasmf.auctionengine.constant.AuctionTimeLeft.LONG
-            )
-        }
-        
+        val auctions =
+            (1..10).map {
+                AuctionDTO(
+                    id = it.toLong(),
+                    item =
+                        AuctionItemDTO(
+                            id = 100 + it,
+                            modifiers = null,
+                            context = null,
+                            pet_breed_id = null,
+                            pet_level = null,
+                            pet_quality_id = null,
+                            pet_species_id = null,
+                        ),
+                    quantity = it * 2L,
+                    unit_price = it * 1000L,
+                    buyout = it * 1000L,
+                    time_left = net.jonasmf.auctionengine.constant.AuctionTimeLeft.LONG,
+                )
+            }
+
         utility.processAuctions(auctions, System.currentTimeMillis(), 5, 7)
-        
+
         verify { hourlyRepo.saveAll(any<List<HourlyAuctionStats>>()) }
         verify { dailyRepo.saveAll(any<List<DailyAuctionStats>>()) }
     }

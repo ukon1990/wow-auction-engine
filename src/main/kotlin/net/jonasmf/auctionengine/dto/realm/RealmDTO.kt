@@ -20,7 +20,7 @@ data class RealmDTO(
     val type: LocaleTypeValue<String>,
     @JsonProperty("is_tournament")
     val isTournament: Boolean,
-    val slug: String
+    val slug: String,
 ) {
     fun toDBO(): Realm {
         val locale = Locale.fromCompactString(locale)
@@ -32,7 +32,7 @@ data class RealmDTO(
             locale = locale, // Convert Locale enum to its string value
             timezone = timezone,
             gameBuild = GameBuildVersion.RETAIL,
-            slug = slug
+            slug = slug,
         )
     }
 }

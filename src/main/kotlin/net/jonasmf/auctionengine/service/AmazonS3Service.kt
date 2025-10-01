@@ -16,10 +16,9 @@ import java.nio.file.StandardOpenOption
 import java.util.zip.GZIPOutputStream
 
 @Service
-class AmazonS3Service (
-    private var amazonS3: AmazonS3
+class AmazonS3Service(
+    private var amazonS3: AmazonS3,
 ) {
-
     /**
      * Serializes an object to JSON, writes it to a gzip file, and uploads the file to S3.
      *
@@ -28,9 +27,13 @@ class AmazonS3Service (
      * @param region The region to determine the S3 bucket.
      * @param s3Key The S3 key under which to store the object.
      */
-    private fun serializeCompressAndUpload(region: Region, path: String, data: Any): File {
-        val mapper = jacksonObjectMapper()  // ObjectMapper for JSON serialization
-        val filePath = Paths.get("/tmp/${path}.gz")
+    private fun serializeCompressAndUpload(
+        region: Region,
+        path: String,
+        data: Any,
+    ): File {
+        val mapper = jacksonObjectMapper() // ObjectMapper for JSON serialization
+        val filePath = Paths.get("/tmp/$path.gz")
         // Ensure directories for the file path exist
         Files.createDirectories(filePath.parent)
 
@@ -39,21 +42,24 @@ class AmazonS3Service (
             Files.newOutputStream(
                 filePath,
                 StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING
-            )
-        )
-            .use { gzipOutputStream ->
-                val jsonData = mapper.writeValueAsBytes(data)
-                gzipOutputStream.write(jsonData)
-            }
+                StandardOpenOption.TRUNCATE_EXISTING,
+            ),
+        ).use { gzipOutputStream ->
+            val jsonData = mapper.writeValueAsBytes(data)
+            gzipOutputStream.write(jsonData)
+        }
 
         // Upload the compressed file to S3
         return filePath.toFile()
     }
 
-    fun uploadFile(region: Region, path: String, data: Any): String? {
+    fun uploadFile(
+        region: Region,
+        path: String,
+        data: Any,
+    ): String? {
         val file = serializeCompressAndUpload(region, path, data)
-        val fileName = "engine/$path.gz";
+        val fileName = "engine/$path.gz"
         val result = amazonS3.putObject(PutObjectRequest(getBucketName(region), fileName, file))
         val url = amazonS3.getUrl(getBucketName(region), fileName)
         if (result != null) {
@@ -64,7 +70,10 @@ class AmazonS3Service (
         return null
     }
 
-    fun getFile(region: Region, path: String): Path {
+    fun getFile(
+        region: Region,
+        path: String,
+    ): Path {
         amazonS3.getObject(getBucketName(region), path).objectContent.use { input ->
             val file = Paths.get("/tmp/$path")
             Files.createDirectories(file.parent)

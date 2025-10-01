@@ -12,5 +12,5 @@ data class Locale(
     val ru_RU: String,
     val ko_KR: String,
     val zh_TW: String,
-    val zh_CN: String
+    val zh_CN: String,
 )

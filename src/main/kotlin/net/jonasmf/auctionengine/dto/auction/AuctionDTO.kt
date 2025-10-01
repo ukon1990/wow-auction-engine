@@ -12,14 +12,18 @@ data class AuctionDTO(
     val quantity: Long,
     val unit_price: Long?, // Commodity price
     val buyout: Long?, // Realm price
-    val time_left: AuctionTimeLeft
+    val time_left: AuctionTimeLeft,
 ) {
-    fun toDBO(connectedRealm: ConnectedRealm, updateHistory: ConnectedRealmUpdateHistory): Auction {
-        return Auction(
-            id = AuctionId(
-                id = id,
-                connectedRealm = connectedRealm,
-            ),
+    fun toDBO(
+        connectedRealm: ConnectedRealm,
+        updateHistory: ConnectedRealmUpdateHistory,
+    ): Auction =
+        Auction(
+            id =
+                AuctionId(
+                    id = id,
+                    connectedRealm = connectedRealm,
+                ),
             item = item.toDBO(),
             quantity = quantity,
             unitPrice = unit_price,
@@ -29,5 +33,4 @@ data class AuctionDTO(
             lastSeen = null,
             updateHistory = updateHistory,
         )
-    }
 }

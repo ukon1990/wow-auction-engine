@@ -13,7 +13,6 @@ import org.testcontainers.containers.localstack.LocalStackContainer
 @SpringBootTest
 @ActiveProfiles("test")
 class AuctionDTOEngineApplicationTests {
-
     companion object {
         @JvmStatic
         @DynamicPropertySource
@@ -30,5 +29,4 @@ class AuctionDTOEngineApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }

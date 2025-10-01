@@ -6,7 +6,7 @@ import jakarta.persistence.Id
 import java.time.ZonedDateTime
 
 @Entity
-data class FileReference (
+data class FileReference(
     @Id
     @GeneratedValue
     val id: Long,

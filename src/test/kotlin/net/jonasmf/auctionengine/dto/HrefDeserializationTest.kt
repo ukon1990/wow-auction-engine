@@ -11,13 +11,14 @@ class HrefDeserializationTest {
 
     @Test
     fun `deserializes connected realm index href`() {
-        val json = """
+        val json =
+            """
             {
               "connected_realms": [
                 { "href": "https://example.com/connected-realm/1" }
               ]
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val result: ConnectedRealmIndex = mapper.readValue(json)
 

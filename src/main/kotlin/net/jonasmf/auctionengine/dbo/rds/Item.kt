@@ -3,7 +3,7 @@ package net.jonasmf.auctionengine.dbo.rds
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 
-enum class Quality{
+enum class Quality {
     POOR,
     COMMON,
     UNCOMMON,

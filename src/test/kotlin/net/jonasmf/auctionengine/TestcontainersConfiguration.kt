@@ -9,12 +9,9 @@ import org.testcontainers.utility.DockerImageName
 
 @TestConfiguration(proxyBeanMethods = false)
 class TestcontainersConfiguration {
-
     @Bean
     @ServiceConnection
-    fun mariaDbContainer(): MariaDBContainer<*> {
-        return MariaDBContainer(DockerImageName.parse("mariadb:latest"))
-    }
+    fun mariaDbContainer(): MariaDBContainer<*> = MariaDBContainer(DockerImageName.parse("mariadb:latest"))
 
     @Bean
     fun localStackContainer(): LocalStackContainer {

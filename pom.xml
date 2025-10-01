@@ -33,6 +33,8 @@
         <kotlin.version>2.2.20</kotlin.version>
         <junit.version>4.13.2</junit.version>
         <mockkVersion>1.14.5</mockkVersion>
+        <ktlint.version>3.5.0</ktlint.version>
+        <ktlint.plugin.version>3.5.0</ktlint.plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -242,6 +244,29 @@
                         <version>${kotlin.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>com.github.gantsign.maven</groupId>
+                <artifactId>ktlint-maven-plugin</artifactId>
+                <version>${ktlint.version}</version>
+                <configuration>
+                    <verbose>true</verbose>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>ktlint-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                    <execution>
+                        <id>ktlint-format</id>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

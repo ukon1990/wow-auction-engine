@@ -1,8 +1,9 @@
 package net.jonasmf.auctionengine.dto
 
 data class Links(
-    val self: Link
+    val self: Link,
 )
+
 data class Link(
-    val href: String
+    val href: String,
 )

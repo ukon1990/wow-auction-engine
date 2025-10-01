@@ -118,61 +118,62 @@ class ConnectedRealmService(
     @Transactional
     fun getAndUpdate(region: Region) {
         log.info("Fetching connected realms for region: ${region.name}")
-        
+
         getConnectedRealmIndex(region)
-            .doOnError { error -> 
-                log.error("Failed to fetch connected realm index for region ${region.name}: $error") 
-            }
-            .flatMapMany { index ->
-                log.info("Successfully fetched connected realm index for region ${region.name}. Found ${index.connectedRealms.size} realms.")
-                
-                Flux.fromIterable(index.connectedRealms)
+            .doOnError { error ->
+                log.error("Failed to fetch connected realm index for region ${region.name}: $error")
+            }.flatMapMany { index ->
+                log.info(
+                    "Successfully fetched connected realm index for region ${region.name}. Found ${index.connectedRealms.size} realms.",
+                )
+
+                Flux
+                    .fromIterable(index.connectedRealms)
                     .flatMap({ realm ->
                         processRealm(realm, region)
                     }, 1) // Process one realm at a time to avoid overwhelming the API
-            }
-            .then()
-            .doOnSuccess { 
-                log.info("Successfully processed all connected realms for region: ${region.name}") 
-            }
-            .doOnError { error -> 
-                log.error("Error occurred while processing connected realms for region ${region.name}: $error") 
-            }
-            .subscribe()
+            }.then()
+            .doOnSuccess {
+                log.info("Successfully processed all connected realms for region: ${region.name}")
+            }.doOnError { error ->
+                log.error("Error occurred while processing connected realms for region ${region.name}: $error")
+            }.subscribe()
     }
 
-    private fun processRealm(realm: Href, region: Region): Mono<Void> {
-        return getRealm(realm)
-            .doOnSubscribe { 
-                log.debug("Fetching realm data for ${realm.href}") 
-            }
-            .doOnError { error -> 
-                log.error("Failed to fetch realm data for ${realm.href}: $error") 
-            }
-            .map { connectedRealmDTO ->
+    private fun processRealm(
+        realm: Href,
+        region: Region,
+    ): Mono<Void> =
+        getRealm(realm)
+            .doOnSubscribe {
+                log.debug("Fetching realm data for ${realm.href}")
+            }.doOnError { error ->
+                log.error("Failed to fetch realm data for ${realm.href}: $error")
+            }.map { connectedRealmDTO ->
                 log.debug("Successfully fetched realm data for ${realm.href}")
                 connectedRealmDTO.toDBO()
-            }
-            .flatMap { connectedDBO ->
+            }.flatMap { connectedDBO ->
                 checkAndSaveRealm(connectedDBO, region)
             }
-    }
 
-    private fun checkAndSaveRealm(connectedDBO: ConnectedRealm, region: Region): Mono<Void> {
-        return Mono.fromCallable {
-            val existingRealm = connectedRealmRepository.findById(connectedDBO.id)
-            
-            if (existingRealm.isPresent) {
-                log.debug("Connected realm ${connectedDBO.id} already exists. Skipping update.")
-                return@fromCallable
-            }
-            
-            log.info("Saving new connected realm ${connectedDBO.id} for region ${region.name}")
-            connectedRealmRepository.save(connectedDBO)
-            log.info("Successfully saved connected realm ${connectedDBO.id}")
-        }
-        .subscribeOn(Schedulers.boundedElastic())
-        .then()
+    private fun checkAndSaveRealm(
+        connectedDBO: ConnectedRealm,
+        region: Region,
+    ): Mono<Void> {
+        return Mono
+            .fromCallable {
+                val existingRealm = connectedRealmRepository.findById(connectedDBO.id)
+
+                if (existingRealm.isPresent) {
+                    log.debug("Connected realm ${connectedDBO.id} already exists. Skipping update.")
+                    return@fromCallable
+                }
+
+                log.info("Saving new connected realm ${connectedDBO.id} for region ${region.name}")
+                connectedRealmRepository.save(connectedDBO)
+                log.info("Successfully saved connected realm ${connectedDBO.id}")
+            }.subscribeOn(Schedulers.boundedElastic())
+            .then()
     }
 
     private fun getConnectedRealmIndex(region: Region): Mono<ConnectedRealmIndex> {

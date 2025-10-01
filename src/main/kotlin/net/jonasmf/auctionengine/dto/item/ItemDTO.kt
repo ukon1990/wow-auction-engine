@@ -7,7 +7,7 @@ import net.jonasmf.auctionengine.dto.MediaDTO
 
 data class Quality(
     val type: String,
-    val name: LocaleDTO
+    val name: LocaleDTO,
 )
 
 data class ItemClass(
@@ -15,15 +15,16 @@ data class ItemClass(
     val key: Href,
     val name: LocaleDTO,
 )
+
 data class ItemSubclass(
     val id: Int,
     val name: LocaleDTO,
-    val key: Href
+    val key: Href,
 )
 
 data class InventoryType(
     val type: String,
-    val name: LocaleDTO
+    val name: LocaleDTO,
 )
 
 data class ItemDTO(
@@ -44,5 +45,5 @@ data class ItemDTO(
     val is_stackable: Boolean,
     val preview_item: ItemPreviewDTO,
     val purchase_quantity: Int,
-    val appearances: List<Appearance>
+    val appearances: List<Appearance>,
 )

@@ -7,7 +7,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument
 data class StatsDynamo(
     @DynamoDBAttribute(attributeName = "lastModified")
     val lastModified: Long,
-
     @DynamoDBAttribute(attributeName = "url")
-    val url: String
+    val url: String,
 )

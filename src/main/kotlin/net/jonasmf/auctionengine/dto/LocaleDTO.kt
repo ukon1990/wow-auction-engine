@@ -15,11 +15,11 @@ data class LocaleDTO(
     val ru_RU: String,
     val ko_KR: String,
     val zh_TW: String,
-    val zh_CN: String
+    val zh_CN: String,
 ) {
     // Convert LocaleDTO to a map based on Locale enum
-    fun toMap(): Map<Locale, String?> {
-        return mapOf(
+    fun toMap(): Map<Locale, String?> =
+        mapOf(
             Locale.EN_US to en_US,
             Locale.ES_MX to es_MX,
             Locale.PT_BR to pt_BR,
@@ -32,12 +32,15 @@ data class LocaleDTO(
             Locale.RU_RU to ru_RU,
             Locale.KO_KR to ko_KR,
             Locale.ZH_TW to zh_TW,
-            Locale.ZH_CN to zh_CN
+            Locale.ZH_CN to zh_CN,
         )
-    }
 }
-fun localeToProperty(locale: Locale, localeDTO: LocaleDTO): String? {
-    return when (locale) {
+
+fun localeToProperty(
+    locale: Locale,
+    localeDTO: LocaleDTO,
+): String? =
+    when (locale) {
         Locale.EN_US -> localeDTO.en_US
         Locale.ES_MX -> localeDTO.es_MX
         Locale.PT_BR -> localeDTO.pt_BR
@@ -52,4 +55,3 @@ fun localeToProperty(locale: Locale, localeDTO: LocaleDTO): String? {
         Locale.ZH_TW -> localeDTO.zh_TW
         Locale.ZH_CN -> localeDTO.zh_CN
     }
-}

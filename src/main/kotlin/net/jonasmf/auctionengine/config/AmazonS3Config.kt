@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class AmazonS3Config {
-
     @Value("\${cloud.aws.credentials.access-key}")
     private lateinit var awsAccessKeyId: String
 
@@ -23,7 +22,8 @@ class AmazonS3Config {
     @Bean
     fun amazonS3(): AmazonS3 {
         val awsCreds = BasicAWSCredentials(awsAccessKeyId, awsSecretKey)
-        return AmazonS3ClientBuilder.standard()
+        return AmazonS3ClientBuilder
+            .standard()
             .withRegion(region)
             .withCredentials(AWSStaticCredentialsProvider(awsCreds))
             .build()

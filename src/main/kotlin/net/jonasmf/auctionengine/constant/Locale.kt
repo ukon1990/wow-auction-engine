@@ -1,6 +1,8 @@
 package net.jonasmf.auctionengine.constant
 
-enum class Locale(val value: String) {
+enum class Locale(
+    val value: String,
+) {
     EN_US("en_US"),
     PT_BR("pt_BR"),
     PT_PT("pt_PT"),
@@ -13,15 +15,14 @@ enum class Locale(val value: String) {
     RU_RU("ru_RU"),
     KO_KR("ko_KR"),
     ZH_TW("zh_TW"),
-    ZH_CN("zh_CN");
+    ZH_CN("zh_CN"),
+    ;
 
     companion object {
-        fun getAllValues(): Map<String, Locale> {
-            return values().associateBy { it.value }
-        }
+        fun getAllValues(): Map<String, Locale> = values().associateBy { it.value }
 
-        fun fromCompactString(value: String): Locale {
-            return when (value) {
+        fun fromCompactString(value: String): Locale =
+            when (value) {
                 "enUS" -> EN_US
                 "ptBR" -> PT_BR
                 "ptPT" -> PT_PT
@@ -37,6 +38,5 @@ enum class Locale(val value: String) {
                 "zhCN" -> ZH_CN
                 else -> throw IllegalArgumentException("Unknown locale: $value")
             }
-        }
     }
 }

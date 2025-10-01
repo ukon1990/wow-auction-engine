@@ -7,12 +7,11 @@ import java.time.Instant
 
 data class HealthResponse(
     val status: String = "UP",
-    val checkedAt: Instant = Instant.now()
+    val checkedAt: Instant = Instant.now(),
 )
 
 @RestController
 class HealthController {
-
     @GetMapping("/health")
     fun health(): ResponseEntity<HealthResponse> = ResponseEntity.ok(HealthResponse())
 }

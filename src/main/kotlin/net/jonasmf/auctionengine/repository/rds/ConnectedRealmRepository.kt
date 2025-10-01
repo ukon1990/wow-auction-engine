@@ -5,4 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ConnectedRealmRepository: JpaRepository<ConnectedRealm, Int>
+interface ConnectedRealmRepository : JpaRepository<ConnectedRealm, Int>

@@ -12,7 +12,7 @@ class AuctionItemStat(
     val auction: AuctionDTO,
     val lastModified: Long,
     hour: String,
-    val ahTypeId: Int
+    val ahTypeId: Int,
 ) {
     private val prices = mutableMapOf<String, Long?>()
     private val quantities = mutableMapOf<String, Long>()
@@ -22,19 +22,21 @@ class AuctionItemStat(
         addQuantity(hour, auction.quantity)
     }
 
-    fun getPrice(hour: String): Long {
-        return prices[hour] ?: Long.MAX_VALUE
-    }
+    fun getPrice(hour: String): Long = prices[hour] ?: Long.MAX_VALUE
 
-    fun setPrice(hour: String, price: Long?) {
+    fun setPrice(
+        hour: String,
+        price: Long?,
+    ) {
         prices[hour] = price
     }
 
-    fun getQuantity(hour: String): Long {
-        return quantities[hour] ?: 0
-    }
+    fun getQuantity(hour: String): Long = quantities[hour] ?: 0
 
-    fun addQuantity(hour: String, quantity: Long) {
+    fun addQuantity(
+        hour: String,
+        quantity: Long,
+    ) {
         quantities[hour] = (quantities[hour] ?: 0) + quantity
     }
 }

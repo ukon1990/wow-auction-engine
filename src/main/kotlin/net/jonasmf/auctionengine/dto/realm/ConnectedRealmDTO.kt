@@ -18,25 +18,25 @@ data class ConnectedRealmDTO(
     val realms: List<RealmDTO>,
     @JsonProperty("mythic_leaderboards")
     val mythicLeaderboards: Href,
-    val auctions: Href
+    val auctions: Href,
 ) {
-    fun toDBO(): ConnectedRealm {
-        return ConnectedRealm(
+    fun toDBO(): ConnectedRealm =
+        ConnectedRealm(
             id = id,
             realms = realms.map { it.toDBO() },
-            auctionHouse = AuctionHouse(
-                lastModified = null,
-                lastRequested = null,
-                nextUpdate = ZonedDateTime.now(),
-                lowestDelay = 0,
-                averageDelay = 0,
-                highestDelay = 0,
-                tsmFile = null,
-                statsFile = null,
-                auctionFile = null,
-                failedAttempts = 0,
-                updateLog = emptyList()
-            ),
+            auctionHouse =
+                AuctionHouse(
+                    lastModified = null,
+                    lastRequested = null,
+                    nextUpdate = ZonedDateTime.now(),
+                    lowestDelay = 0,
+                    averageDelay = 0,
+                    highestDelay = 0,
+                    tsmFile = null,
+                    statsFile = null,
+                    auctionFile = null,
+                    failedAttempts = 0,
+                    updateLog = emptyList(),
+                ),
         )
-    }
 }

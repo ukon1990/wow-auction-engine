@@ -25,14 +25,16 @@ class DynamoDBConfig {
 
     @Bean
     fun amazonDynamoDB(): AmazonDynamoDB {
-        val builder = AmazonDynamoDBClient.builder()
-            .withCredentials(AWSStaticCredentialsProvider(amazonAWSCredentials()))
+        val builder =
+            AmazonDynamoDBClient
+                .builder()
+                .withCredentials(AWSStaticCredentialsProvider(amazonAWSCredentials()))
         if (!amazonDynamoDBEndpoint.isNullOrEmpty()) {
             builder.withEndpointConfiguration(
                 AwsClientBuilder.EndpointConfiguration(
                     amazonDynamoDBEndpoint,
-                    "eu-west-1"
-                )
+                    "eu-west-1",
+                ),
             )
         } else {
             builder.withRegion("eu-west-1")
@@ -41,9 +43,9 @@ class DynamoDBConfig {
     }
 
     @Bean
-    fun amazonAWSCredentials(): AWSCredentials {
-        return BasicAWSCredentials(
-            amazonAWSAccessKey, amazonAWSSecretKey
+    fun amazonAWSCredentials(): AWSCredentials =
+        BasicAWSCredentials(
+            amazonAWSAccessKey,
+            amazonAWSSecretKey,
         )
-    }
 }

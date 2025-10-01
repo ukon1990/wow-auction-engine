@@ -5,5 +5,5 @@ import net.jonasmf.auctionengine.dto.Href
 
 data class ConnectedRealmIndex(
     @JsonProperty("connected_realms")
-    val connectedRealms: List<Href>
+    val connectedRealms: List<Href>,
 )

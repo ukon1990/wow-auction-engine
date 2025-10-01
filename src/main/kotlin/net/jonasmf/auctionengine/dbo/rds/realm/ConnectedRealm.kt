@@ -11,20 +11,20 @@ import java.time.ZonedDateTime
 data class ConnectedRealm(
     @Id
     val id: Int,
-    @OneToOne(cascade = [CascadeType.PERSIST])  // or CascadeType.ALL if you also want to cascade other operations like REMOVE
+    @OneToOne(cascade = [CascadeType.PERSIST]) // or CascadeType.ALL if you also want to cascade other operations like REMOVE
     val auctionHouse: AuctionHouse,
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    val realms: List<Realm> = emptyList()
+    val realms: List<Realm> = emptyList(),
 )
 
 @Entity
-data class AuctionHouseFileLog (
+data class AuctionHouseFileLog(
     @Id
     @GeneratedValue
     val id: Long? = null,
     val timestamp: ZonedDateTime,
     @ManyToOne
-    val file: FileReference
+    val file: FileReference,
 )
 
 @Entity
@@ -32,20 +32,17 @@ data class AuctionHouse(
     @Id
     @GeneratedValue
     val id: Int? = null,
-
     var lastModified: ZonedDateTime?,
     @Nullable
     val lastRequested: ZonedDateTime?,
     @Nullable
     var nextUpdate: ZonedDateTime,
-
     @Nullable
     val lowestDelay: Long,
     @Nullable
     var averageDelay: Long = 60,
     @Nullable
     val highestDelay: Long,
-
     @ManyToOne
     @Nullable
     val tsmFile: FileReference?,
@@ -56,16 +53,15 @@ data class AuctionHouse(
     @Nullable
     val auctionFile: FileReference?,
     val failedAttempts: Int? = 0,
-
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    val updateLog: List<AuctionHouseFileLog> = emptyList()
+    val updateLog: List<AuctionHouseFileLog> = emptyList(),
 )
 
 @Entity(name = "region")
-data class RegionDBO (
+data class RegionDBO(
     @Id
     val id: Int? = null,
-    val name: String
+    val name: String,
 )
 
 @Entity
@@ -79,5 +75,5 @@ data class Realm(
     val locale: Locale,
     val timezone: String,
     val gameBuild: GameBuildVersion,
-    val slug: String
+    val slug: String,
 )
