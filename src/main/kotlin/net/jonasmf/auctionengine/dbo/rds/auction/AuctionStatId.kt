@@ -1,6 +1,10 @@
 package net.jonasmf.auctionengine.dbo.rds.auction
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Embeddable
+import jakarta.persistence.FetchType
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import java.io.Serializable
@@ -19,4 +23,6 @@ data class AuctionStatsId(
     val date: LocalDate,
     @Column(name = "petSpeciesId")
     val petSpeciesId: Int? = null,
-) : Serializable
+) : Serializable {
+    override fun toString(): String = "${connectedRealm.id}-$gameBuildVersion-$itemId-$date-${petSpeciesId ?: ""}"
+}

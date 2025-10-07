@@ -22,7 +22,8 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import java.time.Instant
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Locale
+import java.util.TimeZone
 import kotlin.math.min
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction as AuctionDBO
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItem as AuctionItemDBO
@@ -36,6 +37,7 @@ class BlizzardAuctionService(
     private val amazonS3: AmazonS3Service,
     private val auctionRepository: AuctionRepository,
     private val auctionItemRepository: AuctionItemRepository,
+    private val hourlyPriceStatisticsService: HourlyPriceStatisticsService,
     private val realmService: ConnectedRealmService,
     private val auctionItemModifierRepository: AuctionItemModifierRepository,
     private val updateHistoryService: ConnectedRealmUpdateHistoryService,
@@ -119,6 +121,7 @@ class BlizzardAuctionService(
                 }
 
                 saveAuctionDataToS3(region, connectedRealmId, data, lastModified)
+                hourlyPriceStatisticsService.processHourlyPriceStatistics(connectedRealm, data.auctions, lastModified)
 
                 /* Disabled, as we don't really need ALL auctions in the database as it takes up a lot of space
                     And processing is also really slow for "100k-400k" auctions and all it's corresponding data.
