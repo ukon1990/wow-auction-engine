@@ -7,7 +7,6 @@ import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.repository.rds.HourlyPriceStatisticsRepository
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 
 @Service
