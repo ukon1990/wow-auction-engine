@@ -1,6 +1,7 @@
 package net.jonasmf.auctionengine.utility
 
-import io.mockk.*
+import io.mockk.mockk
+import io.mockk.verify
 import net.jonasmf.auctionengine.dbo.rds.auction.DailyAuctionStats
 import net.jonasmf.auctionengine.dbo.rds.auction.HourlyAuctionStats
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
@@ -53,8 +54,8 @@ class AuctionProcessorUtilityTest {
 
         utility.processAuctions(auctions, System.currentTimeMillis(), 2, 3)
 
-        verify { hourlyRepo.saveAll(any<List<HourlyAuctionStats>>()) }
-        verify { dailyRepo.saveAll(any<List<DailyAuctionStats>>()) }
+        verify { hourlyRepo.saveAll(any<Iterable<HourlyAuctionStats>>()) }
+        verify { dailyRepo.saveAll(any<Iterable<DailyAuctionStats>>()) }
     }
 
     @Test
@@ -82,7 +83,7 @@ class AuctionProcessorUtilityTest {
 
         utility.processAuctions(auctions, System.currentTimeMillis(), 5, 7)
 
-        verify { hourlyRepo.saveAll(any<List<HourlyAuctionStats>>()) }
-        verify { dailyRepo.saveAll(any<List<DailyAuctionStats>>()) }
+        verify { hourlyRepo.saveAll(any<Iterable<HourlyAuctionStats>>()) }
+        verify { dailyRepo.saveAll(any<Iterable<DailyAuctionStats>>()) }
     }
 }

@@ -1,7 +1,14 @@
 package net.jonasmf.auctionengine.dbo.rds.realm
 
 import jakarta.annotation.Nullable
-import jakarta.persistence.*
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import jakarta.persistence.OneToOne
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.dbo.rds.FileReference
@@ -11,7 +18,7 @@ import java.time.ZonedDateTime
 data class ConnectedRealm(
     @Id
     val id: Int,
-    @OneToOne(cascade = [CascadeType.PERSIST]) // or CascadeType.ALL if you also want to cascade other operations like REMOVE
+    @OneToOne(cascade = [CascadeType.PERSIST])
     val auctionHouse: AuctionHouse,
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     val realms: List<Realm> = emptyList(),
