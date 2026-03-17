@@ -56,14 +56,14 @@ class BlizzardAuctionService(
     fun updateAuctionHouses() {
         val ids = listOf(-3, 1403)
         LOG.info("Updating auction houses for realm IDs: $ids")
-        ids.forEach { updateHouse(it, Region.Europe) }
+        ids.forEach { updateHouse(it, properties.region) }
     }
 
     private fun updateHouse(
         connectedRealmId: Int,
         region: Region,
     ) {
-        LOG.debug("Starting update for house: connectedRealmId=$connectedRealmId, region=$region")
+        LOG.debug("Starting update for house: connectedRealmId={}, region={}", connectedRealmId, region)
 
         getLatestDumpPath(connectedRealmId, region).subscribe(
             { response ->
@@ -150,10 +150,11 @@ class BlizzardAuctionService(
             LOG.warn("No auction data to upload for realm $connectedRealmId")
             return
         }
+        val lastModifiedMs = lastModified.toInstant().toEpochMilli()
         val startTime = System.currentTimeMillis()
         val filePath = "auctions/${region.name.lowercase(Locale.getDefault())}/${
             if (connectedRealmId < 0) "commodity" else "$connectedRealmId"
-        }/$lastModified.json"
+        }/$lastModifiedMs.json"
 
         try {
             amazonS3.uploadFile(region, filePath, data)
