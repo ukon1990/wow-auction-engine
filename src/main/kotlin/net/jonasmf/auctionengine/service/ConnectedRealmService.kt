@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.service
 
+import NameSpace
 import jakarta.transaction.Transactional
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
@@ -33,6 +34,7 @@ class ConnectedRealmService(
     private val regionService: RegionService,
     private val connectedRealmRepository: ConnectedRealmRepository,
     private val regionRepository: RegionRepository,
+    private val auctionHouseService: AuctionHouseService,
 ) {
     private val webClient: WebClient = webClientWithAuth
     private val basePath = "connected-realm/index"
@@ -87,6 +89,7 @@ class ConnectedRealmService(
                             ),
                     )
                 connectedRealmRepository.save(connectedRealm)
+                auctionHouseService.createIfMissing(connectedRealm)
                 log.info("Successfully created ConnectedRealm with id $id")
             } else {
                 log.debug("Connected Realm with id $id already exists")
