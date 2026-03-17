@@ -50,7 +50,7 @@ cloud:
       secret-key: ${AWS_SECRET_KEY}
 amazon:
   dynamodb:
-    endpoint: ""
+    endpoint: "http://localhost:8000"
   aws:
     region:
       static: ${WAE_AWS_REGION}

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@EnableDynamoDBRepositories(basePackages = ["net.jonasmf.auctionengine.repositories.dynamodb"])
+@EnableDynamoDBRepositories(basePackages = ["net.jonasmf.auctionengine.repository.dynamodb"])
 class DynamoDBConfig {
     @Value("\${amazon.dynamodb.endpoint}")
     private val amazonDynamoDBEndpoint: String? = null
