@@ -118,6 +118,8 @@ class ConnectedRealmService(
 
     fun getById(id: Int): ConnectedRealm? = connectedRealmRepository.findById(id).orElse(null)
 
+    fun getAllForRegion(region: Region) = connectedRealmRepository.findAllByRegion(region)
+
     @Transactional
     fun getAndUpdate(region: Region) {
         log.info("Fetching connected realms for region: ${region.name}")
@@ -132,9 +134,12 @@ class ConnectedRealmService(
 
                 Flux
                     .fromIterable(index.connectedRealms)
-                    .flatMap({ realm ->
-                        processRealm(realm, region)
-                    }, 1) // Process one realm at a time to avoid overwhelming the API
+                    .flatMap(
+                        { realm ->
+                            processRealm(realm, region)
+                        },
+                        1,
+                    ) // Process one realm at a time to avoid overwhelming the API
             }.then()
             .doOnSuccess {
                 log.info("Successfully processed all connected realms for region: ${region.name}")

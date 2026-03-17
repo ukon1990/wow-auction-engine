@@ -9,6 +9,7 @@ import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
+import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionItemModifierRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionItemRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionRepository
@@ -54,8 +55,9 @@ class BlizzardAuctionService(
     }
 
     fun updateAuctionHouses() {
-        val ids = listOf(-3, 1403)
-        logger.info("Updating auction houses for realm IDs: $ids")
+        val ids = realmService.getAllForRegion(properties.region).map { it.id }
+        // val shit = auctionHouseRepository.get
+        LOG.info("Updating auction houses for realm IDs: $ids")
         ids.forEach { updateHouse(it, properties.region) }
     }
 
