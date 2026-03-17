@@ -1,11 +1,12 @@
 package net.jonasmf.auctionengine.service
 
 import net.jonasmf.auctionengine.constant.GameBuildVersion
-import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsId
-import net.jonasmf.auctionengine.dbo.rds.auction.HourlyAuctionStats
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.repository.rds.HourlyPriceStatisticsRepository
+import net.jonasmf.auctionengine.repository.rds.HourlyStatsUpsertRow
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
 
@@ -13,39 +14,55 @@ import java.time.ZonedDateTime
 class HourlyPriceStatisticsService(
     val hourlyPriceStatisticsRepository: HourlyPriceStatisticsRepository,
 ) {
+    private val LOG: Logger = LoggerFactory.getLogger(HourlyPriceStatisticsService::class.java)
+
     fun processHourlyPriceStatistics(
         connectedRealm: ConnectedRealm,
         auctions: List<AuctionDTO>,
         lastModified: ZonedDateTime,
-    ): List<HourlyAuctionStats> {
-        val now = System.currentTimeMillis()
-        val hourlyStatistics = mutableListOf<HourlyAuctionStats>()
-        val hourlyStatisticsMap = mutableMapOf<String, HourlyAuctionStats>()
+    ): List<HourlyStatsUpsertRow> {
+        val startTime = System.currentTimeMillis()
+        val hour = lastModified.hour
+        val date = lastModified.toLocalDate()
+        val grouped = linkedMapOf<String, HourlyStatsUpsertRow>()
 
         for (auction in auctions) {
-            val hourTimestamp = lastModified.hour
-            val price = auction.buyout ?: auction.unit_price ?: 0
-            val quantity = auction.quantity.takeIf { it > 0 } ?: 1
-            val id =
-                AuctionStatsId(
-                    connectedRealm = connectedRealm,
-                    gameBuildVersion = GameBuildVersion.RETAIL,
-                    itemId = auction.item.id,
-                    petSpeciesId = auction.item.pet_species_id,
-                    date = lastModified.toLocalDate(),
-                )
-            val existingEntry = hourlyStatisticsMap[id.toString()]
-            if (existingEntry != null) {
-                existingEntry.apply {
-                    // Dynamic path key based on hourlyAuctionStatsRepository
-                    val hourKey = "price$hourTimestamp"
-                    val hourQuantityKey = "quantity$hourTimestamp"
-                }
+            val itemId = auction.item.id
+            val petSpeciesId = auction.item.pet_species_id
+            val petBreedId = auction.item.pet_breed_id
+            val petLevel = auction.item.pet_level
+            val modifiers = auction.item.modifiers
+            val key = "${connectedRealm.id}|${GameBuildVersion.RETAIL.ordinal}|$itemId|$date|${petSpeciesId ?: ""}"
+            val price = auction.buyout ?: auction.unit_price ?: 0L
+            val quantity = auction.quantity.takeIf { it > 0 } ?: 1L
+
+            val existing = grouped[key]
+            if (existing == null) {
+                grouped[key] =
+                    HourlyStatsUpsertRow(
+                        connectedRealmId = connectedRealm.id,
+                        ahTypeId = GameBuildVersion.RETAIL.ordinal,
+                        itemId = itemId,
+                        date = date,
+                        petSpeciesId = petSpeciesId,
+                        price = price,
+                        quantity = quantity,
+                    )
             } else {
-                // TODO - Create new entry
+                grouped[key] =
+                    existing.copy(
+                        quantity = (existing.quantity ?: 0L) + quantity,
+                        price = (existing.price ?: 0).coerceAtMost(price),
+                    )
             }
         }
 
-        return hourlyStatistics
+        val insertedRows = hourlyPriceStatisticsRepository.upsertHour(grouped.values.toList(), hour)
+        LOG.info(
+            "Processed hourly auctions for ${
+                connectedRealm.auctionHouse.id
+            } with $insertedRows rows, in ${System.currentTimeMillis() - startTime} ms",
+        )
+        return grouped.values.toList()
     }
 }
