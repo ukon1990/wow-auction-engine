@@ -38,12 +38,13 @@ spring:
 blizzard:
   client-id: ${BLIZZARD_CLIENT_ID}
   client-secret: ${BLIZZARD_CLIENT_SECRET}
+  region: ${WAE_BLIZZARD_REGION}
   token-url: https://eu.battle.net/oauth/token
   base-url: api.blizzard.com/data/wow/
 cloud:
   aws:
     region:
-      static: eu-west-1
+      static: ${WAE_AWS_REGION}
     credentials:
       access-key: ${AWS_ACCESS_KEY}
       secret-key: ${AWS_SECRET_KEY}
@@ -52,7 +53,7 @@ amazon:
     endpoint: ""
   aws:
     region:
-      static: eu-west-1
+      static: ${WAE_AWS_REGION}
     credentials:
       accesskey: dummy-access-key
       secretkey: dummy-secret-key
