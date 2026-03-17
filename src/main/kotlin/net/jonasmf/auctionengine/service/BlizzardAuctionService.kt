@@ -43,12 +43,9 @@ class BlizzardAuctionService(
     private val updateHistoryService: ConnectedRealmUpdateHistoryService,
 ) {
     private val webClient: WebClient = webClientWithAuth
-
-    companion object {
-        private const val AUCTION_BATCH_SIZE = 100_000
-        private const val LOG_BATCH_SIZE = AUCTION_BATCH_SIZE // Log progress every 10k auctions
-        val LOG: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
-    }
+    private val AUCTION_BATCH_SIZE = 100_000
+    private val LOG_BATCH_SIZE = AUCTION_BATCH_SIZE // Log progress every 10k auctions
+    val LOG: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
 
     @Scheduled(fixedDelayString = "PT1H", initialDelay = 3_000)
     fun checkForUpdates() {

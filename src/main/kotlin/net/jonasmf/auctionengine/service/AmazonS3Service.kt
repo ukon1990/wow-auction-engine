@@ -19,6 +19,8 @@ import java.util.zip.GZIPOutputStream
 class AmazonS3Service(
     private var amazonS3: AmazonS3,
 ) {
+    private val LOG: Logger = LoggerFactory.getLogger(AmazonS3Service::class.java)
+
     /**
      * Serializes an object to JSON, writes it to a gzip file, and uploads the file to S3.
      *
@@ -80,9 +82,5 @@ class AmazonS3Service(
             Files.copy(input, file)
             return file
         }
-    }
-
-    companion object {
-        val LOG: Logger = LoggerFactory.getLogger(AmazonS3Service::class.java)
     }
 }
