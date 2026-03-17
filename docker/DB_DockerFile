@@ -6,3 +6,7 @@ RUN apt-get update && \
 ENV LANG nb_NO.UTF-8
 ENV LANGUAGE nb_NO.UTF-8
 ENV LC_ALL nb_NO.UTF-8
+
+# Initialize database with default schema
+RUN mkdir -p /docker-entrypoint-initdb.d && \
+    printf 'create schema dbo collate utf8mb3_general_ci;\n' > /docker-entrypoint-initdb.d/01-init-schema.sql
