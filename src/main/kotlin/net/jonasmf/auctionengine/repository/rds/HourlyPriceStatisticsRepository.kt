@@ -1,7 +1,5 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import net.jonasmf.auctionengine.dbo.rds.auction.HourlyAuctionStats
-import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -30,7 +28,7 @@ class HourlyPriceStatisticsRepository(
         hour: Int,
     ): Int {
         if (rows.isEmpty()) return 0
-        require(hour in 0 .. 23) { "Hour must be between 0 and 23" }
+        require(hour in 0..23) { "Hour must be between 0 and 23" }
 
         val priceColumn = "price%02d".format(hour)
         val quantityColumn = "quantity%02d".format(hour)
@@ -41,7 +39,8 @@ class HourlyPriceStatisticsRepository(
 
         rows.chunked(CHUNK_SIZE).forEach { chunk ->
             val placeholders = chunk.joinToString(",") { valueTuple }
-            val sql = """
+            val sql =
+                """
                 INSERT INTO $tableName (
                     connected_realm_id,
                     ah_type_id,
@@ -54,7 +53,7 @@ class HourlyPriceStatisticsRepository(
                 ON DUPLICATE KEY UPDATE
                     $priceColumn = VALUES($priceColumn),
                     $quantityColumn = VALUES($quantityColumn)
-            """.trimIndent()
+                """.trimIndent()
             // What is the 7 here? Bytes?
             val params = ArrayList<Any?>(chunk.size * numberOfColumns)
             for (row in chunk) {

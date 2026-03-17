@@ -26,7 +26,6 @@ class HourlyPriceStatisticsService(
         val date = lastModified.toLocalDate()
         val grouped = linkedMapOf<String, HourlyStatsUpsertRow>()
 
-
         for (auction in auctions) {
             val itemId = auction.item.id
             val petSpeciesId = auction.item.pet_species_id
@@ -37,23 +36,24 @@ class HourlyPriceStatisticsService(
             val price = auction.buyout ?: auction.unit_price ?: 0L
             val quantity = auction.quantity.takeIf { it > 0 } ?: 1L
 
-
             val existing = grouped[key]
             if (existing == null) {
-                grouped[key] = HourlyStatsUpsertRow(
-                    connectedRealmId = connectedRealm.id,
-                    ahTypeId = GameBuildVersion.RETAIL.ordinal,
-                    itemId = itemId,
-                    date = date,
-                    petSpeciesId = petSpeciesId,
-                    price = price,
-                    quantity = quantity,
-                )
+                grouped[key] =
+                    HourlyStatsUpsertRow(
+                        connectedRealmId = connectedRealm.id,
+                        ahTypeId = GameBuildVersion.RETAIL.ordinal,
+                        itemId = itemId,
+                        date = date,
+                        petSpeciesId = petSpeciesId,
+                        price = price,
+                        quantity = quantity,
+                    )
             } else {
-                grouped[key] = existing.copy(
-                    quantity = (existing.quantity ?: 0L) + quantity,
-                    price = (existing.price ?: 0).coerceAtMost(price),
-                )
+                grouped[key] =
+                    existing.copy(
+                        quantity = (existing.quantity ?: 0L) + quantity,
+                        price = (existing.price ?: 0).coerceAtMost(price),
+                    )
             }
         }
 

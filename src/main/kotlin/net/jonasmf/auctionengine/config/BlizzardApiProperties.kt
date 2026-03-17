@@ -12,5 +12,5 @@ data class BlizzardApiProperties
         val tokenUrl: String,
         val clientId: String,
         val clientSecret: String,
-        val region: Region
+        val region: Region,
     )
