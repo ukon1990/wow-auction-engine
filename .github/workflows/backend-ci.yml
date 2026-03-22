@@ -25,14 +25,8 @@ jobs:
       - name: Ensure Maven wrapper is executable
         run: chmod +x ./mvnw
 
-      - name: Run backend Kotlin style verification
-        run: ./mvnw -B -ntp ktlint:check
-
-      - name: Build and test backend
-        run: ./mvnw -B -ntp -Dkotlin.compiler.daemon=false test
-
-      - name: Generate backend coverage report
-        run: ./mvnw -B -ntp -Dkotlin.compiler.daemon=false jacoco:report
+      - name: Verify backend
+        run: ./mvnw -B -ntp -Dkotlin.compiler.daemon=false verify
 
       - name: Print backend coverage summary
         shell: bash
@@ -66,6 +60,3 @@ jobs:
             target/site/jacoco/jacoco.xml
             target/site/jacoco
           if-no-files-found: error
-
-      - name: Package backend
-        run: ./mvnw -B -ntp -Dkotlin.compiler.daemon=false -DskipTests package

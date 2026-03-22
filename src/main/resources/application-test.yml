@@ -8,6 +8,7 @@ cloud:
 blizzard:
   client-id: dummy-client-id
   client-secret: dummy-client-secret
+  region: Europe
   token-url: http://localhost/mock-blizzard/token
   base-url: http://localhost/mock-blizzard/api/
 amazon:
