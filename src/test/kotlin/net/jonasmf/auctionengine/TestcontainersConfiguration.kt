@@ -20,6 +20,6 @@ class TestcontainersConfiguration {
     @ServiceConnection
     fun mariaDbContainer(): MariaDBContainer<*> = MariaDBContainer(DockerImageName.parse("mariadb:latest"))
 
-    @Bean
+    @Bean(destroyMethod = "")
     fun localStackContainer(): LocalStackContainer = localStackContainer
 }
