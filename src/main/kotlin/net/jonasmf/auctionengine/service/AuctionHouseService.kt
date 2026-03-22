@@ -11,12 +11,18 @@ class AuctionHouseService(
 ) {
     fun createIfMissing(connectedRealm: ConnectedRealm) {
         val auctionHouse = repository.findById(connectedRealm.id)
-        if (!auctionHouse.isEmpty) return;
-        val newAuctionHouse = AuctionHouseDynamo(
-            id = connectedRealm.id,
-            region = connectedRealm.realms.firstOrNull()?.region?.name.orEmpty(),
-            realmSlugs = connectedRealm.realms.joinToString(",") { it.slug }
-        )
+        if (!auctionHouse.isEmpty) return
+        val newAuctionHouse =
+            AuctionHouseDynamo(
+                id = connectedRealm.id,
+                region =
+                    connectedRealm.realms
+                        .firstOrNull()
+                        ?.region
+                        ?.name
+                        .orEmpty(),
+                realmSlugs = connectedRealm.realms.joinToString(",") { it.slug },
+            )
         repository.save(newAuctionHouse)
     }
 }

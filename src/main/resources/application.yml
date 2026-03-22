@@ -1,6 +1,5 @@
-amazon.dynamodb.endpoint: ""
-amazon.aws.accesskey: dummy-access-key
-amazon.aws.secretkey: dummy-secret-key
+amazon.aws.accesskey: fakeMyKeyId
+amazon.aws.secretkey: fakeSecretAccessKey
 
 spring:
   application:
@@ -55,5 +54,5 @@ amazon:
     region:
       static: ${WAE_AWS_REGION}
     credentials:
-      accesskey: dummy-access-key
-      secretkey: dummy-secret-key
+      accesskey: fakeMyKeyId
+      secretkey: fakeSecretAccessKey
