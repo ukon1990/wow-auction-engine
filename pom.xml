@@ -29,13 +29,17 @@
     </scm>
     <properties>
         <java.version>25</java.version>
-        <aws.sdk.kotlin.version>1.6.37</aws.sdk.kotlin.version>
+        <aws.java.sdk.version>1.12.797</aws.java.sdk.version>
+        <aws.sdk.kotlin.version>1.6.41</aws.sdk.kotlin.version>
+        <jackson.version>2.21.2</jackson.version>
         <kotlin.version>2.3.20</kotlin.version>
         <junit.version>6.0.3</junit.version>
         <junit4.version>4.13.2</junit4.version>
+        <mariadb.version>3.5.7</mariadb.version>
         <mockkVersion>1.14.9</mockkVersion>
         <ktlint.version>3.5.0</ktlint.version>
         <ktlint.plugin.version>3.5.0</ktlint.plugin.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -100,7 +104,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-dynamodb</artifactId>
-            <version>1.12.761</version>
+            <version>${aws.java.sdk.version}</version>
         </dependency>
 
         <!-- jaxb -->
