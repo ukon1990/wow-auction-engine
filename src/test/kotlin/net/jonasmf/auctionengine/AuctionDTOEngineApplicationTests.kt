@@ -7,27 +7,26 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.localstack.LocalStackContainer
 
 @Import(TestcontainersConfiguration::class, StubAuthWebClientConfig::class)
 @SpringBootTest
 @ActiveProfiles("test")
 class AuctionDTOEngineApplicationTests {
     companion object {
-        private const val dynamoDbPort = 8000
-
         @JvmStatic
         @DynamicPropertySource
         fun registerDynamoDbProperties(registry: DynamicPropertyRegistry) {
-            val dynamoDb = TestcontainersConfiguration.dynamoDbContainer
-            if (!dynamoDb.isRunning) {
-                dynamoDb.start()
+            val localStack = TestcontainersConfiguration.localStackContainer
+            if (!localStack.isRunning) {
+                localStack.start()
             }
 
             registry.add("amazon.dynamodb.endpoint") {
-                "http://${dynamoDb.host}:${dynamoDb.getMappedPort(dynamoDbPort)}"
+                localStack.getEndpointOverride(LocalStackContainer.Service.DYNAMODB).toString()
             }
-            registry.add("amazon.aws.accesskey") { "fakeMyKeyId" }
-            registry.add("amazon.aws.secretkey") { "fakeSecretAccessKey" }
+            registry.add("amazon.aws.accesskey") { localStack.accessKey }
+            registry.add("amazon.aws.secretkey") { localStack.secretKey }
         }
     }
 

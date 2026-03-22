@@ -4,19 +4,16 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection
 import org.springframework.context.annotation.Bean
 import org.testcontainers.containers.MariaDBContainer
-import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.localstack.LocalStackContainer
 import org.testcontainers.utility.DockerImageName
 
 @TestConfiguration(proxyBeanMethods = false)
 class TestcontainersConfiguration {
     companion object {
-        private const val dynamoDbPort = 8000
-
         @JvmField
-        val dynamoDbContainer: GenericContainer<*> =
-            GenericContainer(DockerImageName.parse("amazon/dynamodb-local:latest"))
-                .withExposedPorts(dynamoDbPort)
-                .withCommand("-jar", "DynamoDBLocal.jar", "-inMemory", "-sharedDb")
+        val localStackContainer: LocalStackContainer =
+            LocalStackContainer(DockerImageName.parse("localstack/localstack:latest"))
+                .withServices(LocalStackContainer.Service.DYNAMODB)
     }
 
     @Bean
@@ -24,5 +21,5 @@ class TestcontainersConfiguration {
     fun mariaDbContainer(): MariaDBContainer<*> = MariaDBContainer(DockerImageName.parse("mariadb:latest"))
 
     @Bean(destroyMethod = "")
-    fun dynamoDbContainer(): GenericContainer<*> = dynamoDbContainer
+    fun localStackContainer(): LocalStackContainer = localStackContainer
 }
