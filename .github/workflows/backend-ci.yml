@@ -1,4 +1,4 @@
-name: Backend CI
+name: Backend PR Checks
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
   pull_request:
 
 jobs:
-  verify:
-    name: Verify Backend
+  backend-build-and-test:
+    name: Backend Style, Build, and Test
     runs-on: ubuntu-latest
 
     steps:
@@ -22,17 +22,50 @@ jobs:
           java-version: "25"
           cache: maven
 
-      - name: Validate Maven wrapper
-        uses: apache/maven-wrapper-validator@v0.3.2
-
-      - name: Make Maven wrapper executable
+      - name: Ensure Maven wrapper is executable
         run: chmod +x ./mvnw
 
-      - name: Check Kotlin formatting
+      - name: Run backend Kotlin style verification
         run: ./mvnw -B -ntp ktlint:check
 
-      - name: Run tests
+      - name: Build and test backend
         run: ./mvnw -B -ntp -Dkotlin.compiler.daemon=false test
 
-      - name: Build package
+      - name: Generate backend coverage report
+        run: ./mvnw -B -ntp -Dkotlin.compiler.daemon=false jacoco:report
+
+      - name: Print backend coverage summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          report="target/site/jacoco/jacoco.xml"
+          if [[ ! -f "$report" ]]; then
+            echo "Coverage report not found at $report"
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          report = ET.parse("target/site/jacoco/jacoco.xml")
+          root = report.getroot()
+          line = next((c for c in root.findall("counter") if c.get("type") == "LINE"), None)
+          if line is None:
+              raise SystemExit("LINE counter not found in JaCoCo report")
+          covered = int(line.get("covered", "0"))
+          missed = int(line.get("missed", "0"))
+          total = covered + missed
+          pct = (covered / total * 100) if total else 0.0
+          print(f"Backend line coverage: {covered}/{total} ({pct:.2f}%)")
+          PY
+
+      - name: Upload backend coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage-report
+          path: |
+            target/site/jacoco/jacoco.xml
+            target/site/jacoco
+          if-no-files-found: error
+
+      - name: Package backend
         run: ./mvnw -B -ntp -Dkotlin.compiler.daemon=false -DskipTests package
