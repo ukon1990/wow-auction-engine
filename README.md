@@ -53,11 +53,14 @@ Required for local startup:
 - `BLIZZARD_CLIENT_ID`
 - `BLIZZARD_CLIENT_SECRET`
 - `WAE_BLIZZARD_REGION`
-- `WAE_AWS_REGION`
-- `AWS_ACCESS_KEY`
-- `AWS_SECRET_KEY`
 
-For local development, the AWS values can be dummy strings. They still need to be present because Spring resolves them at startup.
+For local development, AWS settings default to obvious dummy values:
+
+- `WAE_AWS_REGION=eu-west-1`
+- `AWS_ACCESS_KEY=local-dev-key`
+- `AWS_SECRET_KEY=local-dev-secret`
+
+You only need to export those if you want to override the defaults.
 
 Use `Europe` for `WAE_BLIZZARD_REGION` unless you are intentionally changing regions. Supported values come from the `Region` enum:
 
@@ -109,9 +112,9 @@ docker compose -f docker-compose-db.yml down
 | `BLIZZARD_CLIENT_ID` | Yes | `your-blizzard-client-id` | Used to fetch OAuth tokens from Blizzard. |
 | `BLIZZARD_CLIENT_SECRET` | Yes | `your-blizzard-client-secret` | Used together with the client ID. |
 | `WAE_BLIZZARD_REGION` | Yes | `Europe` | Must match the app enum values, not `eu`. |
-| `WAE_AWS_REGION` | Yes | `eu-west-1` | Used by AWS clients created at startup. |
-| `AWS_ACCESS_KEY` | Yes | `local-dev-key` | Dummy value is fine for local startup. |
-| `AWS_SECRET_KEY` | Yes | `local-dev-secret` | Dummy value is fine for local startup. |
+| `WAE_AWS_REGION` | No | `eu-west-1` | Optional locally; defaults to `eu-west-1`. |
+| `AWS_ACCESS_KEY` | No | `local-dev-key` | Optional locally; defaults to a dummy value. |
+| `AWS_SECRET_KEY` | No | `local-dev-secret` | Optional locally; defaults to a dummy value. |
 
 ### Production-only overrides
 
@@ -128,6 +131,9 @@ The default local datasource configuration lives in [`src/main/resources/applica
 - MariaDB username: `root`
 - MariaDB password: `root`
 - DynamoDB Local endpoint: `http://localhost:58000`
+- AWS region: `eu-west-1`
+- AWS access key: `local-dev-key`
+- AWS secret key: `local-dev-secret`
 
 That means a new developer normally does not need to set any database environment variables for local work.
 

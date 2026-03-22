@@ -4,10 +4,10 @@ spring:
   cloud:
     aws:
       region:
-        static: ${WAE_AWS_REGION}
+        static: ${WAE_AWS_REGION:eu-west-1}
       credentials:
-        access-key: ${AWS_ACCESS_KEY}
-        secret-key: ${AWS_SECRET_KEY}
+        access-key: ${AWS_ACCESS_KEY:local-dev-key}
+        secret-key: ${AWS_SECRET_KEY:local-dev-secret}
       dynamodb:
         endpoint: "http://localhost:58000"
   datasource:
