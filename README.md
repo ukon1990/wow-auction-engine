@@ -28,19 +28,22 @@ Backend service for ingesting, processing, and serving World of Warcraft auction
 
 - JDK 21
 - Maven 3.9+
-- Docker (optional, for local MariaDB)
+- Docker (optional, for local MariaDB + DynamoDB)
 
-### 1) Start a local MariaDB instance
+### 1) Start local databases
 
-The default local config expects MariaDB on `localhost:54000`.
+The default local config expects:
 
-Option A: use the provided compose file:
+- MariaDB on `localhost:54000`
+- DynamoDB Local on `localhost:8000`
+
+Option A: use the provided compose file to start both services:
 
 ```bash
 docker compose -f docker-compose-db.yml up -d
 ```
 
-Option B: use your own MariaDB instance and update `spring.datasource.*` in `application.yml`.
+Option B: use your own MariaDB and DynamoDB instances and update `spring.datasource.*` and `amazon.dynamodb.endpoint` in `application.yml`.
 
 ### 2) Configure environment variables
 
@@ -91,6 +94,8 @@ mvn ktlint:format
 - `application.yml`: default/local configuration
 - `application-test.yml`: test configuration with dummy credentials and mocked Blizzard endpoints
 - `application.production.yml`: production datasource overrides
+
+The unused duplicate `src/main/resources/application.test.yml` has been removed to avoid confusion with `application-test.yml`.
 
 ## Project Structure
 

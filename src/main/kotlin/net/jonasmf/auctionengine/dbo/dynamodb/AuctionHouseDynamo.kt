@@ -45,10 +45,11 @@ data class AuctionHouseDynamo(
     @DynamoDBAttribute(attributeName = "size")
     val size: Double = 0.0,
     @DynamoDBAttribute(attributeName = "stats")
-    val stats: StatsDynamo = StatsDynamo(
-        lastModified = 0L,
-        url = "",
-    ),
+    val stats: StatsDynamo =
+        StatsDynamo(
+            lastModified = 0L,
+            url = "",
+        ),
     @DynamoDBAttribute(attributeName = "updateAttempts")
     val updateAttempts: Long = 0,
     @DynamoDBAttribute(attributeName = "url")

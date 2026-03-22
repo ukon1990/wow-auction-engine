@@ -17,12 +17,16 @@ class AuctionDTOEngineApplicationTests {
         @JvmStatic
         @DynamicPropertySource
         fun registerLocalStackProperties(registry: DynamicPropertyRegistry) {
-            val localStack = TestcontainersConfiguration().localStackContainer()
-            localStack.start()
-            val endpoint = localStack.getEndpointOverride(LocalStackContainer.Service.DYNAMODB).toString()
-            registry.add("amazon.dynamodb.endpoint") { endpoint }
-            registry.add("amazon.aws.accesskey") { "test" }
-            registry.add("amazon.aws.secretkey") { "test" }
+            val localStack = TestcontainersConfiguration.localStackContainer
+            if (!localStack.isRunning) {
+                localStack.start()
+            }
+
+            registry.add("amazon.dynamodb.endpoint") {
+                localStack.getEndpointOverride(LocalStackContainer.Service.DYNAMODB).toString()
+            }
+            registry.add("amazon.aws.accesskey") { localStack.accessKey }
+            registry.add("amazon.aws.secretkey") { localStack.secretKey }
         }
     }
 
