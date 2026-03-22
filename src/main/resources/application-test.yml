@@ -8,6 +8,7 @@ cloud:
 blizzard:
   client-id: dummy-client-id
   client-secret: dummy-client-secret
+  region: Europe
   token-url: http://localhost/mock-blizzard/token
   base-url: http://localhost/mock-blizzard/api/
 amazon:
@@ -17,3 +18,9 @@ amazon:
       secretkey: fakeSecretAccessKey
   dynamodb:
     endpoint: ""
+logging:
+  level:
+    org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR
+    org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
+    org.springframework.beans.factory.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
+    org.socialsignin.spring.data.dynamodb.repository.support.DynamoDBRepositoryFactory: ERROR

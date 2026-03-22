@@ -19,7 +19,7 @@ import java.util.zip.GZIPOutputStream
 class AmazonS3Service(
     private var amazonS3: AmazonS3,
 ) {
-    private val LOG: Logger = LoggerFactory.getLogger(AmazonS3Service::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(AmazonS3Service::class.java)
 
     /**
      * Serializes an object to JSON, writes it to a gzip file, and uploads the file to S3.
@@ -65,10 +65,10 @@ class AmazonS3Service(
         val result = amazonS3.putObject(PutObjectRequest(getBucketName(region), fileName, file))
         val url = amazonS3.getUrl(getBucketName(region), fileName)
         if (result != null) {
-            LOG.info("Uploaded file to $url")
+            logger.info("Uploaded file to $url")
             return url.toString()
         }
-        LOG.error("Failed to upload file - $path")
+        logger.error("Failed to upload file - $path")
         return null
     }
 

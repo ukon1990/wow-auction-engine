@@ -116,7 +116,7 @@ class ConnectedRealmService(
         }
     }
 
-    fun getById(id: Int): ConnectedRealm = connectedRealmRepository.findById(id).orElse(null)
+    fun getById(id: Int): ConnectedRealm? = connectedRealmRepository.findById(id).orElse(null)
 
     @Transactional
     fun getAndUpdate(region: Region) {
@@ -183,7 +183,7 @@ class ConnectedRealmService(
         log.info("Fetching connected realm index...")
         val uri =
             UriComponentsBuilder
-                .fromHttpUrl(determineBaseUrl(region, properties))
+                .fromUriString(determineBaseUrl(region, properties))
                 .path(basePath)
                 .queryParam("namespace", NameSpace.getDynamicForRegion(region).value)
                 .queryParam("locale", "en_GB")

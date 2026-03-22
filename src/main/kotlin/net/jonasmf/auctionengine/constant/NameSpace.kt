@@ -18,7 +18,6 @@ enum class NameSpace(
                 Region.Europe -> DYNAMIC_EU
                 Region.Korea -> DYNAMIC_KR
                 Region.Taiwan -> DYNAMIC_TW
-                else -> throw IllegalArgumentException("Unknown namespace: $region")
             }
     }
 }

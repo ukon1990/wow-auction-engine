@@ -16,7 +16,7 @@ class AuctionDTOEngineApplicationTests {
     companion object {
         @JvmStatic
         @DynamicPropertySource
-        fun registerLocalStackProperties(registry: DynamicPropertyRegistry) {
+        fun registerDynamoDbProperties(registry: DynamicPropertyRegistry) {
             val localStack = TestcontainersConfiguration.localStackContainer
             if (!localStack.isRunning) {
                 localStack.start()

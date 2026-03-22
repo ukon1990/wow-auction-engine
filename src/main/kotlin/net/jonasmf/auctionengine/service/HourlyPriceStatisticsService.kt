@@ -14,7 +14,7 @@ import java.time.ZonedDateTime
 class HourlyPriceStatisticsService(
     val hourlyPriceStatisticsRepository: HourlyPriceStatisticsRepository,
 ) {
-    private val LOG: Logger = LoggerFactory.getLogger(HourlyPriceStatisticsService::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(HourlyPriceStatisticsService::class.java)
 
     fun processHourlyPriceStatistics(
         connectedRealm: ConnectedRealm,
@@ -58,7 +58,7 @@ class HourlyPriceStatisticsService(
         }
 
         val insertedRows = hourlyPriceStatisticsRepository.upsertHour(grouped.values.toList(), hour)
-        LOG.info(
+        logger.info(
             "Processed hourly auctions for ${
                 connectedRealm.auctionHouse.id
             } with $insertedRows rows, in ${System.currentTimeMillis() - startTime} ms",

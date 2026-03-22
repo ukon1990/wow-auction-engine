@@ -11,12 +11,12 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     show-sql: false
+    open-in-view: false
     hibernate:
       ddl-auto: update  # Use 'update' to create/update tables
     properties:
       hibernate:
         format_sql: false
-        dialect: org.hibernate.dialect.MariaDBDialect  # Adjust to your database dialect
         hbm2ddl:
           auto:
             create: false

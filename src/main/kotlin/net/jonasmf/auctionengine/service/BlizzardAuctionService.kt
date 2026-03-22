@@ -43,19 +43,19 @@ class BlizzardAuctionService(
     private val updateHistoryService: ConnectedRealmUpdateHistoryService,
 ) {
     private val webClient: WebClient = webClientWithAuth
-    private val AUCTION_BATCH_SIZE = 100_000
-    private val LOG_BATCH_SIZE = AUCTION_BATCH_SIZE // Log progress every 10k auctions
-    val LOG: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
+    private val auctionBatchSize = 100_000
+    private val logBatchSize = auctionBatchSize
+    val logger: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
 
     @Scheduled(fixedDelayString = "PT1H", initialDelay = 3_000)
     fun checkForUpdates() {
-        LOG.info("Starting scheduled auction house update check...")
+        logger.info("Starting scheduled auction house update check...")
         updateAuctionHouses()
     }
 
     fun updateAuctionHouses() {
         val ids = listOf(-3, 1403)
-        LOG.info("Updating auction houses for realm IDs: $ids")
+        logger.info("Updating auction houses for realm IDs: $ids")
         ids.forEach { updateHouse(it, properties.region) }
     }
 
@@ -63,13 +63,13 @@ class BlizzardAuctionService(
         connectedRealmId: Int,
         region: Region,
     ) {
-        LOG.debug("Starting update for house: connectedRealmId={}, region={}", connectedRealmId, region)
+        logger.debug("Starting update for house: connectedRealmId={}, region={}", connectedRealmId, region)
 
         getLatestDumpPath(connectedRealmId, region).subscribe(
             { response ->
                 val connectedRealm = realmService.getById(connectedRealmId)
                 if (connectedRealm == null) {
-                    LOG.error("ConnectedRealm not found for id $connectedRealmId")
+                    logger.error("ConnectedRealm not found for id $connectedRealmId")
                     return@subscribe
                 }
 
@@ -81,16 +81,16 @@ class BlizzardAuctionService(
                     )
 
                 if (house.lastModified == null || lastModified.isAfter(house.lastModified)) {
-                    LOG.info("New auction data available for $connectedRealmId. Last modified: $lastModified")
+                    logger.info("New auction data available for $connectedRealmId. Last modified: $lastModified")
                     processAuctionData(response.url, region, connectedRealm, connectedRealmId, lastModified)
                 } else {
-                    LOG.debug(
+                    logger.debug(
                         "No new auction data available for $connectedRealmId. Current: ${house.lastModified}, Latest: $lastModified",
                     )
                 }
             },
             { error ->
-                LOG.error("Failed to get latest dump path for realm $connectedRealmId", error)
+                logger.error("Failed to get latest dump path for realm $connectedRealmId", error)
             },
         )
     }
@@ -103,17 +103,17 @@ class BlizzardAuctionService(
         lastModified: ZonedDateTime,
     ) {
         val startTime = System.currentTimeMillis()
-        LOG.info("Starting auction data processing for realm $connectedRealmId")
+        logger.info("Starting auction data processing for realm $connectedRealmId")
 
         getAuctionData(url, region).subscribe(
             { data ->
                 val auctionCount = data.auctions.size
-                LOG.info(
+                logger.info(
                     "Fetched auction data for $connectedRealmId: $auctionCount auctions in ${System.currentTimeMillis() - startTime}ms",
                 )
 
                 if (auctionCount == 0) {
-                    LOG.warn("No auctions found for realm $connectedRealmId")
+                    logger.warn("No auctions found for realm $connectedRealmId")
                     return@subscribe
                 }
 
@@ -135,7 +135,7 @@ class BlizzardAuctionService(
                 )*/
             },
             { error ->
-                LOG.error("Failed to fetch auction data for realm $connectedRealmId", error)
+                logger.error("Failed to fetch auction data for realm $connectedRealmId", error)
             },
         )
     }
@@ -147,7 +147,7 @@ class BlizzardAuctionService(
         lastModified: ZonedDateTime,
     ) {
         if (data.auctions.isEmpty()) {
-            LOG.warn("No auction data to upload for realm $connectedRealmId")
+            logger.warn("No auction data to upload for realm $connectedRealmId")
             return
         }
         val lastModifiedMs = lastModified.toInstant().toEpochMilli()
@@ -158,11 +158,11 @@ class BlizzardAuctionService(
 
         try {
             amazonS3.uploadFile(region, filePath, data)
-            LOG.debug("Successfully uploaded auctions to S3: $filePath")
+            logger.debug("Successfully uploaded auctions to S3: $filePath")
         } catch (e: Exception) {
-            LOG.error("Failed to upload auctions to S3: $filePath", e)
+            logger.error("Failed to upload auctions to S3: $filePath", e)
         }
-        LOG.info(
+        logger.info(
             "Uploaded auctions to S3 for $connectedRealmId: ${data.auctions.size} auctions in ${System.currentTimeMillis() - startTime}ms",
         )
     }
@@ -181,7 +181,7 @@ class BlizzardAuctionService(
         url: String,
     ) {
         if (data == null || data.auctions.isEmpty()) {
-            LOG.warn("No auction data to process for realm $connectedRealmId")
+            logger.warn("No auction data to process for realm $connectedRealmId")
             return
         }
         try {
@@ -189,13 +189,13 @@ class BlizzardAuctionService(
             processAuctionsInBatches(data.auctions, connectedRealm, connectedRealmId, updateHistory, startTime)
             realmService.updateLatestDump(connectedRealmId, lastModified)
             updateHistoryService.setUpdateToCompleted(connectedRealmId, lastModified)
-            LOG.info(
+            logger.info(
                 "Successfully processed $auctionCount auctions for $connectedRealmId in ${System.currentTimeMillis() - startTime}ms",
             )
         } catch (e: Exception) {
-            LOG.error("Failed to process auction data for realm $connectedRealmId", e)
+            logger.error("Failed to process auction data for realm $connectedRealmId", e)
             authService.getToken().subscribe { token ->
-                LOG.error("Processing failed for URL: $url&access_token=$token", e)
+                logger.error("Processing failed for URL: $url&access_token=$token", e)
             }
         }
     }
@@ -209,7 +209,7 @@ class BlizzardAuctionService(
         startTime: Long,
     ) {
         val totalAuctions = auctions.size
-        LOG.info("Processing $totalAuctions auctions in batches of $AUCTION_BATCH_SIZE for realm $connectedRealmId")
+        logger.info("Processing $totalAuctions auctions in batches of $auctionBatchSize for realm $connectedRealmId")
 
         try {
             val processedItems = mutableMapOf<String, AuctionItemDBO>()
@@ -237,7 +237,7 @@ class BlizzardAuctionService(
                     if (existingItems.isNotEmpty()) {
                         if (existingItems.size > 1) {
                             duplicateItemCount++
-                            LOG.debug(
+                            logger.debug(
                                 "Found ${existingItems.size} duplicate items for itemId=${auctionDTO.item.id}, petBreedId=${auctionDTO.item.pet_breed_id}, petLevel=${auctionDTO.item.pet_level}, petQualityId=${auctionDTO.item.pet_quality_id}, petSpeciesId=${auctionDTO.item.pet_species_id}, context=${auctionDTO.item.context}. Using first match.",
                             )
                         }
@@ -248,28 +248,28 @@ class BlizzardAuctionService(
 
                 if (existingItem != null) {
                     processedItems[itemKey] = existingItem
-                    LOG.debug("Found existing item for key: $itemKey")
+                    logger.debug("Found existing item for key: $itemKey")
                 } else {
                     val newItem = auctionDTO.item.toDBO()
                     newItems.add(newItem)
                     processedItems[itemKey] = newItem
-                    LOG.debug("Created new item for key: $itemKey")
+                    logger.debug("Created new item for key: $itemKey")
                 }
 
                 // Log progress every 10,000 items processed
                 if ((index + 1) % 10000 == 0) {
                     val progress = ((index + 1) * 100.0 / totalAuctions).toInt()
-                    LOG.info(
+                    logger.info(
                         "Item processing progress: ${index + 1}/$totalAuctions ($progress%) - $duplicateItemCount duplicate items found so far",
                     )
                 }
             }
 
-            LOG.info(
+            logger.info(
                 "Found ${processedItems.size} unique items (${newItems.size} new, ${processedItems.size - newItems.size} existing) for realm $connectedRealmId",
             )
             if (duplicateItemCount > 0) {
-                LOG.warn(
+                logger.warn(
                     "Found $duplicateItemCount items with duplicate entries in database - this indicates data quality issues that should be investigated",
                 )
             }
@@ -278,7 +278,7 @@ class BlizzardAuctionService(
                 val itemsStartTime = System.currentTimeMillis()
                 saveItemsInBatches(newItems, "items")
                 val itemsElapsed = System.currentTimeMillis() - itemsStartTime
-                LOG.info(
+                logger.info(
                     "Successfully saved ${newItems.size} new items for realm $connectedRealmId in ${itemsElapsed}ms",
                 )
             }
@@ -295,9 +295,9 @@ class BlizzardAuctionService(
                     auctionDTO.toDBO(connectedRealm, updateHistory).copy(item = item)
                 }
             val auctionMappingElapsed = System.currentTimeMillis() - auctionMappingStartTime
-            LOG.info("Mapped ${auctionDbos.size} auctions for realm $connectedRealmId in ${auctionMappingElapsed}ms")
+            logger.info("Mapped ${auctionDbos.size} auctions for realm $connectedRealmId in ${auctionMappingElapsed}ms")
 
-            LOG.info("Processing ${auctionDbos.size} auctions for realm $connectedRealmId")
+            logger.info("Processing ${auctionDbos.size} auctions for realm $connectedRealmId")
             saveAuctionsInBatches(auctionDbos, connectedRealm, connectedRealmId, updateHistory, startTime)
 
             val modifiersExtractionStartTime = System.currentTimeMillis()
@@ -306,18 +306,18 @@ class BlizzardAuctionService(
                     auction.item.modifiers ?: emptyList()
                 }
             val modifiersExtractionElapsed = System.currentTimeMillis() - modifiersExtractionStartTime
-            LOG.info(
+            logger.info(
                 "Extracted ${modifiers.size} item modifiers for realm $connectedRealmId in ${modifiersExtractionElapsed}ms",
             )
 
             if (modifiers.isNotEmpty()) {
-                LOG.info("Processing ${modifiers.size} item modifiers for realm $connectedRealmId")
+                logger.info("Processing ${modifiers.size} item modifiers for realm $connectedRealmId")
                 saveModifiersInBatches(modifiers, "modifiers")
             }
 
-            LOG.info("Successfully completed processing for realm $connectedRealmId")
+            logger.info("Successfully completed processing for realm $connectedRealmId")
         } catch (e: Exception) {
-            LOG.error("Failed to process auctions for realm $connectedRealmId", e)
+            logger.error("Failed to process auctions for realm $connectedRealmId", e)
             throw e
         }
     }
@@ -329,18 +329,18 @@ class BlizzardAuctionService(
         items: List<AuctionItemDBO>,
         itemType: String,
     ) {
-        val batches = items.chunked(AUCTION_BATCH_SIZE)
+        val batches = items.chunked(auctionBatchSize)
         val totalStartTime = System.currentTimeMillis()
-        LOG.debug("Saving ${items.size} $itemType in ${batches.size} batches")
+        logger.debug("Saving ${items.size} $itemType in ${batches.size} batches")
 
         batches.forEachIndexed { index, batch ->
             val batchStartTime = System.currentTimeMillis()
             try {
-                LOG.debug("Saving batch ${index + 1}/${batches.size} with ${batch.size} $itemType")
+                logger.debug("Saving batch ${index + 1}/${batches.size} with ${batch.size} $itemType")
                 val savedItems = auctionItemRepository.saveAll(batch)
                 val batchElapsed = System.currentTimeMillis() - batchStartTime
                 val batchRate = if (batchElapsed > 0) (savedItems.size * 1000.0 / batchElapsed).toInt() else 0
-                LOG.debug(
+                logger.debug(
                     "Successfully saved batch ${index + 1} with ${savedItems.size} $itemType in ${batchElapsed}ms ($batchRate $itemType/sec)",
                 )
 
@@ -350,23 +350,25 @@ class BlizzardAuctionService(
                         if (totalElapsed >
                             0
                         ) {
-                            ((index + 1) * AUCTION_BATCH_SIZE * 1000.0 / totalElapsed).toInt()
+                            ((index + 1) * auctionBatchSize * 1000.0 / totalElapsed).toInt()
                         } else {
                             0
                         }
-                    val progress = min((index + 1) * AUCTION_BATCH_SIZE, items.size)
-                    LOG.info("Saved $progress/${items.size} $itemType in ${totalElapsed}ms ($totalRate $itemType/sec)")
+                    val progress = min((index + 1) * auctionBatchSize, items.size)
+                    logger.info(
+                        "Saved $progress/${items.size} $itemType in ${totalElapsed}ms ($totalRate $itemType/sec)",
+                    )
                 }
             } catch (e: Exception) {
                 val batchElapsed = System.currentTimeMillis() - batchStartTime
-                LOG.error("Failed to save batch ${index + 1} of $itemType after ${batchElapsed}ms", e)
+                logger.error("Failed to save batch ${index + 1} of $itemType after ${batchElapsed}ms", e)
                 throw e
             }
         }
 
         val totalElapsed = System.currentTimeMillis() - totalStartTime
         val totalRate = if (totalElapsed > 0) (items.size * 1000.0 / totalElapsed).toInt() else 0
-        LOG.info("Completed saving ${items.size} $itemType in ${totalElapsed}ms ($totalRate $itemType/sec)")
+        logger.info("Completed saving ${items.size} $itemType in ${totalElapsed}ms ($totalRate $itemType/sec)")
     }
 
     private fun saveAuctionsInBatches(
@@ -376,13 +378,13 @@ class BlizzardAuctionService(
         updateHistory: ConnectedRealmUpdateHistory,
         startTime: Long,
     ) {
-        val batches = auctionDbos.chunked(AUCTION_BATCH_SIZE)
-        LOG.debug("Saving ${auctionDbos.size} auctions in ${batches.size} batches for realm $connectedRealmId")
+        val batches = auctionDbos.chunked(auctionBatchSize)
+        logger.debug("Saving ${auctionDbos.size} auctions in ${batches.size} batches for realm $connectedRealmId")
 
         batches.forEachIndexed { index, batch ->
             val batchStartTime = System.currentTimeMillis()
             try {
-                LOG.debug(
+                logger.debug(
                     "Saving auction batch ${index + 1}/${batches.size} with ${batch.size} auctions for realm $connectedRealmId",
                 )
 
@@ -423,7 +425,7 @@ class BlizzardAuctionService(
                                 chunkDuplicates++
                             }
                         } catch (individualException: Exception) {
-                            LOG.warn(
+                            logger.warn(
                                 "Failed to upsert auction ${auction.id.id} for realm $connectedRealmId: ${individualException.message}",
                             )
                             chunkDuplicates++
@@ -432,7 +434,7 @@ class BlizzardAuctionService(
 
                     val chunkElapsed = System.currentTimeMillis() - chunkStartTime
                     val chunkRate = if (chunkElapsed > 0) (chunk.size * 1000.0 / chunkElapsed).toInt() else 0
-                    LOG.debug(
+                    logger.debug(
                         "Processed chunk with ${chunk.size} auctions: $chunkProcessed saved, $chunkDuplicates duplicates for realm $connectedRealmId in ${chunkElapsed}ms ($chunkRate auctions/sec)",
                     )
 
@@ -442,23 +444,23 @@ class BlizzardAuctionService(
 
                 val batchElapsed = System.currentTimeMillis() - batchStartTime
                 val batchRate = if (batchElapsed > 0) (batch.size * 1000.0 / batchElapsed).toInt() else 0
-                LOG.debug(
+                logger.debug(
                     "Successfully processed auction batch ${index + 1} with ${batch.size} auctions: $totalProcessed saved, $totalDuplicates duplicates for realm $connectedRealmId in ${batchElapsed}ms ($batchRate auctions/sec)",
                 )
 
-                val processedCount = (index + 1) * AUCTION_BATCH_SIZE
+                val processedCount = (index + 1) * auctionBatchSize
                 val progress = min(processedCount, auctionDbos.size)
 
-                if (progress % LOG_BATCH_SIZE == 0 || index == batches.size - 1) {
+                if (progress % logBatchSize == 0 || index == batches.size - 1) {
                     val elapsed = System.currentTimeMillis() - startTime
                     val rate = (progress * 1000.0 / elapsed).toInt()
-                    LOG.info(
+                    logger.info(
                         "Realm $connectedRealmId: Processed $progress/${auctionDbos.size} auctions ($rate auctions/sec)",
                     )
                 }
             } catch (e: Exception) {
                 val batchElapsed = System.currentTimeMillis() - batchStartTime
-                LOG.error(
+                logger.error(
                     "Failed to save auction batch ${index + 1} for realm $connectedRealmId after ${batchElapsed}ms",
                     e,
                 )
@@ -473,18 +475,18 @@ class BlizzardAuctionService(
     ) {
         if (modifiers.isEmpty()) return
 
-        val batches = modifiers.chunked(AUCTION_BATCH_SIZE)
+        val batches = modifiers.chunked(auctionBatchSize)
         val totalStartTime = System.currentTimeMillis()
-        LOG.debug("Saving ${modifiers.size} $itemType in ${batches.size} batches")
+        logger.debug("Saving ${modifiers.size} $itemType in ${batches.size} batches")
 
         batches.forEachIndexed { index, batch ->
             val batchStartTime = System.currentTimeMillis()
             try {
-                LOG.debug("Saving modifier batch ${index + 1}/${batches.size} with ${batch.size} $itemType")
+                logger.debug("Saving modifier batch ${index + 1}/${batches.size} with ${batch.size} $itemType")
                 val savedModifiers = auctionItemModifierRepository.saveAll(batch)
                 val batchElapsed = System.currentTimeMillis() - batchStartTime
                 val batchRate = if (batchElapsed > 0) (savedModifiers.size * 1000.0 / batchElapsed).toInt() else 0
-                LOG.debug(
+                logger.debug(
                     "Successfully saved modifier batch ${index + 1} with ${savedModifiers.size} $itemType in ${batchElapsed}ms ($batchRate $itemType/sec)",
                 )
 
@@ -494,25 +496,25 @@ class BlizzardAuctionService(
                         if (totalElapsed >
                             0
                         ) {
-                            ((index + 1) * AUCTION_BATCH_SIZE * 1000.0 / totalElapsed).toInt()
+                            ((index + 1) * auctionBatchSize * 1000.0 / totalElapsed).toInt()
                         } else {
                             0
                         }
-                    val progress = min((index + 1) * AUCTION_BATCH_SIZE, modifiers.size)
-                    LOG.info(
+                    val progress = min((index + 1) * auctionBatchSize, modifiers.size)
+                    logger.info(
                         "Saved $progress/${modifiers.size} $itemType in ${totalElapsed}ms ($totalRate $itemType/sec)",
                     )
                 }
             } catch (e: Exception) {
                 val batchElapsed = System.currentTimeMillis() - batchStartTime
-                LOG.error("Failed to save modifier batch ${index + 1} of $itemType after ${batchElapsed}ms", e)
+                logger.error("Failed to save modifier batch ${index + 1} of $itemType after ${batchElapsed}ms", e)
                 throw e
             }
         }
 
         val totalElapsed = System.currentTimeMillis() - totalStartTime
         val totalRate = if (totalElapsed > 0) (modifiers.size * 1000.0 / totalElapsed).toInt() else 0
-        LOG.info("Completed saving ${modifiers.size} $itemType in ${totalElapsed}ms ($totalRate $itemType/sec)")
+        logger.info("Completed saving ${modifiers.size} $itemType in ${totalElapsed}ms ($totalRate $itemType/sec)")
     }
 
     @Transactional
@@ -545,13 +547,13 @@ class BlizzardAuctionService(
                 updateHistoryId = updateHistory.id,
             )
 
-            LOG.debug("Successfully upserted auction ${auctionDbo.id.id} for item ${savedItem.id}")
+            logger.debug("Successfully upserted auction ${auctionDbo.id.id} for item ${savedItem.id}")
         } catch (e: Exception) {
             if (e.message?.contains("Duplicate entry") == true) {
-                LOG.debug("Skipping duplicate auction ${auction.id} for realm ${connectedRealm.id}")
+                logger.debug("Skipping duplicate auction ${auction.id} for realm ${connectedRealm.id}")
                 return
             }
-            LOG.error("Failed to save auction: ${auction.id}", e)
+            logger.error("Failed to save auction: ${auction.id}", e)
             throw e
         }
     }
@@ -564,18 +566,19 @@ class BlizzardAuctionService(
         val isClassic = gameBuild == GameBuildVersion.CLASSIC
         val namespace = if (isClassic) NameSpace.DYNAMIC_CLASSIC else NameSpace.DYNAMIC_RETAIL
 
-        LOG.debug("Fetching auction data from: $url, region: $region, gameBuild: $gameBuild")
+        logger.debug("Fetching auction data from: $url, region: $region, gameBuild: $gameBuild")
+        logger.debug("Using namespace {} for game build {}", namespace.value, gameBuild)
 
-        return authService.getToken().flatMap { token ->
+        return authService.getToken().flatMap {
             webClient
                 .get()
                 .uri(url)
                 .retrieve()
                 .bodyToMono(AuctionData::class.java)
                 .doOnNext {
-                    LOG.info("Successfully fetched auction data from $url")
+                    logger.info("Successfully fetched auction data from $url")
                 }.doOnError { error ->
-                    LOG.error("Failed to fetch auction data from $url: ${error.message}", error)
+                    logger.error("Failed to fetch auction data from $url: ${error.message}", error)
                 }
         }
     }
@@ -597,7 +600,7 @@ class BlizzardAuctionService(
             }
 
         if (isClassic) {
-            LOG.info("Classic is not supported for now")
+            logger.info("Classic is not supported for now")
         }
 
         val namespace =
@@ -608,7 +611,7 @@ class BlizzardAuctionService(
                 Region.Taiwan -> NameSpace.DYNAMIC_TW
             }
 
-        LOG.debug("Getting latest dump path for id: $id, region: $region, path: $path")
+        logger.debug("Getting latest dump path for id: $id, region: $region, path: $path")
 
         return authService.getToken().flatMap { token ->
             val baseUrl = determineBaseUrl(region, properties)
@@ -625,14 +628,14 @@ class BlizzardAuctionService(
                     val lastModified = headers.lastModified
                     val lastModifiedZonedDate =
                         ZonedDateTime.ofInstant(
-                            Instant.ofEpochMilli(lastModified ?: 0),
+                            Instant.ofEpochMilli(lastModified),
                             TimeZone.getDefault().toZoneId(),
                         )
                     val cleanedUrl = url.replace("access_token=$token&", "")
 
                     val response =
                         AuctionDataResponse(
-                            lastModified = lastModified ?: 0,
+                            lastModified = lastModified,
                             url = cleanedUrl,
                             gameBuild = gameBuild,
                         )
@@ -644,17 +647,17 @@ class BlizzardAuctionService(
 
                         try {
                             amazonS3.uploadFile(region, filePath, response)
-                            LOG.debug("Successfully uploaded dump path to S3: $filePath")
+                            logger.debug("Successfully uploaded dump path to S3: $filePath")
                         } catch (e: Exception) {
-                            LOG.error("Failed to upload dump path to S3: $filePath", e)
+                            logger.error("Failed to upload dump path to S3: $filePath", e)
                         }
                     }
 
                     response
                 }.doOnNext {
-                    LOG.info("Successfully fetched latest dump path with last modified: ${it.lastModified}")
+                    logger.info("Successfully fetched latest dump path with last modified: ${it.lastModified}")
                 }.doOnError { error ->
-                    LOG.error("Failed to fetch latest dump path from $url: ${error.message}", error)
+                    logger.error("Failed to fetch latest dump path from $url: ${error.message}", error)
                 }
         }
     }
