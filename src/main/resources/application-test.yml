@@ -18,3 +18,9 @@ amazon:
       secretkey: fakeSecretAccessKey
   dynamodb:
     endpoint: ""
+logging:
+  level:
+    org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR
+    org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
+    org.springframework.beans.factory.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
+    org.socialsignin.spring.data.dynamodb.repository.support.DynamoDBRepositoryFactory: ERROR

@@ -13,12 +13,15 @@ import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import org.slf4j.LoggerFactory
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import org.springframework.context.annotation.Role
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 @EnableDynamoDBRepositories(basePackages = ["net.jonasmf.auctionengine.repository.dynamodb"])
 class DynamoDBConfig {
     private val log = LoggerFactory.getLogger(DynamoDBConfig::class.java)
@@ -33,11 +36,12 @@ class DynamoDBConfig {
     private val amazonAWSSecretKey: String? = null
 
     @Bean
-    fun amazonDynamoDB(): AmazonDynamoDB {
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    fun amazonDynamoDB(awsCredentials: AWSCredentials): AmazonDynamoDB {
         val builder =
             AmazonDynamoDBClient
                 .builder()
-                .withCredentials(AWSStaticCredentialsProvider(amazonAWSCredentials()))
+                .withCredentials(AWSStaticCredentialsProvider(awsCredentials))
         if (!amazonDynamoDBEndpoint.isNullOrEmpty()) {
             builder.withEndpointConfiguration(
                 AwsClientBuilder.EndpointConfiguration(
@@ -52,6 +56,7 @@ class DynamoDBConfig {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     fun amazonAWSCredentials(): AWSCredentials =
         BasicAWSCredentials(
             amazonAWSAccessKey,

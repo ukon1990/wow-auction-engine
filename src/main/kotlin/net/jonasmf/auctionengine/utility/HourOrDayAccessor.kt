@@ -2,37 +2,37 @@ package net.jonasmf.auctionengine.utility
 
 import net.jonasmf.auctionengine.dbo.rds.auction.DailyAuctionStats
 import net.jonasmf.auctionengine.dbo.rds.auction.HourlyAuctionStats
-import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.full.memberProperties
+import java.lang.reflect.Field
 
 private object HourAccessors {
-    private fun prop(name: String): KMutableProperty1<HourlyAuctionStats, Long?> =
-        HourlyAuctionStats::class
-            .memberProperties
-            .first { it.name == name } as KMutableProperty1<HourlyAuctionStats, Long?>
+    private fun field(name: String): Field =
+        HourlyAuctionStats::class.java.getDeclaredField(name).apply {
+            isAccessible = true
+        }
 
-    // Cache alle 24 par av (price, quantity)
-    val priceByHour: Map<Int, KMutableProperty1<HourlyAuctionStats, Long?>> =
-        (0..23).associateWith { h -> prop("price%02d".format(h)) }
+    val priceByHour: Map<Int, Field> =
+        (0..23).associateWith { hour -> field("price%02d".format(hour)) }
 
-    val quantityByHour: Map<Int, KMutableProperty1<HourlyAuctionStats, Long?>> =
-        (0..23).associateWith { h -> prop("quantity%02d".format(h)) }
+    val quantityByHour: Map<Int, Field> =
+        (0..23).associateWith { hour -> field("quantity%02d".format(hour)) }
 }
 
 private object DayOfMonthAccessors {
-    private fun prop(name: String): KMutableProperty1<DailyAuctionStats, Long?> =
-        HourlyAuctionStats::class
-            .memberProperties
-            .first { it.name == name } as KMutableProperty1<DailyAuctionStats, Long?>
+    private fun field(name: String): Field =
+        DailyAuctionStats::class.java.getDeclaredField(name).apply {
+            isAccessible = true
+        }
 
-    // Cache alle 31 par av (price, quantity)
-    val priceByDayOfMonth: Map<Int, KMutableProperty1<DailyAuctionStats, Long?>> =
-        (1..31).associateWith { d -> prop("priceDay%02d".format(d)) }
-    val quantityByDayOfMonth: Map<Int, KMutableProperty1<DailyAuctionStats, Long?>> =
-        (1..31).associateWith { d -> prop("quantityDay%02d".format(d)) }
+    // The old API exposed a single price/quantity setter per day. The current daily
+    // model stores min/avg/max, so this maps to the avg slots until richer daily
+    // aggregation is implemented.
+    val priceByDayOfMonth: Map<Int, Field> =
+        (1..31).associateWith { dayOfMonth -> field("avg%02d".format(dayOfMonth)) }
+
+    val quantityByDayOfMonth: Map<Int, Field> =
+        (1..31).associateWith { dayOfMonth -> field("avgQuantity%02d".format(dayOfMonth)) }
 }
 
-/** Oppdaterer priceHH/quantityHH basert på [hour] (0–23). */
 fun HourlyAuctionStats.setHourValues(
     hour: Int,
     price: Long?,
@@ -43,7 +43,6 @@ fun HourlyAuctionStats.setHourValues(
     HourAccessors.quantityByHour.getValue(hour).set(this, quantity)
 }
 
-/** Henter priceHH/quantityHH basert på [hour] (0–23). */
 fun DailyAuctionStats.setDayOfMonthValues(
     dayOfMonth: Int,
     price: Long?,

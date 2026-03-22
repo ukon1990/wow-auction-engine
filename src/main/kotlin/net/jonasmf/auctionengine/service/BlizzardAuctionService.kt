@@ -567,8 +567,9 @@ class BlizzardAuctionService(
         val namespace = if (isClassic) NameSpace.DYNAMIC_CLASSIC else NameSpace.DYNAMIC_RETAIL
 
         logger.debug("Fetching auction data from: $url, region: $region, gameBuild: $gameBuild")
+        logger.debug("Using namespace {} for game build {}", namespace.value, gameBuild)
 
-        return authService.getToken().flatMap { token ->
+        return authService.getToken().flatMap {
             webClient
                 .get()
                 .uri(url)
@@ -627,14 +628,14 @@ class BlizzardAuctionService(
                     val lastModified = headers.lastModified
                     val lastModifiedZonedDate =
                         ZonedDateTime.ofInstant(
-                            Instant.ofEpochMilli(lastModified ?: 0),
+                            Instant.ofEpochMilli(lastModified),
                             TimeZone.getDefault().toZoneId(),
                         )
                     val cleanedUrl = url.replace("access_token=$token&", "")
 
                     val response =
                         AuctionDataResponse(
-                            lastModified = lastModified ?: 0,
+                            lastModified = lastModified,
                             url = cleanedUrl,
                             gameBuild = gameBuild,
                         )

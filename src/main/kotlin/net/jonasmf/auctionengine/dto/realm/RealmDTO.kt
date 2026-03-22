@@ -26,10 +26,10 @@ data class RealmDTO(
         val locale = Locale.fromCompactString(locale)
         return Realm(
             id = id,
-            region = RegionDBO(region?.id, region?.name?.en_GB!!),
-            name = name?.let { localeToProperty(locale, it!!) }!!, // Safely access the localized name
-            category = category!!.en_GB,
-            locale = locale, // Convert Locale enum to its string value
+            region = RegionDBO(region?.id, region?.name?.en_GB ?: Locale.EN_GB.value),
+            name = localeToProperty(locale, name) ?: name.en_GB,
+            category = category.en_GB,
+            locale = locale,
             timezone = timezone,
             gameBuild = GameBuildVersion.RETAIL,
             slug = slug,
