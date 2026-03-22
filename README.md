@@ -8,115 +8,202 @@ Backend service for ingesting, processing, and serving World of Warcraft auction
 
 - retrieves auction and realm data from Blizzard APIs
 - processes and aggregates auction statistics
-- persists data in MariaDB (and supports DynamoDB integrations)
-- exposes operational endpoints such as `GET /health`
-- runs scheduled background sync jobs
+- stores data in MariaDB
+- uses DynamoDB for additional local and AWS-backed storage flows
+- exposes a health endpoint at `GET /health`
+- runs scheduled background sync jobs on startup
 
-## Tech Stack
+## Stack
 
-- Java 21
-- Kotlin 2.2
+- Java 25
+- Kotlin 2.3
 - Spring Boot 3.5
-- Spring Data JPA + MariaDB
-- AWS SDK (Kotlin + Java), Spring Cloud AWS
-- Maven + ktlint
-- Testcontainers for integration tests
+- Maven Wrapper (`./mvnw`)
+- MariaDB
+- DynamoDB Local for local development
+- Testcontainers + LocalStack for tests
 
-## Quick Start
+## New Developer Quick Start
 
-### Prerequisites
+### 1. Install prerequisites
 
-- JDK 21
-- Maven 3.9+
-- Docker (optional, for local MariaDB + DynamoDB)
+- Java 25
+- Docker
 
-### 1) Start local databases
+You do not need a separate Maven install. Use the checked-in Maven wrapper.
+
+### 2. Create local environment variables
+
+Copy the template and fill in the Blizzard credentials:
+
+```bash
+cp .env.example .env.local
+```
+
+Then load it into your shell:
+
+```bash
+set -a
+source .env.local
+set +a
+```
+
+Required for local startup:
+
+- `BLIZZARD_CLIENT_ID`
+- `BLIZZARD_CLIENT_SECRET`
+- `WAE_BLIZZARD_REGION`
+- `WAE_AWS_REGION`
+- `AWS_ACCESS_KEY`
+- `AWS_SECRET_KEY`
+
+For local development, the AWS values can be dummy strings. They still need to be present because Spring resolves them at startup.
+
+Use `Europe` for `WAE_BLIZZARD_REGION` unless you are intentionally changing regions. Supported values come from the `Region` enum:
+
+- `Europe`
+- `NorthAmerica`
+- `Korea`
+- `Taiwan`
+
+### 3. Start local databases
 
 The default local config expects:
 
 - MariaDB on `localhost:54000`
 - DynamoDB Local on `localhost:8000`
 
-Option A: use the provided compose file to start both services:
+Start both with:
 
 ```bash
 docker compose -f docker-compose-db.yml up -d
 ```
 
-Option B: use your own MariaDB and DynamoDB instances and update `spring.datasource.*` and `amazon.dynamodb.endpoint` in `application.yml`.
+The MariaDB container creates the `dbo` database automatically from [`docker/initdb/01-init-schema.sql`](/Users/jonas/Dev/Hobby/wow-auction-engine/docker/initdb/01-init-schema.sql).
 
-### 2) Configure environment variables
+### 4. Run the application
 
-Set these before running:
+```bash
+./mvnw spring-boot:run
+```
 
-- `BLIZZARD_CLIENT_ID`
-- `BLIZZARD_CLIENT_SECRET`
-- `AWS_ACCESS_KEY`
-- `AWS_SECRET_KEY`
+When the app starts successfully:
 
-Optional production DB credentials:
+- the HTTP server is available on `http://localhost:8080`
+- the health endpoint is `http://localhost:8080/health`
+- scheduled jobs are enabled
+- Hibernate updates the MariaDB schema automatically on startup
+
+### 5. Stop local databases
+
+```bash
+docker compose -f docker-compose-db.yml down
+```
+
+## Environment Variables
+
+### Local development
+
+| Variable | Required | Example | Notes |
+| --- | --- | --- | --- |
+| `BLIZZARD_CLIENT_ID` | Yes | `your-blizzard-client-id` | Used to fetch OAuth tokens from Blizzard. |
+| `BLIZZARD_CLIENT_SECRET` | Yes | `your-blizzard-client-secret` | Used together with the client ID. |
+| `WAE_BLIZZARD_REGION` | Yes | `Europe` | Must match the app enum values, not `eu`. |
+| `WAE_AWS_REGION` | Yes | `eu-west-1` | Used by AWS clients created at startup. |
+| `AWS_ACCESS_KEY` | Yes | `local-dev-key` | Dummy value is fine for local startup. |
+| `AWS_SECRET_KEY` | Yes | `local-dev-secret` | Dummy value is fine for local startup. |
+
+### Production-only overrides
+
+These are only needed for the `production` Spring profile because [`src/main/resources/application.production.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.production.yml) overrides the datasource credentials:
 
 - `AUCTION_ENGINE_DB_USERNAME`
 - `AUCTION_ENGINE_DB_PASSWORD`
 
-### 3) Run the application
+## Local Configuration Defaults
+
+The default local datasource configuration lives in [`src/main/resources/application.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.yml):
+
+- MariaDB URL: `jdbc:mariadb://localhost:54000/dbo`
+- MariaDB username: `root`
+- MariaDB password: `root`
+- DynamoDB Local endpoint: `http://localhost:8000`
+
+That means a new developer normally does not need to set any database environment variables for local work.
+
+## Running Tests
+
+Run the full test suite with:
 
 ```bash
-mvn spring-boot:run
+./mvnw test
 ```
 
-The service starts with scheduling enabled and health available at:
+Useful detail for onboarding:
 
-- `http://localhost:8080/health`
+- tests run with the `test` Spring profile
+- Blizzard credentials are stubbed in [`src/main/resources/application-test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application-test.yml)
+- MariaDB runs through Testcontainers
+- DynamoDB is provided through LocalStack in tests
+- Docker Desktop or another working Docker daemon must be running for tests to pass
 
-## Testing and Quality
+## Useful Commands
+
+Run the app:
+
+```bash
+./mvnw spring-boot:run
+```
 
 Run tests:
 
 ```bash
-mvn test
+./mvnw test
 ```
 
-Run full verification (includes ktlint check in `verify` phase):
+Run the verification lifecycle:
 
 ```bash
-mvn verify
+./mvnw verify
 ```
 
-Auto-format Kotlin with ktlint:
+Format Kotlin sources:
 
 ```bash
-mvn ktlint:format
+./mvnw ktlint:format
 ```
-
-## Configuration Profiles
-
-- `application.yml`: default/local configuration
-- `application-test.yml`: test configuration with dummy credentials and mocked Blizzard endpoints
-- `application.production.yml`: production datasource overrides
-
-The unused duplicate `src/main/resources/application.test.yml` has been removed to avoid confusion with `application-test.yml`.
 
 ## Project Structure
 
-Main code is under `src/main/kotlin/net/jonasmf/auctionengine`:
+Main application code lives under [`src/main/kotlin/net/jonasmf/auctionengine`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/kotlin/net/jonasmf/auctionengine):
 
-- `service/`: scheduled jobs and business logic
-- `integration/`: Blizzard API integration
-- `repository/`: JPA, JDBC, and DynamoDB data access
-- `dbo/` and `dto/`: persistence models and transfer objects
-- `utility/`: processing helpers and shared utilities
+- `config/`: Spring configuration and external service wiring
+- `integration/`: Blizzard API integrations
+- `service/`: application logic and scheduled jobs
+- `repository/`: MariaDB and DynamoDB repositories
+- `dbo/` and `dto/`: persistence and transfer models
+- `utility/`: shared helpers
 
 Resources:
 
-- `src/main/resources/application*.yml`
-- `src/main/resources/original-db/original-db-dll.sql`
+- [`src/main/resources/application.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.yml)
+- [`src/main/resources/application-test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application-test.yml)
+- [`src/main/resources/application.production.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.production.yml)
 
-## Current Status
+## Troubleshooting
 
-This README is a starter guide. As the API surface grows, add:
+### Application fails on missing placeholders
 
-- endpoint catalog
-- architecture diagram
-- deployment instructions
-- observability/runbook notes
+Make sure you loaded `.env.local` into the same shell where you run `./mvnw spring-boot:run`.
+
+### MariaDB connection refused
+
+Start the local containers:
+
+```bash
+docker compose -f docker-compose-db.yml up -d
+```
+
+### Tests fail before Spring starts
+
+Check that Docker Desktop or your Docker daemon is running. The tests depend on Testcontainers and LocalStack, not on your manually started compose services.
