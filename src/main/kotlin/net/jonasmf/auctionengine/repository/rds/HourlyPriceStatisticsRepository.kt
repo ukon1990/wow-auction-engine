@@ -20,7 +20,7 @@ data class HourlyStatsUpsertRow(
 class HourlyPriceStatisticsRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) {
-    private val CHUNK_SIZE = 5_000
+    private val chunkSize = 5_000
 
     @Transactional
     fun upsertHour(
@@ -37,7 +37,7 @@ class HourlyPriceStatisticsRepository(
         var total = 0
         val valueTuple = List(numberOfColumns) { "?" }.joinToString(",", "(", ")")
 
-        rows.chunked(CHUNK_SIZE).forEach { chunk ->
+        rows.chunked(chunkSize).forEach { chunk ->
             val placeholders = chunk.joinToString(",") { valueTuple }
             val sql =
                 """
