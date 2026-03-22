@@ -1,12 +1,17 @@
 package net.jonasmf.auctionengine.service
 
-import com.amazonaws.services.s3.AmazonS3
-import com.amazonaws.services.s3.model.PutObjectRequest
+import aws.sdk.kotlin.services.s3.S3Client
+import aws.sdk.kotlin.services.s3.model.GetObjectRequest
+import aws.sdk.kotlin.services.s3.model.PutObjectRequest
+import aws.smithy.kotlin.runtime.content.asByteStream
+import aws.smithy.kotlin.runtime.content.writeToFile
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.utility.getBucketName
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.io.File
 import java.nio.file.Files
@@ -17,7 +22,9 @@ import java.util.zip.GZIPOutputStream
 
 @Service
 class AmazonS3Service(
-    private var amazonS3: AmazonS3,
+    private val amazonS3: S3Client,
+    @Value("\${spring.cloud.aws.region.static}")
+    private val awsRegion: String,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AmazonS3Service::class.java)
 
@@ -62,25 +69,37 @@ class AmazonS3Service(
     ): String? {
         val file = serializeCompressAndUpload(region, path, data)
         val fileName = "engine/$path.gz"
-        val result = amazonS3.putObject(PutObjectRequest(getBucketName(region), fileName, file))
-        val url = amazonS3.getUrl(getBucketName(region), fileName)
-        if (result != null) {
-            logger.info("Uploaded file to $url")
-            return url.toString()
+        val bucketName = getBucketName(region)
+        runBlocking {
+            amazonS3.putObject(
+                PutObjectRequest {
+                    bucket = bucketName
+                    key = fileName
+                    body = file.asByteStream()
+                },
+            )
         }
-        logger.error("Failed to upload file - $path")
-        return null
+        val url = "https://$bucketName.s3.$awsRegion.amazonaws.com/$fileName"
+        logger.info("Uploaded file to $url")
+        return url
     }
 
     fun getFile(
         region: Region,
         path: String,
-    ): Path {
-        amazonS3.getObject(getBucketName(region), path).objectContent.use { input ->
-            val file = Paths.get("/tmp/$path")
-            Files.createDirectories(file.parent)
-            Files.copy(input, file)
-            return file
+    ): Path =
+        runBlocking {
+            amazonS3.getObject(
+                GetObjectRequest {
+                    bucket = getBucketName(region)
+                    key = path
+                },
+            ) { response ->
+                val file = Paths.get("/tmp/$path")
+                Files.createDirectories(file.parent)
+                val body = checkNotNull(response.body) { "S3 object body was empty for key $path" }
+                body.writeToFile(file)
+                file
+            }
         }
-    }
 }

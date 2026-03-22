@@ -29,8 +29,8 @@
     </scm>
     <properties>
         <java.version>25</java.version>
-        <aws.java.sdk.version>1.12.797</aws.java.sdk.version>
         <aws.sdk.kotlin.version>1.6.41</aws.sdk.kotlin.version>
+        <spring.cloud.aws.version>3.4.1</spring.cloud.aws.version>
         <jackson.version>2.21.2</jackson.version>
         <kotlin.version>2.3.20</kotlin.version>
         <junit.version>6.0.3</junit.version>
@@ -97,29 +97,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.github.derjust</groupId>
-            <artifactId>spring-data-dynamodb</artifactId>
-            <version>5.1.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-dynamodb</artifactId>
-            <version>${aws.java.sdk.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- jaxb -->
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
@@ -153,40 +130,9 @@
             <version>${aws.sdk.kotlin.version}</version>
         </dependency>
         <dependency>
-            <groupId>aws.sdk.kotlin</groupId>
-            <artifactId>dynamodb-jvm</artifactId>
-            <version>${aws.sdk.kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>aws.sdk.kotlin</groupId>
-            <artifactId>iam-jvm</artifactId>
-            <version>${aws.sdk.kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>aws.sdk.kotlin</groupId>
-            <artifactId>cloudwatch-jvm</artifactId>
-            <version>${aws.sdk.kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>aws.sdk.kotlin</groupId>
-            <artifactId>cognitoidentityprovider-jvm</artifactId>
-            <version>${aws.sdk.kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>aws.sdk.kotlin</groupId>
-            <artifactId>sns-jvm</artifactId>
-            <version>${aws.sdk.kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>aws.sdk.kotlin</groupId>
-            <artifactId>pinpoint-jvm</artifactId>
-            <version>${aws.sdk.kotlin.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>io.awspring.cloud</groupId>
-            <artifactId>spring-cloud-starter-aws</artifactId>
-            <version>2.4.4</version>
+            <artifactId>spring-cloud-aws-starter-dynamodb</artifactId>
+            <version>${spring.cloud.aws.version}</version>
         </dependency>
 
         <!-- Testing -->

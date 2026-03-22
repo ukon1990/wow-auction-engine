@@ -1,17 +1,12 @@
 package net.jonasmf.auctionengine.config
 
-import com.amazonaws.auth.AWSCredentials
-import com.amazonaws.auth.AWSStaticCredentialsProvider
-import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.client.builder.AwsClientBuilder
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput
-import com.amazonaws.services.dynamodbv2.util.TableUtils
+import io.awspring.cloud.dynamodb.DefaultDynamoDbTableNameResolver
+import io.awspring.cloud.dynamodb.DynamoDbTableNameResolver
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
+import net.jonasmf.auctionengine.repository.dynamodb.AUCTION_HOUSE_TABLE_NAME
 import org.slf4j.LoggerFactory
-import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.boot.ApplicationRunner
@@ -19,53 +14,43 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.context.annotation.Role
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition
+import software.amazon.awssdk.services.dynamodb.model.BillingMode
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement
+import software.amazon.awssdk.services.dynamodb.model.KeyType
+import software.amazon.awssdk.services.dynamodb.model.ResourceInUseException
+import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType
+import software.amazon.awssdk.services.dynamodb.model.TableStatus
 
 @Configuration(proxyBeanMethods = false)
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-@EnableDynamoDBRepositories(basePackages = ["net.jonasmf.auctionengine.repository.dynamodb"])
 class DynamoDBConfig {
     private val log = LoggerFactory.getLogger(DynamoDBConfig::class.java)
 
-    @Value("\${amazon.dynamodb.endpoint}")
+    @Value("\${spring.cloud.aws.dynamodb.endpoint:}")
     private val amazonDynamoDBEndpoint: String? = null
-
-    @Value("\${amazon.aws.accesskey}")
-    private val amazonAWSAccessKey: String? = null
-
-    @Value("\${amazon.aws.secretkey}")
-    private val amazonAWSSecretKey: String? = null
 
     @Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-    fun amazonDynamoDB(awsCredentials: AWSCredentials): AmazonDynamoDB {
-        val builder =
-            AmazonDynamoDBClient
-                .builder()
-                .withCredentials(AWSStaticCredentialsProvider(awsCredentials))
-        if (!amazonDynamoDBEndpoint.isNullOrEmpty()) {
-            builder.withEndpointConfiguration(
-                AwsClientBuilder.EndpointConfiguration(
-                    amazonDynamoDBEndpoint,
-                    "eu-west-1",
-                ),
-            )
-        } else {
-            builder.withRegion("eu-west-1")
+    fun dynamoDbTableNameResolver(): DynamoDbTableNameResolver {
+        val defaultResolver = DefaultDynamoDbTableNameResolver()
+        return object : DynamoDbTableNameResolver {
+            override fun <T : Any?> resolve(clazz: Class<T>): String =
+                if (clazz == AuctionHouseDynamo::class.java) {
+                    AUCTION_HOUSE_TABLE_NAME
+                } else {
+                    defaultResolver.resolve(clazz)
+                }
         }
-        return builder.build()
     }
 
     @Bean
-    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-    fun amazonAWSCredentials(): AWSCredentials =
-        BasicAWSCredentials(
-            amazonAWSAccessKey,
-            amazonAWSSecretKey,
-        )
-
-    @Bean
     @Profile("!production")
-    fun dynamoDbTableInitializer(amazonDynamoDB: AmazonDynamoDB): ApplicationRunner =
+    fun dynamoDbTableInitializer(dynamoDbClient: DynamoDbClient): ApplicationRunner =
         ApplicationRunner {
             val endpoint = amazonDynamoDBEndpoint?.trim().orEmpty()
             if (endpoint.isEmpty()) {
@@ -73,30 +58,72 @@ class DynamoDBConfig {
                 return@ApplicationRunner
             }
 
-            val mapper = DynamoDBMapper(amazonDynamoDB)
-            val createTableRequest =
-                mapper
-                    .generateCreateTableRequest(AuctionHouseDynamo::class.java)
-                    .withProvisionedThroughput(ProvisionedThroughput(5L, 5L))
-
             try {
-                val created = TableUtils.createTableIfNotExists(amazonDynamoDB, createTableRequest)
-                if (created) {
-                    log.info("Created DynamoDB table {} at {}", createTableRequest.tableName, endpoint)
-                } else {
-                    log.info("DynamoDB table {} already exists at {}", createTableRequest.tableName, endpoint)
+                runBlocking {
+                    createTableIfMissing(dynamoDbClient)
+                    waitUntilActive(dynamoDbClient)
                 }
-
-                TableUtils.waitUntilActive(amazonDynamoDB, createTableRequest.tableName)
-                log.info("DynamoDB table {} is active at {}", createTableRequest.tableName, endpoint)
+                log.info("DynamoDB table {} is active at {}", AUCTION_HOUSE_TABLE_NAME, endpoint)
             } catch (exception: Exception) {
                 log.error(
                     "Failed to initialize DynamoDB table {} at {}",
-                    createTableRequest.tableName,
+                    AUCTION_HOUSE_TABLE_NAME,
                     endpoint,
                     exception,
                 )
                 throw exception
             }
         }
+
+    private suspend fun createTableIfMissing(dynamoDbClient: DynamoDbClient) {
+        try {
+            dynamoDbClient.createTable(
+                CreateTableRequest
+                    .builder()
+                    .tableName(AUCTION_HOUSE_TABLE_NAME)
+                    .billingMode(BillingMode.PAY_PER_REQUEST)
+                    .attributeDefinitions(
+                        AttributeDefinition
+                            .builder()
+                            .attributeName("id")
+                            .attributeType(ScalarAttributeType.N)
+                            .build(),
+                    ).keySchema(
+                        KeySchemaElement
+                            .builder()
+                            .attributeName("id")
+                            .keyType(KeyType.HASH)
+                            .build(),
+                    ).build(),
+            )
+            log.info("Created DynamoDB table {} at {}", AUCTION_HOUSE_TABLE_NAME, amazonDynamoDBEndpoint)
+        } catch (_: ResourceInUseException) {
+            log.info("DynamoDB table {} already exists at {}", AUCTION_HOUSE_TABLE_NAME, amazonDynamoDBEndpoint)
+        }
+    }
+
+    private suspend fun waitUntilActive(dynamoDbClient: DynamoDbClient) {
+        repeat(20) {
+            try {
+                val tableStatus =
+                    dynamoDbClient
+                        .describeTable(
+                            DescribeTableRequest
+                                .builder()
+                                .tableName(AUCTION_HOUSE_TABLE_NAME)
+                                .build(),
+                        ).table()
+                        ?.tableStatus()
+
+                if (tableStatus == TableStatus.ACTIVE) {
+                    return
+                }
+            } catch (_: ResourceNotFoundException) {
+                // Creation may still be propagating in local environments.
+            }
+            delay(500)
+        }
+
+        error("Timed out waiting for DynamoDB table $AUCTION_HOUSE_TABLE_NAME to become active")
+    }
 }

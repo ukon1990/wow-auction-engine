@@ -1,57 +1,35 @@
 package net.jonasmf.auctionengine.dbo.dynamodb
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 
-@DynamoDBTable(tableName = "wah_auction_houses")
+@DynamoDbBean
 data class AuctionHouseDynamo(
-    @DynamoDBHashKey(attributeName = "id")
-    val id: Int?,
-    @DynamoDBAttribute(attributeName = "autoUpdate")
-    val autoUpdate: Boolean = false,
-    @DynamoDBAttribute(attributeName = "avgDelay")
-    val avgDelay: Long = 0,
-    @DynamoDBAttribute(attributeName = "connectedId")
-    val connectedId: Long = 0,
-    @DynamoDBAttribute(attributeName = "gameBuild")
-    val gameBuild: Long = 0,
-    @DynamoDBAttribute(attributeName = "highestDelay")
-    val highestDelay: Long = 0,
-    @DynamoDBAttribute(attributeName = "lastDailyPriceUpdate")
-    val lastDailyPriceUpdate: Long = 0,
-    @DynamoDBAttribute(attributeName = "lastHistoryDeleteEvent")
-    val lastHistoryDeleteEvent: Long = 0,
-    @DynamoDBAttribute(attributeName = "lastHistoryDeleteEventDaily")
-    val lastHistoryDeleteEventDaily: Long = 0,
-    @DynamoDBAttribute(attributeName = "lastModified")
-    val lastModified: Long = 0,
-    @DynamoDBAttribute(attributeName = "lastRequested")
-    val lastRequested: Long = 0,
-    @DynamoDBAttribute(attributeName = "lastStatsInsert")
-    val lastStatsInsert: Long = 0,
-    @DynamoDBAttribute(attributeName = "lastTrendUpdateInitiation")
-    val lastTrendUpdateInitiation: Long = 0,
-    @DynamoDBAttribute(attributeName = "lowestDelay")
-    val lowestDelay: Long = 0,
-    @DynamoDBAttribute(attributeName = "nextUpdate")
-    val nextUpdate: Long = 0,
-    @DynamoDBAttribute(attributeName = "realms")
-    val realms: List<RealmDynamo> = emptyList(),
-    @DynamoDBAttribute(attributeName = "realmSlugs")
-    val realmSlugs: String = "",
-    @DynamoDBAttribute(attributeName = "region")
-    val region: String = "",
-    @DynamoDBAttribute(attributeName = "size")
-    val size: Double = 0.0,
-    @DynamoDBAttribute(attributeName = "stats")
-    val stats: StatsDynamo =
+    @get:DynamoDbPartitionKey
+    var id: Int? = null,
+    var autoUpdate: Boolean = false,
+    var avgDelay: Long = 0,
+    var connectedId: Long = 0,
+    var gameBuild: Long = 0,
+    var highestDelay: Long = 0,
+    var lastDailyPriceUpdate: Long = 0,
+    var lastHistoryDeleteEvent: Long = 0,
+    var lastHistoryDeleteEventDaily: Long = 0,
+    var lastModified: Long = 0,
+    var lastRequested: Long = 0,
+    var lastStatsInsert: Long = 0,
+    var lastTrendUpdateInitiation: Long = 0,
+    var lowestDelay: Long = 0,
+    var nextUpdate: Long = 0,
+    var realms: List<RealmDynamo> = emptyList(),
+    var realmSlugs: String = "",
+    var region: String = "",
+    var size: Double = 0.0,
+    var stats: StatsDynamo =
         StatsDynamo(
             lastModified = 0L,
             url = "",
         ),
-    @DynamoDBAttribute(attributeName = "updateAttempts")
-    val updateAttempts: Long = 0,
-    @DynamoDBAttribute(attributeName = "url")
-    val url: String = "",
+    var updateAttempts: Long = 0,
+    var url: String = "",
 )

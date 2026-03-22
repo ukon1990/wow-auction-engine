@@ -20,7 +20,7 @@ Backend service for ingesting, processing, and serving World of Warcraft auction
 - Spring Boot 3.5
 - Maven Wrapper (`./mvnw`)
 - MariaDB
-- DynamoDB Local for local development
+- DynamoDB Local for local development through AWSpring + AWS SDK v2
 - Testcontainers + LocalStack for tests
 
 ## New Developer Quick Start
@@ -207,3 +207,12 @@ docker compose -f docker-compose-db.yml up -d
 ### Tests fail before Spring starts
 
 Check that Docker Desktop or your Docker daemon is running. The tests depend on Testcontainers and LocalStack, not on your manually started compose services.
+
+### AWS SDK deprecation warning
+
+The application should not initialize AWS SDK for Java 1.x anymore. If you see a startup warning mentioning `AWS SDK for Java 1.x`, an old dependency has been reintroduced.
+
+Current local AWS integrations are:
+
+- DynamoDB Local through AWSpring `DynamoDbOperations` on AWS SDK v2
+- S3 uploads/downloads through the AWS SDK for Kotlin `S3Client`

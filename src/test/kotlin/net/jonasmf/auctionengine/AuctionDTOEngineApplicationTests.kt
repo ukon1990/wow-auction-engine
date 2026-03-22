@@ -22,11 +22,11 @@ class AuctionDTOEngineApplicationTests {
                 localStack.start()
             }
 
-            registry.add("amazon.dynamodb.endpoint") {
+            registry.add("spring.cloud.aws.dynamodb.endpoint") {
                 localStack.getEndpointOverride(LocalStackContainer.Service.DYNAMODB).toString()
             }
-            registry.add("amazon.aws.accesskey") { localStack.accessKey }
-            registry.add("amazon.aws.secretkey") { localStack.secretKey }
+            registry.add("spring.cloud.aws.credentials.access-key") { localStack.accessKey }
+            registry.add("spring.cloud.aws.credentials.secret-key") { localStack.secretKey }
         }
     }
 
