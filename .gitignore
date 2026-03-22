@@ -33,3 +33,5 @@ build/
 .vscode/
 
 *.log
+
+docker/dynamodb/shared-local-instance.db

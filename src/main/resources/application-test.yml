@@ -13,7 +13,7 @@ blizzard:
 amazon:
   aws:
     credentials:
-      accesskey: dummy-access-key
-      secretkey: dummy-secret-key
+      accesskey: fakeMyKeyId
+      secretkey: fakeSecretAccessKey
   dynamodb:
     endpoint: ""
