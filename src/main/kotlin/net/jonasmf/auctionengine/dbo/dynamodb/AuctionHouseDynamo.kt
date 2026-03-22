@@ -7,7 +7,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable
 @DynamoDBTable(tableName = "wah_auction_houses")
 data class AuctionHouseDynamo(
     @DynamoDBHashKey(attributeName = "id")
-    val id: Int,
+    val id: Int?,
     @DynamoDBAttribute(attributeName = "autoUpdate")
     val autoUpdate: Boolean = false,
     @DynamoDBAttribute(attributeName = "avgDelay")
