@@ -5,7 +5,7 @@ services:
   mariadb:
     image: mariadb:10.11
     ports:
-      - "54000:3306"
+      - "59000:3306"
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: root
@@ -16,7 +16,7 @@ services:
     command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "./data"]
     image: "amazon/dynamodb-local:latest"
     ports:
-      - "8000:8000"
+      - "58000:8000"
     volumes:
       - "./docker/dynamodb:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal

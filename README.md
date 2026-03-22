@@ -70,8 +70,8 @@ Use `Europe` for `WAE_BLIZZARD_REGION` unless you are intentionally changing reg
 
 The default local config expects:
 
-- MariaDB on `localhost:54000`
-- DynamoDB Local on `localhost:8000`
+- MariaDB on `localhost:59000`
+- DynamoDB Local on `localhost:58000`
 
 Start both with:
 
@@ -124,10 +124,10 @@ These are only needed for the `production` Spring profile because [`src/main/res
 
 The default local datasource configuration lives in [`src/main/resources/application.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.yml):
 
-- MariaDB URL: `jdbc:mariadb://localhost:54000/dbo`
+- MariaDB URL: `jdbc:mariadb://localhost:59000/dbo`
 - MariaDB username: `root`
 - MariaDB password: `root`
-- DynamoDB Local endpoint: `http://localhost:8000`
+- DynamoDB Local endpoint: `http://localhost:58000`
 
 That means a new developer normally does not need to set any database environment variables for local work.
 

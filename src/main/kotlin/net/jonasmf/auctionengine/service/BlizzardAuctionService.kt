@@ -57,7 +57,7 @@ class BlizzardAuctionService(
     fun updateAuctionHouses() {
         val ids = realmService.getAllForRegion(properties.region).map { it.id }
         // val shit = auctionHouseRepository.get
-        LOG.info("Updating auction houses for realm IDs: $ids")
+        logger.info("Updating auction houses for realm IDs: $ids")
         ids.forEach { updateHouse(it, properties.region) }
     }
 
@@ -258,7 +258,7 @@ class BlizzardAuctionService(
                     logger.debug("Created new item for key: $itemKey")
                 }
 
-                // Log progress every 10,000 items processed
+                // logger progress every 10,000 items processed
                 if ((index + 1) % 10000 == 0) {
                     val progress = ((index + 1) * 100.0 / totalAuctions).toInt()
                     logger.info(
