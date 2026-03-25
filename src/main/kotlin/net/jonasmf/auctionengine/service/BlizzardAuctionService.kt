@@ -4,6 +4,7 @@ import NameSpace
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
@@ -15,7 +16,6 @@ import net.jonasmf.auctionengine.repository.rds.AuctionRepository
 import net.jonasmf.auctionengine.utility.determineBaseUrl
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.reactive.function.client.WebClient
@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.Locale
+import java.util.Optional
 import java.util.TimeZone
 import kotlin.math.min
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction as AuctionDBO
@@ -47,17 +48,9 @@ class BlizzardAuctionService(
     private val logBatchSize = auctionBatchSize
     val logger: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
 
-    @Scheduled(fixedDelayString = "PT1H", initialDelay = 3_000)
-    fun checkForUpdates() {
-        logger.info("Starting scheduled auction house update check...")
-        updateAuctionHouses()
-    }
-
-    fun updateAuctionHouses() {
-        val ids = realmService.getAllForRegion(properties.region).map { it.id }
-        // val shit = auctionHouseRepository.get
-        logger.info("Updating auction houses for realm IDs: $ids")
-        ids.forEach { updateHouse(it, properties.region) }
+    fun updateAuctionHouses(auctionHousesToUpdate: List<AuctionHouseDynamo>) {
+        logger.info("Updating $auctionHousesToUpdate.size auction houses for region ${properties.region}")
+        auctionHousesToUpdate.forEach { updateHouse(it.connectedId, properties.region) }
     }
 
     private fun updateHouse(
