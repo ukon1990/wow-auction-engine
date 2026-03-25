@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.dbo.dynamodb
 
+import net.jonasmf.auctionengine.constant.Region
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 
@@ -9,8 +10,8 @@ data class AuctionHouseDynamo(
     var id: Int? = null,
     var autoUpdate: Boolean = false,
     var avgDelay: Long = 0,
-    var connectedId: Long = 0,
-    var gameBuild: Long = 0,
+    var connectedId: Int = 0,
+    var gameBuild: Int = 0,
     var highestDelay: Long = 0,
     var lastDailyPriceUpdate: Long = 0,
     var lastHistoryDeleteEvent: Long = 0,
@@ -23,7 +24,7 @@ data class AuctionHouseDynamo(
     var nextUpdate: Long = 0,
     var realms: List<RealmDynamo> = emptyList(),
     var realmSlugs: String = "",
-    var region: String = "",
+    var region: Region = Region.Europe,
     var size: Double = 0.0,
     var stats: StatsDynamo =
         StatsDynamo(
