@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.service
 
+import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
@@ -25,4 +26,6 @@ class AuctionHouseService(
             )
         repository.save(newAuctionHouse)
     }
+
+    fun getReadyForUpdate(region: Region) = repository.findAllByRegion(region)
 }
