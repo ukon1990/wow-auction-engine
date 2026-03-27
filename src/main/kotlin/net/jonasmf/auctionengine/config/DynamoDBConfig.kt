@@ -15,15 +15,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.context.annotation.Role
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition
-import software.amazon.awssdk.services.dynamodb.model.BillingMode
-import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest
-import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement
-import software.amazon.awssdk.services.dynamodb.model.KeyType
 import software.amazon.awssdk.services.dynamodb.model.ResourceInUseException
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException
-import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType
 import software.amazon.awssdk.services.dynamodb.model.TableStatus
 
 @Configuration(proxyBeanMethods = false)
@@ -77,25 +71,10 @@ class DynamoDBConfig {
 
     private suspend fun createTableIfMissing(dynamoDbClient: DynamoDbClient) {
         try {
-            dynamoDbClient.createTable(
-                CreateTableRequest
-                    .builder()
-                    .tableName(AUCTION_HOUSE_TABLE_NAME)
-                    .billingMode(BillingMode.PAY_PER_REQUEST)
-                    .attributeDefinitions(
-                        AttributeDefinition
-                            .builder()
-                            .attributeName("id")
-                            .attributeType(ScalarAttributeType.N)
-                            .build(),
-                    ).keySchema(
-                        KeySchemaElement
-                            .builder()
-                            .attributeName("id")
-                            .keyType(KeyType.HASH)
-                            .build(),
-                    ).build(),
+            val tables = listOf(// The plan is to have more soon
+                AuctionHouseDynamo.createTableRequest(),
             )
+            tables.forEach { dynamoDbClient.createTable(it) }
             log.info("Created DynamoDB table {} at {}", AUCTION_HOUSE_TABLE_NAME, amazonDynamoDBEndpoint)
         } catch (_: ResourceInUseException) {
             log.info("DynamoDB table {} already exists at {}", AUCTION_HOUSE_TABLE_NAME, amazonDynamoDBEndpoint)
