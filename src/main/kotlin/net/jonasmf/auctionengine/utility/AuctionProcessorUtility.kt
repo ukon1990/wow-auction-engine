@@ -178,6 +178,6 @@ class AuctionProcessorUtility(
                     failedAttempts = 0,
                     updateLog = mutableListOf(),
                 ),
-            realms = emptyList(),
+            realms = mutableListOf(),
         )
 }

@@ -22,7 +22,7 @@ class ConnectedRealm(
     @OneToOne(cascade = [CascadeType.PERSIST])
     var auctionHouse: AuctionHouse,
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    var realms: List<Realm> = emptyList(),
+    var realms: MutableList<Realm> = mutableListOf(),
 )
 
 @Entity

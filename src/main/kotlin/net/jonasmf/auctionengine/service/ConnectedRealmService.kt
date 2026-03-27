@@ -66,7 +66,7 @@ class ConnectedRealmService(
                     ConnectedRealm(
                         id = id,
                         realms =
-                            listOf(
+                            mutableListOf(
                                 Realm(
                                     id = id,
                                     name = "Community",

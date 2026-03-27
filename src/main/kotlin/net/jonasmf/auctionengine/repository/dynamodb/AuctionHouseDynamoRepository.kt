@@ -6,7 +6,7 @@ import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import org.springframework.stereotype.Repository
 import software.amazon.awssdk.enhanced.dynamodb.Expression
 import software.amazon.awssdk.enhanced.dynamodb.Key
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest
+import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import java.util.*
 
@@ -42,21 +42,21 @@ class AuctionHouseDynamoRepositoryIml(
     }
 
     override fun findAllByRegion(region: Region): List<AuctionHouseDynamo> {
-
-        val query = QueryEnhancedRequest
+        val scan = ScanEnhancedRequest
             .builder()
             .filterExpression(
                 Expression
                     .builder()
-                    .expression("region = :region")
+                    .expression("#region = :region")
+                    .putExpressionName("#region", "region")
                     .putExpressionValue(":region", AttributeValue.builder().s(region.name).build())
                     .build(),
             )
             .build()
 
         val pages =
-            dynamoDbOperations.query<AuctionHouseDynamo>(
-                query,
+            dynamoDbOperations.scan<AuctionHouseDynamo>(
+                scan,
                 AuctionHouseDynamo::class.java,
             )
 

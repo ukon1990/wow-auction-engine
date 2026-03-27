@@ -148,7 +148,7 @@ Run the full test suite with:
 Useful detail for onboarding:
 
 - tests run with the `test` Spring profile
-- Blizzard credentials are stubbed in [`src/main/resources/application-test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application-test.yml)
+- Blizzard credentials are stubbed in [`src/main/resources/application.test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.test.yml)
 - MariaDB runs through Testcontainers
 - DynamoDB is provided through LocalStack in tests
 - Docker Desktop or another working Docker daemon must be running for tests to pass
@@ -193,7 +193,7 @@ Main application code lives under [`src/main/kotlin/net/jonasmf/auctionengine`](
 Resources:
 
 - [`src/main/resources/application.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.yml)
-- [`src/main/resources/application-test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application-test.yml)
+- [`src/main/resources/application.test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.test.yml)
 - [`src/main/resources/application.production.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.production.yml)
 
 ## Troubleshooting
