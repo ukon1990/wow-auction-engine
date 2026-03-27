@@ -21,7 +21,7 @@ interface AuctionHouseDynamoRepository {
 }
 
 @Repository
-class DynamoDbAuctionHouseRepository(
+class AuctionHouseDynamoRepositoryIml(
     private val dynamoDbOperations: DynamoDbOperations,
 ) : AuctionHouseDynamoRepository {
     override fun findById(id: Int?): Optional<AuctionHouseDynamo> {
@@ -54,13 +54,13 @@ class DynamoDbAuctionHouseRepository(
             )
             .build()
 
-        val entity =
+        val pages =
             dynamoDbOperations.query<AuctionHouseDynamo>(
                 query,
                 AuctionHouseDynamo::class.java,
             )
 
-        return entity ?: emptyList<AuctionHouseDynamo>()
+        return pages.items().toList()
     }
 
     override fun save(auctionHouse: AuctionHouseDynamo): AuctionHouseDynamo {

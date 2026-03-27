@@ -11,68 +11,70 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
+import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.FileReference
 import java.time.ZonedDateTime
 
 @Entity
-data class ConnectedRealm(
+class ConnectedRealm(
     @Id
-    val id: Int,
+    var id: Int,
     @OneToOne(cascade = [CascadeType.PERSIST])
-    val auctionHouse: AuctionHouse,
+    var auctionHouse: AuctionHouse,
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    val realms: List<Realm> = emptyList(),
+    var realms: List<Realm> = emptyList(),
 )
 
 @Entity
-data class AuctionHouseFileLog(
+class AuctionHouseFileLog(
     @Id
     @GeneratedValue
-    val id: Long? = null,
-    val timestamp: ZonedDateTime,
+    var id: Long? = null,
+    var timestamp: ZonedDateTime,
     @ManyToOne
-    val file: FileReference,
+    var file: FileReference,
 )
 
 @Entity
-data class AuctionHouse(
+class AuctionHouse(
     @Id
     @GeneratedValue
-    val id: Int? = null,
+    var id: Int? = null,
     var lastModified: ZonedDateTime?,
     @Nullable
-    val lastRequested: ZonedDateTime?,
+    var lastRequested: ZonedDateTime?,
     @Nullable
     var nextUpdate: ZonedDateTime,
     @Nullable
-    val lowestDelay: Long,
+    var lowestDelay: Long,
     @Nullable
     var averageDelay: Long = 60,
     @Nullable
-    val highestDelay: Long,
+    var highestDelay: Long,
     @ManyToOne
     @Nullable
-    val tsmFile: FileReference?,
+    var tsmFile: FileReference?,
     @ManyToOne
     @Nullable
-    val statsFile: FileReference?,
+    var statsFile: FileReference?,
     @ManyToOne
     @Nullable
-    val auctionFile: FileReference?,
-    val failedAttempts: Int? = 0,
+    var auctionFile: FileReference?,
+    var failedAttempts: Int? = 0,
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    val updateLog: List<AuctionHouseFileLog> = emptyList(),
+    var updateLog: MutableList<AuctionHouseFileLog> = mutableListOf(),
 )
 
 @Entity(name = "region")
-data class RegionDBO(
+class RegionDBO(
     @Id
-    val id: Int? = null,
-    val name: String,
+    var id: Int? = null,
+    var name: String,
+    var type: Region,
 )
 
 @Entity
-data class Realm(
+class Realm(
     @Id
     val id: Int,
     @ManyToOne(cascade = [CascadeType.REFRESH])

@@ -176,7 +176,7 @@ class AuctionProcessorUtility(
                     statsFile = null,
                     auctionFile = null,
                     failedAttempts = 0,
-                    updateLog = emptyList(),
+                    updateLog = mutableListOf(),
                 ),
             realms = emptyList(),
         )

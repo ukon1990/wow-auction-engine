@@ -11,6 +11,6 @@ enum class Region(
 
     companion object {
         fun fromString(code: String): Region =
-            values().first { it.name.replace(" ", "").equals(code, ignoreCase = true) }
+            entries.first { it.name.replace(" ", "").equals(code, ignoreCase = true) }
     }
 }

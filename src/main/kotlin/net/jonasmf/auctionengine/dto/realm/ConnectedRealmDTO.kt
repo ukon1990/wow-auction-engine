@@ -8,6 +8,7 @@ import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.Href
 import net.jonasmf.auctionengine.dto.LocaleTypeValue
 import java.time.ZonedDateTime
+import kotlin.collections.emptyList
 
 data class ConnectedRealmDTO(
     val id: Int,
@@ -36,7 +37,7 @@ data class ConnectedRealmDTO(
                     statsFile = null,
                     auctionFile = null,
                     failedAttempts = 0,
-                    updateLog = emptyList(),
+                    updateLog = mutableListOf(),
                 ),
         )
 }
