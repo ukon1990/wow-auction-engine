@@ -3,11 +3,15 @@ package net.jonasmf.auctionengine.dbo.dynamodb
 import net.jonasmf.auctionengine.constant.Region
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecondaryPartitionKey
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecondarySortKey
 
 @DynamoDbBean
 data class AuctionHouseDynamo(
     @get:DynamoDbPartitionKey
     var id: Int? = null,
+    @get:DynamoDbSecondaryPartitionKey(indexNames = ["region-index"])
+    var region: Region = Region.Europe,
     var autoUpdate: Boolean = false,
     var avgDelay: Long = 0,
     var connectedId: Int = 0,
@@ -21,10 +25,10 @@ data class AuctionHouseDynamo(
     var lastStatsInsert: Long = 0,
     var lastTrendUpdateInitiation: Long = 0,
     var lowestDelay: Long = 0,
+    @get:DynamoDbSecondarySortKey(indexNames = ["region-index"])
     var nextUpdate: Long = 0,
     var realms: List<RealmDynamo> = emptyList(),
     var realmSlugs: String = "",
-    var region: Region = Region.Europe,
     var size: Double = 0.0,
     var stats: StatsDynamo =
         StatsDynamo(
