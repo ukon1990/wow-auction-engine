@@ -12,6 +12,9 @@ spring:
                 secret-key: dummy-secret-key
             dynamodb:
                 endpoint: ""
+app:
+    scheduling:
+        enabled: false
 blizzard:
     client-id: dummy-client-id
     client-secret: dummy-client-secret
@@ -23,3 +26,5 @@ logging:
         org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR
         org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
         org.springframework.beans.factory.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
+
+
