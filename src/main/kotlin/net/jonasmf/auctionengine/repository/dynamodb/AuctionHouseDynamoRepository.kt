@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository
 import software.amazon.awssdk.enhanced.dynamodb.Key
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest
+import java.time.ZonedDateTime
 import java.util.Optional
 
 const val AUCTION_HOUSE_TABLE_NAME = "wah_auction_houses"
@@ -15,6 +16,8 @@ interface AuctionHouseDynamoRepository {
     fun findById(id: Int?): Optional<AuctionHouseDynamo>
 
     fun findAllByRegion(region: Region): List<AuctionHouseDynamo>
+
+    fun findReadyForUpdateByRegion(region: Region): List<AuctionHouseDynamo>
 
     fun save(auctionHouse: AuctionHouseDynamo): AuctionHouseDynamo
 }
@@ -53,6 +56,32 @@ class AuctionHouseDynamoRepositoryIml(
             )
             .build()
 
+        return queryByRegionIndex(queryParams)
+    }
+
+    /**
+     * Checks for the next connected realms to update.
+     * Returns the 50 oldest updates for the given region, sorted by nextUpdate ascending.
+     */
+    override fun findReadyForUpdateByRegion(region: Region): List<AuctionHouseDynamo> {
+        val queryParams = QueryEnhancedRequest
+            .builder()
+            .queryConditional(
+                QueryConditional
+                    .sortLessThanOrEqualTo(
+                        Key.builder()
+                            .partitionValue(region.name)
+                            .sortValue(ZonedDateTime.now().toEpochSecond())
+                            .build(),
+                    ),
+            )
+            .limit(50)
+            .build()
+
+        return queryByRegionIndex(queryParams)
+    }
+
+    private fun queryByRegionIndex(queryParams: QueryEnhancedRequest): List<AuctionHouseDynamo> {
         val pages =
             dynamoDbOperations.query<AuctionHouseDynamo>(
                 queryParams,

@@ -30,28 +30,55 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
         AuctionHouseDynamo(
             id = 1,
             autoUpdate = true,
-            region = Region.Europe,
+            region = Region.Korea,
             avgDelay = 60,
-            nextUpdate = getOffsetFromNow(10),
+            nextUpdate = getOffsetFromNow(-10),
+            lastModified = getOffsetFromNow(-70),
         ),
         AuctionHouseDynamo(
             id = 2,
             autoUpdate = true,
-            region = Region.NorthAmerica,
+            region = Region.Korea,
             avgDelay = 60,
             nextUpdate = getOffsetFromNow(10),
+            lastModified = getOffsetFromNow(-70),
         ),
         AuctionHouseDynamo(
-            id = 1,
+            id = 3,
             autoUpdate = true,
             region = Region.Europe,
             avgDelay = 60,
             nextUpdate = getOffsetFromNow(10),
+            lastModified = getOffsetFromNow(-50),
+        ),
+        AuctionHouseDynamo(
+            id = 4,
+            autoUpdate = true,
+            region = Region.Europe,
+            avgDelay = 60,
+            nextUpdate = getOffsetFromNow(-20),
+            lastModified = getOffsetFromNow(-80),
+        ),
+        AuctionHouseDynamo(
+            id = 5,
+            autoUpdate = true,
+            region = Region.Europe,
+            avgDelay = 60,
+            nextUpdate = getOffsetFromNow(-50),
+            lastModified = getOffsetFromNow(-100),
+        ),
+        AuctionHouseDynamo(
+            id = 6,
+            autoUpdate = true,
+            region = Region.Europe,
+            avgDelay = 60,
+            nextUpdate = getOffsetFromNow(-90),
+            lastModified = getOffsetFromNow(-120),
         ),
     )
 
     fun getOffsetFromNow(minutes: Int): Long {
-        return ZonedDateTime.now().toEpochSecond() - (minutes * 60)
+        return ZonedDateTime.now().toEpochSecond() + (minutes * 60)
     }
 
     @BeforeEach
@@ -62,9 +89,12 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
     @Nested
     inner class GetReadyForUpdate() {
         @Test
-        fun canGetAuctionHouses() {
+        fun `should only return auction houses for the given region where an update is due`() {
             val result = auctionHouseService.getReadyForUpdate(Region.Europe)
-            assertEquals(1, result.size)
+
+            assertEquals(6, result.first().id)
+            assertEquals(4, result.last().id)
+            assertEquals(3, result.size)
         }
     }
 }

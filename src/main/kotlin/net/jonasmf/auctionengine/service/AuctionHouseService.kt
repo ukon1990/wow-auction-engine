@@ -23,5 +23,6 @@ class AuctionHouseService(
         repository.save(newAuctionHouse)
     }
 
-    fun getReadyForUpdate(region: Region) = repository.findAllByRegion(region)
+    fun findAllByRegion(region: Region) = repository.findAllByRegion(region)
+    fun getReadyForUpdate(region: Region) = repository.findReadyForUpdateByRegion(region)
 }
