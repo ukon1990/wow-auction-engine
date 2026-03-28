@@ -11,7 +11,11 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.bean.override.mockito.MockitoBean
-import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 
 class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
     @MockitoBean
@@ -77,13 +81,28 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
         ),
     )
 
-    fun getOffsetFromNow(minutes: Int): Long {
-        return ZonedDateTime.now().toEpochSecond() + (minutes * 60)
+    fun getOffsetFromNow(minutes: Int): Instant {
+        return Clock.System.now().plus(minutes.minutes)
     }
 
     @BeforeEach
     fun setUp() {
         auctionHouses.forEach { repository.save(it) }
+    }
+
+    @Nested
+    inner class UpdateTimes() {
+        @Test
+        fun `should update the next update time, based on avg delay + last modified on successful update`() {
+            val originalState = auctionHouses.find { it.id == 1 }
+            val newLastModified = originalState?.lastModified?.plus(60.minutes)
+            auctionHouseService.updateTimes(1, newLastModified, true)
+
+            val result = repository.findById(1).get()
+            assertEquals(newLastModified, result.lastModified)
+            assertEquals(60, result.avgDelay)
+            assertEquals(getOffsetFromNow(60), result.nextUpdate)
+        }
     }
 
     @Nested

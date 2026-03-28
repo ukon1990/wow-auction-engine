@@ -5,6 +5,7 @@ import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
 import org.springframework.stereotype.Service
+import kotlin.time.Instant
 
 @Service
 class AuctionHouseService(
@@ -21,6 +22,10 @@ class AuctionHouseService(
                 realmSlugs = connectedRealm.realms.joinToString(",") { it.slug },
             )
         repository.save(newAuctionHouse)
+    }
+
+    fun updateTimes(id: Int, newLastModified: Instant?, isSuccess: Boolean) {
+        val auctionHouse = repository.findById(id)
     }
 
     fun findAllByRegion(region: Region) = repository.findAllByRegion(region)

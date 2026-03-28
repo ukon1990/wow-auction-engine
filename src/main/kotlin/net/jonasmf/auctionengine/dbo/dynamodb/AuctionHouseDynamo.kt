@@ -13,6 +13,7 @@ import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement
 import software.amazon.awssdk.services.dynamodb.model.KeyType
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType
+import kotlin.time.Instant
 
 @DynamoDbBean
 data class AuctionHouseDynamo(
@@ -28,13 +29,13 @@ data class AuctionHouseDynamo(
     var lastDailyPriceUpdate: Long = 0,
     var lastHistoryDeleteEvent: Long = 0,
     var lastHistoryDeleteEventDaily: Long = 0,
-    var lastModified: Long = 0,
-    var lastRequested: Long = 0,
-    var lastStatsInsert: Long = 0,
-    var lastTrendUpdateInitiation: Long = 0,
-    var lowestDelay: Long = 0,
+    var lastModified: Instant = Instant.fromEpochMilliseconds(0),
+    var lastRequested: Instant = Instant.fromEpochMilliseconds(0),
+    var lastStatsInsert: Instant = Instant.fromEpochMilliseconds(0),
+    var lastTrendUpdateInitiation: Instant = Instant.fromEpochMilliseconds(0),
+    var lowestDelay: Instant = Instant.fromEpochMilliseconds(0),
     @get:DynamoDbSecondarySortKey(indexNames = ["region-index"])
-    var nextUpdate: Long = 0,
+    var nextUpdate: Instant = Instant.fromEpochMilliseconds(0),
     var realms: List<RealmDynamo> = emptyList(),
     var realmSlugs: String = "",
     var size: Double = 0.0,
@@ -43,7 +44,7 @@ data class AuctionHouseDynamo(
             lastModified = 0L,
             url = "",
         ),
-    var updateAttempts: Long = 0,
+    var updateAttempts: Int = 0,
     var url: String = "",
 ) {
     companion object {
