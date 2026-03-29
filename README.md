@@ -174,6 +174,14 @@ Run the verification lifecycle:
 ./mvnw verify
 ```
 
+Enable the repo-managed pre-commit hook:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+That hook runs `ktlint:format` on staged Kotlin files before each commit and re-stages any autofixes.
+
 Format Kotlin sources:
 
 ```bash

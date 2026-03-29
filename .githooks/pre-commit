@@ -1,0 +1,86 @@
+#!/bin/sh
+
+set -eu
+
+if ! command -v git >/dev/null 2>&1; then
+  exit 0
+fi
+
+if [ ! -x "./mvnw" ]; then
+  echo "pre-commit: ./mvnw is not executable"
+  exit 1
+fi
+
+staged_files="$(git diff --cached --name-only --diff-filter=ACMR)"
+
+main_includes=""
+test_includes=""
+script_includes=""
+has_kotlin_files=0
+
+append_csv() {
+  current="$1"
+  value="$2"
+  if [ -z "$current" ]; then
+    printf '%s' "$value"
+  else
+    printf '%s,%s' "$current" "$value"
+  fi
+}
+
+for file in $staged_files; do
+  case "$file" in
+    src/main/kotlin/*.kt|src/main/kotlin/**/*.kt)
+      rel="${file#src/main/kotlin/}"
+      main_includes="$(append_csv "$main_includes" "$rel")"
+      has_kotlin_files=1
+      ;;
+    src/test/kotlin/*.kt|src/test/kotlin/**/*.kt)
+      rel="${file#src/test/kotlin/}"
+      test_includes="$(append_csv "$test_includes" "$rel")"
+      has_kotlin_files=1
+      ;;
+    *.kts)
+      script_includes="$(append_csv "$script_includes" "$file")"
+      has_kotlin_files=1
+      ;;
+  esac
+done
+
+if [ "$has_kotlin_files" -eq 0 ]; then
+  exit 0
+fi
+
+echo "pre-commit: formatting staged Kotlin files with ktlint"
+
+set -- "./mvnw" "-q" "ktlint:format"
+
+if [ -n "$main_includes" ]; then
+  set -- "$@" "-Dktlint.includeSources=true" "-Dktlint.sourcesIncludes=$main_includes"
+else
+  set -- "$@" "-Dktlint.includeSources=false"
+fi
+
+if [ -n "$test_includes" ]; then
+  set -- "$@" "-Dktlint.includeTestSources=true" "-Dktlint.testSourcesIncludes=$test_includes"
+else
+  set -- "$@" "-Dktlint.includeTestSources=false"
+fi
+
+if [ -n "$script_includes" ]; then
+  set -- "$@" "-Dktlint.includeScripts=true" "-Dktlint.scriptsIncludes=$script_includes"
+else
+  set -- "$@" "-Dktlint.includeScripts=false"
+fi
+
+"$@"
+
+for file in $staged_files; do
+  case "$file" in
+    *.kt|*.kts)
+      if [ -f "$file" ]; then
+        git add -- "$file"
+      fi
+      ;;
+  esac
+done
