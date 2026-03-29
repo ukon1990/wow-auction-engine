@@ -4,6 +4,7 @@ import aws.sdk.kotlin.services.s3.S3Client
 import net.jonasmf.auctionengine.config.DynamoDbIntegrationTestBase
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
+import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -30,8 +31,8 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
     @Autowired
     lateinit var auctionHouseService: AuctionHouseService
 
-    val auctionHouses = listOf<AuctionHouseDynamo>(
-        AuctionHouseDynamo(
+    val auctionHouses = listOf<AuctionHouse>(
+        AuctionHouse(
             id = 1,
             autoUpdate = true,
             region = Region.Korea,
@@ -39,7 +40,7 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
             nextUpdate = getOffsetFromNow(-10),
             lastModified = getOffsetFromNow(-70),
         ),
-        AuctionHouseDynamo(
+        AuctionHouse(
             id = 2,
             autoUpdate = true,
             region = Region.Korea,
@@ -47,7 +48,7 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
             nextUpdate = getOffsetFromNow(10),
             lastModified = getOffsetFromNow(-70),
         ),
-        AuctionHouseDynamo(
+        AuctionHouse(
             id = 3,
             autoUpdate = true,
             region = Region.Europe,
@@ -55,7 +56,7 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
             nextUpdate = getOffsetFromNow(10),
             lastModified = getOffsetFromNow(-50),
         ),
-        AuctionHouseDynamo(
+        AuctionHouse(
             id = 4,
             autoUpdate = true,
             region = Region.Europe,
@@ -63,7 +64,7 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
             nextUpdate = getOffsetFromNow(-20),
             lastModified = getOffsetFromNow(-80),
         ),
-        AuctionHouseDynamo(
+        AuctionHouse(
             id = 5,
             autoUpdate = true,
             region = Region.Europe,
@@ -71,7 +72,7 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
             nextUpdate = getOffsetFromNow(-50),
             lastModified = getOffsetFromNow(-100),
         ),
-        AuctionHouseDynamo(
+        AuctionHouse(
             id = 6,
             autoUpdate = true,
             region = Region.Europe,

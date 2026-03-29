@@ -1,8 +1,12 @@
 package net.jonasmf.auctionengine.dbo.dynamodb
 
 import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.dbo.dynamodb.converters.KotlinInstantAsLongAttributeConverter
+import net.jonasmf.auctionengine.dbo.dynamodb.converters.toKotlin
+import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.repository.dynamodb.AUCTION_HOUSE_TABLE_NAME
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbConvertedBy
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecondaryPartitionKey
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecondarySortKey
@@ -13,7 +17,7 @@ import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement
 import software.amazon.awssdk.services.dynamodb.model.KeyType
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType
-import kotlin.time.Instant
+import java.time.Instant
 
 @DynamoDbBean
 data class AuctionHouseDynamo(
@@ -26,16 +30,24 @@ data class AuctionHouseDynamo(
     var connectedId: Int = 0,
     var gameBuild: Int = 0,
     var highestDelay: Long = 0,
-    var lastDailyPriceUpdate: Long = 0,
-    var lastHistoryDeleteEvent: Long = 0,
-    var lastHistoryDeleteEventDaily: Long = 0,
-    var lastModified: Instant = Instant.fromEpochMilliseconds(0),
-    var lastRequested: Instant = Instant.fromEpochMilliseconds(0),
-    var lastStatsInsert: Instant = Instant.fromEpochMilliseconds(0),
-    var lastTrendUpdateInitiation: Instant = Instant.fromEpochMilliseconds(0),
-    var lowestDelay: Instant = Instant.fromEpochMilliseconds(0),
+    @get:DynamoDbConvertedBy(KotlinInstantAsLongAttributeConverter::class)
+    var lastDailyPriceUpdate: Instant? = null,
+    @get:DynamoDbConvertedBy(KotlinInstantAsLongAttributeConverter::class)
+    var lastHistoryDeleteEvent: Instant? = null,
+    @get:DynamoDbConvertedBy(KotlinInstantAsLongAttributeConverter::class)
+    var lastHistoryDeleteEventDaily: Instant? = null,
+    @get:DynamoDbConvertedBy(KotlinInstantAsLongAttributeConverter::class)
+    var lastModified: Instant? = null,
+    @get:DynamoDbConvertedBy(KotlinInstantAsLongAttributeConverter::class)
+    var lastRequested: Instant? = null,
+    @get:DynamoDbConvertedBy(KotlinInstantAsLongAttributeConverter::class)
+    var lastStatsInsert: Instant? = null,
+    @get:DynamoDbConvertedBy(KotlinInstantAsLongAttributeConverter::class)
+    var lastTrendUpdateInitiation: Instant? = null,
+    var lowestDelay: Int = 0,
     @get:DynamoDbSecondarySortKey(indexNames = ["region-index"])
-    var nextUpdate: Instant = Instant.fromEpochMilliseconds(0),
+    @get:DynamoDbConvertedBy(KotlinInstantAsLongAttributeConverter::class)
+    var nextUpdate: Instant? = null,
     var realms: List<RealmDynamo> = emptyList(),
     var realmSlugs: String = "",
     var size: Double = 0.0,

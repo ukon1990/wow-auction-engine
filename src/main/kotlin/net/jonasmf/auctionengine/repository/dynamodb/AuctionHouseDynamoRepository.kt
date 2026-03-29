@@ -3,11 +3,13 @@ package net.jonasmf.auctionengine.repository.dynamodb
 import io.awspring.cloud.dynamodb.DynamoDbOperations
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
+import net.jonasmf.auctionengine.domain.AuctionHouse
+import net.jonasmf.auctionengine.mapper.toDbo
 import org.springframework.stereotype.Repository
 import software.amazon.awssdk.enhanced.dynamodb.Key
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest
-import java.time.ZonedDateTime
+import java.time.Instant
 import java.util.Optional
 
 const val AUCTION_HOUSE_TABLE_NAME = "wah_auction_houses"
@@ -19,7 +21,7 @@ interface AuctionHouseDynamoRepository {
 
     fun findReadyForUpdateByRegion(region: Region): List<AuctionHouseDynamo>
 
-    fun save(auctionHouse: AuctionHouseDynamo): AuctionHouseDynamo
+    fun save(auctionHouse: AuctionHouse): AuctionHouseDynamo
 }
 
 @Repository
@@ -71,7 +73,7 @@ class AuctionHouseDynamoRepositoryIml(
                     .sortLessThanOrEqualTo(
                         Key.builder()
                             .partitionValue(region.name)
-                            .sortValue(ZonedDateTime.now().toEpochSecond())
+                            .sortValue(Instant.now().toEpochMilli())
                             .build(),
                     ),
             )
@@ -92,8 +94,8 @@ class AuctionHouseDynamoRepositoryIml(
         return pages.items().toList()
     }
 
-    override fun save(auctionHouse: AuctionHouseDynamo): AuctionHouseDynamo {
+    override fun save(auctionHouse: AuctionHouse): AuctionHouseDynamo {
         requireNotNull(auctionHouse.id) { "AuctionHouseDynamo.id must not be null when saving to DynamoDB" }
-        return dynamoDbOperations.save(auctionHouse)
+        return dynamoDbOperations.save(auctionHouse.toDbo())
     }
 }
