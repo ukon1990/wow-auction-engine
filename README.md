@@ -82,6 +82,13 @@ Start both with:
 docker compose -f docker-compose-db.yml up -d
 ```
 
+Floci persistence uses a Docker-managed named volume. If you previously ran an older setup that bind-mounted `./docker/floci`, recreate the container once so it stops using the old host directory:
+
+```bash
+docker compose -f docker-compose-db.yml down -v
+docker compose -f docker-compose-db.yml up -d
+```
+
 The MariaDB container creates the `dbo` database automatically from [`docker/initdb/01-init-schema.sql`](/Users/jonas/Dev/Hobby/wow-auction-engine/docker/initdb/01-init-schema.sql).
 
 ### 4. Run the application
@@ -216,6 +223,17 @@ Make sure you loaded `.env.local` into the same shell where you run `./mvnw spri
 Start the local containers:
 
 ```bash
+docker compose -f docker-compose-db.yml up -d
+```
+
+### Floci S3 access denied under `/app/data/s3`
+
+This was caused by an older bind-mounted `./docker/floci` directory with host-only permissions. The current setup uses a named Docker volume instead.
+
+Recreate the Floci container and its volume:
+
+```bash
+docker compose -f docker-compose-db.yml down -v
 docker compose -f docker-compose-db.yml up -d
 ```
 

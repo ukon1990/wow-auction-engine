@@ -4,6 +4,8 @@ import aws.sdk.kotlin.services.s3.S3Client
 import aws.sdk.kotlin.services.s3.model.BucketAlreadyExists
 import aws.sdk.kotlin.services.s3.model.BucketAlreadyOwnedByYou
 import aws.sdk.kotlin.services.s3.model.CreateBucketRequest
+import aws.sdk.kotlin.services.s3.model.ListBucketsRequest
+import aws.sdk.kotlin.services.s3.model.S3Exception
 import aws.smithy.kotlin.runtime.net.url.Url
 import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.utility.supportedBucketNames
@@ -63,7 +65,29 @@ class AmazonS3Config {
             }
 
             runBlocking {
+                val existingBuckets =
+                    try {
+                        amazonS3
+                            .listBuckets(ListBucketsRequest {})
+                            .buckets
+                            ?.mapNotNull { it.name }
+                            ?.toSet()
+                            .orEmpty()
+                    } catch (exception: Exception) {
+                        log.warn(
+                            "Failed to list S3 buckets at {}. Continuing with best-effort local bucket bootstrap.",
+                            endpoint,
+                            exception,
+                        )
+                        return@runBlocking
+                    }
+
                 supportedBucketNames.forEach { bucket ->
+                    if (bucket in existingBuckets) {
+                        log.info("S3 bucket {} already exists at {}", bucket, endpoint)
+                        return@forEach
+                    }
+
                     try {
                         amazonS3.createBucket(CreateBucketRequest { this.bucket = bucket })
                         log.info("Created S3 bucket {} at {}", bucket, endpoint)
@@ -71,6 +95,13 @@ class AmazonS3Config {
                         log.info("S3 bucket {} already exists at {}", bucket, endpoint)
                     } catch (_: BucketAlreadyExists) {
                         log.info("S3 bucket {} already exists at {}", bucket, endpoint)
+                    } catch (exception: S3Exception) {
+                        log.warn(
+                            "Failed to create S3 bucket {} at {}. Continuing startup because this is local-only bootstrap.",
+                            bucket,
+                            endpoint,
+                            exception,
+                        )
                     }
                 }
             }

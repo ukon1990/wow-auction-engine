@@ -16,6 +16,7 @@ abstract class FlociIntegrationTestBase : IntegrationTestBase() {
         val flociContainer: GenericContainer<*> =
             GenericContainer(flociImage)
                 .withExposedPorts(4566)
+                .withEnv("FLOCI_STORAGE_MODE", "memory")
                 .waitingFor(Wait.forListeningPort())
                 .withStartupTimeout(Duration.ofSeconds(30))
 
