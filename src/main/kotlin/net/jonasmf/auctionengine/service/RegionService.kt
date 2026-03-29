@@ -13,15 +13,14 @@ class RegionService(
 ) {
     val log: Logger = LoggerFactory.getLogger(RegionService::class.java)
 
-    private fun mapIdToValues(id: Int): Pair<String, Region> {
-        return when (id) {
+    private fun mapIdToValues(id: Int): Pair<String, Region> =
+        when (id) {
             1 -> Pair("US", Region.NorthAmerica)
             2 -> Pair("EU", Region.Europe)
             3 -> Pair("KR", Region.Korea)
             4 -> Pair("TW", Region.Taiwan)
             else -> Pair("Unknown", Region.Europe)
         }
-    }
 
     fun ensureRegionsExist() {
         val regionIds = listOf<Int>(1, 2, 3, 4)

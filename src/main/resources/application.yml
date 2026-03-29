@@ -9,7 +9,10 @@ spring:
         access-key: ${AWS_ACCESS_KEY:local-dev-key}
         secret-key: ${AWS_SECRET_KEY:local-dev-secret}
       dynamodb:
-        endpoint: "http://localhost:58000"
+        endpoint: "http://localhost:4566"
+      s3:
+        endpoint: "http://localhost:4566"
+        bootstrap-enabled: true
   datasource:
     url: "jdbc:mariadb://localhost:59000/dbo?serverTimezone=UTC&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true"
     username: root

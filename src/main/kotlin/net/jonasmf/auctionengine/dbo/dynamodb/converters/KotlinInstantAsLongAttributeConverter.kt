@@ -24,5 +24,5 @@ class KotlinInstantAsLongAttributeConverter : AttributeConverter<Instant> {
 
     override fun attributeValueType(): AttributeValueType = AttributeValueType.N
 }
-fun Instant.toKotlin(): kotlin.time.Instant =
-    kotlin.time.Instant.fromEpochMilliseconds(toEpochMilli())
+
+fun Instant.toKotlin(): kotlin.time.Instant = kotlin.time.Instant.fromEpochMilliseconds(toEpochMilli())

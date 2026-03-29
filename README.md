@@ -20,8 +20,8 @@ Backend service for ingesting, processing, and serving World of Warcraft auction
 - Spring Boot 3.5
 - Maven Wrapper (`./mvnw`)
 - MariaDB
-- DynamoDB Local for local development through AWSpring + AWS SDK v2
-- Testcontainers + LocalStack for tests
+- Floci for local AWS emulation (DynamoDB and S3)
+- Testcontainers for tests
 
 ## New Developer Quick Start
 
@@ -74,7 +74,7 @@ Use `Europe` for `WAE_BLIZZARD_REGION` unless you are intentionally changing reg
 The default local config expects:
 
 - MariaDB on `localhost:59000`
-- DynamoDB Local on `localhost:58000`
+- Floci on `localhost:4566`
 
 Start both with:
 
@@ -130,7 +130,8 @@ The default local datasource configuration lives in [`src/main/resources/applica
 - MariaDB URL: `jdbc:mariadb://localhost:59000/dbo`
 - MariaDB username: `root`
 - MariaDB password: `root`
-- DynamoDB Local endpoint: `http://localhost:58000`
+- DynamoDB endpoint: `http://localhost:4566`
+- S3 endpoint: `http://localhost:4566`
 - AWS region: `eu-west-1`
 - AWS access key: `local-dev-key`
 - AWS secret key: `local-dev-secret`
@@ -150,7 +151,7 @@ Useful detail for onboarding:
 - tests run with the `test` Spring profile
 - Blizzard credentials are stubbed in [`src/main/resources/application.test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.test.yml)
 - MariaDB runs through Testcontainers
-- DynamoDB is provided through LocalStack in tests
+- DynamoDB and S3 are provided through Floci-backed Testcontainers in integration tests
 - Docker Desktop or another working Docker daemon must be running for tests to pass
 
 ## Useful Commands
@@ -212,7 +213,7 @@ docker compose -f docker-compose-db.yml up -d
 
 ### Tests fail before Spring starts
 
-Check that Docker Desktop or your Docker daemon is running. The tests depend on Testcontainers and LocalStack, not on your manually started compose services.
+Check that Docker Desktop or your Docker daemon is running. The tests depend on Testcontainers and Floci, not on your manually started compose services.
 
 ### AWS SDK deprecation warning
 
@@ -220,5 +221,5 @@ The application should not initialize AWS SDK for Java 1.x anymore. If you see a
 
 Current local AWS integrations are:
 
-- DynamoDB Local through AWSpring `DynamoDbOperations` on AWS SDK v2
-- S3 uploads/downloads through the AWS SDK for Kotlin `S3Client`
+- DynamoDB through Floci + AWSpring `DynamoDbOperations`
+- S3 through Floci locally and the AWS SDK for Kotlin `S3Client`

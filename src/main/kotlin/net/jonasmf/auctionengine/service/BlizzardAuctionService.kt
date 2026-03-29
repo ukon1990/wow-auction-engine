@@ -23,7 +23,6 @@ import reactor.core.publisher.Mono
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.Locale
-import java.util.Optional
 import java.util.TimeZone
 import kotlin.math.min
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction as AuctionDBO

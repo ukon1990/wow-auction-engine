@@ -32,5 +32,4 @@ class AuctionHouse(
         ),
     var updateAttempts: Int = 0,
     var url: String = "",
-) {
-}
+)

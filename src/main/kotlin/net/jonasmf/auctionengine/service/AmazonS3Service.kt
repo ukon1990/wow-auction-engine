@@ -25,6 +25,8 @@ class AmazonS3Service(
     private val amazonS3: S3Client,
     @Value("\${spring.cloud.aws.region.static}")
     private val awsRegion: String,
+    @Value("\${spring.cloud.aws.s3.endpoint:}")
+    private val s3Endpoint: String,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AmazonS3Service::class.java)
 
@@ -79,7 +81,12 @@ class AmazonS3Service(
                 },
             )
         }
-        val url = "https://$bucketName.s3.$awsRegion.amazonaws.com/$fileName"
+        val url =
+            if (s3Endpoint.isBlank()) {
+                "https://$bucketName.s3.$awsRegion.amazonaws.com/$fileName"
+            } else {
+                "${s3Endpoint.trimEnd('/')}/$bucketName/$fileName"
+            }
         logger.info("Uploaded file to $url")
         return url
     }

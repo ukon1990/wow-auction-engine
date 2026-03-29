@@ -33,6 +33,7 @@
         <spring.cloud.aws.version>3.4.1</spring.cloud.aws.version>
         <jackson.version>2.21.2</jackson.version>
         <kotlin.version>2.3.20</kotlin.version>
+        <kotlinx.coroutines.version>1.10.2</kotlinx.coroutines.version>
         <junit.version>6.0.3</junit.version>
         <junit4.version>4.13.2</junit4.version>
         <jacoco.version>0.8.14</jacoco.version>
@@ -84,6 +85,11 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-core-jvm</artifactId>
+            <version>${kotlinx.coroutines.version}</version>
         </dependency>
 
         <dependency>
@@ -171,11 +177,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mariadb</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>localstack</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -272,6 +273,11 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>aws/sdk/kotlin/**</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>report</id>

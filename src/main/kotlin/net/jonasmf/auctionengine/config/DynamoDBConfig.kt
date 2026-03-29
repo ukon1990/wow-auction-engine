@@ -71,9 +71,10 @@ class DynamoDBConfig {
 
     private suspend fun createTableIfMissing(dynamoDbClient: DynamoDbClient) {
         try {
-            val tables = listOf(// The plan is to have more soon
-                AuctionHouseDynamo.createTableRequest(),
-            )
+            val tables =
+                listOf( // The plan is to have more soon
+                    AuctionHouseDynamo.createTableRequest(),
+                )
             tables.forEach { dynamoDbClient.createTable(it) }
             log.info("Created DynamoDB table {} at {}", AUCTION_HOUSE_TABLE_NAME, amazonDynamoDBEndpoint)
         } catch (_: ResourceInUseException) {

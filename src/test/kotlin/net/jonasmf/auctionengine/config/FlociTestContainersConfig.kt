@@ -2,11 +2,10 @@ package net.jonasmf.auctionengine.config
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import org.testcontainers.containers.localstack.LocalStackContainer
+import org.testcontainers.containers.GenericContainer
 
 @TestConfiguration(proxyBeanMethods = false)
-class DynamoDBTestContainersConfig {
-
+class FlociTestContainersConfig {
     @Bean(destroyMethod = "")
-    fun localStackContainer(): LocalStackContainer = DynamoDbIntegrationTestBase.localStackContainer
+    fun flociContainer(): GenericContainer<*> = FlociIntegrationTestBase.flociContainer
 }

@@ -12,6 +12,9 @@ spring:
                 secret-key: dummy-secret-key
             dynamodb:
                 endpoint: ""
+            s3:
+                endpoint: ""
+                bootstrap-enabled: false
 app:
     scheduling:
         enabled: false
@@ -26,5 +29,4 @@ logging:
         org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR
         org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
         org.springframework.beans.factory.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
-
 

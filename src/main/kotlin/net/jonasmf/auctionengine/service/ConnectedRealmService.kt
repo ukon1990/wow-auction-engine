@@ -1,9 +1,6 @@
 package net.jonasmf.auctionengine.service
 
 import NameSpace
-import aws.smithy.kotlin.runtime.collections.push
-import aws.smithy.kotlin.runtime.util.flattenIfPossible
-import jakarta.transaction.Transactional
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
@@ -101,13 +98,14 @@ class ConnectedRealmService(
         }
 
         log.info("Checking for updates...")
-        val connectedRealms = listOf(
-            communityRealms,
-            getAndUpdate(Region.NorthAmerica).block() ?: emptyList<ConnectedRealm>(),
-            getAndUpdate(Region.Europe).block() ?: emptyList<ConnectedRealm>(),
-            getAndUpdate(Region.Korea).block() ?: emptyList<ConnectedRealm>(),
-            getAndUpdate(Region.Taiwan).block() ?: emptyList<ConnectedRealm>(),
-        ).flatten()
+        val connectedRealms =
+            listOf(
+                communityRealms,
+                getAndUpdate(Region.NorthAmerica).block() ?: emptyList<ConnectedRealm>(),
+                getAndUpdate(Region.Europe).block() ?: emptyList<ConnectedRealm>(),
+                getAndUpdate(Region.Korea).block() ?: emptyList<ConnectedRealm>(),
+                getAndUpdate(Region.Taiwan).block() ?: emptyList<ConnectedRealm>(),
+            ).flatten()
 
         for (realm in connectedRealms) {
             auctionHouseService.createIfMissing(realm)
@@ -178,16 +176,17 @@ class ConnectedRealmService(
         connectedDBO: ConnectedRealm,
         region: Region,
     ): Mono<ConnectedRealm> =
-        Mono.fromCallable {
-            val existingRealm = connectedRealmRepository.findById(connectedDBO.id)
+        Mono
+            .fromCallable {
+                val existingRealm = connectedRealmRepository.findById(connectedDBO.id)
 
-            if (existingRealm.isPresent) {
-                existingRealm.get()
-            } else {
-                log.info("Saving new connected realm ${connectedDBO.id} for region ${region.name}")
-                connectedRealmRepository.save(connectedDBO)
-            }
-        }.subscribeOn(Schedulers.boundedElastic())
+                if (existingRealm.isPresent) {
+                    existingRealm.get()
+                } else {
+                    log.info("Saving new connected realm ${connectedDBO.id} for region ${region.name}")
+                    connectedRealmRepository.save(connectedDBO)
+                }
+            }.subscribeOn(Schedulers.boundedElastic())
 
     private fun getConnectedRealmIndex(region: Region): Mono<ConnectedRealmIndex> {
         log.info("Fetching connected realm index...")

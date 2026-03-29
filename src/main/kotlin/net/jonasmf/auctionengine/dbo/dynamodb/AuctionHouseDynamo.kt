@@ -2,8 +2,6 @@ package net.jonasmf.auctionengine.dbo.dynamodb
 
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.converters.KotlinInstantAsLongAttributeConverter
-import net.jonasmf.auctionengine.dbo.dynamodb.converters.toKotlin
-import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.repository.dynamodb.AUCTION_HOUSE_TABLE_NAME
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbConvertedBy
@@ -88,7 +86,8 @@ data class AuctionHouseDynamo(
                         .keyType(KeyType.HASH)
                         .build(),
                 ).globalSecondaryIndexes(
-                    GlobalSecondaryIndex.builder()
+                    GlobalSecondaryIndex
+                        .builder()
                         .indexName("region-index")
                         .keySchema(
                             KeySchemaElement
@@ -101,10 +100,8 @@ data class AuctionHouseDynamo(
                                 .attributeName("nextUpdate")
                                 .keyType(KeyType.RANGE)
                                 .build(),
-                        )
-                        .projection { it.projectionType("ALL") }
+                        ).projection { it.projectionType("ALL") }
                         .build(),
                 ).build()
-
     }
 }

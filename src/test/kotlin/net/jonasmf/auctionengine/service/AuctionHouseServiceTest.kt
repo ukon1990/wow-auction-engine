@@ -3,21 +3,16 @@ package net.jonasmf.auctionengine.service
 import aws.sdk.kotlin.services.s3.S3Client
 import net.jonasmf.auctionengine.config.DynamoDbIntegrationTestBase
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.greaterThan
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.bean.override.mockito.MockitoBean
-import java.time.temporal.ChronoUnit
 import kotlin.test.assertTrue
 import kotlin.time.Clock
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
@@ -34,68 +29,86 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
     @Autowired
     lateinit var auctionHouseService: AuctionHouseService
 
-    val auctionHouses = listOf<AuctionHouse>(
-        AuctionHouse(
-            id = 1,
-            autoUpdate = true,
-            region = Region.Korea,
-            avgDelay = 60,
-            nextUpdate = getOffsetFromNow(-10),
-            lastModified = getOffsetFromNow(-70),
-        ),
-        AuctionHouse(
-            id = 2,
-            autoUpdate = true,
-            region = Region.Korea,
-            avgDelay = 60,
-            nextUpdate = getOffsetFromNow(10),
-            lastModified = getOffsetFromNow(-70),
-        ),
-        AuctionHouse(
-            id = 3,
-            autoUpdate = true,
-            region = Region.Europe,
-            avgDelay = 60,
-            nextUpdate = getOffsetFromNow(10),
-            lastModified = getOffsetFromNow(-50),
-        ),
-        AuctionHouse(
-            id = 4,
-            autoUpdate = true,
-            region = Region.Europe,
-            avgDelay = 60,
-            nextUpdate = getOffsetFromNow(-20),
-            lastModified = getOffsetFromNow(-80),
-        ),
-        AuctionHouse(
-            id = 5,
-            autoUpdate = true,
-            region = Region.Europe,
-            avgDelay = 60,
-            nextUpdate = getOffsetFromNow(-50),
-            lastModified = getOffsetFromNow(-100),
-        ),
-        AuctionHouse(
-            id = 6,
-            autoUpdate = true,
-            region = Region.Europe,
-            avgDelay = 60,
-            nextUpdate = getOffsetFromNow(-90),
-            lastModified = getOffsetFromNow(-120),
-        ),
-    )
+    val auctionHouses =
+        listOf<AuctionHouse>(
+            AuctionHouse(
+                id = 1,
+                autoUpdate = true,
+                region = Region.Korea,
+                avgDelay = 60,
+                nextUpdate = getOffsetFromNow(-10),
+                lastModified = getOffsetFromNow(-70),
+            ),
+            AuctionHouse(
+                id = 2,
+                autoUpdate = true,
+                region = Region.Korea,
+                avgDelay = 60,
+                nextUpdate = getOffsetFromNow(10),
+                lastModified = getOffsetFromNow(-70),
+            ),
+            AuctionHouse(
+                id = 3,
+                autoUpdate = true,
+                region = Region.Europe,
+                avgDelay = 60,
+                nextUpdate = getOffsetFromNow(10),
+                lastModified = getOffsetFromNow(-50),
+            ),
+            AuctionHouse(
+                id = 4,
+                autoUpdate = true,
+                region = Region.Europe,
+                avgDelay = 60,
+                nextUpdate = getOffsetFromNow(-20),
+                lastModified = getOffsetFromNow(-80),
+            ),
+            AuctionHouse(
+                id = 5,
+                autoUpdate = true,
+                region = Region.Europe,
+                avgDelay = 60,
+                nextUpdate = getOffsetFromNow(-50),
+                lastModified = getOffsetFromNow(-100),
+            ),
+            AuctionHouse(
+                id = 6,
+                autoUpdate = true,
+                region = Region.Europe,
+                avgDelay = 60,
+                nextUpdate = getOffsetFromNow(-90),
+                lastModified = getOffsetFromNow(-120),
+            ),
+        )
 
-    fun getOffsetFromNow(minutes: Int): Instant {
-        return Clock.System.now().plus(minutes.minutes)
-    }
+    fun getOffsetFromNow(minutes: Int): Instant = Clock.System.now().plus(minutes.minutes)
 
     @BeforeEach
     fun setUp() {
         auctionHouses.forEach { repository.save(it) }
     }
 
+    private fun assertInstantEqualsToMillis(
+        expected: Instant?,
+        actual: Instant?,
+    ) {
+        assertEquals(expected?.toEpochMilliseconds(), actual?.toEpochMilliseconds())
+    }
+
+    private fun assertInstantCloseTo(
+        expected: Instant?,
+        actual: Instant?,
+        toleranceMs: Long = 2_000,
+    ) {
+        val expectedMillis = expected?.toEpochMilliseconds()
+        val actualMillis = actual?.toEpochMilliseconds()
+        requireNotNull(expectedMillis)
+        requireNotNull(actualMillis)
+        assertTrue { kotlin.math.abs(expectedMillis - actualMillis) <= toleranceMs }
+    }
+
     @Nested
-    inner class UpdateTimes() {
+    inner class UpdateTimes {
         @Test
         fun `should update the next update time, based on avg delay + last modified on successful update`() {
             val originalState = auctionHouses.find { it.id == 1 }
@@ -103,9 +116,9 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
             auctionHouseService.updateTimes(1, newLastModified, true)
 
             val result = repository.findById(1).get()
-            assertEquals(newLastModified, result.lastModified)
+            assertInstantEqualsToMillis(newLastModified, result.lastModified)
             assertEquals(60, result.avgDelay)
-            assertEquals(getOffsetFromNow(60), result.nextUpdate)
+            assertInstantCloseTo(getOffsetFromNow(60), result.nextUpdate)
         }
 
         @Test
@@ -114,13 +127,15 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
             auctionHouseService.updateTimes(1, null, false)
 
             val result = repository.findById(1).get()
-            assertEquals(originalState?.lastModified, result.lastModified)
-            assertTrue { result.nextUpdate?.toEpochMilliseconds()!! > originalState?.nextUpdate?.toEpochMilliseconds()!! }
+            assertInstantEqualsToMillis(originalState?.lastModified, result.lastModified)
+            assertTrue {
+                result.nextUpdate?.toEpochMilliseconds()!! > originalState?.nextUpdate?.toEpochMilliseconds()!!
+            }
         }
     }
 
     @Nested
-    inner class GetReadyForUpdate() {
+    inner class GetReadyForUpdate {
         @Test
         fun `should only return auction houses for the given region where an update is due`() {
             val result = auctionHouseService.getReadyForUpdate(Region.Europe)

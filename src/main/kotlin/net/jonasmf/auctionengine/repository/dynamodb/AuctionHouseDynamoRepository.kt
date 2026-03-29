@@ -47,17 +47,18 @@ class AuctionHouseDynamoRepositoryIml(
     }
 
     override fun findAllByRegion(region: Region): List<AuctionHouseDynamo> {
-        val queryParams = QueryEnhancedRequest
-            .builder()
-            .queryConditional(
-                QueryConditional
-                    .keyEqualTo(
-                        Key.builder()
-                            .partitionValue(region.name)
-                            .build(),
-                    ),
-            )
-            .build()
+        val queryParams =
+            QueryEnhancedRequest
+                .builder()
+                .queryConditional(
+                    QueryConditional
+                        .keyEqualTo(
+                            Key
+                                .builder()
+                                .partitionValue(region.name)
+                                .build(),
+                        ),
+                ).build()
 
         return queryByRegionIndex(queryParams)
     }
@@ -67,19 +68,20 @@ class AuctionHouseDynamoRepositoryIml(
      * Returns the 50 oldest updates for the given region, sorted by nextUpdate ascending.
      */
     override fun findReadyForUpdateByRegion(region: Region): List<AuctionHouseDynamo> {
-        val queryParams = QueryEnhancedRequest
-            .builder()
-            .queryConditional(
-                QueryConditional
-                    .sortLessThanOrEqualTo(
-                        Key.builder()
-                            .partitionValue(region.name)
-                            .sortValue(Instant.now().toEpochMilli())
-                            .build(),
-                    ),
-            )
-            .limit(50)
-            .build()
+        val queryParams =
+            QueryEnhancedRequest
+                .builder()
+                .queryConditional(
+                    QueryConditional
+                        .sortLessThanOrEqualTo(
+                            Key
+                                .builder()
+                                .partitionValue(region.name)
+                                .sortValue(Instant.now().toEpochMilli())
+                                .build(),
+                        ),
+                ).limit(50)
+                .build()
 
         return queryByRegionIndex(queryParams)
     }

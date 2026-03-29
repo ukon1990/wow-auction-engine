@@ -12,17 +12,12 @@ services:
     volumes:
       - "./docker/initdb:/docker-entrypoint-initdb.d:ro"
 
-  dynamodb-local:
-    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "./data"]
-    image: "amazon/dynamodb-local:latest"
+  floci:
+    image: "hectorvent/floci:latest"
     ports:
-      - "58000:8000"
+      - "4566:4566"
     volumes:
-      - "./docker/dynamodb:/home/dynamodblocal/data"
-    working_dir: /home/dynamodblocal
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sS http://127.0.0.1:8000/ >/dev/null || exit 1"]
-      interval: 5s
-      timeout: 3s
-      retries: 12
-      start_period: 5s
+      - "./docker/floci:/app/data"
+    environment:
+      FLOCI_STORAGE_MODE: persistent
+      FLOCI_STORAGE_PERSISTENT_PATH: /app/data

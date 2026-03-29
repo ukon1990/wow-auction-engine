@@ -27,11 +27,12 @@ data class RealmDTO(
         val locale = Locale.fromCompactString(locale)
         return Realm(
             id = id,
-            region = RegionDBO(
-                region?.id,
-                region?.name?.en_GB ?: Region.Europe.name,
-                region?.type ?: Region.Europe
-            ),
+            region =
+                RegionDBO(
+                    region?.id,
+                    region?.name?.en_GB ?: Region.Europe.name,
+                    region?.type ?: Region.Europe,
+                ),
             name = localeToProperty(locale, name) ?: name.en_GB,
             category = category.en_GB,
             locale = locale,

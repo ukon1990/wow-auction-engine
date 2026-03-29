@@ -8,4 +8,3 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 @Import(MariaDBTestcontainersConfig::class, StubAuthWebClientConfig::class)
 abstract class IntegrationTestBase
-
