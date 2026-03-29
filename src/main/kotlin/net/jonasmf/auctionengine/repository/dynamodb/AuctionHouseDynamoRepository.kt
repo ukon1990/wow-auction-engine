@@ -5,6 +5,7 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.mapper.toDbo
+import net.jonasmf.auctionengine.mapper.toDomain
 import org.springframework.stereotype.Repository
 import software.amazon.awssdk.enhanced.dynamodb.Key
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional
@@ -15,7 +16,7 @@ import java.util.Optional
 const val AUCTION_HOUSE_TABLE_NAME = "wah_auction_houses"
 
 interface AuctionHouseDynamoRepository {
-    fun findById(id: Int?): Optional<AuctionHouseDynamo>
+    fun findById(id: Int?): Optional<AuctionHouse>
 
     fun findAllByRegion(region: Region): List<AuctionHouseDynamo>
 
@@ -28,7 +29,7 @@ interface AuctionHouseDynamoRepository {
 class AuctionHouseDynamoRepositoryIml(
     private val dynamoDbOperations: DynamoDbOperations,
 ) : AuctionHouseDynamoRepository {
-    override fun findById(id: Int?): Optional<AuctionHouseDynamo> {
+    override fun findById(id: Int?): Optional<AuctionHouse> {
         if (id == null) {
             return Optional.empty()
         }
@@ -42,7 +43,7 @@ class AuctionHouseDynamoRepositoryIml(
                 AuctionHouseDynamo::class.java,
             )
 
-        return Optional.ofNullable(entity)
+        return Optional.ofNullable(entity?.toDomain())
     }
 
     override fun findAllByRegion(region: Region): List<AuctionHouseDynamo> {

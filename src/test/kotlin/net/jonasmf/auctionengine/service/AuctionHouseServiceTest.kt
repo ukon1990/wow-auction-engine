@@ -6,6 +6,8 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.greaterThan
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import java.time.temporal.ChronoUnit
+import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -103,6 +106,16 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
             assertEquals(newLastModified, result.lastModified)
             assertEquals(60, result.avgDelay)
             assertEquals(getOffsetFromNow(60), result.nextUpdate)
+        }
+
+        @Test
+        fun `should add a delay based on the number of failed attempts`() {
+            val originalState = auctionHouses.find { it.id == 1 }
+            auctionHouseService.updateTimes(1, null, false)
+
+            val result = repository.findById(1).get()
+            assertEquals(originalState?.lastModified, result.lastModified)
+            assertTrue { result.nextUpdate?.toEpochMilliseconds()!! > originalState?.nextUpdate?.toEpochMilliseconds()!! }
         }
     }
 
