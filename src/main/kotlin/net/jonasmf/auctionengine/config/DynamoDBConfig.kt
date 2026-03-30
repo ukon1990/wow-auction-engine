@@ -5,7 +5,9 @@ import io.awspring.cloud.dynamodb.DynamoDbTableNameResolver
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
+import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseUpdateLog
 import net.jonasmf.auctionengine.repository.dynamodb.AUCTION_HOUSE_TABLE_NAME
+import net.jonasmf.auctionengine.repository.dynamodb.AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.config.BeanDefinition
@@ -24,6 +26,17 @@ import software.amazon.awssdk.services.dynamodb.model.TableStatus
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 class DynamoDBConfig {
     private val log = LoggerFactory.getLogger(DynamoDBConfig::class.java)
+    private val tables =
+        listOf(
+            AuctionHouseDynamo.createTableRequest(),
+            AuctionHouseUpdateLog.createTableRequest(),
+        )
+    private val tableNames =
+        listOf<String>(
+            AUCTION_HOUSE_TABLE_NAME,
+            AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME,
+        )
+    private val tableNamesJoined = tableNames.joinToString { ", " }
 
     @Value("\${spring.cloud.aws.dynamodb.endpoint:}")
     private val amazonDynamoDBEndpoint: String? = null
@@ -34,10 +47,10 @@ class DynamoDBConfig {
         val defaultResolver = DefaultDynamoDbTableNameResolver()
         return object : DynamoDbTableNameResolver {
             override fun <T : Any?> resolve(clazz: Class<T>): String =
-                if (clazz == AuctionHouseDynamo::class.java) {
-                    AUCTION_HOUSE_TABLE_NAME
-                } else {
-                    defaultResolver.resolve(clazz)
+                when (clazz) {
+                    AuctionHouseUpdateLog::class.java -> AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME
+                    AuctionHouseDynamo::class.java -> AUCTION_HOUSE_TABLE_NAME
+                    else -> defaultResolver.resolve(clazz)
                 }
         }
     }
@@ -57,11 +70,11 @@ class DynamoDBConfig {
                     createTableIfMissing(dynamoDbClient)
                     waitUntilActive(dynamoDbClient)
                 }
-                log.info("DynamoDB table {} is active at {}", AUCTION_HOUSE_TABLE_NAME, endpoint)
+                log.info("DynamoDB tables {} is active at {}", tableNamesJoined, endpoint)
             } catch (exception: Exception) {
                 log.error(
-                    "Failed to initialize DynamoDB table {} at {}",
-                    AUCTION_HOUSE_TABLE_NAME,
+                    "Failed to initialize DynamoDB tables {} at {}",
+                    tableNamesJoined,
                     endpoint,
                     exception,
                 )
@@ -71,14 +84,10 @@ class DynamoDBConfig {
 
     private suspend fun createTableIfMissing(dynamoDbClient: DynamoDbClient) {
         try {
-            val tables =
-                listOf( // The plan is to have more soon
-                    AuctionHouseDynamo.createTableRequest(),
-                )
             tables.forEach { dynamoDbClient.createTable(it) }
-            log.info("Created DynamoDB table {} at {}", AUCTION_HOUSE_TABLE_NAME, amazonDynamoDBEndpoint)
+            log.info("Created DynamoDB tables {} at {}", tableNamesJoined, amazonDynamoDBEndpoint)
         } catch (_: ResourceInUseException) {
-            log.info("DynamoDB table {} already exists at {}", AUCTION_HOUSE_TABLE_NAME, amazonDynamoDBEndpoint)
+            log.info("DynamoDB tables {} already exists at {}", tableNamesJoined, amazonDynamoDBEndpoint)
         }
     }
 
@@ -86,16 +95,18 @@ class DynamoDBConfig {
         repeat(20) {
             try {
                 val tableStatus =
-                    dynamoDbClient
-                        .describeTable(
-                            DescribeTableRequest
-                                .builder()
-                                .tableName(AUCTION_HOUSE_TABLE_NAME)
-                                .build(),
-                        ).table()
-                        ?.tableStatus()
+                    tableNames.map {
+                        dynamoDbClient
+                            .describeTable(
+                                DescribeTableRequest
+                                    .builder()
+                                    .tableName(it)
+                                    .build(),
+                            ).table()
+                            ?.tableStatus()
+                    }
 
-                if (tableStatus == TableStatus.ACTIVE) {
+                if (tableStatus.all { it == TableStatus.ACTIVE }) {
                     return
                 }
             } catch (_: ResourceNotFoundException) {

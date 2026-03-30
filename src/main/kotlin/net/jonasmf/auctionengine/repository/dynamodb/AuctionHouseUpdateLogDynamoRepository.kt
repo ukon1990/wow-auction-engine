@@ -1,0 +1,5 @@
+package net.jonasmf.auctionengine.repository.dynamodb
+
+var AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME = "wah_auction_houses_update_log"
+
+class AuctionHouseUpdateLogDynamoRepository

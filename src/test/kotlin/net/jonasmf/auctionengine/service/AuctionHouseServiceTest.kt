@@ -110,6 +110,18 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
     @Nested
     inner class UpdateTimes {
         @Test
+        fun `should fallback to 60 minutes avg `() {
+        }
+
+        @Test
+        fun `Should set no longer than 120 minutes avg delay`() {
+        }
+
+        @Test
+        fun `should be no less than 30 minutes avg delay`() {
+        }
+
+        @Test
         fun `should update the next update time, based on avg delay + last modified on successful update`() {
             val originalState = auctionHouses.find { it.id == 1 }
             val newLastModified = originalState?.lastModified?.plus(60.minutes)
