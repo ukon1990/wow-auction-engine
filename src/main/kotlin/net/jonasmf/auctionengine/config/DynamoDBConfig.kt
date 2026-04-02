@@ -5,7 +5,7 @@ import io.awspring.cloud.dynamodb.DynamoDbTableNameResolver
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
-import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseUpdateLog
+import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseUpdateLogDynamo
 import net.jonasmf.auctionengine.repository.dynamodb.AUCTION_HOUSE_TABLE_NAME
 import net.jonasmf.auctionengine.repository.dynamodb.AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME
 import org.slf4j.LoggerFactory
@@ -29,7 +29,7 @@ class DynamoDBConfig {
     private val tables =
         listOf(
             AuctionHouseDynamo.createTableRequest(),
-            AuctionHouseUpdateLog.createTableRequest(),
+            AuctionHouseUpdateLogDynamo.createTableRequest(),
         )
     private val tableNames =
         listOf<String>(
@@ -48,7 +48,7 @@ class DynamoDBConfig {
         return object : DynamoDbTableNameResolver {
             override fun <T : Any?> resolve(clazz: Class<T>): String =
                 when (clazz) {
-                    AuctionHouseUpdateLog::class.java -> AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME
+                    AuctionHouseUpdateLogDynamo::class.java -> AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME
                     AuctionHouseDynamo::class.java -> AUCTION_HOUSE_TABLE_NAME
                     else -> defaultResolver.resolve(clazz)
                 }
