@@ -4,30 +4,39 @@ import aws.sdk.kotlin.services.s3.S3Client
 import net.jonasmf.auctionengine.config.DynamoDbIntegrationTestBase
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.domain.AuctionHouse
+import net.jonasmf.auctionengine.domain.AuctionHouseUpdateLog
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
+import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseUpdateLogDynamoRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.TestConstructor
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
-class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
+@SpringBootTest
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+@ExtendWith(SpringExtension::class)
+class AuctionHouseServiceTest(
+    var auctionHouseService: AuctionHouseService,
+    var repository: AuctionHouseDynamoRepository,
+    var auctionHouseUpdateLogDynamoRepository: AuctionHouseUpdateLogDynamoRepository,
+) : DynamoDbIntegrationTestBase() {
     @MockitoBean
     lateinit var amazonS3: S3Client
 
     @MockitoBean
     lateinit var connectedRealmService: ConnectedRealmService
 
-    @Autowired
-    lateinit var repository: AuctionHouseDynamoRepository
-
-    @Autowired
-    lateinit var auctionHouseService: AuctionHouseService
+    val auctionHouseIdWithLogs = 4
+    val auctionHouseIdWithLogsLastModified = getOffsetFromNow(-80)
 
     val auctionHouses =
         listOf<AuctionHouse>(
@@ -56,12 +65,12 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
                 lastModified = getOffsetFromNow(-50),
             ),
             AuctionHouse(
-                id = 4,
+                id = auctionHouseIdWithLogs,
                 autoUpdate = true,
                 region = Region.Europe,
                 avgDelay = 60,
                 nextUpdate = getOffsetFromNow(-20),
-                lastModified = getOffsetFromNow(-80),
+                lastModified = auctionHouseIdWithLogsLastModified,
             ),
             AuctionHouse(
                 id = 5,
@@ -81,11 +90,29 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
             ),
         )
 
+    var updateLogs: List<AuctionHouseUpdateLog> = List<AuctionHouseUpdateLog>(10) {
+        AuctionHouseUpdateLog(
+            id = auctionHouseIdWithLogs,
+            lastModified = auctionHouseIdWithLogsLastModified.minus((it * 60).minutes),
+            size = 1,
+            url = "",
+            timeSincePreviousDump = 0, // Not relevant, the repo sets it.
+        )
+    }
+
     fun getOffsetFromNow(minutes: Int): Instant = Clock.System.now().plus(minutes.minutes)
 
     @BeforeEach
     fun setUp() {
         auctionHouses.forEach { repository.save(it) }
+        updateLogs.forEach {
+            auctionHouseUpdateLogDynamoRepository.save(
+                it.id,
+                it.lastModified,
+                it.size,
+                it.url,
+            )
+        }
     }
 
     private fun assertInstantEqualsToMillis(
@@ -131,6 +158,11 @@ class AuctionHouseServiceTest : DynamoDbIntegrationTestBase() {
             assertInstantEqualsToMillis(newLastModified, result.lastModified)
             assertEquals(60, result.avgDelay)
             assertInstantCloseTo(getOffsetFromNow(60), result.nextUpdate)
+
+            // Should also add a new entry into last modified log
+
+            val logEntries = auctionHouseUpdateLogDynamoRepository.findByIdAndMostRecentLastModified(1)
+            assertEquals(2, logEntries.size)
         }
 
         @Test
