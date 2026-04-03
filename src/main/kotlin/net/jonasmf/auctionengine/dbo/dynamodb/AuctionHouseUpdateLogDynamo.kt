@@ -24,9 +24,9 @@ data class AuctionHouseUpdateLogDynamo(
     @get:DynamoDbConvertedBy(KotlinInstantAsLongAttributeConverter::class)
     var lastModified: Instant = Instant.now(),
 
-    var size: Int = 0,
+    var size: Double = 0.0,
     var timeSincePreviousDump: Long = 0L,
-    var url: String = ""
+    var url: String = "",
 ) {
     companion object {
         fun createTableRequest(): CreateTableRequest =
@@ -56,8 +56,7 @@ data class AuctionHouseUpdateLogDynamo(
                         .attributeType(ScalarAttributeType.S)
                         .build(),
 
-                )
-                .keySchema(
+                ).keySchema(
                     KeySchemaElement
                         .builder()
                         .attributeName("id")
@@ -67,9 +66,8 @@ data class AuctionHouseUpdateLogDynamo(
                         .builder()
                         .attributeName("lastModified")
                         .keyType(KeyType.RANGE)
-                        .build()
-                )
-                .globalSecondaryIndexes(
+                        .build(),
+                ).globalSecondaryIndexes(
                     GlobalSecondaryIndex
                         .builder()
                         .keySchema(

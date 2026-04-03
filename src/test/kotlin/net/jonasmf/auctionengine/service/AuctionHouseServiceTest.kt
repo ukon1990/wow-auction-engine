@@ -7,6 +7,7 @@ import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.domain.AuctionHouseUpdateLog
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseUpdateLogDynamoRepository
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -90,15 +91,16 @@ class AuctionHouseServiceTest(
             ),
         )
 
-    var updateLogs: List<AuctionHouseUpdateLog> = List<AuctionHouseUpdateLog>(10) {
-        AuctionHouseUpdateLog(
-            id = auctionHouseIdWithLogs,
-            lastModified = auctionHouseIdWithLogsLastModified.minus((it * 60).minutes),
-            size = 1,
-            url = "",
-            timeSincePreviousDump = 0, // Not relevant, the repo sets it.
-        )
-    }
+    var updateLogs: List<AuctionHouseUpdateLog> =
+        List<AuctionHouseUpdateLog>(10) {
+            AuctionHouseUpdateLog(
+                id = auctionHouseIdWithLogs,
+                lastModified = auctionHouseIdWithLogsLastModified.minus((it * 60).minutes),
+                size = 1.0,
+                url = "",
+                timeSincePreviousDump = 0, // Not relevant, the repo sets it.
+            )
+        }
 
     fun getOffsetFromNow(minutes: Int): Instant = Clock.System.now().plus(minutes.minutes)
 
@@ -113,6 +115,12 @@ class AuctionHouseServiceTest(
                 it.url,
             )
         }
+    }
+
+    @AfterEach
+    fun tearDown() {
+        repository.clear()
+        auctionHouseUpdateLogDynamoRepository.clear()
     }
 
     private fun assertInstantEqualsToMillis(

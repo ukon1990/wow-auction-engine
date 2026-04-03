@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository
 import software.amazon.awssdk.enhanced.dynamodb.Key
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest
-import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 
@@ -19,84 +18,99 @@ interface AuctionHouseUpdateLogDynamoRepository {
 
     fun findNewestEntryForConnectedRealm(connectedRealmId: Int): AuctionHouseUpdateLog?
 
-    fun save(connectedId: Int, lastModified: Instant, size: Int, url: String): AuctionHouseUpdateLog
+    fun save(
+        connectedId: Int,
+        lastModified: Instant,
+        size: Double,
+        url: String,
+    ): AuctionHouseUpdateLog
 }
 
 @Repository
 class AuctionHouseUpdateLogDynamoRepositoryImpl(
     private val dynamoDbOperations: DynamoDbOperations,
 ) : AuctionHouseUpdateLogDynamoRepository {
-    override fun findByIdAndMostRecentLastModified(
-        connectedRealmId: Int,
-    ): List<AuctionHouseUpdateLog> {
-        val query = QueryEnhancedRequest
-            .builder()
-            .queryConditional(
-                QueryConditional
-                    .keyEqualTo (
-                        Key
-                            .builder()
-                            .partitionValue(connectedRealmId)
-                            .build()
-                    )
-            )
-            .scanIndexForward(false)
-            // Would be about 72 hours ish depending on if the realm is actively updated or not
-            .limit(72)
-            .build()
+    override fun findByIdAndMostRecentLastModified(connectedRealmId: Int): List<AuctionHouseUpdateLog> {
+        val query =
+            QueryEnhancedRequest
+                .builder()
+                .queryConditional(
+                    QueryConditional
+                        .keyEqualTo(
+                            Key
+                                .builder()
+                                .partitionValue(connectedRealmId)
+                                .build(),
+                        ),
+                ).scanIndexForward(false)
+                // Would be about 72 hours ish depending on if the realm is actively updated or not
+                .limit(72)
+                .build()
 
-        val pages = dynamoDbOperations.query<AuctionHouseUpdateLogDynamo>(
-            query,
-            AuctionHouseUpdateLogDynamo::class.java,
-        )
+        val pages =
+            dynamoDbOperations.query<AuctionHouseUpdateLogDynamo>(
+                query,
+                AuctionHouseUpdateLogDynamo::class.java,
+            )
         return pages.items().toList().map { it.toDomain() }
     }
 
     override fun findNewestEntryForConnectedRealm(connectedRealmId: Int): AuctionHouseUpdateLog? {
-        val query = QueryEnhancedRequest
-            .builder()
-            .queryConditional(
-                QueryConditional
-                    .keyEqualTo(
-                        Key
-                            .builder()
-                            .partitionValue(connectedRealmId)
-                            .build(),
-                    ),
-            )
-            .scanIndexForward(false)
-            .limit(1)
-            .build()
+        val query =
+            QueryEnhancedRequest
+                .builder()
+                .queryConditional(
+                    QueryConditional
+                        .keyEqualTo(
+                            Key
+                                .builder()
+                                .partitionValue(connectedRealmId)
+                                .build(),
+                        ),
+                ).scanIndexForward(false)
+                .limit(1)
+                .build()
 
-        val pages = dynamoDbOperations.query<AuctionHouseUpdateLogDynamo>(
-            query,
-            AuctionHouseUpdateLogDynamo::class.java,
-        )
+        val pages =
+            dynamoDbOperations.query<AuctionHouseUpdateLogDynamo>(
+                query,
+                AuctionHouseUpdateLogDynamo::class.java,
+            )
         val items = pages.items().toList()
         return if (items.isNotEmpty()) {
-            pages.items().toList().map { it.toDomain() }.first()
-        } else null
+            pages
+                .items()
+                .toList()
+                .map { it.toDomain() }
+                .first()
+        } else {
+            null
+        }
     }
 
     override fun save(
         connectedId: Int,
         lastModified: Instant,
-        size: Int,
+        size: Double,
         url: String,
     ): AuctionHouseUpdateLog {
         val previousLogEntry = this.findNewestEntryForConnectedRealm(connectedId)
         val timeSincePrevious =
-            if (previousLogEntry == null) 0
-            else lastModified.minus(previousLogEntry.lastModified).inWholeMilliseconds
+            if (previousLogEntry == null) {
+                0
+            } else {
+                lastModified.minus(previousLogEntry.lastModified).inWholeMilliseconds
+            }
 
-        return dynamoDbOperations.save(
-            AuctionHouseUpdateLogDynamo(
-                id = connectedId,
-                lastModified = lastModified.toJavaInstant(),
-                timeSincePreviousDump = timeSincePrevious,
-                size = size,
-                url = url,
-            ),
-        ).toDomain()
+        return dynamoDbOperations
+            .save(
+                AuctionHouseUpdateLogDynamo(
+                    id = connectedId,
+                    lastModified = lastModified.toJavaInstant(),
+                    timeSincePreviousDump = timeSincePrevious,
+                    size = size,
+                    url = url,
+                ),
+            ).toDomain()
     }
 }
