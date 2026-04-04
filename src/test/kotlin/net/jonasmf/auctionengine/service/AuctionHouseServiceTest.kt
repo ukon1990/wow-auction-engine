@@ -7,8 +7,9 @@ import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.domain.AuctionHouseUpdateLog
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseUpdateLogDynamoRepository
-import org.junit.jupiter.api.AfterEach
+import net.jonasmf.auctionengine.testsupport.database.DynamoDBUtil
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -17,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -26,10 +26,11 @@ import kotlin.time.Instant
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @ExtendWith(SpringExtension::class)
 class AuctionHouseServiceTest(
-    var auctionHouseService: AuctionHouseService,
-    var repository: AuctionHouseDynamoRepository,
-    var auctionHouseUpdateLogDynamoRepository: AuctionHouseUpdateLogDynamoRepository,
-) : DynamoDbIntegrationTestBase() {
+    private val dbUtil: DynamoDBUtil,
+    private var auctionHouseService: AuctionHouseService,
+    private var repository: AuctionHouseDynamoRepository,
+    private var auctionHouseUpdateLogDynamoRepository: AuctionHouseUpdateLogDynamoRepository,
+) : DynamoDbIntegrationTestBase(dbUtil) {
     @MockitoBean
     lateinit var amazonS3: S3Client
 
@@ -117,12 +118,6 @@ class AuctionHouseServiceTest(
         }
     }
 
-    @AfterEach
-    fun tearDown() {
-        repository.clear()
-        auctionHouseUpdateLogDynamoRepository.clear()
-    }
-
     private fun assertInstantEqualsToMillis(
         expected: Instant?,
         actual: Instant?,
@@ -153,7 +148,25 @@ class AuctionHouseServiceTest(
         }
 
         @Test
-        fun `should be no less than 30 minutes avg delay`() {
+        fun `the next update time should never be closer to latModified than 30 minutes even if the avg is lower`() {
+            val connectedRealmId = 1
+            var house = repository.findById(connectedRealmId).get()
+            val startTime = house.lastModified
+
+            List<Unit>(10) {
+                auctionHouseService.updateTimes(
+                    connectedRealmId,
+                    startTime?.plus((it * 10).minutes),
+                    true,
+                )
+            }
+
+            house = repository.findById(connectedRealmId).get()
+            assertEquals(10, house.avgDelay)
+            assertTrue(
+                house.nextUpdate!!.toEpochMilliseconds() > house.lastModified!!.toEpochMilliseconds(),
+            ) { "Next update(${house.nextUpdate}) should be after last modified(${house.lastModified})" }
+            assertEquals(30, house.nextUpdate!!.minus(house.lastModified!!).inWholeMinutes)
         }
 
         @Test

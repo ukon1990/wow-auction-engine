@@ -4,7 +4,6 @@ import io.awspring.cloud.dynamodb.DynamoDbOperations
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.domain.AuctionHouse
-import net.jonasmf.auctionengine.domain.AuctionHouseUpdateLog
 import net.jonasmf.auctionengine.mapper.toDbo
 import net.jonasmf.auctionengine.mapper.toDomain
 import org.springframework.stereotype.Repository
@@ -107,15 +106,13 @@ class AuctionHouseDynamoRepositoryIml(
         requireNotNull(auctionHouse.url) { "AuctionHouseDynamo.url cannot be null when saving to DynamoDB" }
 
         val savedResult = dynamoDbOperations.save(auctionHouse.toDbo())
-        val logUpdate =
-            AuctionHouseUpdateLog(
-                auctionHouse.id!!,
-                auctionHouse.lastModified!!,
-                auctionHouse.size,
-                0,
-                savedResult.url,
-            )
-        logRepository.save(logUpdate)
+
+        logRepository.save(
+            auctionHouse.id!!,
+            auctionHouse.lastModified!!,
+            auctionHouse.size,
+            savedResult.url,
+        )
         return savedResult
     }
 }
