@@ -30,6 +30,9 @@ interface AuctionHouseUpdateLogDynamoRepository {
 class AuctionHouseUpdateLogDynamoRepositoryImpl(
     private val dynamoDbOperations: DynamoDbOperations,
 ) : AuctionHouseUpdateLogDynamoRepository {
+    /**
+     * Returns a descended sorted list of the most recent 72 entries for the given connected realm id.
+     */
     override fun findByIdAndMostRecentLastModified(connectedRealmId: Int): List<AuctionHouseUpdateLog> {
         val query =
             QueryEnhancedRequest

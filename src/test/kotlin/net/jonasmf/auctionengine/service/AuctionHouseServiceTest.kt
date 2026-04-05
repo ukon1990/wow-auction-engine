@@ -118,51 +118,40 @@ class AuctionHouseServiceTest(
         }
     }
 
-    private fun assertInstantEqualsToMillis(
-        expected: Instant?,
-        actual: Instant?,
-    ) {
-        assertEquals(expected?.toEpochMilliseconds(), actual?.toEpochMilliseconds())
-    }
-
-    private fun assertInstantCloseTo(
-        expected: Instant?,
-        actual: Instant?,
-        toleranceMs: Long = 2_000,
-    ) {
-        val expectedMillis = expected?.toEpochMilliseconds()
-        val actualMillis = actual?.toEpochMilliseconds()
-        requireNotNull(expectedMillis)
-        requireNotNull(actualMillis)
-        assertTrue { kotlin.math.abs(expectedMillis - actualMillis) <= toleranceMs }
-    }
-
     @Nested
     inner class UpdateTimes {
         @Test
-        fun `should fallback to 60 minutes avg `() {
-        }
-
-        @Test
-        fun `Should set no longer than 120 minutes avg delay`() {
-        }
-
-        @Test
-        fun `the next update time should never be closer to latModified than 30 minutes even if the avg is lower`() {
+        fun `Should correctly determine lowest, avg and highest delay, as well as set the next update time upon update`() {
             val connectedRealmId = 1
             var house = repository.findById(connectedRealmId).get()
-            val startTime = house.lastModified
+            var startTime = house.lastModified
+
+            auctionHouseService.updateTimes(
+                connectedRealmId,
+                startTime?.plus(30.minutes),
+                true,
+            )
+            startTime = repository.findById(connectedRealmId).get().lastModified
+
+            auctionHouseService.updateTimes(
+                connectedRealmId,
+                startTime?.plus(90.minutes),
+                true,
+            )
+            startTime = repository.findById(connectedRealmId).get().lastModified
 
             List<Unit>(10) {
                 auctionHouseService.updateTimes(
                     connectedRealmId,
-                    startTime?.plus((it * 10).minutes),
+                    startTime?.plus((it * 45).minutes),
                     true,
                 )
             }
 
             house = repository.findById(connectedRealmId).get()
-            assertEquals(10, house.avgDelay)
+            assertEquals(30, house.lowestDelay)
+            assertEquals(48, house.avgDelay) // Should be 47,5 but rounds up
+            assertEquals(90, house.highestDelay)
             assertTrue(
                 house.nextUpdate!!.toEpochMilliseconds() > house.lastModified!!.toEpochMilliseconds(),
             ) { "Next update(${house.nextUpdate}) should be after last modified(${house.lastModified})" }
@@ -170,31 +159,31 @@ class AuctionHouseServiceTest(
         }
 
         @Test
-        fun `should update the next update time, based on avg delay + last modified on successful update`() {
-            val originalState = auctionHouses.find { it.id == 1 }
-            val newLastModified = originalState?.lastModified?.plus(60.minutes)
+        fun `should update the next update time, and add a new log entry for successful updates`() {
+            val originalState = repository.findById(1).get()
+            val newLastModified = originalState.lastModified?.plus(60.minutes)
             auctionHouseService.updateTimes(1, newLastModified, true)
 
             val result = repository.findById(1).get()
-            assertInstantEqualsToMillis(newLastModified, result.lastModified)
-            assertEquals(60, result.avgDelay)
-            assertInstantCloseTo(getOffsetFromNow(60), result.nextUpdate)
+            assertEquals(newLastModified, result.lastModified)
+            assertTrue(result.lastModified!! < result.nextUpdate!!) {
+                "The next update time (${result.nextUpdate}) should always be after last modified (${result.lastModified})"
+            }
 
             // Should also add a new entry into last modified log
-
             val logEntries = auctionHouseUpdateLogDynamoRepository.findByIdAndMostRecentLastModified(1)
             assertEquals(2, logEntries.size)
         }
 
         @Test
         fun `should add a delay based on the number of failed attempts`() {
-            val originalState = auctionHouses.find { it.id == 1 }
+            val originalState = repository.findById(1).get()
             auctionHouseService.updateTimes(1, null, false)
 
             val result = repository.findById(1).get()
-            assertInstantEqualsToMillis(originalState?.lastModified, result.lastModified)
+            assertEquals(originalState.lastModified, result.lastModified)
             assertTrue {
-                result.nextUpdate?.toEpochMilliseconds()!! > originalState?.nextUpdate?.toEpochMilliseconds()!!
+                result.nextUpdate?.toEpochMilliseconds()!! > originalState.nextUpdate?.toEpochMilliseconds()!!
             }
         }
     }

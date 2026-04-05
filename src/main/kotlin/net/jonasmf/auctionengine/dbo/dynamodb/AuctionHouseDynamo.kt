@@ -42,7 +42,7 @@ data class AuctionHouseDynamo(
     var lastStatsInsert: Instant? = null,
     @get:DynamoDbConvertedBy(KotlinInstantAsLongAttributeConverter::class)
     var lastTrendUpdateInitiation: Instant? = null,
-    var lowestDelay: Int = 0,
+    var lowestDelay: Long = 0,
     @get:DynamoDbSecondarySortKey(indexNames = ["region-index"])
     @get:DynamoDbConvertedBy(KotlinInstantAsLongAttributeConverter::class)
     var nextUpdate: Instant? = null,

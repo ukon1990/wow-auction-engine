@@ -20,7 +20,7 @@ class AuctionHouse(
     var lastRequested: Instant? = null,
     var lastStatsInsert: Instant? = null,
     var lastTrendUpdateInitiation: Instant? = null,
-    var lowestDelay: Int = 0,
+    var lowestDelay: Long = 0,
     var nextUpdate: Instant? = null,
     var realms: List<RealmDynamo> = emptyList(),
     var realmSlugs: String = "",

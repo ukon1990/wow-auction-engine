@@ -98,6 +98,9 @@ class AuctionHouseDynamoRepositoryIml(
         return pages.items().toList()
     }
 
+    /**
+     * Updates the auction house and appends to the log
+     */
     override fun save(auctionHouse: AuctionHouse): AuctionHouseDynamo {
         requireNotNull(auctionHouse.id) { "AuctionHouseDynamo.id must not be null when saving to DynamoDB" }
         requireNotNull(value = auctionHouse.lastModified) {
