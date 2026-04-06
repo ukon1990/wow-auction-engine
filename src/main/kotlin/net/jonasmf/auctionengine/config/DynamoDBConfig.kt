@@ -99,7 +99,11 @@ class DynamoDBConfig {
             log.info("Created DynamoDB tables {} at {}", createdTables.joinToString(", "), amazonDynamoDBEndpoint)
         }
         if (existingTables.isNotEmpty()) {
-            log.info("DynamoDB tables {} already exists at {}", existingTables.joinToString(", "), amazonDynamoDBEndpoint)
+            log.info(
+                "DynamoDB tables {} already exists at {}",
+                existingTables.joinToString(", "),
+                amazonDynamoDBEndpoint,
+            )
         }
     }
 

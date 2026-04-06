@@ -5,7 +5,6 @@ import net.jonasmf.auctionengine.config.DynamoDbIntegrationTestBase
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as RealmAuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm
 import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
@@ -24,10 +23,11 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.ZonedDateTime
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
-import java.time.ZonedDateTime
+import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as RealmAuctionHouse
 
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @ExtendWith(SpringExtension::class)
