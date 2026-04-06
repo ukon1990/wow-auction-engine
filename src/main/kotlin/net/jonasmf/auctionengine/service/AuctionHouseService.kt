@@ -21,16 +21,19 @@ class AuctionHouseService(
         val auctionHouse = repository.findById(connectedRealm.id)
         if (!auctionHouse.isEmpty) return
         if (connectedRealm.realms.isEmpty()) return
+        val seededAt = Instant.fromEpochSeconds(0L)
         val newAuctionHouse =
             AuctionHouse(
                 id = connectedRealm.id,
+                connectedId = connectedRealm.id,
                 region =
                     connectedRealm.realms
                         .first()
                         .region.type,
                 realmSlugs = connectedRealm.realms.joinToString(",") { it.slug },
                 // Only for new auction houses. We set it way back in the past
-                lastModified = Instant.fromEpochSeconds(0L),
+                lastModified = seededAt,
+                nextUpdate = seededAt,
             )
         repository.save(newAuctionHouse)
     }
