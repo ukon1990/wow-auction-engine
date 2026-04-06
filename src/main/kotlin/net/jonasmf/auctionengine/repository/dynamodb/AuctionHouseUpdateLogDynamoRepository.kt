@@ -11,7 +11,7 @@ import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest
 import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 
-var AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME = "wah_auction_houses_update_log"
+const val AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME = "wah_auction_houses_update_log"
 
 interface AuctionHouseUpdateLogDynamoRepository {
     fun findByIdAndMostRecentLastModified(connectedRealmId: Int): List<AuctionHouseUpdateLog>

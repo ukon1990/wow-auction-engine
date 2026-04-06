@@ -121,7 +121,7 @@ class AuctionHouseServiceTest(
     @Nested
     inner class UpdateTimes {
         @Test
-        fun `Should correctly determine lowest, avg and highest delay, as well as set the next update time upon update`() {
+        fun `Should set next update time and calculate delay summary on update`() {
             val connectedRealmId = 1
             var house = repository.findById(connectedRealmId).get()
             var startTime = house.lastModified
@@ -130,7 +130,7 @@ class AuctionHouseServiceTest(
                 connectedRealmId,
                 startTime?.plus(30.minutes),
                 true,
-                "https://example.json/1"
+                "https://example.json/1",
             )
             startTime = repository.findById(connectedRealmId).get().lastModified
 
@@ -138,7 +138,7 @@ class AuctionHouseServiceTest(
                 connectedRealmId,
                 startTime?.plus(90.minutes),
                 true,
-                "https://example.json/2"
+                "https://example.json/2",
             )
             startTime = repository.findById(connectedRealmId).get().lastModified
 
@@ -147,7 +147,7 @@ class AuctionHouseServiceTest(
                     connectedRealmId,
                     startTime?.plus((it * 45).minutes),
                     true,
-                    "https://example.json/3"
+                    "https://example.json/3",
                 )
             }
 

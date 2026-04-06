@@ -187,7 +187,21 @@ Enable the repo-managed pre-commit hook:
 git config core.hooksPath .githooks
 ```
 
-That hook runs `ktlint:format` on staged Kotlin files before each commit and re-stages any autofixes.
+Hooks are opt-in per clone. If `core.hooksPath` is not set, Git will not run the repo-managed hook on commit.
+
+Verify the hook path:
+
+```bash
+git config --get core.hooksPath
+```
+
+Expected output:
+
+```text
+.githooks
+```
+
+The pre-commit hook runs `ktlint:format`, re-stages any staged Kotlin autofixes, and then runs `ktlint:check` to block the commit if lint violations remain.
 
 Format Kotlin sources:
 

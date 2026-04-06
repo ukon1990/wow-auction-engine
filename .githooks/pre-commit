@@ -1,86 +1,58 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-set -eu
+set -euo pipefail
 
 if ! command -v git >/dev/null 2>&1; then
   exit 0
 fi
 
-if [ ! -x "./mvnw" ]; then
-  echo "pre-commit: ./mvnw is not executable"
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$repo_root"
+
+if [ -f "./mvnw" ]; then
+  run_maven() {
+    sh "./mvnw" "$@"
+  }
+elif [ -f "./mvnw.cmd" ]; then
+  run_maven() {
+    cmd.exe //c mvnw.cmd "$@"
+  }
+else
+  echo "pre-commit: Maven wrapper not found. Expected ./mvnw or ./mvnw.cmd" >&2
   exit 1
 fi
 
-staged_files="$(git diff --cached --name-only --diff-filter=ACMR)"
-
-main_includes=""
-test_includes=""
-script_includes=""
 has_kotlin_files=0
+staged_kotlin_files=()
 
-append_csv() {
-  current="$1"
-  value="$2"
-  if [ -z "$current" ]; then
-    printf '%s' "$value"
-  else
-    printf '%s,%s' "$current" "$value"
+while IFS= read -r -d '' file; do
+  if [[ "$file" == src/main/kotlin/* && "$file" == *.kt ]]; then
+    staged_kotlin_files+=("$file")
+    has_kotlin_files=1
+  elif [[ "$file" == src/test/kotlin/* && "$file" == *.kt ]]; then
+    staged_kotlin_files+=("$file")
+    has_kotlin_files=1
+  elif [[ "$file" == *.kts ]]; then
+    staged_kotlin_files+=("$file")
+    has_kotlin_files=1
   fi
-}
-
-for file in $staged_files; do
-  case "$file" in
-    src/main/kotlin/*.kt|src/main/kotlin/**/*.kt)
-      rel="${file#src/main/kotlin/}"
-      main_includes="$(append_csv "$main_includes" "$rel")"
-      has_kotlin_files=1
-      ;;
-    src/test/kotlin/*.kt|src/test/kotlin/**/*.kt)
-      rel="${file#src/test/kotlin/}"
-      test_includes="$(append_csv "$test_includes" "$rel")"
-      has_kotlin_files=1
-      ;;
-    *.kts)
-      script_includes="$(append_csv "$script_includes" "$file")"
-      has_kotlin_files=1
-      ;;
-  esac
-done
+done < <(git diff --cached --name-only --diff-filter=ACMR -z)
 
 if [ "$has_kotlin_files" -eq 0 ]; then
   exit 0
 fi
 
 echo "pre-commit: formatting staged Kotlin files with ktlint"
+run_maven "-q" "ktlint:format"
 
-set -- "./mvnw" "-q" "ktlint:format"
-
-if [ -n "$main_includes" ]; then
-  set -- "$@" "-Dktlint.includeSources=true" "-Dktlint.sourcesIncludes=$main_includes"
-else
-  set -- "$@" "-Dktlint.includeSources=false"
-fi
-
-if [ -n "$test_includes" ]; then
-  set -- "$@" "-Dktlint.includeTestSources=true" "-Dktlint.testSourcesIncludes=$test_includes"
-else
-  set -- "$@" "-Dktlint.includeTestSources=false"
-fi
-
-if [ -n "$script_includes" ]; then
-  set -- "$@" "-Dktlint.includeScripts=true" "-Dktlint.scriptsIncludes=$script_includes"
-else
-  set -- "$@" "-Dktlint.includeScripts=false"
-fi
-
-"$@"
-
-for file in $staged_files; do
-  case "$file" in
-    *.kt|*.kts)
-      if [ -f "$file" ]; then
-        git add -- "$file"
-      fi
-      ;;
-  esac
+for file in "${staged_kotlin_files[@]}"; do
+  if [ -f "$file" ]; then
+    git add -- "$file"
+  fi
 done
+
+echo "pre-commit: lint-checking Kotlin sources with ktlint"
+if ! run_maven "-q" "ktlint:check"; then
+  echo "pre-commit: ktlint reported remaining violations. Review the output above and amend the staged changes." >&2
+  exit 1
+fi
