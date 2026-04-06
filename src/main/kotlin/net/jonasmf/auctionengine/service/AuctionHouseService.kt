@@ -37,7 +37,7 @@ class AuctionHouseService(
         id: Int,
         newLastModified: Instant?,
         isSuccess: Boolean,
-        url: String?,
+        url: String? = null,
     ) {
         val auctionHouse = repository.findById(id).orElse(null) ?: return
 
