@@ -40,7 +40,7 @@ class AmazonS3Config {
     @Bean
     fun amazonS3(): S3Client =
         S3Client {
-            this.region = region
+            this.region = this@AmazonS3Config.region
             credentialsProvider =
                 staticCredentialsProvider(
                     accessKeyId = awsAccessKeyId,
