@@ -26,5 +26,6 @@ data class AuctionStatsId(
     @Column(name = "modifier_key")
     val modifierKey: String = "",
 ) : Serializable {
-    override fun toString(): String = "${connectedRealm.id}-$gameBuildVersion-$itemId-$date-${petSpeciesId ?: ""}-$modifierKey"
+    override fun toString(): String =
+        "${connectedRealm.id}-$gameBuildVersion-$itemId-$date-${petSpeciesId ?: ""}-$modifierKey"
 }

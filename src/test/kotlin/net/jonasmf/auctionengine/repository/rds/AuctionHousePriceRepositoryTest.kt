@@ -153,8 +153,18 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             lastModified = lastModified,
         )
 
-        val first = repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(3084, 19021, "7,100")
-        val second = repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(3084, 19021, "7,101")
+        val first =
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(
+                3084,
+                19021,
+                "7,100",
+            )
+        val second =
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(
+                3084,
+                19021,
+                "7,101",
+            )
 
         assertEquals(1, first.size)
         assertEquals(1, second.size)
@@ -177,7 +187,12 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             lastModified = lastModified,
         )
 
-        val prices = repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(4084, 19022, "7,100")
+        val prices =
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(
+                4084,
+                19022,
+                "7,100",
+            )
 
         assertEquals(1, prices.size)
         assertEquals(LocalDateTime.of(2026, 4, 9, 14, 0), prices.single().auctionTimestamp)
@@ -200,7 +215,12 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             lastModified = lastModified,
         )
 
-        val prices = repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(5084, 19023, "")
+        val prices =
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(
+                5084,
+                19023,
+                "",
+            )
 
         assertEquals(1, prices.size)
         assertEquals(18L, prices.single().price)

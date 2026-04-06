@@ -1,9 +1,9 @@
 package net.jonasmf.auctionengine.service
 
 import net.jonasmf.auctionengine.constant.GameBuildVersion
-import net.jonasmf.auctionengine.dto.auction.ModifierDTO
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
+import net.jonasmf.auctionengine.dto.auction.ModifierDTO
 import net.jonasmf.auctionengine.repository.rds.HourlyPriceStatisticsRepository
 import net.jonasmf.auctionengine.repository.rds.HourlyStatsUpsertRow
 import org.slf4j.Logger
@@ -31,7 +31,11 @@ class HourlyPriceStatisticsService(
             val itemId = auction.item.id
             val petSpeciesId = auction.item.pet_species_id
             val modifierKey = canonicalModifierKey(auction.item.modifiers)
-            val key = "${connectedRealm.id}|${GameBuildVersion.RETAIL.ordinal}|$itemId|$date|${petSpeciesId ?: ""}|$modifierKey"
+            val key = "${connectedRealm.id}|${
+                GameBuildVersion.RETAIL.ordinal
+            }|$itemId|$date|${
+                petSpeciesId ?: ""
+            }|$modifierKey"
             val price = auction.buyout ?: auction.unit_price ?: 0L
             val quantity = auction.quantity.takeIf { it > 0 } ?: 1L
 
