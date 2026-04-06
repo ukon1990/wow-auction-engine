@@ -83,11 +83,23 @@ class DynamoDBConfig {
         }
 
     private suspend fun createTableIfMissing(dynamoDbClient: DynamoDbClient) {
-        try {
-            tables.forEach { dynamoDbClient.createTable(it) }
-            log.info("Created DynamoDB tables {} at {}", tableNamesJoined, amazonDynamoDBEndpoint)
-        } catch (_: ResourceInUseException) {
-            log.info("DynamoDB tables {} already exists at {}", tableNamesJoined, amazonDynamoDBEndpoint)
+        val createdTables = mutableListOf<String>()
+        val existingTables = mutableListOf<String>()
+
+        tables.forEach { table ->
+            try {
+                dynamoDbClient.createTable(table)
+                createdTables += table.tableName()
+            } catch (_: ResourceInUseException) {
+                existingTables += table.tableName()
+            }
+        }
+
+        if (createdTables.isNotEmpty()) {
+            log.info("Created DynamoDB tables {} at {}", createdTables.joinToString(", "), amazonDynamoDBEndpoint)
+        }
+        if (existingTables.isNotEmpty()) {
+            log.info("DynamoDB tables {} already exists at {}", existingTables.joinToString(", "), amazonDynamoDBEndpoint)
         }
     }
 
