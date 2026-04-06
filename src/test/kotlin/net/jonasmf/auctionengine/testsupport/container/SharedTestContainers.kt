@@ -9,7 +9,7 @@ import java.time.Duration
 
 object SharedTestContainers {
     private val mariaDbImage = DockerImageName.parse("mariadb:11.4.10")
-    private val flociImage = DockerImageName.parse("hectorvent/floci:1.0.8")
+    private val flociImage = DockerImageName.parse("hectorvent/floci:latest")
 
     @JvmField
     val mariaDbContainer: MariaDBContainer<*> =
