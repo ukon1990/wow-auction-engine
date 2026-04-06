@@ -31,7 +31,6 @@ import kotlin.text.get
 class ConnectedRealmService(
     private val properties: BlizzardApiProperties,
     webClientWithAuth: WebClient,
-    private val authService: AuthService,
     private val regionService: RegionService,
     private val connectedRealmRepository: ConnectedRealmRepository,
     private val regionRepository: RegionRepository,
@@ -167,7 +166,16 @@ class ConnectedRealmService(
                 log.error("Failed to fetch realm data for ${realm.href}: $error")
             }.map { connectedRealmDTO ->
                 log.debug("Successfully fetched realm data for ${realm.href}")
-                connectedRealmDTO.toDBO()
+                val payloadRegions = connectedRealmDTO.realms.mapNotNull { it.payloadRegion() }.toSet()
+                if (payloadRegions.isNotEmpty() && payloadRegions != setOf(region)) {
+                    log.warn(
+                        "Realm {} returned payload regions {} while fetched under {}. Using fetch context as source of truth.",
+                        connectedRealmDTO.id,
+                        payloadRegions,
+                        region,
+                    )
+                }
+                connectedRealmDTO.toDBO(region)
             }.flatMap { connectedDBO ->
                 checkAndSaveRealm(connectedDBO, region)
             }
@@ -178,14 +186,8 @@ class ConnectedRealmService(
     ): Mono<ConnectedRealm> =
         Mono
             .fromCallable {
-                val existingRealm = connectedRealmRepository.findById(connectedDBO.id)
-
-                if (existingRealm.isPresent) {
-                    existingRealm.get()
-                } else {
-                    log.info("Saving new connected realm ${connectedDBO.id} for region ${region.name}")
-                    connectedRealmRepository.save(connectedDBO)
-                }
+                log.info("Saving new connected realm ${connectedDBO.id} for region ${region.name}")
+                connectedRealmRepository.save(connectedDBO)
             }.subscribeOn(Schedulers.boundedElastic())
 
     private fun getConnectedRealmIndex(region: Region): Mono<ConnectedRealmIndex> {

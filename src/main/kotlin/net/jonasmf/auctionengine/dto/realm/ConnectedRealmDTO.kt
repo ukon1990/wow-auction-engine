@@ -3,6 +3,7 @@ package net.jonasmf.auctionengine.dto.realm
 import com.fasterxml.jackson.annotation.JsonProperty
 import net.jonasmf.auctionengine.constant.RealmPopulation
 import net.jonasmf.auctionengine.constant.RealmStatus
+import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.Href
@@ -20,10 +21,10 @@ data class ConnectedRealmDTO(
     val mythicLeaderboards: Href,
     val auctions: Href,
 ) {
-    fun toDBO(): ConnectedRealm =
+    fun toDBO(region: Region): ConnectedRealm =
         ConnectedRealm(
             id = id,
-            realms = realms.map { it.toDBO() }.toMutableList(),
+            realms = realms.map { it.toDBO(region) }.toMutableList(),
             auctionHouse =
                 AuctionHouse(
                     lastModified = null,

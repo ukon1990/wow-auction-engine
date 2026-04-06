@@ -1,6 +1,5 @@
 package net.jonasmf.auctionengine.dto.realm
 
-import aws.smithy.kotlin.runtime.util.type
 import com.fasterxml.jackson.annotation.JsonProperty
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
@@ -23,15 +22,15 @@ data class RealmDTO(
     val isTournament: Boolean,
     val slug: String,
 ) {
-    fun toDBO(): Realm {
+    fun toDBO(regionType: Region): Realm {
         val locale = Locale.fromCompactString(locale)
         return Realm(
             id = id,
             region =
                 RegionDBO(
-                    region?.id,
-                    region?.name?.en_GB ?: Region.Europe.name,
-                    region?.type ?: Region.Europe,
+                    regionId(regionType),
+                    regionType.name,
+                    regionType,
                 ),
             name = localeToProperty(locale, name) ?: name.en_GB,
             category = category.en_GB,
@@ -41,4 +40,22 @@ data class RealmDTO(
             slug = slug,
         )
     }
+
+    fun payloadRegion(): Region? =
+        when (region?.name?.en_GB) {
+            "Europe" -> Region.Europe
+            "North America" -> Region.NorthAmerica
+            "Korea" -> Region.Korea
+            "Taiwan" -> Region.Taiwan
+            null -> null
+            else -> null
+        }
+
+    private fun regionId(regionType: Region): Int =
+        when (regionType) {
+            Region.NorthAmerica -> 1
+            Region.Europe -> 2
+            Region.Korea -> 3
+            Region.Taiwan -> 4
+        }
 }
