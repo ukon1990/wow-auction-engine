@@ -18,6 +18,9 @@ spring:
     username: root
     password: root
     driver-class-name: org.mariadb.jdbc.Driver
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
   jpa:
     show-sql: false
     open-in-view: false

@@ -3,6 +3,7 @@ package net.jonasmf.auctionengine.service
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
+import net.jonasmf.auctionengine.dto.auction.ModifierDTO
 import net.jonasmf.auctionengine.repository.rds.HourlyPriceStatisticsRepository
 import net.jonasmf.auctionengine.repository.rds.HourlyStatsUpsertRow
 import org.slf4j.Logger
@@ -29,10 +30,12 @@ class HourlyPriceStatisticsService(
         for (auction in auctions) {
             val itemId = auction.item.id
             val petSpeciesId = auction.item.pet_species_id
-            val petBreedId = auction.item.pet_breed_id
-            val petLevel = auction.item.pet_level
-            val modifiers = auction.item.modifiers
-            val key = "${connectedRealm.id}|${GameBuildVersion.RETAIL.ordinal}|$itemId|$date|${petSpeciesId ?: ""}"
+            val modifierKey = canonicalModifierKey(auction.item.modifiers)
+            val key = "${connectedRealm.id}|${
+                GameBuildVersion.RETAIL.ordinal
+            }|$itemId|$date|${
+                petSpeciesId ?: ""
+            }|$modifierKey"
             val price = auction.buyout ?: auction.unit_price ?: 0L
             val quantity = auction.quantity.takeIf { it > 0 } ?: 1L
 
@@ -45,6 +48,7 @@ class HourlyPriceStatisticsService(
                         itemId = itemId,
                         date = date,
                         petSpeciesId = petSpeciesId,
+                        modifierKey = modifierKey,
                         price = price,
                         quantity = quantity,
                     )
@@ -65,4 +69,10 @@ class HourlyPriceStatisticsService(
         )
         return grouped.values.toList()
     }
+
+    private fun canonicalModifierKey(modifiers: List<ModifierDTO>?): String =
+        modifiers
+            .orEmpty()
+            .sortedBy { it.value }
+            .joinToString(",") { it.value.toString() }
 }
