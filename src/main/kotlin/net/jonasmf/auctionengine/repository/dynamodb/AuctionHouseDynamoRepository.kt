@@ -95,7 +95,11 @@ class AuctionHouseDynamoRepositoryIml(
                 "region-index",
             )
 
-        return pages.items().toList()
+        return pages
+            .items()
+            .asSequence()
+            .take(50)
+            .toList()
     }
 
     /**
