@@ -2,13 +2,20 @@ package net.jonasmf.auctionengine.service
 
 import aws.sdk.kotlin.services.s3.S3Client
 import net.jonasmf.auctionengine.config.DynamoDbIntegrationTestBase
+import net.jonasmf.auctionengine.constant.GameBuildVersion
+import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as RealmAuctionHouse
+import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
+import net.jonasmf.auctionengine.dbo.rds.realm.Realm
+import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
 import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.domain.AuctionHouseUpdateLog
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseUpdateLogDynamoRepository
 import net.jonasmf.auctionengine.testsupport.database.TestDataCleaner
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -20,6 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+import java.time.ZonedDateTime
 
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @ExtendWith(SpringExtension::class)
@@ -113,6 +121,51 @@ class AuctionHouseServiceTest(
                 it.size,
                 it.url,
             )
+        }
+    }
+
+    @Nested
+    inner class CreateIfMissing {
+        @Test
+        fun `should seed new auction houses as immediately ready for update`() {
+            val connectedRealm =
+                ConnectedRealm(
+                    id = 999,
+                    auctionHouse =
+                        RealmAuctionHouse(
+                            lastModified = null,
+                            lastRequested = null,
+                            nextUpdate = ZonedDateTime.now(),
+                            lowestDelay = 60,
+                            averageDelay = 60,
+                            highestDelay = 60,
+                            tsmFile = null,
+                            statsFile = null,
+                            auctionFile = null,
+                            failedAttempts = 0,
+                        ),
+                    realms =
+                        mutableListOf(
+                            Realm(
+                                id = 999,
+                                region = RegionDBO(id = 2, name = "Europe", type = Region.Europe),
+                                name = "Test Realm",
+                                category = "Normal",
+                                locale = Locale.EN_GB,
+                                timezone = "UTC",
+                                gameBuild = GameBuildVersion.RETAIL,
+                                slug = "test-realm",
+                            ),
+                        ),
+                )
+
+            auctionHouseService.createIfMissing(connectedRealm)
+
+            val saved = repository.findById(999).orElseThrow()
+            assertEquals(999, saved.connectedId)
+            assertNotNull(saved.nextUpdate)
+            assertEquals(0L, saved.nextUpdate!!.epochSeconds)
+            assertEquals(1, auctionHouseService.getReadyForUpdate(Region.Europe).count { it.id == 999 })
         }
     }
 
