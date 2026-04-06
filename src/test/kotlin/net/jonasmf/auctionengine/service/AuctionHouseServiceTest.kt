@@ -7,14 +7,13 @@ import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.domain.AuctionHouseUpdateLog
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
 import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseUpdateLogDynamoRepository
-import net.jonasmf.auctionengine.testsupport.database.DynamoDBUtil
+import net.jonasmf.auctionengine.testsupport.database.TestDataCleaner
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -22,15 +21,14 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
-@SpringBootTest
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @ExtendWith(SpringExtension::class)
 class AuctionHouseServiceTest(
-    private val dbUtil: DynamoDBUtil,
+    private val cleaner: TestDataCleaner,
     private var auctionHouseService: AuctionHouseService,
     private var repository: AuctionHouseDynamoRepository,
     private var auctionHouseUpdateLogDynamoRepository: AuctionHouseUpdateLogDynamoRepository,
-) : DynamoDbIntegrationTestBase(dbUtil) {
+) : DynamoDbIntegrationTestBase(cleaner) {
     @MockitoBean
     lateinit var amazonS3: S3Client
 
