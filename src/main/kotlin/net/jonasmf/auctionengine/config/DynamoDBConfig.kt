@@ -36,7 +36,7 @@ class DynamoDBConfig {
             AUCTION_HOUSE_TABLE_NAME,
             AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME,
         )
-    private val tableNamesJoined = tableNames.joinToString { ", " }
+    private val tableNamesJoined = tableNames.joinToString(", ")
 
     @Value("\${spring.cloud.aws.dynamodb.endpoint:}")
     private val amazonDynamoDBEndpoint: String? = null
