@@ -130,6 +130,7 @@ class AuctionHouseServiceTest(
                 connectedRealmId,
                 startTime?.plus(30.minutes),
                 true,
+                "https://example.json/1"
             )
             startTime = repository.findById(connectedRealmId).get().lastModified
 
@@ -137,6 +138,7 @@ class AuctionHouseServiceTest(
                 connectedRealmId,
                 startTime?.plus(90.minutes),
                 true,
+                "https://example.json/2"
             )
             startTime = repository.findById(connectedRealmId).get().lastModified
 
@@ -145,6 +147,7 @@ class AuctionHouseServiceTest(
                     connectedRealmId,
                     startTime?.plus((it * 45).minutes),
                     true,
+                    "https://example.json/3"
                 )
             }
 
@@ -162,7 +165,7 @@ class AuctionHouseServiceTest(
         fun `should update the next update time, and add a new log entry for successful updates`() {
             val originalState = repository.findById(1).get()
             val newLastModified = originalState.lastModified?.plus(60.minutes)
-            auctionHouseService.updateTimes(1, newLastModified, true)
+            auctionHouseService.updateTimes(1, newLastModified, true, "https://example.json")
 
             val result = repository.findById(1).get()
             assertEquals(newLastModified, result.lastModified)
