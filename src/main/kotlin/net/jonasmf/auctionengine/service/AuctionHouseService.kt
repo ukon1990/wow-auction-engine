@@ -29,6 +29,8 @@ class AuctionHouseService(
                         .first()
                         .region.type,
                 realmSlugs = connectedRealm.realms.joinToString(",") { it.slug },
+                // Only for new auction houses. We set it way back in the past
+                lastModified = Instant.fromEpochSeconds(0L),
             )
         repository.save(newAuctionHouse)
     }
