@@ -20,8 +20,8 @@ Backend service for ingesting, processing, and serving World of Warcraft auction
 - Spring Boot 3.5
 - Maven Wrapper (`./mvnw`)
 - MariaDB
-- DynamoDB Local for local development
-- Testcontainers + LocalStack for tests
+- Floci for local AWS emulation (DynamoDB and S3)
+- Testcontainers for tests
 
 ## New Developer Quick Start
 
@@ -53,11 +53,14 @@ Required for local startup:
 - `BLIZZARD_CLIENT_ID`
 - `BLIZZARD_CLIENT_SECRET`
 - `WAE_BLIZZARD_REGION`
-- `WAE_AWS_REGION`
-- `AWS_ACCESS_KEY`
-- `AWS_SECRET_KEY`
 
-For local development, the AWS values can be dummy strings. They still need to be present because Spring resolves them at startup.
+For local development, AWS settings default to obvious dummy values:
+
+- `WAE_AWS_REGION=eu-west-1`
+- `AWS_ACCESS_KEY=local-dev-key`
+- `AWS_SECRET_KEY=local-dev-secret`
+
+You only need to export those if you want to override the defaults.
 
 Use `Europe` for `WAE_BLIZZARD_REGION` unless you are intentionally changing regions. Supported values come from the `Region` enum:
 
@@ -70,12 +73,19 @@ Use `Europe` for `WAE_BLIZZARD_REGION` unless you are intentionally changing reg
 
 The default local config expects:
 
-- MariaDB on `localhost:54000`
-- DynamoDB Local on `localhost:8000`
+- MariaDB on `localhost:59000`
+- Floci on `localhost:4566`
 
 Start both with:
 
 ```bash
+docker compose -f docker-compose-db.yml up -d
+```
+
+Floci persistence uses a Docker-managed named volume. If you previously ran an older setup that bind-mounted `./docker/floci`, recreate the container once so it stops using the old host directory:
+
+```bash
+docker compose -f docker-compose-db.yml down -v
 docker compose -f docker-compose-db.yml up -d
 ```
 
@@ -109,9 +119,9 @@ docker compose -f docker-compose-db.yml down
 | `BLIZZARD_CLIENT_ID` | Yes | `your-blizzard-client-id` | Used to fetch OAuth tokens from Blizzard. |
 | `BLIZZARD_CLIENT_SECRET` | Yes | `your-blizzard-client-secret` | Used together with the client ID. |
 | `WAE_BLIZZARD_REGION` | Yes | `Europe` | Must match the app enum values, not `eu`. |
-| `WAE_AWS_REGION` | Yes | `eu-west-1` | Used by AWS clients created at startup. |
-| `AWS_ACCESS_KEY` | Yes | `local-dev-key` | Dummy value is fine for local startup. |
-| `AWS_SECRET_KEY` | Yes | `local-dev-secret` | Dummy value is fine for local startup. |
+| `WAE_AWS_REGION` | No | `eu-west-1` | Optional locally; defaults to `eu-west-1`. |
+| `AWS_ACCESS_KEY` | No | `local-dev-key` | Optional locally; defaults to a dummy value. |
+| `AWS_SECRET_KEY` | No | `local-dev-secret` | Optional locally; defaults to a dummy value. |
 
 ### Production-only overrides
 
@@ -124,10 +134,14 @@ These are only needed for the `production` Spring profile because [`src/main/res
 
 The default local datasource configuration lives in [`src/main/resources/application.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.yml):
 
-- MariaDB URL: `jdbc:mariadb://localhost:54000/dbo`
+- MariaDB URL: `jdbc:mariadb://localhost:59000/dbo`
 - MariaDB username: `root`
 - MariaDB password: `root`
-- DynamoDB Local endpoint: `http://localhost:8000`
+- DynamoDB endpoint: `http://localhost:4566`
+- S3 endpoint: `http://localhost:4566`
+- AWS region: `eu-west-1`
+- AWS access key: `local-dev-key`
+- AWS secret key: `local-dev-secret`
 
 That means a new developer normally does not need to set any database environment variables for local work.
 
@@ -142,9 +156,9 @@ Run the full test suite with:
 Useful detail for onboarding:
 
 - tests run with the `test` Spring profile
-- Blizzard credentials are stubbed in [`src/main/resources/application-test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application-test.yml)
+- Blizzard credentials are stubbed in [`src/main/resources/application.test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.test.yml)
 - MariaDB runs through Testcontainers
-- DynamoDB is provided through LocalStack in tests
+- DynamoDB and S3 are provided through Floci-backed Testcontainers in integration tests
 - Docker Desktop or another working Docker daemon must be running for tests to pass
 
 ## Useful Commands
@@ -167,6 +181,28 @@ Run the verification lifecycle:
 ./mvnw verify
 ```
 
+Enable the repo-managed pre-commit hook:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Hooks are opt-in per clone. If `core.hooksPath` is not set, Git will not run the repo-managed hook on commit.
+
+Verify the hook path:
+
+```bash
+git config --get core.hooksPath
+```
+
+Expected output:
+
+```text
+.githooks
+```
+
+The pre-commit hook runs `ktlint:format`, re-stages any staged Kotlin autofixes, and then runs `ktlint:check` to block the commit if lint violations remain.
+
 Format Kotlin sources:
 
 ```bash
@@ -187,7 +223,7 @@ Main application code lives under [`src/main/kotlin/net/jonasmf/auctionengine`](
 Resources:
 
 - [`src/main/resources/application.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.yml)
-- [`src/main/resources/application-test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application-test.yml)
+- [`src/main/resources/application.test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.test.yml)
 - [`src/main/resources/application.production.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.production.yml)
 
 ## Troubleshooting
@@ -204,6 +240,26 @@ Start the local containers:
 docker compose -f docker-compose-db.yml up -d
 ```
 
+### Floci S3 access denied under `/app/data/s3`
+
+This was caused by an older bind-mounted `./docker/floci` directory with host-only permissions. The current setup uses a named Docker volume instead.
+
+Recreate the Floci container and its volume:
+
+```bash
+docker compose -f docker-compose-db.yml down -v
+docker compose -f docker-compose-db.yml up -d
+```
+
 ### Tests fail before Spring starts
 
-Check that Docker Desktop or your Docker daemon is running. The tests depend on Testcontainers and LocalStack, not on your manually started compose services.
+Check that Docker Desktop or your Docker daemon is running. The tests depend on Testcontainers and Floci, not on your manually started compose services.
+
+### AWS SDK deprecation warning
+
+The application should not initialize AWS SDK for Java 1.x anymore. If you see a startup warning mentioning `AWS SDK for Java 1.x`, an old dependency has been reintroduced.
+
+Current local AWS integrations are:
+
+- DynamoDB through Floci + AWSpring `DynamoDbOperations`
+- S3 through Floci locally and the AWS SDK for Kotlin `S3Client`

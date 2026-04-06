@@ -1,26 +1,32 @@
-cloud:
-  aws:
-    region:
-      static: eu-west-1
-    credentials:
-      access-key: dummy-access-key
-      secret-key: dummy-secret-key
+spring:
+    test:
+        constructor:
+            autowire:
+                mode: all
+    cloud:
+        aws:
+            region:
+                static: eu-west-1
+            credentials:
+                access-key: dummy-access-key
+                secret-key: dummy-secret-key
+            dynamodb:
+                endpoint: ""
+            s3:
+                endpoint: ""
+                bootstrap-enabled: false
+app:
+    scheduling:
+        enabled: false
 blizzard:
-  client-id: dummy-client-id
-  client-secret: dummy-client-secret
-  region: Europe
-  token-url: http://localhost/mock-blizzard/token
-  base-url: http://localhost/mock-blizzard/api/
-amazon:
-  aws:
-    credentials:
-      accesskey: fakeMyKeyId
-      secretkey: fakeSecretAccessKey
-  dynamodb:
-    endpoint: ""
+    client-id: dummy-client-id
+    client-secret: dummy-client-secret
+    region: Europe
+    token-url: http://localhost/mock-blizzard/token
+    base-url: http://localhost/mock-blizzard/api/
 logging:
-  level:
-    org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR
-    org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
-    org.springframework.beans.factory.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
-    org.socialsignin.spring.data.dynamodb.repository.support.DynamoDBRepositoryFactory: ERROR
+    level:
+        org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR
+        org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
+        org.springframework.beans.factory.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: ERROR
+

@@ -5,24 +5,22 @@ services:
   mariadb:
     image: mariadb:10.11
     ports:
-      - "54000:3306"
+      - "59000:3306"
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: root
     volumes:
       - "./docker/initdb:/docker-entrypoint-initdb.d:ro"
 
-  dynamodb-local:
-    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "./data"]
-    image: "amazon/dynamodb-local:latest"
+  floci:
+    image: "hectorvent/floci:latest"
     ports:
-      - "8000:8000"
+      - "4566:4566"
     volumes:
-      - "./docker/dynamodb:/home/dynamodblocal/data"
-    working_dir: /home/dynamodblocal
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sS http://127.0.0.1:8000/ >/dev/null || exit 1"]
-      interval: 5s
-      timeout: 3s
-      retries: 12
-      start_period: 5s
+      - "floci-data:/app/data"
+    environment:
+      FLOCI_STORAGE_MODE: persistent
+      FLOCI_STORAGE_PERSISTENT_PATH: /app/data
+
+volumes:
+  floci-data:

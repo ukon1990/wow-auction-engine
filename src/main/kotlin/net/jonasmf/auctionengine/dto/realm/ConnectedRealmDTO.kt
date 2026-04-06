@@ -23,7 +23,7 @@ data class ConnectedRealmDTO(
     fun toDBO(): ConnectedRealm =
         ConnectedRealm(
             id = id,
-            realms = realms.map { it.toDBO() },
+            realms = realms.map { it.toDBO() }.toMutableList(),
             auctionHouse =
                 AuctionHouse(
                     lastModified = null,
@@ -36,7 +36,7 @@ data class ConnectedRealmDTO(
                     statsFile = null,
                     auctionFile = null,
                     failedAttempts = 0,
-                    updateLog = emptyList(),
+                    updateLog = mutableListOf(),
                 ),
         )
 }

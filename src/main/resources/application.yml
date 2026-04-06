@@ -1,11 +1,20 @@
-amazon.aws.accesskey: fakeMyKeyId
-amazon.aws.secretkey: fakeSecretAccessKey
-
 spring:
   application:
     name: auction-engine
+  cloud:
+    aws:
+      region:
+        static: ${WAE_AWS_REGION:eu-west-1}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY:local-dev-key}
+        secret-key: ${AWS_SECRET_KEY:local-dev-secret}
+      dynamodb:
+        endpoint: "http://localhost:4566"
+      s3:
+        endpoint: "http://localhost:4566"
+        bootstrap-enabled: true
   datasource:
-    url: "jdbc:mariadb://localhost:54000/dbo?serverTimezone=UTC&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true"
+    url: "jdbc:mariadb://localhost:59000/dbo?serverTimezone=UTC&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true"
     username: root
     password: root
     driver-class-name: org.mariadb.jdbc.Driver
@@ -40,19 +49,3 @@ blizzard:
   region: ${WAE_BLIZZARD_REGION}
   token-url: https://eu.battle.net/oauth/token
   base-url: api.blizzard.com/data/wow/
-cloud:
-  aws:
-    region:
-      static: ${WAE_AWS_REGION}
-    credentials:
-      access-key: ${AWS_ACCESS_KEY}
-      secret-key: ${AWS_SECRET_KEY}
-amazon:
-  dynamodb:
-    endpoint: "http://localhost:8000"
-  aws:
-    region:
-      static: ${WAE_AWS_REGION}
-    credentials:
-      accesskey: fakeMyKeyId
-      secretkey: fakeSecretAccessKey

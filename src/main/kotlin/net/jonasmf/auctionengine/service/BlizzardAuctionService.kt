@@ -4,6 +4,8 @@ import NameSpace
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
+import net.jonasmf.auctionengine.dbo.dynamodb.converters.toKotlin
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
@@ -15,7 +17,6 @@ import net.jonasmf.auctionengine.repository.rds.AuctionRepository
 import net.jonasmf.auctionengine.utility.determineBaseUrl
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.reactive.function.client.WebClient
@@ -41,22 +42,16 @@ class BlizzardAuctionService(
     private val realmService: ConnectedRealmService,
     private val auctionItemModifierRepository: AuctionItemModifierRepository,
     private val updateHistoryService: ConnectedRealmUpdateHistoryService,
+    private val auctionHouseService: AuctionHouseService,
 ) {
     private val webClient: WebClient = webClientWithAuth
     private val auctionBatchSize = 100_000
     private val logBatchSize = auctionBatchSize
     val logger: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
 
-    @Scheduled(fixedDelayString = "PT1H", initialDelay = 3_000)
-    fun checkForUpdates() {
-        logger.info("Starting scheduled auction house update check...")
-        updateAuctionHouses()
-    }
-
-    fun updateAuctionHouses() {
-        val ids = listOf(-3, 1403)
-        logger.info("Updating auction houses for realm IDs: $ids")
-        ids.forEach { updateHouse(it, properties.region) }
+    fun updateAuctionHouses(auctionHousesToUpdate: List<AuctionHouseDynamo>) {
+        logger.info("Updating $auctionHousesToUpdate.size auction houses for region ${properties.region}")
+        auctionHousesToUpdate.forEach { updateHouse(it.connectedId, properties.region) }
     }
 
     private fun updateHouse(
@@ -74,6 +69,7 @@ class BlizzardAuctionService(
                 }
 
                 val house = connectedRealm.auctionHouse
+                // TODO: Cleanup so that the original lastModified also is Instant
                 val lastModified =
                     ZonedDateTime.ofInstant(
                         Instant.ofEpochMilli(response.lastModified),
@@ -85,7 +81,16 @@ class BlizzardAuctionService(
                     processAuctionData(response.url, region, connectedRealm, connectedRealmId, lastModified)
                 } else {
                     logger.debug(
-                        "No new auction data available for $connectedRealmId. Current: ${house.lastModified}, Latest: $lastModified",
+                        "No new auction data available for {}. Current: {}, Latest: {}",
+                        connectedRealmId,
+                        house.lastModified,
+                        lastModified,
+                    )
+                    auctionHouseService.updateTimes(
+                        // TODO: Cleanup so that the original lastModified also is Instant
+                        connectedRealmId,
+                        lastModified.toInstant().toKotlin(),
+                        false,
                     )
                 }
             },
@@ -117,9 +122,14 @@ class BlizzardAuctionService(
                     return@subscribe
                 }
 
-                saveAuctionDataToS3(region, connectedRealmId, data, lastModified)
+                val s3Url = saveAuctionDataToS3(region, connectedRealmId, data, lastModified)
                 hourlyPriceStatisticsService.processHourlyPriceStatistics(connectedRealm, data.auctions, lastModified)
-
+                auctionHouseService.updateTimes(
+                    connectedRealmId,
+                    lastModified.toInstant().toKotlin(),
+                    true,
+                    s3Url,
+                )
                 /* Disabled, as we don't really need ALL auctions in the database as it takes up a lot of space
                     And processing is also really slow for "100k-400k" auctions and all it's corresponding data.
                     I might get back to this later and see if I can optimize it more, but for now I'm more interested in trends over time
@@ -136,6 +146,12 @@ class BlizzardAuctionService(
             },
             { error ->
                 logger.error("Failed to fetch auction data for realm $connectedRealmId", error)
+                auctionHouseService.updateTimes(
+                    // TODO: Cleanup so that the original lastModified also is Instant
+                    connectedRealmId,
+                    lastModified.toInstant().toKotlin(),
+                    false,
+                )
             },
         )
     }
@@ -145,10 +161,11 @@ class BlizzardAuctionService(
         connectedRealmId: Int,
         data: AuctionData,
         lastModified: ZonedDateTime,
-    ) {
+    ): String? {
+        var s3Url: String? = null
         if (data.auctions.isEmpty()) {
             logger.warn("No auction data to upload for realm $connectedRealmId")
-            return
+            return s3Url
         }
         val lastModifiedMs = lastModified.toInstant().toEpochMilli()
         val startTime = System.currentTimeMillis()
@@ -157,7 +174,7 @@ class BlizzardAuctionService(
         }/$lastModifiedMs.json"
 
         try {
-            amazonS3.uploadFile(region, filePath, data)
+            s3Url = amazonS3.uploadFile(region, filePath, data)
             logger.debug("Successfully uploaded auctions to S3: $filePath")
         } catch (e: Exception) {
             logger.error("Failed to upload auctions to S3: $filePath", e)
@@ -165,6 +182,7 @@ class BlizzardAuctionService(
         logger.info(
             "Uploaded auctions to S3 for $connectedRealmId: ${data.auctions.size} auctions in ${System.currentTimeMillis() - startTime}ms",
         )
+        return s3Url
     }
 
     /**
@@ -256,7 +274,7 @@ class BlizzardAuctionService(
                     logger.debug("Created new item for key: $itemKey")
                 }
 
-                // Log progress every 10,000 items processed
+                // logger progress every 10,000 items processed
                 if ((index + 1) % 10000 == 0) {
                     val progress = ((index + 1) * 100.0 / totalAuctions).toInt()
                     logger.info(

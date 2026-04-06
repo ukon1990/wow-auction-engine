@@ -1,18 +1,12 @@
 package net.jonasmf.auctionengine.dbo.dynamodb
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 
-@DynamoDBDocument
+@DynamoDbBean
 data class RealmDynamo(
-    @DynamoDBAttribute(attributeName = "id")
-    val id: Long,
-    @DynamoDBAttribute(attributeName = "locale")
-    val locale: String,
-    @DynamoDBAttribute(attributeName = "name")
-    val name: String,
-    @DynamoDBAttribute(attributeName = "slug")
-    val slug: String,
-    @DynamoDBAttribute(attributeName = "timezone")
-    val timezone: String,
+    var id: Long = 0,
+    var locale: String = "",
+    var name: String = "",
+    var slug: String = "",
+    var timezone: String = "",
 )

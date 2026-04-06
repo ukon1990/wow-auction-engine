@@ -1,7 +1,6 @@
 package net.jonasmf.auctionengine.service
 
 import NameSpace
-import jakarta.transaction.Transactional
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
@@ -25,6 +24,8 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import java.time.ZonedDateTime
+import kotlin.collections.emptyList
+import kotlin.text.get
 
 @Service
 class ConnectedRealmService(
@@ -44,7 +45,7 @@ class ConnectedRealmService(
     fun updateRealms() {
         regionService.ensureRegionsExist()
         val communityIds = listOf(-1, -2, -3, -4)
-
+        val communityRealms = mutableListOf<ConnectedRealm>()
         communityIds.forEach { id ->
             val connectedDBO = connectedRealmRepository.findById(id).orElse(null)
             if (connectedDBO == null) {
@@ -62,7 +63,7 @@ class ConnectedRealmService(
                     ConnectedRealm(
                         id = id,
                         realms =
-                            listOf(
+                            mutableListOf(
                                 Realm(
                                     id = id,
                                     name = "Community",
@@ -88,19 +89,27 @@ class ConnectedRealmService(
                                 failedAttempts = 0,
                             ),
                     )
-                connectedRealmRepository.save(connectedRealm)
-                auctionHouseService.createIfMissing(connectedRealm)
+                communityRealms.add(connectedRealmRepository.save(connectedRealm))
                 log.info("Successfully created ConnectedRealm with id $id")
             } else {
+                communityRealms.add(connectedDBO)
                 log.debug("Connected Realm with id $id already exists")
             }
         }
 
         log.info("Checking for updates...")
-        getAndUpdate(Region.NorthAmerica)
-        getAndUpdate(Region.Europe)
-        getAndUpdate(Region.Korea)
-        getAndUpdate(Region.Taiwan)
+        val connectedRealms =
+            listOf(
+                communityRealms,
+                getAndUpdate(Region.NorthAmerica).block() ?: emptyList<ConnectedRealm>(),
+                getAndUpdate(Region.Europe).block() ?: emptyList<ConnectedRealm>(),
+                getAndUpdate(Region.Korea).block() ?: emptyList<ConnectedRealm>(),
+                getAndUpdate(Region.Taiwan).block() ?: emptyList<ConnectedRealm>(),
+            ).flatten()
+
+        for (realm in connectedRealms) {
+            auctionHouseService.createIfMissing(realm)
+        }
     }
 
     fun updateLatestDump(
@@ -118,11 +127,12 @@ class ConnectedRealmService(
 
     fun getById(id: Int): ConnectedRealm? = connectedRealmRepository.findById(id).orElse(null)
 
-    @Transactional
-    fun getAndUpdate(region: Region) {
+    fun getAllForRegion(region: Region) = connectedRealmRepository.findAllByRegion(region)
+
+    fun getAndUpdate(region: Region): Mono<List<ConnectedRealm>> {
         log.info("Fetching connected realms for region: ${region.name}")
 
-        getConnectedRealmIndex(region)
+        return getConnectedRealmIndex(region)
             .doOnError { error ->
                 log.error("Failed to fetch connected realm index for region ${region.name}: $error")
             }.flatMapMany { index ->
@@ -132,21 +142,24 @@ class ConnectedRealmService(
 
                 Flux
                     .fromIterable(index.connectedRealms)
-                    .flatMap({ realm ->
-                        processRealm(realm, region)
-                    }, 1) // Process one realm at a time to avoid overwhelming the API
-            }.then()
+                    .flatMap(
+                        { realm ->
+                            processRealm(realm, region)
+                        },
+                        1,
+                    ) // Process one realm at a time to avoid overwhelming the API
+            }.collectList()
             .doOnSuccess {
                 log.info("Successfully processed all connected realms for region: ${region.name}")
             }.doOnError { error ->
                 log.error("Error occurred while processing connected realms for region ${region.name}: $error")
-            }.subscribe()
+            }
     }
 
     private fun processRealm(
         realm: Href,
         region: Region,
-    ): Mono<Void> =
+    ): Mono<ConnectedRealm> =
         getRealm(realm)
             .doOnSubscribe {
                 log.debug("Fetching realm data for ${realm.href}")
@@ -162,22 +175,18 @@ class ConnectedRealmService(
     private fun checkAndSaveRealm(
         connectedDBO: ConnectedRealm,
         region: Region,
-    ): Mono<Void> {
-        return Mono
+    ): Mono<ConnectedRealm> =
+        Mono
             .fromCallable {
                 val existingRealm = connectedRealmRepository.findById(connectedDBO.id)
 
                 if (existingRealm.isPresent) {
-                    log.debug("Connected realm ${connectedDBO.id} already exists. Skipping update.")
-                    return@fromCallable
+                    existingRealm.get()
+                } else {
+                    log.info("Saving new connected realm ${connectedDBO.id} for region ${region.name}")
+                    connectedRealmRepository.save(connectedDBO)
                 }
-
-                log.info("Saving new connected realm ${connectedDBO.id} for region ${region.name}")
-                connectedRealmRepository.save(connectedDBO)
-                log.info("Successfully saved connected realm ${connectedDBO.id}")
             }.subscribeOn(Schedulers.boundedElastic())
-            .then()
-    }
 
     private fun getConnectedRealmIndex(region: Region): Mono<ConnectedRealmIndex> {
         log.info("Fetching connected realm index...")

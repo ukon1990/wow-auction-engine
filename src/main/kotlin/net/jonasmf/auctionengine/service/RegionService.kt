@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.service
 
+import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
 import net.jonasmf.auctionengine.repository.rds.RegionRepository
 import org.slf4j.Logger
@@ -12,23 +13,27 @@ class RegionService(
 ) {
     val log: Logger = LoggerFactory.getLogger(RegionService::class.java)
 
+    private fun mapIdToValues(id: Int): Pair<String, Region> =
+        when (id) {
+            1 -> Pair("US", Region.NorthAmerica)
+            2 -> Pair("EU", Region.Europe)
+            3 -> Pair("KR", Region.Korea)
+            4 -> Pair("TW", Region.Taiwan)
+            else -> Pair("Unknown", Region.Europe)
+        }
+
     fun ensureRegionsExist() {
         val regionIds = listOf<Int>(1, 2, 3, 4)
         regionIds.forEach { id ->
             val regionOptional = regionRepository.findById(id)
             if (regionOptional.isEmpty) {
                 log.info("Region with id $id not found. Creating it")
+                val regionPair = mapIdToValues(id)
                 val region =
                     RegionDBO(
                         id = id,
-                        name =
-                            when (id) {
-                                1 -> "US"
-                                2 -> "EU"
-                                3 -> "KR"
-                                4 -> "TW"
-                                else -> "Unknown"
-                            },
+                        name = regionPair.first,
+                        type = regionPair.second,
                     )
                 regionRepository.save(region)
             }
