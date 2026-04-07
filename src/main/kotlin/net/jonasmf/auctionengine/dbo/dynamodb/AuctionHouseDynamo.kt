@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.dbo.dynamodb
 
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.converters.KotlinInstantAsLongAttributeConverter
+import net.jonasmf.auctionengine.dbo.dynamodb.converters.RegionAttributeConverter
 import net.jonasmf.auctionengine.repository.dynamodb.AUCTION_HOUSE_TABLE_NAME
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbConvertedBy
@@ -22,6 +23,7 @@ data class AuctionHouseDynamo(
     @get:DynamoDbPartitionKey
     var id: Int? = null,
     @get:DynamoDbSecondaryPartitionKey(indexNames = ["region-index"])
+    @get:DynamoDbConvertedBy(RegionAttributeConverter::class)
     var region: Region = Region.Europe,
     var autoUpdate: Boolean = false,
     var avgDelay: Long = 0,
