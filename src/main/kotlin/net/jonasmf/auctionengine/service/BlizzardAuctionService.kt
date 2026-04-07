@@ -51,18 +51,31 @@ class BlizzardAuctionService(
     val logger: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
 
     fun updateAuctionHouses(auctionHousesToUpdate: List<AuctionHouseDynamo>) {
+        val batchStartTime = System.currentTimeMillis()
         logger.info("Updating ${auctionHousesToUpdate.size} auction houses for region ${properties.region}")
         auctionHousesToUpdate.forEach {
+            val houseStartTime = System.currentTimeMillis()
             logger.info("Starting sequential update for auction house {}", it.connectedId)
             updateHouse(it.connectedId, properties.region)
-            logger.info("Finished sequential update for auction house {}", it.connectedId)
+            logger.info(
+                "Finished sequential update for auction house {} in {}ms",
+                it.connectedId,
+                System.currentTimeMillis() - houseStartTime,
+            )
         }
+        logger.info(
+            "Finished updating {} auction houses for region {} in {}ms",
+            auctionHousesToUpdate.size,
+            properties.region,
+            System.currentTimeMillis() - batchStartTime,
+        )
     }
 
     private fun updateHouse(
         connectedRealmId: Int,
         region: Region,
     ) {
+        val startTime = System.currentTimeMillis()
         logger.debug("Starting update for house: connectedRealmId={}, region={}", connectedRealmId, region)
         try {
             val response =
@@ -104,7 +117,10 @@ class BlizzardAuctionService(
                 )
             }
         } catch (error: Exception) {
-            logger.error("Failed to get latest dump path for realm $connectedRealmId", error)
+            logger.error(
+                "Failed to get latest dump path for realm $connectedRealmId after ${System.currentTimeMillis() - startTime}ms",
+                error,
+            )
         }
     }
 
@@ -162,7 +178,10 @@ class BlizzardAuctionService(
                 url,
             )*/
         } catch (error: Exception) {
-            logger.error("Failed to fetch auction data for realm $connectedRealmId", error)
+            logger.error(
+                "Failed to fetch auction data for realm $connectedRealmId after ${System.currentTimeMillis() - startTime}ms",
+                error,
+            )
             auctionHouseService.updateTimes(
                 // TODO: Cleanup so that the original lastModified also is Instant
                 connectedRealmId,

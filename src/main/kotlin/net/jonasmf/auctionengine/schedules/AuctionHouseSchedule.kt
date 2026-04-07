@@ -25,6 +25,7 @@ class AuctionHouseSchedule(
             return
         }
 
+        val batchStartTime = System.currentTimeMillis()
         logger.info("Starting scheduled auction house update check...")
         try {
             val auctionHousesToUpdate = auctionHouseService.getReadyForUpdate(properties.region)
@@ -34,7 +35,9 @@ class AuctionHouseSchedule(
             }
             logger.info("Found ${auctionHousesToUpdate.size} auction houses ready for update.")
             blizzardAuctionService.updateAuctionHouses(auctionHousesToUpdate)
-            logger.info("Completed scheduled auction house update batch.")
+            logger.info(
+                "Completed scheduled auction house update batch in ${System.currentTimeMillis() - batchStartTime}ms.",
+            )
         } finally {
             updateBatchRunning.set(false)
         }
