@@ -46,6 +46,23 @@ It is not a Kubernetes or EKS deployment.
 
 The expensive jobs therefore show as `skipped` when a change is clearly irrelevant, and CloudFormation only runs when the stack or deploy contract changed.
 
+## Health Check Contract
+
+The deploy workflow verifies each regional stack with `GET /health` after restart.
+
+Current `/health` behavior:
+
+- `204 No Content`: the app is running and no scheduled update batch appears stalled
+- `503 Service Unavailable`: the app is alive but believes an update batch has stopped making progress longer than the configured threshold
+
+This is intentional. A region should fail deployment verification not only when the process is down, but also when it is stuck in a hung state such as:
+
+- GC or heap pressure
+- CPU saturation during large auction processing
+- blocked S3, Blizzard API, or database work
+
+The default stalled-update threshold is `PT20M` from application config.
+
 ## Change Classification
 
 The shared classifier lives in `scripts/deploy/classify_changes.py`.
@@ -365,7 +382,158 @@ Important keys include:
 - `BLIZZARD_CLIENT_ID`
 - `BLIZZARD_CLIENT_SECRET`
 - `JVM_MAX_RAM_PERCENTAGE`
+- `JAVA_TOOL_OPTIONS`
 - optional endpoint overrides for S3 and DynamoDB
+
+Recommended production diagnostics for incident-prone regions:
+
+- `JAVA_TOOL_OPTIONS=-Xlog:gc*:stdout:time,level,tags -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp`
+
+This enables GC logging to CloudWatch and writes a heap dump on OOM to local disk.
+
+## Incident Commands
+
+Use these commands from your local machine when a regional instance looks unhealthy.
+
+### 1. Resolve the regional instance ID
+
+Example for Europe:
+
+```bash
+aws cloudformation describe-stacks \
+  --region eu-west-1 \
+  --stack-name wah-wow-auction-engine-prod-eu-west-1 \
+  --query "Stacks[0].Outputs[?OutputKey=='AppInstanceId'].OutputValue" \
+  --output text
+```
+
+Example for North America:
+
+```bash
+aws cloudformation describe-stacks \
+  --region us-west-1 \
+  --stack-name wah-wow-auction-engine-prod-us-west-1 \
+  --query "Stacks[0].Outputs[?OutputKey=='AppInstanceId'].OutputValue" \
+  --output text
+```
+
+### 2. Run the container inspection script through SSM
+
+This uses [`scripts/deploy/inspect-container-state.sh`](../scripts/deploy/inspect-container-state.sh) on the EC2 host and prints:
+
+- `docker ps`
+- `docker stats --no-stream`
+- container state and restart count
+- Java RSS and CPU
+- cgroup memory and CPU data
+- recent container logs
+- kernel OOM hints
+- the runtime env keys loaded into the container
+
+Example:
+
+```bash
+aws ssm send-command \
+  --region eu-west-1 \
+  --instance-ids <instance-id> \
+  --document-name AWS-RunShellScript \
+  --comment "Inspect wow-auction-engine" \
+  --parameters commands='["APP_NAME=wow-auction-engine ENV_FILE_PATH=/opt/wow-auction-engine/config/app.env /opt/wow-auction-engine/bin/inspect-container-state.sh"]' \
+  --query 'Command.CommandId' \
+  --output text
+```
+
+Then fetch the output:
+
+```bash
+aws ssm list-command-invocations \
+  --region eu-west-1 \
+  --command-id <command-id> \
+  --details
+```
+
+If the command remains `Delayed` or `Undeliverable`, treat that as a sign the host may still be overloaded or the SSM agent is not making progress.
+
+### 3. Read recent application logs
+
+Recent logs from the regional log group:
+
+```bash
+aws logs tail /aws/ec2/wow-auction-engine/prod/eu-west-1 --since 30m
+```
+
+Follow logs live:
+
+```bash
+aws logs tail /aws/ec2/wow-auction-engine/prod/eu-west-1 --follow
+```
+
+Look for:
+
+- long gaps in output
+- repeated auction processing starts without matching completion logs
+- GC logs from `JAVA_TOOL_OPTIONS`
+- OOM, DB timeout, or S3/Blizzard download failures
+
+### 4. Check the public health endpoint
+
+First resolve the current base URL from the stack output:
+
+```bash
+aws cloudformation describe-stacks \
+  --region eu-west-1 \
+  --stack-name wah-wow-auction-engine-prod-eu-west-1 \
+  --query "Stacks[0].Outputs[?OutputKey=='AppBaseUrl'].OutputValue" \
+  --output text
+```
+
+Then call `/health` on that URL:
+
+```bash
+curl -i "$(aws cloudformation describe-stacks \
+  --region eu-west-1 \
+  --stack-name wah-wow-auction-engine-prod-eu-west-1 \
+  --query "Stacks[0].Outputs[?OutputKey=='AppBaseUrl'].OutputValue" \
+  --output text)/health"
+```
+
+Interpretation:
+
+- `204`: region is considered healthy
+- `503`: the app believes an update batch is stalled; inspect application logs for the detailed reason
+- timeout: the JVM or web stack is overloaded badly enough that even the health handler is not responding in time
+
+### 5. Restart only the application container
+
+Use this when the host is reachable and SSM is still responsive.
+
+```bash
+aws ssm send-command \
+  --region eu-west-1 \
+  --instance-ids <instance-id> \
+  --document-name AWS-RunShellScript \
+  --comment "Restart wow-auction-engine" \
+  --parameters commands='["sudo systemctl restart wow-auction-engine.service"]'
+```
+
+### 6. Reboot or stop/start the EC2 instance
+
+Use this when the container is unresponsive and SSM or Docker commands are not making progress.
+
+Reboot:
+
+```bash
+aws ec2 reboot-instances --region eu-west-1 --instance-ids <instance-id>
+```
+
+Full stop/start:
+
+```bash
+aws ec2 stop-instances --region eu-west-1 --instance-ids <instance-id>
+aws ec2 start-instances --region eu-west-1 --instance-ids <instance-id>
+```
+
+Because the stack uses an Elastic IP and systemd bootstraps the container on startup, a stop/start should bring the same public endpoint back.
 
 ## Scaling Regions Up Or Down
 
@@ -383,6 +551,7 @@ Typical changes:
 - change `enabled` to include or exclude a region
 - adjust `allowed_ingress_cidr`
 - adjust JVM settings per region
+- adjust runtime diagnostics passed through `JAVA_TOOL_OPTIONS`
 
 ## Production Region Layout
 
@@ -510,6 +679,17 @@ The current deployment design avoids that by:
 - keeping the app version rollout out of CloudFormation
 - pushing the image to ECR separately
 - restarting the Docker container on the instance through SSM
+
+### `/health` stays unavailable after restart
+
+If the instance is reachable but deploy verification still fails on `/health`, treat it as an application stall rather than a simple network failure.
+
+Recommended checks:
+
+- CloudWatch application logs in `/aws/ec2/<app-name>/<environment>/<region>`
+- SSM inspection using [`scripts/deploy/inspect-container-state.sh`](../scripts/deploy/inspect-container-state.sh)
+- kernel or console output for OOM events
+- whether the current `instance_type` is too small for the region's auction volume
 
 ### Deploy Workflow Does Not Start
 

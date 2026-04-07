@@ -1,22 +1,34 @@
 package net.jonasmf.auctionengine
 
+import io.mockk.every
+import io.mockk.mockk
+import net.jonasmf.auctionengine.service.RuntimeHealthSnapshot
+import net.jonasmf.auctionengine.service.RuntimeHealthTracker
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
+import org.springframework.http.HttpStatus
 
-@WebMvcTest(HealthController::class)
-class HealthControllerTest(
-    @Autowired private val mockMvc: MockMvc,
-) {
+class HealthControllerTest {
+    private val runtimeHealthTracker = mockk<RuntimeHealthTracker>()
+    private val controller = HealthController(runtimeHealthTracker)
+
     @Test
     fun `health endpoint returns no content`() {
-        mockMvc
-            .get("/health")
-            .andExpect {
-                status { isNoContent() }
-                content { string("") }
-            }
+        every { runtimeHealthTracker.snapshot(any()) } returns RuntimeHealthSnapshot(healthy = true)
+
+        val response = controller.health()
+
+        assertEquals(HttpStatus.NO_CONTENT, response.statusCode)
+    }
+
+    @Test
+    fun `health endpoint returns service unavailable when runtime tracker is unhealthy`() {
+        every { runtimeHealthTracker.snapshot(any()) } returns
+            RuntimeHealthSnapshot(healthy = false, reason = "stalled")
+
+        val response = controller.health()
+
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.statusCode)
+        assertEquals(null, response.headers.getFirst("X-Health-Reason"))
     }
 }

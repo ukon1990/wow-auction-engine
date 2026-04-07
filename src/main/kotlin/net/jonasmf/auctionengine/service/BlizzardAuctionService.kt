@@ -13,6 +13,7 @@ import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
 import net.jonasmf.auctionengine.repository.rds.AuctionItemModifierRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionItemRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionRepository
+import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -39,6 +40,7 @@ class BlizzardAuctionService(
     private val auctionItemModifierRepository: AuctionItemModifierRepository,
     private val updateHistoryService: ConnectedRealmUpdateHistoryService,
     private val auctionHouseService: AuctionHouseService,
+    private val runtimeHealthTracker: RuntimeHealthTracker,
 ) {
     private val auctionBatchSize = 100_000
     private val logBatchSize = auctionBatchSize
@@ -49,22 +51,34 @@ class BlizzardAuctionService(
         auctionHousesToUpdate: List<AuctionHouseDynamo>,
     ) {
         val batchStartTime = System.currentTimeMillis()
-        logger.info("Updating ${auctionHousesToUpdate.size} auction houses for region {}", region)
+        logger.info(
+            "Updating {} auction houses for region {} {}",
+            auctionHousesToUpdate.size,
+            region,
+            JvmRuntimeDiagnostics.snapshot(),
+        )
         auctionHousesToUpdate.forEach {
             val houseStartTime = System.currentTimeMillis()
             logger.info("Starting sequential update for auction house {}", it.connectedId)
+            runtimeHealthTracker.markUpdateBatchProgress(
+                "fetch-dump-metadata",
+                region = region,
+                connectedRealmId = it.connectedId,
+            )
             updateHouse(it.connectedId, region)
             logger.info(
-                "Finished sequential update for auction house {} in {}ms",
+                "Finished sequential update for auction house {} in {}ms {}",
                 it.connectedId,
                 System.currentTimeMillis() - houseStartTime,
+                JvmRuntimeDiagnostics.snapshot(),
             )
         }
         logger.info(
-            "Finished updating {} auction houses for region {} in {}ms",
+            "Finished updating {} auction houses for region {} in {}ms {}",
             auctionHousesToUpdate.size,
             region,
             System.currentTimeMillis() - batchStartTime,
+            JvmRuntimeDiagnostics.snapshot(),
         )
     }
 
@@ -131,8 +145,19 @@ class BlizzardAuctionService(
         lastModified: ZonedDateTime,
     ) {
         val startTime = System.currentTimeMillis()
-        logger.info("Starting auction data processing for realm $connectedRealmId")
+        logger.info(
+            "Starting auction data processing for realm {} region {} {}",
+            connectedRealmId,
+            region,
+            JvmRuntimeDiagnostics.snapshot(),
+        )
         try {
+            runtimeHealthTracker.markUpdateBatchProgress(
+                "download-auction-payload",
+                region = region,
+                connectedRealmId = connectedRealmId,
+            )
+            val downloadStartTime = System.currentTimeMillis()
             val data =
                 blizzardAuctionApiClient
                     .downloadAuctionData(url)
@@ -148,7 +173,12 @@ class BlizzardAuctionService(
 
             val auctionCount = data.auctions.size
             logger.info(
-                "Fetched auction data for $connectedRealmId: $auctionCount auctions in ${System.currentTimeMillis() - startTime}ms",
+                "Fetched auction data for realm {} region {} with {} auctions in {}ms {}",
+                connectedRealmId,
+                region,
+                auctionCount,
+                System.currentTimeMillis() - downloadStartTime,
+                JvmRuntimeDiagnostics.snapshot(),
             )
 
             if (auctionCount == 0) {
@@ -156,6 +186,12 @@ class BlizzardAuctionService(
                 return
             }
 
+            runtimeHealthTracker.markUpdateBatchProgress(
+                "archive-auction-payload",
+                region = region,
+                connectedRealmId = connectedRealmId,
+            )
+            val s3ArchiveStartTime = System.currentTimeMillis()
             val s3Url = saveAuctionDataToS3(region, connectedRealmId, data, lastModified)
             if (s3Url == null) {
                 logger.error("Auction payload archive failed for realm {}. Marking update as failed.", connectedRealmId)
@@ -166,7 +202,35 @@ class BlizzardAuctionService(
                 )
                 return
             }
-            hourlyPriceStatisticsService.processHourlyPriceStatistics(connectedRealm, data.auctions, lastModified)
+            logger.info(
+                "Archived auction payload for realm {} region {} in {}ms {}",
+                connectedRealmId,
+                region,
+                System.currentTimeMillis() - s3ArchiveStartTime,
+                JvmRuntimeDiagnostics.snapshot(),
+            )
+            runtimeHealthTracker.markUpdateBatchProgress(
+                "aggregate-hourly-stats",
+                region = region,
+                connectedRealmId = connectedRealmId,
+            )
+            val hourlyStatsStartTime = System.currentTimeMillis()
+            val hourlyStatsSummary =
+                hourlyPriceStatisticsService.processHourlyPriceStatistics(connectedRealm, data.auctions, lastModified)
+            logger.info(
+                "Completed hourly stats processing for realm {} region {} groupedRows={} insertedRows={} in {}ms {}",
+                connectedRealmId,
+                region,
+                hourlyStatsSummary.groupedRows,
+                hourlyStatsSummary.insertedRows,
+                System.currentTimeMillis() - hourlyStatsStartTime,
+                JvmRuntimeDiagnostics.snapshot(),
+            )
+            runtimeHealthTracker.markUpdateBatchProgress(
+                "update-auction-house-times",
+                region = region,
+                connectedRealmId = connectedRealmId,
+            )
             auctionHouseService.updateTimes(
                 connectedRealmId,
                 lastModified.toInstant().toKotlin(),
@@ -190,6 +254,11 @@ class BlizzardAuctionService(
             logger.error(
                 "Failed to fetch auction data for realm $connectedRealmId after ${System.currentTimeMillis() - startTime}ms",
                 error,
+            )
+            runtimeHealthTracker.markUpdateBatchProgress(
+                "auction-processing-failed",
+                region = region,
+                connectedRealmId = connectedRealmId,
             )
             auctionHouseService.updateTimes(
                 // TODO: Cleanup so that the original lastModified also is Instant
@@ -225,7 +294,12 @@ class BlizzardAuctionService(
         }
         if (s3Url != null) {
             logger.info(
-                "Uploaded auctions to S3 for $connectedRealmId: ${data.auctions.size} auctions in ${System.currentTimeMillis() - startTime}ms",
+                "Uploaded auctions to S3 for realm {} region {} with {} auctions in {}ms {}",
+                connectedRealmId,
+                region,
+                data.auctions.size,
+                System.currentTimeMillis() - startTime,
+                JvmRuntimeDiagnostics.snapshot(),
             )
         }
         return s3Url

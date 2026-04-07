@@ -11,9 +11,11 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.service.AuctionHouseService
 import net.jonasmf.auctionengine.service.BlizzardAuctionService
+import net.jonasmf.auctionengine.service.RuntimeHealthTracker
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
+import java.time.Duration
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -48,7 +50,13 @@ class AuctionHouseScheduleTest {
         }
 
         try {
-            val schedule = AuctionHouseSchedule(properties, blizzardAuctionService, auctionHouseService)
+            val schedule =
+                AuctionHouseSchedule(
+                    properties,
+                    blizzardAuctionService,
+                    auctionHouseService,
+                    RuntimeHealthTracker(Duration.ofMinutes(20)),
+                )
             val future = executor.submit<Unit> { schedule.checkForUpdates() }
             assertTrue(started.await(5, TimeUnit.SECONDS))
 
@@ -84,7 +92,13 @@ class AuctionHouseScheduleTest {
         every { auctionHouseService.getReadyForUpdate(Region.Taiwan) } returns emptyList()
         every { blizzardAuctionService.updateAuctionHouses(any(), any()) } returns Unit
 
-        val schedule = AuctionHouseSchedule(properties, blizzardAuctionService, auctionHouseService)
+        val schedule =
+            AuctionHouseSchedule(
+                properties,
+                blizzardAuctionService,
+                auctionHouseService,
+                RuntimeHealthTracker(Duration.ofMinutes(20)),
+            )
 
         schedule.checkForUpdates()
         schedule.checkForUpdates()
@@ -103,7 +117,13 @@ class AuctionHouseScheduleTest {
         every { auctionHouseService.getReadyForUpdate(Region.Taiwan) } returns emptyList()
         every { blizzardAuctionService.updateAuctionHouses(any(), any()) } throws RuntimeException("boom") andThen Unit
 
-        val schedule = AuctionHouseSchedule(properties, blizzardAuctionService, auctionHouseService)
+        val schedule =
+            AuctionHouseSchedule(
+                properties,
+                blizzardAuctionService,
+                auctionHouseService,
+                RuntimeHealthTracker(Duration.ofMinutes(20)),
+            )
 
         runCatching { schedule.checkForUpdates() }
         schedule.checkForUpdates()
