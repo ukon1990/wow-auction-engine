@@ -251,36 +251,8 @@ Resources:
           chmod 600 "$OUTPUT_FILE"
           EOF
 
-          cat > /opt/${AppName}/bin/start-app.sh <<'EOF'
-          #!/bin/bash
-          set -euo pipefail
-
-          IMAGE_URI="$1"
-          APP_NAME="${AppName}"
-          CONTAINER_PORT="${ContainerPort}"
-          LOG_GROUP="/aws/ec2/${AppName}/${Environment}/${RegionCode}"
-          ENV_FILE="/opt/${AppName}/config/app.env"
-          REGISTRY="$(echo "$IMAGE_URI" | cut -d/ -f1)"
-
-          aws ecr get-login-password --region "${AWS::Region}" | docker login --username AWS --password-stdin "$REGISTRY"
-          docker pull "$IMAGE_URI"
-          docker rm -f "$APP_NAME" >/dev/null 2>&1 || true
-          docker run -d \
-            --name "$APP_NAME" \
-            --restart unless-stopped \
-            --env-file "$ENV_FILE" \
-            -e JVM_MAX_RAM_PERCENTAGE="${JvmMaxRamPercentage}" \
-            -p "$CONTAINER_PORT:$CONTAINER_PORT" \
-            --log-driver awslogs \
-            --log-opt awslogs-region="${AWS::Region}" \
-            --log-opt awslogs-group="$LOG_GROUP" \
-            --log-opt awslogs-stream="$APP_NAME" \
-            "$IMAGE_URI"
-          EOF
-
-          chmod +x /opt/${AppName}/bin/write-env-file.sh /opt/${AppName}/bin/start-app.sh
+          chmod +x /opt/${AppName}/bin/write-env-file.sh
           /opt/${AppName}/bin/write-env-file.sh
-          /opt/${AppName}/bin/start-app.sh "${ContainerImageUri}" || true
       Tags:
         - Key: Name
           Value: !Sub "${AppName}-${Environment}-${RegionCode}"

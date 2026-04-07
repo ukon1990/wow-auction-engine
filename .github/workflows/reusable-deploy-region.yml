@@ -158,7 +158,7 @@ jobs:
         env:
           AWS_REGION: ${{ inputs.aws_region }}
 
-      - name: Clear failed rollback-only stack
+      - name: Recover failed stack state
         shell: bash
         run: |
           set -euo pipefail
@@ -167,6 +167,16 @@ jobs:
             --stack-name "${STACK_NAME}" \
             --query 'Stacks[0].StackStatus' \
             --output text 2>/dev/null || true)"
+          if [[ "$stack_status" == "UPDATE_ROLLBACK_FAILED" ]]; then
+            echo "Continuing rollback for stack ${STACK_NAME} in ${stack_status}"
+            aws cloudformation continue-update-rollback --region "${AWS_REGION}" --stack-name "${STACK_NAME}"
+            aws cloudformation wait stack-rollback-complete --region "${AWS_REGION}" --stack-name "${STACK_NAME}"
+            stack_status="$(aws cloudformation describe-stacks \
+              --region "${AWS_REGION}" \
+              --stack-name "${STACK_NAME}" \
+              --query 'Stacks[0].StackStatus' \
+              --output text)"
+          fi
           if [[ "$stack_status" == "ROLLBACK_COMPLETE" || "$stack_status" == "ROLLBACK_FAILED" || "$stack_status" == "CREATE_FAILED" ]]; then
             echo "Deleting stack ${STACK_NAME} in ${stack_status} before redeploy"
             aws cloudformation delete-stack --region "${AWS_REGION}" --stack-name "${STACK_NAME}"
@@ -212,7 +222,6 @@ jobs:
               ProjectTag="${PROJECT_TAG}" \
               InstanceType="${INSTANCE_TYPE}" \
               InstanceEnabled="${INSTANCE_ENABLED}" \
-              ContainerImageUri="${IMAGE_URI}" \
               ContainerPort="${CONTAINER_PORT}" \
               HealthCheckPath="${HEALTH_CHECK_PATH}" \
               AllowedIngressCidr="${ALLOWED_INGRESS_CIDR}" \
