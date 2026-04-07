@@ -349,8 +349,8 @@ jobs:
 
           commands = [
               f"sudo /opt/{app_name}/bin/write-env-file.sh",
-              f"echo {script_b64} | base64 -d > /tmp/restart-container.sh",
-              "chmod +x /tmp/restart-container.sh",
+              f"echo {script_b64} | base64 -d | sudo tee /opt/{app_name}/bin/restart-container.sh > /dev/null",
+              f"sudo chmod +x /opt/{app_name}/bin/restart-container.sh",
               (
                   "sudo "
                   f"APP_NAME={app_name} "
@@ -359,7 +359,7 @@ jobs:
                   f"ENV_FILE_PATH=/opt/{app_name}/config/app.env "
                   f"CONTAINER_PORT={container_port} "
                   f"LOG_GROUP=/aws/ec2/{app_name}/{environment}/{aws_region} "
-                  "/tmp/restart-container.sh"
+                  f"/opt/{app_name}/bin/restart-container.sh"
               ),
           ]
           print(json.dumps({"commands": commands}))
@@ -404,6 +404,65 @@ jobs:
           AWS_REGION: ${{ inputs.aws_region }}
           COMMAND_ID: ${{ steps.ssm.outputs.command_id }}
 
+      - name: Inspect container state through SSM
+        if: ${{ inputs.run_app_rollout }}
+        id: container_probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          script_b64="$(base64 -w 0 scripts/deploy/inspect-container-state.sh)"
+          export SCRIPT_B64="$script_b64"
+          python - <<'PY' > /tmp/container-probe-commands.json
+          import json
+          import os
+
+          app_name = os.environ["APP_NAME"]
+          script_b64 = os.environ["SCRIPT_B64"]
+
+          commands = [
+              f"echo {script_b64} | base64 -d > /tmp/inspect-container-state.sh",
+              "chmod +x /tmp/inspect-container-state.sh",
+              (
+                  "sudo "
+                  f"APP_NAME={app_name} "
+                  f"ENV_FILE_PATH=/opt/{app_name}/config/app.env "
+                  "/tmp/inspect-container-state.sh"
+              ),
+          ]
+
+          print(json.dumps({"commands": commands}))
+          PY
+          probe_command_id="$(aws ssm send-command \
+            --region "${AWS_REGION}" \
+            --instance-ids "${INSTANCE_ID}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Inspect ${APP_NAME} container state" \
+            --parameters file:///tmp/container-probe-commands.json \
+            --query 'Command.CommandId' \
+            --output text)"
+          echo "probe_command_id=$probe_command_id" >> "$GITHUB_OUTPUT"
+
+          for _ in $(seq 1 30); do
+            status="$(aws ssm list-command-invocations --region "${AWS_REGION}" --command-id "${probe_command_id}" --details --query 'CommandInvocations[0].Status' --output text)"
+            if [[ "$status" == "Success" ]]; then
+              aws ssm list-command-invocations --region "${AWS_REGION}" --command-id "${probe_command_id}" --details
+              exit 0
+            fi
+            if [[ "$status" == "Cancelled" || "$status" == "Failed" || "$status" == "TimedOut" ]]; then
+              aws ssm list-command-invocations --region "${AWS_REGION}" --command-id "${probe_command_id}" --details
+              exit 1
+            fi
+            sleep 5
+          done
+
+          echo "Container probe command ${probe_command_id} did not complete in time" >&2
+          aws ssm list-command-invocations --region "${AWS_REGION}" --command-id "${probe_command_id}" --details || true
+          exit 1
+        env:
+          APP_NAME: ${{ inputs.app_name }}
+          AWS_REGION: ${{ inputs.aws_region }}
+          INSTANCE_ID: ${{ steps.stack_outputs.outputs.instance_id }}
+
       - name: Verify application health
         if: ${{ inputs.run_app_rollout }}
         shell: bash
@@ -411,7 +470,7 @@ jobs:
           set -euo pipefail
           health_url="${BASE_URL}${HEALTH_CHECK_PATH}"
           for _ in $(seq 1 30); do
-            if curl --fail --silent --show-error "$health_url" >/dev/null; then
+            if curl --fail --silent --show-error --connect-timeout 5 --max-time 10 "$health_url" >/dev/null; then
               exit 0
             fi
             sleep 10
@@ -421,3 +480,48 @@ jobs:
         env:
           BASE_URL: ${{ steps.stack_outputs.outputs.base_url }}
           HEALTH_CHECK_PATH: ${{ inputs.health_check_path }}
+
+      - name: Dump rollout diagnostics
+        if: ${{ failure() && inputs.run_app_rollout }}
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          echo "=== Restart SSM command details ==="
+          aws ssm list-command-invocations \
+            --region "${AWS_REGION}" \
+            --command-id "${COMMAND_ID}" \
+            --details || true
+
+          echo "=== Container probe SSM command details ==="
+          if [[ -n "${PROBE_COMMAND_ID:-}" ]]; then
+            aws ssm list-command-invocations \
+              --region "${AWS_REGION}" \
+              --command-id "${PROBE_COMMAND_ID}" \
+              --details || true
+          fi
+
+          echo "=== Recent CloudWatch application logs ==="
+          stream_name="$(aws logs describe-log-streams \
+            --region "${AWS_REGION}" \
+            --log-group-name "${LOG_GROUP}" \
+            --order-by LastEventTime \
+            --descending \
+            --max-items 1 \
+            --query 'logStreams[0].logStreamName' \
+            --output text 2>/dev/null || true)"
+
+          if [[ -n "$stream_name" && "$stream_name" != "None" ]]; then
+            aws logs get-log-events \
+              --region "${AWS_REGION}" \
+              --log-group-name "${LOG_GROUP}" \
+              --log-stream-name "$stream_name" \
+              --limit 200 || true
+          else
+            echo "No CloudWatch log stream found in ${LOG_GROUP}"
+          fi
+        env:
+          AWS_REGION: ${{ inputs.aws_region }}
+          COMMAND_ID: ${{ steps.ssm.outputs.command_id }}
+          PROBE_COMMAND_ID: ${{ steps.container_probe.outputs.probe_command_id }}
+          LOG_GROUP: /aws/ec2/${{ inputs.app_name }}/${{ inputs.environment }}/${{ inputs.aws_region }}

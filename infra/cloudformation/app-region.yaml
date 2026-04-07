@@ -251,7 +251,69 @@ Resources:
           EOF
 
           chmod +x /opt/${AppName}/bin/write-env-file.sh
+          cat > /opt/${AppName}/bin/restart-container.sh <<'EOF'
+          #!/bin/bash
+          set -euo pipefail
+
+          required_vars=(
+            APP_NAME
+            AWS_REGION
+            IMAGE_URI
+            ENV_FILE_PATH
+            CONTAINER_PORT
+          )
+
+          for var_name in "${required_vars[@]}"; do
+            if [[ -z "${!var_name:-}" ]]; then
+              echo "Missing required environment variable: $var_name" >&2
+              exit 1
+            fi
+          done
+
+          LOG_GROUP="${LOG_GROUP:-/aws/ec2/${APP_NAME}}"
+          HOST_PORT="${HOST_PORT:-$CONTAINER_PORT}"
+          REGISTRY="${IMAGE_URI%%/*}"
+
+          aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$REGISTRY"
+
+          docker pull "$IMAGE_URI"
+          docker rm -f "$APP_NAME" >/dev/null 2>&1 || true
+
+          docker run -d \
+            --name "$APP_NAME" \
+            --restart unless-stopped \
+            --env-file "$ENV_FILE_PATH" \
+            -p "${HOST_PORT}:${CONTAINER_PORT}" \
+            --log-driver awslogs \
+            --log-opt awslogs-region="$AWS_REGION" \
+            --log-opt awslogs-group="$LOG_GROUP" \
+            --log-opt awslogs-stream="$APP_NAME" \
+            "$IMAGE_URI"
+          EOF
+
+          chmod +x /opt/${AppName}/bin/restart-container.sh
+
+          cat > /etc/systemd/system/${AppName}.service <<'EOF'
+          [Unit]
+          Description=${AppName} container bootstrap
+          Wants=network-online.target docker.service
+          After=network-online.target docker.service
+
+          [Service]
+          Type=oneshot
+          RemainAfterExit=yes
+          ExecStart=/bin/bash -lc '/opt/${AppName}/bin/write-env-file.sh && APP_NAME=${AppName} AWS_REGION=${AWS::Region} IMAGE_URI=${AppRepository.RepositoryUri}:master ENV_FILE_PATH=/opt/${AppName}/config/app.env CONTAINER_PORT=${ContainerPort} LOG_GROUP=/aws/ec2/${AppName}/${Environment}/${RegionCode} /opt/${AppName}/bin/restart-container.sh'
+          Restart=on-failure
+          RestartSec=30
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+
+          systemctl daemon-reload
+          systemctl enable ${AppName}.service
           /opt/${AppName}/bin/write-env-file.sh
+          systemctl start ${AppName}.service || true
       Tags:
         - Key: Name
           Value: !Sub "${AppName}-${Environment}-${RegionCode}"
