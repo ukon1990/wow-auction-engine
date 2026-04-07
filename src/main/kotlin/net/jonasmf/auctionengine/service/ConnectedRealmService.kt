@@ -34,7 +34,10 @@ class ConnectedRealmService(
 ) {
     val log: Logger = LoggerFactory.getLogger(ConnectedRealmService::class.java)
 
-    @Scheduled(fixedDelayString = "PT1H", initialDelay = 3_000)
+    @Scheduled(
+        fixedDelayString = "PT1H",
+        initialDelayString = "\${app.scheduling.initial-delay:PT30S}",
+    )
     fun updateRealms() {
         // return // TODO: FInd a better way to determine when to run this or not. It's annoying to run every time
         regionService.ensureRegionsExist()

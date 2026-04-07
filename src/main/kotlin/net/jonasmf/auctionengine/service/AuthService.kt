@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.context.ApplicationListener
-import org.springframework.context.event.ContextRefreshedEvent
+import org.springframework.boot.context.event.ApplicationReadyEvent
+import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -16,16 +16,20 @@ import reactor.core.publisher.Mono
 class AuthService(
     private val properties: BlizzardApiProperties,
     private val authWebClient: WebClient,
-) : ApplicationListener<ContextRefreshedEvent> {
+) {
     @Volatile
     private var accessToken: String? = null
     private var expiryDuration: Long = 0
 
-    override fun onApplicationEvent(event: ContextRefreshedEvent) {
-        refreshToken() // Fetch token on application start
+    @EventListener(ApplicationReadyEvent::class)
+    fun refreshTokenAfterStartup() {
+        refreshToken().subscribe()
     }
 
-    @Scheduled(fixedDelayString = "PT1H") // This can be adjusted to refresh more frequently
+    @Scheduled(
+        fixedDelayString = "PT1H",
+        initialDelayString = "\${app.scheduling.initial-delay:PT30S}",
+    )
     fun scheduledTokenRefresh() {
         refreshToken().subscribe()
     }

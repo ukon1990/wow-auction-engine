@@ -8,6 +8,7 @@ import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.testsupport.loadFixture
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -22,9 +23,20 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.TimeoutException
+import kotlin.io.path.deleteIfExists
 
 class BlizzardAuctionApiClientTest {
+    private val filesToDelete = mutableListOf<Path>()
+
+    @AfterEach
+    fun cleanupFiles() {
+        filesToDelete.forEach { it.deleteIfExists() }
+        filesToDelete.clear()
+    }
+
     @Test
     fun `getLatestAuctionDump builds connected realm uri with regional namespace and header`() {
         var capturedRequest: ClientRequest? = null
@@ -69,7 +81,7 @@ class BlizzardAuctionApiClientTest {
     }
 
     @Test
-    fun `downloadAuctionData deserializes auction fixture with varied items`() {
+    fun `downloadAuctionData streams auction fixture to a temp file`() {
         var capturedRequest: ClientRequest? = null
         val webClient =
             webClient { request ->
@@ -84,22 +96,39 @@ class BlizzardAuctionApiClientTest {
                 .downloadAuctionData(
                     "https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions",
                 ).block()!!
+        filesToDelete.add(result.path)
+        val fileContents = Files.readString(result.path)
 
         assertEquals(
             "https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions",
             capturedRequest!!.url().toString(),
         )
-        assertEquals(3, result.auctions.size)
-        assertEquals(19019, result.auctions[0].item.id)
-        assertEquals(
-            2,
-            result.auctions[1]
-                .item.modifiers!!
-                .size,
-        )
-        assertEquals(52, result.auctions[1].item.context)
-        assertEquals(39, result.auctions[2].item.pet_species_id)
-        assertEquals(25, result.auctions[2].item.pet_level)
+        assertTrue(Files.exists(result.path))
+        assertTrue(fileContents.contains("\"auctions\""))
+        assertTrue(fileContents.contains("19019"))
+        assertTrue(fileContents.contains("pet_species_id"))
+    }
+
+    @Test
+    fun `downloadAuctionData streams malformed json without decoding it`() {
+        val client =
+            BlizzardAuctionApiClient(
+                createSupport(
+                    webClient {
+                        response("""{"auctions":[{"id":1""")
+                    },
+                ),
+            )
+
+        val result =
+            client
+                .downloadAuctionData(
+                    "https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions",
+                ).block()!!
+        filesToDelete.add(result.path)
+
+        assertTrue(Files.exists(result.path))
+        assertEquals("""{"auctions":[{"id":1""", Files.readString(result.path))
     }
 
     @Test
@@ -128,32 +157,6 @@ class BlizzardAuctionApiClientTest {
         val errorEvent = appender.list.single { it.level == Level.ERROR }
         assertTrue(errorEvent.formattedMessage.contains("Blizzard API download auction payload failed"))
         assertTrue(errorEvent.formattedMessage.contains("502 Bad Gateway"))
-        assertNull(errorEvent.throwableProxy)
-        detachAppender(appender)
-    }
-
-    @Test
-    fun `downloadAuctionData logs concise malformed json failure and still propagates`() {
-        val appender = attachAppender()
-        val client =
-            BlizzardAuctionApiClient(
-                createSupport(
-                    webClient {
-                        response("""{"auctions":[{"id":1""")
-                    },
-                ),
-            )
-
-        val error =
-            assertThrows(BlizzardApiClientException::class.java) {
-                client.downloadAuctionData("https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions").block()
-            }
-
-        assertEquals("download auction payload", error.operation)
-        assertEquals("Unexpected end-of-input: expected close marker for Object", error.summary)
-        val errorEvent = appender.list.single { it.level == Level.ERROR }
-        assertTrue(errorEvent.formattedMessage.contains("DecodingException"))
-        assertTrue(errorEvent.formattedMessage.contains("Unexpected end-of-input: expected close marker for Object"))
         assertNull(errorEvent.throwableProxy)
         detachAppender(appender)
     }
