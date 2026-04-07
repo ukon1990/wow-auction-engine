@@ -1,8 +1,6 @@
 package net.jonasmf.auctionengine.service
 
-import NameSpace
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.dbo.dynamodb.converters.toKotlin
@@ -11,17 +9,14 @@ import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
+import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
 import net.jonasmf.auctionengine.repository.rds.AuctionItemModifierRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionItemRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionRepository
-import net.jonasmf.auctionengine.utility.determineBaseUrl
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.Locale
@@ -34,7 +29,7 @@ import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItemModifier as AuctionI
 @Service
 class BlizzardAuctionService(
     private val properties: BlizzardApiProperties,
-    private val webClientWithAuth: WebClient,
+    private val blizzardAuctionApiClient: BlizzardAuctionApiClient,
     private val authService: AuthService,
     private val amazonS3: AmazonS3Service,
     private val auctionRepository: AuctionRepository,
@@ -45,7 +40,6 @@ class BlizzardAuctionService(
     private val updateHistoryService: ConnectedRealmUpdateHistoryService,
     private val auctionHouseService: AuctionHouseService,
 ) {
-    private val webClient: WebClient = webClientWithAuth
     private val auctionBatchSize = 100_000
     private val logBatchSize = auctionBatchSize
     val logger: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
@@ -79,7 +73,8 @@ class BlizzardAuctionService(
         logger.debug("Starting update for house: connectedRealmId={}, region={}", connectedRealmId, region)
         try {
             val response =
-                getLatestDumpPath(connectedRealmId, region)
+                blizzardAuctionApiClient
+                    .getLatestAuctionDump(connectedRealmId, region)
                     .block() ?: run {
                     logger.error("Latest dump path lookup returned no response for realm {}", connectedRealmId)
                     return
@@ -101,6 +96,7 @@ class BlizzardAuctionService(
 
             if (house.lastModified == null || lastModified.isAfter(house.lastModified)) {
                 logger.info("New auction data available for $connectedRealmId. Last modified: $lastModified")
+                saveDumpPathToS3(region, connectedRealmId, response)
                 processAuctionData(response.url, region, connectedRealm, connectedRealmId, lastModified)
             } else {
                 logger.debug(
@@ -135,7 +131,8 @@ class BlizzardAuctionService(
         logger.info("Starting auction data processing for realm $connectedRealmId")
         try {
             val data =
-                getAuctionData(url, region)
+                blizzardAuctionApiClient
+                    .downloadAuctionData(url)
                     .block() ?: run {
                     logger.error("Auction data download returned no payload for realm {}", connectedRealmId)
                     auctionHouseService.updateTimes(
@@ -218,6 +215,23 @@ class BlizzardAuctionService(
             "Uploaded auctions to S3 for $connectedRealmId: ${data.auctions.size} auctions in ${System.currentTimeMillis() - startTime}ms",
         )
         return s3Url
+    }
+
+    private fun saveDumpPathToS3(
+        region: Region,
+        connectedRealmId: Int,
+        response: AuctionDataResponse,
+    ) {
+        val filePath = "auctions/${region.name.lowercase(
+            Locale.getDefault(),
+        )}/${if (connectedRealmId < 0) "commodity" else "$connectedRealmId"}/dump-path.json"
+
+        try {
+            amazonS3.uploadFile(region, filePath, response)
+            logger.debug("Successfully uploaded dump path to S3: $filePath")
+        } catch (e: Exception) {
+            logger.error("Failed to upload dump path to S3: $filePath", e)
+        }
     }
 
     /**
@@ -609,119 +623,5 @@ class BlizzardAuctionService(
             logger.error("Failed to save auction: ${auction.id}", e)
             throw e
         }
-    }
-
-    fun getAuctionData(
-        url: String,
-        region: Region,
-        gameBuild: GameBuildVersion = GameBuildVersion.RETAIL,
-    ): Mono<AuctionData> {
-        val isClassic = gameBuild == GameBuildVersion.CLASSIC
-        val namespace = if (isClassic) NameSpace.DYNAMIC_CLASSIC else NameSpace.DYNAMIC_RETAIL
-
-        logger.debug("Fetching auction data from: $url, region: $region, gameBuild: $gameBuild")
-        logger.debug("Using namespace {} for game build {}", namespace.value, gameBuild)
-
-        return authService.getToken().flatMap {
-            webClient
-                .get()
-                .uri(url)
-                .retrieve()
-                .bodyToMono(AuctionData::class.java)
-                .doOnNext {
-                    logger.info("Successfully fetched auction data from $url")
-                }.doOnError { error ->
-                    logger.error("Failed to fetch auction data from $url: ${error.message}", error)
-                }
-        }
-    }
-
-    fun getLatestDumpPath(
-        id: Int,
-        region: Region,
-        gameBuild: GameBuildVersion = GameBuildVersion.RETAIL,
-        previousLastModified: ZonedDateTime? = null,
-    ): Mono<AuctionDataResponse> {
-        val isClassic = gameBuild == GameBuildVersion.CLASSIC
-        val path =
-            if (id <
-                0
-            ) {
-                "auctions/commodities"
-            } else {
-                "connected-realm/$id/auctions${if (isClassic) "/index" else ""}"
-            }
-
-        if (isClassic) {
-            logger.info("Classic is not supported for now")
-        }
-
-        val namespace =
-            when (region) {
-                Region.NorthAmerica -> NameSpace.DYNAMIC_US
-                Region.Europe -> NameSpace.DYNAMIC_EU
-                Region.Korea -> NameSpace.DYNAMIC_KR
-                Region.Taiwan -> NameSpace.DYNAMIC_TW
-            }
-
-        logger.debug("Getting latest dump path for id: $id, region: $region, path: $path")
-
-        return authService
-            .getToken()
-            .flatMap { token ->
-                val baseUrl = determineBaseUrl(region, properties)
-                val url = "${baseUrl}$path?namespace=${namespace.value}&locale=en_US"
-
-                webClient
-                    .get()
-                    .uri(url)
-                    .header("If-Modified-Since", "Sat, 14 Mar 3000 20:07:10 GMT")
-                    .retrieve()
-                    .toEntity(String::class.java)
-                    .map { httpResponse ->
-                        val headers = httpResponse.headers
-                        val lastModified = headers.lastModified
-                        val lastModifiedZonedDate =
-                            ZonedDateTime.ofInstant(
-                                Instant.ofEpochMilli(lastModified),
-                                TimeZone.getDefault().toZoneId(),
-                            )
-                        val cleanedUrl = url.replace("access_token=$token&", "")
-
-                        val response =
-                            AuctionDataResponse(
-                                lastModified = lastModified,
-                                url = cleanedUrl,
-                                gameBuild = gameBuild,
-                            )
-
-                        if (previousLastModified == null || previousLastModified.isBefore(lastModifiedZonedDate)) {
-                            val filePath = "auctions/${region.name.lowercase(Locale.getDefault())}/${
-                                if (id < 0) "commodity" else "$id"
-                            }/dump-path.json"
-
-                            try {
-                                amazonS3.uploadFile(region, filePath, response)
-                                logger.debug("Successfully uploaded dump path to S3: $filePath")
-                            } catch (e: Exception) {
-                                logger.error("Failed to upload dump path to S3: $filePath", e)
-                            }
-                        } else {
-                            logger.info(
-                                "No new dump available for id $id. Previous last modified: $previousLastModified, Latest last modified: $lastModifiedZonedDate",
-                            )
-                        }
-
-                        response
-                    }.doOnNext {
-                        logger.info(
-                            "Successfully fetched latest dump path with last modified: ${Instant.ofEpochMilli(
-                                it.lastModified,
-                            )}",
-                        )
-                    }.doOnError { error ->
-                        logger.error("Failed to fetch latest dump path from $url: ${error.message}", error)
-                    }
-            }.subscribeOn(Schedulers.boundedElastic())
     }
 }

@@ -1,4 +1,4 @@
-import net.jonasmf.auctionengine.constant.Region
+package net.jonasmf.auctionengine.constant
 
 enum class NameSpace(
     val value: String,

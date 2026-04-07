@@ -1,7 +1,5 @@
 package net.jonasmf.auctionengine.service
 
-import NameSpace
-import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.constant.Region
@@ -9,17 +7,13 @@ import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm
 import net.jonasmf.auctionengine.dto.Href
-import net.jonasmf.auctionengine.dto.realm.ConnectedRealmDTO
-import net.jonasmf.auctionengine.dto.realm.ConnectedRealmIndex
+import net.jonasmf.auctionengine.integration.blizzard.BlizzardConnectedRealmApiClient
 import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
 import net.jonasmf.auctionengine.repository.rds.RegionRepository
-import net.jonasmf.auctionengine.utility.determineBaseUrl
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
@@ -29,15 +23,12 @@ import kotlin.text.get
 
 @Service
 class ConnectedRealmService(
-    private val properties: BlizzardApiProperties,
-    webClientWithAuth: WebClient,
+    private val blizzardConnectedRealmApiClient: BlizzardConnectedRealmApiClient,
     private val regionService: RegionService,
     private val connectedRealmRepository: ConnectedRealmRepository,
     private val regionRepository: RegionRepository,
     private val auctionHouseService: AuctionHouseService,
 ) {
-    private val webClient: WebClient = webClientWithAuth
-    private val basePath = "connected-realm/index"
     val log: Logger = LoggerFactory.getLogger(ConnectedRealmService::class.java)
 
     @Scheduled(fixedDelayString = "PT1H", initialDelay = 3_000)
@@ -132,7 +123,8 @@ class ConnectedRealmService(
     fun getAndUpdate(region: Region): Mono<List<ConnectedRealm>> {
         log.info("Fetching connected realms for region: ${region.name}")
 
-        return getConnectedRealmIndex(region)
+        return blizzardConnectedRealmApiClient
+            .getConnectedRealmIndex(region)
             .doOnError { error ->
                 log.error("Failed to fetch connected realm index for region ${region.name}: $error")
             }.flatMapMany { index ->
@@ -160,7 +152,8 @@ class ConnectedRealmService(
         realm: Href,
         region: Region,
     ): Mono<ConnectedRealm> =
-        getRealm(realm)
+        blizzardConnectedRealmApiClient
+            .getConnectedRealm(realm)
             .doOnSubscribe {
                 log.debug("Fetching realm data for ${realm.href}")
             }.doOnError { error ->
@@ -190,28 +183,4 @@ class ConnectedRealmService(
                 log.info("Saving new connected realm ${connectedDBO.id} for region ${region.name}")
                 connectedRealmRepository.save(connectedDBO)
             }.subscribeOn(Schedulers.boundedElastic())
-
-    private fun getConnectedRealmIndex(region: Region): Mono<ConnectedRealmIndex> {
-        log.info("Fetching connected realm index...")
-        val uri =
-            UriComponentsBuilder
-                .fromUriString(determineBaseUrl(region, properties))
-                .path(basePath)
-                .queryParam("namespace", NameSpace.getDynamicForRegion(region).value)
-                .queryParam("locale", "en_GB")
-                .toUriString()
-
-        return webClient
-            .get()
-            .uri(uri)
-            .retrieve()
-            .bodyToMono(ConnectedRealmIndex::class.java)
-    }
-
-    private fun getRealm(url: Href): Mono<ConnectedRealmDTO> =
-        webClient
-            .get()
-            .uri(url.href)
-            .retrieve()
-            .bodyToMono(ConnectedRealmDTO::class.java)
 }

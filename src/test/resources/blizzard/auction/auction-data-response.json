@@ -1,0 +1,54 @@
+{
+  "_links": {
+    "self": {
+      "href": "https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions"
+    }
+  },
+  "commodities": {
+    "href": "https://eu.api.blizzard.test/data/wow/auctions/commodities"
+  },
+  "auctions": [
+    {
+      "id": 101001,
+      "item": {
+        "id": 19019
+      },
+      "quantity": 1,
+      "buyout": 250000000,
+      "time_left": "LONG"
+    },
+    {
+      "id": 101002,
+      "item": {
+        "id": 211297,
+        "context": 52,
+        "modifiers": [
+          {
+            "type": "PLAYER_LEVEL",
+            "value": 70
+          },
+          {
+            "type": "ITEM_LEVEL",
+            "value": 489
+          }
+        ]
+      },
+      "quantity": 3,
+      "buyout": 1599900,
+      "time_left": "VERY_LONG"
+    },
+    {
+      "id": 101003,
+      "item": {
+        "id": 82800,
+        "pet_breed_id": 3,
+        "pet_level": 25,
+        "pet_quality_id": 4,
+        "pet_species_id": 39
+      },
+      "quantity": 1,
+      "unit_price": 875000,
+      "time_left": "SHORT"
+    }
+  ]
+}
