@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import java.nio.charset.StandardCharsets
 
 class BlizzardAuctionApiClientTest {
     @Test
@@ -21,7 +22,7 @@ class BlizzardAuctionApiClientTest {
         val webClient =
             webClient { request ->
                 capturedRequest = request
-                response("""{}""", 1_700_000_000_000)
+                response(auctionDumpMetadataBody(), 1_700_000_000_000)
             }
 
         val client = BlizzardAuctionApiClient(createSupport(webClient))
@@ -44,7 +45,7 @@ class BlizzardAuctionApiClientTest {
         val webClient =
             webClient { request ->
                 capturedRequest = request
-                response("""{}""", 1_700_000_000_000)
+                response(auctionDumpMetadataBody(), 1_700_000_000_000)
             }
 
         val client = BlizzardAuctionApiClient(createSupport(webClient))
@@ -56,6 +57,40 @@ class BlizzardAuctionApiClientTest {
             result.url,
         )
         assertEquals(result.url, capturedRequest!!.url().toString())
+    }
+
+    @Test
+    fun `downloadAuctionData deserializes auction fixture with varied items`() {
+        var capturedRequest: ClientRequest? = null
+        val webClient =
+            webClient { request ->
+                capturedRequest = request
+                response(auctionDataBody())
+            }
+
+        val client = BlizzardAuctionApiClient(createSupport(webClient))
+
+        val result =
+            client
+                .downloadAuctionData(
+                    "https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions",
+                ).block()!!
+
+        assertEquals(
+            "https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions",
+            capturedRequest!!.url().toString(),
+        )
+        assertEquals(3, result.auctions.size)
+        assertEquals(19019, result.auctions[0].item.id)
+        assertEquals(
+            2,
+            result.auctions[1]
+                .item.modifiers!!
+                .size,
+        )
+        assertEquals(52, result.auctions[1].item.context)
+        assertEquals(39, result.auctions[2].item.pet_species_id)
+        assertEquals(25, result.auctions[2].item.pet_level)
     }
 
     private fun createSupport(webClient: WebClient) =
@@ -79,14 +114,29 @@ class BlizzardAuctionApiClientTest {
 
     private fun response(
         body: String,
-        lastModified: Long,
+        lastModified: Long? = null,
     ): Mono<ClientResponse> =
         Mono.just(
             ClientResponse
                 .create(HttpStatus.OK)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .header(HttpHeaders.LAST_MODIFIED, lastModified.toString())
-                .body(body)
+                .apply {
+                    if (lastModified != null) {
+                        header(HttpHeaders.LAST_MODIFIED, lastModified.toString())
+                    }
+                }.body(body)
                 .build(),
         )
+
+    private fun auctionDataBody(): String =
+        javaClass
+            .getResourceAsStream("/blizzard/auction-data-response.json")
+            ?.use { inputStream -> String(inputStream.readAllBytes(), StandardCharsets.UTF_8) }
+            ?: error("Missing test resource: /blizzard/auction-data-response.json")
+
+    private fun auctionDumpMetadataBody(): String =
+        javaClass
+            .getResourceAsStream("/blizzard/auction-dump-metadata-response.json")
+            ?.use { inputStream -> String(inputStream.readAllBytes(), StandardCharsets.UTF_8) }
+            ?: error("Missing test resource: /blizzard/auction-dump-metadata-response.json")
 }

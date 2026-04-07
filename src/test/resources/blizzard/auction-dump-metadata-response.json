@@ -1,0 +1,7 @@
+{
+  "_links": {
+    "self": {
+      "href": "https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions/index"
+    }
+  }
+}
