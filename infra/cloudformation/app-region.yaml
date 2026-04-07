@@ -1,0 +1,327 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Reusable single-region stack for the WoW Auction Engine service.
+
+Parameters:
+  AppName:
+    Type: String
+    Default: wow-auction-engine
+  Environment:
+    Type: String
+    Default: prod
+  RegionCode:
+    Type: String
+  ProjectTag:
+    Type: String
+    Default: WAH
+  InstanceType:
+    Type: String
+    Default: t4g.micro
+  InstanceEnabled:
+    Type: String
+    Default: "true"
+    AllowedValues: ["true", "false"]
+  ContainerImageUri:
+    Type: String
+  ContainerPort:
+    Type: Number
+    Default: 8080
+  HealthCheckPath:
+    Type: String
+    Default: /health
+  AllowedIngressCidr:
+    Type: String
+    Default: 0.0.0.0/0
+  JvmMaxRamPercentage:
+    Type: String
+    Default: "65.0"
+  ParameterPathPrefix:
+    Type: String
+  VpcId:
+    Type: String
+  SubnetId:
+    Type: String
+  KeyPairName:
+    Type: String
+    Default: ""
+
+Conditions:
+  CreateInstance: !Equals [!Ref InstanceEnabled, "true"]
+  HasKeyPair: !Not [!Equals [!Ref KeyPairName, ""]]
+
+Resources:
+  AppLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/ec2/${AppName}/${Environment}/${RegionCode}"
+      RetentionInDays: 30
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Application
+          Value: !Ref AppName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref RegionCode
+
+  AppRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Ref AppName
+      ImageTagMutability: MUTABLE
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Application
+          Value: !Ref AppName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref RegionCode
+
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: !Sub "${AppName} ${Environment} ingress"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: !Ref ContainerPort
+          ToPort: !Ref ContainerPort
+          CidrIp: !Ref AllowedIngressCidr
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub "${AppName}-${Environment}-${RegionCode}-sg"
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Application
+          Value: !Ref AppName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref RegionCode
+
+  AppInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [ec2.amazonaws.com]
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      Policies:
+        - PolicyName: !Sub "${AppName}-${Environment}-runtime"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter
+                  - ssm:GetParameters
+                  - ssm:GetParametersByPath
+                Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${ParameterPathPrefix}/*"
+              - Effect: Allow
+                Action: [kms:Decrypt]
+                Resource: "*"
+              - Effect: Allow
+                Action: [ecr:GetAuthorizationToken]
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:BatchGetImage
+                  - ecr:DescribeImages
+                  - ecr:GetDownloadUrlForLayer
+                Resource: !GetAtt AppRepository.Arn
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "${AppLogGroup.Arn}:*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:BatchGetItem
+                  - dynamodb:DescribeTable
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:Query
+                  - dynamodb:UpdateItem
+                Resource:
+                  - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/wah_auction_houses"
+                  - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/wah_auction_houses/index/*"
+                  - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/wah_auction_houses_update_log"
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:AbortMultipartUpload
+                Resource: "arn:aws:s3:::wah-data*/*"
+              - Effect: Allow
+                Action: [s3:ListBucket]
+                Resource: "arn:aws:s3:::wah-data*"
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Application
+          Value: !Ref AppName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref RegionCode
+
+  AppInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles: [!Ref AppInstanceRole]
+
+  AppInstance:
+    Type: AWS::EC2::Instance
+    Condition: CreateInstance
+    Properties:
+      ImageId: "{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64}}"
+      InstanceType: !Ref InstanceType
+      IamInstanceProfile: !Ref AppInstanceProfile
+      KeyName: !If [HasKeyPair, !Ref KeyPairName, !Ref "AWS::NoValue"]
+      SubnetId: !Ref SubnetId
+      SecurityGroupIds: [!Ref AppSecurityGroup]
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -euxo pipefail
+
+          dnf update -y
+          dnf install -y docker awscli amazon-cloudwatch-agent
+          systemctl enable --now docker
+          usermod -a -G docker ec2-user
+
+          install -d -m 755 /opt/${AppName}/bin /opt/${AppName}/config
+
+          cat > /opt/${AppName}/bin/write-env-file.sh <<'EOF'
+          #!/bin/bash
+          set -euo pipefail
+
+          PARAMETER_PREFIX="${ParameterPathPrefix}"
+          OUTPUT_FILE="/opt/${AppName}/config/app.env"
+          TMP_FILE="$(mktemp)"
+
+          fetch_param() {
+            local name="$1"
+            local with_decryption="$2"
+            if [[ "$with_decryption" == "true" ]]; then
+              aws ssm get-parameter --region "${AWS::Region}" --name "$PARAMETER_PREFIX/$name" --with-decryption --query 'Parameter.Value' --output text 2>/dev/null || true
+            else
+              aws ssm get-parameter --region "${AWS::Region}" --name "$PARAMETER_PREFIX/$name" --query 'Parameter.Value' --output text 2>/dev/null || true
+            fi
+          }
+
+          write_line() {
+            local key="$1"
+            local value="$2"
+            if [[ -n "$value" && "$value" != "None" ]]; then
+              printf '%s=%s\n' "$key" "$value" >> "$TMP_FILE"
+            fi
+          }
+
+          : > "$TMP_FILE"
+          write_line "SPRING_PROFILES_ACTIVE" "$(fetch_param SPRING_PROFILES_ACTIVE false)"
+          write_line "WAE_AWS_REGION" "$(fetch_param WAE_AWS_REGION false)"
+          write_line "WAE_BLIZZARD_REGION" "$(fetch_param WAE_BLIZZARD_REGION false)"
+          write_line "AUCTION_ENGINE_DB_URL" "$(fetch_param AUCTION_ENGINE_DB_URL false)"
+          write_line "AUCTION_ENGINE_DB_USERNAME" "$(fetch_param AUCTION_ENGINE_DB_USERNAME true)"
+          write_line "AUCTION_ENGINE_DB_PASSWORD" "$(fetch_param AUCTION_ENGINE_DB_PASSWORD true)"
+          write_line "BLIZZARD_CLIENT_ID" "$(fetch_param BLIZZARD_CLIENT_ID true)"
+          write_line "BLIZZARD_CLIENT_SECRET" "$(fetch_param BLIZZARD_CLIENT_SECRET true)"
+          write_line "AWS_ACCESS_KEY" "$(fetch_param AWS_ACCESS_KEY true)"
+          write_line "AWS_SECRET_KEY" "$(fetch_param AWS_SECRET_KEY true)"
+          write_line "WAE_DYNAMODB_ENDPOINT" "$(fetch_param WAE_DYNAMODB_ENDPOINT false)"
+          write_line "WAE_S3_ENDPOINT" "$(fetch_param WAE_S3_ENDPOINT false)"
+          write_line "JAVA_TOOL_OPTIONS" "$(fetch_param JAVA_TOOL_OPTIONS false)"
+          write_line "JVM_MAX_RAM_PERCENTAGE" "$(fetch_param JVM_MAX_RAM_PERCENTAGE false)"
+          mv "$TMP_FILE" "$OUTPUT_FILE"
+          chmod 600 "$OUTPUT_FILE"
+          EOF
+
+          cat > /opt/${AppName}/bin/start-app.sh <<'EOF'
+          #!/bin/bash
+          set -euo pipefail
+
+          IMAGE_URI="$1"
+          APP_NAME="${AppName}"
+          CONTAINER_PORT="${ContainerPort}"
+          LOG_GROUP="/aws/ec2/${AppName}/${Environment}/${RegionCode}"
+          ENV_FILE="/opt/${AppName}/config/app.env"
+          REGISTRY="$(echo "$IMAGE_URI" | cut -d/ -f1)"
+
+          aws ecr get-login-password --region "${AWS::Region}" | docker login --username AWS --password-stdin "$REGISTRY"
+          docker pull "$IMAGE_URI"
+          docker rm -f "$APP_NAME" >/dev/null 2>&1 || true
+          docker run -d \
+            --name "$APP_NAME" \
+            --restart unless-stopped \
+            --env-file "$ENV_FILE" \
+            -e JVM_MAX_RAM_PERCENTAGE="${JvmMaxRamPercentage}" \
+            -p "$CONTAINER_PORT:$CONTAINER_PORT" \
+            --log-driver awslogs \
+            --log-opt awslogs-region="${AWS::Region}" \
+            --log-opt awslogs-group="$LOG_GROUP" \
+            --log-opt awslogs-stream="$APP_NAME" \
+            "$IMAGE_URI"
+          EOF
+
+          chmod +x /opt/${AppName}/bin/write-env-file.sh /opt/${AppName}/bin/start-app.sh
+          /opt/${AppName}/bin/write-env-file.sh
+          /opt/${AppName}/bin/start-app.sh "${ContainerImageUri}" || true
+      Tags:
+        - Key: Name
+          Value: !Sub "${AppName}-${Environment}-${RegionCode}"
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Application
+          Value: !Ref AppName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref RegionCode
+
+  AppElasticIp:
+    Type: AWS::EC2::EIP
+    Condition: CreateInstance
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref AppInstance
+      Tags:
+        - Key: Name
+          Value: !Sub "${AppName}-${Environment}-${RegionCode}-eip"
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Application
+          Value: !Ref AppName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref RegionCode
+
+Outputs:
+  AppInstanceId:
+    Condition: CreateInstance
+    Value: !Ref AppInstance
+  AppPublicIp:
+    Condition: CreateInstance
+    Value: !Ref AppElasticIp
+  AppBaseUrl:
+    Condition: CreateInstance
+    Value: !Sub "http://${AppElasticIp}:${ContainerPort}"
+  AppRepositoryUri:
+    Value: !GetAtt AppRepository.RepositoryUri
+  ParameterPathPrefix:
+    Value: !Ref ParameterPathPrefix

@@ -1,5 +1,15 @@
 spring:
   datasource:
-    url: "jdbc:mariadb://194.242.11.14:3306/100680.wow-auction-house-data"
+    url: ${AUCTION_ENGINE_DB_URL:jdbc:mariadb://194.242.11.14:3306/100680.wow-auction-house-data}
     username: ${AUCTION_ENGINE_DB_USERNAME}
     password: ${AUCTION_ENGINE_DB_PASSWORD}
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY:}
+        secret-key: ${AWS_SECRET_KEY:}
+      dynamodb:
+        endpoint: ${WAE_DYNAMODB_ENDPOINT:}
+      s3:
+        endpoint: ${WAE_S3_ENDPOINT:}
+        bootstrap-enabled: false

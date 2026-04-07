@@ -89,7 +89,7 @@ docker compose -f docker-compose-db.yml down -v
 docker compose -f docker-compose-db.yml up -d
 ```
 
-The MariaDB container creates the `dbo` database automatically from [`docker/initdb/01-init-schema.sql`](/Users/jonas/Dev/Hobby/wow-auction-engine/docker/initdb/01-init-schema.sql).
+The MariaDB container creates the `dbo` database automatically from [`docker/initdb/01-init-schema.sql`](docker/initdb/01-init-schema.sql).
 
 ### 4. Run the application
 
@@ -125,14 +125,14 @@ docker compose -f docker-compose-db.yml down
 
 ### Production-only overrides
 
-These are only needed for the `production` Spring profile because [`src/main/resources/application.production.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.production.yml) overrides the datasource credentials:
+These are only needed for the `production` Spring profile because [`src/main/resources/application.production.yml`](src/main/resources/application.production.yml) overrides the datasource credentials:
 
 - `AUCTION_ENGINE_DB_USERNAME`
 - `AUCTION_ENGINE_DB_PASSWORD`
 
 ## Local Configuration Defaults
 
-The default local datasource configuration lives in [`src/main/resources/application.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.yml):
+The default local datasource configuration lives in [`src/main/resources/application.yml`](src/main/resources/application.yml):
 
 - MariaDB URL: `jdbc:mariadb://localhost:59000/dbo`
 - MariaDB username: `root`
@@ -156,7 +156,7 @@ Run the full test suite with:
 Useful detail for onboarding:
 
 - tests run with the `test` Spring profile
-- Blizzard credentials are stubbed in [`src/main/resources/application.test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.test.yml)
+- Blizzard credentials are stubbed in [`src/main/resources/application.test.yml`](src/main/resources/application.test.yml)
 - MariaDB runs through Testcontainers
 - DynamoDB and S3 are provided through Floci-backed Testcontainers in integration tests
 - Docker Desktop or another working Docker daemon must be running for tests to pass
@@ -209,9 +209,27 @@ Format Kotlin sources:
 ./mvnw ktlint:format
 ```
 
+## AWS Deployment
+
+This repository includes a GitHub Actions based production deployment flow for AWS.
+
+The deployment path is designed for small regional EC2 instances running Docker, not Kubernetes. The current infrastructure and workflow files are documented in [infra/README.md](infra/README.md).
+
+At a high level:
+
+- pushes to `master` run `Backend PR Checks`
+- a successful `master` run uploads the deployable `.war` artifact
+- `Deploy Production` starts after that workflow succeeds
+- the deploy workflow reads [`infra/regions.json`](infra/regions.json)
+- it deploys or updates one CloudFormation stack per enabled region
+- it pushes the Docker image to regional ECR repositories
+- it restarts the EC2-hosted Docker container through AWS Systems Manager
+
+Forks can use the same flow, but must create their own AWS IAM role, GitHub secrets, and environment configuration.
+
 ## Project Structure
 
-Main application code lives under [`src/main/kotlin/net/jonasmf/auctionengine`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/kotlin/net/jonasmf/auctionengine):
+Main application code lives under [`src/main/kotlin/net/jonasmf/auctionengine`](src/main/kotlin/net/jonasmf/auctionengine):
 
 - `config/`: Spring configuration and external service wiring
 - `integration/`: Blizzard API integrations
@@ -222,9 +240,9 @@ Main application code lives under [`src/main/kotlin/net/jonasmf/auctionengine`](
 
 Resources:
 
-- [`src/main/resources/application.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.yml)
-- [`src/main/resources/application.test.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.test.yml)
-- [`src/main/resources/application.production.yml`](/Users/jonas/Dev/Hobby/wow-auction-engine/src/main/resources/application.production.yml)
+- [`src/main/resources/application.yml`](src/main/resources/application.yml)
+- [`src/main/resources/application.test.yml`](src/main/resources/application.test.yml)
+- [`src/main/resources/application.production.yml`](src/main/resources/application.production.yml)
 
 ## Troubleshooting
 

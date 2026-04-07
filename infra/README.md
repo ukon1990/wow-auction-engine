@@ -1,0 +1,298 @@
+# AWS Deployment
+
+This repository includes a minimal single-instance regional deployment path for the WoW Auction Engine.
+
+It is intended for:
+
+- one EC2 instance per region
+- Docker on EC2
+- GitHub Actions deployment from `master`
+- AWS Systems Manager for in-place restarts
+- SSM Parameter Store for runtime configuration
+
+It is not a Kubernetes or EKS deployment.
+
+## Layout
+
+- `infra/regions.json`: enabled regions and per-region overrides
+- `infra/cloudformation/app-region.yaml`: reusable per-region CloudFormation stack
+- `scripts/deploy/sync-ssm-parameters.sh`: writes runtime configuration to SSM Parameter Store
+- `scripts/deploy/restart-container.sh`: restarts the app container on the EC2 instance through SSM
+- `.github/workflows/backend-ci.yml`: verifies the backend and uploads the deployable `.war`
+- `.github/workflows/deploy-production.yml`: orchestrates production deployment from `master`
+- `.github/workflows/reusable-build-image.yml`: builds the runtime image from the `.war` artifact
+- `.github/workflows/reusable-deploy-region.yml`: deploys one region at a time
+
+## What Happens On Push To `master`
+
+1. `Backend PR Checks` runs Maven `verify`
+2. The workflow uploads:
+   - coverage artifacts
+   - the deployable `.war` artifact
+3. If that workflow succeeds on `master`, `Deploy Production` starts
+4. The deploy workflow reads enabled regions from `infra/regions.json`
+5. For each enabled region, sequentially:
+   - sync runtime env vars into SSM Parameter Store
+   - run `aws cloudformation deploy`
+   - push the Docker image to the region's ECR repository
+   - restart the EC2-hosted container through SSM
+   - verify the `/health` endpoint
+
+CloudFormation is therefore applied on every successful production deploy, once per enabled region.
+
+## GitHub Setup
+
+### Required GitHub Secrets
+
+Repository or environment secrets:
+
+- `AWS_DEPLOY_ROLE_ARN`
+- `PROD_BLIZZARD_CLIENT_ID`
+- `PROD_BLIZZARD_CLIENT_SECRET`
+- `PROD_AUCTION_ENGINE_DB_URL`
+- `PROD_AUCTION_ENGINE_DB_USERNAME`
+- `PROD_AUCTION_ENGINE_DB_PASSWORD`
+
+Optional secrets:
+
+- `PROD_AWS_ACCESS_KEY`
+- `PROD_AWS_SECRET_KEY`
+- `PROD_WAE_DYNAMODB_ENDPOINT`
+- `PROD_WAE_S3_ENDPOINT`
+- `PROD_JAVA_TOOL_OPTIONS`
+
+Notes:
+
+- `AWS_DEPLOY_ROLE_ARN` is the IAM role assumed by GitHub Actions through OIDC
+- `PROD_AWS_ACCESS_KEY` and `PROD_AWS_SECRET_KEY` are optional; the running application can use the EC2 instance role instead
+- the deploy job uses the GitHub Environment `production`
+
+### Recommended GitHub Environment
+
+Create a GitHub Environment named `production` if you want:
+
+- environment-scoped secrets
+- manual approvals
+- deployment visibility in GitHub UI
+
+## AWS Setup
+
+### 1. Create the GitHub OIDC Provider
+
+In AWS IAM, create an OpenID Connect provider if one does not already exist:
+
+- Provider URL: `https://token.actions.githubusercontent.com`
+- Audience: `sts.amazonaws.com`
+
+### 2. Create the Deploy Role
+
+Create an IAM role for GitHub Actions. This is the role whose ARN goes into `AWS_DEPLOY_ROLE_ARN`.
+
+The role trust relationship must allow GitHub's OIDC provider.
+
+Example trust policy:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::<ACCOUNT_ID>:oidc-provider/token.actions.githubusercontent.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+        },
+        "StringLike": {
+          "token.actions.githubusercontent.com:sub": [
+            "repo:<OWNER>/<REPO>:environment:production",
+            "repo:<OWNER>/<REPO>:ref:refs/heads/master"
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+Replace:
+
+- `<ACCOUNT_ID>` with your 12-digit AWS account ID
+- `<OWNER>` with your GitHub username or organization
+- `<REPO>` with your repository name
+
+Common mistake:
+
+- the `sub` string must match exactly
+- accidental spaces in `repo:<OWNER>/<REPO>:...` will break OIDC authentication
+
+### 3. Attach Permissions To The Deploy Role
+
+The deploy role needs permissions for at least:
+
+- CloudFormation stack deployment and updates
+- IAM role and instance profile management for stack-created roles
+- EC2, Elastic IP, security group, and describe actions
+- ECR repository creation, tagging, rollback deletion, and image push
+- SSM parameter writes and SSM Run Command
+- CloudWatch Logs, including log-group describe calls used during stack creation
+
+In practice, make sure the deploy role can perform at least:
+
+- `ecr:CreateRepository`
+- `ecr:DescribeRepositories`
+- `ecr:TagResource`
+- `ecr:DeleteRepository`
+- `ecr:GetAuthorizationToken`
+- `ecr:PutImage`
+- `ecr:InitiateLayerUpload`
+- `ecr:UploadLayerPart`
+- `ecr:CompleteLayerUpload`
+- `ecr:BatchCheckLayerAvailability`
+- `ecr:BatchGetImage`
+- `logs:CreateLogGroup`
+- `logs:DeleteLogGroup`
+- `logs:PutRetentionPolicy`
+- `logs:TagResource`
+- `logs:ListTagsForResource`
+- `logs:DescribeLogGroups`
+
+The deploy workflow uses OIDC. It does not require long-lived AWS access keys.
+
+### 4. Verify Target Regions
+
+Make sure the AWS account can deploy into the regions listed in `infra/regions.json`, for example:
+
+- `eu-west-1`
+- `us-east-1`
+- `ap-northeast-2`
+
+Also verify that your account has quota and access for:
+
+- `t4g.micro`
+- Elastic IPs
+- ECR
+- SSM
+- CloudFormation
+
+### 5. Verify Network Access To External Services
+
+This repository does not provision the MariaDB database. If you use an external database, make sure it accepts connections from the deployed EC2 instances.
+
+If the application uses production S3 buckets or DynamoDB tables, make sure:
+
+- those resources exist
+- the EC2 instance role created by CloudFormation is allowed to access them
+
+## Runtime Configuration
+
+The runtime configuration is written to SSM under:
+
+`/<app-name>/<environment>/<aws-region>/...`
+
+Example:
+
+`/wow-auction-engine/prod/eu-west-1/BLIZZARD_CLIENT_ID`
+
+Important keys include:
+
+- `SPRING_PROFILES_ACTIVE`
+- `WAE_AWS_REGION`
+- `WAE_BLIZZARD_REGION`
+- `AUCTION_ENGINE_DB_URL`
+- `AUCTION_ENGINE_DB_USERNAME`
+- `AUCTION_ENGINE_DB_PASSWORD`
+- `BLIZZARD_CLIENT_ID`
+- `BLIZZARD_CLIENT_SECRET`
+- `JVM_MAX_RAM_PERCENTAGE`
+- optional endpoint overrides for S3 and DynamoDB
+
+## Scaling Regions Up Or Down
+
+To add, remove, or disable a region:
+
+1. update `infra/regions.json`
+2. commit the change
+3. push to `master`
+
+The deploy workflow will only act on regions marked as enabled in that file.
+
+Typical changes:
+
+- change `instance_type` to scale vertically
+- change `enabled` to include or exclude a region
+- adjust `allowed_ingress_cidr`
+- adjust JVM settings per region
+
+## First-Deploy Caveats
+
+- The current stack is intentionally small and EC2-focused
+- it does not create a full VPC layout
+- the workflow currently looks up the default VPC and one default subnet in the target region and passes them into CloudFormation
+- if your AWS account does not have a default VPC in that region, the deploy will fail and the template/workflow must be extended to pass explicit VPC and subnet IDs
+
+## Troubleshooting
+
+### OIDC Fails With `Not authorized to perform sts:AssumeRoleWithWebIdentity`
+
+Usually caused by one of:
+
+- wrong `AWS_DEPLOY_ROLE_ARN`
+- wrong trust relationship on the deploy role
+- `sub` condition does not match the repo, branch, or environment
+- GitHub OIDC provider created in the wrong AWS account
+
+Start by verifying the trust policy matches the exact GitHub repo and the `production` environment.
+
+### CloudFormation Fails With `ROLLBACK_COMPLETE`
+
+CloudFormation cannot update a stack in `ROLLBACK_COMPLETE`.
+
+The deploy workflow now deletes rollback-only stacks automatically before retrying create/update. If the stack still fails, inspect the printed stack events in the workflow log to find the first failing resource.
+
+### CloudFormation Fails Creating `AppSecurityGroup`
+
+If you see an error like:
+
+`SecurityGroupEgress cannot be specified without VpcId`
+
+it means the stack was missing VPC context. The workflow now resolves the default VPC and a subnet automatically. If your AWS account has no default VPC in that region, you must either create one or extend the workflow/template to pass explicit `VpcId` and `SubnetId`.
+
+### CloudFormation Fails Creating `AppRepository`
+
+If you see an error mentioning:
+
+`not authorized to perform: ecr:TagResource`
+
+the GitHub deploy role is missing ECR tagging permissions. Update the IAM policy attached to the role referenced by `AWS_DEPLOY_ROLE_ARN`.
+
+If rollback later fails with:
+
+`not authorized to perform: ecr:DeleteRepository`
+
+the deploy role is missing ECR repository deletion permissions needed for CloudFormation rollback.
+
+### CloudFormation Fails Creating `AppInstanceRole`
+
+If you see an error mentioning:
+
+`Access denied for operation 'logs:DescribeLogGroups'`
+
+the GitHub deploy role is missing CloudWatch Logs describe permissions needed while CloudFormation evaluates the log group reference in the IAM policy.
+
+### Deploy Workflow Does Not Start
+
+`Deploy Production` only runs after `Backend PR Checks` succeeds on `master`.
+
+Make sure:
+
+- the push actually reached `master`
+- `Backend PR Checks` finished successfully
+- the workflow name still matches `Backend PR Checks`
+
+### Docker Build Rebuilds The Entire App
+
+The current setup avoids that by uploading the `.war` from CI and building the Docker image from that artifact. If you see Maven or Kotlin compilation inside the Docker build, the workflow likely reverted away from the artifact-based path.

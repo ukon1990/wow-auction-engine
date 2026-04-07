@@ -1,0 +1,394 @@
+name: Reusable Deploy Region
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      git_ref:
+        required: true
+        type: string
+      artifact_name:
+        required: true
+        type: string
+      image_tag:
+        required: true
+        type: string
+      app_name:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+      project_tag:
+        required: true
+        type: string
+      aws_region:
+        required: true
+        type: string
+      blizzard_region:
+        required: true
+        type: string
+      instance_type:
+        required: true
+        type: string
+      allowed_ingress_cidr:
+        required: true
+        type: string
+      jvm_max_ram_percentage:
+        required: true
+        type: string
+      container_port:
+        required: true
+        type: number
+      health_check_path:
+        required: true
+        type: string
+      instance_enabled:
+        required: true
+        type: string
+      stack_name:
+        required: true
+        type: string
+    secrets:
+      AWS_DEPLOY_ROLE_ARN:
+        required: true
+      PROD_BLIZZARD_CLIENT_ID:
+        required: true
+      PROD_BLIZZARD_CLIENT_SECRET:
+        required: true
+      PROD_AUCTION_ENGINE_DB_URL:
+        required: true
+      PROD_AUCTION_ENGINE_DB_USERNAME:
+        required: true
+      PROD_AUCTION_ENGINE_DB_PASSWORD:
+        required: true
+      PROD_AWS_ACCESS_KEY:
+        required: false
+      PROD_AWS_SECRET_KEY:
+        required: false
+      PROD_WAE_DYNAMODB_ENDPOINT:
+        required: false
+      PROD_WAE_S3_ENDPOINT:
+        required: false
+      PROD_JAVA_TOOL_OPTIONS:
+        required: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.git_ref }}
+
+      - name: Download image artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: /tmp/image-artifact
+
+      - name: Bootstrap AWS session
+        uses: ./.github/actions/aws-bootstrap
+        with:
+          aws-role-arn: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ inputs.aws_region }}
+
+      - name: Resolve account and image metadata
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          account_id="$(aws sts get-caller-identity --query Account --output text)"
+          repository_uri="${account_id}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP_NAME}"
+          image_uri="${repository_uri}:${IMAGE_TAG}"
+          parameter_prefix="/${APP_NAME}/${ENVIRONMENT}/${AWS_REGION}"
+          echo "repository_uri=$repository_uri" >> "$GITHUB_OUTPUT"
+          echo "image_uri=$image_uri" >> "$GITHUB_OUTPUT"
+          echo "parameter_prefix=$parameter_prefix" >> "$GITHUB_OUTPUT"
+        env:
+          APP_NAME: ${{ inputs.app_name }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          AWS_REGION: ${{ inputs.aws_region }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+
+      - name: Resolve default VPC and subnet
+        id: network
+        shell: bash
+        run: |
+          set -euo pipefail
+          vpc_id="$(aws ec2 describe-vpcs \
+            --region "${AWS_REGION}" \
+            --filters Name=isDefault,Values=true \
+            --query 'Vpcs[0].VpcId' \
+            --output text)"
+          if [[ -z "$vpc_id" || "$vpc_id" == "None" ]]; then
+            echo "No default VPC found in ${AWS_REGION}. Either create one or extend the template to pass explicit VPC/subnet IDs." >&2
+            exit 1
+          fi
+
+          subnet_id="$(aws ec2 describe-subnets \
+            --region "${AWS_REGION}" \
+            --filters Name=vpc-id,Values="${vpc_id}" Name=default-for-az,Values=true \
+            --query 'Subnets[0].SubnetId' \
+            --output text)"
+          if [[ -z "$subnet_id" || "$subnet_id" == "None" ]]; then
+            subnet_id="$(aws ec2 describe-subnets \
+              --region "${AWS_REGION}" \
+              --filters Name=vpc-id,Values="${vpc_id}" \
+              --query 'Subnets[0].SubnetId' \
+              --output text)"
+          fi
+
+          if [[ -z "$subnet_id" || "$subnet_id" == "None" ]]; then
+            echo "No subnet found in default VPC ${vpc_id} in ${AWS_REGION}" >&2
+            exit 1
+          fi
+
+          echo "vpc_id=$vpc_id" >> "$GITHUB_OUTPUT"
+          echo "subnet_id=$subnet_id" >> "$GITHUB_OUTPUT"
+        env:
+          AWS_REGION: ${{ inputs.aws_region }}
+
+      - name: Clear failed rollback-only stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          stack_status="$(aws cloudformation describe-stacks \
+            --region "${AWS_REGION}" \
+            --stack-name "${STACK_NAME}" \
+            --query 'Stacks[0].StackStatus' \
+            --output text 2>/dev/null || true)"
+          if [[ "$stack_status" == "ROLLBACK_COMPLETE" || "$stack_status" == "ROLLBACK_FAILED" || "$stack_status" == "CREATE_FAILED" ]]; then
+            echo "Deleting stack ${STACK_NAME} in ${stack_status} before redeploy"
+            aws cloudformation delete-stack --region "${AWS_REGION}" --stack-name "${STACK_NAME}"
+            aws cloudformation wait stack-delete-complete --region "${AWS_REGION}" --stack-name "${STACK_NAME}"
+          fi
+        env:
+          AWS_REGION: ${{ inputs.aws_region }}
+          STACK_NAME: ${{ inputs.stack_name }}
+
+      - name: Synchronize runtime parameters to SSM
+        shell: bash
+        run: bash scripts/deploy/sync-ssm-parameters.sh
+        env:
+          APP_NAME: ${{ inputs.app_name }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          AWS_REGION: ${{ inputs.aws_region }}
+          BLIZZARD_REGION: ${{ inputs.blizzard_region }}
+          JVM_MAX_RAM_PERCENTAGE: ${{ inputs.jvm_max_ram_percentage }}
+          BLIZZARD_CLIENT_ID: ${{ secrets.PROD_BLIZZARD_CLIENT_ID }}
+          BLIZZARD_CLIENT_SECRET: ${{ secrets.PROD_BLIZZARD_CLIENT_SECRET }}
+          AUCTION_ENGINE_DB_URL: ${{ secrets.PROD_AUCTION_ENGINE_DB_URL }}
+          AUCTION_ENGINE_DB_USERNAME: ${{ secrets.PROD_AUCTION_ENGINE_DB_USERNAME }}
+          AUCTION_ENGINE_DB_PASSWORD: ${{ secrets.PROD_AUCTION_ENGINE_DB_PASSWORD }}
+          AWS_ACCESS_KEY: ${{ secrets.PROD_AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.PROD_AWS_SECRET_KEY }}
+          WAE_DYNAMODB_ENDPOINT: ${{ secrets.PROD_WAE_DYNAMODB_ENDPOINT }}
+          WAE_S3_ENDPOINT: ${{ secrets.PROD_WAE_S3_ENDPOINT }}
+          JAVA_TOOL_OPTIONS: ${{ secrets.PROD_JAVA_TOOL_OPTIONS }}
+
+      - name: Deploy regional CloudFormation stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! aws cloudformation deploy \
+            --region "${AWS_REGION}" \
+            --stack-name "${STACK_NAME}" \
+            --template-file infra/cloudformation/app-region.yaml \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --parameter-overrides \
+              AppName="${APP_NAME}" \
+              Environment="${ENVIRONMENT}" \
+              RegionCode="${AWS_REGION}" \
+              ProjectTag="${PROJECT_TAG}" \
+              InstanceType="${INSTANCE_TYPE}" \
+              InstanceEnabled="${INSTANCE_ENABLED}" \
+              ContainerImageUri="${IMAGE_URI}" \
+              ContainerPort="${CONTAINER_PORT}" \
+              HealthCheckPath="${HEALTH_CHECK_PATH}" \
+              AllowedIngressCidr="${ALLOWED_INGRESS_CIDR}" \
+              JvmMaxRamPercentage="${JVM_MAX_RAM_PERCENTAGE}" \
+              ParameterPathPrefix="${PARAMETER_PREFIX}" \
+              VpcId="${VPC_ID}" \
+              SubnetId="${SUBNET_ID}" \
+            --tags \
+              Project="${PROJECT_TAG}" \
+              Application="${APP_NAME}" \
+              Environment="${ENVIRONMENT}" \
+              Region="${AWS_REGION}"; then
+            echo "CloudFormation deploy failed. Recent stack events:" >&2
+            aws cloudformation describe-stack-events \
+              --region "${AWS_REGION}" \
+              --stack-name "${STACK_NAME}" \
+              --query "StackEvents[0:20].[Timestamp,LogicalResourceId,ResourceStatus,ResourceStatusReason]" \
+              --output table || true
+            exit 1
+          fi
+        env:
+          APP_NAME: ${{ inputs.app_name }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          PROJECT_TAG: ${{ inputs.project_tag }}
+          AWS_REGION: ${{ inputs.aws_region }}
+          STACK_NAME: ${{ inputs.stack_name }}
+          INSTANCE_TYPE: ${{ inputs.instance_type }}
+          INSTANCE_ENABLED: ${{ inputs.instance_enabled }}
+          CONTAINER_PORT: ${{ inputs.container_port }}
+          HEALTH_CHECK_PATH: ${{ inputs.health_check_path }}
+          ALLOWED_INGRESS_CIDR: ${{ inputs.allowed_ingress_cidr }}
+          JVM_MAX_RAM_PERCENTAGE: ${{ inputs.jvm_max_ram_percentage }}
+          PARAMETER_PREFIX: ${{ steps.meta.outputs.parameter_prefix }}
+          IMAGE_URI: ${{ steps.meta.outputs.image_uri }}
+          VPC_ID: ${{ steps.network.outputs.vpc_id }}
+          SUBNET_ID: ${{ steps.network.outputs.subnet_id }}
+
+      - name: Log in to Amazon ECR
+        uses: ./.github/actions/aws-bootstrap
+        with:
+          aws-role-arn: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ inputs.aws_region }}
+          login-ecr: "true"
+
+      - name: Publish image to regional ECR
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker load --input "/tmp/image-artifact/${ARTIFACT_NAME}.tar"
+          docker tag "localbuild:${IMAGE_TAG}" "${IMAGE_URI}"
+          docker tag "localbuild:${IMAGE_TAG}" "${REPOSITORY_URI}:master"
+          docker push "${IMAGE_URI}"
+          docker push "${REPOSITORY_URI}:master"
+        env:
+          ARTIFACT_NAME: ${{ inputs.artifact_name }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          IMAGE_URI: ${{ steps.meta.outputs.image_uri }}
+          REPOSITORY_URI: ${{ steps.meta.outputs.repository_uri }}
+
+      - name: Resolve instance and base URL
+        id: stack_outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          instance_id="$(aws cloudformation describe-stacks --region "${AWS_REGION}" --stack-name "${STACK_NAME}" --query "Stacks[0].Outputs[?OutputKey=='AppInstanceId'].OutputValue" --output text)"
+          base_url="$(aws cloudformation describe-stacks --region "${AWS_REGION}" --stack-name "${STACK_NAME}" --query "Stacks[0].Outputs[?OutputKey=='AppBaseUrl'].OutputValue" --output text)"
+          echo "instance_id=$instance_id" >> "$GITHUB_OUTPUT"
+          echo "base_url=$base_url" >> "$GITHUB_OUTPUT"
+        env:
+          AWS_REGION: ${{ inputs.aws_region }}
+          STACK_NAME: ${{ inputs.stack_name }}
+
+      - name: Wait for SSM registration
+        shell: bash
+        run: |
+          set -euo pipefail
+          for _ in $(seq 1 30); do
+            ping_status="$(aws ssm describe-instance-information --region "${AWS_REGION}" --filters "Key=InstanceIds,Values=${INSTANCE_ID}" --query 'InstanceInformationList[0].PingStatus' --output text 2>/dev/null || true)"
+            if [[ "$ping_status" == "Online" ]]; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Instance ${INSTANCE_ID} did not register with SSM in time" >&2
+          exit 1
+        env:
+          AWS_REGION: ${{ inputs.aws_region }}
+          INSTANCE_ID: ${{ steps.stack_outputs.outputs.instance_id }}
+
+      - name: Restart container through SSM
+        id: ssm
+        shell: bash
+        run: |
+          set -euo pipefail
+          script_b64="$(base64 -w 0 scripts/deploy/restart-container.sh)"
+          export SCRIPT_B64="$script_b64"
+          python - <<'PY' > /tmp/ssm-commands.json
+          import json
+          import os
+
+          app_name = os.environ["APP_NAME"]
+          aws_region = os.environ["AWS_REGION"]
+          image_uri = os.environ["IMAGE_URI"]
+          container_port = os.environ["CONTAINER_PORT"]
+          environment = os.environ["ENVIRONMENT"]
+          script_b64 = os.environ["SCRIPT_B64"]
+
+          commands = [
+              f"sudo /opt/{app_name}/bin/write-env-file.sh",
+              f"echo {script_b64} | base64 -d > /tmp/restart-container.sh",
+              "chmod +x /tmp/restart-container.sh",
+              (
+                  "sudo "
+                  f"APP_NAME={app_name} "
+                  f"AWS_REGION={aws_region} "
+                  f"IMAGE_URI={image_uri} "
+                  f"ENV_FILE_PATH=/opt/{app_name}/config/app.env "
+                  f"CONTAINER_PORT={container_port} "
+                  f"LOG_GROUP=/aws/ec2/{app_name}/{environment}/{aws_region} "
+                  "/tmp/restart-container.sh"
+              ),
+          ]
+          print(json.dumps({"commands": commands}))
+          PY
+          command_id="$(aws ssm send-command \
+            --region "${AWS_REGION}" \
+            --instance-ids "${INSTANCE_ID}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Deploy ${APP_NAME}:${IMAGE_TAG}" \
+            --parameters file:///tmp/ssm-commands.json \
+            --query 'Command.CommandId' \
+            --output text)"
+          echo "command_id=$command_id" >> "$GITHUB_OUTPUT"
+        env:
+          APP_NAME: ${{ inputs.app_name }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          AWS_REGION: ${{ inputs.aws_region }}
+          INSTANCE_ID: ${{ steps.stack_outputs.outputs.instance_id }}
+          IMAGE_URI: ${{ steps.meta.outputs.image_uri }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          CONTAINER_PORT: ${{ inputs.container_port }}
+
+      - name: Wait for SSM command success
+        shell: bash
+        run: |
+          set -euo pipefail
+          for _ in $(seq 1 60); do
+            status="$(aws ssm list-command-invocations --region "${AWS_REGION}" --command-id "${COMMAND_ID}" --details --query 'CommandInvocations[0].Status' --output text)"
+            if [[ "$status" == "Success" ]]; then
+              exit 0
+            fi
+            if [[ "$status" == "Cancelled" || "$status" == "Failed" || "$status" == "TimedOut" ]]; then
+              aws ssm list-command-invocations --region "${AWS_REGION}" --command-id "${COMMAND_ID}" --details
+              exit 1
+            fi
+            sleep 10
+          done
+          echo "SSM command ${COMMAND_ID} did not complete in time" >&2
+          exit 1
+        env:
+          AWS_REGION: ${{ inputs.aws_region }}
+          COMMAND_ID: ${{ steps.ssm.outputs.command_id }}
+
+      - name: Verify application health
+        shell: bash
+        run: |
+          set -euo pipefail
+          health_url="${BASE_URL}${HEALTH_CHECK_PATH}"
+          for _ in $(seq 1 30); do
+            if curl --fail --silent --show-error "$health_url" >/dev/null; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Health check failed for ${health_url}" >&2
+          exit 1
+        env:
+          BASE_URL: ${{ steps.stack_outputs.outputs.base_url }}
+          HEALTH_CHECK_PATH: ${{ inputs.health_check_path }}

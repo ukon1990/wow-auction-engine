@@ -1,0 +1,123 @@
+name: Reusable Build Image
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+permissions:
+  contents: read
+  actions: read
+
+on:
+  workflow_call:
+    inputs:
+      git_ref:
+        required: true
+        type: string
+      workflow_run_id:
+        required: true
+        type: string
+      image_tag:
+        required: true
+        type: string
+    outputs:
+      artifact_name:
+        description: Uploaded Docker image artifact name
+        value: ${{ jobs.build.outputs.artifact_name }}
+      image_tag:
+        description: Built image tag
+        value: ${{ jobs.build.outputs.image_tag }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_name: ${{ steps.meta.outputs.artifact_name }}
+      image_tag: ${{ steps.meta.outputs.image_tag }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.git_ref }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Prepare image metadata
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          short_sha="${IMAGE_TAG:0:12}"
+          artifact_name="app-image-${short_sha}"
+          echo "artifact_name=$artifact_name" >> "$GITHUB_OUTPUT"
+          echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+
+      - name: Download WAR artifact from CI run
+        shell: bash
+        run: |
+          set -euo pipefail
+          api_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${WORKFLOW_RUN_ID}/artifacts"
+          artifact_id="$(curl -fsSL \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "$api_url" | python -c "import json,sys; data=json.load(sys.stdin); arts=[a for a in data['artifacts'] if a['name']=='backend-war' and not a['expired']]; print(arts[0]['id'] if arts else '')")"
+          if [[ -z "$artifact_id" ]]; then
+            echo "Could not find backend-war artifact for workflow run ${WORKFLOW_RUN_ID}" >&2
+            exit 1
+          fi
+          curl -fsSL \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}/zip" \
+            -o /tmp/backend-war.zip
+          rm -rf /tmp/backend-war
+          mkdir -p /tmp/backend-war
+          unzip -q /tmp/backend-war.zip -d /tmp/backend-war
+          war_path="$(find /tmp/backend-war -maxdepth 1 -name '*.war' | head -n 1)"
+          if [[ -z "$war_path" ]]; then
+            echo "Downloaded artifact did not contain a war file" >&2
+            exit 1
+          fi
+          cp "$war_path" ./app.war
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          WORKFLOW_RUN_ID: ${{ inputs.workflow_run_id }}
+
+      - name: Build ARM64 Docker image
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker buildx build \
+            --platform linux/arm64 \
+            --tag "localbuild:${IMAGE_TAG}" \
+            --load \
+            .
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+
+      - name: Export Docker image artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker save "localbuild:${IMAGE_TAG}" -o "/tmp/${ARTIFACT_NAME}.tar"
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          ARTIFACT_NAME: ${{ steps.meta.outputs.artifact_name }}
+
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}
+          path: /tmp/${{ steps.meta.outputs.artifact_name }}.tar
+          if-no-files-found: error
+
+      - name: Remove transient WAR file
+        if: always()
+        shell: bash
+        run: rm -f ./app.war

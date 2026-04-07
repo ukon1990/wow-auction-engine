@@ -1,0 +1,24 @@
+name: AWS Bootstrap
+description: Configure AWS credentials and optionally log in to ECR.
+
+inputs:
+  aws-role-arn:
+    required: true
+  aws-region:
+    required: true
+  login-ecr:
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v6
+      with:
+        role-to-assume: ${{ inputs.aws-role-arn }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Log in to Amazon ECR
+      if: ${{ inputs.login-ecr == 'true' }}
+      uses: aws-actions/amazon-ecr-login@v2
