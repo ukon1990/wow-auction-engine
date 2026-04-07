@@ -130,13 +130,13 @@ class BlizzardAuctionApiClientTest {
 
     private fun auctionDataBody(): String =
         javaClass
-            .getResourceAsStream("/blizzard/auction-data-response.json")
+            .getResourceAsStream("/blizzard/auction/auction-data-response.json")
             ?.use { inputStream -> String(inputStream.readAllBytes(), StandardCharsets.UTF_8) }
-            ?: error("Missing test resource: /blizzard/auction-data-response.json")
+            ?: error("Missing test resource: /blizzard/auction/auction-data-response.json")
 
     private fun auctionDumpMetadataBody(): String =
         javaClass
-            .getResourceAsStream("/blizzard/auction-dump-metadata-response.json")
+            .getResourceAsStream("/blizzard/auction/auction-dump-metadata-response.json")
             ?.use { inputStream -> String(inputStream.readAllBytes(), StandardCharsets.UTF_8) }
-            ?: error("Missing test resource: /blizzard/auction-dump-metadata-response.json")
+            ?: error("Missing test resource: /blizzard/auction/auction-dump-metadata-response.json")
 }

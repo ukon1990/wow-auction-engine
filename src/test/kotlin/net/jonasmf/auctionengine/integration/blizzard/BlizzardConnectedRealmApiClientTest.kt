@@ -83,7 +83,7 @@ class BlizzardConnectedRealmApiClientTest {
 
     private fun connectedRealmBody(): String =
         javaClass
-            .getResourceAsStream("/blizzard/connected-realm-response.json")
+            .getResourceAsStream("/blizzard/connected-realm/connected-realm-response.json")
             ?.use { inputStream -> String(inputStream.readAllBytes(), StandardCharsets.UTF_8) }
-            ?: error("Missing test resource: /blizzard/connected-realm-response.json")
+            ?: error("Missing test resource: /blizzard/connected-realm/connected-realm-response.json")
 }
