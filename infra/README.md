@@ -25,20 +25,64 @@ It is not a Kubernetes or EKS deployment.
 
 ## What Happens On Push To `master`
 
-1. `Backend PR Checks` runs Maven `verify`
-2. The workflow uploads:
+1. `Backend PR Checks` always starts with a lightweight change-classification job.
+2. If the commit changed backend-relevant files, the backend verify job runs Maven `verify` and uploads:
    - coverage artifacts
    - the deployable `.war` artifact
-3. If that workflow succeeds on `master`, `Deploy Production` starts
-4. The deploy workflow reads enabled regions from `infra/regions.json`
-5. For each enabled region, sequentially:
-   - sync runtime env vars into SSM Parameter Store
-   - run `aws cloudformation deploy`
-   - push the Docker image to the region's ECR repository
-   - restart the EC2-hosted container through SSM
-   - verify the `/health` endpoint
+3. If the commit only changed clearly irrelevant files, the expensive backend job is skipped and the workflow still completes successfully.
+4. If `Backend PR Checks` finishes successfully on `master`, `Deploy Production` starts with the same conservative change classifier.
+5. The deploy workflow reads enabled regions from `infra/regions.json` only when deployment-relevant files changed.
+6. For each enabled region, sequentially:
+   - app-only changes:
+     - push the Docker image to the region's ECR repository
+     - restart the EC2-hosted container through SSM
+     - verify the `/health` endpoint
+   - infra-affecting changes:
+     - sync runtime env vars into SSM Parameter Store
+     - run `aws cloudformation deploy`
+     - push the Docker image to the region's ECR repository
+     - restart the EC2-hosted container through SSM
+     - verify the `/health` endpoint
 
-CloudFormation is therefore applied on every successful production deploy, once per enabled region.
+The expensive jobs therefore show as `skipped` when a change is clearly irrelevant, and CloudFormation only runs when the stack or deploy contract changed.
+
+## Change Classification
+
+The shared classifier lives in `scripts/deploy/classify_changes.py`.
+
+It conservatively enables work when files could affect:
+
+- backend verification:
+  - `src/**`
+  - `pom.xml`
+  - `mvnw`
+  - `.mvn/**`
+  - `Dockerfile`
+  - backend CI workflow inputs such as `.github/actions/**`
+- app rollout:
+  - runtime/build-affecting code and resources
+  - `Dockerfile`
+  - deploy workflows
+  - `.github/actions/**`
+  - `scripts/deploy/**`
+  - `infra/regions.json`
+- CloudFormation:
+  - `infra/cloudformation/**`
+  - `infra/regions.json`
+  - deploy workflows and shared deploy actions
+  - deploy scripts that can affect stack/bootstrap assumptions
+
+When in doubt, the classifier runs the relevant work instead of skipping it.
+
+## Manual Infra Sync
+
+The repository also includes `.github/workflows/manual-infra-sync.yml`.
+
+Use it when you want to force CloudFormation without relying on changed-file detection. It supports:
+
+- a target `ref`
+- one region or `all`
+- an option to skip the app rollout and perform infra-only sync
 
 ## GitHub Setup
 
@@ -87,8 +131,9 @@ Create a GitHub Environment named `production` if you want:
 5. Copy the role ARN into the GitHub secret `AWS_DEPLOY_ROLE_ARN`.
 6. Make sure the target regions are enabled in your AWS account.
 7. Make sure the account has a default VPC and subnet in each target region, or extend the workflow/template to pass explicit `VpcId` and `SubnetId`.
-8. Make sure the external MariaDB instance accepts traffic from the deployed EC2 instances.
-9. Make sure the DynamoDB tables and S3 buckets expected by the app already exist.
+8. Add the required GitHub repository/environment secrets.
+9. Make sure the external MariaDB instance accepts traffic from the deployed EC2 instances.
+10. Make sure the DynamoDB tables and S3 buckets expected by the app already exist.
 
 ### 1. Create the GitHub OIDC Provider
 

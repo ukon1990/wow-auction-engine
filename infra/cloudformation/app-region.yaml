@@ -20,8 +20,6 @@ Parameters:
     Type: String
     Default: "true"
     AllowedValues: ["true", "false"]
-  ContainerImageUri:
-    Type: String
   ContainerPort:
     Type: Number
     Default: 8080

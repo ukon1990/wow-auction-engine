@@ -1,0 +1,122 @@
+name: Manual Infra Sync
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+permissions:
+  contents: read
+  id-token: write
+  actions: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to deploy
+        required: true
+        default: master
+        type: string
+      region:
+        description: Region to deploy, or all enabled regions
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - eu-west-1
+          - us-east-1
+          - ap-northeast-2
+      run_app_rollout:
+        description: Also push and restart the current image after infra sync
+        required: true
+        default: true
+        type: boolean
+
+jobs:
+  load-regions:
+    runs-on: ubuntu-latest
+    outputs:
+      git_ref: ${{ steps.ref.outputs.git_ref }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      app_name: ${{ steps.config.outputs.app_name }}
+      environment: ${{ steps.config.outputs.environment }}
+      project_tag: ${{ steps.config.outputs.project_tag }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Resolve git ref
+        id: ref
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "git_ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Read deployment defaults
+        id: config
+        shell: bash
+        run: |
+          set -euo pipefail
+          app_name="$(python -c "import json; print(json.load(open('infra/regions.json'))['app_name'])")"
+          environment="$(python -c "import json; print(json.load(open('infra/regions.json'))['environment'])")"
+          project_tag="$(python -c "import json; print(json.load(open('infra/regions.json'))['project_tag'])")"
+          echo "app_name=$app_name" >> "$GITHUB_OUTPUT"
+          echo "environment=$environment" >> "$GITHUB_OUTPUT"
+          echo "project_tag=$project_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Render region matrix
+        id: matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          matrix_json="$(python scripts/deploy/render_regions_matrix.py)"
+          if [[ "${TARGET_REGION}" == "all" ]]; then
+            echo "matrix=$matrix_json" >> "$GITHUB_OUTPUT"
+          else
+            filtered="$(python -c "import json,sys; data=json.loads(sys.stdin.read()); print(json.dumps([item for item in data if item['aws_region']=='${TARGET_REGION}']))" <<< "$matrix_json")"
+            echo "matrix=$filtered" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          TARGET_REGION: ${{ inputs.region }}
+
+  build-image:
+    needs: load-regions
+    if: ${{ inputs.run_app_rollout }}
+    uses: ./.github/workflows/reusable-build-image.yml
+    with:
+      git_ref: ${{ needs.load-regions.outputs.git_ref }}
+      workflow_run_id: ""
+      image_tag: ${{ needs.load-regions.outputs.git_ref }}
+
+  deploy-region:
+    needs:
+      - load-regions
+      - build-image
+    if: ${{ always() && (inputs.run_app_rollout == false || needs.build-image.result == 'success') }}
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix: ${{ fromJson(needs.load-regions.outputs.matrix) }}
+    uses: ./.github/workflows/reusable-deploy-region.yml
+    with:
+      git_ref: ${{ needs.load-regions.outputs.git_ref }}
+      artifact_name: ${{ inputs.run_app_rollout && needs.build-image.outputs.artifact_name || 'unused-artifact' }}
+      image_tag: ${{ inputs.run_app_rollout && needs.build-image.outputs.image_tag || needs.load-regions.outputs.git_ref }}
+      app_name: ${{ needs.load-regions.outputs.app_name }}
+      environment: ${{ needs.load-regions.outputs.environment }}
+      project_tag: ${{ needs.load-regions.outputs.project_tag }}
+      aws_region: ${{ matrix.aws_region }}
+      blizzard_region: ${{ matrix.blizzard_region }}
+      instance_type: ${{ matrix.instance_type }}
+      allowed_ingress_cidr: ${{ matrix.allowed_ingress_cidr }}
+      jvm_max_ram_percentage: ${{ matrix.jvm_max_ram_percentage }}
+      container_port: ${{ matrix.container_port }}
+      health_check_path: ${{ matrix.health_check_path }}
+      instance_enabled: ${{ matrix.instance_enabled }}
+      stack_name: ${{ matrix.stack_name }}
+      run_infra_phase: true
+      run_app_rollout: ${{ inputs.run_app_rollout }}
+    secrets: inherit

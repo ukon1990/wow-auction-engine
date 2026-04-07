@@ -218,12 +218,12 @@ The deployment path is designed for small regional EC2 instances running Docker,
 At a high level:
 
 - pushes to `master` run `Backend PR Checks`
-- a successful `master` run uploads the deployable `.war` artifact
-- `Deploy Production` starts after that workflow succeeds
-- the deploy workflow reads [`infra/regions.json`](infra/regions.json)
-- it deploys or updates one CloudFormation stack per enabled region
-- it pushes the Docker image to regional ECR repositories
-- it restarts the EC2-hosted Docker container through AWS Systems Manager
+- the backend workflow first classifies changes and skips the expensive verify job when the change is clearly irrelevant
+- `Deploy Production` starts after a successful `master` backend run and uses the same conservative change classification
+- app-only changes do image build, ECR push, and SSM restart
+- infra-affecting changes also run CloudFormation before the app rollout
+- clearly irrelevant changes leave the expensive jobs in a real `skipped` state
+- manual infrastructure-only syncs can be triggered with `.github/workflows/manual-infra-sync.yml`
 
 Forks can use the same flow, but must create their own AWS IAM role, GitHub secrets, and environment configuration.
 

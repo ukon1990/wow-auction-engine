@@ -10,8 +10,49 @@ on:
   pull_request:
 
 jobs:
+  classify-changes:
+    name: Classify Changes
+    runs-on: ubuntu-latest
+    outputs:
+      backend_verify_required: ${{ steps.classify.outputs.backend_verify_required }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Determine diff range
+        id: diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            echo "base_sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+            echo "head_sha=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "base_sha=${{ github.event.before }}" >> "$GITHUB_OUTPUT"
+            echo "head_sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Classify changed files
+        id: classify
+        shell: bash
+        run: |
+          set -euo pipefail
+          base_sha="${{ steps.diff.outputs.base_sha }}"
+          head_sha="${{ steps.diff.outputs.head_sha }}"
+          if [[ -z "$base_sha" || "$base_sha" == "0000000000000000000000000000000000000000" ]]; then
+            git ls-tree -r --name-only "$head_sha" > /tmp/changed-files.txt
+          else
+            git diff --name-only "$base_sha" "$head_sha" > /tmp/changed-files.txt
+          fi
+          classification="$(python scripts/deploy/classify_changes.py < /tmp/changed-files.txt)"
+          echo "backend_verify_required=$(python -c "import json,sys; print(str(json.load(sys.stdin)['backend_verify_required']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
+
   backend-build-and-test:
     name: Backend Style, Build, and Test
+    needs: classify-changes
+    if: ${{ needs.classify-changes.outputs.backend_verify_required == 'true' }}
     runs-on: ubuntu-latest
 
     steps:

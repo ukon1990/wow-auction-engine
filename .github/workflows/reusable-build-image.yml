@@ -14,7 +14,7 @@ on:
         required: true
         type: string
       workflow_run_id:
-        required: true
+        required: false
         type: string
       image_tag:
         required: true
@@ -59,6 +59,7 @@ jobs:
           IMAGE_TAG: ${{ inputs.image_tag }}
 
       - name: Download WAR artifact from CI run
+        if: ${{ inputs.workflow_run_id != '' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -88,6 +89,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           WORKFLOW_RUN_ID: ${{ inputs.workflow_run_id }}
+
+      - name: Build WAR artifact locally
+        if: ${{ inputs.workflow_run_id == '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x ./mvnw
+          ./mvnw -B -ntp "-Dkotlin.compiler.daemon=false" -Dmaven.test.skip=true package
+          war_path="$(find target -maxdepth 1 -name '*.war' | head -n 1)"
+          if [[ -z "$war_path" ]]; then
+            echo "Local build did not produce a war file" >&2
+            exit 1
+          fi
+          cp "$war_path" ./app.war
 
       - name: Build ARM64 Docker image
         shell: bash

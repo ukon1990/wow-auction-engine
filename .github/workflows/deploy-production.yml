@@ -16,7 +16,7 @@ on:
       - completed
 
 jobs:
-  load-regions:
+  classify-changes:
     if: >-
       ${{
         github.event.workflow_run.conclusion == 'success' &&
@@ -24,19 +24,59 @@ jobs:
       }}
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-      app_name: ${{ steps.config.outputs.app_name }}
-      environment: ${{ steps.config.outputs.environment }}
-      project_tag: ${{ steps.config.outputs.project_tag }}
+      app_rollout_required: ${{ steps.classify.outputs.app_rollout_required }}
+      infra_apply_required: ${{ steps.classify.outputs.infra_apply_required }}
+      relevant_changed: ${{ steps.classify.outputs.relevant_changed }}
       git_ref: ${{ steps.config.outputs.git_ref }}
       image_tag: ${{ steps.config.outputs.image_tag }}
       workflow_run_id: ${{ steps.config.outputs.workflow_run_id }}
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 2
+
+      - name: Read workflow context
+        id: config
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "git_ref=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          echo "image_tag=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          echo "workflow_run_id=${{ github.event.workflow_run.id }}" >> "$GITHUB_OUTPUT"
+
+      - name: Classify changed files
+        id: classify
+        shell: bash
+        run: |
+          set -euo pipefail
+          parent_sha="$(git rev-list --parents -n 1 HEAD | awk '{print $2}')"
+          if [[ -z "$parent_sha" ]]; then
+            git ls-tree -r --name-only HEAD > /tmp/changed-files.txt
+          else
+            git diff --name-only "$parent_sha" HEAD > /tmp/changed-files.txt
+          fi
+          classification="$(python scripts/deploy/classify_changes.py < /tmp/changed-files.txt)"
+          echo "app_rollout_required=$(python -c "import json,sys; print(str(json.load(sys.stdin)['app_rollout_required']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
+          echo "infra_apply_required=$(python -c "import json,sys; print(str(json.load(sys.stdin)['infra_apply_required']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
+          echo "relevant_changed=$(python -c "import json,sys; print(str(json.load(sys.stdin)['relevant_changed']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
+
+  load-regions:
+    needs: classify-changes
+    if: ${{ needs.classify-changes.outputs.relevant_changed == 'true' }}
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      app_name: ${{ steps.config.outputs.app_name }}
+      environment: ${{ steps.config.outputs.environment }}
+      project_tag: ${{ steps.config.outputs.project_tag }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.classify-changes.outputs.git_ref }}
 
       - name: Read deployment defaults
         id: config
@@ -49,9 +89,6 @@ jobs:
           echo "app_name=$app_name" >> "$GITHUB_OUTPUT"
           echo "environment=$environment" >> "$GITHUB_OUTPUT"
           echo "project_tag=$project_tag" >> "$GITHUB_OUTPUT"
-          echo "git_ref=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
-          echo "image_tag=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
-          echo "workflow_run_id=${{ github.event.workflow_run.id }}" >> "$GITHUB_OUTPUT"
 
       - name: Render enabled region matrix
         id: matrix
@@ -62,24 +99,29 @@ jobs:
           echo "matrix=$matrix_json" >> "$GITHUB_OUTPUT"
 
   build-image:
-    needs: load-regions
+    needs:
+      - classify-changes
+      - load-regions
+    if: ${{ needs.classify-changes.outputs.app_rollout_required == 'true' }}
     uses: ./.github/workflows/reusable-build-image.yml
     with:
-      git_ref: ${{ needs.load-regions.outputs.git_ref }}
-      workflow_run_id: ${{ needs.load-regions.outputs.workflow_run_id }}
-      image_tag: ${{ needs.load-regions.outputs.image_tag }}
+      git_ref: ${{ needs.classify-changes.outputs.git_ref }}
+      workflow_run_id: ${{ needs.classify-changes.outputs.workflow_run_id }}
+      image_tag: ${{ needs.classify-changes.outputs.image_tag }}
 
   deploy-region:
     needs:
+      - classify-changes
       - load-regions
       - build-image
+    if: ${{ needs.classify-changes.outputs.app_rollout_required == 'true' }}
     strategy:
       fail-fast: true
       max-parallel: 1
       matrix: ${{ fromJson(needs.load-regions.outputs.matrix) }}
     uses: ./.github/workflows/reusable-deploy-region.yml
     with:
-      git_ref: ${{ needs.load-regions.outputs.git_ref }}
+      git_ref: ${{ needs.classify-changes.outputs.git_ref }}
       artifact_name: ${{ needs.build-image.outputs.artifact_name }}
       image_tag: ${{ needs.build-image.outputs.image_tag }}
       app_name: ${{ needs.load-regions.outputs.app_name }}
@@ -94,4 +136,6 @@ jobs:
       health_check_path: ${{ matrix.health_check_path }}
       instance_enabled: ${{ matrix.instance_enabled }}
       stack_name: ${{ matrix.stack_name }}
+      run_infra_phase: ${{ needs.classify-changes.outputs.infra_apply_required == 'true' }}
+      run_app_rollout: true
     secrets: inherit
