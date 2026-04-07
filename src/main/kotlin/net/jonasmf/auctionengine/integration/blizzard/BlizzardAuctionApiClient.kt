@@ -10,9 +10,12 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
+import java.time.Duration
 
 private const val AUCTION_DEFAULT_LOCALE = "en_US"
 private const val FAR_FUTURE_IF_MODIFIED_SINCE = "Sat, 14 Mar 3000 20:07:10 GMT"
+private val AUCTION_METADATA_TIMEOUT: Duration = Duration.ofSeconds(30)
+private val AUCTION_DOWNLOAD_TIMEOUT: Duration = Duration.ofMinutes(3)
 
 @Component
 class BlizzardAuctionApiClient(
@@ -49,6 +52,7 @@ class BlizzardAuctionApiClient(
             .header(HttpHeaders.IF_MODIFIED_SINCE, FAR_FUTURE_IF_MODIFIED_SINCE)
             .retrieve()
             .toEntity(String::class.java)
+            .timeout(AUCTION_METADATA_TIMEOUT)
             .map { response ->
                 AuctionDataResponse(
                     lastModified = response.headers.lastModified,
@@ -67,10 +71,24 @@ class BlizzardAuctionApiClient(
             .webClient()
             .get()
             .uri(url)
-            .retrieve()
-            .bodyToMono(AuctionData::class.java)
-            .doOnNext {
-                logger.info("Successfully fetched auction data from {}", url)
+            .exchangeToMono { response ->
+                val contentLength = response.headers().contentLength().orElse(-1)
+                logger.info(
+                    "Starting auction payload download from {} with contentLength={}B",
+                    url,
+                    if (contentLength >= 0) contentLength else "unknown",
+                )
+                response
+                    .bodyToMono(AuctionData::class.java)
+                    .timeout(AUCTION_DOWNLOAD_TIMEOUT)
+                    .doOnNext {
+                        logger.info(
+                            "Completed auction payload download from {} with {} auctions and contentLength={}B",
+                            url,
+                            it.auctions.size,
+                            if (contentLength >= 0) contentLength else "unknown",
+                        )
+                    }
             }.doOnError { error ->
                 logger.error("Failed to fetch auction data from {}: {}", url, error.message, error)
             }

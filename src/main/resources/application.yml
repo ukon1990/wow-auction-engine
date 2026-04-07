@@ -46,6 +46,12 @@ spring:
           create-source: metadata
           drop-source: metadata
 
+app:
+  scheduling:
+    enabled: true
+  health:
+    stuck-update-threshold: PT20M
+
 blizzard:
   client-id: ${BLIZZARD_CLIENT_ID}
   client-secret: ${BLIZZARD_CLIENT_SECRET}

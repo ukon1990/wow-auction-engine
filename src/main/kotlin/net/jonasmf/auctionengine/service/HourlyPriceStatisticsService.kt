@@ -6,28 +6,43 @@ import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.ModifierDTO
 import net.jonasmf.auctionengine.repository.rds.HourlyPriceStatisticsRepository
 import net.jonasmf.auctionengine.repository.rds.HourlyStatsUpsertRow
+import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
+
+data class HourlyPriceStatisticsSummary(
+    val insertedRows: Int,
+    val groupedRows: Int,
+)
 
 @Service
 class HourlyPriceStatisticsService(
     val hourlyPriceStatisticsRepository: HourlyPriceStatisticsRepository,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(HourlyPriceStatisticsService::class.java)
+    private val progressLogInterval = 100_000
 
     fun processHourlyPriceStatistics(
         connectedRealm: ConnectedRealm,
         auctions: List<AuctionDTO>,
         lastModified: ZonedDateTime,
-    ): List<HourlyStatsUpsertRow> {
+    ): HourlyPriceStatisticsSummary {
         val startTime = System.currentTimeMillis()
         val hour = lastModified.hour
         val date = lastModified.toLocalDate()
         val grouped = linkedMapOf<String, HourlyStatsUpsertRow>()
 
-        for (auction in auctions) {
+        logger.info(
+            "Starting hourly stats aggregation for realm {} with {} auctions at hour {} and {}",
+            connectedRealm.id,
+            auctions.size,
+            hour,
+            JvmRuntimeDiagnostics.snapshot(),
+        )
+
+        for ((index, auction) in auctions.withIndex()) {
             val itemId = auction.item.id
             val petSpeciesId = auction.item.pet_species_id
             val modifierKey = canonicalModifierKey(auction.item.modifiers)
@@ -59,15 +74,41 @@ class HourlyPriceStatisticsService(
                         price = (existing.price ?: 0).coerceAtMost(price),
                     )
             }
+
+            if ((index + 1) % progressLogInterval == 0) {
+                logger.info(
+                    "Hourly stats aggregation progress for realm {}: {}/{} auctions groupedRows={} {}",
+                    connectedRealm.id,
+                    index + 1,
+                    auctions.size,
+                    grouped.size,
+                    JvmRuntimeDiagnostics.snapshot(),
+                )
+            }
         }
 
-        val insertedRows = hourlyPriceStatisticsRepository.upsertHour(grouped.values.toList(), hour)
+        val groupedRows = ArrayList(grouped.values)
         logger.info(
-            "Processed hourly auctions for ${
-                connectedRealm.auctionHouse.id
-            } with $insertedRows rows, in ${System.currentTimeMillis() - startTime} ms",
+            "Starting hourly stats upsert for realm {} with groupedRows={} at hour {} {}",
+            connectedRealm.id,
+            groupedRows.size,
+            hour,
+            JvmRuntimeDiagnostics.snapshot(),
         )
-        return grouped.values.toList()
+        val insertedRows = hourlyPriceStatisticsRepository.upsertHour(groupedRows, hour)
+        grouped.clear()
+        logger.info(
+            "Processed hourly auctions for realm {} with insertedRows={} groupedRows={} in {} ms {}",
+            connectedRealm.id,
+            insertedRows,
+            groupedRows.size,
+            System.currentTimeMillis() - startTime,
+            JvmRuntimeDiagnostics.snapshot(),
+        )
+        return HourlyPriceStatisticsSummary(
+            insertedRows = insertedRows,
+            groupedRows = groupedRows.size,
+        )
     }
 
     private fun canonicalModifierKey(modifiers: List<ModifierDTO>?): String =

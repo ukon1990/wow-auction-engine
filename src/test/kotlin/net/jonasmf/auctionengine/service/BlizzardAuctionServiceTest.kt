@@ -23,6 +23,7 @@ import net.jonasmf.auctionengine.repository.rds.AuctionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
+import java.time.Duration
 import java.time.ZonedDateTime
 
 class BlizzardAuctionServiceTest {
@@ -45,6 +46,7 @@ class BlizzardAuctionServiceTest {
     private val auctionItemModifierRepository = mockk<AuctionItemModifierRepository>(relaxed = true)
     private val updateHistoryService = mockk<ConnectedRealmUpdateHistoryService>(relaxed = true)
     private val auctionHouseService = mockk<AuctionHouseService>()
+    private val runtimeHealthTracker = RuntimeHealthTracker(Duration.ofMinutes(20))
 
     private fun createService() =
         BlizzardAuctionService(
@@ -59,6 +61,7 @@ class BlizzardAuctionServiceTest {
             auctionItemModifierRepository = auctionItemModifierRepository,
             updateHistoryService = updateHistoryService,
             auctionHouseService = auctionHouseService,
+            runtimeHealthTracker = runtimeHealthTracker,
         )
 
     @Test
@@ -112,13 +115,13 @@ class BlizzardAuctionServiceTest {
             hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(firstRealm), eq(firstData.auctions), any())
         } answers {
             events += "stats-1"
-            emptyList()
+            HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1)
         }
         every {
             hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(secondRealm), eq(secondData.auctions), any())
         } answers {
             events += "stats-2"
-            emptyList()
+            HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1)
         }
         every { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) } answers {
             events += "update-1"
@@ -195,7 +198,7 @@ class BlizzardAuctionServiceTest {
             hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(secondRealm), eq(secondData.auctions), any())
         } answers {
             events += "stats-2"
-            emptyList()
+            HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1)
         }
         every { auctionHouseService.updateTimes(eq(2), any(), eq(true), any()) } answers {
             events += "update-2"
@@ -230,7 +233,7 @@ class BlizzardAuctionServiceTest {
         every { hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(realm), eq(data.auctions), any()) } answers
             {
                 events += "stats"
-                emptyList()
+                HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1)
             }
         every { auctionHouseService.updateTimes(eq(1), any(), eq(true), capture(completionMarker)) } answers {
             events += "complete"
