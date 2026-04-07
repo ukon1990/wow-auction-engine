@@ -46,6 +46,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
+      - name: Set up Java 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
       - name: Prepare image metadata
         id: meta
         shell: bash
@@ -58,51 +65,12 @@ jobs:
         env:
           IMAGE_TAG: ${{ inputs.image_tag }}
 
-      - name: Download WAR artifact from CI run
-        if: ${{ inputs.workflow_run_id != '' }}
+      - name: Ensure WAR artifact is available
         shell: bash
-        run: |
-          set -euo pipefail
-          api_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${WORKFLOW_RUN_ID}/artifacts"
-          artifact_id="$(curl -fsSL \
-            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            "$api_url" | python -c "import json,sys; data=json.load(sys.stdin); arts=[a for a in data['artifacts'] if a['name']=='backend-war' and not a['expired']]; print(arts[0]['id'] if arts else '')")"
-          if [[ -z "$artifact_id" ]]; then
-            echo "Could not find backend-war artifact for workflow run ${WORKFLOW_RUN_ID}" >&2
-            exit 1
-          fi
-          curl -fsSL \
-            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}/zip" \
-            -o /tmp/backend-war.zip
-          rm -rf /tmp/backend-war
-          mkdir -p /tmp/backend-war
-          unzip -q /tmp/backend-war.zip -d /tmp/backend-war
-          war_path="$(find /tmp/backend-war -maxdepth 1 -name '*.war' | head -n 1)"
-          if [[ -z "$war_path" ]]; then
-            echo "Downloaded artifact did not contain a war file" >&2
-            exit 1
-          fi
-          cp "$war_path" ./app.war
+        run: bash scripts/deploy/ensure-war.sh
         env:
           GITHUB_TOKEN: ${{ github.token }}
           WORKFLOW_RUN_ID: ${{ inputs.workflow_run_id }}
-
-      - name: Build WAR artifact locally
-        if: ${{ inputs.workflow_run_id == '' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          chmod +x ./mvnw
-          ./mvnw -B -ntp "-Dkotlin.compiler.daemon=false" -Dmaven.test.skip=true package
-          war_path="$(find target -maxdepth 1 -name '*.war' | head -n 1)"
-          if [[ -z "$war_path" ]]; then
-            echo "Local build did not produce a war file" >&2
-            exit 1
-          fi
-          cp "$war_path" ./app.war
 
       - name: Build ARM64 Docker image
         shell: bash
