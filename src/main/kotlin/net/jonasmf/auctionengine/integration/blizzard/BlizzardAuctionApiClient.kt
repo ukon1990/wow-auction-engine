@@ -1,7 +1,11 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonToken
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -124,6 +128,14 @@ class BlizzardAuctionApiClient(
                     .onErrorResume { error ->
                         tempFile.toFile().delete()
                         Mono.error(error)
+                    }.flatMap { payload ->
+                        try {
+                            validateDownloadedPayload(payload)
+                            Mono.just(payload)
+                        } catch (error: Exception) {
+                            payload.path.toFile().delete()
+                            Mono.error(error)
+                        }
                     }
             }.doOnNext { payload ->
                 logger.info(
@@ -142,4 +154,33 @@ class BlizzardAuctionApiClient(
             }.doOnError { error ->
                 logger.logBlizzardHttpFailure(error)
             }
+
+    private fun validateDownloadedPayload(payload: DownloadedAuctionPayload) {
+        val mapper = jacksonObjectMapper()
+        val jsonFactory = JsonFactory(mapper)
+        payload.path.toFile().inputStream().use { input ->
+            jsonFactory.createParser(input).use { parser ->
+                require(parser.nextToken() == JsonToken.START_OBJECT) {
+                    "Auction payload root must be a JSON object"
+                }
+                var foundAuctionsArray = false
+                while (parser.nextToken() != JsonToken.END_OBJECT) {
+                    val fieldName = parser.currentName
+                    parser.nextToken()
+                    if (fieldName == "auctions") {
+                        foundAuctionsArray = true
+                        require(parser.currentToken == JsonToken.START_ARRAY) {
+                            "Auction payload field 'auctions' must be an array"
+                        }
+                        while (parser.nextToken() != JsonToken.END_ARRAY) {
+                            mapper.readValue(parser, AuctionDTO::class.java)
+                        }
+                    } else {
+                        parser.skipChildren()
+                    }
+                }
+                require(foundAuctionsArray) { "Auction payload did not contain an 'auctions' array" }
+            }
+        }
+    }
 }

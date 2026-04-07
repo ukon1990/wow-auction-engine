@@ -110,7 +110,8 @@ class BlizzardAuctionApiClientTest {
     }
 
     @Test
-    fun `downloadAuctionData streams malformed json without decoding it`() {
+    fun `downloadAuctionData rejects malformed json before returning a payload file`() {
+        val appender = attachAppender()
         val client =
             BlizzardAuctionApiClient(
                 createSupport(
@@ -120,15 +121,17 @@ class BlizzardAuctionApiClientTest {
                 ),
             )
 
-        val result =
-            client
-                .downloadAuctionData(
-                    "https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions",
-                ).block()!!
-        filesToDelete.add(result.path)
+        val error =
+            assertThrows(BlizzardApiClientException::class.java) {
+                client.downloadAuctionData("https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions").block()
+            }
 
-        assertTrue(Files.exists(result.path))
-        assertEquals("""{"auctions":[{"id":1""", Files.readString(result.path))
+        assertEquals("download auction payload", error.operation)
+        assertTrue(error.summary.contains("Unexpected end-of-input"))
+        val errorEvent = appender.list.single { it.level == Level.ERROR }
+        assertTrue(errorEvent.formattedMessage.contains("Unexpected end-of-input"))
+        assertNull(errorEvent.throwableProxy)
+        detachAppender(appender)
     }
 
     @Test
