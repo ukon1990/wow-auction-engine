@@ -62,12 +62,55 @@ class AmazonS3Service(
         return filePath.toFile()
     }
 
+    private fun compressFile(
+        path: String,
+        source: Path,
+    ): File {
+        val filePath = Paths.get("/tmp/$path.gz")
+        Files.createDirectories(filePath.parent)
+
+        Files.newInputStream(source).use { input ->
+            GZIPOutputStream(
+                Files.newOutputStream(
+                    filePath,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING,
+                ),
+            ).use { gzipOutputStream ->
+                input.copyTo(gzipOutputStream)
+            }
+        }
+
+        return filePath.toFile()
+    }
+
     fun uploadFile(
         region: Region,
         path: String,
         data: Any,
     ): String? {
         val file = serializeCompressAndUpload(path, data)
+        return uploadLocalFile(region, path, file)
+    }
+
+    fun uploadCompressedFile(
+        region: Region,
+        path: String,
+        source: Path,
+    ): String? {
+        val file = compressFile(path, source)
+        return try {
+            uploadLocalFile(region, path, file)
+        } finally {
+            file.delete()
+        }
+    }
+
+    private fun uploadLocalFile(
+        region: Region,
+        path: String,
+        file: File,
+    ): String? {
         val fileName = "engine/$path.gz"
         val bucketConfig = s3Properties.bucketFor(region)
         val bucketName = bucketConfig.name

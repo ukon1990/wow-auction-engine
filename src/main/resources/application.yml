@@ -49,6 +49,7 @@ spring:
 app:
   scheduling:
     enabled: true
+    initial-delay: PT30S
   health:
     stuck-update-threshold: PT20M
 

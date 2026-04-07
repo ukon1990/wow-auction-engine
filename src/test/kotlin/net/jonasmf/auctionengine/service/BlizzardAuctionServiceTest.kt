@@ -8,20 +8,15 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.constant.AuctionTimeLeft
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
-import net.jonasmf.auctionengine.dto.Link
-import net.jonasmf.auctionengine.dto.Links
-import net.jonasmf.auctionengine.dto.auction.AuctionDTO
-import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
-import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
+import net.jonasmf.auctionengine.integration.blizzard.DownloadedAuctionPayload
 import net.jonasmf.auctionengine.repository.rds.AuctionItemModifierRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionItemRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionRepository
@@ -31,6 +26,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
+import java.nio.file.Files
 import java.time.Duration
 import java.time.ZonedDateTime
 
@@ -80,8 +76,8 @@ class BlizzardAuctionServiceTest {
         val secondLastModified = ZonedDateTime.now().minusMinutes(10)
         val firstRealm = createRealm(1, firstLastModified.minusMinutes(1))
         val secondRealm = createRealm(2, secondLastModified.minusMinutes(1))
-        val firstData = createAuctionData(101)
-        val secondData = createAuctionData(202)
+        val firstData = createDownloadedPayload()
+        val secondData = createDownloadedPayload()
 
         every { blizzardAuctionApiClient.getLatestAuctionDump(1, Region.Europe, any()) } answers {
             events += "dump-1"
@@ -114,22 +110,26 @@ class BlizzardAuctionServiceTest {
             events += if (path.contains("/1/")) "dump-s3-1" else "dump-s3-2"
             "s3://$path"
         }
-        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionData>()) } answers {
+        every { amazonS3.uploadCompressedFile(eq(Region.Europe), any(), any()) } answers {
             val path = secondArg<String>()
             events += if (path.contains("/1/")) "s3-1" else "s3-2"
             "s3://$path"
         }
         every {
-            hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(firstRealm), eq(firstData.auctions), any())
+            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(eq(firstRealm), eq(firstData.path), any())
         } answers {
             events += "stats-1"
-            HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1)
+            HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
         }
         every {
-            hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(secondRealm), eq(secondData.auctions), any())
+            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(
+                eq(secondRealm),
+                eq(secondData.path),
+                any(),
+            )
         } answers {
             events += "stats-2"
-            HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1)
+            HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
         }
         every { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) } answers {
             events += "update-1"
@@ -173,7 +173,7 @@ class BlizzardAuctionServiceTest {
         val secondLastModified = ZonedDateTime.now().minusMinutes(10)
         val firstRealm = createRealm(1, firstLastModified.minusMinutes(1))
         val secondRealm = createRealm(2, secondLastModified.minusMinutes(1))
-        val secondData = createAuctionData(202)
+        val secondData = createDownloadedPayload()
 
         every { blizzardAuctionApiClient.getLatestAuctionDump(1, Region.Europe, any()) } returns
             Mono.just(
@@ -198,15 +198,19 @@ class BlizzardAuctionServiceTest {
         every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } answers {
             events += "failure-1"
         }
-        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionData>()) } answers {
+        every { amazonS3.uploadCompressedFile(eq(Region.Europe), any(), any()) } answers {
             events += "s3-2"
             "s3://second"
         }
         every {
-            hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(secondRealm), eq(secondData.auctions), any())
+            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(
+                eq(secondRealm),
+                eq(secondData.path),
+                any(),
+            )
         } answers {
             events += "stats-2"
-            HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1)
+            HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
         }
         every { auctionHouseService.updateTimes(eq(2), any(), eq(true), any()) } answers {
             events += "update-2"
@@ -230,18 +234,24 @@ class BlizzardAuctionServiceTest {
         val realm = createRealm(1, lastModified.minusMinutes(1))
         val events = mutableListOf<String>()
         val completionMarker = slot<String>()
-        val data = createAuctionData(101)
+        val data = createDownloadedPayload()
 
         every { blizzardAuctionApiClient.getLatestAuctionDump(1, Region.Europe, any()) } returns
             Mono.just(AuctionDataResponse(lastModified.toInstant().toEpochMilli(), "url-1", GameBuildVersion.RETAIL))
         every { realmService.getById(1) } returns realm
         every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionDataResponse>()) } returns "s3://dump"
         every { blizzardAuctionApiClient.downloadAuctionData("url-1") } returns Mono.just(data)
-        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionData>()) } returns "s3://first"
-        every { hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(realm), eq(data.auctions), any()) } answers
+        every { amazonS3.uploadCompressedFile(eq(Region.Europe), any(), any()) } returns "s3://first"
+        every {
+            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(
+                eq(realm),
+                eq(data.path),
+                any(),
+            )
+        } answers
             {
                 events += "stats"
-                HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1)
+                HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
             }
         every { auctionHouseService.updateTimes(eq(1), any(), eq(true), capture(completionMarker)) } answers {
             events += "complete"
@@ -258,20 +268,20 @@ class BlizzardAuctionServiceTest {
         val service = createService()
         val lastModified = ZonedDateTime.now().minusMinutes(5)
         val realm = createRealm(1, lastModified.minusMinutes(1))
-        val data = createAuctionData(101)
+        val data = createDownloadedPayload()
 
         every { blizzardAuctionApiClient.getLatestAuctionDump(1, Region.Europe, any()) } returns
             Mono.just(AuctionDataResponse(lastModified.toInstant().toEpochMilli(), "url-1", GameBuildVersion.RETAIL))
         every { realmService.getById(1) } returns realm
         every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionDataResponse>()) } returns "s3://dump"
         every { blizzardAuctionApiClient.downloadAuctionData("url-1") } returns Mono.just(data)
-        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionData>()) } returns null
+        every { amazonS3.uploadCompressedFile(eq(Region.Europe), any(), any()) } returns null
         every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
 
         service.updateAuctionHouses(Region.Europe, listOf(AuctionHouseDynamo(connectedId = 1, region = Region.Europe)))
 
         io.mockk.verify(exactly = 0) {
-            hourlyPriceStatisticsService.processHourlyPriceStatistics(any(), any(), any())
+            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(any(), any(), any())
         }
         io.mockk.verify(exactly = 1) { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) }
         io.mockk.verify(exactly = 0) { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) }
@@ -354,21 +364,11 @@ class BlizzardAuctionServiceTest {
         realms = mutableListOf(),
     )
 
-    private fun createAuctionData(itemId: Int) =
-        AuctionData(
-            _links = Links(Link("self-$itemId")),
-            auctions =
-                listOf(
-                    AuctionDTO(
-                        id = itemId.toLong(),
-                        item = AuctionItemDTO(id = itemId),
-                        quantity = 1,
-                        unit_price = 100,
-                        buyout = 100,
-                        time_left = AuctionTimeLeft.LONG,
-                    ),
-                ),
-        )
+    private fun createDownloadedPayload(): DownloadedAuctionPayload {
+        val path = Files.createTempFile("auction-service-test-", ".json")
+        Files.writeString(path, """{"auctions":[{"id":1}]}""")
+        return DownloadedAuctionPayload(path = path, contentLength = Files.size(path))
+    }
 
     private fun attachAppender(): ListAppender<ILoggingEvent> {
         val logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java) as Logger

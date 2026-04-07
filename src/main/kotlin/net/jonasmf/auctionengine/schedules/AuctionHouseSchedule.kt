@@ -20,7 +20,10 @@ class AuctionHouseSchedule(
     val logger: Logger = LoggerFactory.getLogger(AuctionHouseSchedule::class.java)
     private val updateBatchRunning = AtomicBoolean(false)
 
-    @Scheduled(fixedDelayString = "PT1M", initialDelay = 3_000)
+    @Scheduled(
+        fixedDelayString = "PT1M",
+        initialDelayString = "\${app.scheduling.initial-delay:PT30S}",
+    )
     fun checkForUpdates() {
         if (!updateBatchRunning.compareAndSet(false, true)) {
             logger.info("Skipping scheduled auction house update check because an update batch is already running.")

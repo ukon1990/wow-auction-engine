@@ -11,6 +11,7 @@ import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
+import net.jonasmf.auctionengine.integration.blizzard.DownloadedAuctionPayload
 import net.jonasmf.auctionengine.repository.rds.AuctionItemModifierRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionItemRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionRepository
@@ -23,6 +24,7 @@ import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.io.path.deleteIfExists
 import kotlin.math.min
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction as AuctionDBO
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItem as AuctionItemDBO
@@ -161,7 +163,7 @@ class BlizzardAuctionService(
                 connectedRealmId = connectedRealmId,
             )
             val downloadStartTime = System.currentTimeMillis()
-            val data =
+            val downloadedPayload =
                 blizzardAuctionApiClient
                     .downloadAuctionData(url)
                     .block() ?: run {
@@ -173,73 +175,86 @@ class BlizzardAuctionService(
                     )
                     return
                 }
-
-            val auctionCount = data.auctions.size
-            logger.info(
-                "Fetched auction data for realm {} region {} with {} auctions in {}ms {}",
-                connectedRealmId,
-                region,
-                auctionCount,
-                System.currentTimeMillis() - downloadStartTime,
-                JvmRuntimeDiagnostics.snapshot(),
-            )
-
-            if (auctionCount == 0) {
-                logger.warn("No auctions found for realm $connectedRealmId")
-                return
-            }
-
-            runtimeHealthTracker.markUpdateBatchProgress(
-                "archive-auction-payload",
-                region = region,
-                connectedRealmId = connectedRealmId,
-            )
-            val s3ArchiveStartTime = System.currentTimeMillis()
-            val s3Url = saveAuctionDataToS3(region, connectedRealmId, data, lastModified)
-            if (s3Url == null) {
-                logger.error("Auction payload archive failed for realm {}. Marking update as failed.", connectedRealmId)
+            try {
+                logger.info(
+                    "Fetched auction data for realm {} region {} into {} in {}ms {}",
+                    connectedRealmId,
+                    region,
+                    downloadedPayload.path,
+                    System.currentTimeMillis() - downloadStartTime,
+                    JvmRuntimeDiagnostics.snapshot(),
+                )
+                runtimeHealthTracker.markUpdateBatchProgress(
+                    "archive-auction-payload",
+                    region = region,
+                    connectedRealmId = connectedRealmId,
+                )
+                val s3ArchiveStartTime = System.currentTimeMillis()
+                val s3Url = saveAuctionDataToS3(region, connectedRealmId, downloadedPayload, lastModified)
+                if (s3Url == null) {
+                    logger.error(
+                        "Auction payload archive failed for realm {}. Marking update as failed.",
+                        connectedRealmId,
+                    )
+                    auctionHouseService.updateTimes(
+                        connectedRealmId,
+                        lastModified.toInstant().toKotlin(),
+                        false,
+                    )
+                    return
+                }
+                logger.info(
+                    "Archived auction payload for realm {} region {} in {}ms {}",
+                    connectedRealmId,
+                    region,
+                    System.currentTimeMillis() - s3ArchiveStartTime,
+                    JvmRuntimeDiagnostics.snapshot(),
+                )
+                runtimeHealthTracker.markUpdateBatchProgress(
+                    "aggregate-hourly-stats",
+                    region = region,
+                    connectedRealmId = connectedRealmId,
+                )
+                val hourlyStatsStartTime = System.currentTimeMillis()
+                val hourlyStatsSummary =
+                    hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(
+                        connectedRealm = connectedRealm,
+                        payloadPath = downloadedPayload.path,
+                        lastModified = lastModified,
+                    )
+                if (hourlyStatsSummary.processedAuctions == 0) {
+                    logger.warn("No auctions found for realm {}", connectedRealmId)
+                    auctionHouseService.updateTimes(
+                        connectedRealmId,
+                        lastModified.toInstant().toKotlin(),
+                        false,
+                    )
+                    return
+                }
+                logger.info(
+                    "Completed hourly stats processing for realm {} region {} auctions={} groupedRows={} insertedRows={} in {}ms {}",
+                    connectedRealmId,
+                    region,
+                    hourlyStatsSummary.processedAuctions,
+                    hourlyStatsSummary.groupedRows,
+                    hourlyStatsSummary.insertedRows,
+                    System.currentTimeMillis() - hourlyStatsStartTime,
+                    JvmRuntimeDiagnostics.snapshot(),
+                )
+                runtimeHealthTracker.markUpdateBatchProgress(
+                    "update-auction-house-times",
+                    region = region,
+                    connectedRealmId = connectedRealmId,
+                )
                 auctionHouseService.updateTimes(
                     connectedRealmId,
                     lastModified.toInstant().toKotlin(),
-                    false,
+                    true,
+                    s3Url,
                 )
-                return
+            } finally {
+                downloadedPayload.path.deleteIfExists()
             }
-            logger.info(
-                "Archived auction payload for realm {} region {} in {}ms {}",
-                connectedRealmId,
-                region,
-                System.currentTimeMillis() - s3ArchiveStartTime,
-                JvmRuntimeDiagnostics.snapshot(),
-            )
-            runtimeHealthTracker.markUpdateBatchProgress(
-                "aggregate-hourly-stats",
-                region = region,
-                connectedRealmId = connectedRealmId,
-            )
-            val hourlyStatsStartTime = System.currentTimeMillis()
-            val hourlyStatsSummary =
-                hourlyPriceStatisticsService.processHourlyPriceStatistics(connectedRealm, data.auctions, lastModified)
-            logger.info(
-                "Completed hourly stats processing for realm {} region {} groupedRows={} insertedRows={} in {}ms {}",
-                connectedRealmId,
-                region,
-                hourlyStatsSummary.groupedRows,
-                hourlyStatsSummary.insertedRows,
-                System.currentTimeMillis() - hourlyStatsStartTime,
-                JvmRuntimeDiagnostics.snapshot(),
-            )
-            runtimeHealthTracker.markUpdateBatchProgress(
-                "update-auction-house-times",
-                region = region,
-                connectedRealmId = connectedRealmId,
-            )
-            auctionHouseService.updateTimes(
-                connectedRealmId,
-                lastModified.toInstant().toKotlin(),
-                true,
-                s3Url,
-            )
             /* Disabled, as we don't really need ALL auctions in the database as it takes up a lot of space
                 And processing is also really slow for "100k-400k" auctions and all it's corresponding data.
                 I might get back to this later and see if I can optimize it more, but for now I'm more interested in trends over time
@@ -311,14 +326,10 @@ class BlizzardAuctionService(
     private fun saveAuctionDataToS3(
         region: Region,
         connectedRealmId: Int,
-        data: AuctionData,
+        payload: DownloadedAuctionPayload,
         lastModified: ZonedDateTime,
     ): String? {
         var s3Url: String? = null
-        if (data.auctions.isEmpty()) {
-            logger.warn("No auction data to upload for realm $connectedRealmId")
-            return s3Url
-        }
         val lastModifiedMs = lastModified.toInstant().toEpochMilli()
         val startTime = System.currentTimeMillis()
         val filePath = "auctions/${region.name.lowercase(Locale.getDefault())}/${
@@ -326,17 +337,18 @@ class BlizzardAuctionService(
         }/$lastModifiedMs.json"
 
         try {
-            s3Url = amazonS3.uploadFile(region, filePath, data)
+            s3Url = amazonS3.uploadCompressedFile(region, filePath, payload.path)
             logger.debug("Successfully uploaded auctions to S3: $filePath")
         } catch (e: Exception) {
             logger.error("Failed to upload auctions to S3: $filePath", e)
         }
         if (s3Url != null) {
             logger.info(
-                "Uploaded auctions to S3 for realm {} region {} with {} auctions in {}ms {}",
+                "Uploaded auctions to S3 for realm {} region {} from {} (contentLength={}B) in {}ms {}",
                 connectedRealmId,
                 region,
-                data.auctions.size,
+                payload.path,
+                payload.contentLength ?: "unknown",
                 System.currentTimeMillis() - startTime,
                 JvmRuntimeDiagnostics.snapshot(),
             )

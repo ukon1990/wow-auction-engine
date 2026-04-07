@@ -1,21 +1,34 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonToken
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dto.auction.AuctionData
+import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.buffer.DataBuffer
+import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption
 import java.time.Duration
+import kotlin.io.path.createTempFile
 
 private const val AUCTION_DEFAULT_LOCALE = "en_US"
 private const val FAR_FUTURE_IF_MODIFIED_SINCE = "Sat, 14 Mar 3000 20:07:10 GMT"
 private val AUCTION_METADATA_TIMEOUT: Duration = Duration.ofSeconds(30)
 private val AUCTION_DOWNLOAD_TIMEOUT: Duration = Duration.ofMinutes(3)
+
+data class DownloadedAuctionPayload(
+    val path: Path,
+    val contentLength: Long?,
+)
 
 @Component
 class BlizzardAuctionApiClient(
@@ -51,7 +64,7 @@ class BlizzardAuctionApiClient(
             .uri(url)
             .header(HttpHeaders.IF_MODIFIED_SINCE, FAR_FUTURE_IF_MODIFIED_SINCE)
             .retrieve()
-            .toEntity(String::class.java)
+            .toBodilessEntity()
             .timeout(AUCTION_METADATA_TIMEOUT)
             .onErrorMap { error ->
                 BlizzardApiClientException.from(
@@ -74,15 +87,64 @@ class BlizzardAuctionApiClient(
             }.subscribeOn(Schedulers.boundedElastic())
     }
 
-    fun downloadAuctionData(url: String): Mono<AuctionData> =
-        blizzardApiSupport
-            .webClient()
-            .get()
-            .uri(url)
-            .retrieve()
-            .toEntity(AuctionData::class.java)
-            .timeout(AUCTION_DOWNLOAD_TIMEOUT)
-            .onErrorMap { error ->
+    fun downloadAuctionData(url: String): Mono<DownloadedAuctionPayload> =
+        Mono
+            .fromCallable { createTempFile(prefix = "auction-payload-", suffix = ".json") }
+            .flatMap { tempFile ->
+                blizzardApiSupport
+                    .webClient()
+                    .get()
+                    .uri(url)
+                    .exchangeToMono { response ->
+                        if (response.statusCode().isError) {
+                            response.createException().flatMap { Mono.error(it) }
+                        } else {
+                            val contentLength =
+                                response
+                                    .headers()
+                                    .contentLength()
+                                    .takeIf { it.isPresent }
+                                    ?.asLong
+                            logger.info(
+                                "Starting auction payload download from {} with contentLength={}B into {}",
+                                url,
+                                contentLength ?: "unknown",
+                                tempFile,
+                            )
+                            DataBufferUtils
+                                .write(
+                                    response.bodyToFlux(DataBuffer::class.java),
+                                    tempFile,
+                                    StandardOpenOption.CREATE,
+                                    StandardOpenOption.TRUNCATE_EXISTING,
+                                ).thenReturn(
+                                    DownloadedAuctionPayload(
+                                        path = tempFile,
+                                        contentLength = contentLength,
+                                    ),
+                                )
+                        }
+                    }.timeout(AUCTION_DOWNLOAD_TIMEOUT)
+                    .onErrorResume { error ->
+                        tempFile.toFile().delete()
+                        Mono.error(error)
+                    }.flatMap { payload ->
+                        try {
+                            validateDownloadedPayload(payload)
+                            Mono.just(payload)
+                        } catch (error: Exception) {
+                            payload.path.toFile().delete()
+                            Mono.error(error)
+                        }
+                    }
+            }.doOnNext { payload ->
+                logger.info(
+                    "Completed auction payload download from {} into {} with contentLength={}B",
+                    url,
+                    payload.path,
+                    payload.contentLength ?: "unknown",
+                )
+            }.onErrorMap { error ->
                 BlizzardApiClientException.from(
                     error = error,
                     operation = "download auction payload",
@@ -91,20 +153,34 @@ class BlizzardAuctionApiClient(
                 )
             }.doOnError { error ->
                 logger.logBlizzardHttpFailure(error)
-            }.map { response ->
-                val contentLength = response.headers.contentLength
-                logger.info(
-                    "Starting auction payload download from {} with contentLength={}B",
-                    url,
-                    if (contentLength >= 0) contentLength else "unknown",
-                )
-                val body = checkNotNull(response.body) { "Auction download response body was empty" }
-                logger.info(
-                    "Completed auction payload download from {} with {} auctions and contentLength={}B",
-                    url,
-                    body.auctions.size,
-                    if (contentLength >= 0) contentLength else "unknown",
-                )
-                body
             }
+
+    private fun validateDownloadedPayload(payload: DownloadedAuctionPayload) {
+        val mapper = jacksonObjectMapper()
+        val jsonFactory = JsonFactory(mapper)
+        payload.path.toFile().inputStream().use { input ->
+            jsonFactory.createParser(input).use { parser ->
+                require(parser.nextToken() == JsonToken.START_OBJECT) {
+                    "Auction payload root must be a JSON object"
+                }
+                var foundAuctionsArray = false
+                while (parser.nextToken() != JsonToken.END_OBJECT) {
+                    val fieldName = parser.currentName
+                    parser.nextToken()
+                    if (fieldName == "auctions") {
+                        foundAuctionsArray = true
+                        require(parser.currentToken == JsonToken.START_ARRAY) {
+                            "Auction payload field 'auctions' must be an array"
+                        }
+                        while (parser.nextToken() != JsonToken.END_ARRAY) {
+                            mapper.readValue(parser, AuctionDTO::class.java)
+                        }
+                    } else {
+                        parser.skipChildren()
+                    }
+                }
+                require(foundAuctionsArray) { "Auction payload did not contain an 'auctions' array" }
+            }
+        }
+    }
 }
