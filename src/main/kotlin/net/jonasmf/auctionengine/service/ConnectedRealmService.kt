@@ -42,6 +42,7 @@ class ConnectedRealmService(
 
     @Scheduled(fixedDelayString = "PT1H", initialDelay = 3_000)
     fun updateRealms() {
+        // return // TODO: FInd a better way to determine when to run this or not. It's annoying to run every time
         regionService.ensureRegionsExist()
         val communityIds = listOf(-1, -2, -3, -4)
         val communityRealms = mutableListOf<ConnectedRealm>()
