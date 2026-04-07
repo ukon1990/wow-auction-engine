@@ -22,11 +22,11 @@ import org.springframework.context.annotation.Role
 class AmazonS3Config {
     private val log = LoggerFactory.getLogger(AmazonS3Config::class.java)
 
-    @Value("\${spring.cloud.aws.credentials.access-key}")
-    private lateinit var awsAccessKeyId: String
+    @Value("\${spring.cloud.aws.credentials.access-key:}")
+    private var awsAccessKeyId: String = ""
 
-    @Value("\${spring.cloud.aws.credentials.secret-key}")
-    private lateinit var awsSecretKey: String
+    @Value("\${spring.cloud.aws.credentials.secret-key:}")
+    private var awsSecretKey: String = ""
 
     @Value("\${spring.cloud.aws.region.static}")
     private lateinit var region: String
@@ -41,11 +41,13 @@ class AmazonS3Config {
     fun amazonS3(): S3Client =
         S3Client {
             this.region = this@AmazonS3Config.region
-            credentialsProvider =
-                staticCredentialsProvider(
-                    accessKeyId = awsAccessKeyId,
-                    secretAccessKey = awsSecretKey,
-                )
+            if (awsAccessKeyId.isNotBlank() && awsSecretKey.isNotBlank()) {
+                credentialsProvider =
+                    staticCredentialsProvider(
+                        accessKeyId = awsAccessKeyId,
+                        secretAccessKey = awsSecretKey,
+                    )
+            }
             val endpoint = s3Endpoint.trim()
             if (endpoint.isNotEmpty()) {
                 endpointUrl = Url.parse(endpoint)
