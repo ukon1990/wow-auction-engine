@@ -1,0 +1,273 @@
+package net.jonasmf.auctionengine.service
+
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.spyk
+import net.jonasmf.auctionengine.config.BlizzardApiProperties
+import net.jonasmf.auctionengine.constant.AuctionTimeLeft
+import net.jonasmf.auctionengine.constant.GameBuildVersion
+import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
+import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
+import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
+import net.jonasmf.auctionengine.dto.Link
+import net.jonasmf.auctionengine.dto.Links
+import net.jonasmf.auctionengine.dto.auction.AuctionDTO
+import net.jonasmf.auctionengine.dto.auction.AuctionData
+import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
+import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
+import net.jonasmf.auctionengine.repository.rds.AuctionItemModifierRepository
+import net.jonasmf.auctionengine.repository.rds.AuctionItemRepository
+import net.jonasmf.auctionengine.repository.rds.AuctionRepository
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
+import java.time.ZonedDateTime
+
+class BlizzardAuctionServiceTest {
+    private val properties =
+        BlizzardApiProperties(
+            baseUrl = "https://example.test/",
+            tokenUrl = "https://example.test/token",
+            clientId = "id",
+            clientSecret = "secret",
+            region = Region.Europe,
+        )
+
+    private val webClient = mockk<WebClient>(relaxed = true)
+    private val authService = mockk<AuthService>(relaxed = true)
+    private val amazonS3 = mockk<AmazonS3Service>()
+    private val auctionRepository = mockk<AuctionRepository>(relaxed = true)
+    private val auctionItemRepository = mockk<AuctionItemRepository>(relaxed = true)
+    private val hourlyPriceStatisticsService = mockk<HourlyPriceStatisticsService>()
+    private val realmService = mockk<ConnectedRealmService>()
+    private val auctionItemModifierRepository = mockk<AuctionItemModifierRepository>(relaxed = true)
+    private val updateHistoryService = mockk<ConnectedRealmUpdateHistoryService>(relaxed = true)
+    private val auctionHouseService = mockk<AuctionHouseService>()
+
+    private fun createService() =
+        spyk(
+            BlizzardAuctionService(
+                properties = properties,
+                webClientWithAuth = webClient,
+                authService = authService,
+                amazonS3 = amazonS3,
+                auctionRepository = auctionRepository,
+                auctionItemRepository = auctionItemRepository,
+                hourlyPriceStatisticsService = hourlyPriceStatisticsService,
+                realmService = realmService,
+                auctionItemModifierRepository = auctionItemModifierRepository,
+                updateHistoryService = updateHistoryService,
+                auctionHouseService = auctionHouseService,
+            ),
+        )
+
+    @Test
+    fun `updateAuctionHouses processes houses strictly one by one`() {
+        val events = mutableListOf<String>()
+        val service = createService()
+        val firstLastModified = ZonedDateTime.now().minusMinutes(5)
+        val secondLastModified = ZonedDateTime.now().minusMinutes(10)
+        val firstRealm = createRealm(1, firstLastModified.minusMinutes(1))
+        val secondRealm = createRealm(2, secondLastModified.minusMinutes(1))
+        val firstData = createAuctionData(101)
+        val secondData = createAuctionData(202)
+
+        every { service.getLatestDumpPath(1, Region.Europe, any(), any()) } answers {
+            events += "dump-1"
+            Mono.just(
+                AuctionDataResponse(firstLastModified.toInstant().toEpochMilli(), "url-1", GameBuildVersion.RETAIL),
+            )
+        }
+        every { service.getLatestDumpPath(2, Region.Europe, any(), any()) } answers {
+            events += "dump-2"
+            Mono.just(
+                AuctionDataResponse(secondLastModified.toInstant().toEpochMilli(), "url-2", GameBuildVersion.RETAIL),
+            )
+        }
+        every { realmService.getById(1) } returns firstRealm
+        every { realmService.getById(2) } returns secondRealm
+        every { service.getAuctionData("url-1", Region.Europe, any()) } answers {
+            Mono.fromCallable {
+                events += "download-1"
+                firstData
+            }
+        }
+        every { service.getAuctionData("url-2", Region.Europe, any()) } answers {
+            Mono.fromCallable {
+                events += "download-2"
+                secondData
+            }
+        }
+        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionData>()) } answers {
+            val path = secondArg<String>()
+            events += if (path.contains("/1/")) "s3-1" else "s3-2"
+            "s3://$path"
+        }
+        every {
+            hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(firstRealm), eq(firstData.auctions), any())
+        } answers {
+            events += "stats-1"
+            emptyList()
+        }
+        every {
+            hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(secondRealm), eq(secondData.auctions), any())
+        } answers {
+            events += "stats-2"
+            emptyList()
+        }
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) } answers {
+            events += "update-1"
+        }
+        every { auctionHouseService.updateTimes(eq(2), any(), eq(true), any()) } answers {
+            events += "update-2"
+        }
+
+        service.updateAuctionHouses(
+            listOf(
+                AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
+                AuctionHouseDynamo(connectedId = 2, region = Region.Europe),
+            ),
+        )
+
+        assertEquals(
+            listOf(
+                "dump-1",
+                "download-1",
+                "s3-1",
+                "stats-1",
+                "update-1",
+                "dump-2",
+                "download-2",
+                "s3-2",
+                "stats-2",
+                "update-2",
+            ),
+            events,
+        )
+    }
+
+    @Test
+    fun `updateAuctionHouses continues to next house after a failure`() {
+        val events = mutableListOf<String>()
+        val service = createService()
+        val firstLastModified = ZonedDateTime.now().minusMinutes(5)
+        val secondLastModified = ZonedDateTime.now().minusMinutes(10)
+        val firstRealm = createRealm(1, firstLastModified.minusMinutes(1))
+        val secondRealm = createRealm(2, secondLastModified.minusMinutes(1))
+        val secondData = createAuctionData(202)
+
+        every { service.getLatestDumpPath(1, Region.Europe, any(), any()) } returns
+            Mono.just(
+                AuctionDataResponse(firstLastModified.toInstant().toEpochMilli(), "url-1", GameBuildVersion.RETAIL),
+            )
+        every { service.getLatestDumpPath(2, Region.Europe, any(), any()) } answers {
+            events += "dump-2"
+            Mono.just(
+                AuctionDataResponse(secondLastModified.toInstant().toEpochMilli(), "url-2", GameBuildVersion.RETAIL),
+            )
+        }
+        every { realmService.getById(1) } returns firstRealm
+        every { realmService.getById(2) } returns secondRealm
+        every { service.getAuctionData("url-1", Region.Europe, any()) } returns Mono.error(RuntimeException("boom"))
+        every { service.getAuctionData("url-2", Region.Europe, any()) } answers {
+            Mono.fromCallable {
+                events += "download-2"
+                secondData
+            }
+        }
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } answers {
+            events += "failure-1"
+        }
+        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionData>()) } answers {
+            events += "s3-2"
+            "s3://second"
+        }
+        every {
+            hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(secondRealm), eq(secondData.auctions), any())
+        } answers {
+            events += "stats-2"
+            emptyList()
+        }
+        every { auctionHouseService.updateTimes(eq(2), any(), eq(true), any()) } answers {
+            events += "update-2"
+        }
+
+        service.updateAuctionHouses(
+            listOf(
+                AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
+                AuctionHouseDynamo(connectedId = 2, region = Region.Europe),
+            ),
+        )
+
+        assertEquals(listOf("failure-1", "dump-2", "download-2", "s3-2", "stats-2", "update-2"), events)
+    }
+
+    @Test
+    fun `updateAuctionHouses waits for processing before returning`() {
+        val service = createService()
+        val lastModified = ZonedDateTime.now().minusMinutes(5)
+        val realm = createRealm(1, lastModified.minusMinutes(1))
+        val events = mutableListOf<String>()
+        val completionMarker = slot<String>()
+        val data = createAuctionData(101)
+
+        every { service.getLatestDumpPath(1, Region.Europe, any(), any()) } returns
+            Mono.just(AuctionDataResponse(lastModified.toInstant().toEpochMilli(), "url-1", GameBuildVersion.RETAIL))
+        every { realmService.getById(1) } returns realm
+        every { service.getAuctionData("url-1", Region.Europe, any()) } returns Mono.just(data)
+        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionData>()) } returns "s3://first"
+        every { hourlyPriceStatisticsService.processHourlyPriceStatistics(eq(realm), eq(data.auctions), any()) } answers
+            {
+                events += "stats"
+                emptyList()
+            }
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(true), capture(completionMarker)) } answers {
+            events += "complete"
+        }
+
+        service.updateAuctionHouses(listOf(AuctionHouseDynamo(connectedId = 1, region = Region.Europe)))
+
+        assertEquals(listOf("stats", "complete"), events)
+        assertEquals("s3://first", completionMarker.captured)
+    }
+
+    private fun createRealm(
+        id: Int,
+        lastModified: ZonedDateTime?,
+    ) = ConnectedRealm(
+        id = id,
+        auctionHouse =
+            AuctionHouse(
+                lastModified = lastModified,
+                lastRequested = null,
+                nextUpdate = ZonedDateTime.now(),
+                lowestDelay = 60,
+                averageDelay = 60,
+                highestDelay = 60,
+                tsmFile = null,
+                statsFile = null,
+                auctionFile = null,
+                failedAttempts = 0,
+            ),
+        realms = mutableListOf(),
+    )
+
+    private fun createAuctionData(itemId: Int) =
+        AuctionData(
+            _links = Links(Link("self-$itemId")),
+            auctions =
+                listOf(
+                    AuctionDTO(
+                        id = itemId.toLong(),
+                        item = AuctionItemDTO(id = itemId),
+                        quantity = 1,
+                        unit_price = 100,
+                        buyout = 100,
+                        time_left = AuctionTimeLeft.LONG,
+                    ),
+                ),
+        )
+}
