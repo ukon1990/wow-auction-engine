@@ -31,7 +31,7 @@ on:
       aws_region:
         required: true
         type: string
-      blizzard_region:
+      blizzard_regions:
         required: true
         type: string
       instance_type:
@@ -205,7 +205,7 @@ jobs:
           APP_NAME: ${{ inputs.app_name }}
           ENVIRONMENT: ${{ inputs.environment }}
           AWS_REGION: ${{ inputs.aws_region }}
-          BLIZZARD_REGION: ${{ inputs.blizzard_region }}
+          BLIZZARD_REGIONS: ${{ inputs.blizzard_regions }}
           JVM_MAX_RAM_PERCENTAGE: ${{ inputs.jvm_max_ram_percentage }}
           BLIZZARD_CLIENT_ID: ${{ secrets.PROD_BLIZZARD_CLIENT_ID }}
           BLIZZARD_CLIENT_SECRET: ${{ secrets.PROD_BLIZZARD_CLIENT_SECRET }}

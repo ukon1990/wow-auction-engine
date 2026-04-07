@@ -357,7 +357,8 @@ Important keys include:
 
 - `SPRING_PROFILES_ACTIVE`
 - `WAE_AWS_REGION`
-- `WAE_BLIZZARD_REGION`
+- `WAE_BLIZZARD_REGIONS`
+- `WAE_BLIZZARD_REGION` (compatibility fallback)
 - `AUCTION_ENGINE_DB_URL`
 - `AUCTION_ENGINE_DB_USERNAME`
 - `AUCTION_ENGINE_DB_PASSWORD`
@@ -382,6 +383,32 @@ Typical changes:
 - change `enabled` to include or exclude a region
 - adjust `allowed_ingress_cidr`
 - adjust JVM settings per region
+
+## Production Region Layout
+
+The deploy contract now distinguishes the AWS deployment region from the Blizzard regions handled by that instance.
+
+- `eu-west-1` deploys the Europe stack with `blizzard_regions: ["Europe"]`
+- `us-west-1` deploys the North America stack with `blizzard_regions: ["NorthAmerica"]`
+- `ap-northeast-2` deploys the Asia stack with `blizzard_regions: ["Korea", "Taiwan"]`
+
+The Asia stack is intentionally a single Seoul deployment that updates both Korea and Taiwan auction houses.
+
+## regions.json Contract
+
+Each enabled entry in [`infra/regions.json`](C:/Users/jonas/.codex/worktrees/173c/wow-auction-engine/infra/regions.json) should declare:
+
+- `aws_region`
+- `blizzard_regions`
+- `instance_type`
+- `allowed_ingress_cidr`
+- `jvm_max_ram_percentage`
+- `container_port`
+- `health_check_path`
+- `instance_enabled`
+- `stack_name`
+
+`blizzard_regions` is an array in source control and is written to runtime as `WAE_BLIZZARD_REGIONS` using comma-separated values.
 
 ## First-Deploy Caveats
 

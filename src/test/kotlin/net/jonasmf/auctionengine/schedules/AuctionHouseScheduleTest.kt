@@ -25,7 +25,7 @@ class AuctionHouseScheduleTest {
             tokenUrl = "https://example.test/token",
             clientId = "id",
             clientSecret = "secret",
-            region = Region.Europe,
+            regions = listOf(Region.Europe, Region.Taiwan),
         )
 
     @Test
@@ -41,7 +41,8 @@ class AuctionHouseScheduleTest {
             listOf(
                 AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
             )
-        every { blizzardAuctionService.updateAuctionHouses(any()) } answers {
+        every { auctionHouseService.getReadyForUpdate(Region.Taiwan) } returns emptyList()
+        every { blizzardAuctionService.updateAuctionHouses(any(), any()) } answers {
             started.countDown()
             release.await(5, TimeUnit.SECONDS)
         }
@@ -61,7 +62,7 @@ class AuctionHouseScheduleTest {
                     )
                 },
             )
-            verify(exactly = 1) { blizzardAuctionService.updateAuctionHouses(any()) }
+            verify(exactly = 1) { blizzardAuctionService.updateAuctionHouses(Region.Europe, any()) }
 
             release.countDown()
             future.get(5, TimeUnit.SECONDS)
@@ -80,14 +81,15 @@ class AuctionHouseScheduleTest {
             listOf(
                 AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
             )
-        every { blizzardAuctionService.updateAuctionHouses(any()) } returns Unit
+        every { auctionHouseService.getReadyForUpdate(Region.Taiwan) } returns emptyList()
+        every { blizzardAuctionService.updateAuctionHouses(any(), any()) } returns Unit
 
         val schedule = AuctionHouseSchedule(properties, blizzardAuctionService, auctionHouseService)
 
         schedule.checkForUpdates()
         schedule.checkForUpdates()
 
-        verify(exactly = 2) { blizzardAuctionService.updateAuctionHouses(any()) }
+        verify(exactly = 2) { blizzardAuctionService.updateAuctionHouses(Region.Europe, any()) }
     }
 
     @Test
@@ -98,14 +100,15 @@ class AuctionHouseScheduleTest {
             listOf(
                 AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
             )
-        every { blizzardAuctionService.updateAuctionHouses(any()) } throws RuntimeException("boom") andThen Unit
+        every { auctionHouseService.getReadyForUpdate(Region.Taiwan) } returns emptyList()
+        every { blizzardAuctionService.updateAuctionHouses(any(), any()) } throws RuntimeException("boom") andThen Unit
 
         val schedule = AuctionHouseSchedule(properties, blizzardAuctionService, auctionHouseService)
 
         runCatching { schedule.checkForUpdates() }
         schedule.checkForUpdates()
 
-        verify(exactly = 2) { blizzardAuctionService.updateAuctionHouses(any()) }
+        verify(exactly = 2) { blizzardAuctionService.updateAuctionHouses(Region.Europe, any()) }
     }
 
     private fun attachAppender(): ListAppender<ILoggingEvent> {

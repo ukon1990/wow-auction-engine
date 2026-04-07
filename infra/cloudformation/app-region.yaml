@@ -233,6 +233,7 @@ Resources:
           : > "$TMP_FILE"
           write_line "SPRING_PROFILES_ACTIVE" "$(fetch_param SPRING_PROFILES_ACTIVE false)"
           write_line "WAE_AWS_REGION" "$(fetch_param WAE_AWS_REGION false)"
+          write_line "WAE_BLIZZARD_REGIONS" "$(fetch_param WAE_BLIZZARD_REGIONS false)"
           write_line "WAE_BLIZZARD_REGION" "$(fetch_param WAE_BLIZZARD_REGION false)"
           write_line "AUCTION_ENGINE_DB_URL" "$(fetch_param AUCTION_ENGINE_DB_URL false)"
           write_line "AUCTION_ENGINE_DB_USERNAME" "$(fetch_param AUCTION_ENGINE_DB_USERNAME true)"

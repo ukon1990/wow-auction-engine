@@ -12,5 +12,22 @@ data class BlizzardApiProperties
         val tokenUrl: String,
         val clientId: String,
         val clientSecret: String,
-        val region: Region,
-    )
+        val region: Region? = null,
+        val regions: List<Region> = emptyList(),
+    ) {
+        init {
+            require(region != null || regions.isNotEmpty()) {
+                "At least one Blizzard region must be configured"
+            }
+        }
+
+        val configuredRegions: List<Region> =
+            if (regions.isNotEmpty()) {
+                regions
+            } else {
+                listOfNotNull(region)
+            }
+
+        val primaryRegion: Region
+            get() = configuredRegions.first()
+    }

@@ -24,7 +24,7 @@ on:
         options:
           - all
           - eu-west-1
-          - us-east-1
+          - us-west-1
           - ap-northeast-2
       run_app_rollout:
         description: Also push and restart the current image after infra sync
@@ -76,7 +76,7 @@ jobs:
           if [[ "${TARGET_REGION}" == "all" ]]; then
             echo "matrix=$matrix_json" >> "$GITHUB_OUTPUT"
           else
-            filtered="$(python -c "import json,sys; data=json.loads(sys.stdin.read()); print(json.dumps([item for item in data if item['aws_region']=='${TARGET_REGION}']))" <<< "$matrix_json")"
+            filtered="$(python -c "import json,sys; data=json.loads(sys.stdin.read()); data['include']=[item for item in data['include'] if item['aws_region']=='${TARGET_REGION}']; print(json.dumps(data))" <<< "$matrix_json")"
             echo "matrix=$filtered" >> "$GITHUB_OUTPUT"
           fi
         env:
@@ -109,7 +109,7 @@ jobs:
       environment: ${{ needs.load-regions.outputs.environment }}
       project_tag: ${{ needs.load-regions.outputs.project_tag }}
       aws_region: ${{ matrix.aws_region }}
-      blizzard_region: ${{ matrix.blizzard_region }}
+      blizzard_regions: ${{ join(matrix.blizzard_regions, ',') }}
       instance_type: ${{ matrix.instance_type }}
       allowed_ingress_cidr: ${{ matrix.allowed_ingress_cidr }}
       jvm_max_ram_percentage: ${{ matrix.jvm_max_ram_percentage }}

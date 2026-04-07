@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 class AmazonS3ConfigTest {
     private val contextRunner =
         ApplicationContextRunner()
-            .withUserConfiguration(AmazonS3Config::class.java)
+            .withUserConfiguration(AmazonS3Config::class.java, TestConfiguration::class.java)
             .withPropertyValues(
                 "spring.cloud.aws.credentials.access-key=test",
                 "spring.cloud.aws.credentials.secret-key=test",
@@ -26,5 +28,20 @@ class AmazonS3ConfigTest {
             assertNull(client.config.endpointUrl)
             assertFalse(client.config.forcePathStyle)
         }
+    }
+
+    @Configuration
+    class TestConfiguration {
+        @Bean
+        fun s3Properties() =
+            WaeS3Properties(
+                buckets =
+                    mapOf(
+                        "europe" to BucketConfig("wah-data-eu", "eu-west-1"),
+                        "northamerica" to BucketConfig("wah-data-us", "us-west-1"),
+                        "korea" to BucketConfig("wah-data-as", "ap-northeast-2"),
+                        "taiwan" to BucketConfig("wah-data-as", "ap-northeast-2"),
+                    ),
+            )
     }
 }
