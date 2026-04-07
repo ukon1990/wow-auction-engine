@@ -50,7 +50,7 @@ class BlizzardAuctionService(
     val logger: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
 
     fun updateAuctionHouses(auctionHousesToUpdate: List<AuctionHouseDynamo>) {
-        logger.info("Updating $auctionHousesToUpdate.size auction houses for region ${properties.region}")
+        logger.info("Updating ${auctionHousesToUpdate.size} auction houses for region ${properties.region}")
         auctionHousesToUpdate.forEach { updateHouse(it.connectedId, properties.region) }
     }
 
@@ -669,11 +669,19 @@ class BlizzardAuctionService(
                         } catch (e: Exception) {
                             logger.error("Failed to upload dump path to S3: $filePath", e)
                         }
+                    } else {
+                        logger.info(
+                            "No new dump available for id $id. Previous last modified: $previousLastModified, Latest last modified: $lastModifiedZonedDate",
+                        )
                     }
 
                     response
                 }.doOnNext {
-                    logger.info("Successfully fetched latest dump path with last modified: ${it.lastModified}")
+                    logger.info(
+                        "Successfully fetched latest dump path with last modified: ${Instant.ofEpochMilli(
+                            it.lastModified,
+                        )}",
+                    )
                 }.doOnError { error ->
                     logger.error("Failed to fetch latest dump path from $url: ${error.message}", error)
                 }
