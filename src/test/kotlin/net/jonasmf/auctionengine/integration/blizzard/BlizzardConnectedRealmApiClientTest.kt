@@ -1,0 +1,211 @@
+package net.jonasmf.auctionengine.integration.blizzard
+
+import net.jonasmf.auctionengine.config.BlizzardApiProperties
+import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.dto.Href
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.ClientRequest
+import org.springframework.web.reactive.function.client.ClientResponse
+import org.springframework.web.reactive.function.client.ExchangeFunction
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
+
+class BlizzardConnectedRealmApiClientTest {
+    @Test
+    fun `getConnectedRealmIndex builds expected uri`() {
+        var capturedRequest: ClientRequest? = null
+        val webClient =
+            webClient { request ->
+                capturedRequest = request
+                response("""{"connected_realms":[{"href":"https://realm.test/1"}]}""")
+            }
+
+        val client = BlizzardConnectedRealmApiClient(createSupport(webClient))
+
+        val result = client.getConnectedRealmIndex(Region.Korea).block()!!
+
+        assertEquals(1, result.connectedRealms.size)
+        assertEquals(
+            "https://kr.api.blizzard.test/data/wow/connected-realm/index?namespace=dynamic-kr&locale=en_GB",
+            capturedRequest!!.url().toString(),
+        )
+    }
+
+    @Test
+    fun `getConnectedRealm uses href directly`() {
+        var capturedRequest: ClientRequest? = null
+        val webClient =
+            webClient { request ->
+                capturedRequest = request
+                response(connectedRealmBody())
+            }
+
+        val client = BlizzardConnectedRealmApiClient(createSupport(webClient))
+
+        val result = client.getConnectedRealm(Href("https://realm.test/connected-realm/42")).block()!!
+
+        assertEquals(42, result.id)
+        assertEquals("https://realm.test/connected-realm/42", capturedRequest!!.url().toString())
+    }
+
+    private fun createSupport(webClient: WebClient) =
+        BlizzardApiSupport(
+            properties =
+                BlizzardApiProperties(
+                    baseUrl = "api.blizzard.test/data/wow/",
+                    tokenUrl = "https://oauth.blizzard.test/token",
+                    clientId = "id",
+                    clientSecret = "secret",
+                    region = Region.Europe,
+                ),
+            webClientWithAuth = webClient,
+        )
+
+    private fun webClient(handler: (ClientRequest) -> Mono<ClientResponse>): WebClient =
+        WebClient
+            .builder()
+            .exchangeFunction(ExchangeFunction(handler))
+            .build()
+
+    private fun response(body: String): Mono<ClientResponse> =
+        Mono.just(
+            ClientResponse
+                .create(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .body(body)
+                .build(),
+        )
+
+    private fun connectedRealmBody(): String =
+        """
+        {
+          "id": 42,
+          "has_queue": false,
+          "status": {
+            "id": 1,
+            "type": "UP",
+            "name": {
+              "en_US": "Up",
+              "es_MX": "Up",
+              "pt_BR": "Up",
+              "pt_PT": "Up",
+              "de_DE": "Up",
+              "en_GB": "Up",
+              "es_ES": "Up",
+              "fr_FR": "Up",
+              "it_IT": "Up",
+              "ru_RU": "Up",
+              "ko_KR": "Up",
+              "zh_TW": "Up",
+              "zh_CN": "Up"
+            }
+          },
+          "population": {
+            "id": 1,
+            "type": "FULL",
+            "name": {
+              "en_US": "Full",
+              "es_MX": "Full",
+              "pt_BR": "Full",
+              "pt_PT": "Full",
+              "de_DE": "Full",
+              "en_GB": "Full",
+              "es_ES": "Full",
+              "fr_FR": "Full",
+              "it_IT": "Full",
+              "ru_RU": "Full",
+              "ko_KR": "Full",
+              "zh_TW": "Full",
+              "zh_CN": "Full"
+            }
+          },
+          "realms": [
+            {
+              "id": 7,
+              "region": {
+                "id": 2,
+                "type": null,
+                "name": {
+                  "en_US": "Europe",
+                  "es_MX": "Europe",
+                  "pt_BR": "Europe",
+                  "pt_PT": "Europe",
+                  "de_DE": "Europe",
+                  "en_GB": "Europe",
+                  "es_ES": "Europe",
+                  "fr_FR": "Europe",
+                  "it_IT": "Europe",
+                  "ru_RU": "Europe",
+                  "ko_KR": "Europe",
+                  "zh_TW": "Europe",
+                  "zh_CN": "Europe"
+                }
+              },
+              "name": {
+                "en_US": "Realm",
+                "es_MX": "Realm",
+                "pt_BR": "Realm",
+                "pt_PT": "Realm",
+                "de_DE": "Realm",
+                "en_GB": "Realm",
+                "es_ES": "Realm",
+                "fr_FR": "Realm",
+                "it_IT": "Realm",
+                "ru_RU": "Realm",
+                "ko_KR": "Realm",
+                "zh_TW": "Realm",
+                "zh_CN": "Realm"
+              },
+              "category": {
+                "en_US": "Normal",
+                "es_MX": "Normal",
+                "pt_BR": "Normal",
+                "pt_PT": "Normal",
+                "de_DE": "Normal",
+                "en_GB": "Normal",
+                "es_ES": "Normal",
+                "fr_FR": "Normal",
+                "it_IT": "Normal",
+                "ru_RU": "Normal",
+                "ko_KR": "Normal",
+                "zh_TW": "Normal",
+                "zh_CN": "Normal"
+              },
+              "locale": "en_GB",
+              "timezone": "UTC",
+              "type": {
+                "id": 1,
+                "type": "PVE",
+                "name": {
+                  "en_US": "PvE",
+                  "es_MX": "PvE",
+                  "pt_BR": "PvE",
+                  "pt_PT": "PvE",
+                  "de_DE": "PvE",
+                  "en_GB": "PvE",
+                  "es_ES": "PvE",
+                  "fr_FR": "PvE",
+                  "it_IT": "PvE",
+                  "ru_RU": "PvE",
+                  "ko_KR": "PvE",
+                  "zh_TW": "PvE",
+                  "zh_CN": "PvE"
+                }
+              },
+              "is_tournament": false,
+              "slug": "realm"
+            }
+          ],
+          "mythic_leaderboards": {
+            "href": "https://realm.test/leaderboards"
+          },
+          "auctions": {
+            "href": "https://realm.test/auctions"
+          }
+        }
+        """.trimIndent()
+}
