@@ -10,7 +10,12 @@ enum class Region(
     ;
 
     companion object {
-        fun fromString(code: String): Region =
-            entries.first { it.name.replace(" ", "").equals(code, ignoreCase = true) }
+        fun fromString(value: String): Region {
+            val normalized = value.trim()
+            return entries.firstOrNull {
+                it.name.equals(normalized, ignoreCase = true) ||
+                    it.code.equals(normalized, ignoreCase = true)
+            } ?: throw IllegalArgumentException("Unknown region value: $value")
+        }
     }
 }
