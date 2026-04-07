@@ -104,6 +104,18 @@ When the app starts successfully:
 - scheduled jobs are enabled
 - Hibernate updates the MariaDB schema automatically on startup
 
+## Health Checks
+
+`GET /health` is a liveness-style endpoint for the web process and scheduler progress.
+
+- returns `204 No Content` when the app is up and no scheduler batch appears stuck
+- returns `503 Service Unavailable` when a scheduled update batch has stopped making progress longer than the configured threshold
+- may include `X-Health-Reason` with a short explanation such as a stalled update stage
+
+The default stalled-update threshold is `PT20M` and is configured in [`src/main/resources/application.yml`](src/main/resources/application.yml) as `app.health.stuck-update-threshold`.
+
+This endpoint is intentionally stricter than a pure "process is running" check. A JVM that is alive but stuck in GC, CPU saturation, or a blocked update path should eventually fail `/health`.
+
 ### 5. Stop local databases
 
 ```bash
@@ -143,6 +155,11 @@ The default local datasource configuration lives in [`src/main/resources/applica
 - AWS region: `eu-west-1`
 - AWS access key: `local-dev-key`
 - AWS secret key: `local-dev-secret`
+
+Other local runtime defaults:
+
+- scheduler enabled: `app.scheduling.enabled=true`
+- stalled update threshold for `/health`: `app.health.stuck-update-threshold=PT20M`
 
 That means a new developer normally does not need to set any database environment variables for local work.
 
@@ -297,3 +314,19 @@ Current local AWS integrations are:
 
 - DynamoDB through Floci + AWSpring `DynamoDbOperations`
 - S3 through Floci locally and the AWS SDK for Kotlin `S3Client`
+
+### `/health` returns `503`
+
+This now means the app believes a scheduled update batch has stalled longer than the configured threshold, not just that the HTTP server is down.
+
+Typical causes:
+
+- JVM memory pressure or GC thrash
+- CPU saturation during auction aggregation
+- blocked external I/O such as Blizzard download, S3 upload, or database writes
+
+Start by checking:
+
+- recent application logs for stage markers around auction download, S3 upload, and hourly stats processing
+- JVM GC logs if `JAVA_TOOL_OPTIONS` includes `-Xlog:gc*`
+- container or host memory pressure if you are running inside Docker or EC2
