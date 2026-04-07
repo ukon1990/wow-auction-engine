@@ -3,6 +3,7 @@ package net.jonasmf.auctionengine.integration.blizzard
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
@@ -13,7 +14,6 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
-import java.nio.charset.StandardCharsets
 
 class BlizzardAuctionApiClientTest {
     @Test
@@ -128,15 +128,8 @@ class BlizzardAuctionApiClientTest {
                 .build(),
         )
 
-    private fun auctionDataBody(): String =
-        javaClass
-            .getResourceAsStream("/blizzard/auction/auction-data-response.json")
-            ?.use { inputStream -> String(inputStream.readAllBytes(), StandardCharsets.UTF_8) }
-            ?: error("Missing test resource: /blizzard/auction/auction-data-response.json")
+    private fun auctionDataBody(): String = loadFixture(this, "/blizzard/auction/auction-data-response.json")
 
     private fun auctionDumpMetadataBody(): String =
-        javaClass
-            .getResourceAsStream("/blizzard/auction/auction-dump-metadata-response.json")
-            ?.use { inputStream -> String(inputStream.readAllBytes(), StandardCharsets.UTF_8) }
-            ?: error("Missing test resource: /blizzard/auction/auction-dump-metadata-response.json")
+        loadFixture(this, "/blizzard/auction/auction-dump-metadata-response.json")
 }
