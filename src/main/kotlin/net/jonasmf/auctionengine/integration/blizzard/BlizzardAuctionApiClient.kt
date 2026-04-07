@@ -53,7 +53,17 @@ class BlizzardAuctionApiClient(
             .retrieve()
             .toEntity(String::class.java)
             .timeout(AUCTION_METADATA_TIMEOUT)
-            .map { response ->
+            .onErrorMap { error ->
+                BlizzardApiClientException.from(
+                    error = error,
+                    operation = "fetch latest auction dump metadata",
+                    url = url,
+                    realmId = id,
+                    timeout = AUCTION_METADATA_TIMEOUT,
+                )
+            }.doOnError { error ->
+                logger.logBlizzardHttpFailure(error)
+            }.map { response ->
                 AuctionDataResponse(
                     lastModified = response.headers.lastModified,
                     url = url,
@@ -61,8 +71,6 @@ class BlizzardAuctionApiClient(
                 )
             }.doOnNext {
                 logger.info("Fetched latest auction dump metadata for id={} with lastModified={}", id, it.lastModified)
-            }.doOnError { error ->
-                logger.error("Failed to fetch latest auction dump metadata from {}: {}", url, error.message, error)
             }.subscribeOn(Schedulers.boundedElastic())
     }
 
@@ -74,7 +82,16 @@ class BlizzardAuctionApiClient(
             .retrieve()
             .toEntity(AuctionData::class.java)
             .timeout(AUCTION_DOWNLOAD_TIMEOUT)
-            .map { response ->
+            .onErrorMap { error ->
+                BlizzardApiClientException.from(
+                    error = error,
+                    operation = "download auction payload",
+                    url = url,
+                    timeout = AUCTION_DOWNLOAD_TIMEOUT,
+                )
+            }.doOnError { error ->
+                logger.logBlizzardHttpFailure(error)
+            }.map { response ->
                 val contentLength = response.headers.contentLength
                 logger.info(
                     "Starting auction payload download from {} with contentLength={}B",
@@ -89,7 +106,5 @@ class BlizzardAuctionApiClient(
                     if (contentLength >= 0) contentLength else "unknown",
                 )
                 body
-            }.doOnError { error ->
-                logger.error("Failed to fetch auction data from {}: {}", url, error.message, error)
             }
 }

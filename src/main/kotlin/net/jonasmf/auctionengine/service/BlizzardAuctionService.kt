@@ -9,6 +9,7 @@ import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
+import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
 import net.jonasmf.auctionengine.repository.rds.AuctionItemModifierRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionItemRepository
@@ -130,9 +131,11 @@ class BlizzardAuctionService(
                 )
             }
         } catch (error: Exception) {
-            logger.error(
-                "Failed to get latest dump path for realm $connectedRealmId after ${System.currentTimeMillis() - startTime}ms",
-                error,
+            logAuctionUpdateFailure(
+                connectedRealmId = connectedRealmId,
+                startTime = startTime,
+                failure = error,
+                action = "get latest dump path",
             )
         }
     }
@@ -251,9 +254,11 @@ class BlizzardAuctionService(
                 url,
             )*/
         } catch (error: Exception) {
-            logger.error(
-                "Failed to fetch auction data for realm $connectedRealmId after ${System.currentTimeMillis() - startTime}ms",
-                error,
+            logAuctionUpdateFailure(
+                connectedRealmId = connectedRealmId,
+                startTime = startTime,
+                failure = error,
+                action = "process auction data",
             )
             runtimeHealthTracker.markUpdateBatchProgress(
                 "auction-processing-failed",
@@ -267,6 +272,40 @@ class BlizzardAuctionService(
                 false,
             )
         }
+    }
+
+    private fun logAuctionUpdateFailure(
+        connectedRealmId: Int,
+        startTime: Long,
+        failure: Exception,
+        action: String,
+    ) {
+        val elapsedMs = System.currentTimeMillis() - startTime
+        if (failure is BlizzardApiClientException) {
+            logger.warn(
+                "Failed to {} for realm {} after {}ms: {}",
+                action,
+                connectedRealmId,
+                elapsedMs,
+                failure.summary,
+            )
+            logger.debug(
+                "Auction update diagnostics for realm {} while attempting to {}",
+                connectedRealmId,
+                action,
+                failure,
+            )
+            return
+        }
+
+        logger.error(
+            "Failed to {} for realm {} after {}ms: {}",
+            action,
+            connectedRealmId,
+            elapsedMs,
+            failure.message ?: failure::class.simpleName ?: "unknown error",
+            failure,
+        )
     }
 
     private fun saveAuctionDataToS3(
