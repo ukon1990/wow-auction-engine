@@ -110,7 +110,7 @@ When the app starts successfully:
 
 - returns `204 No Content` when the app is up and no scheduler batch appears stuck
 - returns `503 Service Unavailable` when a scheduled update batch has stopped making progress longer than the configured threshold
-- may include `X-Health-Reason` with a short explanation such as a stalled update stage
+- returns a bare `503` to callers; detailed unhealthy reasons are only written to server logs
 
 The default stalled-update threshold is `PT20M` and is configured in [`src/main/resources/application.yml`](src/main/resources/application.yml) as `app.health.stuck-update-threshold`.
 

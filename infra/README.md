@@ -500,7 +500,7 @@ curl -i "$(aws cloudformation describe-stacks \
 Interpretation:
 
 - `204`: region is considered healthy
-- `503` with `X-Health-Reason`: the app believes an update batch is stalled
+- `503`: the app believes an update batch is stalled; inspect application logs for the detailed reason
 - timeout: the JVM or web stack is overloaded badly enough that even the health handler is not responding in time
 
 ### 5. Restart only the application container
