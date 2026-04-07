@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.Locale
@@ -51,7 +52,11 @@ class BlizzardAuctionService(
 
     fun updateAuctionHouses(auctionHousesToUpdate: List<AuctionHouseDynamo>) {
         logger.info("Updating ${auctionHousesToUpdate.size} auction houses for region ${properties.region}")
-        auctionHousesToUpdate.forEach { updateHouse(it.connectedId, properties.region) }
+        auctionHousesToUpdate.forEach {
+            logger.info("Starting sequential update for auction house {}", it.connectedId)
+            updateHouse(it.connectedId, properties.region)
+            logger.info("Finished sequential update for auction house {}", it.connectedId)
+        }
     }
 
     private fun updateHouse(
@@ -59,45 +64,48 @@ class BlizzardAuctionService(
         region: Region,
     ) {
         logger.debug("Starting update for house: connectedRealmId={}, region={}", connectedRealmId, region)
-
-        getLatestDumpPath(connectedRealmId, region).subscribe(
-            { response ->
-                val connectedRealm = realmService.getById(connectedRealmId)
-                if (connectedRealm == null) {
-                    logger.error("ConnectedRealm not found for id $connectedRealmId")
-                    return@subscribe
+        try {
+            val response =
+                getLatestDumpPath(connectedRealmId, region)
+                    .block() ?: run {
+                    logger.error("Latest dump path lookup returned no response for realm {}", connectedRealmId)
+                    return
                 }
 
-                val house = connectedRealm.auctionHouse
-                // TODO: Cleanup so that the original lastModified also is Instant
-                val lastModified =
-                    ZonedDateTime.ofInstant(
-                        Instant.ofEpochMilli(response.lastModified),
-                        TimeZone.getDefault().toZoneId(),
-                    )
+            val connectedRealm = realmService.getById(connectedRealmId)
+            if (connectedRealm == null) {
+                logger.error("ConnectedRealm not found for id $connectedRealmId")
+                return
+            }
 
-                if (house.lastModified == null || lastModified.isAfter(house.lastModified)) {
-                    logger.info("New auction data available for $connectedRealmId. Last modified: $lastModified")
-                    processAuctionData(response.url, region, connectedRealm, connectedRealmId, lastModified)
-                } else {
-                    logger.debug(
-                        "No new auction data available for {}. Current: {}, Latest: {}",
-                        connectedRealmId,
-                        house.lastModified,
-                        lastModified,
-                    )
-                    auctionHouseService.updateTimes(
-                        // TODO: Cleanup so that the original lastModified also is Instant
-                        connectedRealmId,
-                        lastModified.toInstant().toKotlin(),
-                        false,
-                    )
-                }
-            },
-            { error ->
-                logger.error("Failed to get latest dump path for realm $connectedRealmId", error)
-            },
-        )
+            val house = connectedRealm.auctionHouse
+            // TODO: Cleanup so that the original lastModified also is Instant
+            val lastModified =
+                ZonedDateTime.ofInstant(
+                    Instant.ofEpochMilli(response.lastModified),
+                    TimeZone.getDefault().toZoneId(),
+                )
+
+            if (house.lastModified == null || lastModified.isAfter(house.lastModified)) {
+                logger.info("New auction data available for $connectedRealmId. Last modified: $lastModified")
+                processAuctionData(response.url, region, connectedRealm, connectedRealmId, lastModified)
+            } else {
+                logger.debug(
+                    "No new auction data available for {}. Current: {}, Latest: {}",
+                    connectedRealmId,
+                    house.lastModified,
+                    lastModified,
+                )
+                auctionHouseService.updateTimes(
+                    // TODO: Cleanup so that the original lastModified also is Instant
+                    connectedRealmId,
+                    lastModified.toInstant().toKotlin(),
+                    false,
+                )
+            }
+        } catch (error: Exception) {
+            logger.error("Failed to get latest dump path for realm $connectedRealmId", error)
+        }
     }
 
     private fun processAuctionData(
@@ -109,51 +117,59 @@ class BlizzardAuctionService(
     ) {
         val startTime = System.currentTimeMillis()
         logger.info("Starting auction data processing for realm $connectedRealmId")
-
-        getAuctionData(url, region).subscribe(
-            { data ->
-                val auctionCount = data.auctions.size
-                logger.info(
-                    "Fetched auction data for $connectedRealmId: $auctionCount auctions in ${System.currentTimeMillis() - startTime}ms",
-                )
-
-                if (auctionCount == 0) {
-                    logger.warn("No auctions found for realm $connectedRealmId")
-                    return@subscribe
+        try {
+            val data =
+                getAuctionData(url, region)
+                    .block() ?: run {
+                    logger.error("Auction data download returned no payload for realm {}", connectedRealmId)
+                    auctionHouseService.updateTimes(
+                        connectedRealmId,
+                        lastModified.toInstant().toKotlin(),
+                        false,
+                    )
+                    return
                 }
 
-                val s3Url = saveAuctionDataToS3(region, connectedRealmId, data, lastModified)
-                hourlyPriceStatisticsService.processHourlyPriceStatistics(connectedRealm, data.auctions, lastModified)
-                auctionHouseService.updateTimes(
-                    connectedRealmId,
-                    lastModified.toInstant().toKotlin(),
-                    true,
-                    s3Url,
-                )
-                /* Disabled, as we don't really need ALL auctions in the database as it takes up a lot of space
-                    And processing is also really slow for "100k-400k" auctions and all it's corresponding data.
-                    I might get back to this later and see if I can optimize it more, but for now I'm more interested in trends over time
-                    and not having every single auction ever recorded in the database.
-                saveAuctionsToDatabase(
-                    connectedRealm,
-                    auctionCount,
-                    lastModified,
-                    data,
-                    connectedRealmId,
-                    startTime,
-                    url,
-                )*/
-            },
-            { error ->
-                logger.error("Failed to fetch auction data for realm $connectedRealmId", error)
-                auctionHouseService.updateTimes(
-                    // TODO: Cleanup so that the original lastModified also is Instant
-                    connectedRealmId,
-                    lastModified.toInstant().toKotlin(),
-                    false,
-                )
-            },
-        )
+            val auctionCount = data.auctions.size
+            logger.info(
+                "Fetched auction data for $connectedRealmId: $auctionCount auctions in ${System.currentTimeMillis() - startTime}ms",
+            )
+
+            if (auctionCount == 0) {
+                logger.warn("No auctions found for realm $connectedRealmId")
+                return
+            }
+
+            val s3Url = saveAuctionDataToS3(region, connectedRealmId, data, lastModified)
+            hourlyPriceStatisticsService.processHourlyPriceStatistics(connectedRealm, data.auctions, lastModified)
+            auctionHouseService.updateTimes(
+                connectedRealmId,
+                lastModified.toInstant().toKotlin(),
+                true,
+                s3Url,
+            )
+            /* Disabled, as we don't really need ALL auctions in the database as it takes up a lot of space
+                And processing is also really slow for "100k-400k" auctions and all it's corresponding data.
+                I might get back to this later and see if I can optimize it more, but for now I'm more interested in trends over time
+                and not having every single auction ever recorded in the database.
+            saveAuctionsToDatabase(
+                connectedRealm,
+                auctionCount,
+                lastModified,
+                data,
+                connectedRealmId,
+                startTime,
+                url,
+            )*/
+        } catch (error: Exception) {
+            logger.error("Failed to fetch auction data for realm $connectedRealmId", error)
+            auctionHouseService.updateTimes(
+                // TODO: Cleanup so that the original lastModified also is Instant
+                connectedRealmId,
+                lastModified.toInstant().toKotlin(),
+                false,
+            )
+        }
     }
 
     private fun saveAuctionDataToS3(
@@ -631,60 +647,62 @@ class BlizzardAuctionService(
 
         logger.debug("Getting latest dump path for id: $id, region: $region, path: $path")
 
-        return authService.getToken().flatMap { token ->
-            val baseUrl = determineBaseUrl(region, properties)
-            val url = "${baseUrl}$path?namespace=${namespace.value}&locale=en_US"
+        return authService
+            .getToken()
+            .flatMap { token ->
+                val baseUrl = determineBaseUrl(region, properties)
+                val url = "${baseUrl}$path?namespace=${namespace.value}&locale=en_US"
 
-            webClient
-                .get()
-                .uri(url)
-                .header("If-Modified-Since", "Sat, 14 Mar 3000 20:07:10 GMT")
-                .retrieve()
-                .toEntity(String::class.java)
-                .map { httpResponse ->
-                    val headers = httpResponse.headers
-                    val lastModified = headers.lastModified
-                    val lastModifiedZonedDate =
-                        ZonedDateTime.ofInstant(
-                            Instant.ofEpochMilli(lastModified),
-                            TimeZone.getDefault().toZoneId(),
-                        )
-                    val cleanedUrl = url.replace("access_token=$token&", "")
+                webClient
+                    .get()
+                    .uri(url)
+                    .header("If-Modified-Since", "Sat, 14 Mar 3000 20:07:10 GMT")
+                    .retrieve()
+                    .toEntity(String::class.java)
+                    .map { httpResponse ->
+                        val headers = httpResponse.headers
+                        val lastModified = headers.lastModified
+                        val lastModifiedZonedDate =
+                            ZonedDateTime.ofInstant(
+                                Instant.ofEpochMilli(lastModified),
+                                TimeZone.getDefault().toZoneId(),
+                            )
+                        val cleanedUrl = url.replace("access_token=$token&", "")
 
-                    val response =
-                        AuctionDataResponse(
-                            lastModified = lastModified,
-                            url = cleanedUrl,
-                            gameBuild = gameBuild,
-                        )
+                        val response =
+                            AuctionDataResponse(
+                                lastModified = lastModified,
+                                url = cleanedUrl,
+                                gameBuild = gameBuild,
+                            )
 
-                    if (previousLastModified == null || previousLastModified.isBefore(lastModifiedZonedDate)) {
-                        val filePath = "auctions/${region.name.lowercase(Locale.getDefault())}/${
-                            if (id < 0) "commodity" else "$id"
-                        }/dump-path.json"
+                        if (previousLastModified == null || previousLastModified.isBefore(lastModifiedZonedDate)) {
+                            val filePath = "auctions/${region.name.lowercase(Locale.getDefault())}/${
+                                if (id < 0) "commodity" else "$id"
+                            }/dump-path.json"
 
-                        try {
-                            amazonS3.uploadFile(region, filePath, response)
-                            logger.debug("Successfully uploaded dump path to S3: $filePath")
-                        } catch (e: Exception) {
-                            logger.error("Failed to upload dump path to S3: $filePath", e)
+                            try {
+                                amazonS3.uploadFile(region, filePath, response)
+                                logger.debug("Successfully uploaded dump path to S3: $filePath")
+                            } catch (e: Exception) {
+                                logger.error("Failed to upload dump path to S3: $filePath", e)
+                            }
+                        } else {
+                            logger.info(
+                                "No new dump available for id $id. Previous last modified: $previousLastModified, Latest last modified: $lastModifiedZonedDate",
+                            )
                         }
-                    } else {
-                        logger.info(
-                            "No new dump available for id $id. Previous last modified: $previousLastModified, Latest last modified: $lastModifiedZonedDate",
-                        )
-                    }
 
-                    response
-                }.doOnNext {
-                    logger.info(
-                        "Successfully fetched latest dump path with last modified: ${Instant.ofEpochMilli(
-                            it.lastModified,
-                        )}",
-                    )
-                }.doOnError { error ->
-                    logger.error("Failed to fetch latest dump path from $url: ${error.message}", error)
-                }
-        }
+                        response
+                    }.doOnNext {
+                        logger.info(
+                            "Successfully fetched latest dump path with last modified: ${Instant.ofEpochMilli(
+                                it.lastModified,
+                            )}",
+                        )
+                    }.doOnError { error ->
+                        logger.error("Failed to fetch latest dump path from $url: ${error.message}", error)
+                    }
+            }.subscribeOn(Schedulers.boundedElastic())
     }
 }
