@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.service
 
+import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.constant.Region
@@ -23,6 +24,7 @@ import kotlin.text.get
 
 @Service
 class ConnectedRealmService(
+    private val properties: BlizzardApiProperties,
     private val blizzardConnectedRealmApiClient: BlizzardConnectedRealmApiClient,
     private val regionService: RegionService,
     private val connectedRealmRepository: ConnectedRealmRepository,
@@ -35,7 +37,8 @@ class ConnectedRealmService(
     fun updateRealms() {
         // return // TODO: FInd a better way to determine when to run this or not. It's annoying to run every time
         regionService.ensureRegionsExist()
-        val communityIds = listOf(-1, -2, -3, -4)
+        val configuredRegions = properties.configuredRegions
+        val communityIds = configuredRegions.map(::communityIdForRegion)
         val communityRealms = mutableListOf<ConnectedRealm>()
         communityIds.forEach { id ->
             val connectedDBO = connectedRealmRepository.findById(id).orElse(null)
@@ -88,20 +91,27 @@ class ConnectedRealmService(
             }
         }
 
-        log.info("Checking for updates...")
+        log.info("Checking for updates for configured regions: {}", configuredRegions)
         val connectedRealms =
             listOf(
                 communityRealms,
-                getAndUpdate(Region.NorthAmerica).block() ?: emptyList<ConnectedRealm>(),
-                getAndUpdate(Region.Europe).block() ?: emptyList<ConnectedRealm>(),
-                getAndUpdate(Region.Korea).block() ?: emptyList<ConnectedRealm>(),
-                getAndUpdate(Region.Taiwan).block() ?: emptyList<ConnectedRealm>(),
+                configuredRegions.flatMap { region ->
+                    getAndUpdate(region).block() ?: emptyList<ConnectedRealm>()
+                },
             ).flatten()
 
         for (realm in connectedRealms) {
             auctionHouseService.createIfMissing(realm)
         }
     }
+
+    private fun communityIdForRegion(region: Region): Int =
+        when (region) {
+            Region.NorthAmerica -> -1
+            Region.Europe -> -2
+            Region.Korea -> -3
+            Region.Taiwan -> -4
+        }
 
     fun updateLatestDump(
         connectedId: Int,

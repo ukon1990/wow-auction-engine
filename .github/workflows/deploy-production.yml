@@ -128,7 +128,7 @@ jobs:
       environment: ${{ needs.load-regions.outputs.environment }}
       project_tag: ${{ needs.load-regions.outputs.project_tag }}
       aws_region: ${{ matrix.aws_region }}
-      blizzard_region: ${{ matrix.blizzard_region }}
+      blizzard_regions: ${{ join(matrix.blizzard_regions, ',') }}
       instance_type: ${{ matrix.instance_type }}
       allowed_ingress_cidr: ${{ matrix.allowed_ingress_cidr }}
       jvm_max_ram_percentage: ${{ matrix.jvm_max_ram_percentage }}

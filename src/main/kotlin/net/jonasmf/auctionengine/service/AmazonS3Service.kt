@@ -7,8 +7,9 @@ import aws.smithy.kotlin.runtime.content.asByteStream
 import aws.smithy.kotlin.runtime.content.writeToFile
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.runBlocking
+import net.jonasmf.auctionengine.config.AmazonS3ClientFactory
+import net.jonasmf.auctionengine.config.WaeS3Properties
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.utility.getBucketName
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -23,8 +24,8 @@ import java.util.zip.GZIPOutputStream
 @Service
 class AmazonS3Service(
     private val amazonS3: S3Client,
-    @Value("\${spring.cloud.aws.region.static}")
-    private val awsRegion: String,
+    private val amazonS3ClientFactory: AmazonS3ClientFactory,
+    private val s3Properties: WaeS3Properties,
     @Value("\${spring.cloud.aws.s3.endpoint:}")
     private val s3Endpoint: String,
 ) {
@@ -34,12 +35,9 @@ class AmazonS3Service(
      * Serializes an object to JSON, writes it to a gzip file, and uploads the file to S3.
      *
      * @param data Object to serialize and upload.
-     * @param filePath Path where the gzip file will be stored temporarily.
-     * @param region The region to determine the S3 bucket.
-     * @param s3Key The S3 key under which to store the object.
+     * @param path Path where the gzip file will be stored temporarily.
      */
     private fun serializeCompressAndUpload(
-        region: Region,
         path: String,
         data: Any,
     ): File {
@@ -69,11 +67,13 @@ class AmazonS3Service(
         path: String,
         data: Any,
     ): String? {
-        val file = serializeCompressAndUpload(region, path, data)
+        val file = serializeCompressAndUpload(path, data)
         val fileName = "engine/$path.gz"
-        val bucketName = getBucketName(region)
+        val bucketConfig = s3Properties.bucketFor(region)
+        val bucketName = bucketConfig.name
+        val s3Client = clientFor(bucketConfig.bucketRegion)
         runBlocking {
-            amazonS3.putObject(
+            s3Client.putObject(
                 PutObjectRequest {
                     bucket = bucketName
                     key = fileName
@@ -83,7 +83,7 @@ class AmazonS3Service(
         }
         val url =
             if (s3Endpoint.isBlank()) {
-                "https://$bucketName.s3.$awsRegion.amazonaws.com/$fileName"
+                "https://$bucketName.s3.${bucketConfig.bucketRegion}.amazonaws.com/$fileName"
             } else {
                 "${s3Endpoint.trimEnd('/')}/$bucketName/$fileName"
             }
@@ -96,9 +96,10 @@ class AmazonS3Service(
         path: String,
     ): Path =
         runBlocking {
-            amazonS3.getObject(
+            val bucketConfig = s3Properties.bucketFor(region)
+            clientFor(bucketConfig.bucketRegion).getObject(
                 GetObjectRequest {
-                    bucket = getBucketName(region)
+                    bucket = bucketConfig.name
                     key = path
                 },
             ) { response ->
@@ -108,5 +109,12 @@ class AmazonS3Service(
                 body.writeToFile(file)
                 file
             }
+        }
+
+    private fun clientFor(region: String): S3Client =
+        if (s3Endpoint.isBlank()) {
+            amazonS3ClientFactory.create(region)
+        } else {
+            amazonS3
         }
 }

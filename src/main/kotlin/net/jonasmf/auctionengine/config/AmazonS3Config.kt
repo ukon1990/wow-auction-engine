@@ -8,7 +8,6 @@ import aws.sdk.kotlin.services.s3.model.ListBucketsRequest
 import aws.sdk.kotlin.services.s3.model.S3Exception
 import aws.smithy.kotlin.runtime.net.url.Url
 import kotlinx.coroutines.runBlocking
-import net.jonasmf.auctionengine.utility.supportedBucketNames
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.config.BeanDefinition
@@ -58,7 +57,10 @@ class AmazonS3Config {
     @Bean
     @Profile("!production")
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-    fun s3BucketInitializer(amazonS3: S3Client): ApplicationRunner =
+    fun s3BucketInitializer(
+        amazonS3: S3Client,
+        s3Properties: WaeS3Properties,
+    ): ApplicationRunner =
         ApplicationRunner {
             val endpoint = s3Endpoint.trim()
             if (!bootstrapEnabled || endpoint.isEmpty()) {
@@ -84,7 +86,7 @@ class AmazonS3Config {
                         return@runBlocking
                     }
 
-                supportedBucketNames.forEach { bucket ->
+                s3Properties.supportedBucketNames().forEach { bucket ->
                     if (bucket in existingBuckets) {
                         log.info("S3 bucket {} already exists at {}", bucket, endpoint)
                         return@forEach

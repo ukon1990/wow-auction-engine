@@ -32,7 +32,7 @@ class BlizzardAuctionServiceTest {
             tokenUrl = "https://example.test/token",
             clientId = "id",
             clientSecret = "secret",
-            region = Region.Europe,
+            regions = listOf(Region.Europe),
         )
 
     private val blizzardAuctionApiClient = mockk<BlizzardAuctionApiClient>()
@@ -128,6 +128,7 @@ class BlizzardAuctionServiceTest {
         }
 
         service.updateAuctionHouses(
+            Region.Europe,
             listOf(
                 AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
                 AuctionHouseDynamo(connectedId = 2, region = Region.Europe),
@@ -201,6 +202,7 @@ class BlizzardAuctionServiceTest {
         }
 
         service.updateAuctionHouses(
+            Region.Europe,
             listOf(
                 AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
                 AuctionHouseDynamo(connectedId = 2, region = Region.Europe),
@@ -234,10 +236,34 @@ class BlizzardAuctionServiceTest {
             events += "complete"
         }
 
-        service.updateAuctionHouses(listOf(AuctionHouseDynamo(connectedId = 1, region = Region.Europe)))
+        service.updateAuctionHouses(Region.Europe, listOf(AuctionHouseDynamo(connectedId = 1, region = Region.Europe)))
 
         assertEquals(listOf("stats", "complete"), events)
         assertEquals("s3://first", completionMarker.captured)
+    }
+
+    @Test
+    fun `updateAuctionHouses marks update as failed when auction payload upload does not return a url`() {
+        val service = createService()
+        val lastModified = ZonedDateTime.now().minusMinutes(5)
+        val realm = createRealm(1, lastModified.minusMinutes(1))
+        val data = createAuctionData(101)
+
+        every { blizzardAuctionApiClient.getLatestAuctionDump(1, Region.Europe, any()) } returns
+            Mono.just(AuctionDataResponse(lastModified.toInstant().toEpochMilli(), "url-1", GameBuildVersion.RETAIL))
+        every { realmService.getById(1) } returns realm
+        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionDataResponse>()) } returns "s3://dump"
+        every { blizzardAuctionApiClient.downloadAuctionData("url-1") } returns Mono.just(data)
+        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionData>()) } returns null
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
+
+        service.updateAuctionHouses(Region.Europe, listOf(AuctionHouseDynamo(connectedId = 1, region = Region.Europe)))
+
+        io.mockk.verify(exactly = 0) {
+            hourlyPriceStatisticsService.processHourlyPriceStatistics(any(), any(), any())
+        }
+        io.mockk.verify(exactly = 1) { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) }
+        io.mockk.verify(exactly = 0) { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) }
     }
 
     private fun createRealm(

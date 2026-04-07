@@ -52,7 +52,7 @@ Required for local startup:
 
 - `BLIZZARD_CLIENT_ID`
 - `BLIZZARD_CLIENT_SECRET`
-- `WAE_BLIZZARD_REGION`
+- `WAE_BLIZZARD_REGIONS`
 
 For local development, AWS settings default to obvious dummy values:
 
@@ -62,7 +62,7 @@ For local development, AWS settings default to obvious dummy values:
 
 You only need to export those if you want to override the defaults.
 
-Use `Europe` for `WAE_BLIZZARD_REGION` unless you are intentionally changing regions. Supported values come from the `Region` enum:
+Use `Europe` for `WAE_BLIZZARD_REGIONS` unless you are intentionally changing regions. The canonical format is a comma-separated list such as `Europe` or `Korea,Taiwan`. Supported values come from the `Region` enum:
 
 - `Europe`
 - `NorthAmerica`
@@ -118,7 +118,8 @@ docker compose -f docker-compose-db.yml down
 | --- | --- | --- | --- |
 | `BLIZZARD_CLIENT_ID` | Yes | `your-blizzard-client-id` | Used to fetch OAuth tokens from Blizzard. |
 | `BLIZZARD_CLIENT_SECRET` | Yes | `your-blizzard-client-secret` | Used together with the client ID. |
-| `WAE_BLIZZARD_REGION` | Yes | `Europe` | Must match the app enum values, not `eu`. |
+| `WAE_BLIZZARD_REGIONS` | Yes | `Europe` or `Korea,Taiwan` | Comma-separated app enum values, not `eu`/`kr`. |
+| `WAE_BLIZZARD_REGION` | No | `Europe` | Deprecated compatibility fallback for single-region setups. |
 | `WAE_AWS_REGION` | No | `eu-west-1` | Optional locally; defaults to `eu-west-1`. |
 | `AWS_ACCESS_KEY` | No | `local-dev-key` | Optional locally; defaults to a dummy value. |
 | `AWS_SECRET_KEY` | No | `local-dev-secret` | Optional locally; defaults to a dummy value. |
@@ -145,6 +146,20 @@ The default local datasource configuration lives in [`src/main/resources/applica
 
 That means a new developer normally does not need to set any database environment variables for local work.
 
+## Region Model
+
+The app deployment region and the S3 bucket region are related but not identical configuration concerns.
+
+- `WAE_AWS_REGION` is the region where the application instance runs.
+- `WAE_BLIZZARD_REGIONS` is the Blizzard data scope that instance processes.
+- S3 bucket name and bucket AWS region are resolved internally from app config per Blizzard region.
+
+Current production layout:
+
+- Europe deployment: `eu-west-1`, updates `Europe`, writes to `wah-data-eu` in `eu-west-1`
+- North America deployment: `us-west-1`, updates `NorthAmerica`, writes to `wah-data-us` in `us-west-1`
+- Asia deployment: `ap-northeast-2`, updates `Korea,Taiwan`, writes to `wah-data-as` in `ap-northeast-2`
+
 ## Running Tests
 
 Run the full test suite with:
@@ -160,6 +175,7 @@ Useful detail for onboarding:
 - MariaDB runs through Testcontainers
 - DynamoDB and S3 are provided through Floci-backed Testcontainers in integration tests
 - Docker Desktop or another working Docker daemon must be running for tests to pass
+- `WAE_BLIZZARD_REGION` is still accepted as a fallback, but new config and deployment work should use `WAE_BLIZZARD_REGIONS`
 
 ## Useful Commands
 

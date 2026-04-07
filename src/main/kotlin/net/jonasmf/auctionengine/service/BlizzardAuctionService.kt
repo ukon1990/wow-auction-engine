@@ -44,13 +44,16 @@ class BlizzardAuctionService(
     private val logBatchSize = auctionBatchSize
     val logger: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
 
-    fun updateAuctionHouses(auctionHousesToUpdate: List<AuctionHouseDynamo>) {
+    fun updateAuctionHouses(
+        region: Region,
+        auctionHousesToUpdate: List<AuctionHouseDynamo>,
+    ) {
         val batchStartTime = System.currentTimeMillis()
-        logger.info("Updating ${auctionHousesToUpdate.size} auction houses for region ${properties.region}")
+        logger.info("Updating ${auctionHousesToUpdate.size} auction houses for region {}", region)
         auctionHousesToUpdate.forEach {
             val houseStartTime = System.currentTimeMillis()
             logger.info("Starting sequential update for auction house {}", it.connectedId)
-            updateHouse(it.connectedId, properties.region)
+            updateHouse(it.connectedId, region)
             logger.info(
                 "Finished sequential update for auction house {} in {}ms",
                 it.connectedId,
@@ -60,7 +63,7 @@ class BlizzardAuctionService(
         logger.info(
             "Finished updating {} auction houses for region {} in {}ms",
             auctionHousesToUpdate.size,
-            properties.region,
+            region,
             System.currentTimeMillis() - batchStartTime,
         )
     }
@@ -154,6 +157,15 @@ class BlizzardAuctionService(
             }
 
             val s3Url = saveAuctionDataToS3(region, connectedRealmId, data, lastModified)
+            if (s3Url == null) {
+                logger.error("Auction payload archive failed for realm {}. Marking update as failed.", connectedRealmId)
+                auctionHouseService.updateTimes(
+                    connectedRealmId,
+                    lastModified.toInstant().toKotlin(),
+                    false,
+                )
+                return
+            }
             hourlyPriceStatisticsService.processHourlyPriceStatistics(connectedRealm, data.auctions, lastModified)
             auctionHouseService.updateTimes(
                 connectedRealmId,
@@ -211,9 +223,11 @@ class BlizzardAuctionService(
         } catch (e: Exception) {
             logger.error("Failed to upload auctions to S3: $filePath", e)
         }
-        logger.info(
-            "Uploaded auctions to S3 for $connectedRealmId: ${data.auctions.size} auctions in ${System.currentTimeMillis() - startTime}ms",
-        )
+        if (s3Url != null) {
+            logger.info(
+                "Uploaded auctions to S3 for $connectedRealmId: ${data.auctions.size} auctions in ${System.currentTimeMillis() - startTime}ms",
+            )
+        }
         return s3Url
     }
 

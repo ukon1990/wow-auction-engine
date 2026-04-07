@@ -5,7 +5,7 @@ required_vars=(
   APP_NAME
   ENVIRONMENT
   AWS_REGION
-  BLIZZARD_REGION
+  BLIZZARD_REGIONS
   BLIZZARD_CLIENT_ID
   BLIZZARD_CLIENT_SECRET
   AUCTION_ENGINE_DB_URL
@@ -60,9 +60,15 @@ put_optional_secure_string() {
   fi
 }
 
+primary_region="${BLIZZARD_REGION:-}"
+if [[ -z "$primary_region" || "$primary_region" == *","* ]]; then
+  primary_region="${BLIZZARD_REGIONS%%,*}"
+fi
+
 put_string "SPRING_PROFILES_ACTIVE" "production"
 put_string "WAE_AWS_REGION" "$AWS_REGION"
-put_string "WAE_BLIZZARD_REGION" "$BLIZZARD_REGION"
+put_string "WAE_BLIZZARD_REGIONS" "$BLIZZARD_REGIONS"
+put_string "WAE_BLIZZARD_REGION" "$primary_region"
 put_string "AUCTION_ENGINE_DB_URL" "$AUCTION_ENGINE_DB_URL"
 put_string "JVM_MAX_RAM_PERCENTAGE" "${JVM_MAX_RAM_PERCENTAGE:-65.0}"
 put_optional_string "JAVA_TOOL_OPTIONS" "${JAVA_TOOL_OPTIONS:-}"

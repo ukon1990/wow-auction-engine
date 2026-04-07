@@ -21,9 +21,24 @@ app:
 blizzard:
     client-id: dummy-client-id
     client-secret: dummy-client-secret
-    region: Europe
+    regions: ${WAE_BLIZZARD_REGIONS:${WAE_BLIZZARD_REGION:Europe}}
     token-url: http://localhost/mock-blizzard/token
     base-url: http://localhost/mock-blizzard/api/
+wae:
+    s3:
+        buckets:
+            northamerica:
+                name: wah-data-us
+                bucket-region: us-west-1
+            europe:
+                name: wah-data-eu
+                bucket-region: eu-west-1
+            korea:
+                name: wah-data-as
+                bucket-region: ap-northeast-2
+            taiwan:
+                name: wah-data-as
+                bucket-region: ap-northeast-2
 logging:
     level:
         org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR

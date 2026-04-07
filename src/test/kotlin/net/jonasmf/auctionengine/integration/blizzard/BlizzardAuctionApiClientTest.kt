@@ -101,7 +101,7 @@ class BlizzardAuctionApiClientTest {
                     tokenUrl = "https://oauth.blizzard.test/token",
                     clientId = "id",
                     clientSecret = "secret",
-                    region = Region.Europe,
+                    regions = listOf(Region.Europe),
                 ),
             webClientWithAuth = webClient,
         )

@@ -28,13 +28,25 @@ class AuctionHouseSchedule(
         val batchStartTime = System.currentTimeMillis()
         logger.info("Starting scheduled auction house update check...")
         try {
-            val auctionHousesToUpdate = auctionHouseService.getReadyForUpdate(properties.region)
-            if (auctionHousesToUpdate.isEmpty()) {
+            var housesFound = false
+            properties.configuredRegions.forEach { region ->
+                val auctionHousesToUpdate = auctionHouseService.getReadyForUpdate(region)
+                if (auctionHousesToUpdate.isEmpty()) {
+                    logger.info("No auction houses found for update in region {}.", region)
+                    return@forEach
+                }
+                housesFound = true
+                logger.info(
+                    "Found {} auction houses ready for update in region {}.",
+                    auctionHousesToUpdate.size,
+                    region,
+                )
+                blizzardAuctionService.updateAuctionHouses(region, auctionHousesToUpdate)
+            }
+            if (!housesFound) {
                 logger.info("No auction houses found for update.")
                 return
             }
-            logger.info("Found ${auctionHousesToUpdate.size} auction houses ready for update.")
-            blizzardAuctionService.updateAuctionHouses(auctionHousesToUpdate)
             logger.info(
                 "Completed scheduled auction house update batch in ${System.currentTimeMillis() - batchStartTime}ms.",
             )
