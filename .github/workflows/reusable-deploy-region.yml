@@ -488,10 +488,14 @@ jobs:
           set -uo pipefail
 
           echo "=== Restart SSM command details ==="
-          aws ssm list-command-invocations \
-            --region "${AWS_REGION}" \
-            --command-id "${COMMAND_ID}" \
-            --details || true
+          if [[ -n "${COMMAND_ID:-}" ]]; then
+            aws ssm list-command-invocations \
+              --region "${AWS_REGION}" \
+              --command-id "${COMMAND_ID}" \
+              --details || true
+          else
+            echo "No restart SSM command was created before the failure."
+          fi
 
           echo "=== Container probe SSM command details ==="
           if [[ -n "${PROBE_COMMAND_ID:-}" ]]; then

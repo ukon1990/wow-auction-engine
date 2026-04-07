@@ -255,24 +255,35 @@ Resources:
           #!/bin/bash
           set -euo pipefail
 
-          required_vars=(
-            APP_NAME
-            AWS_REGION
-            IMAGE_URI
-            ENV_FILE_PATH
-            CONTAINER_PORT
-          )
-
-          for var_name in "${required_vars[@]}"; do
-            if [[ -z "${!var_name:-}" ]]; then
+          require_env() {
+            local var_name="$1"
+            if [[ -z "$(printenv "$var_name" || true)" ]]; then
               echo "Missing required environment variable: $var_name" >&2
               exit 1
             fi
-          done
+          }
 
-          LOG_GROUP="${LOG_GROUP:-/aws/ec2/${APP_NAME}}"
-          HOST_PORT="${HOST_PORT:-$CONTAINER_PORT}"
-          REGISTRY="${IMAGE_URI%%/*}"
+          require_env APP_NAME
+          require_env AWS_REGION
+          require_env IMAGE_URI
+          require_env ENV_FILE_PATH
+          require_env CONTAINER_PORT
+
+          resolved_log_group="$(printenv LOG_GROUP || true)"
+          if [[ -n "$resolved_log_group" ]]; then
+            LOG_GROUP="$resolved_log_group"
+          else
+            LOG_GROUP="/aws/ec2/$APP_NAME"
+          fi
+
+          resolved_host_port="$(printenv HOST_PORT || true)"
+          if [[ -n "$resolved_host_port" ]]; then
+            HOST_PORT="$resolved_host_port"
+          else
+            HOST_PORT="$CONTAINER_PORT"
+          fi
+
+          REGISTRY="$(printf '%s\n' "$IMAGE_URI" | cut -d/ -f1)"
 
           aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$REGISTRY"
 
@@ -283,7 +294,7 @@ Resources:
             --name "$APP_NAME" \
             --restart unless-stopped \
             --env-file "$ENV_FILE_PATH" \
-            -p "${HOST_PORT}:${CONTAINER_PORT}" \
+            -p "$HOST_PORT:$CONTAINER_PORT" \
             --log-driver awslogs \
             --log-opt awslogs-region="$AWS_REGION" \
             --log-opt awslogs-group="$LOG_GROUP" \
