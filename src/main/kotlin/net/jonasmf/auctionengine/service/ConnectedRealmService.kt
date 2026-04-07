@@ -30,6 +30,7 @@ class ConnectedRealmService(
     private val connectedRealmRepository: ConnectedRealmRepository,
     private val regionRepository: RegionRepository,
     private val auctionHouseService: AuctionHouseService,
+    private val connectedRealmBulkSyncService: ConnectedRealmBulkSyncService,
 ) {
     val log: Logger = LoggerFactory.getLogger(ConnectedRealmService::class.java)
 
@@ -144,21 +145,20 @@ class ConnectedRealmService(
 
                 Flux
                     .fromIterable(index.connectedRealms)
-                    .flatMap(
-                        { realm ->
-                            processRealm(realm, region)
-                        },
-                        1,
-                    ) // Process one realm at a time to avoid overwhelming the API
+                    .flatMap({ realm -> fetchRealm(realm, region) }, 1)
             }.collectList()
-            .doOnSuccess {
+            .flatMap { connectedRealms ->
+                Mono
+                    .fromCallable { connectedRealmBulkSyncService.sync(connectedRealms) }
+                    .subscribeOn(Schedulers.boundedElastic())
+            }.doOnSuccess {
                 log.info("Successfully processed all connected realms for region: ${region.name}")
             }.doOnError { error ->
                 log.error("Error occurred while processing connected realms for region ${region.name}: $error")
             }
     }
 
-    private fun processRealm(
+    private fun fetchRealm(
         realm: Href,
         region: Region,
     ): Mono<ConnectedRealm> =
@@ -180,17 +180,5 @@ class ConnectedRealmService(
                     )
                 }
                 connectedRealmDTO.toDBO(region)
-            }.flatMap { connectedDBO ->
-                checkAndSaveRealm(connectedDBO, region)
             }
-
-    private fun checkAndSaveRealm(
-        connectedDBO: ConnectedRealm,
-        region: Region,
-    ): Mono<ConnectedRealm> =
-        Mono
-            .fromCallable {
-                log.info("Saving new connected realm ${connectedDBO.id} for region ${region.name}")
-                connectedRealmRepository.save(connectedDBO)
-            }.subscribeOn(Schedulers.boundedElastic())
 }
