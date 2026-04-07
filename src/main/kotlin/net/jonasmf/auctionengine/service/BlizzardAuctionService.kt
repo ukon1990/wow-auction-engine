@@ -304,11 +304,6 @@ class BlizzardAuctionService(
             connectedRealmId,
             elapsedMs,
             failure.message ?: failure::class.simpleName ?: "unknown error",
-        )
-        logger.debug(
-            "Auction update diagnostics for realm {} while attempting to {}",
-            connectedRealmId,
-            action,
             failure,
         )
     }

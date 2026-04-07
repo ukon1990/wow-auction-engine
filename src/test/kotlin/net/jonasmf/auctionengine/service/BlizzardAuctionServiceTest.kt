@@ -310,6 +310,29 @@ class BlizzardAuctionServiceTest {
         detachAppender(appender)
     }
 
+    @Test
+    fun `updateAuctionHouses keeps throwable on error for unexpected processing failures`() {
+        val appender = attachAppender()
+        val service = createService()
+        val lastModified = ZonedDateTime.now().minusMinutes(5)
+        val realm = createRealm(1, lastModified.minusMinutes(1))
+
+        every { blizzardAuctionApiClient.getLatestAuctionDump(1, Region.Europe, any()) } returns
+            Mono.just(AuctionDataResponse(lastModified.toInstant().toEpochMilli(), "url-1", GameBuildVersion.RETAIL))
+        every { realmService.getById(1) } returns realm
+        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionDataResponse>()) } returns "s3://dump"
+        every { blizzardAuctionApiClient.downloadAuctionData("url-1") } returns Mono.error(RuntimeException("boom"))
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
+
+        service.updateAuctionHouses(Region.Europe, listOf(AuctionHouseDynamo(connectedId = 1, region = Region.Europe)))
+
+        val errorEvent = appender.list.single { it.level == Level.ERROR }
+        assertTrue(errorEvent.formattedMessage.contains("Failed to process auction data for realm 1"))
+        assertTrue(errorEvent.formattedMessage.contains("boom"))
+        assertTrue(errorEvent.throwableProxy != null)
+        detachAppender(appender)
+    }
+
     private fun createRealm(
         id: Int,
         lastModified: ZonedDateTime?,
