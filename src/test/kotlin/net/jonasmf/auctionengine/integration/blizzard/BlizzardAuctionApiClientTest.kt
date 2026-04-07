@@ -1,12 +1,19 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -14,8 +21,8 @@ import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import java.util.concurrent.TimeoutException
 
 class BlizzardAuctionApiClientTest {
     @Test
@@ -97,6 +104,7 @@ class BlizzardAuctionApiClientTest {
 
     @Test
     fun `downloadAuctionData propagates non-2xx responses as web client exceptions`() {
+        val appender = attachAppender()
         val webClient =
             webClient {
                 Mono.just(
@@ -111,11 +119,68 @@ class BlizzardAuctionApiClientTest {
         val client = BlizzardAuctionApiClient(createSupport(webClient))
 
         val error =
-            assertThrows(WebClientResponseException.BadGateway::class.java) {
+            assertThrows(BlizzardApiClientException::class.java) {
                 client.downloadAuctionData("https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions").block()
             }
 
-        assertEquals(502, error.statusCode.value())
+        assertEquals("download auction payload", error.operation)
+        assertEquals("502 Bad Gateway", error.summary)
+        val errorEvent = appender.list.single { it.level == Level.ERROR }
+        assertTrue(errorEvent.formattedMessage.contains("Blizzard API download auction payload failed"))
+        assertTrue(errorEvent.formattedMessage.contains("502 Bad Gateway"))
+        assertNull(errorEvent.throwableProxy)
+        detachAppender(appender)
+    }
+
+    @Test
+    fun `downloadAuctionData logs concise malformed json failure and still propagates`() {
+        val appender = attachAppender()
+        val client =
+            BlizzardAuctionApiClient(
+                createSupport(
+                    webClient {
+                        response("""{"auctions":[{"id":1""")
+                    },
+                ),
+            )
+
+        val error =
+            assertThrows(BlizzardApiClientException::class.java) {
+                client.downloadAuctionData("https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions").block()
+            }
+
+        assertEquals("download auction payload", error.operation)
+        assertEquals("Unexpected end-of-input: expected close marker for Object", error.summary)
+        val errorEvent = appender.list.single { it.level == Level.ERROR }
+        assertTrue(errorEvent.formattedMessage.contains("DecodingException"))
+        assertTrue(errorEvent.formattedMessage.contains("Unexpected end-of-input: expected close marker for Object"))
+        assertNull(errorEvent.throwableProxy)
+        detachAppender(appender)
+    }
+
+    @Test
+    fun `downloadAuctionData logs concise timeout failure without stack trace`() {
+        val appender = attachAppender()
+        val client =
+            BlizzardAuctionApiClient(
+                createSupport(
+                    webClient {
+                        Mono.error(TimeoutException("simulated upstream timeout"))
+                    },
+                ),
+            )
+
+        val error =
+            assertThrows(BlizzardApiClientException::class.java) {
+                client.downloadAuctionData("https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions").block()
+            }
+
+        assertEquals("request timed out after 180s", error.summary)
+        val errorEvent = appender.list.single { it.level == Level.ERROR }
+        assertTrue(errorEvent.formattedMessage.contains("TimeoutException"))
+        assertTrue(errorEvent.formattedMessage.contains("request timed out after 180s"))
+        assertNull(errorEvent.throwableProxy)
+        detachAppender(appender)
     }
 
     private fun createSupport(webClient: WebClient) =
@@ -157,4 +222,18 @@ class BlizzardAuctionApiClientTest {
 
     private fun auctionDumpMetadataBody(): String =
         loadFixture(this, "/blizzard/auction/auction-dump-metadata-response.json")
+
+    private fun attachAppender(): ListAppender<ILoggingEvent> {
+        val logger = LoggerFactory.getLogger(BlizzardAuctionApiClient::class.java) as Logger
+        return ListAppender<ILoggingEvent>().also {
+            it.start()
+            logger.addAppender(it)
+        }
+    }
+
+    private fun detachAppender(appender: ListAppender<ILoggingEvent>) {
+        val logger = LoggerFactory.getLogger(BlizzardAuctionApiClient::class.java) as Logger
+        logger.detachAppender(appender)
+        appender.stop()
+    }
 }

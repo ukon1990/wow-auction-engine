@@ -1,5 +1,9 @@
 package net.jonasmf.auctionengine.service
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -16,12 +20,16 @@ import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
 import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
+import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
 import net.jonasmf.auctionengine.repository.rds.AuctionItemModifierRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionItemRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -269,6 +277,39 @@ class BlizzardAuctionServiceTest {
         io.mockk.verify(exactly = 0) { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) }
     }
 
+    @Test
+    fun `updateAuctionHouses logs known client failures without error stack trace`() {
+        val appender = attachAppender()
+        val service = createService()
+        val lastModified = ZonedDateTime.now().minusMinutes(5)
+        val realm = createRealm(1, lastModified.minusMinutes(1))
+
+        every { blizzardAuctionApiClient.getLatestAuctionDump(1, Region.Europe, any()) } returns
+            Mono.just(AuctionDataResponse(lastModified.toInstant().toEpochMilli(), "url-1", GameBuildVersion.RETAIL))
+        every { realmService.getById(1) } returns realm
+        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionDataResponse>()) } returns "s3://dump"
+        every { blizzardAuctionApiClient.downloadAuctionData("url-1") } returns
+            Mono.error(
+                BlizzardApiClientException(
+                    operation = "download auction payload",
+                    url = "url-1",
+                    summary = "Unexpected end-of-input",
+                    exceptionType = "DecodingException",
+                    cause = RuntimeException("Unexpected end-of-input"),
+                ),
+            )
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
+
+        service.updateAuctionHouses(Region.Europe, listOf(AuctionHouseDynamo(connectedId = 1, region = Region.Europe)))
+
+        val warnEvent = appender.list.single { it.level == Level.WARN }
+        assertTrue(warnEvent.formattedMessage.contains("Failed to process auction data for realm 1"))
+        assertTrue(warnEvent.formattedMessage.contains("Unexpected end-of-input"))
+        assertNull(warnEvent.throwableProxy)
+        assertTrue(appender.list.none { it.level == Level.ERROR })
+        detachAppender(appender)
+    }
+
     private fun createRealm(
         id: Int,
         lastModified: ZonedDateTime?,
@@ -305,4 +346,18 @@ class BlizzardAuctionServiceTest {
                     ),
                 ),
         )
+
+    private fun attachAppender(): ListAppender<ILoggingEvent> {
+        val logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java) as Logger
+        return ListAppender<ILoggingEvent>().also {
+            it.start()
+            logger.addAppender(it)
+        }
+    }
+
+    private fun detachAppender(appender: ListAppender<ILoggingEvent>) {
+        val logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java) as Logger
+        logger.detachAppender(appender)
+        appender.stop()
+    }
 }
