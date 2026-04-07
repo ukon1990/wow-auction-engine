@@ -66,6 +66,7 @@ Notes:
 - `AWS_DEPLOY_ROLE_ARN` is the IAM role assumed by GitHub Actions through OIDC
 - `PROD_AWS_ACCESS_KEY` and `PROD_AWS_SECRET_KEY` are optional; the running application can use the EC2 instance role instead
 - the deploy job uses the GitHub Environment `production`
+- the deploy role is separate from the EC2 instance role created by CloudFormation
 
 ### Recommended GitHub Environment
 
@@ -77,6 +78,18 @@ Create a GitHub Environment named `production` if you want:
 
 ## AWS Setup
 
+### Manual AWS Setup Checklist
+
+1. Create the GitHub OIDC provider in IAM.
+2. Create the GitHub deploy role.
+3. Add the trust policy shown below to that role.
+4. Add the permissions policy shown below to that role.
+5. Copy the role ARN into the GitHub secret `AWS_DEPLOY_ROLE_ARN`.
+6. Make sure the target regions are enabled in your AWS account.
+7. Make sure the account has a default VPC and subnet in each target region, or extend the workflow/template to pass explicit `VpcId` and `SubnetId`.
+8. Make sure the external MariaDB instance accepts traffic from the deployed EC2 instances.
+9. Make sure the DynamoDB tables and S3 buckets expected by the app already exist.
+
 ### 1. Create the GitHub OIDC Provider
 
 In AWS IAM, create an OpenID Connect provider if one does not already exist:
@@ -84,13 +97,15 @@ In AWS IAM, create an OpenID Connect provider if one does not already exist:
 - Provider URL: `https://token.actions.githubusercontent.com`
 - Audience: `sts.amazonaws.com`
 
-### 2. Create the Deploy Role
+### 2. Create the Deploy Role Trust Policy
 
 Create an IAM role for GitHub Actions. This is the role whose ARN goes into `AWS_DEPLOY_ROLE_ARN`.
 
-The role trust relationship must allow GitHub's OIDC provider.
+Use this trust policy, replacing:
 
-Example trust policy:
+- `<ACCOUNT_ID>` with your 12-digit AWS account ID
+- `<OWNER>` with your GitHub username or organization
+- `<REPO>` with your repository name
 
 ```json
 {
@@ -118,47 +133,137 @@ Example trust policy:
 }
 ```
 
-Replace:
-
-- `<ACCOUNT_ID>` with your 12-digit AWS account ID
-- `<OWNER>` with your GitHub username or organization
-- `<REPO>` with your repository name
-
 Common mistake:
 
 - the `sub` string must match exactly
 - accidental spaces in `repo:<OWNER>/<REPO>:...` will break OIDC authentication
 
-### 3. Attach Permissions To The Deploy Role
+### 3. Deploy Role Permissions Policy
 
-The deploy role needs permissions for at least:
+Attach this full permissions policy to the GitHub deploy role:
 
-- CloudFormation stack deployment and updates
-- IAM role and instance profile management for stack-created roles
-- EC2, Elastic IP, security group, and describe actions
-- ECR repository creation, tagging, rollback deletion, and image push
-- SSM parameter writes and SSM Run Command
-- CloudWatch Logs, including log-group describe calls used during stack creation
-
-In practice, make sure the deploy role can perform at least:
-
-- `ecr:CreateRepository`
-- `ecr:DescribeRepositories`
-- `ecr:TagResource`
-- `ecr:DeleteRepository`
-- `ecr:GetAuthorizationToken`
-- `ecr:PutImage`
-- `ecr:InitiateLayerUpload`
-- `ecr:UploadLayerPart`
-- `ecr:CompleteLayerUpload`
-- `ecr:BatchCheckLayerAvailability`
-- `ecr:BatchGetImage`
-- `logs:CreateLogGroup`
-- `logs:DeleteLogGroup`
-- `logs:PutRetentionPolicy`
-- `logs:TagResource`
-- `logs:ListTagsForResource`
-- `logs:DescribeLogGroups`
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CloudFormationDeploy",
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:CreateStack",
+        "cloudformation:UpdateStack",
+        "cloudformation:DeleteStack",
+        "cloudformation:DescribeStacks",
+        "cloudformation:DescribeStackEvents",
+        "cloudformation:DescribeStackResources",
+        "cloudformation:GetTemplateSummary",
+        "cloudformation:ValidateTemplate",
+        "cloudformation:CreateChangeSet",
+        "cloudformation:DescribeChangeSet",
+        "cloudformation:ExecuteChangeSet",
+        "cloudformation:DeleteChangeSet",
+        "cloudformation:ContinueUpdateRollback"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "IamForStackResources",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:GetRole",
+        "iam:PassRole",
+        "iam:AttachRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy",
+        "iam:CreateInstanceProfile",
+        "iam:DeleteInstanceProfile",
+        "iam:GetInstanceProfile",
+        "iam:AddRoleToInstanceProfile",
+        "iam:RemoveRoleFromInstanceProfile",
+        "iam:TagRole"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "Ec2Infrastructure",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:RunInstances",
+        "ec2:TerminateInstances",
+        "ec2:StartInstances",
+        "ec2:StopInstances",
+        "ec2:ModifyInstanceAttribute",
+        "ec2:DescribeInstances",
+        "ec2:DescribeImages",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeVolumes",
+        "ec2:CreateSecurityGroup",
+        "ec2:DeleteSecurityGroup",
+        "ec2:AuthorizeSecurityGroupIngress",
+        "ec2:RevokeSecurityGroupIngress",
+        "ec2:AuthorizeSecurityGroupEgress",
+        "ec2:RevokeSecurityGroupEgress",
+        "ec2:CreateTags",
+        "ec2:DescribeTags",
+        "ec2:AllocateAddress",
+        "ec2:AssociateAddress",
+        "ec2:DisassociateAddress",
+        "ec2:ReleaseAddress",
+        "ec2:DescribeAddresses",
+        "ec2:DescribeVpcs",
+        "ec2:DescribeSubnets"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "EcrRepositoriesAndImages",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:CreateRepository",
+        "ecr:DescribeRepositories",
+        "ecr:TagResource",
+        "ecr:DeleteRepository",
+        "ecr:PutImage",
+        "ecr:InitiateLayerUpload",
+        "ecr:UploadLayerPart",
+        "ecr:CompleteLayerUpload",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:BatchGetImage"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SsmDeployment",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:GetParameters",
+        "ssm:PutParameter",
+        "ssm:SendCommand",
+        "ssm:ListCommandInvocations",
+        "ssm:DescribeInstanceInformation"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CloudWatchLogs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:DeleteLogGroup",
+        "logs:PutRetentionPolicy",
+        "logs:TagResource",
+        "logs:ListTagsForResource",
+        "logs:DescribeLogGroups"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
 
 The deploy workflow uses OIDC. It does not require long-lived AWS access keys.
 
@@ -178,7 +283,7 @@ Also verify that your account has quota and access for:
 - SSM
 - CloudFormation
 
-### 5. Verify Network Access To External Services
+### 5. Verify Existing Application Dependencies
 
 This repository does not provision the MariaDB database. If you use an external database, make sure it accepts connections from the deployed EC2 instances.
 
@@ -186,6 +291,12 @@ If the application uses production S3 buckets or DynamoDB tables, make sure:
 
 - those resources exist
 - the EC2 instance role created by CloudFormation is allowed to access them
+
+The current code expects at least:
+
+- DynamoDB table `wah_auction_houses`
+- DynamoDB table `wah_auction_houses_update_log`
+- S3 buckets matching `wah-data*`
 
 ## Runtime Configuration
 
@@ -232,7 +343,7 @@ Typical changes:
 - The current stack is intentionally small and EC2-focused
 - it does not create a full VPC layout
 - the workflow currently looks up the default VPC and one default subnet in the target region and passes them into CloudFormation
-- if your AWS account does not have a default VPC in that region, the deploy will fail and the template/workflow must be extended to pass explicit VPC and subnet IDs
+- if your AWS account does not have a default VPC in that region, the deploy will fail and the template/workflow must be extended to pass explicit `VpcId` and `SubnetId`
 
 ## Troubleshooting
 
@@ -251,7 +362,36 @@ Start by verifying the trust policy matches the exact GitHub repo and the `produ
 
 CloudFormation cannot update a stack in `ROLLBACK_COMPLETE`.
 
-The deploy workflow now deletes rollback-only stacks automatically before retrying create/update. If the stack still fails, inspect the printed stack events in the workflow log to find the first failing resource.
+The deploy workflow deletes rollback-only stacks automatically before retrying create/update.
+
+### CloudFormation Fails With `UPDATE_ROLLBACK_FAILED`
+
+CloudFormation cannot update a stack in `UPDATE_ROLLBACK_FAILED`.
+
+The deploy workflow attempts to recover this automatically with `ContinueUpdateRollback` before retrying the deploy.
+
+If the stack is still stuck, run:
+
+```bash
+aws cloudformation continue-update-rollback \
+  --region <aws-region> \
+  --stack-name <stack-name>
+```
+
+If the rollback remains stuck because of an earlier bad EC2 instance update, ensure the deploy role still has:
+
+- `ec2:StopInstances`
+- `ec2:StartInstances`
+- `ec2:ModifyInstanceAttribute`
+- `ec2:DescribeVolumes`
+
+### CloudFormation Fails Resolving The Amazon Linux AMI
+
+If you see an error mentioning:
+
+`not authorized to perform: ssm:GetParameters on resource: arn:aws:ssm:...:parameter/aws/service/ami-amazon-linux-latest/...`
+
+the deploy role is missing SSM read access for AWS-managed public parameters. The template resolves the latest Amazon Linux 2023 ARM64 AMI through a public SSM parameter.
 
 ### CloudFormation Fails Creating `AppSecurityGroup`
 
@@ -267,7 +407,7 @@ If you see an error mentioning:
 
 `not authorized to perform: ecr:TagResource`
 
-the GitHub deploy role is missing ECR tagging permissions. Update the IAM policy attached to the role referenced by `AWS_DEPLOY_ROLE_ARN`.
+the GitHub deploy role is missing ECR tagging permissions.
 
 If rollback later fails with:
 
@@ -282,6 +422,22 @@ If you see an error mentioning:
 `Access denied for operation 'logs:DescribeLogGroups'`
 
 the GitHub deploy role is missing CloudWatch Logs describe permissions needed while CloudFormation evaluates the log group reference in the IAM policy.
+
+### CloudFormation Fails Updating `AppInstance`
+
+If you see an error mentioning:
+
+- `not authorized to perform: ec2:StopInstances`
+- `not authorized to perform: ec2:ModifyInstanceAttribute`
+- `not authorized to perform: ec2:DescribeVolumes`
+
+that usually means the stack is still recovering from an older revision that tried to push application image changes through EC2 instance `UserData`, which forced a CloudFormation instance update.
+
+The current deployment design avoids that by:
+
+- keeping the app version rollout out of CloudFormation
+- pushing the image to ECR separately
+- restarting the Docker container on the instance through SSM
 
 ### Deploy Workflow Does Not Start
 
