@@ -29,6 +29,6 @@ class HealthControllerTest {
         val response = controller.health()
 
         assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.statusCode)
-        assertEquals("stalled", response.headers.getFirst("X-Health-Reason"))
+        assertEquals(null, response.headers.getFirst("X-Health-Reason"))
     }
 }

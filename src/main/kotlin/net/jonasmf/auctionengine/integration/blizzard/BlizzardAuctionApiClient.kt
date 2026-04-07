@@ -71,24 +71,24 @@ class BlizzardAuctionApiClient(
             .webClient()
             .get()
             .uri(url)
-            .exchangeToMono { response ->
-                val contentLength = response.headers().contentLength().orElse(-1)
+            .retrieve()
+            .toEntity(AuctionData::class.java)
+            .timeout(AUCTION_DOWNLOAD_TIMEOUT)
+            .map { response ->
+                val contentLength = response.headers.contentLength
                 logger.info(
                     "Starting auction payload download from {} with contentLength={}B",
                     url,
                     if (contentLength >= 0) contentLength else "unknown",
                 )
-                response
-                    .bodyToMono(AuctionData::class.java)
-                    .timeout(AUCTION_DOWNLOAD_TIMEOUT)
-                    .doOnNext {
-                        logger.info(
-                            "Completed auction payload download from {} with {} auctions and contentLength={}B",
-                            url,
-                            it.auctions.size,
-                            if (contentLength >= 0) contentLength else "unknown",
-                        )
-                    }
+                val body = checkNotNull(response.body) { "Auction download response body was empty" }
+                logger.info(
+                    "Completed auction payload download from {} with {} auctions and contentLength={}B",
+                    url,
+                    body.auctions.size,
+                    if (contentLength >= 0) contentLength else "unknown",
+                )
+                body
             }.doOnError { error ->
                 logger.error("Failed to fetch auction data from {}: {}", url, error.message, error)
             }

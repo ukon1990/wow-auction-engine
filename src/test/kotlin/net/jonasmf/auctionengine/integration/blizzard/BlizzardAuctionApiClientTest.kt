@@ -5,6 +5,7 @@ import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -13,6 +14,7 @@ import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 
 class BlizzardAuctionApiClientTest {
@@ -91,6 +93,29 @@ class BlizzardAuctionApiClientTest {
         assertEquals(52, result.auctions[1].item.context)
         assertEquals(39, result.auctions[2].item.pet_species_id)
         assertEquals(25, result.auctions[2].item.pet_level)
+    }
+
+    @Test
+    fun `downloadAuctionData propagates non-2xx responses as web client exceptions`() {
+        val webClient =
+            webClient {
+                Mono.just(
+                    ClientResponse
+                        .create(HttpStatus.BAD_GATEWAY)
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .body("""{"error":"upstream"}""")
+                        .build(),
+                )
+            }
+
+        val client = BlizzardAuctionApiClient(createSupport(webClient))
+
+        val error =
+            assertThrows(WebClientResponseException.BadGateway::class.java) {
+                client.downloadAuctionData("https://eu.api.blizzard.test/data/wow/connected-realm/123/auctions").block()
+            }
+
+        assertEquals(502, error.statusCode.value())
     }
 
     private fun createSupport(webClient: WebClient) =
