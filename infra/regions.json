@@ -1,0 +1,43 @@
+{
+  "app_name": "wow-auction-engine",
+  "environment": "prod",
+  "project_tag": "WAH",
+  "regions": [
+    {
+      "enabled": true,
+      "aws_region": "eu-west-1",
+      "blizzard_region": "Europe",
+      "instance_type": "t4g.micro",
+      "allowed_ingress_cidr": "0.0.0.0/0",
+      "jvm_max_ram_percentage": "65.0",
+      "container_port": 8080,
+      "health_check_path": "/health",
+      "instance_enabled": "true",
+      "stack_name": "wah-wow-auction-engine-prod-eu-west-1"
+    },
+    {
+      "enabled": true,
+      "aws_region": "us-east-1",
+      "blizzard_region": "NorthAmerica",
+      "instance_type": "t4g.micro",
+      "allowed_ingress_cidr": "0.0.0.0/0",
+      "jvm_max_ram_percentage": "65.0",
+      "container_port": 8080,
+      "health_check_path": "/health",
+      "instance_enabled": "true",
+      "stack_name": "wah-wow-auction-engine-prod-us-east-1"
+    },
+    {
+      "enabled": true,
+      "aws_region": "ap-northeast-2",
+      "blizzard_region": "Korea",
+      "instance_type": "t4g.micro",
+      "allowed_ingress_cidr": "0.0.0.0/0",
+      "jvm_max_ram_percentage": "65.0",
+      "container_port": 8080,
+      "health_check_path": "/health",
+      "instance_enabled": "true",
+      "stack_name": "wah-wow-auction-engine-prod-ap-northeast-2"
+    }
+  ]
+}
