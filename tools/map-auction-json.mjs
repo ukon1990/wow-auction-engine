@@ -16,6 +16,7 @@ export const DEFAULT_OUT_DIR = path.resolve(process.cwd(), 'target', 'auction-js
 
 export function parseCliArgs(argv) {
   const options = {
+    bearerToken: undefined,
     urls: [],
     outDir: DEFAULT_OUT_DIR,
     enumThreshold: DEFAULT_ENUM_THRESHOLD,
@@ -31,6 +32,16 @@ export function parseCliArgs(argv) {
         throw new Error('Missing value for --url');
       }
       options.urls.push(value);
+      index += 1;
+      continue;
+    }
+
+    if (argument === '--bearer-token') {
+      const value = argv[index + 1];
+      if (!value) {
+        throw new Error('Missing value for --bearer-token');
+      }
+      options.bearerToken = value;
       index += 1;
       continue;
     }
@@ -99,6 +110,7 @@ Usage:
 
 Options:
   --url <url>            Add a URL to inspect. Can be used multiple times.
+  --bearer-token <token> Send an Authorization: Bearer header with each request.
   --out-dir <path>       Output directory. Default: ${DEFAULT_OUT_DIR}
   --sample-size <count>  Number of array elements to inspect per array. Use "all" to inspect every element.
                          Default: all elements
@@ -396,8 +408,15 @@ export function decompressIfNeeded(buffer, url) {
   return buffer;
 }
 
-export async function downloadBuffer(url) {
-  const response = await fetch(url);
+export async function downloadBuffer(url, options = {}) {
+  const headers = {};
+  if (options.bearerToken) {
+    headers.Authorization = `Bearer ${options.bearerToken}`;
+  }
+
+  const response = await fetch(url, {
+    headers,
+  });
   if (!response.ok) {
     throw new Error(`Failed to download ${url}: ${response.status} ${response.statusText}`);
   }
@@ -430,7 +449,7 @@ export async function processUrl(url, options = {}) {
   const itemOutDir = path.join(effectiveOptions.outDir, label);
   await mkdir(itemOutDir, { recursive: true });
 
-  const compressed = await downloadBuffer(url);
+  const compressed = await downloadBuffer(url, effectiveOptions);
   const decompressed = decompressIfNeeded(compressed, url);
   const text = decompressed.toString('utf8');
   const data = JSON.parse(text);
@@ -509,5 +528,4 @@ if (launchedDirectly) {
     process.exitCode = 1;
   });
 }
-
 
