@@ -22,6 +22,11 @@
       "item": {
         "id": 211297,
         "context": 52,
+        "bonus_lists": [
+          12499,
+          12252,
+          12251
+        ],
         "modifiers": [
           {
             "type": "PLAYER_LEVEL",

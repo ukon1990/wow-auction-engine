@@ -1,13 +1,12 @@
 package net.jonasmf.auctionengine.dto.auction
 
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItem
+import net.jonasmf.auctionengine.utility.AuctionVariantKeyUtility
 
 data class AuctionItemDTO(
     val id: Int,
     val modifiers: List<ModifierDTO>? = null,
-    // Equipment specific fields
-    // @OneToMany
-    // val bonus_lists: List<Int>? = mutableListOf<Int>(),
+    val bonus_lists: List<Int>? = null,
     val context: Int? = null, // Raid, Dungeon, Delve, PvP, etc.
     // Pet specific fields
     val pet_breed_id: Int? = null,
@@ -20,6 +19,7 @@ data class AuctionItemDTO(
             id = null,
             itemId = id,
             modifiers = modifiers?.map { it.toDBO() }?.toMutableList(),
+            bonusLists = AuctionVariantKeyUtility.canonicalBonusKey(bonus_lists),
             context = context,
             petBreedId = pet_breed_id,
             petLevel = pet_level,

@@ -33,6 +33,9 @@ class AuctionHousePrice(
     @Id
     @Column(name = "modifier_key")
     var modifierKey: String = "",
+    @Id
+    @Column(name = "bonus_key")
+    var bonusKey: String = "",
     @Column(name = "price")
     var price: Long? = null,
     @Column(name = "quantity")

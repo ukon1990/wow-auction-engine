@@ -10,4 +10,5 @@ data class AuctionHousePriceId(
     var itemId: Int = 0,
     var petSpeciesId: Int = 0,
     var modifierKey: String = "",
+    var bonusKey: String = "",
 ) : Serializable

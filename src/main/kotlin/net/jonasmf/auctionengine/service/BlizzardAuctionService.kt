@@ -15,6 +15,7 @@ import net.jonasmf.auctionengine.integration.blizzard.DownloadedAuctionPayload
 import net.jonasmf.auctionengine.repository.rds.AuctionItemModifierRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionItemRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionRepository
+import net.jonasmf.auctionengine.utility.AuctionVariantKeyUtility
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -437,6 +438,7 @@ class BlizzardAuctionService(
                         auctionDTO.item.pet_quality_id,
                         auctionDTO.item.pet_species_id,
                         auctionDTO.item.context,
+                        AuctionVariantKeyUtility.canonicalBonusKey(auctionDTO.item.bonus_lists),
                     )
 
                 val existingItem =
@@ -444,7 +446,7 @@ class BlizzardAuctionService(
                         if (existingItems.size > 1) {
                             duplicateItemCount++
                             logger.debug(
-                                "Found ${existingItems.size} duplicate items for itemId=${auctionDTO.item.id}, petBreedId=${auctionDTO.item.pet_breed_id}, petLevel=${auctionDTO.item.pet_level}, petQualityId=${auctionDTO.item.pet_quality_id}, petSpeciesId=${auctionDTO.item.pet_species_id}, context=${auctionDTO.item.context}. Using first match.",
+                                "Found ${existingItems.size} duplicate items for itemId=${auctionDTO.item.id}, petBreedId=${auctionDTO.item.pet_breed_id}, petLevel=${auctionDTO.item.pet_level}, petQualityId=${auctionDTO.item.pet_quality_id}, petSpeciesId=${auctionDTO.item.pet_species_id}, context=${auctionDTO.item.context}, bonusLists=${auctionDTO.item.bonus_lists}. Using first match.",
                             )
                         }
                         existingItems.first()
@@ -529,7 +531,23 @@ class BlizzardAuctionService(
     }
 
     private fun createItemKey(item: net.jonasmf.auctionengine.dto.auction.AuctionItemDTO): String =
-        "${item.id}_${item.pet_breed_id ?: "null"}_${item.pet_level ?: "null"}_${item.pet_quality_id ?: "null"}_${item.pet_species_id ?: "null"}_${item.context ?: "null"}_${item.modifiers?.hashCode() ?: "null"}"
+        buildString {
+            append(item.id)
+            append('_')
+            append(item.pet_breed_id ?: "null")
+            append('_')
+            append(item.pet_level ?: "null")
+            append('_')
+            append(item.pet_quality_id ?: "null")
+            append('_')
+            append(item.pet_species_id ?: "null")
+            append('_')
+            append(item.context ?: "null")
+            append('_')
+            append(item.modifiers?.hashCode() ?: "null")
+            append('_')
+            append(AuctionVariantKeyUtility.canonicalBonusKey(item.bonus_lists))
+        }
 
     private fun saveItemsInBatches(
         items: List<AuctionItemDBO>,

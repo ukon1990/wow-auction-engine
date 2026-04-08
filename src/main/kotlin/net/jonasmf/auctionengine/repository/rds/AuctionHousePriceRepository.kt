@@ -19,6 +19,13 @@ interface AuctionHousePriceRepository : JpaRepository<AuctionHousePrice, Auction
         modifierKey: String,
     ): List<AuctionHousePrice>
 
+    fun findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByAuctionTimestampAsc(
+        connectedRealmId: Int,
+        itemId: Int,
+        modifierKey: String,
+        bonusKey: String,
+    ): List<AuctionHousePrice>
+
     fun findAllByAuctionTimestampBetweenOrderByAuctionTimestampAsc(
         from: LocalDateTime,
         to: LocalDateTime,

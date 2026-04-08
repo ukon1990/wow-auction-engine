@@ -6,9 +6,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
-import net.jonasmf.auctionengine.dto.auction.ModifierDTO
 import net.jonasmf.auctionengine.repository.rds.HourlyPriceStatisticsRepository
 import net.jonasmf.auctionengine.repository.rds.HourlyStatsUpsertRow
+import net.jonasmf.auctionengine.utility.AuctionVariantKeyUtility
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -78,12 +78,13 @@ class HourlyPriceStatisticsService(
         iterateAuctions { auction ->
             val itemId = auction.item.id
             val petSpeciesId = auction.item.pet_species_id
-            val modifierKey = canonicalModifierKey(auction.item.modifiers)
+            val modifierKey = AuctionVariantKeyUtility.canonicalModifierKey(auction.item.modifiers)
+            val bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auction.item.bonus_lists)
             val key = "${connectedRealm.id}|${
                 GameBuildVersion.RETAIL.ordinal
             }|$itemId|$date|${
                 petSpeciesId ?: ""
-            }|$modifierKey"
+            }|$modifierKey|$bonusKey"
             val price = auction.buyout ?: auction.unit_price ?: 0L
             val quantity = auction.quantity.takeIf { it > 0 } ?: 1L
 
@@ -97,6 +98,7 @@ class HourlyPriceStatisticsService(
                         date = date,
                         petSpeciesId = petSpeciesId,
                         modifierKey = modifierKey,
+                        bonusKey = bonusKey,
                         price = price,
                         quantity = quantity,
                     )
@@ -174,10 +176,4 @@ class HourlyPriceStatisticsService(
             }
         }
     }
-
-    private fun canonicalModifierKey(modifiers: List<ModifierDTO>?): String =
-        modifiers
-            .orEmpty()
-            .sortedBy { it.value }
-            .joinToString(",") { it.value.toString() }
 }
