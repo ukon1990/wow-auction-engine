@@ -531,9 +531,23 @@ class BlizzardAuctionService(
     }
 
     private fun createItemKey(item: net.jonasmf.auctionengine.dto.auction.AuctionItemDTO): String =
-        "${item.id}_${item.pet_breed_id ?: "null"}_${item.pet_level ?: "null"}_${item.pet_quality_id ?: "null"}_${item.pet_species_id ?: "null"}_${item.context ?: "null"}_${item.modifiers?.hashCode() ?: "null"}_${AuctionVariantKeyUtility.canonicalBonusKey(
-            item.bonus_lists,
-        )}"
+        buildString {
+            append(item.id)
+            append('_')
+            append(item.pet_breed_id ?: "null")
+            append('_')
+            append(item.pet_level ?: "null")
+            append('_')
+            append(item.pet_quality_id ?: "null")
+            append('_')
+            append(item.pet_species_id ?: "null")
+            append('_')
+            append(item.context ?: "null")
+            append('_')
+            append(item.modifiers?.hashCode() ?: "null")
+            append('_')
+            append(AuctionVariantKeyUtility.canonicalBonusKey(item.bonus_lists))
+        }
 
     private fun saveItemsInBatches(
         items: List<AuctionItemDBO>,
