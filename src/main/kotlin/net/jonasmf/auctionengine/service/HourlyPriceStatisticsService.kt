@@ -6,9 +6,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
-import net.jonasmf.auctionengine.dto.auction.ModifierDTO
 import net.jonasmf.auctionengine.repository.rds.HourlyPriceStatisticsRepository
 import net.jonasmf.auctionengine.repository.rds.HourlyStatsUpsertRow
+import net.jonasmf.auctionengine.utility.AuctionVariantKeyUtility
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -174,10 +174,4 @@ class HourlyPriceStatisticsService(
             }
         }
     }
-
-    private fun canonicalModifierKey(modifiers: List<ModifierDTO>?): String =
-        modifiers
-            .orEmpty()
-            .sortedBy { it.value }
-            .joinToString(",") { it.value.toString() }
 }
