@@ -13,6 +13,7 @@ data class HourlyStatsUpsertRow(
     val date: LocalDate,
     val petSpeciesId: Int?,
     val modifierKey: String,
+    val bonusKey: String,
     val price: Long?,
     val quantity: Long?,
 )
@@ -34,7 +35,7 @@ class HourlyPriceStatisticsRepository(
         val priceColumn = "price%02d".format(hour)
         val quantityColumn = "quantity%02d".format(hour)
         val tableName = "hourly_auction_stats"
-        val numberOfColumns = 8
+        val numberOfColumns = 9
         var total = 0
         val valueTuple = List(numberOfColumns) { "?" }.joinToString(",", "(", ")")
 
@@ -49,6 +50,7 @@ class HourlyPriceStatisticsRepository(
                     date,
                     pet_species_id,
                     modifier_key,
+                    bonus_key,
                     $priceColumn,
                     $quantityColumn
                 ) VALUES $placeholders
@@ -65,6 +67,7 @@ class HourlyPriceStatisticsRepository(
                 params.add(Date.valueOf(row.date))
                 params.add(row.petSpeciesId ?: -1)
                 params.add(row.modifierKey)
+                params.add(row.bonusKey)
                 params.add(row.price)
                 params.add(row.quantity)
             }

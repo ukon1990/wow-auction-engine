@@ -27,6 +27,7 @@ interface AuctionItemRepository : JpaRepository<AuctionItem, Long> {
         AND ai.petQualityId = :petQualityId 
         AND ai.petSpeciesId = :petSpeciesId 
         AND ai.context = :context
+        AND ai.bonusLists = :bonusLists
     """,
     )
     fun findByCompositeKey(
@@ -36,6 +37,7 @@ interface AuctionItemRepository : JpaRepository<AuctionItem, Long> {
         @Param("petQualityId") petQualityId: Int?,
         @Param("petSpeciesId") petSpeciesId: Int?,
         @Param("context") context: Int?,
+        @Param("bonusLists") bonusLists: String,
     ): AuctionItem?
 
     @Query(
@@ -47,6 +49,7 @@ interface AuctionItemRepository : JpaRepository<AuctionItem, Long> {
         AND (ai.petQualityId = :petQualityId OR (ai.petQualityId IS NULL AND :petQualityId IS NULL))
         AND (ai.petSpeciesId = :petSpeciesId OR (ai.petSpeciesId IS NULL AND :petSpeciesId IS NULL))
         AND (ai.context = :context OR (ai.context IS NULL AND :context IS NULL))
+        AND ai.bonusLists = :bonusLists
     """,
     )
     fun findByCompositeKeyWithNullHandlingList(
@@ -56,5 +59,6 @@ interface AuctionItemRepository : JpaRepository<AuctionItem, Long> {
         @Param("petQualityId") petQualityId: Int?,
         @Param("petSpeciesId") petSpeciesId: Int?,
         @Param("context") context: Int?,
+        @Param("bonusLists") bonusLists: String,
     ): List<AuctionItem>
 }
