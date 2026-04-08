@@ -1,0 +1,75 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2826?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 2826,
+    "name": "Dragon Isles Fishing",
+    "minimum_skill_level": 1,
+    "maximum_skill_level": 100,
+    "categories": [
+        {
+            "name": "Freshwater",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47906?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Thousandbite Piranha",
+                    "id": 47906
+                },
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47909?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Temporal Dragonhead",
+                    "id": 47909
+                }
+            ]
+        },
+        {
+            "name": "Saltwater",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47907?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Cerulean Spinefish",
+                    "id": 47907
+                },
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47908?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Aileron Seamoth",
+                    "id": 47908
+                }
+            ]
+        },
+        {
+            "name": "General Fishing",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47910?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Shimmering Treasure",
+                    "id": 47910
+                }
+            ]
+        },
+        {
+            "name": "Specialty Fishing",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47913?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Rimefin Tuna",
+                    "id": 47913
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51965?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51965,
+    "name": "Eversong Woods",
+    "description": "Recommended Skill: 1\r\n\r\nCalm and serene waters make it an ideal location for Anglers to begin exploring what the depths have to offer.\r\n\r\nPools found in this zone:\r\n- Sunwell Swarm\r\n- Bubbling Bloom\r\n- Bloom Swarm\r\n- Viscous Void\r\n- Careless Cargo\r\n- Lost Treasures",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51965?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51965
+    }
+}

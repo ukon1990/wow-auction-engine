@@ -1,0 +1,106 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/164?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 164,
+    "name": "Blacksmithing",
+    "description": "Higher smithing skill allows you to learn higher level smithing plans.  Blacksmithing plans can be found on trainers around the world as well as from quests and monsters.",
+    "type": {
+        "type": "PRIMARY",
+        "name": "Primary"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/profession/164?namespace=static-12.0.1_65617-us"
+        },
+        "id": 164
+    },
+    "skill_tiers": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2437?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Kul Tiran Blacksmithing / Zandalari Blacksmithing",
+            "id": 2437
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2454?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Legion Blacksmithing",
+            "id": 2454
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2472?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Draenor Blacksmithing",
+            "id": 2472
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2473?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Pandaria Blacksmithing",
+            "id": 2473
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2474?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Cataclysm Blacksmithing",
+            "id": 2474
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2475?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Northrend Blacksmithing",
+            "id": 2475
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2476?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Outland Blacksmithing",
+            "id": 2476
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2477?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Classic Blacksmithing",
+            "id": 2477
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2751?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Shadowlands Blacksmithing",
+            "id": 2751
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2822?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Dragon Isles Blacksmithing",
+            "id": 2822
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2872?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Khaz Algar Blacksmithing",
+            "id": 2872
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2907?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Midnight Blacksmithing",
+            "id": 2907
+        }
+    ]
+}

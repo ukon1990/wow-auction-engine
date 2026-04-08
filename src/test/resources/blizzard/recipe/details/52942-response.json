@@ -1,0 +1,48 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52942?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 52942,
+    "name": "Enchant Shoulders - Flight of the Eagle",
+    "description": "Permanently enchants shoulder armor with Flight of the Eagle, increasing Speed by $ec1. Cannot be applied to items lower than level $ecim.\r\n\r\nAmani Augments - Berserker Brawn ",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52942?namespace=static-12.0.1_65617-us"
+        },
+        "id": 52942
+    },
+    "modified_crafting_slots": [
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/404?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Eversinging Dust",
+                "id": 404
+            },
+            "display_order": 0
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/403?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Radiant Shard",
+                "id": 403
+            },
+            "display_order": 1
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Artisan's Authenticity",
+                "id": 388
+            },
+            "display_order": 2
+        }
+    ]
+}

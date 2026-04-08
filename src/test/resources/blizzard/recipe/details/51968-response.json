@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51968?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51968,
+    "name": "Twisted Tetra",
+    "description": "An eel whose body camouflages within the roots that make up the riverbeds of the Harandar. The Twisted Tetra lies in wait for Bloomtail Minnows who become too comfortable with their surroundings.\r\n\r\nSpecial: \r\n\r\n Fresh Fillet\r\n\r\nSalvaging this fish with the Cooking skill can produce Fresh Fillet.\r\n\r\nAreas you can find this fish:\r\n- Harandar\r\n- Zul'Aman\r\n\r\nFishing Pools:\r\n- Obscured School\r\n- Lashing Waves",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51968?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51968
+    }
+}

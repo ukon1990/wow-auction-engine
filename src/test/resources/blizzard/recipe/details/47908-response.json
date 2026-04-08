@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/47908?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 47908,
+    "name": "Aileron Seamoth",
+    "description": "Aileron Seamoth glide across the ocean floor and jet upwards when they suspect a tasty treat!\r\n\r\nThese saltwater schools can be found primarily in the ocean and other bodies of water connected to it.\r\n\r\nThey are especially active in areas such as Iskaara in The Azure Span.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/47908?namespace=static-12.0.1_65617-us"
+        },
+        "id": 47908
+    }
+}

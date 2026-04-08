@@ -1,0 +1,106 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/356?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 356,
+    "name": "Fishing",
+    "description": "Higher fishing skill increases your chance of catching fish in bodies of water around the world.  If you are having trouble catching fish in a given area, move to a lower level area or purchase a fishing lure and try again.",
+    "type": {
+        "type": "SECONDARY",
+        "name": "Secondary"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/profession/356?namespace=static-12.0.1_65617-us"
+        },
+        "id": 356
+    },
+    "skill_tiers": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2585?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Kul Tiran Fishing / Zandalari Fishing",
+            "id": 2585
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2586?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Legion Fishing",
+            "id": 2586
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2587?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Draenor Fishing",
+            "id": 2587
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2588?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Pandaria Fishing",
+            "id": 2588
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2589?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Cataclysm Fishing",
+            "id": 2589
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2590?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Northrend Fishing",
+            "id": 2590
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2591?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Outland Fishing",
+            "id": 2591
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2592?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Classic Fishing",
+            "id": 2592
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2754?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Shadowlands Fishing",
+            "id": 2754
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2826?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Dragon Isles Fishing",
+            "id": 2826
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2876?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Khaz Algar Fishing",
+            "id": 2876
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2911?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Midnight Fishing",
+            "id": 2911
+        }
+    ]
+}

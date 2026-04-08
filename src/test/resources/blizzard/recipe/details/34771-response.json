@@ -1,0 +1,17 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/34771?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 34771,
+    "name": "Dreamleaf",
+    "description": "Gather dreamleaf more effectively.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/34771?namespace=static-12.0.1_65617-us"
+        },
+        "id": 34771
+    },
+    "rank": 1
+}

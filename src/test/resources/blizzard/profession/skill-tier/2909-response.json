@@ -1,0 +1,85 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2909?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 2909,
+    "name": "Midnight Enchanting",
+    "minimum_skill_level": 1,
+    "maximum_skill_level": 100,
+    "categories": [
+        {
+            "name": "Recrafting",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51521?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Recraft Equipment",
+                    "id": 51521
+                }
+            ]
+        },
+        {
+            "name": "Chest Enchants",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52935?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Enchant Chest - Mark of Nalorakk",
+                    "id": 52935
+                }
+            ]
+        },
+        {
+            "name": "Helm Enchants",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52936?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Enchant Helm - Hex of Leeching",
+                    "id": 52936
+                }
+            ]
+        },
+        {
+            "name": "Boot Enchants",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52938?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Enchant Boots - Lynx's Dexterity",
+                    "id": 52938
+                }
+            ]
+        },
+        {
+            "name": "Rings Enchants",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52939?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Enchant Ring - Amani Mastery",
+                    "id": 52939
+                }
+            ]
+        },
+        {
+            "name": "Shoulder Enchants",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52942?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Enchant Shoulders - Flight of the Eagle",
+                    "id": 52942
+                }
+            ]
+        }
+    ]
+}

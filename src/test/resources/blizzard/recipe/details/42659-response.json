@@ -1,0 +1,47 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42659?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42659,
+    "name": "Enchanted Elethium Bar",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42659?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42659
+    },
+    "crafted_item": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item/172437?namespace=static-12.0.1_65617-us"
+        },
+        "name": "Enchanted Elethium Bar",
+        "id": 172437
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/172230?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Soul Dust",
+                "id": 172230
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171833?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Elethium Ore",
+                "id": 171833
+            },
+            "quantity": 2
+        }
+    ],
+    "crafted_quantity": {
+        "value": 1
+    }
+}

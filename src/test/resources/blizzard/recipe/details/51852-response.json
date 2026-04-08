@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51852?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51852,
+    "name": "Sanguithorn",
+    "description": "Once only usable as an edible plant for fleeting magical power, recent evolutionary changes and alchemical breakthroughs with bloodthistle have led to it's use across the professions. This more potent growth has come to be known as sanguithorn, and still boasts fearsome magical capabilities.\r\n\r\nSanguithorn are known to tether themselves to rocks, either above or under the ground, so check for them in more rugged terrain.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51852?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51852
+    }
+}

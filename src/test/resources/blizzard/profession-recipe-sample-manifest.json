@@ -1,0 +1,306 @@
+[
+    {
+        "professionId": 164,
+        "professionName": "Blacksmithing",
+        "skillTierId": 2907,
+        "skillTierName": "Midnight Blacksmithing",
+        "recipes": [
+            {
+                "id": 51520,
+                "name": "Recraft Equipment",
+                "category": "Recrafting"
+            },
+            {
+                "id": 52333,
+                "name": "Sun-Blessed Blacksmith's Hammer",
+                "category": "Profession Equipment"
+            },
+            {
+                "id": 52349,
+                "name": "Primalforged Heavy Axe",
+                "category": "Weapons"
+            },
+            {
+                "id": 52356,
+                "name": "Blood-Tempered Gauntlets",
+                "category": "Armor"
+            },
+            {
+                "id": 52365,
+                "name": "Thalassian Competitor's Sword",
+                "category": "Competitor's Plate (PvP)"
+            },
+            {
+                "id": 52666,
+                "name": "Refulgent Whetstone",
+                "category": "Stonework"
+            }
+        ]
+    },
+    {
+        "professionId": 164,
+        "professionName": "Blacksmithing",
+        "skillTierId": 2751,
+        "skillTierName": "Shadowlands Blacksmithing",
+        "recipes": [
+            {
+                "id": 42363,
+                "name": "Ceremonious Breastplate",
+                "category": "Armor"
+            },
+            {
+                "id": 42368,
+                "name": "Ceremonious Shield",
+                "category": "Shields"
+            },
+            {
+                "id": 42381,
+                "name": "Shadowghast Breastplate",
+                "category": "Specialized Armor"
+            },
+            {
+                "id": 42389,
+                "name": "Shadowghast Ingot",
+                "category": "Reagents"
+            },
+            {
+                "id": 42397,
+                "name": "Laestrite Skeleton Key",
+                "category": "Other"
+            },
+            {
+                "id": 42406,
+                "name": "Ceremonious Axe",
+                "category": "Weapons"
+            }
+        ]
+    },
+    {
+        "professionId": 333,
+        "professionName": "Enchanting",
+        "skillTierId": 2909,
+        "skillTierName": "Midnight Enchanting",
+        "recipes": [
+            {
+                "id": 51521,
+                "name": "Recraft Equipment",
+                "category": "Recrafting"
+            },
+            {
+                "id": 52935,
+                "name": "Enchant Chest - Mark of Nalorakk",
+                "category": "Chest Enchants"
+            },
+            {
+                "id": 52936,
+                "name": "Enchant Helm - Hex of Leeching",
+                "category": "Helm Enchants"
+            },
+            {
+                "id": 52938,
+                "name": "Enchant Boots - Lynx's Dexterity",
+                "category": "Boot Enchants"
+            },
+            {
+                "id": 52939,
+                "name": "Enchant Ring - Amani Mastery",
+                "category": "Rings Enchants"
+            },
+            {
+                "id": 52942,
+                "name": "Enchant Shoulders - Flight of the Eagle",
+                "category": "Shoulder Enchants"
+            }
+        ]
+    },
+    {
+        "professionId": 333,
+        "professionName": "Enchanting",
+        "skillTierId": 2753,
+        "skillTierName": "Shadowlands Enchanting",
+        "recipes": [
+            {
+                "id": 42637,
+                "name": "Eternal Agility",
+                "category": "Boot Enchantments"
+            },
+            {
+                "id": 42638,
+                "name": "Eternal Bulwark",
+                "category": "Chest Enchantments"
+            },
+            {
+                "id": 42639,
+                "name": "Fortified Speed",
+                "category": "Cloak Enchantments"
+            },
+            {
+                "id": 42643,
+                "name": "Shadowlands Gathering",
+                "category": "Glove Enchantments"
+            },
+            {
+                "id": 42655,
+                "name": "Illuminated Soul",
+                "category": "Bracer Enchantments"
+            },
+            {
+                "id": 42659,
+                "name": "Enchanted Elethium Bar",
+                "category": "Reagents"
+            }
+        ]
+    },
+    {
+        "professionId": 182,
+        "professionName": "Herbalism",
+        "skillTierId": 2912,
+        "skillTierName": "Midnight Herbalism",
+        "recipes": [
+            {
+                "id": 51818,
+                "name": "Magical Mulch",
+                "category": "Mulch"
+            },
+            {
+                "id": 51851,
+                "name": "Tranquility Bloom",
+                "category": "Section I - Peacebloom"
+            },
+            {
+                "id": 51852,
+                "name": "Sanguithorn",
+                "category": "Section II - Sanguithorn"
+            },
+            {
+                "id": 51853,
+                "name": "Azeroot",
+                "category": "Section III - Azeroot"
+            },
+            {
+                "id": 51854,
+                "name": "Argentleaf",
+                "category": "Section IV - Argentleaf"
+            },
+            {
+                "id": 51855,
+                "name": "Mana Lily",
+                "category": "Section V - Mana Lily"
+            }
+        ]
+    },
+    {
+        "professionId": 182,
+        "professionName": "Herbalism",
+        "skillTierId": 2550,
+        "skillTierName": "Legion Herbalism",
+        "recipes": [
+            {
+                "id": 34768,
+                "name": "Aethril",
+                "category": "Gathering Techniques"
+            },
+            {
+                "id": 34769,
+                "name": "Aethril",
+                "category": "Gathering Techniques"
+            },
+            {
+                "id": 34770,
+                "name": "Aethril",
+                "category": "Gathering Techniques"
+            },
+            {
+                "id": 34771,
+                "name": "Dreamleaf",
+                "category": "Gathering Techniques"
+            },
+            {
+                "id": 34772,
+                "name": "Dreamleaf",
+                "category": "Gathering Techniques"
+            },
+            {
+                "id": 34773,
+                "name": "Dreamleaf",
+                "category": "Gathering Techniques"
+            }
+        ]
+    },
+    {
+        "professionId": 356,
+        "professionName": "Fishing",
+        "skillTierId": 2911,
+        "skillTierName": "Midnight Fishing",
+        "recipes": [
+            {
+                "id": 51945,
+                "name": "Sin'dorei Swarmer",
+                "category": "Common Fish"
+            },
+            {
+                "id": 51965,
+                "name": "Eversong Woods",
+                "category": "Zones"
+            },
+            {
+                "id": 51968,
+                "name": "Twisted Tetra",
+                "category": "Rare Fish"
+            },
+            {
+                "id": 51969,
+                "name": "Bloomtail Minnow",
+                "category": "Uncommon Fish"
+            },
+            {
+                "id": 51988,
+                "name": "Midnight Anglin'",
+                "category": "Information"
+            },
+            {
+                "id": 52039,
+                "name": "Lucky Loa Lure",
+                "category": "Crafting"
+            }
+        ]
+    },
+    {
+        "professionId": 356,
+        "professionName": "Fishing",
+        "skillTierId": 2826,
+        "skillTierName": "Dragon Isles Fishing",
+        "recipes": [
+            {
+                "id": 47906,
+                "name": "Thousandbite Piranha",
+                "category": "Freshwater"
+            },
+            {
+                "id": 47907,
+                "name": "Cerulean Spinefish",
+                "category": "Saltwater"
+            },
+            {
+                "id": 47910,
+                "name": "Shimmering Treasure",
+                "category": "General Fishing"
+            },
+            {
+                "id": 47913,
+                "name": "Rimefin Tuna",
+                "category": "Specialty Fishing"
+            },
+            {
+                "id": 47909,
+                "name": "Temporal Dragonhead",
+                "category": "Freshwater"
+            },
+            {
+                "id": 47908,
+                "name": "Aileron Seamoth",
+                "category": "Saltwater"
+            }
+        ]
+    }
+]

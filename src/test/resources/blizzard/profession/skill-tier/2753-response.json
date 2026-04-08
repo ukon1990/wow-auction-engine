@@ -1,0 +1,85 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2753?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 2753,
+    "name": "Shadowlands Enchanting",
+    "minimum_skill_level": 1,
+    "maximum_skill_level": 115,
+    "categories": [
+        {
+            "name": "Boot Enchantments",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42637?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Eternal Agility",
+                    "id": 42637
+                }
+            ]
+        },
+        {
+            "name": "Chest Enchantments",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42638?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Eternal Bulwark",
+                    "id": 42638
+                }
+            ]
+        },
+        {
+            "name": "Cloak Enchantments",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42639?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Fortified Speed",
+                    "id": 42639
+                }
+            ]
+        },
+        {
+            "name": "Glove Enchantments",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42643?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Shadowlands Gathering",
+                    "id": 42643
+                }
+            ]
+        },
+        {
+            "name": "Bracer Enchantments",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42655?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Illuminated Soul",
+                    "id": 42655
+                }
+            ]
+        },
+        {
+            "name": "Reagents",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42659?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Enchanted Elethium Bar",
+                    "id": 42659
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,60 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2550?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 2550,
+    "name": "Legion Herbalism",
+    "minimum_skill_level": 1,
+    "maximum_skill_level": 100,
+    "categories": [
+        {
+            "name": "Gathering Techniques",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/34768?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Aethril",
+                    "id": 34768
+                },
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/34769?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Aethril",
+                    "id": 34769
+                },
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/34770?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Aethril",
+                    "id": 34770
+                },
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/34771?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Dreamleaf",
+                    "id": 34771
+                },
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/34772?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Dreamleaf",
+                    "id": 34772
+                },
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/34773?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Dreamleaf",
+                    "id": 34773
+                }
+            ]
+        }
+    ]
+}

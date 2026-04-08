@@ -1,0 +1,77 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42389?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42389,
+    "name": "Shadowghast Ingot",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42389?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42389
+    },
+    "crafted_item": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item/171428?namespace=static-12.0.1_65617-us"
+        },
+        "name": "Shadowghast Ingot",
+        "id": 171428
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171829?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Solenium Ore",
+                "id": 171829
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171832?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Sinvyr Ore",
+                "id": 171832
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171831?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Phaedrum Ore",
+                "id": 171831
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171830?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Oxxein Ore",
+                "id": 171830
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Luminous Flux",
+                "id": 180733
+            },
+            "quantity": 4
+        }
+    ],
+    "crafted_quantity": {
+        "value": 2
+    }
+}

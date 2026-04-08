@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51988?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51988,
+    "name": "Midnight Anglin'",
+    "description": "Becoming an Angler is easy!\r\n\r\nCast your line and reel in the many secrets Midnight has to offer.\r\n\r\nCaught Fish will appear here in your trusty Fishing Journal. The records here will detail these fanciful fish and give indication on where you might find them again!\r\n\r\n",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51988?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51988
+    }
+}

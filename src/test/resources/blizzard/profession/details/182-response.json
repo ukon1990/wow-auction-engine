@@ -1,0 +1,106 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/182?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 182,
+    "name": "Herbalism",
+    "description": "Higher herbalism skill allows you to harvest more difficult herbs around the world.  If you cannot harvest a specific herb, then increase your skill by harvesting easier to gather herbs in lower level areas.",
+    "type": {
+        "type": "PRIMARY",
+        "name": "Primary"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/profession/182?namespace=static-12.0.1_65617-us"
+        },
+        "id": 182
+    },
+    "skill_tiers": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2549?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Kul Tiran Herbalism / Zandalari Herbalism",
+            "id": 2549
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2550?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Legion Herbalism",
+            "id": 2550
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2551?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Draenor Herbalism",
+            "id": 2551
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2552?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Pandaria Herbalism",
+            "id": 2552
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2553?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Cataclysm Herbalism",
+            "id": 2553
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2554?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Northrend Herbalism",
+            "id": 2554
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2555?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Outland Herbalism",
+            "id": 2555
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2556?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Classic Herbalism",
+            "id": 2556
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2760?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Shadowlands Herbalism",
+            "id": 2760
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2832?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Dragon Isles Herbalism",
+            "id": 2832
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2877?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Khaz Algar Herbalism",
+            "id": 2877
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2912?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Midnight Herbalism",
+            "id": 2912
+        }
+    ]
+}

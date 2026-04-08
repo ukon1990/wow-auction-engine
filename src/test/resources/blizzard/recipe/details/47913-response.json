@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/47913?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 47913,
+    "name": "Rimefin Tuna",
+    "description": "Rimefin Tuna are a large, fatty fish coated in a thin layer of protective ice. The thick layer of fat protects their vital organs in below freezing temperatures. \r\n\r\nYou can find these pools in especially frosty climates around the Dragon Isles.\r\n\r\nThe Iskaara Tuskarr are experts in catching these kinds of special fish.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/47913?namespace=static-12.0.1_65617-us"
+        },
+        "id": 47913
+    }
+}

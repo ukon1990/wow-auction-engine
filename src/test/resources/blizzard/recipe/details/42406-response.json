@@ -1,0 +1,59 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42406?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42406,
+    "name": "Ceremonious Axe",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42406?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42406
+    },
+    "crafted_item": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item/171388?namespace=static-12.0.1_65617-us"
+        },
+        "name": "Ceremonious Axe",
+        "id": 171388
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171828?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Laestrite Ore",
+                "id": 171828
+            },
+            "quantity": 8
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Luminous Flux",
+                "id": 180733
+            },
+            "quantity": 6
+        }
+    ],
+    "crafted_quantity": {
+        "value": 1
+    },
+    "modified_crafting_slots": [
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/77?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Modify Item Level - Minor",
+                "id": 77
+            },
+            "display_order": 0
+        }
+    ]
+}

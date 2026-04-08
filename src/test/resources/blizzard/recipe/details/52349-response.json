@@ -1,0 +1,79 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52349?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 52349,
+    "name": "Primalforged Heavy Axe",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52349?namespace=static-12.0.1_65617-us"
+        },
+        "id": 52349
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/243060?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Luminant Flux",
+                "id": 243060
+            },
+            "quantity": 2
+        }
+    ],
+    "modified_crafting_slots": [
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/386?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Refulgent Copper Ingot",
+                "id": 386
+            },
+            "display_order": 0
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Add Embellishment",
+                "id": 390
+            },
+            "display_order": 1
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Customize Secondary Stats",
+                "id": 393
+            },
+            "display_order": 2
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/469?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Empower",
+                "id": 469
+            },
+            "display_order": 3
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Artisan's Authenticity",
+                "id": 388
+            },
+            "display_order": 4
+        }
+    ]
+}

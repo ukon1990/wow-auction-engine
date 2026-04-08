@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51945?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51945,
+    "name": "Sin'dorei Swarmer",
+    "description": "A mixture of crimson and cerulean scales adorns this nimble fish. A common fish in Eversong Woods, the Sin'dorei Swarmer travels and interacts with the waters in accordance to the school it's a part of.\r\n\r\nSpecial: \r\n\r\n Chum\r\n\r\nThrow the fish back into the water to gain 25 Midnight Fishing for 30 sec.\r\n\r\nThrowing multiple fish can extend this buff up to 5 min.\r\n\r\nAreas you can find this fish:\r\n- Eversong Woods\r\n- Zul'Aman\r\n\r\nFishing Pools:\r\n- Bubbling Bloom\r\n- Sunwell Swarm\r\n- Surface Ripple",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51945?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51945
+    }
+}

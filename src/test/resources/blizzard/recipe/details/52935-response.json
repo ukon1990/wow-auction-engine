@@ -1,0 +1,90 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52935?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 52935,
+    "name": "Enchant Chest - Mark of Nalorakk",
+    "description": "Permanently enchants chest armor with Mark of Nalorakk, increasing Strength by $ec1 and Stamina by $ec2. Cannot be applied to items lower than level $ecim.\r\n\r\nAmani Augments - Zul'Aman Zeal",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52935?namespace=static-12.0.1_65617-us"
+        },
+        "id": 52935
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/236951?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Mote of Wild Magic",
+                "id": 236951
+            },
+            "quantity": 5
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/238528?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Majestic Claw",
+                "id": 238528
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/251285?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Petrified Root",
+                "id": 251285
+            },
+            "quantity": 2
+        }
+    ],
+    "modified_crafting_slots": [
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/404?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Eversinging Dust",
+                "id": 404
+            },
+            "display_order": 0
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/403?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Radiant Shard",
+                "id": 403
+            },
+            "display_order": 1
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/402?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Dawn Crystal",
+                "id": 402
+            },
+            "display_order": 2
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Artisan's Authenticity",
+                "id": 388
+            },
+            "display_order": 3
+        }
+    ]
+}

@@ -1,0 +1,80 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42381?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42381,
+    "name": "Shadowghast Breastplate",
+    "description": "Create a piece of plate armor that is worthy of being infused with the power necessary to become a Legendary item.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42381?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42381
+    },
+    "crafted_item": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item/171412?namespace=static-12.0.1_65617-us"
+        },
+        "name": "Shadowghast Breastplate",
+        "id": 171412
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171428?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Shadowghast Ingot",
+                "id": 171428
+            },
+            "quantity": 30
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/172437?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Enchanted Elethium Bar",
+                "id": 172437
+            },
+            "quantity": 15
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Luminous Flux",
+                "id": 180733
+            },
+            "quantity": 30
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/178787?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Orboreal Shard",
+                "id": 178787
+            },
+            "quantity": 15
+        }
+    ],
+    "crafted_quantity": {
+        "value": 1
+    },
+    "modified_crafting_slots": [
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/110?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Increase Rank",
+                "id": 110
+            },
+            "display_order": 0
+        }
+    ]
+}

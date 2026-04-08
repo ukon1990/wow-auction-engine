@@ -1,0 +1,38 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52039?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 52039,
+    "name": "Lucky Loa Lure",
+    "description": "Prepare 5 Sin'dorei Swarmer to create a lure for catching Lucky Loa.\r\n",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52039?namespace=static-12.0.1_65617-us"
+        },
+        "id": 52039
+    },
+    "crafted_item": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item/241145?namespace=static-12.0.1_65617-us"
+        },
+        "name": "Lucky Loa Lure",
+        "id": 241145
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/238365?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Sin'dorei Swarmer",
+                "id": 238365
+            },
+            "quantity": 5
+        }
+    ],
+    "crafted_quantity": {
+        "value": 1
+    }
+}

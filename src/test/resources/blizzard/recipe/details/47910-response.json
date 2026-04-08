@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/47910?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 47910,
+    "name": "Shimmering Treasure",
+    "description": "Shimmering Treasure can appear in all bodies of water across the Dragon Isles. These pools contain untold treasures and are what every angler hopes to stumble upon.\r\n \r\nFishing in these pools significantly increases your chance for rare treasures.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/47910?namespace=static-12.0.1_65617-us"
+        },
+        "id": 47910
+    }
+}

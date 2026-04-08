@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51854?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51854,
+    "name": "Argentleaf",
+    "description": "The silverleaf of Quel'Thalas has grown more lustrous in recent years, gaining a unique sheen that allows anyone to recognize it at a glance. Because of these changes, this new offshoot of silverleaf has become known as argentleaf. \r\n\r\nRegularly found among other common foliage, it is a standard ingredient of many recipes and is thus highly sought after.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51854?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51854
+    }
+}

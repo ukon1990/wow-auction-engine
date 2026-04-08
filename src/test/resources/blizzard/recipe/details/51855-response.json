@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51855?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51855,
+    "name": "Mana Lily",
+    "description": "Another recent offshoot species, mana lily is a new variant of mageroyal. The latent magic present in the Quel'Thalas region has seeped into the mana lily, giving them potent properties for crafting.\r\n\r\nIf you're ever gathering around bodies of water, you can expect to find mana lilies somewhere nearby.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51855?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51855
+    }
+}

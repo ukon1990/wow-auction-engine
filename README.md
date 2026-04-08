@@ -194,6 +194,22 @@ Useful detail for onboarding:
 - Docker Desktop or another working Docker daemon must be running for tests to pass
 - `WAE_BLIZZARD_REGION` is still accepted as a fallback, but new config and deployment work should use `WAE_BLIZZARD_REGIONS`
 
+## Profession/Recipe Test Fixtures
+
+Profession and recipe integration fixtures now use a structured layout under [`src/test/resources/blizzard`](src/test/resources/blizzard):
+
+- [`src/test/resources/blizzard/profession/index-response.json`](src/test/resources/blizzard/profession/index-response.json)
+- [`src/test/resources/blizzard/profession/details`](src/test/resources/blizzard/profession/details) for `GET /profession/{id}`
+- [`src/test/resources/blizzard/profession/skill-tier`](src/test/resources/blizzard/profession/skill-tier) for `GET /profession/{id}/skill-tier/{skillTierId}`
+- [`src/test/resources/blizzard/recipe/details`](src/test/resources/blizzard/recipe/details) for `GET /recipe/{id}`
+- [`src/test/resources/blizzard/profession-recipe-sample-manifest.json`](src/test/resources/blizzard/profession-recipe-sample-manifest.json) describing sampled tiers and recipe IDs
+
+Current sample policy:
+
+- professions: Blacksmithing, Enchanting, Herbalism, Fishing
+- tiers: Midnight + one older tier per profession
+- recipe sampling: 5-10 recipes per selected skill tier (default 6)
+
 ## Useful Commands
 
 Run the app:

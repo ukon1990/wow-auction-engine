@@ -1,0 +1,85 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2907?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 2907,
+    "name": "Midnight Blacksmithing",
+    "minimum_skill_level": 1,
+    "maximum_skill_level": 100,
+    "categories": [
+        {
+            "name": "Recrafting",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51520?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Recraft Equipment",
+                    "id": 51520
+                }
+            ]
+        },
+        {
+            "name": "Profession Equipment",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52333?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Sun-Blessed Blacksmith's Hammer",
+                    "id": 52333
+                }
+            ]
+        },
+        {
+            "name": "Weapons",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52349?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Primalforged Heavy Axe",
+                    "id": 52349
+                }
+            ]
+        },
+        {
+            "name": "Armor",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52356?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Blood-Tempered Gauntlets",
+                    "id": 52356
+                }
+            ]
+        },
+        {
+            "name": "Competitor's Plate (PvP)",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52365?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Thalassian Competitor's Sword",
+                    "id": 52365
+                }
+            ]
+        },
+        {
+            "name": "Stonework",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52666?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Refulgent Whetstone",
+                    "id": 52666
+                }
+            ]
+        }
+    ]
+}

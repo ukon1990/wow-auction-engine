@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51851?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51851,
+    "name": "Tranquility Bloom",
+    "description": "The environmental factors and changes of Quel'Thalas and the surrounding regions has had a profound impact on the local flora, including even the humble Peacebloom. It is still a staple of local crafting and is utilized in a wide variety of recipes, and a recent strain that has adapted to those changes has been dubbed Tranquility Bloom.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51851?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51851
+    }
+}

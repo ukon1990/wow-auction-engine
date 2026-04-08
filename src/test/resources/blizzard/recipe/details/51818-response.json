@@ -1,0 +1,27 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51818?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51818,
+    "name": "Magical Mulch",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51818?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51818
+    },
+    "modified_crafting_slots": [
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/432?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Peacebloom",
+                "id": 432
+            },
+            "display_order": 0
+        }
+    ]
+}

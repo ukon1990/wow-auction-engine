@@ -1,0 +1,41 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42639?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42639,
+    "name": "Fortified Speed",
+    "description": "Permanently enchants a cloak to increase your Stamina by 3 and your Speed by 5. Cannot be applied to items lower than level 10.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42639?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42639
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/172231?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Sacred Shard",
+                "id": 172231
+            },
+            "quantity": 2
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/172230?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Soul Dust",
+                "id": 172230
+            },
+            "quantity": 4
+        }
+    ],
+    "crafted_quantity": {
+        "value": 1
+    }
+}

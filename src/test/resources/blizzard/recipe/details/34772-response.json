@@ -1,0 +1,17 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/34772?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 34772,
+    "name": "Dreamleaf",
+    "description": "Find rare materials when gathering dreamleaf.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/34772?namespace=static-12.0.1_65617-us"
+        },
+        "id": 34772
+    },
+    "rank": 2
+}

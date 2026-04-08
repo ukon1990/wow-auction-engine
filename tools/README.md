@@ -71,4 +71,51 @@ Tests:
 node --test .\tools\analyze-auction-field.test.mjs
 ```
 
+## `refresh-profession-fixtures.mjs`
+
+Fetches and refreshes profession/skill-tier/recipe fixture data for test resources using Blizzard Game Data APIs.
+
+By default it updates:
+
+- `src/test/resources/blizzard/profession/index-response.json`
+- `src/test/resources/blizzard/profession/details/*.json`
+- `src/test/resources/blizzard/profession/skill-tier/*.json`
+- `src/test/resources/blizzard/recipe/details/*.json`
+- `src/test/resources/blizzard/profession-recipe-sample-manifest.json`
+
+### Authentication
+
+Uses the same app environment variables for Blizzard OAuth:
+
+- `BLIZZARD_CLIENT_ID`
+- `BLIZZARD_CLIENT_SECRET`
+
+Optional overrides:
+
+- `BLIZZARD_ACCESS_TOKEN` (use an existing bearer token instead of OAuth refresh)
+- `BLIZZARD_TOKEN_URL` (default: `https://eu.battle.net/oauth/token`)
+- `BLIZZARD_BASE_URL` (default: `https://us.api.blizzard.com/data/wow`)
+- `BLIZZARD_NAMESPACE` (default: `static-us`)
+- `BLIZZARD_LOCALE` (default: `en_US`)
+
+### Usage
+
+Default refresh (sample size defaults to `6`, constrained to `5..10`):
+
+```powershell
+node .\tools\refresh-profession-fixtures.mjs
+```
+
+Dry run:
+
+```powershell
+node .\tools\refresh-profession-fixtures.mjs --dry-run
+```
+
+Refresh only selected professions:
+
+```powershell
+node .\tools\refresh-profession-fixtures.mjs --profession-id 333,164 --sample-size 8
+```
+
 

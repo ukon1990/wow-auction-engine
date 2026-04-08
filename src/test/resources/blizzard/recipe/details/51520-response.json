@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51520?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51520,
+    "name": "Recraft Equipment",
+    "description": "Allows you to change the Optional Reagents and quality of equipment crafted with Midnight Blacksmithing.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51520?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51520
+    }
+}

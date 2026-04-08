@@ -1,0 +1,31 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42655?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42655,
+    "name": "Illuminated Soul",
+    "description": "Permanently enchants bracers to increase your Intellect by 1. Cannot be applied to items lower than level 10.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42655?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42655
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/172230?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Soul Dust",
+                "id": 172230
+            },
+            "quantity": 3
+        }
+    ],
+    "crafted_quantity": {
+        "value": 1
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "professions": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Blacksmithing",
+            "id": 164
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/333?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Enchanting",
+            "id": 333
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Herbalism",
+            "id": 182
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356?namespace=static-12.0.1_65617-us"
+            },
+            "name": "Fishing",
+            "id": 356
+        }
+    ]
+}

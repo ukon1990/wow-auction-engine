@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51969?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51969,
+    "name": "Bloomtail Minnow",
+    "description": "Its truly unique tail fin resembles that of a flower in bloom. The light emitting from its tail dulls in motion and illuminates when stagnant. Its small size and tendency to travel in schools add a fluorescent motion to the depths of the Harandar.\r\n\r\nSpecial: \r\n\r\n Bloom Baubles\r\n\r\nSalvaging this fish with the Cooking skill can produce Bloom Baubles.\r\n\r\nAreas you can find this fish:\r\n- Harandar\r\n\r\nFishing Pools:\r\n- Lashing Waves",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51969?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51969
+    }
+}

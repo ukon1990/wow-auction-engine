@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42397?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42397,
+    "name": "Laestrite Skeleton Key",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42397?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42397
+    },
+    "crafted_item": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item/171441?namespace=static-12.0.1_65617-us"
+        },
+        "name": "Laestrite Skeleton Key",
+        "id": 171441
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171828?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Laestrite Ore",
+                "id": 171828
+            },
+            "quantity": 2
+        }
+    ],
+    "crafted_quantity": {
+        "value": 1
+    }
+}

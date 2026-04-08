@@ -1,0 +1,85 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2751?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 2751,
+    "name": "Shadowlands Blacksmithing",
+    "minimum_skill_level": 1,
+    "maximum_skill_level": 100,
+    "categories": [
+        {
+            "name": "Armor",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42363?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Ceremonious Breastplate",
+                    "id": 42363
+                }
+            ]
+        },
+        {
+            "name": "Shields",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42368?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Ceremonious Shield",
+                    "id": 42368
+                }
+            ]
+        },
+        {
+            "name": "Specialized Armor",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42381?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Shadowghast Breastplate",
+                    "id": 42381
+                }
+            ]
+        },
+        {
+            "name": "Reagents",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42389?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Shadowghast Ingot",
+                    "id": 42389
+                }
+            ]
+        },
+        {
+            "name": "Other",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42397?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Laestrite Skeleton Key",
+                    "id": 42397
+                }
+            ]
+        },
+        {
+            "name": "Weapons",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42406?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Ceremonious Axe",
+                    "id": 42406
+                }
+            ]
+        }
+    ]
+}

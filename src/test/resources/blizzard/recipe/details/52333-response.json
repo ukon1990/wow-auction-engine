@@ -1,0 +1,69 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52333?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 52333,
+    "name": "Sun-Blessed Blacksmith's Hammer",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52333?namespace=static-12.0.1_65617-us"
+        },
+        "id": 52333
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/238528?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Majestic Claw",
+                "id": 238528
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/237366?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Dazzling Thorium",
+                "id": 237366
+            },
+            "quantity": 2
+        }
+    ],
+    "modified_crafting_slots": [
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/467?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Sterling Alloy",
+                "id": 467
+            },
+            "display_order": 0
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/395?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Customize Crafting Stat",
+                "id": 395
+            },
+            "display_order": 1
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+                },
+                "name": "Artisan's Authenticity",
+                "id": 388
+            },
+            "display_order": 2
+        }
+    ]
+}

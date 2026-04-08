@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51853?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51853,
+    "name": "Azeroot",
+    "description": "The hearty earthroot plant has grown stronger in recent years. Difficult to gather, but just as potent in crafting, azeroot is key to many recipes in Quel'Thalas.\r\n\r\nThis sturdy wooden herb can be found on or around trees in the Quel'Thalas region.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51853?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51853
+    }
+}

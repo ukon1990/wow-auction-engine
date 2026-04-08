@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/47909?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 47909,
+    "name": "Temporal Dragonhead",
+    "description": "Temporal Dragonhead are a peculiar fish whose scales seem to displace forwards and backwards every few seconds. Keep your fingers away from their sharp snout!\r\n\r\nThese freshwater schools can be found primarily in the vast lakes and sprawling river systems around the Dragon Isles.\r\n\r\nThey are especially active in areas such as the Uktulut Backwater in The Waking Shores.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/47909?namespace=static-12.0.1_65617-us"
+        },
+        "id": 47909
+    }
+}

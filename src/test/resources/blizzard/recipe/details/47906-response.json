@@ -1,0 +1,16 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/47906?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 47906,
+    "name": "Thousandbite Piranha",
+    "description": "Thousandbite Piranha are an aggressive freshwater fish that will devour anything in sight! \r\n\r\nThese freshwater swarms are found primarily in vast lakes and sprawling river systems across the Dragon Isles.\r\n\r\nThey are especially active in areas such as The Ohn'ahran Plains and The Waking Shores.",
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/47906?namespace=static-12.0.1_65617-us"
+        },
+        "id": 47906
+    }
+}

@@ -1,0 +1,85 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2912?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 2912,
+    "name": "Midnight Herbalism",
+    "minimum_skill_level": 1,
+    "maximum_skill_level": 100,
+    "categories": [
+        {
+            "name": "Mulch",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51818?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Magical Mulch",
+                    "id": 51818
+                }
+            ]
+        },
+        {
+            "name": "Section I - Peacebloom",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51851?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Tranquility Bloom",
+                    "id": 51851
+                }
+            ]
+        },
+        {
+            "name": "Section II - Sanguithorn",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51852?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Sanguithorn",
+                    "id": 51852
+                }
+            ]
+        },
+        {
+            "name": "Section III - Azeroot",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51853?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Azeroot",
+                    "id": 51853
+                }
+            ]
+        },
+        {
+            "name": "Section IV - Argentleaf",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51854?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Argentleaf",
+                    "id": 51854
+                }
+            ]
+        },
+        {
+            "name": "Section V - Mana Lily",
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51855?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": "Mana Lily",
+                    "id": 51855
+                }
+            ]
+        }
+    ]
+}
