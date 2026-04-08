@@ -45,6 +45,8 @@ data class AuctionItem(
     val itemId: Int,
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     val modifiers: MutableList<AuctionItemModifier>? = mutableListOf(),
+    @Column(name = "bonus_lists")
+    val bonusLists: String = "",
     val context: Int?,
     val petBreedId: Int?,
     val petLevel: Int?,
