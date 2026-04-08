@@ -13,4 +13,9 @@ class ProfessionApiClientTest {
     }
 
     private fun professionIndexBody(): String = loadFixture("blizzard/profession/index-response.json")
+
+    private fun professionById(id: Int): String = loadFixture("blizzard/profesion/details/$id-response.json")
+
+    private fun professionSkillTierById(id: Int): String =
+        loadFixture("blizzard/profesion/skill-tier/$id-response.json")
 }
