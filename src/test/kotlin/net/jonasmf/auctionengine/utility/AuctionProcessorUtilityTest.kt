@@ -47,6 +47,7 @@ class AuctionProcessorUtilityTest {
                 item =
                     AuctionItemDTO(
                         id = 100,
+                        bonus_lists = listOf(20, 10),
                         modifiers = null,
                         context = null,
                         pet_breed_id = null,
@@ -64,8 +65,22 @@ class AuctionProcessorUtilityTest {
 
         assertEquals(1, hourlyRepoCapture.calls.size)
         assertEquals(1, hourlyRepoCapture.calls.single().size)
+        assertEquals(
+            "10,20",
+            hourlyRepoCapture.calls
+                .single()
+                .single()
+                .id.bonusKey,
+        )
         assertEquals(1, dailyRepoCapture.calls.size)
         assertEquals(1, dailyRepoCapture.calls.single().size)
+        assertEquals(
+            "10,20",
+            dailyRepoCapture.calls
+                .single()
+                .single()
+                .id.bonusKey,
+        )
     }
 
     @Test

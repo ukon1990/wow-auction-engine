@@ -52,6 +52,20 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             )
 
         assertEquals(1, viewCount)
+
+        val bonusKeyColumnCount =
+            jdbcTemplate.queryForObject(
+                """
+                SELECT COUNT(*)
+                FROM information_schema.columns
+                WHERE table_schema = DATABASE()
+                  AND table_name = 'v_auction_house_prices'
+                  AND column_name = 'bonus_key'
+                """.trimIndent(),
+                Int::class.java,
+            )
+
+        assertEquals(1, bonusKeyColumnCount)
     }
 
     @Test
@@ -69,6 +83,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                         date = date,
                         petSpeciesId = null,
                         modifierKey = "",
+                        bonusKey = "",
                         price = 123_456L,
                         quantity = 10L,
                     ),
@@ -85,6 +100,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                         date = date,
                         petSpeciesId = null,
                         modifierKey = "",
+                        bonusKey = "",
                         price = 120_000L,
                         quantity = 15L,
                     ),
@@ -102,6 +118,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         assertEquals(10L, first.quantity)
         assertEquals(-1, first.petSpeciesId)
         assertEquals("", first.modifierKey)
+        assertEquals("", first.bonusKey)
 
         val second = prices[1]
         assertEquals(LocalDateTime.of(2026, 4, 6, 7, 0), second.auctionTimestamp)
@@ -124,6 +141,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                         date = date,
                         petSpeciesId = 42,
                         modifierKey = "",
+                        bonusKey = "",
                         price = 99L,
                         quantity = 2L,
                     ),
@@ -173,6 +191,56 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `should keep different bonus lists as separate hourly variants`() {
+        val connectedRealm = seedConnectedRealm(3584)
+        val lastModified = ZonedDateTime.of(2026, 4, 8, 11, 0, 0, 0, ZonedDateTime.now().zone)
+
+        hourlyPriceStatisticsService.processHourlyPriceStatistics(
+            connectedRealm = connectedRealm,
+            auctions =
+                listOf(
+                    auction(
+                        11,
+                        19031,
+                        500L,
+                        2L,
+                        modifiers = listOf(ModifierDTO("9", 100)),
+                        bonusLists = listOf(12251, 12252),
+                    ),
+                    auction(
+                        12,
+                        19031,
+                        450L,
+                        3L,
+                        modifiers = listOf(ModifierDTO("9", 100)),
+                        bonusLists = listOf(12251, 12253),
+                    ),
+                ),
+            lastModified = lastModified,
+        )
+
+        val first =
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByAuctionTimestampAsc(
+                3584,
+                19031,
+                "100",
+                "12251,12252",
+            )
+        val second =
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByAuctionTimestampAsc(
+                3584,
+                19031,
+                "100",
+                "12251,12253",
+            )
+
+        assertEquals(1, first.size)
+        assertEquals(1, second.size)
+        assertEquals(500L, first.single().price)
+        assertEquals(450L, second.single().price)
+    }
+
+    @Test
     fun `should canonicalize modifier order into one hourly variant`() {
         val connectedRealm = seedConnectedRealm(4084)
         val lastModified = ZonedDateTime.of(2026, 4, 9, 14, 0, 0, 0, ZonedDateTime.now().zone)
@@ -198,6 +266,36 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         assertEquals(LocalDateTime.of(2026, 4, 9, 14, 0), prices.single().auctionTimestamp)
         assertEquals(650L, prices.single().price)
         assertEquals(9L, prices.single().quantity)
+    }
+
+    @Test
+    fun `should canonicalize bonus list order into one hourly variant`() {
+        val connectedRealm = seedConnectedRealm(4584)
+        val lastModified = ZonedDateTime.of(2026, 4, 9, 16, 0, 0, 0, ZonedDateTime.now().zone)
+
+        hourlyPriceStatisticsService.processHourlyPriceStatistics(
+            connectedRealm = connectedRealm,
+            auctions =
+                listOf(
+                    auction(13, 19032, 700L, 4L, bonusLists = listOf(12499, 12252, 12251)),
+                    auction(14, 19032, 650L, 5L, bonusLists = listOf(12251, 12499, 12252)),
+                ),
+            lastModified = lastModified,
+        )
+
+        val prices =
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByAuctionTimestampAsc(
+                4584,
+                19032,
+                "",
+                "12251,12252,12499",
+            )
+
+        assertEquals(1, prices.size)
+        assertEquals(LocalDateTime.of(2026, 4, 9, 16, 0), prices.single().auctionTimestamp)
+        assertEquals(650L, prices.single().price)
+        assertEquals(9L, prices.single().quantity)
+        assertEquals("12251,12252,12499", prices.single().bonusKey)
     }
 
     @Test
@@ -265,12 +363,14 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         price: Long,
         quantity: Long,
         modifiers: List<ModifierDTO>? = null,
+        bonusLists: List<Int>? = null,
     ) = AuctionDTO(
         id = id,
         item =
             AuctionItemDTO(
                 id = itemId,
                 modifiers = modifiers,
+                bonus_lists = bonusLists,
             ),
         quantity = quantity,
         unit_price = null,
