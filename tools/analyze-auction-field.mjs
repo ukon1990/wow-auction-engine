@@ -81,7 +81,7 @@ export function parseCliArgs(argv) {
     throw new Error(`Unknown argument: ${argument}`);
   }
 
-  if (options.urls.length === 0) {
+  if (!options.help && options.urls.length === 0) {
     throw new Error('At least one --url is required');
   }
 

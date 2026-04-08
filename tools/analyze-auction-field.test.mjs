@@ -24,6 +24,13 @@ test('parseCliArgs reads required urls and optional auth token', () => {
   assert.equal(parsed.topN, 10);
 });
 
+test('parseCliArgs allows help without requiring urls', () => {
+  const parsed = parseCliArgs(['--help']);
+
+  assert.equal(parsed.help, true);
+  assert.deepEqual(parsed.urls, []);
+});
+
 test('getValueAtPath walks nested auction paths', () => {
   const auction = {
     item: {
