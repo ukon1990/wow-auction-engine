@@ -1,8 +1,10 @@
 package net.jonasmf.auctionengine.dto.auction
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItem
 import net.jonasmf.auctionengine.utility.AuctionVariantKeyUtility
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class AuctionItemDTO(
     val id: Int,
     val modifiers: List<ModifierDTO>? = null,
