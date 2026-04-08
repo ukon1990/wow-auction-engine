@@ -242,6 +242,11 @@ Format Kotlin sources:
 ./mvnw ktlint:format
 ```
 
+## Documentation
+
+- [Production memory footprint and cost action criteria](docs/production-memory-footprint.md)
+- [AWS deployment and regional operations](infra/README.md)
+
 ## AWS Deployment
 
 This repository includes a GitHub Actions based production deployment flow for AWS.
