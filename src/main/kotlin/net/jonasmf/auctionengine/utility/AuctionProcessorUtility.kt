@@ -79,6 +79,7 @@ class AuctionProcessorUtility(
                 itemId = auctionDTO.item.id,
                 date = LocalDate.now(),
                 petSpeciesId = auctionDTO.item.pet_species_id,
+                bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auctionDTO.item.bonus_lists),
             )
         val hourlyStat =
             HourlyAuctionStats(
@@ -152,6 +153,7 @@ class AuctionProcessorUtility(
                 itemId = auctionDTO.item.id,
                 date = LocalDate.now(),
                 petSpeciesId = auctionDTO.item.pet_species_id,
+                bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auctionDTO.item.bonus_lists),
             )
         val dailyStat =
             DailyAuctionStats(
