@@ -61,6 +61,7 @@ data class Auction(
     @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.REMOVE])
     val item: AuctionItem,
     val quantity: Long,
+    val bid: Long?,
     val unitPrice: Long?,
     val timeLeft: AuctionTimeLeft,
     val buyout: Long?,

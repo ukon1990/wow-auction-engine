@@ -11,6 +11,7 @@ data class UpsertAuctionParams(
     val connectedRealmId: Int,
     val itemId: Long,
     val quantity: Long,
+    val bid: Long?,
     val unitPrice: Long?,
     val timeLeft: Int,
     val buyout: Long?,
@@ -32,15 +33,16 @@ class AuctionJDBCRepository(
         var totalRows = 0
 
         auctions.chunked(chunkSize).forEach { chunk ->
-            val placeholders = chunk.joinToString(",") { "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" }
+            val placeholders = chunk.joinToString(",") { "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" }
 
             val sqlPrefix = (
                 "INSERT INTO auction (id, connected_realm_id, item_id, quantity, " +
-                    "unit_price, time_left, buyout, first_seen, last_seen, update_history_id) VALUES "
+                    "bid, unit_price, time_left, buyout, first_seen, last_seen, update_history_id) VALUES "
             )
             val updateClause = (
                 " ON DUPLICATE KEY UPDATE " +
                     "quantity = VALUES(quantity), " +
+                    "bid = VALUES(bid), " +
                     "unit_price = VALUES(unit_price), " +
                     "time_left = VALUES(time_left), " +
                     "buyout = VALUES(buyout), " +
@@ -55,12 +57,13 @@ class AuctionJDBCRepository(
                     .append(updateClause)
                     .toString()
 
-            val params = ArrayList<Any?>(chunk.size * 10)
+            val params = ArrayList<Any?>(chunk.size * 11)
             for (auction in chunk) {
                 params.add(auction.id)
                 params.add(auction.connectedRealmId)
                 params.add(auction.itemId)
                 params.add(auction.quantity)
+                params.add(auction.bid)
                 params.add(auction.unitPrice)
                 params.add(auction.timeLeft)
                 params.add(auction.buyout)
