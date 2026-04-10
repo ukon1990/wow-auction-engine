@@ -1,12 +1,36 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
+import net.jonasmf.auctionengine.config.BlizzardApiProperties
+import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport
+import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.buildWebClient
+import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.okJson
 import net.jonasmf.auctionengine.testsupport.loadFixture
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.web.reactive.function.client.ClientRequest
+import org.springframework.web.reactive.function.client.ClientResponse
+import reactor.core.publisher.Mono
+import kotlin.test.assertEquals
 
-class ProfessionApiClientTest {
-    @Test
-    fun getAll() {
-        // TODO
+class ProfessionApiClientTest(
+    private val properties: BlizzardApiProperties,
+) {
+    @Nested
+    internal inner class GetAll {
+        @Test
+        fun `should return a index response with all professions`() {
+            val webClient =
+                buildWebClient {
+                    handleRequest(it)
+                }
+            val client =
+                ProfessionApiClient(
+                    BlizzardApiSupport(properties, webClient),
+                )
+            val response = client.getAll()
+
+            assertEquals(2, response.professions.size)
+        }
     }
 
     @Test
