@@ -20,4 +20,26 @@ class ProfessionApiClientTest {
 
     private fun professionSkillTierById(id: Int): String =
         loadFixture(this, "blizzard/profesion/skill-tier/$id-response.json")
+
+    fun handleRequest(request: ClientRequest): Mono<ClientResponse> {
+        val path = request.url().path
+
+        return when {
+            path.endsWith("/profession/index") -> {
+                okJson(professionIndexBody())
+            }
+
+            path.matches(Regex(""".*/profession/\d+$""")) -> {
+                okJson(professionById(path.substringAfterLast('/').toInt()))
+            }
+
+            path.matches(Regex(""".*/profession/\d+/skill-tier/\d+$""")) -> {
+                okJson(professionSkillTierById(path.substringAfterLast('/').toInt()))
+            }
+
+            else -> {
+                error("Unexpected request: ${request.method()} ${request.url()}")
+            }
+        }
+    }
 }
