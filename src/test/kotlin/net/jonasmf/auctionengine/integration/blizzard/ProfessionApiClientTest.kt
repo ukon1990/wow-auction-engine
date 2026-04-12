@@ -1,8 +1,7 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
-import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.buildWebClient
+import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.createSupport
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.okJson
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Nested
@@ -12,9 +11,7 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import reactor.core.publisher.Mono
 import kotlin.test.assertEquals
 
-class ProfessionApiClientTest(
-    private val properties: BlizzardApiProperties,
-) {
+class ProfessionApiClientTest {
     @Nested
     internal inner class GetAll {
         @Test
@@ -25,11 +22,11 @@ class ProfessionApiClientTest(
                 }
             val client =
                 ProfessionApiClient(
-                    BlizzardApiSupport(properties, webClient),
+                    createSupport(webClient),
                 )
             val response = client.getAll()
 
-            assertEquals(2, response.professions.size)
+            assertEquals(4, response.professions.size)
         }
     }
 
@@ -38,18 +35,18 @@ class ProfessionApiClientTest(
         // TODO
     }
 
-    private fun professionIndexBody(): String = loadFixture(this, "blizzard/profession/index-response.json")
+    private fun professionIndexBody(): String = loadFixture(this, "/blizzard/profession/index-response.json")
 
-    private fun professionById(id: Int): String = loadFixture(this, "blizzard/profesion/details/$id-response.json")
+    private fun professionById(id: Int): String = loadFixture(this, "/blizzard/profesion/details/$id-response.json")
 
     private fun professionSkillTierById(id: Int): String =
-        loadFixture(this, "blizzard/profesion/skill-tier/$id-response.json")
+        loadFixture(this, "/blizzard/profesion/skill-tier/$id-response.json")
 
     fun handleRequest(request: ClientRequest): Mono<ClientResponse> {
         val path = request.url().path
 
         return when {
-            path.endsWith("/profession/index") -> {
+            path.endsWith(PROFESSION_INDEX_PATH) -> {
                 okJson(professionIndexBody())
             }
 
