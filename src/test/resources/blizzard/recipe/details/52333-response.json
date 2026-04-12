@@ -5,7 +5,20 @@
         }
     },
     "id": 52333,
-    "name": "Sun-Blessed Blacksmith's Hammer",
+    "name": {
+        "en_US": "Sun-Blessed Blacksmith's Hammer",
+        "es_MX": "Martillo de herrero de bendición solar",
+        "pt_BR": "Martelo do Ferreiro Abençoado pelo Sol",
+        "de_DE": "Sonnengesegneter Schmiedehammer",
+        "en_GB": "Sun-Blessed Blacksmith's Hammer",
+        "es_ES": "Martillo de herrería bendito por el sol",
+        "fr_FR": "Marteau de forge béni par le soleil",
+        "it_IT": "Martello da Fabbro Benedetto dal Sole",
+        "ru_RU": "Солнцезарный кузнечный молот",
+        "ko_KR": "태양축복 대장장이 망치",
+        "zh_TW": "日祝鐵匠之錘",
+        "zh_CN": "日佑铁匠锤"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/52333?namespace=static-12.0.1_65617-us"
@@ -18,7 +31,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/238528?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Majestic Claw",
+                "name": {
+                    "en_US": "Majestic Claw",
+                    "es_MX": "Zarpa majestuosa",
+                    "pt_BR": "Garra Majestosa",
+                    "de_DE": "Majestätische Klaue",
+                    "en_GB": "Majestic Claw",
+                    "es_ES": "Garra majestuosa",
+                    "fr_FR": "Griffe majestueuse",
+                    "it_IT": "Artiglio Maestoso",
+                    "ru_RU": "Величественный коготь",
+                    "ko_KR": "위엄 넘치는 발톱",
+                    "zh_TW": "珍獸獸爪",
+                    "zh_CN": "威风之爪"
+                },
                 "id": 238528
             },
             "quantity": 1
@@ -28,7 +54,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/237366?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Dazzling Thorium",
+                "name": {
+                    "en_US": "Dazzling Thorium",
+                    "es_MX": "Torio deslumbrante",
+                    "pt_BR": "Tório Ofuscante",
+                    "de_DE": "Funkelndes Thorium",
+                    "en_GB": "Dazzling Thorium",
+                    "es_ES": "Torio deslumbrante",
+                    "fr_FR": "Thorium éblouissant",
+                    "it_IT": "Torio Abbagliante",
+                    "ru_RU": "Ослепительный торий",
+                    "ko_KR": "휘황찬란한 토륨",
+                    "zh_TW": "璀璨瑟銀",
+                    "zh_CN": "炫目瑟银"
+                },
                 "id": 237366
             },
             "quantity": 2
@@ -40,7 +79,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/467?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Sterling Alloy",
+                "name": {
+                    "en_US": "Sterling Alloy",
+                    "es_MX": "Aleación de plata fina",
+                    "pt_BR": "Liga Excelente",
+                    "de_DE": "Sterlinglegierung",
+                    "en_GB": "Sterling Alloy",
+                    "es_ES": "Aleación plateada",
+                    "fr_FR": "Alliage en argent",
+                    "it_IT": "Lega Eccellente",
+                    "ru_RU": "Сплав высокой пробы",
+                    "ko_KR": "순도 높은 합금",
+                    "zh_TW": "純銀合金",
+                    "zh_CN": "纯银合金"
+                },
                 "id": 467
             },
             "display_order": 0
@@ -50,7 +102,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/395?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Customize Crafting Stat",
+                "name": {
+                    "en_US": "Customize Crafting Stat",
+                    "es_MX": "Personaliza estadística de fabricación",
+                    "pt_BR": "Personalizar Atributo de Criação",
+                    "de_DE": "Herstellungswerte anpassen",
+                    "en_GB": "Customize Crafting Stat",
+                    "es_ES": "Personalizar estadística de fabricación",
+                    "fr_FR": "Personnaliser une caractéristique d’artisanat",
+                    "it_IT": "Personalizza statistiche di creazione",
+                    "ru_RU": "Позволяет выбрать характеристику при изготовлении",
+                    "ko_KR": "제작 능력치 사용자 설정",
+                    "zh_TW": "自訂製作屬性",
+                    "zh_CN": "自定义制作属性"
+                },
                 "id": 395
             },
             "display_order": 1
@@ -60,7 +125,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Artisan's Authenticity",
+                "name": {
+                    "en_US": "Artisan's Authenticity",
+                    "es_MX": "Autenticidad del artesano",
+                    "pt_BR": "Autenticidade do Artífice",
+                    "de_DE": "Authentizität des Kunsthandwerks",
+                    "en_GB": "Artisan's Authenticity",
+                    "es_ES": "Autenticidad de artesano",
+                    "fr_FR": "Authenticité artisanale",
+                    "it_IT": "Autenticità dell'Artigiano",
+                    "ru_RU": "Почерк ремесленника",
+                    "ko_KR": "장인의 진정성",
+                    "zh_TW": "工匠之保證",
+                    "zh_CN": "匠人之真"
+                },
                 "id": 388
             },
             "display_order": 2

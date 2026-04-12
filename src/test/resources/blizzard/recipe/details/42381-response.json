@@ -5,8 +5,34 @@
         }
     },
     "id": 42381,
-    "name": "Shadowghast Breastplate",
-    "description": "Create a piece of plate armor that is worthy of being infused with the power necessary to become a Legendary item.",
+    "name": {
+        "en_US": "Shadowghast Breastplate",
+        "es_MX": "Coraza de sombra fantasmal",
+        "pt_BR": "Peitoral de Umbromedo",
+        "de_DE": "Schattenschreckbrustplatte",
+        "en_GB": "Shadowghast Breastplate",
+        "es_ES": "Coraza de terror sombrío",
+        "fr_FR": "Cuirasse ombrepeur",
+        "it_IT": "Pettorale Corazzato di Spettrombra",
+        "ru_RU": "Эребиевая кираса",
+        "ko_KR": "어둠혼 가슴보호갑",
+        "zh_TW": "影怖胸甲",
+        "zh_CN": "影怖胸甲"
+    },
+    "description": {
+        "en_US": "Create a piece of plate armor that is worthy of being infused with the power necessary to become a Legendary item.",
+        "es_MX": "Crea una pieza de armadura de placas digna de ser infundida con el poder necesario para convertirla en un objeto legendario.",
+        "pt_BR": "Cria uma armadura de placa digna de ser imbuída no poder necessário para se tornar um item Lendário.",
+        "de_DE": "Stellt ein Plattenrüstungsteil her, das würdig ist, die Macht zu erhalten, mit der es zu einem legendären Gegenstand wird.",
+        "en_GB": "Create a piece of plate armor that is worthy of being infused with the power necessary to become a Legendary item.",
+        "es_ES": "Crea una pieza de armadura de placas digna de ser imbuida del poder necesario para convertirse en un objeto legendario.",
+        "fr_FR": "Vous créez une pièce d’armure de plaques digne d’être imprégnée de la puissance nécessaire pour devenir un objet légendaire.",
+        "it_IT": "Crea un pezzo di equipaggiamento a piastre degno di essere infuso con il potere necessario a diventare un oggetto leggendario.",
+        "ru_RU": "Изготовить часть латного доспеха, которую можно будет наполнить энергией и превратить в легендарный предмет.",
+        "ko_KR": "힘을 주입하여 전설 아이템으로 탈바꿈시킬 만한 가치가 있는 판금 방어구를 만듭니다.",
+        "zh_TW": "製作一件有資格灌注必要的力量以成為傳說級物品的鎧甲。",
+        "zh_CN": "制造一件板甲，它可以被注入必要的力量，成为一件传说物品。"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/42381?namespace=static-12.0.1_65617-us"
@@ -17,7 +43,20 @@
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/item/171412?namespace=static-12.0.1_65617-us"
         },
-        "name": "Shadowghast Breastplate",
+        "name": {
+            "en_US": "Shadowghast Breastplate",
+            "es_MX": "Coraza de sombra fantasmal",
+            "pt_BR": "Peitoral de Umbromedo",
+            "de_DE": "Schattenschreckbrustplatte",
+            "en_GB": "Shadowghast Breastplate",
+            "es_ES": "Coraza de terror sombrío",
+            "fr_FR": "Cuirasse ombrepeur",
+            "it_IT": "Pettorale Corazzato di Spettrombra",
+            "ru_RU": "Эребиевая кираса",
+            "ko_KR": "어둠혼 가슴보호갑",
+            "zh_TW": "影怖胸甲",
+            "zh_CN": "影怖胸甲"
+        },
         "id": 171412
     },
     "reagents": [
@@ -26,7 +65,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/171428?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Shadowghast Ingot",
+                "name": {
+                    "en_US": "Shadowghast Ingot",
+                    "es_MX": "Lingote de sombra fantasmal",
+                    "pt_BR": "Lingote de Umbromedo",
+                    "de_DE": "Schattenschreckbarren",
+                    "en_GB": "Shadowghast Ingot",
+                    "es_ES": "Lingote de terror sombrío",
+                    "fr_FR": "Lingot ombrepeur",
+                    "it_IT": "Lingotto di Spettrombra",
+                    "ru_RU": "Слиток эребия",
+                    "ko_KR": "어둠혼 주괴",
+                    "zh_TW": "影怖錠",
+                    "zh_CN": "影怖之锭"
+                },
                 "id": 171428
             },
             "quantity": 30
@@ -36,7 +88,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/172437?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Enchanted Elethium Bar",
+                "name": {
+                    "en_US": "Enchanted Elethium Bar",
+                    "es_MX": "Barra de eletio encantado",
+                    "pt_BR": "Barra de Elétio Encantada",
+                    "de_DE": "Verzauberter Elethiumbarren",
+                    "en_GB": "Enchanted Elethium Bar",
+                    "es_ES": "Barra de eletio encantado",
+                    "fr_FR": "Barre d’éléthium enchanté",
+                    "it_IT": "Lingotto di Elezio Incantato",
+                    "ru_RU": "Зачарованный элетиевый слиток",
+                    "ko_KR": "마력 깃든 엘레튬 주괴",
+                    "zh_TW": "附魔艾雷希錠",
+                    "zh_CN": "魔化阴铁锭"
+                },
                 "id": 172437
             },
             "quantity": 15
@@ -46,7 +111,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Luminous Flux",
+                "name": {
+                    "en_US": "Luminous Flux",
+                    "es_MX": "Flujo luminoso",
+                    "pt_BR": "Fluxo Luminoso",
+                    "de_DE": "Leuchtender Fluxus",
+                    "en_GB": "Luminous Flux",
+                    "es_ES": "Flujo luminoso",
+                    "fr_FR": "Flux lumineux",
+                    "it_IT": "Flusso Luminoso",
+                    "ru_RU": "Светящийся плавень",
+                    "ko_KR": "영롱한 유동체",
+                    "zh_TW": "夜光熔劑",
+                    "zh_CN": "辉光助熔剂"
+                },
                 "id": 180733
             },
             "quantity": 30
@@ -56,7 +134,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/178787?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Orboreal Shard",
+                "name": {
+                    "en_US": "Orboreal Shard",
+                    "es_MX": "Fragmento orboreal",
+                    "pt_BR": "Estilhaço Orbóreo",
+                    "de_DE": "Orborealer Splitter",
+                    "en_GB": "Orboreal Shard",
+                    "es_ES": "Fragmento orbóreo",
+                    "fr_FR": "Éclat orboréal",
+                    "it_IT": "Scheggia Orborea",
+                    "ru_RU": "Ориборейский осколок",
+                    "ko_KR": "오리보리얼 파편",
+                    "zh_TW": "奧睿博瑞爾裂片",
+                    "zh_CN": "奥渺碎片"
+                },
                 "id": 178787
             },
             "quantity": 15
@@ -71,7 +162,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/110?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Increase Rank",
+                "name": {
+                    "en_US": "Increase Rank",
+                    "es_MX": "Aumenta el rango",
+                    "pt_BR": "Aumentar Nível",
+                    "de_DE": "Rang erhöhen",
+                    "en_GB": "Increase Rank",
+                    "es_ES": "Aumentar rango",
+                    "fr_FR": "Augmentation du rang",
+                    "it_IT": "Aumenta il grado",
+                    "ru_RU": "Повышает ранг предмета",
+                    "ko_KR": "등급 증가",
+                    "zh_TW": "提高等級",
+                    "zh_CN": "提升技能等级"
+                },
                 "id": 110
             },
             "display_order": 0

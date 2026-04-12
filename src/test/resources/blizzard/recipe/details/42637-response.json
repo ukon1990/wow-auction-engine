@@ -5,8 +5,34 @@
         }
     },
     "id": 42637,
-    "name": "Eternal Agility",
-    "description": "Permanently enchants boots to increase your Agility by 2. Cannot be applied to items lower than level 10.",
+    "name": {
+        "en_US": "Eternal Agility",
+        "es_MX": "Agilidad eterna",
+        "pt_BR": "Agilidade Eterna",
+        "de_DE": "Ewige Beweglichkeit",
+        "en_GB": "Eternal Agility",
+        "es_ES": "Agilidad eterna",
+        "fr_FR": "Agilité éternelle",
+        "it_IT": "Agilità Eterna",
+        "ru_RU": "Вечная ловкость",
+        "ko_KR": "영원의 민첩성",
+        "zh_TW": "永恆敏捷",
+        "zh_CN": "永恒敏捷"
+    },
+    "description": {
+        "en_US": "Permanently enchants boots to increase your Agility by 2. Cannot be applied to items lower than level 10.",
+        "es_MX": "Encanta unas botas de forma permanente para aumentar 2 p. tu agilidad. No se puede aplicar a objetos de nivel inferior a 10.",
+        "pt_BR": "Encanta permanentemente um par de botas para aumentar em 2 a Agilidade. Não pode ser aplicado a itens abaixo do nível 10.",
+        "de_DE": "Stiefel dauerhaft verzaubern, sodass die Beweglichkeit um 2 erhöht wird. Kann nicht auf Gegenstände unter Stufe 0,0 angewandt werden.",
+        "en_GB": "Permanently enchants boots to increase your Agility by 2. Cannot be applied to items lower than level 10.",
+        "es_ES": "Encanta de forma permanente unas botas para que aumenten 2 p. tu agilidad. No se puede aplicar a objetos de nivel inferior a 10.",
+        "fr_FR": "Enchante des bottes de manière permanente. Augmente votre Agilité de 2. Ne peut être appliqué sur des objets d’un niveau inférieur à 10.",
+        "it_IT": "Incanta in modo permanente un equipaggiamento per piedi, aumentando l'Agilità di 2. Non applicabile a oggetti di livello inferiore a 10.",
+        "ru_RU": "Применяет к обуви постоянные чары, повышающие ловкость на 2. Не действует на предметы ниже 10-го уровня.",
+        "ko_KR": "장화에 영구적으로 마법을 부여해 착용자의 민첩성을 2만큼 증가시킵니다. 10 레벨 미만의 아이템에는 사용할 수 없습니다.",
+        "zh_TW": "永久性地為靴子附魔，使你的敏捷提高2點。無法用在等級低於10的物品。",
+        "zh_CN": "永久性地为一双鞋子附魔，使你的敏捷提高2点。不能对物品等级低于10的物品使用。"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/42637?namespace=static-12.0.1_65617-us"
@@ -19,7 +45,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/172232?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Eternal Crystal",
+                "name": {
+                    "en_US": "Eternal Crystal",
+                    "es_MX": "Cristal eterno",
+                    "pt_BR": "Cristal Eterno",
+                    "de_DE": "Ewiger Kristall",
+                    "en_GB": "Eternal Crystal",
+                    "es_ES": "Cristal eterno",
+                    "fr_FR": "Cristal éternel",
+                    "it_IT": "Cristallo Eterno",
+                    "ru_RU": "Кристалл вечности",
+                    "ko_KR": "영원한 수정",
+                    "zh_TW": "永恆水晶",
+                    "zh_CN": "永恒水晶"
+                },
                 "id": 172232
             },
             "quantity": 1
@@ -29,7 +68,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/172231?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Sacred Shard",
+                "name": {
+                    "en_US": "Sacred Shard",
+                    "es_MX": "Fragmento sagrado",
+                    "pt_BR": "Estilhaço Sagrado",
+                    "de_DE": "Heiliger Splitter",
+                    "en_GB": "Sacred Shard",
+                    "es_ES": "Fragmento sagrado",
+                    "fr_FR": "Éclat sacré",
+                    "it_IT": "Scheggia Sacra",
+                    "ru_RU": "Священный осколок",
+                    "ko_KR": "신성한 조각",
+                    "zh_TW": "神聖裂片",
+                    "zh_CN": "圣洁碎片"
+                },
                 "id": 172231
             },
             "quantity": 2

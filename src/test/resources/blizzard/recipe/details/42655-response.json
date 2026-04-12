@@ -5,8 +5,34 @@
         }
     },
     "id": 42655,
-    "name": "Illuminated Soul",
-    "description": "Permanently enchants bracers to increase your Intellect by 1. Cannot be applied to items lower than level 10.",
+    "name": {
+        "en_US": "Illuminated Soul",
+        "es_MX": "Alma iluminada",
+        "pt_BR": "Alma Iluminada",
+        "de_DE": "Erleuchtete Seele",
+        "en_GB": "Illuminated Soul",
+        "es_ES": "Alma iluminada",
+        "fr_FR": "Âme illuminée",
+        "it_IT": "Anima Illuminata",
+        "ru_RU": "Освещенная душа",
+        "ko_KR": "빛나는 영혼",
+        "zh_TW": "光明之魂",
+        "zh_CN": "光耀灵魂"
+    },
+    "description": {
+        "en_US": "Permanently enchants bracers to increase your Intellect by 1. Cannot be applied to items lower than level 10.",
+        "es_MX": "Encanta unos brazales de forma permanente para aumentar 1 p. tu intelecto. No se puede aplicar a objetos de nivel inferior a 10.",
+        "pt_BR": "Encanta permanentemente um par de braçadeiras para aumentar em 1 o Intelecto. Não pode ser aplicado a itens abaixo do nível 10.",
+        "de_DE": "Armschienen dauerhaft verzaubern, sodass die Intelligenz um 1 erhöht wird. Kann nicht auf Gegenstände unter Stufe 0,0 angewandt werden.",
+        "en_GB": "Permanently enchants bracers to increase your Intellect by 1. Cannot be applied to items lower than level 10.",
+        "es_ES": "Encanta de forma permanente unos brazales para que aumenten 1 p. tu intelecto. No se puede aplicar a objetos de nivel inferior a 10.",
+        "fr_FR": "Enchante des brassards de manière permanente. Augmente votre Intelligence de 1. Ne peut être appliqué sur des objets d’un niveau inférieur à 10.",
+        "it_IT": "Incanta in modo permanente un equipaggiamento per polsi, aumentando l'Intelletto di 1. Non applicabile a oggetti di livello inferiore a 10.",
+        "ru_RU": "Применяет к наручам постоянные чары, повышающие интеллект на 1. Не действует на предметы ниже 10-го уровня.",
+        "ko_KR": "팔보호구에 영구적으로 마법을 부여해 착용자의 지능을 1만큼 증가시킵니다. 10 레벨 미만의 아이템에는 사용할 수 없습니다.",
+        "zh_TW": "永久性地為護腕附魔，使你的智力提高1點。無法用在等級低於10的物品。",
+        "zh_CN": "永久性地为一双护腕附魔，使你的智力提高1点。不能对物品等级低于10的物品使用。"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/42655?namespace=static-12.0.1_65617-us"
@@ -19,7 +45,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/172230?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Soul Dust",
+                "name": {
+                    "en_US": "Soul Dust",
+                    "es_MX": "Polvo de alma",
+                    "pt_BR": "Pó d'Alma",
+                    "de_DE": "Seelenstaub",
+                    "en_GB": "Soul Dust",
+                    "es_ES": "Polvo de alma",
+                    "fr_FR": "Poussière d’âme",
+                    "it_IT": "Polvere d'Anima",
+                    "ru_RU": "Пыль духа",
+                    "ko_KR": "영혼 가루",
+                    "zh_TW": "靈魂之塵",
+                    "zh_CN": "灵魂之尘"
+                },
                 "id": 172230
             },
             "quantity": 3

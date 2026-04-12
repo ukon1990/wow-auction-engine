@@ -5,7 +5,20 @@
         }
     },
     "id": 52666,
-    "name": "Refulgent Whetstone",
+    "name": {
+        "en_US": "Refulgent Whetstone",
+        "es_MX": "Piedra de afilar refulgente",
+        "pt_BR": "Pedra-ume Refulgente",
+        "de_DE": "Glänzender Schleifstein",
+        "en_GB": "Refulgent Whetstone",
+        "es_ES": "Piedra de afilar refulgente",
+        "fr_FR": "Pierre à aiguiser éclatante",
+        "it_IT": "Cote Rifulgente",
+        "ru_RU": "Сверкающий точильный камень",
+        "ko_KR": "광명 숫돌",
+        "zh_TW": "輝煌磨石",
+        "zh_CN": "辉耀磨刀石"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/52666?namespace=static-12.0.1_65617-us"
@@ -18,7 +31,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/243060?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Luminant Flux",
+                "name": {
+                    "en_US": "Luminant Flux",
+                    "es_MX": "Flujo luminante",
+                    "pt_BR": "Fluxo Fulgurante",
+                    "de_DE": "Leuchtender Fluxus",
+                    "en_GB": "Luminant Flux",
+                    "es_ES": "Flujo luminiscente",
+                    "fr_FR": "Flux de luminance",
+                    "it_IT": "Flusso Illuminante",
+                    "ru_RU": "Сияющий плавень",
+                    "ko_KR": "영롱한 융제",
+                    "zh_TW": "發光助熔劑",
+                    "zh_CN": "莹辉助熔剂"
+                },
                 "id": 243060
             },
             "quantity": 15
@@ -28,7 +54,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/251285?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Petrified Root",
+                "name": {
+                    "en_US": "Petrified Root",
+                    "es_MX": "Raíz petrificada",
+                    "pt_BR": "Raiz Petrificada",
+                    "de_DE": "Versteinerte Wurzel",
+                    "en_GB": "Petrified Root",
+                    "es_ES": "Raíz petrificada",
+                    "fr_FR": "Racine pétrifiée",
+                    "it_IT": "Radice Pietrificata",
+                    "ru_RU": "Окаменелый корень",
+                    "ko_KR": "석화된 뿌리",
+                    "zh_TW": "石化根",
+                    "zh_CN": "石化之根"
+                },
                 "id": 251285
             },
             "quantity": 2
@@ -40,7 +79,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/386?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Refulgent Copper Ingot",
+                "name": {
+                    "en_US": "Refulgent Copper Ingot",
+                    "es_MX": "Lingote de cobre refulgente",
+                    "pt_BR": "Lingote de Cobre Refulgente",
+                    "de_DE": "Glänzender Kupferbarren",
+                    "en_GB": "Refulgent Copper Ingot",
+                    "es_ES": "Lingote de cobre refulgente",
+                    "fr_FR": "Lingot de cuivre éclatant",
+                    "it_IT": "Lingotto di Rame Rifulgente",
+                    "ru_RU": "Слиток сверкающей меди",
+                    "ko_KR": "광명구리 주괴",
+                    "zh_TW": "輝煌銅合金",
+                    "zh_CN": "耀辉铜锭"
+                },
                 "id": 386
             },
             "display_order": 0
@@ -50,7 +102,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/417?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Duskshrouded Stone",
+                "name": {
+                    "en_US": "Duskshrouded Stone",
+                    "es_MX": "Piedra ocasovelada",
+                    "pt_BR": "Pedra Crepusculada",
+                    "de_DE": "Dämmerschleierstein",
+                    "en_GB": "Duskshrouded Stone",
+                    "es_ES": "Piedra velocrepúsculo",
+                    "fr_FR": "Pierre voile-de-brune",
+                    "it_IT": "Pietra Ammantata di Vespro",
+                    "ru_RU": "Затененный камень",
+                    "ko_KR": "어스름장막 돌",
+                    "zh_TW": "暮罩石",
+                    "zh_CN": "暮胧石"
+                },
                 "id": 417
             },
             "display_order": 1
@@ -60,7 +125,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/396?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Artisan's Authenticity",
+                "name": {
+                    "en_US": "Artisan's Authenticity",
+                    "es_MX": "Autenticidad del artesano",
+                    "pt_BR": "Autenticidade do Artífice",
+                    "de_DE": "Authentizität des Kunsthandwerks",
+                    "en_GB": "Artisan's Authenticity",
+                    "es_ES": "Autenticidad de artesano",
+                    "fr_FR": "Authenticité artisanale",
+                    "it_IT": "Autenticità dell'Artigiano",
+                    "ru_RU": "Почерк ремесленника",
+                    "ko_KR": "장인의 진정성",
+                    "zh_TW": "工匠之保證",
+                    "zh_CN": "匠人之真"
+                },
                 "id": 396
             },
             "display_order": 2

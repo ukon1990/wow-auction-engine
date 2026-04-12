@@ -1,305 +1,1761 @@
 [
     {
         "professionId": 164,
-        "professionName": "Blacksmithing",
+        "professionName": {
+            "en_US": "Blacksmithing",
+            "es_MX": "Herrería",
+            "pt_BR": "Ferraria",
+            "de_DE": "Schmiedekunst",
+            "en_GB": "Blacksmithing",
+            "es_ES": "Herrería",
+            "fr_FR": "Forge",
+            "it_IT": "Forgiatura",
+            "ru_RU": "Кузнечное дело",
+            "ko_KR": "대장기술",
+            "zh_TW": "鍛造",
+            "zh_CN": "锻造"
+        },
         "skillTierId": 2907,
-        "skillTierName": "Midnight Blacksmithing",
+        "skillTierName": {
+            "en_US": "Midnight Blacksmithing",
+            "es_MX": "Herrería de Midnight",
+            "pt_BR": "Ferraria de Midnight",
+            "de_DE": "Schmiedekunst von Midnight",
+            "en_GB": "Midnight Blacksmithing",
+            "es_ES": "Herrería de Midnight",
+            "fr_FR": "Forge de Midnight",
+            "it_IT": "Forgiatura di Midnight",
+            "ru_RU": "Кузнечное дело Midnight",
+            "ko_KR": "한밤 대장기술",
+            "zh_TW": "至暗之夜鍛造",
+            "zh_CN": "至暗之夜锻造"
+        },
         "recipes": [
             {
                 "id": 51520,
-                "name": "Recraft Equipment",
-                "category": "Recrafting"
+                "name": {
+                    "en_US": "Recraft Equipment",
+                    "es_MX": "Refabricar equipamiento",
+                    "pt_BR": "Recriar Equipamento",
+                    "de_DE": "Ausrüstung umfertigen",
+                    "en_GB": "Recraft Equipment",
+                    "es_ES": "Refabricar equipo",
+                    "fr_FR": "Refaçonner de l’équipement",
+                    "it_IT": "Ricreazione Equipaggiamento",
+                    "ru_RU": "Переделка снаряжения",
+                    "ko_KR": "장비 재제작",
+                    "zh_TW": "重新製作裝備",
+                    "zh_CN": "再造装备"
+                },
+                "category": {
+                    "en_US": "Recrafting",
+                    "es_MX": "Refabricación",
+                    "pt_BR": "Recriação",
+                    "de_DE": "Umfertigen",
+                    "en_GB": "Recrafting",
+                    "es_ES": "Refabricación",
+                    "fr_FR": "Refaçonner",
+                    "it_IT": "Nuova Creazione",
+                    "ru_RU": "Переделка",
+                    "ko_KR": "재제작",
+                    "zh_TW": "重新製作",
+                    "zh_CN": "再造"
+                }
             },
             {
                 "id": 52333,
-                "name": "Sun-Blessed Blacksmith's Hammer",
-                "category": "Profession Equipment"
+                "name": {
+                    "en_US": "Sun-Blessed Blacksmith's Hammer",
+                    "es_MX": "Martillo de herrero de bendición solar",
+                    "pt_BR": "Martelo do Ferreiro Abençoado pelo Sol",
+                    "de_DE": "Sonnengesegneter Schmiedehammer",
+                    "en_GB": "Sun-Blessed Blacksmith's Hammer",
+                    "es_ES": "Martillo de herrería bendito por el sol",
+                    "fr_FR": "Marteau de forge béni par le soleil",
+                    "it_IT": "Martello da Fabbro Benedetto dal Sole",
+                    "ru_RU": "Солнцезарный кузнечный молот",
+                    "ko_KR": "태양축복 대장장이 망치",
+                    "zh_TW": "日祝鐵匠之錘",
+                    "zh_CN": "日佑铁匠锤"
+                },
+                "category": {
+                    "en_US": "Profession Equipment",
+                    "es_MX": "Equipamiento de profesión",
+                    "pt_BR": "Equipamento de Profissão",
+                    "de_DE": "Berufsausrüstung",
+                    "en_GB": "Profession Equipment",
+                    "es_ES": "Equipamiento de profesión",
+                    "fr_FR": "Équipements de métier",
+                    "it_IT": "Equipaggiamento delle Professioni",
+                    "ru_RU": "Снаряжение для профессии",
+                    "ko_KR": "전문 기술 장비",
+                    "zh_TW": "專業技能裝備",
+                    "zh_CN": "专业装备"
+                }
             },
             {
                 "id": 52349,
-                "name": "Primalforged Heavy Axe",
-                "category": "Weapons"
+                "name": {
+                    "en_US": "Primalforged Heavy Axe",
+                    "es_MX": "Hacha pesada forjaprimus",
+                    "pt_BR": "Machado Pesado Primeforjado",
+                    "de_DE": "Urgeschmiedete Großaxt",
+                    "en_GB": "Primalforged Heavy Axe",
+                    "es_ES": "Hacha pesada de forja primigenia",
+                    "fr_FR": "Hache lourde primal-forgée",
+                    "it_IT": "Ascia Pesante Forgiata dal Primordiale",
+                    "ru_RU": "Кованый изначальный тяжелый топор",
+                    "ko_KR": "원시벼림 중형 도끼",
+                    "zh_TW": "花鑄重斧",
+                    "zh_CN": "原铸重斧"
+                },
+                "category": {
+                    "en_US": "Weapons",
+                    "es_MX": "Armas",
+                    "pt_BR": "Armas",
+                    "de_DE": "Waffen",
+                    "en_GB": "Weapons",
+                    "es_ES": "Armas",
+                    "fr_FR": "Armes",
+                    "it_IT": "Armi",
+                    "ru_RU": "Оружие",
+                    "ko_KR": "무기",
+                    "zh_TW": "武器",
+                    "zh_CN": "武器"
+                }
             },
             {
                 "id": 52356,
-                "name": "Blood-Tempered Gauntlets",
-                "category": "Armor"
+                "name": {
+                    "en_US": "Blood-Tempered Gauntlets",
+                    "es_MX": "Guanteletes templados en sangre",
+                    "pt_BR": "Manoplas Temperadas em Sangue",
+                    "de_DE": "Blutgehärtete Stulpen",
+                    "en_GB": "Blood-Tempered Gauntlets",
+                    "es_ES": "Guanteletes templados en sangre",
+                    "fr_FR": "Gantelets à la trempe de sang",
+                    "it_IT": "Guanti Lunghi Temprati nel Sangue",
+                    "ru_RU": "Кровокаленые рукавицы",
+                    "ko_KR": "피로 담금질한 건틀릿",
+                    "zh_TW": "血淬護手",
+                    "zh_CN": "淬血手铠"
+                },
+                "category": {
+                    "en_US": "Armor",
+                    "es_MX": "Armadura",
+                    "pt_BR": "Armadura",
+                    "de_DE": "Rüstung",
+                    "en_GB": "Armor",
+                    "es_ES": "Armadura",
+                    "fr_FR": "Armure",
+                    "it_IT": "Armature",
+                    "ru_RU": "Броня",
+                    "ko_KR": "방어구",
+                    "zh_TW": "護甲",
+                    "zh_CN": "护甲"
+                }
             },
             {
                 "id": 52365,
-                "name": "Thalassian Competitor's Sword",
-                "category": "Competitor's Plate (PvP)"
+                "name": {
+                    "en_US": "Thalassian Competitor's Sword",
+                    "es_MX": "Espada de Competidor thalassiano",
+                    "pt_BR": "Espada do Competidor Talassiano",
+                    "de_DE": "Schwert des thalassischen Wettkämpfers",
+                    "en_GB": "Thalassian Competitor's Sword",
+                    "es_ES": "Espada de competidor thalassiano",
+                    "fr_FR": "Épée de compétition thalassienne",
+                    "it_IT": "Spada del Concorrente Thalassiano",
+                    "ru_RU": "Меч талассийского бойца",
+                    "ko_KR": "탈라시안 경쟁자의 검",
+                    "zh_TW": "薩拉斯競技者之劍",
+                    "zh_CN": "萨拉斯竞争者之剑"
+                },
+                "category": {
+                    "en_US": "Competitor's Plate (PvP)",
+                    "es_MX": "Placas de competidor (JcJ)",
+                    "pt_BR": "Placa do Competidor (JxJ)",
+                    "de_DE": "Plattenrüstung des Wettkämpfers (PvP)",
+                    "en_GB": "Competitor's Plate (PvP)",
+                    "es_ES": "Placas de competidor (JcJ)",
+                    "fr_FR": "Plaques de compétition (JcJ)",
+                    "it_IT": "Piastre del Concorrente (PvP)",
+                    "ru_RU": "Латные доспехи бойца (PvP)",
+                    "ko_KR": "경쟁자의 판금 방어구 (플레이어 간 전투)",
+                    "zh_TW": "競技者鎧甲（PvP）",
+                    "zh_CN": "竞争者板甲（PvP）"
+                }
             },
             {
                 "id": 52666,
-                "name": "Refulgent Whetstone",
-                "category": "Stonework"
+                "name": {
+                    "en_US": "Refulgent Whetstone",
+                    "es_MX": "Piedra de afilar refulgente",
+                    "pt_BR": "Pedra-ume Refulgente",
+                    "de_DE": "Glänzender Schleifstein",
+                    "en_GB": "Refulgent Whetstone",
+                    "es_ES": "Piedra de afilar refulgente",
+                    "fr_FR": "Pierre à aiguiser éclatante",
+                    "it_IT": "Cote Rifulgente",
+                    "ru_RU": "Сверкающий точильный камень",
+                    "ko_KR": "광명 숫돌",
+                    "zh_TW": "輝煌磨石",
+                    "zh_CN": "辉耀磨刀石"
+                },
+                "category": {
+                    "en_US": "Stonework",
+                    "es_MX": "Cantería",
+                    "pt_BR": "Trabalho em Pedra",
+                    "de_DE": "Steinverkleidung",
+                    "en_GB": "Stonework",
+                    "es_ES": "Tallado en piedra",
+                    "fr_FR": "Travail de la pierre",
+                    "it_IT": "Lavorazione della Pietra",
+                    "ru_RU": "Резьба по камню",
+                    "ko_KR": "돌세공",
+                    "zh_TW": "石料加工",
+                    "zh_CN": "石制"
+                }
             }
         ]
     },
     {
         "professionId": 164,
-        "professionName": "Blacksmithing",
+        "professionName": {
+            "en_US": "Blacksmithing",
+            "es_MX": "Herrería",
+            "pt_BR": "Ferraria",
+            "de_DE": "Schmiedekunst",
+            "en_GB": "Blacksmithing",
+            "es_ES": "Herrería",
+            "fr_FR": "Forge",
+            "it_IT": "Forgiatura",
+            "ru_RU": "Кузнечное дело",
+            "ko_KR": "대장기술",
+            "zh_TW": "鍛造",
+            "zh_CN": "锻造"
+        },
         "skillTierId": 2751,
-        "skillTierName": "Shadowlands Blacksmithing",
+        "skillTierName": {
+            "en_US": "Shadowlands Blacksmithing",
+            "es_MX": "Herrería de Shadowlands",
+            "pt_BR": "Ferraria de Shadowlands",
+            "de_DE": "Schmiedekunst der Schattenlande",
+            "en_GB": "Shadowlands Blacksmithing",
+            "es_ES": "Herrería de Shadowlands",
+            "fr_FR": "Forge d’Ombreterre",
+            "it_IT": "Forgiatura di Shadowlands",
+            "ru_RU": "Кузнечное дело Темных Земель",
+            "ko_KR": "어둠땅 대장기술",
+            "zh_TW": "暗影之境鍛造",
+            "zh_CN": "暗影界锻造"
+        },
         "recipes": [
             {
                 "id": 42363,
-                "name": "Ceremonious Breastplate",
-                "category": "Armor"
+                "name": {
+                    "en_US": "Ceremonious Breastplate",
+                    "es_MX": "Coraza ceremoniosa",
+                    "pt_BR": "Peitoral Cerimonioso",
+                    "de_DE": "Zeremonielle Brustplatte",
+                    "en_GB": "Ceremonious Breastplate",
+                    "es_ES": "Coraza de ceremonia",
+                    "fr_FR": "Cuirasse de cérémonie",
+                    "it_IT": "Pettorale Corazzato Cerimonioso",
+                    "ru_RU": "Церемониальная кираса",
+                    "ko_KR": "격조의 가슴보호갑",
+                    "zh_TW": "典禮胸甲",
+                    "zh_CN": "仪式胸甲"
+                },
+                "category": {
+                    "en_US": "Armor",
+                    "es_MX": "Armadura",
+                    "pt_BR": "Armadura",
+                    "de_DE": "Rüstung",
+                    "en_GB": "Armor",
+                    "es_ES": "Armadura",
+                    "fr_FR": "Armure",
+                    "it_IT": "Armature",
+                    "ru_RU": "Доспехи",
+                    "ko_KR": "방어구",
+                    "zh_TW": "護甲",
+                    "zh_CN": "护甲"
+                }
             },
             {
                 "id": 42368,
-                "name": "Ceremonious Shield",
-                "category": "Shields"
+                "name": {
+                    "en_US": "Ceremonious Shield",
+                    "es_MX": "Escudo ceremonioso",
+                    "pt_BR": "Escudo Cerimonioso",
+                    "de_DE": "Zeremonieller Schild",
+                    "en_GB": "Ceremonious Shield",
+                    "es_ES": "Escudo de ceremonia",
+                    "fr_FR": "Bouclier de cérémonie",
+                    "it_IT": "Scudo Cerimonioso",
+                    "ru_RU": "Церемониальный щит",
+                    "ko_KR": "격조의 방패",
+                    "zh_TW": "典禮盾牌",
+                    "zh_CN": "仪式盾牌"
+                },
+                "category": {
+                    "en_US": "Shields",
+                    "es_MX": "Escudos",
+                    "pt_BR": "Escudos",
+                    "de_DE": "Schilde",
+                    "en_GB": "Shields",
+                    "es_ES": "Escudos",
+                    "fr_FR": "Boucliers",
+                    "it_IT": "Scudi",
+                    "ru_RU": "Щиты",
+                    "ko_KR": "방패",
+                    "zh_TW": "盾牌",
+                    "zh_CN": "盾牌"
+                }
             },
             {
                 "id": 42381,
-                "name": "Shadowghast Breastplate",
-                "category": "Specialized Armor"
+                "name": {
+                    "en_US": "Shadowghast Breastplate",
+                    "es_MX": "Coraza de sombra fantasmal",
+                    "pt_BR": "Peitoral de Umbromedo",
+                    "de_DE": "Schattenschreckbrustplatte",
+                    "en_GB": "Shadowghast Breastplate",
+                    "es_ES": "Coraza de terror sombrío",
+                    "fr_FR": "Cuirasse ombrepeur",
+                    "it_IT": "Pettorale Corazzato di Spettrombra",
+                    "ru_RU": "Эребиевая кираса",
+                    "ko_KR": "어둠혼 가슴보호갑",
+                    "zh_TW": "影怖胸甲",
+                    "zh_CN": "影怖胸甲"
+                },
+                "category": {
+                    "en_US": "Specialized Armor",
+                    "es_MX": "Armadura especializada",
+                    "pt_BR": "Armadura Especializada",
+                    "de_DE": "Spezialrüstung",
+                    "en_GB": "Specialized Armor",
+                    "es_ES": "Armadura especializada",
+                    "fr_FR": "Armure spécialisée",
+                    "it_IT": "Armature Specializzate",
+                    "ru_RU": "Специализированные доспехи",
+                    "ko_KR": "특제 방어구",
+                    "zh_TW": "精製護甲",
+                    "zh_CN": "特化护甲"
+                }
             },
             {
                 "id": 42389,
-                "name": "Shadowghast Ingot",
-                "category": "Reagents"
+                "name": {
+                    "en_US": "Shadowghast Ingot",
+                    "es_MX": "Lingote de sombra fantasmal",
+                    "pt_BR": "Lingote de Umbromedo",
+                    "de_DE": "Schattenschreckbarren",
+                    "en_GB": "Shadowghast Ingot",
+                    "es_ES": "Lingote de terror sombrío",
+                    "fr_FR": "Lingot ombrepeur",
+                    "it_IT": "Lingotto di Spettrombra",
+                    "ru_RU": "Слиток эребия",
+                    "ko_KR": "어둠혼 주괴",
+                    "zh_TW": "影怖錠",
+                    "zh_CN": "影怖之锭"
+                },
+                "category": {
+                    "en_US": "Reagents",
+                    "es_MX": "Componentes",
+                    "pt_BR": "Reagentes",
+                    "de_DE": "Reagenzien",
+                    "en_GB": "Reagents",
+                    "es_ES": "Componentes",
+                    "fr_FR": "Composants",
+                    "it_IT": "Reagenti",
+                    "ru_RU": "Реагенты",
+                    "ko_KR": "재료",
+                    "zh_TW": "材料",
+                    "zh_CN": "材料"
+                }
             },
             {
                 "id": 42397,
-                "name": "Laestrite Skeleton Key",
-                "category": "Other"
+                "name": {
+                    "en_US": "Laestrite Skeleton Key",
+                    "es_MX": "Llave maestra de lestrita",
+                    "pt_BR": "Chave-mestra de Laestrita",
+                    "de_DE": "Laestritdietrich",
+                    "en_GB": "Laestrite Skeleton Key",
+                    "es_ES": "Llave maestra de laestrita",
+                    "fr_FR": "Passe-partout en læstrite",
+                    "it_IT": "Chiave Universale di Laestrite",
+                    "ru_RU": "Лестритовая отмычка",
+                    "ko_KR": "레이스트라이트 해골 열쇠",
+                    "zh_TW": "雷瑟瑞骷髏鑰匙",
+                    "zh_CN": "苷铜万能钥匙"
+                },
+                "category": {
+                    "en_US": "Other",
+                    "es_MX": "Otros",
+                    "pt_BR": "Outros",
+                    "de_DE": "Sonstiges",
+                    "en_GB": "Other",
+                    "es_ES": "Otros",
+                    "fr_FR": "Autres",
+                    "it_IT": "Altro",
+                    "ru_RU": "Другое",
+                    "ko_KR": "기타",
+                    "zh_TW": "其他",
+                    "zh_CN": "其它"
+                }
             },
             {
                 "id": 42406,
-                "name": "Ceremonious Axe",
-                "category": "Weapons"
+                "name": {
+                    "en_US": "Ceremonious Axe",
+                    "es_MX": "Hacha ceremoniosa",
+                    "pt_BR": "Machado Cerimonioso",
+                    "de_DE": "Zeremonielle Axt",
+                    "en_GB": "Ceremonious Axe",
+                    "es_ES": "Hacha de ceremonia",
+                    "fr_FR": "Hache de cérémonie",
+                    "it_IT": "Ascia Cerimoniosa",
+                    "ru_RU": "Церемониальный топор",
+                    "ko_KR": "격조의 도끼",
+                    "zh_TW": "典禮之斧",
+                    "zh_CN": "仪式之斧"
+                },
+                "category": {
+                    "en_US": "Weapons",
+                    "es_MX": "Armas",
+                    "pt_BR": "Armas",
+                    "de_DE": "Waffen",
+                    "en_GB": "Weapons",
+                    "es_ES": "Armas",
+                    "fr_FR": "Armes",
+                    "it_IT": "Armi",
+                    "ru_RU": "Оружие",
+                    "ko_KR": "무기",
+                    "zh_TW": "武器",
+                    "zh_CN": "武器"
+                }
             }
         ]
     },
     {
         "professionId": 333,
-        "professionName": "Enchanting",
+        "professionName": {
+            "en_US": "Enchanting",
+            "es_MX": "Encantamiento",
+            "pt_BR": "Encantamento",
+            "de_DE": "Verzauberkunst",
+            "en_GB": "Enchanting",
+            "es_ES": "Encantamiento",
+            "fr_FR": "Enchantement",
+            "it_IT": "Incantamento",
+            "ru_RU": "Наложение чар",
+            "ko_KR": "마법부여",
+            "zh_TW": "附魔",
+            "zh_CN": "附魔"
+        },
         "skillTierId": 2909,
-        "skillTierName": "Midnight Enchanting",
+        "skillTierName": {
+            "en_US": "Midnight Enchanting",
+            "es_MX": "Encantamiento de Midnight",
+            "pt_BR": "Encantamento de Midnight",
+            "de_DE": "Verzauberkunst von Midnight",
+            "en_GB": "Midnight Enchanting",
+            "es_ES": "Encantamiento de Midnight",
+            "fr_FR": "Enchantement de Midnight",
+            "it_IT": "Incantamento di Midnight",
+            "ru_RU": "Наложение чар Midnight",
+            "ko_KR": "한밤 마법부여",
+            "zh_TW": "至暗之夜附魔",
+            "zh_CN": "至暗之夜附魔"
+        },
         "recipes": [
             {
                 "id": 51521,
-                "name": "Recraft Equipment",
-                "category": "Recrafting"
+                "name": {
+                    "en_US": "Recraft Equipment",
+                    "es_MX": "Refabricar equipamiento",
+                    "pt_BR": "Recriar Equipamento",
+                    "de_DE": "Ausrüstung umfertigen",
+                    "en_GB": "Recraft Equipment",
+                    "es_ES": "Refabricar equipo",
+                    "fr_FR": "Refaçonner de l’équipement",
+                    "it_IT": "Ricreazione Equipaggiamento",
+                    "ru_RU": "Переделка снаряжения",
+                    "ko_KR": "장비 재제작",
+                    "zh_TW": "重新製作裝備",
+                    "zh_CN": "再造装备"
+                },
+                "category": {
+                    "en_US": "Recrafting",
+                    "es_MX": "Refabricación",
+                    "pt_BR": "Recriação",
+                    "de_DE": "Umfertigen",
+                    "en_GB": "Recrafting",
+                    "es_ES": "Refabricación",
+                    "fr_FR": "Refaçonner",
+                    "it_IT": "Nuova Creazione",
+                    "ru_RU": "Переделка",
+                    "ko_KR": "재제작",
+                    "zh_TW": "重新製作",
+                    "zh_CN": "再造"
+                }
             },
             {
                 "id": 52935,
-                "name": "Enchant Chest - Mark of Nalorakk",
-                "category": "Chest Enchants"
+                "name": {
+                    "en_US": "Enchant Chest - Mark of Nalorakk",
+                    "es_MX": "Encantar pechera: Marca de Nalorakk",
+                    "pt_BR": "Encantamento da Marca de Nalorakk - Torso",
+                    "de_DE": "Brust - Zeichen von Nalorakk",
+                    "en_GB": "Enchant Chest - Mark of Nalorakk",
+                    "es_ES": "Encantar torso: Marca de Nalorakk",
+                    "fr_FR": "Enchantement de plastron – marque de Nalorakk",
+                    "it_IT": "Incantamento Torso - Marchio di Nalorakk",
+                    "ru_RU": "Чары для нагрудника – метка Налоракка",
+                    "ko_KR": "가슴보호구 마법부여 - 날로라크의 징표",
+                    "zh_TW": "附魔胸甲 - 納羅拉克印記",
+                    "zh_CN": "附魔胸甲 - 纳洛拉克印记"
+                },
+                "category": {
+                    "en_US": "Chest Enchants",
+                    "es_MX": "Encantamientos de cofres",
+                    "pt_BR": "Encantamentos de Torso",
+                    "de_DE": "Brustverzauberungen",
+                    "en_GB": "Chest Enchants",
+                    "es_ES": "Encantamientos de torsos",
+                    "fr_FR": "Enchantements de torse",
+                    "it_IT": "Incantamenti per Corazze",
+                    "ru_RU": "Чары для нагрудника",
+                    "ko_KR": "가슴 마법부여",
+                    "zh_TW": "胸甲附魔",
+                    "zh_CN": "胸甲附魔"
+                }
             },
             {
                 "id": 52936,
-                "name": "Enchant Helm - Hex of Leeching",
-                "category": "Helm Enchants"
+                "name": {
+                    "en_US": "Enchant Helm - Hex of Leeching",
+                    "es_MX": "Encantar yelmo: Maleficio chupasangre",
+                    "pt_BR": "Encantamento de Bagata Sorvedora - Elmo",
+                    "de_DE": "Helm - Lebensraubzauber",
+                    "en_GB": "Enchant Helm - Hex of Leeching",
+                    "es_ES": "Encantar yelmo: Maleficio de parasitismo",
+                    "fr_FR": "Enchantement de casque – maléfice de sangsue",
+                    "it_IT": "Incantamento Elmo - Maleficio dell'Assorbimento",
+                    "ru_RU": "Чары для шлема – сглаз самоисцеления",
+                    "ko_KR": "투구 마법부여 - 생기흡수의 사술",
+                    "zh_TW": "附魔頭盔 - 汲取妖術",
+                    "zh_CN": "附魔头盔 - 吸血妖术"
+                },
+                "category": {
+                    "en_US": "Helm Enchants",
+                    "es_MX": "Encantamientos de yelmos",
+                    "pt_BR": "Encantamentos de Elmo",
+                    "de_DE": "Helmverzauberungen",
+                    "en_GB": "Helm Enchants",
+                    "es_ES": "Encantamientos de yelmos",
+                    "fr_FR": "Enchantements de heaume",
+                    "it_IT": "Incantamenti per Elmi",
+                    "ru_RU": "Чары для шлема",
+                    "ko_KR": "투구 마법부여",
+                    "zh_TW": "頭盔附魔",
+                    "zh_CN": "头盔附魔"
+                }
             },
             {
                 "id": 52938,
-                "name": "Enchant Boots - Lynx's Dexterity",
-                "category": "Boot Enchants"
+                "name": {
+                    "en_US": "Enchant Boots - Lynx's Dexterity",
+                    "es_MX": "Encantar botas: Destreza de lince",
+                    "pt_BR": "Encantamento de Destreza do Lince - Botas",
+                    "de_DE": "Stiefel - Gewandtheit des Luchses",
+                    "en_GB": "Enchant Boots - Lynx's Dexterity",
+                    "es_ES": "Encantar botas: Destreza de lince",
+                    "fr_FR": "Enchantement de bottes – dextérité du lynx",
+                    "it_IT": "Incantamento Stivali - Destrezza della Lince",
+                    "ru_RU": "Чары для обуви – рысья стремительность",
+                    "ko_KR": "장화 마법부여 - 스라소니의 기민함",
+                    "zh_TW": "附魔靴子 - 山貓迅敏",
+                    "zh_CN": "附魔靴子 - 山猫之敏"
+                },
+                "category": {
+                    "en_US": "Boot Enchants",
+                    "es_MX": "Encantamientos de botas",
+                    "pt_BR": "Encantamentos de Botas",
+                    "de_DE": "Stiefelverzauberungen",
+                    "en_GB": "Boot Enchants",
+                    "es_ES": "Encantamientos de botas",
+                    "fr_FR": "Enchantements de bottes",
+                    "it_IT": "Incantamenti per Stivali",
+                    "ru_RU": "Чары для обуви",
+                    "ko_KR": "장화 마법부여",
+                    "zh_TW": "長靴附魔",
+                    "zh_CN": "靴子附魔"
+                }
             },
             {
                 "id": 52939,
-                "name": "Enchant Ring - Amani Mastery",
-                "category": "Rings Enchants"
+                "name": {
+                    "en_US": "Enchant Ring - Amani Mastery",
+                    "es_MX": "Encantar anillo: Maestría amani",
+                    "pt_BR": "Encantamento de Maestria Amani - Anel",
+                    "de_DE": "Ring - Amanimeisterschaft",
+                    "en_GB": "Enchant Ring - Amani Mastery",
+                    "es_ES": "Encantar anillo: Maestría Amani",
+                    "fr_FR": "Enchantement d’anneau – maîtrise amani",
+                    "it_IT": "Incantamento Anello - Maestria degli Amani",
+                    "ru_RU": "Чары для кольца – аманийская искусность",
+                    "ko_KR": "반지 마법부여 - 아마니의 특화",
+                    "zh_TW": "附魔戒指 - 阿曼尼精通",
+                    "zh_CN": "附魔戒指 - 阿曼尼精通"
+                },
+                "category": {
+                    "en_US": "Rings Enchants",
+                    "es_MX": "Encantamientos de anillos",
+                    "pt_BR": "Encantamentos de Anéis",
+                    "de_DE": "Ringverzauberungen",
+                    "en_GB": "Rings Enchants",
+                    "es_ES": "Encantamientos de anillos",
+                    "fr_FR": "Enchantements d’anneaux",
+                    "it_IT": "Incantamenti per Anelli",
+                    "ru_RU": "Чары для колец",
+                    "ko_KR": "반지 마법부여",
+                    "zh_TW": "戒指附魔",
+                    "zh_CN": "戒指附魔"
+                }
             },
             {
                 "id": 52942,
-                "name": "Enchant Shoulders - Flight of the Eagle",
-                "category": "Shoulder Enchants"
+                "name": {
+                    "en_US": "Enchant Shoulders - Flight of the Eagle",
+                    "es_MX": "Encantar sobrehombros: Vuelo del águila",
+                    "pt_BR": "Encantamento do Voo da Águia - Ombros",
+                    "de_DE": "Schultern - Flug des Adlers",
+                    "en_GB": "Enchant Shoulders - Flight of the Eagle",
+                    "es_ES": "Encantar hombros: Vuelo del águila",
+                    "fr_FR": "Enchantement d’épaulières – Vol de l’aigle",
+                    "it_IT": "Incantamento Spalle - Volo dell'Aquila",
+                    "ru_RU": "Чары для наплечников – полет орла",
+                    "ko_KR": "어깨보호구 마법부여 - 독수리의 비행",
+                    "zh_TW": "附魔肩膀 - 老鷹之翔",
+                    "zh_CN": "附魔护肩 - 鹰翔长空"
+                },
+                "category": {
+                    "en_US": "Shoulder Enchants",
+                    "es_MX": "Encantamientos de hombros",
+                    "pt_BR": "Encantamentos de Ombros",
+                    "de_DE": "Schulterverzauberungen",
+                    "en_GB": "Shoulder Enchants",
+                    "es_ES": "Encantamientos de hombros",
+                    "fr_FR": "Enchantements d’épaulières",
+                    "it_IT": "Incantamenti per Spalle",
+                    "ru_RU": "Чары для наплечников",
+                    "ko_KR": "어깨보호구 마법부여",
+                    "zh_TW": "肩部附魔",
+                    "zh_CN": "护肩附魔"
+                }
             }
         ]
     },
     {
         "professionId": 333,
-        "professionName": "Enchanting",
+        "professionName": {
+            "en_US": "Enchanting",
+            "es_MX": "Encantamiento",
+            "pt_BR": "Encantamento",
+            "de_DE": "Verzauberkunst",
+            "en_GB": "Enchanting",
+            "es_ES": "Encantamiento",
+            "fr_FR": "Enchantement",
+            "it_IT": "Incantamento",
+            "ru_RU": "Наложение чар",
+            "ko_KR": "마법부여",
+            "zh_TW": "附魔",
+            "zh_CN": "附魔"
+        },
         "skillTierId": 2753,
-        "skillTierName": "Shadowlands Enchanting",
+        "skillTierName": {
+            "en_US": "Shadowlands Enchanting",
+            "es_MX": "Encantamiento de Shadowlands",
+            "pt_BR": "Encantamento de Shadowlands",
+            "de_DE": "Verzauberkunst der Schattenlande",
+            "en_GB": "Shadowlands Enchanting",
+            "es_ES": "Encantamiento de Shadowlands",
+            "fr_FR": "Enchantement d’Ombreterre",
+            "it_IT": "Incantamento di Shadowlands",
+            "ru_RU": "Наложение чар Темных Земель",
+            "ko_KR": "어둠땅 마법부여",
+            "zh_TW": "暗影之境附魔",
+            "zh_CN": "暗影界附魔"
+        },
         "recipes": [
             {
                 "id": 42637,
-                "name": "Eternal Agility",
-                "category": "Boot Enchantments"
+                "name": {
+                    "en_US": "Eternal Agility",
+                    "es_MX": "Agilidad eterna",
+                    "pt_BR": "Agilidade Eterna",
+                    "de_DE": "Ewige Beweglichkeit",
+                    "en_GB": "Eternal Agility",
+                    "es_ES": "Agilidad eterna",
+                    "fr_FR": "Agilité éternelle",
+                    "it_IT": "Agilità Eterna",
+                    "ru_RU": "Вечная ловкость",
+                    "ko_KR": "영원의 민첩성",
+                    "zh_TW": "永恆敏捷",
+                    "zh_CN": "永恒敏捷"
+                },
+                "category": {
+                    "en_US": "Boot Enchantments",
+                    "es_MX": "Encantamientos de botas",
+                    "pt_BR": "Encantamentos de Botas",
+                    "de_DE": "Stiefelverzauberungen",
+                    "en_GB": "Boot Enchantments",
+                    "es_ES": "Encantamientos de botas",
+                    "fr_FR": "Enchantements de bottes",
+                    "it_IT": "Incantamenti per Stivali",
+                    "ru_RU": "Чары для обуви",
+                    "ko_KR": "장화 마법부여",
+                    "zh_TW": "長靴附魔",
+                    "zh_CN": "靴子附魔"
+                }
             },
             {
                 "id": 42638,
-                "name": "Eternal Bulwark",
-                "category": "Chest Enchantments"
+                "name": {
+                    "en_US": "Eternal Bulwark",
+                    "es_MX": "Baluarte eterno",
+                    "pt_BR": "Baluarte Eterno",
+                    "de_DE": "Ewiges Bollwerk",
+                    "en_GB": "Eternal Bulwark",
+                    "es_ES": "Baluarte eterno",
+                    "fr_FR": "Rempart éternel",
+                    "it_IT": "Baluardo Eterno",
+                    "ru_RU": "Вечный оплот",
+                    "ko_KR": "영원의 보루",
+                    "zh_TW": "永恆壁壘",
+                    "zh_CN": "永恒壁垒"
+                },
+                "category": {
+                    "en_US": "Chest Enchantments",
+                    "es_MX": "Encantamientos de pecheras",
+                    "pt_BR": "Encantamentos de Torso",
+                    "de_DE": "Brustverzauberungen",
+                    "en_GB": "Chest Enchantments",
+                    "es_ES": "Encantamientos de pechera",
+                    "fr_FR": "Enchantements de torse",
+                    "it_IT": "Incantamenti per Corazze",
+                    "ru_RU": "Чары для нагрудных доспехов",
+                    "ko_KR": "가슴 마법부여",
+                    "zh_TW": "胸部附魔",
+                    "zh_CN": "胸甲附魔"
+                }
             },
             {
                 "id": 42639,
-                "name": "Fortified Speed",
-                "category": "Cloak Enchantments"
+                "name": {
+                    "en_US": "Fortified Speed",
+                    "es_MX": "Velocidad fortificada",
+                    "pt_BR": "Velocidade Fortificada",
+                    "de_DE": "Verstärkte Geschwindigkeit",
+                    "en_GB": "Fortified Speed",
+                    "es_ES": "Velocidad reforzada",
+                    "fr_FR": "Vitesse augmentée",
+                    "it_IT": "Velocità Rinforzata",
+                    "ru_RU": "Повышенная скорость",
+                    "ko_KR": "강화된 속도",
+                    "zh_TW": "強化速度",
+                    "zh_CN": "强化速度"
+                },
+                "category": {
+                    "en_US": "Cloak Enchantments",
+                    "es_MX": "Encantamientos de capas",
+                    "pt_BR": "Encantamentos de Mantos",
+                    "de_DE": "Umhangverzauberungen",
+                    "en_GB": "Cloak Enchantments",
+                    "es_ES": "Encantamientos de capas",
+                    "fr_FR": "Enchantements de cape",
+                    "it_IT": "Incantamenti per Mantelli",
+                    "ru_RU": "Чары для плаща",
+                    "ko_KR": "망토 마법부여",
+                    "zh_TW": "披風附魔",
+                    "zh_CN": "披风附魔"
+                }
             },
             {
                 "id": 42643,
-                "name": "Shadowlands Gathering",
-                "category": "Glove Enchantments"
+                "name": {
+                    "en_US": "Shadowlands Gathering",
+                    "es_MX": "Recolección de Shadowlands",
+                    "pt_BR": "Coleta nas Terras Sombrias",
+                    "de_DE": "Sammeln der Schattenlande",
+                    "en_GB": "Shadowlands Gathering",
+                    "es_ES": "Recolección de las Tierras Sombrías",
+                    "fr_FR": "Récolte d’Ombreterre",
+                    "it_IT": "Raccolta di Shadowlands",
+                    "ru_RU": "Сбор ресурсов в Темных Землях",
+                    "ko_KR": "어둠땅 채집",
+                    "zh_TW": "暗影之境採集",
+                    "zh_CN": "暗影界采集"
+                },
+                "category": {
+                    "en_US": "Glove Enchantments",
+                    "es_MX": "Encantamientos de guantes",
+                    "pt_BR": "Encantamentos de Luvas",
+                    "de_DE": "Handschuhverzauberungen",
+                    "en_GB": "Glove Enchantments",
+                    "es_ES": "Encantamientos de guantes",
+                    "fr_FR": "Enchantements de gants",
+                    "it_IT": "Incantamenti per Guanti",
+                    "ru_RU": "Чары для перчаток",
+                    "ko_KR": "장갑 마법부여",
+                    "zh_TW": "手套附魔",
+                    "zh_CN": "手套附魔"
+                }
             },
             {
                 "id": 42655,
-                "name": "Illuminated Soul",
-                "category": "Bracer Enchantments"
+                "name": {
+                    "en_US": "Illuminated Soul",
+                    "es_MX": "Alma iluminada",
+                    "pt_BR": "Alma Iluminada",
+                    "de_DE": "Erleuchtete Seele",
+                    "en_GB": "Illuminated Soul",
+                    "es_ES": "Alma iluminada",
+                    "fr_FR": "Âme illuminée",
+                    "it_IT": "Anima Illuminata",
+                    "ru_RU": "Освещенная душа",
+                    "ko_KR": "빛나는 영혼",
+                    "zh_TW": "光明之魂",
+                    "zh_CN": "光耀灵魂"
+                },
+                "category": {
+                    "en_US": "Bracer Enchantments",
+                    "es_MX": "Encantamientos de brazales",
+                    "pt_BR": "Encantamentos de Braçadeiras",
+                    "de_DE": "Armschienenverzauberungen",
+                    "en_GB": "Bracer Enchantments",
+                    "es_ES": "Encantamientos de brazal",
+                    "fr_FR": "Enchantements de brassards",
+                    "it_IT": "Incantamenti per Bracciali",
+                    "ru_RU": "Чары для наручей",
+                    "ko_KR": "손목 마법부여",
+                    "zh_TW": "護腕附魔",
+                    "zh_CN": "护腕附魔"
+                }
             },
             {
                 "id": 42659,
-                "name": "Enchanted Elethium Bar",
-                "category": "Reagents"
+                "name": {
+                    "en_US": "Enchanted Elethium Bar",
+                    "es_MX": "Barra de eletio encantado",
+                    "pt_BR": "Barra de Elétio Encantada",
+                    "de_DE": "Verzauberter Elethiumbarren",
+                    "en_GB": "Enchanted Elethium Bar",
+                    "es_ES": "Barra de eletio encantado",
+                    "fr_FR": "Barre d’éléthium enchanté",
+                    "it_IT": "Lingotto di Elezio Incantato",
+                    "ru_RU": "Зачарованный элетиевый слиток",
+                    "ko_KR": "마력 깃든 엘레튬 주괴",
+                    "zh_TW": "附魔艾雷希錠",
+                    "zh_CN": "魔化阴铁锭"
+                },
+                "category": {
+                    "en_US": "Reagents",
+                    "es_MX": "Componentes",
+                    "pt_BR": "Reagentes",
+                    "de_DE": "Reagenzien",
+                    "en_GB": "Reagents",
+                    "es_ES": "Componentes",
+                    "fr_FR": "Composants",
+                    "it_IT": "Reagenti",
+                    "ru_RU": "Реагенты",
+                    "ko_KR": "재료",
+                    "zh_TW": "材料",
+                    "zh_CN": "材料"
+                }
             }
         ]
     },
     {
         "professionId": 182,
-        "professionName": "Herbalism",
+        "professionName": {
+            "en_US": "Herbalism",
+            "es_MX": "Herboristería",
+            "pt_BR": "Herborismo",
+            "de_DE": "Kräuterkunde",
+            "en_GB": "Herbalism",
+            "es_ES": "Herboristería",
+            "fr_FR": "Herboristerie",
+            "it_IT": "Erbalismo",
+            "ru_RU": "Травничество",
+            "ko_KR": "약초채집",
+            "zh_TW": "草藥學",
+            "zh_CN": "草药学"
+        },
         "skillTierId": 2912,
-        "skillTierName": "Midnight Herbalism",
+        "skillTierName": {
+            "en_US": "Midnight Herbalism",
+            "es_MX": "Herboristería de Midnight",
+            "pt_BR": "Herborismo de Midnight",
+            "de_DE": "Kräuterkunde von Midnight",
+            "en_GB": "Midnight Herbalism",
+            "es_ES": "Herboristería de Midnight",
+            "fr_FR": "Herboristerie de Midnight",
+            "it_IT": "Erbalismo di Midnight",
+            "ru_RU": "Травничество Midnight",
+            "ko_KR": "한밤 약초채집",
+            "zh_TW": "至暗之夜草藥學",
+            "zh_CN": "至暗之夜草药学"
+        },
         "recipes": [
             {
                 "id": 51818,
-                "name": "Magical Mulch",
-                "category": "Mulch"
+                "name": {
+                    "en_US": "Magical Mulch",
+                    "es_MX": "Mantillo mágico",
+                    "pt_BR": "Húmus Mágico",
+                    "de_DE": "Magischer Mulch",
+                    "en_GB": "Magical Mulch",
+                    "es_ES": "Mantillo mágico",
+                    "fr_FR": "Paillis magique",
+                    "it_IT": "Concime Magico",
+                    "ru_RU": "Магическая мульча",
+                    "ko_KR": "마법 거름",
+                    "zh_TW": "魔法堆肥",
+                    "zh_CN": "魔法护土"
+                },
+                "category": {
+                    "en_US": "Mulch",
+                    "es_MX": "Mantillo",
+                    "pt_BR": "Adubação",
+                    "de_DE": "Mulch",
+                    "en_GB": "Mulch",
+                    "es_ES": "Mantillo",
+                    "fr_FR": "Paillis",
+                    "it_IT": "Concime",
+                    "ru_RU": "Мульча",
+                    "ko_KR": "거름",
+                    "zh_TW": "堆肥",
+                    "zh_CN": "护土"
+                }
             },
             {
                 "id": 51851,
-                "name": "Tranquility Bloom",
-                "category": "Section I - Peacebloom"
+                "name": {
+                    "en_US": "Tranquility Bloom",
+                    "es_MX": "Flor de tranquilidad",
+                    "pt_BR": "Floração da Tranquilidade",
+                    "de_DE": "Harmonieblume",
+                    "en_GB": "Tranquility Bloom",
+                    "es_ES": "Flor de tranquilidad",
+                    "fr_FR": "Tranquillette",
+                    "it_IT": "Bocciolo Tranquillo",
+                    "ru_RU": "Тихоцвет",
+                    "ko_KR": "평온의 꽃송이",
+                    "zh_TW": "靜心花",
+                    "zh_CN": "宁心花"
+                },
+                "category": {
+                    "en_US": "Section I - Peacebloom",
+                    "es_MX": "Sección I - Flor de paz",
+                    "pt_BR": "Seção I - Botão-da-paz",
+                    "de_DE": "Abschnitt I - Friedensblume",
+                    "en_GB": "Section I - Peacebloom",
+                    "es_ES": "Sección I - Flor de paz",
+                    "fr_FR": "Section I – pacifique",
+                    "it_IT": "Sezione I - Sbocciapace",
+                    "ru_RU": "Раздел I – мироцвет",
+                    "ko_KR": "항목 I - 평온초",
+                    "zh_TW": "第一部分 - 寧神花",
+                    "zh_CN": "第I部分 - 宁神花"
+                }
             },
             {
                 "id": 51852,
-                "name": "Sanguithorn",
-                "category": "Section II - Sanguithorn"
+                "name": {
+                    "en_US": "Sanguithorn",
+                    "es_MX": "Sangrespina",
+                    "pt_BR": "Sanguispinho",
+                    "de_DE": "Rotdorn",
+                    "en_GB": "Sanguithorn",
+                    "es_ES": "Sanguispino",
+                    "fr_FR": "Sanguironce",
+                    "it_IT": "Rovosangue",
+                    "ru_RU": "Кровотерн",
+                    "ko_KR": "핏빛찔레",
+                    "zh_TW": "血棘",
+                    "zh_CN": "血艳蓟"
+                },
+                "category": {
+                    "en_US": "Section II - Sanguithorn",
+                    "es_MX": "Sección II - Sangrespina",
+                    "pt_BR": "Seção II - Sanguispinho",
+                    "de_DE": "Abschnitt II - Rotdorn",
+                    "en_GB": "Section II - Sanguithorn",
+                    "es_ES": "Sección II - Sanguispino",
+                    "fr_FR": "Section II – sanguironce",
+                    "it_IT": "Sezione II - Rovosangue",
+                    "ru_RU": "Раздел II – кровотерн",
+                    "ko_KR": "항목 II - 핏빛찔레",
+                    "zh_TW": "第二部分 - 血棘",
+                    "zh_CN": "第II部分 - 血艳蓟"
+                }
             },
             {
                 "id": 51853,
-                "name": "Azeroot",
-                "category": "Section III - Azeroot"
+                "name": {
+                    "en_US": "Azeroot",
+                    "es_MX": "Azerraíz",
+                    "pt_BR": "Raizeroth",
+                    "de_DE": "Azerwurz",
+                    "en_GB": "Azeroot",
+                    "es_ES": "Azerraíz",
+                    "fr_FR": "Azeracine",
+                    "it_IT": "Azeradice",
+                    "ru_RU": "Азефит",
+                    "ko_KR": "아제뿌리",
+                    "zh_TW": "杜根草",
+                    "zh_CN": "艾泽之根"
+                },
+                "category": {
+                    "en_US": "Section III - Azeroot",
+                    "es_MX": "Sección III - Azerraíz",
+                    "pt_BR": "Seção III - Raizeroth",
+                    "de_DE": "Abschnitt III - Azerwurz",
+                    "en_GB": "Section III - Azeroot",
+                    "es_ES": "Sección III - Azerraíz",
+                    "fr_FR": "Section III – azeracine",
+                    "it_IT": "Sezione III - Azeradice",
+                    "ru_RU": "Раздел III – азефит",
+                    "ko_KR": "항목 III - 아제뿌리",
+                    "zh_TW": "第三部分 - 杜根草",
+                    "zh_CN": "第III部分 - 艾泽之根"
+                }
             },
             {
                 "id": 51854,
-                "name": "Argentleaf",
-                "category": "Section IV - Argentleaf"
+                "name": {
+                    "en_US": "Argentleaf",
+                    "es_MX": "Hojargenta",
+                    "pt_BR": "Folhargêntea",
+                    "de_DE": "Argentumblatt",
+                    "en_GB": "Argentleaf",
+                    "es_ES": "Hojargenta",
+                    "fr_FR": "Feuille-d’argent",
+                    "it_IT": "Argentemo",
+                    "ru_RU": "Сребревица",
+                    "ko_KR": "은빛잎사귀",
+                    "zh_TW": "鉑葉草",
+                    "zh_CN": "白银叶"
+                },
+                "category": {
+                    "en_US": "Section IV - Argentleaf",
+                    "es_MX": "Sección IV - Hojargenta",
+                    "pt_BR": "Seção IV - Folhargêntea",
+                    "de_DE": "Abschnitt IV - Argentumblatt",
+                    "en_GB": "Section IV - Argentleaf",
+                    "es_ES": "Sección IV - Hojargenta",
+                    "fr_FR": "Section IV – feuille-d’argent",
+                    "it_IT": "Sezione IV - Argentemo",
+                    "ru_RU": "Раздел IV – сребревица",
+                    "ko_KR": "항목 IV - 은빛잎사귀",
+                    "zh_TW": "第四部分 - 鉑葉草",
+                    "zh_CN": "第IV部分 - 白银叶"
+                }
             },
             {
                 "id": 51855,
-                "name": "Mana Lily",
-                "category": "Section V - Mana Lily"
+                "name": {
+                    "en_US": "Mana Lily",
+                    "es_MX": "Lirio de maná",
+                    "pt_BR": "Lírio de Mana",
+                    "de_DE": "Manalilie",
+                    "en_GB": "Mana Lily",
+                    "es_ES": "Lirio de maná",
+                    "fr_FR": "Lys de mana",
+                    "it_IT": "Giglio di Mana",
+                    "ru_RU": "Маналилия",
+                    "ko_KR": "마나 백합",
+                    "zh_TW": "法力百合",
+                    "zh_CN": "法力百合"
+                },
+                "category": {
+                    "en_US": "Section V - Mana Lily",
+                    "es_MX": "Sección V - Lirio de maná",
+                    "pt_BR": "Seção V - Lírio de Mana",
+                    "de_DE": "Abschnitt II - Manalilie",
+                    "en_GB": "Section V - Mana Lily",
+                    "es_ES": "Sección V - Lirio de maná",
+                    "fr_FR": "Section V – lys de mana",
+                    "it_IT": "Sezione V - Giglio di Mana",
+                    "ru_RU": "Раздел V – маналилия",
+                    "ko_KR": "항목 V - 마나 백합",
+                    "zh_TW": "第五部分 - 法力百合",
+                    "zh_CN": "第V部分 - 法力百合"
+                }
             }
         ]
     },
     {
         "professionId": 182,
-        "professionName": "Herbalism",
+        "professionName": {
+            "en_US": "Herbalism",
+            "es_MX": "Herboristería",
+            "pt_BR": "Herborismo",
+            "de_DE": "Kräuterkunde",
+            "en_GB": "Herbalism",
+            "es_ES": "Herboristería",
+            "fr_FR": "Herboristerie",
+            "it_IT": "Erbalismo",
+            "ru_RU": "Травничество",
+            "ko_KR": "약초채집",
+            "zh_TW": "草藥學",
+            "zh_CN": "草药学"
+        },
         "skillTierId": 2550,
-        "skillTierName": "Legion Herbalism",
+        "skillTierName": {
+            "en_US": "Legion Herbalism",
+            "es_MX": "Herboristería de Legion",
+            "pt_BR": "Herborismo de Legion",
+            "de_DE": "Kräuterkunde der Verheerten Inseln",
+            "en_GB": "Legion Herbalism",
+            "es_ES": "Herboristería de Legion",
+            "fr_FR": "Herboristerie de Legion",
+            "it_IT": "Erbalismo di Legion",
+            "ru_RU": "Травничество Legion",
+            "ko_KR": "군단 약초채집",
+            "zh_TW": "軍團草藥學",
+            "zh_CN": "军团草药学"
+        },
         "recipes": [
             {
                 "id": 34768,
-                "name": "Aethril",
-                "category": "Gathering Techniques"
+                "name": {
+                    "en_US": "Aethril",
+                    "es_MX": "Aethril",
+                    "pt_BR": "Aethril",
+                    "de_DE": "Aethril",
+                    "en_GB": "Aethril",
+                    "es_ES": "Aethril",
+                    "fr_FR": "Aethril",
+                    "it_IT": "Aethril",
+                    "ru_RU": "Айтрил",
+                    "ko_KR": "에이트릴",
+                    "zh_TW": "紫地根草",
+                    "zh_CN": "安瑟瑞尔花"
+                },
+                "category": {
+                    "en_US": "Gathering Techniques",
+                    "es_MX": "Técnicas de Recolección",
+                    "pt_BR": "Técnica de Coleta",
+                    "de_DE": "Sammeltechniken",
+                    "en_GB": "Gathering Techniques",
+                    "es_ES": "Técnicas de recolección",
+                    "fr_FR": "Techniques de récolte",
+                    "it_IT": "Tecniche di Raccolta",
+                    "ru_RU": "Способы сбора ресурсов",
+                    "ko_KR": "채집 기술",
+                    "zh_TW": "採集技術",
+                    "zh_CN": "采集技术"
+                }
             },
             {
                 "id": 34769,
-                "name": "Aethril",
-                "category": "Gathering Techniques"
+                "name": {
+                    "en_US": "Aethril",
+                    "es_MX": "Aethril",
+                    "pt_BR": "Aethril",
+                    "de_DE": "Aethril",
+                    "en_GB": "Aethril",
+                    "es_ES": "Aethril",
+                    "fr_FR": "Aethril",
+                    "it_IT": "Aethril",
+                    "ru_RU": "Айтрил",
+                    "ko_KR": "에이트릴",
+                    "zh_TW": "紫地根草",
+                    "zh_CN": "安瑟瑞尔花"
+                },
+                "category": {
+                    "en_US": "Gathering Techniques",
+                    "es_MX": "Técnicas de Recolección",
+                    "pt_BR": "Técnica de Coleta",
+                    "de_DE": "Sammeltechniken",
+                    "en_GB": "Gathering Techniques",
+                    "es_ES": "Técnicas de recolección",
+                    "fr_FR": "Techniques de récolte",
+                    "it_IT": "Tecniche di Raccolta",
+                    "ru_RU": "Способы сбора ресурсов",
+                    "ko_KR": "채집 기술",
+                    "zh_TW": "採集技術",
+                    "zh_CN": "采集技术"
+                }
             },
             {
                 "id": 34770,
-                "name": "Aethril",
-                "category": "Gathering Techniques"
+                "name": {
+                    "en_US": "Aethril",
+                    "es_MX": "Aethril",
+                    "pt_BR": "Aethril",
+                    "de_DE": "Aethril",
+                    "en_GB": "Aethril",
+                    "es_ES": "Aethril",
+                    "fr_FR": "Aethril",
+                    "it_IT": "Aethril",
+                    "ru_RU": "Айтрил",
+                    "ko_KR": "에이트릴",
+                    "zh_TW": "紫地根草",
+                    "zh_CN": "安瑟瑞尔花"
+                },
+                "category": {
+                    "en_US": "Gathering Techniques",
+                    "es_MX": "Técnicas de Recolección",
+                    "pt_BR": "Técnica de Coleta",
+                    "de_DE": "Sammeltechniken",
+                    "en_GB": "Gathering Techniques",
+                    "es_ES": "Técnicas de recolección",
+                    "fr_FR": "Techniques de récolte",
+                    "it_IT": "Tecniche di Raccolta",
+                    "ru_RU": "Способы сбора ресурсов",
+                    "ko_KR": "채집 기술",
+                    "zh_TW": "採集技術",
+                    "zh_CN": "采集技术"
+                }
             },
             {
                 "id": 34771,
-                "name": "Dreamleaf",
-                "category": "Gathering Techniques"
+                "name": {
+                    "en_US": "Dreamleaf",
+                    "es_MX": "Frondasueño",
+                    "pt_BR": "Folha-de-sonho",
+                    "de_DE": "Traumlaub",
+                    "en_GB": "Dreamleaf",
+                    "es_ES": "Frondasueño",
+                    "fr_FR": "Songefeuille",
+                    "it_IT": "Erbonirica",
+                    "ru_RU": "Грезолист",
+                    "ko_KR": "꿈잎사귀",
+                    "zh_TW": "幻夢草",
+                    "zh_CN": "入梦叶"
+                },
+                "category": {
+                    "en_US": "Gathering Techniques",
+                    "es_MX": "Técnicas de Recolección",
+                    "pt_BR": "Técnica de Coleta",
+                    "de_DE": "Sammeltechniken",
+                    "en_GB": "Gathering Techniques",
+                    "es_ES": "Técnicas de recolección",
+                    "fr_FR": "Techniques de récolte",
+                    "it_IT": "Tecniche di Raccolta",
+                    "ru_RU": "Способы сбора ресурсов",
+                    "ko_KR": "채집 기술",
+                    "zh_TW": "採集技術",
+                    "zh_CN": "采集技术"
+                }
             },
             {
                 "id": 34772,
-                "name": "Dreamleaf",
-                "category": "Gathering Techniques"
+                "name": {
+                    "en_US": "Dreamleaf",
+                    "es_MX": "Frondasueño",
+                    "pt_BR": "Folha-de-sonho",
+                    "de_DE": "Traumlaub",
+                    "en_GB": "Dreamleaf",
+                    "es_ES": "Frondasueño",
+                    "fr_FR": "Songefeuille",
+                    "it_IT": "Erbonirica",
+                    "ru_RU": "Грезолист",
+                    "ko_KR": "꿈잎사귀",
+                    "zh_TW": "幻夢草",
+                    "zh_CN": "入梦叶"
+                },
+                "category": {
+                    "en_US": "Gathering Techniques",
+                    "es_MX": "Técnicas de Recolección",
+                    "pt_BR": "Técnica de Coleta",
+                    "de_DE": "Sammeltechniken",
+                    "en_GB": "Gathering Techniques",
+                    "es_ES": "Técnicas de recolección",
+                    "fr_FR": "Techniques de récolte",
+                    "it_IT": "Tecniche di Raccolta",
+                    "ru_RU": "Способы сбора ресурсов",
+                    "ko_KR": "채집 기술",
+                    "zh_TW": "採集技術",
+                    "zh_CN": "采集技术"
+                }
             },
             {
                 "id": 34773,
-                "name": "Dreamleaf",
-                "category": "Gathering Techniques"
+                "name": {
+                    "en_US": "Dreamleaf",
+                    "es_MX": "Frondasueño",
+                    "pt_BR": "Folha-de-sonho",
+                    "de_DE": "Traumlaub",
+                    "en_GB": "Dreamleaf",
+                    "es_ES": "Frondasueño",
+                    "fr_FR": "Songefeuille",
+                    "it_IT": "Erbonirica",
+                    "ru_RU": "Грезолист",
+                    "ko_KR": "꿈잎사귀",
+                    "zh_TW": "幻夢草",
+                    "zh_CN": "入梦叶"
+                },
+                "category": {
+                    "en_US": "Gathering Techniques",
+                    "es_MX": "Técnicas de Recolección",
+                    "pt_BR": "Técnica de Coleta",
+                    "de_DE": "Sammeltechniken",
+                    "en_GB": "Gathering Techniques",
+                    "es_ES": "Técnicas de recolección",
+                    "fr_FR": "Techniques de récolte",
+                    "it_IT": "Tecniche di Raccolta",
+                    "ru_RU": "Способы сбора ресурсов",
+                    "ko_KR": "채집 기술",
+                    "zh_TW": "採集技術",
+                    "zh_CN": "采集技术"
+                }
             }
         ]
     },
     {
         "professionId": 356,
-        "professionName": "Fishing",
+        "professionName": {
+            "en_US": "Fishing",
+            "es_MX": "Pesca",
+            "pt_BR": "Pesca",
+            "de_DE": "Angeln",
+            "en_GB": "Fishing",
+            "es_ES": "Pesca",
+            "fr_FR": "Pêche",
+            "it_IT": "Pesca",
+            "ru_RU": "Рыбная ловля",
+            "ko_KR": "낚시",
+            "zh_TW": "釣魚",
+            "zh_CN": "钓鱼"
+        },
         "skillTierId": 2911,
-        "skillTierName": "Midnight Fishing",
+        "skillTierName": {
+            "en_US": "Midnight Fishing",
+            "es_MX": "Pesca de Midnight",
+            "pt_BR": "Pesca de Midnight",
+            "de_DE": "Angeln von Midnight",
+            "en_GB": "Midnight Fishing",
+            "es_ES": "Pesca de Midnight",
+            "fr_FR": "Pêche de Midnight",
+            "it_IT": "Pesca di Midnight",
+            "ru_RU": "Рыбная ловля Midnight",
+            "ko_KR": "한밤 낚시",
+            "zh_TW": "至暗之夜釣魚",
+            "zh_CN": "至暗之夜钓鱼"
+        },
         "recipes": [
             {
                 "id": 51945,
-                "name": "Sin'dorei Swarmer",
-                "category": "Common Fish"
+                "name": {
+                    "en_US": "Sin'dorei Swarmer",
+                    "es_MX": "Enjambrista sin'dorei",
+                    "pt_BR": "Enxameador Sin'dorei",
+                    "de_DE": "Sin'doreischwärmer",
+                    "en_GB": "Sin'dorei Swarmer",
+                    "es_ES": "Enjambrista sin'dorei",
+                    "fr_FR": "Carnassier sin’dorei",
+                    "it_IT": "Brulicatore dei Sin'dorei",
+                    "ru_RU": "Син'дорайский роевик",
+                    "ko_KR": "신도레이 무리붙이",
+                    "zh_TW": "辛多雷魚群",
+                    "zh_CN": "辛多雷群聚鱼"
+                },
+                "category": {
+                    "en_US": "Common Fish",
+                    "es_MX": "Peces comunes",
+                    "pt_BR": "Peixes Comuns",
+                    "de_DE": "Gewöhnlicher Fisch",
+                    "en_GB": "Common Fish",
+                    "es_ES": "Peces comunes",
+                    "fr_FR": "Poisson ordinaire",
+                    "it_IT": "Pesci Comuni",
+                    "ru_RU": "Обычная рыба",
+                    "ko_KR": "일반 생선",
+                    "zh_TW": "常見魚種",
+                    "zh_CN": "普通鱼类"
+                }
             },
             {
                 "id": 51965,
-                "name": "Eversong Woods",
-                "category": "Zones"
+                "name": {
+                    "en_US": "Eversong Woods",
+                    "es_MX": "Bosque Canción Eterna",
+                    "pt_BR": "Floresta do Canto Eterno",
+                    "de_DE": "Immersangwald",
+                    "en_GB": "Eversong Woods",
+                    "es_ES": "Bosque Canción Eterna",
+                    "fr_FR": "Bois des Chants éternels",
+                    "it_IT": "Boschi di Cantoeterno",
+                    "ru_RU": "Леса Вечной Песни",
+                    "ko_KR": "영원노래 숲",
+                    "zh_TW": "永歌森林",
+                    "zh_CN": "永歌森林"
+                },
+                "category": {
+                    "en_US": "Zones",
+                    "es_MX": "Zonas",
+                    "pt_BR": "Áreas",
+                    "de_DE": "Zonen",
+                    "en_GB": "Zones",
+                    "es_ES": "Zonas",
+                    "fr_FR": "Régions",
+                    "it_IT": "Zone",
+                    "ru_RU": "Зоны",
+                    "ko_KR": "지역",
+                    "zh_TW": "區域",
+                    "zh_CN": "区域"
+                }
             },
             {
                 "id": 51968,
-                "name": "Twisted Tetra",
-                "category": "Rare Fish"
+                "name": {
+                    "en_US": "Twisted Tetra",
+                    "es_MX": "Tetra retorcido",
+                    "pt_BR": "Tetra Perverso",
+                    "de_DE": "Verdrehter Tetra",
+                    "en_GB": "Twisted Tetra",
+                    "es_ES": "Tetra retorcido",
+                    "fr_FR": "Tétra distordu",
+                    "it_IT": "Tetra Corrotta",
+                    "ru_RU": "Искаженная тетра",
+                    "ko_KR": "뒤틀린 열대어",
+                    "zh_TW": "扭曲燈魚",
+                    "zh_CN": "扭曲的脂鲤"
+                },
+                "category": {
+                    "en_US": "Rare Fish",
+                    "es_MX": "Peces raros",
+                    "pt_BR": "Peixes Raros",
+                    "de_DE": "Seltener Fisch",
+                    "en_GB": "Rare Fish",
+                    "es_ES": "Peces poco comunes",
+                    "fr_FR": "Poisson rare",
+                    "it_IT": "Pesci Rari",
+                    "ru_RU": "Редкая рыба",
+                    "ko_KR": "희귀 생선",
+                    "zh_TW": "稀有魚種",
+                    "zh_CN": "精良鱼类"
+                }
             },
             {
                 "id": 51969,
-                "name": "Bloomtail Minnow",
-                "category": "Uncommon Fish"
+                "name": {
+                    "en_US": "Bloomtail Minnow",
+                    "es_MX": "Pescardo colaflor",
+                    "pt_BR": "Manjubinha Caudaflora",
+                    "de_DE": "Blütenfinnenpfrille",
+                    "en_GB": "Bloomtail Minnow",
+                    "es_ES": "Pececillo colaflora",
+                    "fr_FR": "Vairon florequeue",
+                    "it_IT": "Sanguinerola Fiorcoda",
+                    "ru_RU": "Цветохвостая минога",
+                    "ko_KR": "만개꼬리 송사리",
+                    "zh_TW": "花尾小鯉",
+                    "zh_CN": "绽尾鲦鱼"
+                },
+                "category": {
+                    "en_US": "Uncommon Fish",
+                    "es_MX": "Peces poco comunes",
+                    "pt_BR": "Peixes Incomuns",
+                    "de_DE": "Ungewöhnlicher Fisch",
+                    "en_GB": "Uncommon Fish",
+                    "es_ES": "Peces inusuales",
+                    "fr_FR": "Poisson inhabituel",
+                    "it_IT": "Pesci Pregiati",
+                    "ru_RU": "Необычная рыба",
+                    "ko_KR": "고급 생선",
+                    "zh_TW": "優秀魚種",
+                    "zh_CN": "优秀鱼类"
+                }
             },
             {
                 "id": 51988,
-                "name": "Midnight Anglin'",
-                "category": "Information"
+                "name": {
+                    "en_US": "Midnight Anglin'",
+                    "es_MX": "Pesca de Midnight",
+                    "pt_BR": "Pesca em Midnight",
+                    "de_DE": "Angeln von Midnight",
+                    "en_GB": "Midnight Anglin'",
+                    "es_ES": "Pesca en Midnight",
+                    "fr_FR": "Pêche de Midnight",
+                    "it_IT": "Pesca di Midnight",
+                    "ru_RU": "Рыбалка Midnight",
+                    "ko_KR": "한밤 강태공",
+                    "zh_TW": "至暗之夜釣魚",
+                    "zh_CN": "至暗之夜渔夫"
+                },
+                "category": {
+                    "en_US": "Information",
+                    "es_MX": "Información",
+                    "pt_BR": "Informações",
+                    "de_DE": "Information",
+                    "en_GB": "Information",
+                    "es_ES": "Información",
+                    "fr_FR": "Information",
+                    "it_IT": "Informazioni",
+                    "ru_RU": "Информация",
+                    "ko_KR": "정보",
+                    "zh_TW": "資訊",
+                    "zh_CN": "信息"
+                }
             },
             {
                 "id": 52039,
-                "name": "Lucky Loa Lure",
-                "category": "Crafting"
+                "name": {
+                    "en_US": "Lucky Loa Lure",
+                    "es_MX": "Cebo de loa de la suerte",
+                    "pt_BR": "Isca de Loa da Sorte",
+                    "de_DE": "Köder für glückliche Loa",
+                    "en_GB": "Lucky Loa Lure",
+                    "es_ES": "Cebo de loa de la suerte",
+                    "fr_FR": "Appât à Loa porte-bonheur",
+                    "it_IT": "Esca per Loa della Fortuna",
+                    "ru_RU": "Приманка на счастливого лоа",
+                    "ko_KR": "행운의 로아 미끼",
+                    "zh_TW": "幸運羅亞誘餌",
+                    "zh_CN": "好运神灵鱼诱饵"
+                },
+                "category": {
+                    "en_US": "Crafting",
+                    "es_MX": "Fabricación",
+                    "pt_BR": "Criação",
+                    "de_DE": "Herstellung",
+                    "en_GB": "Crafting",
+                    "es_ES": "Fabricación",
+                    "fr_FR": "Artisanat",
+                    "it_IT": "Artigianato",
+                    "ru_RU": "Изготовление",
+                    "ko_KR": "제작 기술",
+                    "zh_TW": "製作中",
+                    "zh_CN": "制造"
+                }
             }
         ]
     },
     {
         "professionId": 356,
-        "professionName": "Fishing",
+        "professionName": {
+            "en_US": "Fishing",
+            "es_MX": "Pesca",
+            "pt_BR": "Pesca",
+            "de_DE": "Angeln",
+            "en_GB": "Fishing",
+            "es_ES": "Pesca",
+            "fr_FR": "Pêche",
+            "it_IT": "Pesca",
+            "ru_RU": "Рыбная ловля",
+            "ko_KR": "낚시",
+            "zh_TW": "釣魚",
+            "zh_CN": "钓鱼"
+        },
         "skillTierId": 2826,
-        "skillTierName": "Dragon Isles Fishing",
+        "skillTierName": {
+            "en_US": "Dragon Isles Fishing",
+            "es_MX": "Pesca de las Islas Dragón",
+            "pt_BR": "Pesca nas Ilhas do Dragão",
+            "de_DE": "Angeln auf den Dracheninseln",
+            "en_GB": "Dragon Isles Fishing",
+            "es_ES": "Pesca de las Islas Dragón",
+            "fr_FR": "Pêche des îles aux Dragons",
+            "it_IT": "Pesca delle Isole dei Draghi",
+            "ru_RU": "Рыбная ловля Драконьих островов",
+            "ko_KR": "용의 섬 낚시",
+            "zh_TW": "巨龍群島釣魚",
+            "zh_CN": "巨龙群岛钓鱼"
+        },
         "recipes": [
             {
                 "id": 47906,
-                "name": "Thousandbite Piranha",
-                "category": "Freshwater"
+                "name": {
+                    "en_US": "Thousandbite Piranha",
+                    "es_MX": "Piraña milmordiscos",
+                    "pt_BR": "Piranha de Mil-mordidas",
+                    "de_DE": "Tausendbisspiranha",
+                    "en_GB": "Thousandbite Piranha",
+                    "es_ES": "Piraña milmordiscos",
+                    "fr_FR": "Piranha mille-morsures",
+                    "it_IT": "Piranha Millemorsi",
+                    "ru_RU": "Тысячезубая пиранья",
+                    "ko_KR": "일천이빨 피라냐",
+                    "zh_TW": "千咬食人魚",
+                    "zh_CN": "千噬水虎鱼"
+                },
+                "category": {
+                    "en_US": "Freshwater",
+                    "es_MX": "Agua dulce",
+                    "pt_BR": "Água doce",
+                    "de_DE": "Süßwasser",
+                    "en_GB": "Freshwater",
+                    "es_ES": "Agua dulce",
+                    "fr_FR": "Eau douce",
+                    "it_IT": "D'Acqua Dolce",
+                    "ru_RU": "Пресноводные",
+                    "ko_KR": "민물",
+                    "zh_TW": "淡水",
+                    "zh_CN": "淡水"
+                }
             },
             {
                 "id": 47907,
-                "name": "Cerulean Spinefish",
-                "category": "Saltwater"
+                "name": {
+                    "en_US": "Cerulean Spinefish",
+                    "es_MX": "Pez espinoso cerúleo",
+                    "pt_BR": "Peixe-espinho Cerúleo",
+                    "de_DE": "Himmelblauer Stachelfisch",
+                    "en_GB": "Cerulean Spinefish",
+                    "es_ES": "Pez espinoso cerúleo",
+                    "fr_FR": "Poisson-hérisson céruléen",
+                    "it_IT": "Pesce Scorpione Ceruleo",
+                    "ru_RU": "Лазурная иглоспинка",
+                    "ko_KR": "하늘빛 가시고기",
+                    "zh_TW": "天藍棘魚",
+                    "zh_CN": "天蓝刺皮鱼"
+                },
+                "category": {
+                    "en_US": "Saltwater",
+                    "es_MX": "Agua salada",
+                    "pt_BR": "Água salgada",
+                    "de_DE": "Salzwasser",
+                    "en_GB": "Saltwater",
+                    "es_ES": "Agua salada",
+                    "fr_FR": "Eau salée",
+                    "it_IT": "Acqua di Mare",
+                    "ru_RU": "Морские",
+                    "ko_KR": "바닷물",
+                    "zh_TW": "海水",
+                    "zh_CN": "咸水"
+                }
             },
             {
                 "id": 47910,
-                "name": "Shimmering Treasure",
-                "category": "General Fishing"
+                "name": {
+                    "en_US": "Shimmering Treasure",
+                    "es_MX": "Tesoros resplandecientes",
+                    "pt_BR": "Tesouro Cintilante",
+                    "de_DE": "Schimmernder Schatz",
+                    "en_GB": "Shimmering Treasure",
+                    "es_ES": "Tesoro centelleante",
+                    "fr_FR": "Trésor scintillant",
+                    "it_IT": "Tesoro Scintillante",
+                    "ru_RU": "Мерцающее сокровище",
+                    "ko_KR": "일렁이는 보물",
+                    "zh_TW": "閃爍寶藏",
+                    "zh_CN": "微光宝藏"
+                },
+                "category": {
+                    "en_US": "General Fishing",
+                    "es_MX": "Pesca general",
+                    "pt_BR": "Pesca geral",
+                    "de_DE": "Normales Fischen",
+                    "en_GB": "General Fishing",
+                    "es_ES": "Pesca general",
+                    "fr_FR": "Pêche ordinaire",
+                    "it_IT": "Pesca Generica",
+                    "ru_RU": "Обычная рыбалка",
+                    "ko_KR": "일반 낚시",
+                    "zh_TW": "一般釣魚",
+                    "zh_CN": "普通钓鱼"
+                }
             },
             {
                 "id": 47913,
-                "name": "Rimefin Tuna",
-                "category": "Specialty Fishing"
+                "name": {
+                    "en_US": "Rimefin Tuna",
+                    "es_MX": "Atún escarchaleta",
+                    "pt_BR": "Atum Barbatana-da-geada",
+                    "de_DE": "Raureifflossenthunfisch",
+                    "en_GB": "Rimefin Tuna",
+                    "es_ES": "Atún hieloaleta",
+                    "fr_FR": "Thon frimageoire",
+                    "it_IT": "Tonno Pinnabrina",
+                    "ru_RU": "Льдистый тунец",
+                    "ko_KR": "서리지느러미 다랑어",
+                    "zh_TW": "霜鰭鮪魚",
+                    "zh_CN": "淞鳍金枪鱼"
+                },
+                "category": {
+                    "en_US": "Specialty Fishing",
+                    "es_MX": "Pesca de especialidad",
+                    "pt_BR": "Pesca especializada",
+                    "de_DE": "Spezialfischen",
+                    "en_GB": "Specialty Fishing",
+                    "es_ES": "Pesca de especialidad",
+                    "fr_FR": "Pêche spécialisée",
+                    "it_IT": "Pesca Specializzata",
+                    "ru_RU": "Особая рыбалка",
+                    "ko_KR": "특수 낚시",
+                    "zh_TW": "特殊釣魚",
+                    "zh_CN": "专业钓鱼"
+                }
             },
             {
                 "id": 47909,
-                "name": "Temporal Dragonhead",
-                "category": "Freshwater"
+                "name": {
+                    "en_US": "Temporal Dragonhead",
+                    "es_MX": "Cabeza dracónica temporal",
+                    "pt_BR": "Cabeça de Dragão Temporal",
+                    "de_DE": "Temporaler Drachenkopf",
+                    "en_GB": "Temporal Dragonhead",
+                    "es_ES": "Cabezadragón temporal",
+                    "fr_FR": "Tête-de-Dragon temporel",
+                    "it_IT": "Testa di Drago Temporale",
+                    "ru_RU": "Темпоральная драконоголовка",
+                    "ko_KR": "시간의 용머리",
+                    "zh_TW": "時光龍頭魚",
+                    "zh_CN": "时光龙头鱼"
+                },
+                "category": {
+                    "en_US": "Freshwater",
+                    "es_MX": "Agua dulce",
+                    "pt_BR": "Água doce",
+                    "de_DE": "Süßwasser",
+                    "en_GB": "Freshwater",
+                    "es_ES": "Agua dulce",
+                    "fr_FR": "Eau douce",
+                    "it_IT": "D'Acqua Dolce",
+                    "ru_RU": "Пресноводные",
+                    "ko_KR": "민물",
+                    "zh_TW": "淡水",
+                    "zh_CN": "淡水"
+                }
             },
             {
                 "id": 47908,
-                "name": "Aileron Seamoth",
-                "category": "Saltwater"
+                "name": {
+                    "en_US": "Aileron Seamoth",
+                    "es_MX": "Pez dragón alerón",
+                    "pt_BR": "Mariposa do Mar Aileron",
+                    "de_DE": "Querflossen-Flügelrossfisch",
+                    "en_GB": "Aileron Seamoth",
+                    "es_ES": "Polilla marina con alerón",
+                    "fr_FR": "Phalène aquatique alifère",
+                    "it_IT": "Falena di Mare",
+                    "ru_RU": "Мелкокрылая рыба-пегас",
+                    "ko_KR": "날개돋이 해마",
+                    "zh_TW": "副翼海蛾魚",
+                    "zh_CN": "副翼海蛾鱼"
+                },
+                "category": {
+                    "en_US": "Saltwater",
+                    "es_MX": "Agua salada",
+                    "pt_BR": "Água salgada",
+                    "de_DE": "Salzwasser",
+                    "en_GB": "Saltwater",
+                    "es_ES": "Agua salada",
+                    "fr_FR": "Eau salée",
+                    "it_IT": "Acqua di Mare",
+                    "ru_RU": "Морские",
+                    "ko_KR": "바닷물",
+                    "zh_TW": "海水",
+                    "zh_CN": "咸水"
+                }
             }
         ]
     }

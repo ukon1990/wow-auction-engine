@@ -5,8 +5,34 @@
         }
     },
     "id": 51854,
-    "name": "Argentleaf",
-    "description": "The silverleaf of Quel'Thalas has grown more lustrous in recent years, gaining a unique sheen that allows anyone to recognize it at a glance. Because of these changes, this new offshoot of silverleaf has become known as argentleaf. \r\n\r\nRegularly found among other common foliage, it is a standard ingredient of many recipes and is thus highly sought after.",
+    "name": {
+        "en_US": "Argentleaf",
+        "es_MX": "Hojargenta",
+        "pt_BR": "Folhargêntea",
+        "de_DE": "Argentumblatt",
+        "en_GB": "Argentleaf",
+        "es_ES": "Hojargenta",
+        "fr_FR": "Feuille-d’argent",
+        "it_IT": "Argentemo",
+        "ru_RU": "Сребревица",
+        "ko_KR": "은빛잎사귀",
+        "zh_TW": "鉑葉草",
+        "zh_CN": "白银叶"
+    },
+    "description": {
+        "en_US": "The silverleaf of Quel'Thalas has grown more lustrous in recent years, gaining a unique sheen that allows anyone to recognize it at a glance. Because of these changes, this new offshoot of silverleaf has become known as argentleaf. \r\n\r\nRegularly found among other common foliage, it is a standard ingredient of many recipes and is thus highly sought after.",
+        "es_MX": "La hojaplata de Quel'thalas ha crecido con más brillo durante los últimos años y adquirió un lustre único que la hace reconocible a primera vista. A causa de estos cambios, esta nueva variedad de hojaplata se hizo conocida como hojargenta. \r\n\r\nSe encuentra normalmente entre otros follajes comunes y es un ingrediente estándar en muchas recetas, por lo que es muy buscada.",
+        "pt_BR": "A folha-prata de Quel'thalas se tornou mais lustrosa nos últimos anos, ganhando um luzir único que permite que todos a reconheçam num instante. Por causa dessas mudanças, a nova variante de folha-prata ficou conhecida como folhargêntea.\r\n\r\nEncontrada em meio à folhagem comum, é um ingrediente básico de inúmeras receitas e, portanto, muito visada.",
+        "de_DE": "Das Silberblatt von Quel'Thalas hat in den letzten Jahren einen einzigartigen Glanz entwickelt, an dem man es auf den ersten Blick erkennt. Diese neue Variante des Silberblatts wird als Argentumblatt bezeichnet.\r\n\r\nDiese Pflanze kann häufig in der Nähe von anderem Laub gefunden werden und ist als Standardzutat für viele Rezepte sehr begehrt.",
+        "en_GB": "The silverleaf of Quel'Thalas has grown more lustrous in recent years, gaining a unique sheen that allows anyone to recognize it at a glance. Because of these changes, this new offshoot of silverleaf has become known as argentleaf. \r\n\r\nRegularly found among other common foliage, it is a standard ingredient of many recipes and is thus highly sought after.",
+        "es_ES": "La hojaplata de Quel'Thalas se ha vuelto más lustrosa en los últimos años y ha adquirido un brillo único que permite que cualquiera la reconozca de un vistazo. Debido a estas transformaciones, esta nueva variante de hojaplata se conoce ahora como hojargenta.\r\n\r\nSe trata de un ingrediente estándar en muchas recetas, así que está muy demandado. Puedes encontrarla habitualmente entre otras plantas comunes.",
+        "fr_FR": "Le feuillargent de Quel’Thalas a gagné en brillance au cours de ces dernières années, se parant d’un lustre unique, reconnaissable d’un coup d’œil. En raison de cette évolution, la nouvelle pousse de feuillargent est maintenant connue sous le nom de feuille-d’argent. \r\n\r\nSouvent trouvée parmi d’autres fourrés communs, c’est un ingrédient classique dans de nombreuses recettes et donc une plante très recherchée.",
+        "it_IT": "La Fogliargenta di Quel'Thalas è diventata più brillante negli ultimi anni, acquisendo una lucentezza unica che la rende riconoscibile a colpo d'occhio. A causa di questi cambiamenti, questa nuova variante è ormai conosciuta come Argentemo.\r\n\r\nSi trova spesso mescolato ad altra vegetazione comune ed è un ingrediente base di molte ricette, motivo per cui è molto ricercato.",
+        "ru_RU": "Сребролист Кель'Таласа в последние годы стал более ярким и приобрел уникальный блеск, так что теперь его ни с чем не спутать. Из-за этих изменений новый подвид сребролиста стали называть сребревицей.\r\n\r\nСребревица широко распространена и является стандартным ингредиентом множества рецептов.",
+        "ko_KR": "쿠엘탈라스의 은엽수는 최근 한층 더 영롱한 빛을 띠며 독특한 광채를 내기 시작했습니다. 덕분에 누구라도 단번에 알아볼 수 있을 정도로 눈에 띄게 되었고, 이 새로운 변종은 은빛잎사귀라 불리게 되었습니다.\r\n\r\n주변에서 흔히 찾아볼 수 있는 식생에서 발견되며, 여러 제작법에서 기본적인 재료로 사용되기에 수요가 매우 높습니다.",
+        "zh_TW": "近年來，奎爾薩拉斯的銀葉草變得更光彩耀人，散發獨一無二的光輝，讓人一眼就能認出。由於這種變化，因此新品種的銀葉草被人稱為鉑葉草。\r\n\r\n它經常與其他普通的植物共存，是許多配方的必要材料，需求量極高。",
+        "zh_CN": "奎尔萨拉斯的银叶草近年来光泽愈发亮丽，散发着独特的光辉，让人一眼就能认出。因为这些变化，银叶草的这个新分支被称为白银叶。\r\n\r\n它们经常混杂在其他常见植物中，是许多配方的基础材料，因此备受采集者青睐。"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/51854?namespace=static-12.0.1_65617-us"

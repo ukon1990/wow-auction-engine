@@ -5,8 +5,34 @@
         }
     },
     "id": 47906,
-    "name": "Thousandbite Piranha",
-    "description": "Thousandbite Piranha are an aggressive freshwater fish that will devour anything in sight! \r\n\r\nThese freshwater swarms are found primarily in vast lakes and sprawling river systems across the Dragon Isles.\r\n\r\nThey are especially active in areas such as The Ohn'ahran Plains and The Waking Shores.",
+    "name": {
+        "en_US": "Thousandbite Piranha",
+        "es_MX": "Piraña milmordiscos",
+        "pt_BR": "Piranha de Mil-mordidas",
+        "de_DE": "Tausendbisspiranha",
+        "en_GB": "Thousandbite Piranha",
+        "es_ES": "Piraña milmordiscos",
+        "fr_FR": "Piranha mille-morsures",
+        "it_IT": "Piranha Millemorsi",
+        "ru_RU": "Тысячезубая пиранья",
+        "ko_KR": "일천이빨 피라냐",
+        "zh_TW": "千咬食人魚",
+        "zh_CN": "千噬水虎鱼"
+    },
+    "description": {
+        "en_US": "Thousandbite Piranha are an aggressive freshwater fish that will devour anything in sight! \r\n\r\nThese freshwater swarms are found primarily in vast lakes and sprawling river systems across the Dragon Isles.\r\n\r\nThey are especially active in areas such as The Ohn'ahran Plains and The Waking Shores.",
+        "es_MX": "Las pirañas milmordiscos son peces agresivos de agua dulce que devoran todo a su paso. \r\n\r\nPuedes encontrar sus cardúmenes principalmente en lagos grandes y sistemas fluviales de las Islas Dragón.\r\n\r\nSe concentran en lugares como las Llanuras de Ohn'ahra y las Costas del Despertar.",
+        "pt_BR": "A Piranha de Mil-mordidas é um peixe de água doce agressivo que devora tudo à vista!\r\n\r\nSeus cardumes são encontrados principalmente em grandes lagos e nos vastos sistemas fluviais das Ilhas do Dragão.\r\n\r\nSão especialmente ativas em áreas como Chapada Ohn'ahrana e a Costa Desperta.",
+        "de_DE": "Tausendbisspiranhas sind aggressive Süßwasserfische, die alles verschlingen, was ihnen in den Weg kommt!\r\n\r\nDiese Süßwasserschwärme findet man größtenteils in den großen Seen und weitverzweigten Flüssen der Dracheninseln.\r\n\r\nBesonders aktiv sind sie in Bereichen wie den Ebenen von Ohn'ahra und der Küste des Erwachens.",
+        "en_GB": "Thousandbite Piranha are an aggressive freshwater fish that will devour anything in sight! \r\n\r\nThese freshwater swarms are found primarily in vast lakes and sprawling river systems across the Dragon Isles.\r\n\r\nThey are especially active in areas such as The Ohn'ahran Plains and The Waking Shores.",
+        "es_ES": "¡Las pirañas milmordiscos son peces de agua dulce muy agresivos que devoran todo lo que encuentran!\r\n\r\nEstos peces se encuentran principalmente en los enormes lagos y los largos ríos de las Islas Dragón.\r\n\r\nEstán especialmente activos en zonas como las Llanuras de Ohn'ahra o las Orillas del Despertar.",
+        "fr_FR": "Les piranhas mille-morsures sont des poissons d’eau douce agressifs qui dévorent tout ce qui tombe sous leurs dents acérées !\r\n\r\nOn les trouve principalement dans les vastes lacs et le réseau hydrographique tentaculaire des îles aux Dragons.\r\n\r\nIls sont particulièrement nombreux dans certaines régions, comme les plaines d’Ohn’ahra et les rivages de l’Éveil.",
+        "it_IT": "I Piranha Millemorsi sono pesci d'acqua dolce aggressivi capaci di divorare qualsiasi cosa! \r\n\r\nI loro banchi si trovano soprattutto nei grandi laghi e nei sistemi fluviali sparpagliati nelle Isole dei Draghi.\r\n\r\nSono particolarmente attivi nelle regioni delle Pianure di Ohn'ahra e delle Sponde del Risveglio.",
+        "ru_RU": "Тысячезубая пиранья — агрессивная пресноводная рыба, пожирающая все, что видит! \r\n\r\nВодится преимущественно в больших озерах и обширных речных системах по всем Драконьим островам.\r\n\r\nОсобенно активна в местах вроде равнин Он'ары и Берегов Пробуждения.",
+        "ko_KR": "일천이빨 피라냐는 눈에 띄는 모든 것을 닥치는 대로 먹어 치우는 공격적인 민물고기입니다!\r\n\r\n이 민물고기 떼는 주로 용의 섬 곳곳에 분포되어 있는 넓은 호수나 강줄기에서 찾아볼 수 있습니다.\r\n\r\n특히 온아라 평야와 깨어나는 해안 같은 지역에서 왕성하게 서식합니다.",
+        "zh_TW": "千咬食人魚是極具攻擊性的淡水魚，會吞噬出現在視線中的任何東西！\r\n\r\n這些群聚的淡水生物主要出沒於巨龍群島的浩瀚湖泊和蜿蜒河道中。\r\n\r\n它們在雍亞拉平原、甦醒海岸等地區特別活躍。",
+        "zh_CN": "千噬水虎鱼是一种具有攻击性的淡水鱼，它会吃掉任何看到的东西！\r\n\r\n这些淡水鱼群主要分布在巨大的湖泊和穿过巨龙群岛的河流系统中。\r\n\r\n它们尤其活跃在诸如欧恩哈拉平原和觉醒海岸等地区。"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/47906?namespace=static-12.0.1_65617-us"

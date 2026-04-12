@@ -5,8 +5,34 @@
         }
     },
     "id": 47910,
-    "name": "Shimmering Treasure",
-    "description": "Shimmering Treasure can appear in all bodies of water across the Dragon Isles. These pools contain untold treasures and are what every angler hopes to stumble upon.\r\n \r\nFishing in these pools significantly increases your chance for rare treasures.",
+    "name": {
+        "en_US": "Shimmering Treasure",
+        "es_MX": "Tesoros resplandecientes",
+        "pt_BR": "Tesouro Cintilante",
+        "de_DE": "Schimmernder Schatz",
+        "en_GB": "Shimmering Treasure",
+        "es_ES": "Tesoro centelleante",
+        "fr_FR": "Trésor scintillant",
+        "it_IT": "Tesoro Scintillante",
+        "ru_RU": "Мерцающее сокровище",
+        "ko_KR": "일렁이는 보물",
+        "zh_TW": "閃爍寶藏",
+        "zh_CN": "微光宝藏"
+    },
+    "description": {
+        "en_US": "Shimmering Treasure can appear in all bodies of water across the Dragon Isles. These pools contain untold treasures and are what every angler hopes to stumble upon.\r\n \r\nFishing in these pools significantly increases your chance for rare treasures.",
+        "es_MX": "Los tesoros resplandecientes pueden aparecer en todos los cuerpos de agua de las Islas Dragón. Contienen tesoros ocultos y son la búsqueda de cualquier pescador.\r\n \r\nPescarlos aumenta significativamente tu probabilidad de obtener tesoros raros.",
+        "pt_BR": "O Tesouro Cintilante pode aparecer em todos os corpos d'água das Ilhas do Dragão. Essas águas contêm tesouros indizíveis e são o que todo pescador espera encontrar.\r\n\r\nPescar nessas águas aumenta consideravelmente sua chance de encontrar tesouros raros.",
+        "de_DE": "Schimmernde Schatzbecken findet man in allen Gewässern der Dracheninseln. Diese Becken enthalten unermessliche Schätze und ein jeder Angler erhofft, sie zu entdecken.\r\n\r\nAngeln in diesen Becken erhöht die Chance auf seltene Schätze erheblich.",
+        "en_GB": "Shimmering Treasure can appear in all bodies of water across the Dragon Isles. These pools contain untold treasures and are what every angler hopes to stumble upon.\r\n \r\nFishing in these pools significantly increases your chance for rare treasures.",
+        "es_ES": "Pueden encontrarse tesoros centelleantes en cualquier masa de agua de las Islas Dragón. Estos charcos, la delicia de cualquier pescador, contienen tesoros incalculables.\r\n\r\nPescar en estos charcos aumenta significativamente tus posibilidades de encontrar tesoros poco comunes.",
+        "fr_FR": "Des trésors scintillants peuvent apparaître spontanément dans toutes les étendues d’eau des îles aux Dragons. Ces bassins qui hantent les rêves de tous les pêcheurs et pêcheuses recèlent de véritables fortunes.\r\n\r\nPêcher dans ces bassins augmente considérablement vos chances de trouver des trésors rares.",
+        "it_IT": "Dei Tesori Scintillanti possono comparire in qualsiasi specchio d'acqua delle Isole dei Draghi. Tutti i pescatori sperano di poterne trovare uno, perché possono contenere tesori incredibili.\r\n \r\nPescare in questi banchi aumenta significativamente la probabilità di trovare tesori rari.",
+        "ru_RU": "Мерцающее сокровище может появиться в любом водоеме Драконьих островов. Содержит неслыханные богатства, и любой рыбак мечтает на него наткнуться.\r\n\r\nЕсли рыбачить в таком пруду, гораздо больше возможность выловить клад.",
+        "ko_KR": "일렁이는 보물은 용의 섬 물가 어디서든 출현할 수 있습니다. 이 웅덩이에는 막대한 보물이 들어 있으며, 모든 낚시꾼의 소망으로 통합니다.\r\n \r\n이 웅덩이에서 낚시를 하면 희귀한 보물을 획득할 확률이 크게 증가합니다.",
+        "zh_TW": "閃爍寶藏可能出現在巨龍群島的所有水體中。這些釣點藏有無數財寶，是每一個釣手夢寐以求的釣點。\r\n\r\n在這些釣點釣魚，可大幅提高獲得稀有寶藏的機率。",
+        "zh_CN": "微光宝藏会出现在巨龙群岛的所有水域。这些鱼池里面有数不清的宝藏，每个垂钓翁都希望偶然发现它们。\r\n\r\n在这些鱼池中钓鱼会大大增加你获得稀有宝藏的机会。"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/47910?namespace=static-12.0.1_65617-us"

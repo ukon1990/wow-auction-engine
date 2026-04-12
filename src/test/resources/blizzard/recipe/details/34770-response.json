@@ -5,8 +5,34 @@
         }
     },
     "id": 34770,
-    "name": "Aethril",
-    "description": "Gathering herbs in the Broken Isles may cause additional herbs to appear.",
+    "name": {
+        "en_US": "Aethril",
+        "es_MX": "Aethril",
+        "pt_BR": "Aethril",
+        "de_DE": "Aethril",
+        "en_GB": "Aethril",
+        "es_ES": "Aethril",
+        "fr_FR": "Aethril",
+        "it_IT": "Aethril",
+        "ru_RU": "Айтрил",
+        "ko_KR": "에이트릴",
+        "zh_TW": "紫地根草",
+        "zh_CN": "安瑟瑞尔花"
+    },
+    "description": {
+        "en_US": "Gathering herbs in the Broken Isles may cause additional herbs to appear.",
+        "es_MX": "Recolectar hierbas en las Islas Quebradas puede provocar que aparezcan más hierbas.",
+        "pt_BR": "Coletar plantas nas Ilhas Partidas pode fazer com que mais plantas apareçam.",
+        "de_DE": "Beim Sammeln von Kräutern auf den Verheerten Inseln können zusätzliche Kräuter erscheinen.",
+        "en_GB": "Gathering herbs in the Broken Isles may cause additional herbs to appear.",
+        "es_ES": "Recolectar hierbas en las Islas Abruptas puede provocar que aparezcan hierbas adicionales.",
+        "fr_FR": "Ramasser des herbes sur les îles Brisées peut en faire apparaître d’autres.",
+        "it_IT": "Raccogliere erbe sulle Isole Disperse può far apparire delle erbe aggiuntive.",
+        "ru_RU": "При собирании трав на Расколотых островах могут появляться дополнительные точки сбора трав.",
+        "ko_KR": "부서진 섬에서 약초를 채집할 때 추가 약초가 나타나기도 합니다.",
+        "zh_TW": "在破碎群島採集藥草時，可能會採到額外的藥草。",
+        "zh_CN": "在破碎群岛采集草药时会出现额外的草药。"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/34770?namespace=static-12.0.1_65617-us"

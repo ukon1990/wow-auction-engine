@@ -5,68 +5,211 @@
         }
     },
     "id": 2826,
-    "name": "Dragon Isles Fishing",
+    "name": {
+        "en_US": "Dragon Isles Fishing",
+        "es_MX": "Pesca de las Islas Dragón",
+        "pt_BR": "Pesca nas Ilhas do Dragão",
+        "de_DE": "Angeln auf den Dracheninseln",
+        "en_GB": "Dragon Isles Fishing",
+        "es_ES": "Pesca de las Islas Dragón",
+        "fr_FR": "Pêche des îles aux Dragons",
+        "it_IT": "Pesca delle Isole dei Draghi",
+        "ru_RU": "Рыбная ловля Драконьих островов",
+        "ko_KR": "용의 섬 낚시",
+        "zh_TW": "巨龍群島釣魚",
+        "zh_CN": "巨龙群岛钓鱼"
+    },
     "minimum_skill_level": 1,
     "maximum_skill_level": 100,
     "categories": [
         {
-            "name": "Freshwater",
+            "name": {
+                "en_US": "Freshwater",
+                "es_MX": "Agua dulce",
+                "pt_BR": "Água doce",
+                "de_DE": "Süßwasser",
+                "en_GB": "Freshwater",
+                "es_ES": "Agua dulce",
+                "fr_FR": "Eau douce",
+                "it_IT": "D'Acqua Dolce",
+                "ru_RU": "Пресноводные",
+                "ko_KR": "민물",
+                "zh_TW": "淡水",
+                "zh_CN": "淡水"
+            },
             "recipes": [
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/47906?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Thousandbite Piranha",
+                    "name": {
+                        "en_US": "Thousandbite Piranha",
+                        "es_MX": "Piraña milmordiscos",
+                        "pt_BR": "Piranha de Mil-mordidas",
+                        "de_DE": "Tausendbisspiranha",
+                        "en_GB": "Thousandbite Piranha",
+                        "es_ES": "Piraña milmordiscos",
+                        "fr_FR": "Piranha mille-morsures",
+                        "it_IT": "Piranha Millemorsi",
+                        "ru_RU": "Тысячезубая пиранья",
+                        "ko_KR": "일천이빨 피라냐",
+                        "zh_TW": "千咬食人魚",
+                        "zh_CN": "千噬水虎鱼"
+                    },
                     "id": 47906
                 },
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/47909?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Temporal Dragonhead",
+                    "name": {
+                        "en_US": "Temporal Dragonhead",
+                        "es_MX": "Cabeza dracónica temporal",
+                        "pt_BR": "Cabeça de Dragão Temporal",
+                        "de_DE": "Temporaler Drachenkopf",
+                        "en_GB": "Temporal Dragonhead",
+                        "es_ES": "Cabezadragón temporal",
+                        "fr_FR": "Tête-de-Dragon temporel",
+                        "it_IT": "Testa di Drago Temporale",
+                        "ru_RU": "Темпоральная драконоголовка",
+                        "ko_KR": "시간의 용머리",
+                        "zh_TW": "時光龍頭魚",
+                        "zh_CN": "时光龙头鱼"
+                    },
                     "id": 47909
                 }
             ]
         },
         {
-            "name": "Saltwater",
+            "name": {
+                "en_US": "Saltwater",
+                "es_MX": "Agua salada",
+                "pt_BR": "Água salgada",
+                "de_DE": "Salzwasser",
+                "en_GB": "Saltwater",
+                "es_ES": "Agua salada",
+                "fr_FR": "Eau salée",
+                "it_IT": "Acqua di Mare",
+                "ru_RU": "Морские",
+                "ko_KR": "바닷물",
+                "zh_TW": "海水",
+                "zh_CN": "咸水"
+            },
             "recipes": [
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/47907?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Cerulean Spinefish",
+                    "name": {
+                        "en_US": "Cerulean Spinefish",
+                        "es_MX": "Pez espinoso cerúleo",
+                        "pt_BR": "Peixe-espinho Cerúleo",
+                        "de_DE": "Himmelblauer Stachelfisch",
+                        "en_GB": "Cerulean Spinefish",
+                        "es_ES": "Pez espinoso cerúleo",
+                        "fr_FR": "Poisson-hérisson céruléen",
+                        "it_IT": "Pesce Scorpione Ceruleo",
+                        "ru_RU": "Лазурная иглоспинка",
+                        "ko_KR": "하늘빛 가시고기",
+                        "zh_TW": "天藍棘魚",
+                        "zh_CN": "天蓝刺皮鱼"
+                    },
                     "id": 47907
                 },
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/47908?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Aileron Seamoth",
+                    "name": {
+                        "en_US": "Aileron Seamoth",
+                        "es_MX": "Pez dragón alerón",
+                        "pt_BR": "Mariposa do Mar Aileron",
+                        "de_DE": "Querflossen-Flügelrossfisch",
+                        "en_GB": "Aileron Seamoth",
+                        "es_ES": "Polilla marina con alerón",
+                        "fr_FR": "Phalène aquatique alifère",
+                        "it_IT": "Falena di Mare",
+                        "ru_RU": "Мелкокрылая рыба-пегас",
+                        "ko_KR": "날개돋이 해마",
+                        "zh_TW": "副翼海蛾魚",
+                        "zh_CN": "副翼海蛾鱼"
+                    },
                     "id": 47908
                 }
             ]
         },
         {
-            "name": "General Fishing",
+            "name": {
+                "en_US": "General Fishing",
+                "es_MX": "Pesca general",
+                "pt_BR": "Pesca geral",
+                "de_DE": "Normales Fischen",
+                "en_GB": "General Fishing",
+                "es_ES": "Pesca general",
+                "fr_FR": "Pêche ordinaire",
+                "it_IT": "Pesca Generica",
+                "ru_RU": "Обычная рыбалка",
+                "ko_KR": "일반 낚시",
+                "zh_TW": "一般釣魚",
+                "zh_CN": "普通钓鱼"
+            },
             "recipes": [
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/47910?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Shimmering Treasure",
+                    "name": {
+                        "en_US": "Shimmering Treasure",
+                        "es_MX": "Tesoros resplandecientes",
+                        "pt_BR": "Tesouro Cintilante",
+                        "de_DE": "Schimmernder Schatz",
+                        "en_GB": "Shimmering Treasure",
+                        "es_ES": "Tesoro centelleante",
+                        "fr_FR": "Trésor scintillant",
+                        "it_IT": "Tesoro Scintillante",
+                        "ru_RU": "Мерцающее сокровище",
+                        "ko_KR": "일렁이는 보물",
+                        "zh_TW": "閃爍寶藏",
+                        "zh_CN": "微光宝藏"
+                    },
                     "id": 47910
                 }
             ]
         },
         {
-            "name": "Specialty Fishing",
+            "name": {
+                "en_US": "Specialty Fishing",
+                "es_MX": "Pesca de especialidad",
+                "pt_BR": "Pesca especializada",
+                "de_DE": "Spezialfischen",
+                "en_GB": "Specialty Fishing",
+                "es_ES": "Pesca de especialidad",
+                "fr_FR": "Pêche spécialisée",
+                "it_IT": "Pesca Specializzata",
+                "ru_RU": "Особая рыбалка",
+                "ko_KR": "특수 낚시",
+                "zh_TW": "特殊釣魚",
+                "zh_CN": "专业钓鱼"
+            },
             "recipes": [
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/47913?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Rimefin Tuna",
+                    "name": {
+                        "en_US": "Rimefin Tuna",
+                        "es_MX": "Atún escarchaleta",
+                        "pt_BR": "Atum Barbatana-da-geada",
+                        "de_DE": "Raureifflossenthunfisch",
+                        "en_GB": "Rimefin Tuna",
+                        "es_ES": "Atún hieloaleta",
+                        "fr_FR": "Thon frimageoire",
+                        "it_IT": "Tonno Pinnabrina",
+                        "ru_RU": "Льдистый тунец",
+                        "ko_KR": "서리지느러미 다랑어",
+                        "zh_TW": "霜鰭鮪魚",
+                        "zh_CN": "淞鳍金枪鱼"
+                    },
                     "id": 47913
                 }
             ]

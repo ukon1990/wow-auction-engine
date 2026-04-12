@@ -5,8 +5,34 @@
         }
     },
     "id": 52039,
-    "name": "Lucky Loa Lure",
-    "description": "Prepare 5 Sin'dorei Swarmer to create a lure for catching Lucky Loa.\r\n",
+    "name": {
+        "en_US": "Lucky Loa Lure",
+        "es_MX": "Cebo de loa de la suerte",
+        "pt_BR": "Isca de Loa da Sorte",
+        "de_DE": "Köder für glückliche Loa",
+        "en_GB": "Lucky Loa Lure",
+        "es_ES": "Cebo de loa de la suerte",
+        "fr_FR": "Appât à Loa porte-bonheur",
+        "it_IT": "Esca per Loa della Fortuna",
+        "ru_RU": "Приманка на счастливого лоа",
+        "ko_KR": "행운의 로아 미끼",
+        "zh_TW": "幸運羅亞誘餌",
+        "zh_CN": "好运神灵鱼诱饵"
+    },
+    "description": {
+        "en_US": "Prepare 5 Sin'dorei Swarmer to create a lure for catching Lucky Loa.\r\n",
+        "es_MX": "Prepara 5 enjambristas sin'dorei para crear un cebo para atrapar loas de la suerte.\r\n",
+        "pt_BR": "Prepare 5 Enxameadores Sin'dorei para criar uma isca para capturar Loas da Sorte.\r\n",
+        "de_DE": "Macht aus 5 Sin'doreischwärmern einen Köder für glückliche Loa.\r\n",
+        "en_GB": "Prepare 5 Sin'dorei Swarmer to create a lure for catching Lucky Loa.\r\n",
+        "es_ES": "Preparas 5 enjambristas sin'dorei para crear un cebo con el que pescar loa de la suerte.\r\n",
+        "fr_FR": "Vous préparez 5 carnassiers sin’dorei pour créer un appât servant à pêcher des Loas porte-bonheur.\r\n",
+        "it_IT": "Lavora 5 Brulicatori dei Sin'dorei per creare un'esca per i Loa della Fortuna.\r\n",
+        "ru_RU": "Вы делаете приманку на счастливого лоа из 5 син'дорайских роевиков.\r\n",
+        "ko_KR": "신도레이 무리붙이 5마리로 행운의 로아를 낚는 데 필요한 미끼를 준비합니다.\r\n",
+        "zh_TW": "準備5條辛多雷群居魚，製造捕捉幸運羅亞的誘餌。\r\n",
+        "zh_CN": "准备5条辛多雷群聚鱼，制作捕获好运神灵鱼的诱饵。\r\n"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/52039?namespace=static-12.0.1_65617-us"
@@ -17,7 +43,20 @@
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/item/241145?namespace=static-12.0.1_65617-us"
         },
-        "name": "Lucky Loa Lure",
+        "name": {
+            "en_US": "Lucky Loa Lure",
+            "es_MX": "Cebo de loa de la suerte",
+            "pt_BR": "Isca de Loa da Sorte",
+            "de_DE": "Köder für glückliche Loa",
+            "en_GB": "Lucky Loa Lure",
+            "es_ES": "Cebo de loa de la suerte",
+            "fr_FR": "Appât à Loa porte-bonheur",
+            "it_IT": "Esca per Loa della Fortuna",
+            "ru_RU": "Приманка на счастливого лоа",
+            "ko_KR": "행운의 로아 미끼",
+            "zh_TW": "幸運羅亞誘餌",
+            "zh_CN": "好运神灵鱼诱饵"
+        },
         "id": 241145
     },
     "reagents": [
@@ -26,7 +65,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/238365?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Sin'dorei Swarmer",
+                "name": {
+                    "en_US": "Sin'dorei Swarmer",
+                    "es_MX": "Enjambrista sin'dorei",
+                    "pt_BR": "Enxameador Sin'dorei",
+                    "de_DE": "Sin'doreischwärmer",
+                    "en_GB": "Sin'dorei Swarmer",
+                    "es_ES": "Enjambrista sin'dorei",
+                    "fr_FR": "Carnassier sin’dorei",
+                    "it_IT": "Brulicatore dei Sin'dorei",
+                    "ru_RU": "Син'дорайский роевик",
+                    "ko_KR": "신도레이 무리붙이",
+                    "zh_TW": "辛多雷群居魚",
+                    "zh_CN": "辛多雷群聚鱼"
+                },
                 "id": 238365
             },
             "quantity": 5

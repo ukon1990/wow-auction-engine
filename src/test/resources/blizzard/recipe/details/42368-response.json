@@ -5,7 +5,20 @@
         }
     },
     "id": 42368,
-    "name": "Ceremonious Shield",
+    "name": {
+        "en_US": "Ceremonious Shield",
+        "es_MX": "Escudo ceremonioso",
+        "pt_BR": "Escudo Cerimonioso",
+        "de_DE": "Zeremonieller Schild",
+        "en_GB": "Ceremonious Shield",
+        "es_ES": "Escudo de ceremonia",
+        "fr_FR": "Bouclier de cérémonie",
+        "it_IT": "Scudo Cerimonioso",
+        "ru_RU": "Церемониальный щит",
+        "ko_KR": "격조의 방패",
+        "zh_TW": "典禮盾牌",
+        "zh_CN": "仪式盾牌"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/42368?namespace=static-12.0.1_65617-us"
@@ -16,7 +29,20 @@
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/item/171391?namespace=static-12.0.1_65617-us"
         },
-        "name": "Ceremonious Shield",
+        "name": {
+            "en_US": "Ceremonious Shield",
+            "es_MX": "Escudo ceremonioso",
+            "pt_BR": "Escudo Cerimonioso",
+            "de_DE": "Zeremonieller Schild",
+            "en_GB": "Ceremonious Shield",
+            "es_ES": "Escudo de ceremonia",
+            "fr_FR": "Bouclier de cérémonie",
+            "it_IT": "Scudo Cerimonioso",
+            "ru_RU": "Церемониальный щит",
+            "ko_KR": "격조의 방패",
+            "zh_TW": "典禮盾牌",
+            "zh_CN": "仪式盾牌"
+        },
         "id": 171391
     },
     "reagents": [
@@ -25,7 +51,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/171828?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Laestrite Ore",
+                "name": {
+                    "en_US": "Laestrite Ore",
+                    "es_MX": "Mena de lestrita",
+                    "pt_BR": "Minério de Laestrita",
+                    "de_DE": "Laestriterz",
+                    "en_GB": "Laestrite Ore",
+                    "es_ES": "Mena de laestrita",
+                    "fr_FR": "Minerai de læstrite",
+                    "it_IT": "Minerale di Laestrite",
+                    "ru_RU": "Лестритовая руда",
+                    "ko_KR": "레이스트라이트 광석",
+                    "zh_TW": "雷瑟瑞礦石",
+                    "zh_CN": "苷铜矿石"
+                },
                 "id": 171828
             },
             "quantity": 9
@@ -35,7 +74,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Luminous Flux",
+                "name": {
+                    "en_US": "Luminous Flux",
+                    "es_MX": "Flujo luminoso",
+                    "pt_BR": "Fluxo Luminoso",
+                    "de_DE": "Leuchtender Fluxus",
+                    "en_GB": "Luminous Flux",
+                    "es_ES": "Flujo luminoso",
+                    "fr_FR": "Flux lumineux",
+                    "it_IT": "Flusso Luminoso",
+                    "ru_RU": "Светящийся плавень",
+                    "ko_KR": "영롱한 유동체",
+                    "zh_TW": "夜光熔劑",
+                    "zh_CN": "辉光助熔剂"
+                },
                 "id": 180733
             },
             "quantity": 3
@@ -50,7 +102,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/77?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Modify Item Level - Minor",
+                "name": {
+                    "en_US": "Modify Item Level - Minor",
+                    "es_MX": "Modifica el nivel de objeto - Poco",
+                    "pt_BR": "Modificar Nível de Item - Menor",
+                    "de_DE": "Gegenstandsstufe modifizieren - Gering",
+                    "en_GB": "Modify Item Level - Minor",
+                    "es_ES": "Modificar nivel de objeto: menor",
+                    "fr_FR": "Changement de niveau d’objet - mineur",
+                    "it_IT": "Modifica livello oggetto - Minore",
+                    "ru_RU": "Модифицирует уровень предмета – слабый эффект",
+                    "ko_KR": "아이템 레벨 변경 - 하급",
+                    "zh_TW": "修改物品等級 - 次要",
+                    "zh_CN": "修正物品等级 - 次级"
+                },
                 "id": 77
             },
             "display_order": 0

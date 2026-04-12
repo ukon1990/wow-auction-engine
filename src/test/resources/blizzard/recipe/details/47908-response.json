@@ -5,8 +5,34 @@
         }
     },
     "id": 47908,
-    "name": "Aileron Seamoth",
-    "description": "Aileron Seamoth glide across the ocean floor and jet upwards when they suspect a tasty treat!\r\n\r\nThese saltwater schools can be found primarily in the ocean and other bodies of water connected to it.\r\n\r\nThey are especially active in areas such as Iskaara in The Azure Span.",
+    "name": {
+        "en_US": "Aileron Seamoth",
+        "es_MX": "Pez dragón alerón",
+        "pt_BR": "Mariposa do Mar Aileron",
+        "de_DE": "Querflossen-Flügelrossfisch",
+        "en_GB": "Aileron Seamoth",
+        "es_ES": "Polilla marina con alerón",
+        "fr_FR": "Phalène aquatique alifère",
+        "it_IT": "Falena di Mare",
+        "ru_RU": "Мелкокрылая рыба-пегас",
+        "ko_KR": "날개돋이 해마",
+        "zh_TW": "副翼海蛾魚",
+        "zh_CN": "副翼海蛾鱼"
+    },
+    "description": {
+        "en_US": "Aileron Seamoth glide across the ocean floor and jet upwards when they suspect a tasty treat!\r\n\r\nThese saltwater schools can be found primarily in the ocean and other bodies of water connected to it.\r\n\r\nThey are especially active in areas such as Iskaara in The Azure Span.",
+        "es_MX": "Los peces dragón alerón se deslizan por el suelo oceánico y se impulsan hacia arriba cuando sienten que hay un delicioso bocadillo.\r\n\r\nEstos cardúmenes de agua salada pueden encontrarse principalmente en el océano y otros cuerpos de agua que llegan a él.\r\n\r\nSe encuentran particularmente en Iskaara, en el Trecho Azur.",
+        "pt_BR": "A Mariposa do Mar Aileron plana sobre o leito oceânico e dispara para cima quando avista alguma coisa gostosa!\r\n\r\nOs cardumes de água salgada podem ser encontrados principalmente no oceano e em outros corpos d'água conectados a ele.\r\n\r\nSão especialmente ativos em áreas como Iskaara e na Vasta Lazúli.",
+        "de_DE": "Querflossen-Flügelrossfische gleiten den Meeresboden entlang und schnellen hinauf, sobald sie etwas Schmackhaftes dort oben erwarten!\r\n\r\nDiese Salzwasserschwärme findet man gewöhnlich im Meer und damit verbundenen Gewässern.\r\n\r\nBesonders viele treiben sich in Iskaara im Azurblauen Gebirge herum.",
+        "en_GB": "Aileron Seamoth glide across the ocean floor and jet upwards when they suspect a tasty treat!\r\n\r\nThese saltwater schools can be found primarily in the ocean and other bodies of water connected to it.\r\n\r\nThey are especially active in areas such as Iskaara in The Azure Span.",
+        "es_ES": "La polillas marinas con alerón nadan por el fondo del océano y se propulsan hacia arriba cuando encuentran algún manjar sabroso.\r\n\r\nPueden encontrarse en los océanos o masas de agua cercanas.\r\n\r\nEstán especialmente activas en zonas como Iskaara, en las Tierras Azures.",
+        "fr_FR": "Les phalènes aquatiques alifères sillonnent les fonds marins dans l’attente de proies savoureuses qu’elles attaquent en remontant brusquement.\r\n\r\nCes bancs de poissons d’eau salée vivent principalement dans l’océan et les cours d’eau qui s’y jettent.\r\n\r\nIls sont particulièrement nombreux dans certaines régions, comme Iskaara, dans la travée d’Azur.",
+        "it_IT": "La Falena di Mare scivola sul fondo dell'oceano e vola verso l'alto se sospetta che ci sia una prelibatezza!\r\n\r\nQuesti banchi di pesci d'acqua salata si trovano soprattutto nell'oceano e nei bacini d'acqua a esso collegato.\r\n\r\nSono particolarmente attivi nelle aree di Iskaara nella Vastità Azzurra.",
+        "ru_RU": "Мелкокрылая рыба-пегас скользит по самому дну океана, выпрыгивая лишь когда почует что-то вкусненькое!\r\n\r\nСтаи этой солоноводной рыбы водятся в океане и примыкающих к нему водоемах.\r\n\r\nОсобенно активна местах вроде Искары, что в Лазурном Просторе.",
+        "ko_KR": "날개돋이 해마는 해저를 누비며, 맛있는 먹잇감을 포착했을 때 솟아오르는 습성이 있습니다!\r\n\r\n이 바닷물고기 떼는 주로 바다나 인접한 물가에서 찾아볼 수 있습니다.\r\n\r\n특히 하늘빛 평원의 이스카라 같은 지역에서 왕성하게 서식합니다.",
+        "zh_TW": "副翼海蛾魚習慣在海底悠然泅游，然後在發現疑似美食的東西時，向上快速竄游捕食！\r\n\r\n這種鹹水生物主要出沒於海洋，以及其他與海洋相連的水域中。\r\n\r\n它們在蒼藍高地的伊斯凱拉等地區特別活躍。",
+        "zh_CN": "副翼海蛾鱼平时在海底掠行，而发现有疑似的美味佳肴时会向上猛冲！\r\n\r\n这些咸水鱼群主要分布于海洋和与之相连的其他水域中。\r\n\r\n它们尤其活跃于诸如碧蓝林海的伊斯卡拉等地区。"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/47908?namespace=static-12.0.1_65617-us"

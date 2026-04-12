@@ -9,28 +9,80 @@
             "key": {
                 "href": "https://us.api.blizzard.com/data/wow/profession/164?namespace=static-12.0.1_65617-us"
             },
-            "name": "Blacksmithing",
+            "name": {
+                "en_US": "Blacksmithing",
+                "es_MX": "Herrería",
+                "pt_BR": "Ferraria",
+                "de_DE": "Schmiedekunst",
+                "en_GB": "Blacksmithing",
+                "es_ES": "Herrería",
+                "fr_FR": "Forge",
+                "it_IT": "Forgiatura",
+                "ru_RU": "Кузнечное дело",
+                "ko_KR": "대장기술",
+                "zh_TW": "鍛造",
+                "zh_CN": "锻造"
+            },
             "id": 164
         },
         {
             "key": {
                 "href": "https://us.api.blizzard.com/data/wow/profession/333?namespace=static-12.0.1_65617-us"
             },
-            "name": "Enchanting",
+            "name": {
+                "en_US": "Enchanting",
+                "es_MX": "Encantamiento",
+                "pt_BR": "Encantamento",
+                "de_DE": "Verzauberkunst",
+                "en_GB": "Enchanting",
+                "es_ES": "Encantamiento",
+                "fr_FR": "Enchantement",
+                "it_IT": "Incantamento",
+                "ru_RU": "Наложение чар",
+                "ko_KR": "마법부여",
+                "zh_TW": "附魔",
+                "zh_CN": "附魔"
+            },
             "id": 333
         },
         {
             "key": {
                 "href": "https://us.api.blizzard.com/data/wow/profession/182?namespace=static-12.0.1_65617-us"
             },
-            "name": "Herbalism",
+            "name": {
+                "en_US": "Herbalism",
+                "es_MX": "Herboristería",
+                "pt_BR": "Herborismo",
+                "de_DE": "Kräuterkunde",
+                "en_GB": "Herbalism",
+                "es_ES": "Herboristería",
+                "fr_FR": "Herboristerie",
+                "it_IT": "Erbalismo",
+                "ru_RU": "Травничество",
+                "ko_KR": "약초채집",
+                "zh_TW": "草藥學",
+                "zh_CN": "草药学"
+            },
             "id": 182
         },
         {
             "key": {
                 "href": "https://us.api.blizzard.com/data/wow/profession/356?namespace=static-12.0.1_65617-us"
             },
-            "name": "Fishing",
+            "name": {
+                "en_US": "Fishing",
+                "es_MX": "Pesca",
+                "pt_BR": "Pesca",
+                "de_DE": "Angeln",
+                "en_GB": "Fishing",
+                "es_ES": "Pesca",
+                "fr_FR": "Pêche",
+                "it_IT": "Pesca",
+                "ru_RU": "Рыбная ловля",
+                "ko_KR": "낚시",
+                "zh_TW": "釣魚",
+                "zh_CN": "钓鱼"
+            },
             "id": 356
         }
     ]

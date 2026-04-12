@@ -5,8 +5,34 @@
         }
     },
     "id": 47913,
-    "name": "Rimefin Tuna",
-    "description": "Rimefin Tuna are a large, fatty fish coated in a thin layer of protective ice. The thick layer of fat protects their vital organs in below freezing temperatures. \r\n\r\nYou can find these pools in especially frosty climates around the Dragon Isles.\r\n\r\nThe Iskaara Tuskarr are experts in catching these kinds of special fish.",
+    "name": {
+        "en_US": "Rimefin Tuna",
+        "es_MX": "Atún escarchaleta",
+        "pt_BR": "Atum Barbatana-da-geada",
+        "de_DE": "Raureifflossenthunfisch",
+        "en_GB": "Rimefin Tuna",
+        "es_ES": "Atún hieloaleta",
+        "fr_FR": "Thon frimageoire",
+        "it_IT": "Tonno Pinnabrina",
+        "ru_RU": "Льдистый тунец",
+        "ko_KR": "서리지느러미 다랑어",
+        "zh_TW": "霜鰭鮪魚",
+        "zh_CN": "淞鳍金枪鱼"
+    },
+    "description": {
+        "en_US": "Rimefin Tuna are a large, fatty fish coated in a thin layer of protective ice. The thick layer of fat protects their vital organs in below freezing temperatures. \r\n\r\nYou can find these pools in especially frosty climates around the Dragon Isles.\r\n\r\nThe Iskaara Tuskarr are experts in catching these kinds of special fish.",
+        "es_MX": "El atún escarchaleta es un pez grande y carnoso envuelto en una fina capa de hielo que lo protege. Su gruesa capa de grasa protege sus órganos vitales de las temperaturas heladas. \r\n\r\nPuedes encontrar estos bancos de peces principalmente en los climas gélidos de las Islas Dragón.\r\n\r\nLos colmillarr de Iskaara son expertos en atrapar este tipo especial de peces.",
+        "pt_BR": "O Atum Barbatana-da-geada é um peixe grande, rico em gordura, coberto por uma fina camada protetora de gelo. A espessa camada de gordura protege seus órgãos vitais em temperaturas congelantes.\r\n\r\nVocê encontra cardumes dele especialmente nos climas mais gélidos das Ilhas do Dragão.\r\n\r\nOs Morsanos de Iskaara são especialistas em pegar peixes especiais como este.",
+        "de_DE": "Raureifflossenthunfische sind große, fetthaltige Fische, die von einer dünnen Schutzschicht aus Eis umgeben sind. Die dicke Fettschicht schützt ihre Organe vor den eisigen Temperaturen.\r\n\r\nIhr findet diese Schwärme in besonders frostigen Bereichen der Dracheninseln.\r\n\r\nDie Tuskarr von Iskaara sind Experten, was den Fang dieser Fische betrifft.",
+        "en_GB": "Rimefin Tuna are a large, fatty fish coated in a thin layer of protective ice. The thick layer of fat protects their vital organs in below freezing temperatures. \r\n\r\nYou can find these pools in especially frosty climates around the Dragon Isles.\r\n\r\nThe Iskaara Tuskarr are experts in catching these kinds of special fish.",
+        "es_ES": "El atún hieloaleta es un pez grande y graso recubierto de una fina película de hielo protector. Una gruesa capa de grasa protege sus órganos vitales, lo que le permite sobrevivir en temperaturas bajo cero.\r\n\r\nPueden encontrarse en los climas más gélidos de las Islas Dragón.\r\n\r\nLos Colmillarr de Iskaara son expertos en la captura de estos peces.",
+        "fr_FR": "Les thons frimageoires sont de grands poissons recouverts d’une pellicule de glace protectrice et dotés d’une épaisse couche de graisse qui protège leurs organes vitaux des températures inférieures à zéro.\r\n\r\nOn trouve ces bancs de poissons sous les climats les plus froids des îles aux Dragons.\r\n\r\nLes Roharts iskaariens sont connus pour leur habileté à pêcher ces poissons spéciaux.",
+        "it_IT": "I Tonni Pinnabrina sono pesci grandi e grossi che vivono sotto sottili lastre di ghiaccio, e riescono a sopravvivere alle basse temperature grazie a uno spesso strato di grasso.\r\n\r\nSi possono trovare banchi di questi pesci soprattutto nelle zone fredde delle Isole dei Draghi.\r\n\r\nI Tuskarr di Iskaara sono esperti nella pesca di questi esemplari.",
+        "ru_RU": "Льдистый тунец — большая жирная рыба, вся покрытая тонким слоем льда. Толстая жировая прослойка защищает жизненно важные органы от низких температур. \r\n\r\nЭту рыбу можно найти в особенно холодных местностях Драконьих островов.\r\n\r\nИскарские клыкарры — знатоки ловли этого вида рыбы.",
+        "ko_KR": "서리지느러미 다랑어는 보호 용도로 두꺼운 얼음을 두른 큰 물고기로, 지방이 풍부합니다. 두터운 지방층 덕택에 얼음장처럼 차가운 물속에서도 장기가 손상되지 않습니다. \r\n\r\n서리지느러미 다랑어 떼는 용의 섬에서도 특히 기온이 추운 지역에서 찾아볼 수 있습니다.\r\n\r\n이스카라 투스카르는 이런 특별한 물고기를 잡는 데 있어 전문가로 통합니다.",
+        "zh_TW": "霜鰭鮪魚是油脂豐富的大型魚類，身上覆蓋一層具保護作用的薄冰。厚厚的脂肪層可在零度以下的環境中保護其重要器官。\r\n\r\n這些釣點最常出現在巨龍群島氣候寒冷的地區。\r\n\r\n伊斯凱拉巨牙海民是擅長捕捉這類特殊魚種的行家。",
+        "zh_CN": "淞鳍金枪鱼是一种肥硕的大鱼，身体上覆盖着薄薄的保护冰层。厚厚的脂肪层可以在低于冰点的温度下保护它们的重要器官。\r\n\r\n你可以在巨龙群岛周围特别寒冷的气候中找到这些鱼池。\r\n\r\n伊斯卡拉海象人是捕捉这种特殊鱼类的专家。"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/47913?namespace=static-12.0.1_65617-us"

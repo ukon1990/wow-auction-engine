@@ -5,8 +5,34 @@
         }
     },
     "id": 34772,
-    "name": "Dreamleaf",
-    "description": "Find rare materials when gathering dreamleaf.",
+    "name": {
+        "en_US": "Dreamleaf",
+        "es_MX": "Frondasueño",
+        "pt_BR": "Folha-de-sonho",
+        "de_DE": "Traumlaub",
+        "en_GB": "Dreamleaf",
+        "es_ES": "Frondasueño",
+        "fr_FR": "Songefeuille",
+        "it_IT": "Erbonirica",
+        "ru_RU": "Грезолист",
+        "ko_KR": "꿈잎사귀",
+        "zh_TW": "幻夢草",
+        "zh_CN": "入梦叶"
+    },
+    "description": {
+        "en_US": "Find rare materials when gathering dreamleaf.",
+        "es_MX": "Encuentra materiales poco comunes mientras recolectas frondasueño.",
+        "pt_BR": "Encontra materiais raros ao coletar folha-de-sonho.",
+        "de_DE": "Findet seltene Materialien beim Sammeln von Traumlaub.",
+        "en_GB": "Find rare materials when gathering dreamleaf.",
+        "es_ES": "Encuentra materiales poco comunes al recolectar frondasueño.",
+        "fr_FR": "Vous trouvez des matériaux rares en ramassant de la songefeuille.",
+        "it_IT": "Permette di trovare materiali rari quando si raccoglie l'Erbonirica.",
+        "ru_RU": "Собирая грезолист, вы также находите редкие материалы.",
+        "ko_KR": "꿈잎사귀를 채집할 때 희귀한 재료를 함께 획득할 수도 있습니다.",
+        "zh_TW": "在採集幻夢草時發現稀有材料。",
+        "zh_CN": "在采集入梦叶的同时可以找到稀有材料。\r\n"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/34772?namespace=static-12.0.1_65617-us"

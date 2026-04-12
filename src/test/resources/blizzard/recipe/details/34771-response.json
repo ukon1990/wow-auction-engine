@@ -5,8 +5,34 @@
         }
     },
     "id": 34771,
-    "name": "Dreamleaf",
-    "description": "Gather dreamleaf more effectively.",
+    "name": {
+        "en_US": "Dreamleaf",
+        "es_MX": "Frondasueño",
+        "pt_BR": "Folha-de-sonho",
+        "de_DE": "Traumlaub",
+        "en_GB": "Dreamleaf",
+        "es_ES": "Frondasueño",
+        "fr_FR": "Songefeuille",
+        "it_IT": "Erbonirica",
+        "ru_RU": "Грезолист",
+        "ko_KR": "꿈잎사귀",
+        "zh_TW": "幻夢草",
+        "zh_CN": "入梦叶"
+    },
+    "description": {
+        "en_US": "Gather dreamleaf more effectively.",
+        "es_MX": "Recolecta frondasueño con más eficiencia.",
+        "pt_BR": "Coleta folha-de-sonho com mais eficiência.",
+        "de_DE": "Sammelt Traumlaub effektiver.",
+        "en_GB": "Gather dreamleaf more effectively.",
+        "es_ES": "Recolecta frondasueño con mayor eficacia.",
+        "fr_FR": "Vous ramassez la songefeuille plus efficacement.",
+        "it_IT": "Permette di raccogliere l'Erbonirica più efficacemente.",
+        "ru_RU": "Более эффективный сбор грезолиста.",
+        "ko_KR": "꿈잎사귀를 더 효율적으로 채집합니다.",
+        "zh_TW": "更有效率地採集幻夢草。",
+        "zh_CN": "更有效率地采集入梦叶。\r\n"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/34771?namespace=static-12.0.1_65617-us"

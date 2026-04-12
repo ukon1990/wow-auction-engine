@@ -5,53 +5,157 @@
         }
     },
     "id": 2550,
-    "name": "Legion Herbalism",
+    "name": {
+        "en_US": "Legion Herbalism",
+        "es_MX": "Herboristería de Legion",
+        "pt_BR": "Herborismo de Legion",
+        "de_DE": "Kräuterkunde der Verheerten Inseln",
+        "en_GB": "Legion Herbalism",
+        "es_ES": "Herboristería de Legion",
+        "fr_FR": "Herboristerie de Legion",
+        "it_IT": "Erbalismo di Legion",
+        "ru_RU": "Травничество Legion",
+        "ko_KR": "군단 약초채집",
+        "zh_TW": "軍團草藥學",
+        "zh_CN": "军团草药学"
+    },
     "minimum_skill_level": 1,
     "maximum_skill_level": 100,
     "categories": [
         {
-            "name": "Gathering Techniques",
+            "name": {
+                "en_US": "Gathering Techniques",
+                "es_MX": "Técnicas de Recolección",
+                "pt_BR": "Técnica de Coleta",
+                "de_DE": "Sammeltechniken",
+                "en_GB": "Gathering Techniques",
+                "es_ES": "Técnicas de recolección",
+                "fr_FR": "Techniques de récolte",
+                "it_IT": "Tecniche di Raccolta",
+                "ru_RU": "Способы сбора ресурсов",
+                "ko_KR": "채집 기술",
+                "zh_TW": "採集技術",
+                "zh_CN": "采集技术"
+            },
             "recipes": [
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/34768?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Aethril",
+                    "name": {
+                        "en_US": "Aethril",
+                        "es_MX": "Aethril",
+                        "pt_BR": "Aethril",
+                        "de_DE": "Aethril",
+                        "en_GB": "Aethril",
+                        "es_ES": "Aethril",
+                        "fr_FR": "Aethril",
+                        "it_IT": "Aethril",
+                        "ru_RU": "Айтрил",
+                        "ko_KR": "에이트릴",
+                        "zh_TW": "紫地根草",
+                        "zh_CN": "安瑟瑞尔花"
+                    },
                     "id": 34768
                 },
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/34769?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Aethril",
+                    "name": {
+                        "en_US": "Aethril",
+                        "es_MX": "Aethril",
+                        "pt_BR": "Aethril",
+                        "de_DE": "Aethril",
+                        "en_GB": "Aethril",
+                        "es_ES": "Aethril",
+                        "fr_FR": "Aethril",
+                        "it_IT": "Aethril",
+                        "ru_RU": "Айтрил",
+                        "ko_KR": "에이트릴",
+                        "zh_TW": "紫地根草",
+                        "zh_CN": "安瑟瑞尔花"
+                    },
                     "id": 34769
                 },
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/34770?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Aethril",
+                    "name": {
+                        "en_US": "Aethril",
+                        "es_MX": "Aethril",
+                        "pt_BR": "Aethril",
+                        "de_DE": "Aethril",
+                        "en_GB": "Aethril",
+                        "es_ES": "Aethril",
+                        "fr_FR": "Aethril",
+                        "it_IT": "Aethril",
+                        "ru_RU": "Айтрил",
+                        "ko_KR": "에이트릴",
+                        "zh_TW": "紫地根草",
+                        "zh_CN": "安瑟瑞尔花"
+                    },
                     "id": 34770
                 },
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/34771?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Dreamleaf",
+                    "name": {
+                        "en_US": "Dreamleaf",
+                        "es_MX": "Frondasueño",
+                        "pt_BR": "Folha-de-sonho",
+                        "de_DE": "Traumlaub",
+                        "en_GB": "Dreamleaf",
+                        "es_ES": "Frondasueño",
+                        "fr_FR": "Songefeuille",
+                        "it_IT": "Erbonirica",
+                        "ru_RU": "Грезолист",
+                        "ko_KR": "꿈잎사귀",
+                        "zh_TW": "幻夢草",
+                        "zh_CN": "入梦叶"
+                    },
                     "id": 34771
                 },
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/34772?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Dreamleaf",
+                    "name": {
+                        "en_US": "Dreamleaf",
+                        "es_MX": "Frondasueño",
+                        "pt_BR": "Folha-de-sonho",
+                        "de_DE": "Traumlaub",
+                        "en_GB": "Dreamleaf",
+                        "es_ES": "Frondasueño",
+                        "fr_FR": "Songefeuille",
+                        "it_IT": "Erbonirica",
+                        "ru_RU": "Грезолист",
+                        "ko_KR": "꿈잎사귀",
+                        "zh_TW": "幻夢草",
+                        "zh_CN": "入梦叶"
+                    },
                     "id": 34772
                 },
                 {
                     "key": {
                         "href": "https://us.api.blizzard.com/data/wow/recipe/34773?namespace=static-12.0.1_65617-us"
                     },
-                    "name": "Dreamleaf",
+                    "name": {
+                        "en_US": "Dreamleaf",
+                        "es_MX": "Frondasueño",
+                        "pt_BR": "Folha-de-sonho",
+                        "de_DE": "Traumlaub",
+                        "en_GB": "Dreamleaf",
+                        "es_ES": "Frondasueño",
+                        "fr_FR": "Songefeuille",
+                        "it_IT": "Erbonirica",
+                        "ru_RU": "Грезолист",
+                        "ko_KR": "꿈잎사귀",
+                        "zh_TW": "幻夢草",
+                        "zh_CN": "入梦叶"
+                    },
                     "id": 34773
                 }
             ]

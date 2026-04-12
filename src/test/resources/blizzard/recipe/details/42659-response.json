@@ -5,7 +5,20 @@
         }
     },
     "id": 42659,
-    "name": "Enchanted Elethium Bar",
+    "name": {
+        "en_US": "Enchanted Elethium Bar",
+        "es_MX": "Barra de eletio encantado",
+        "pt_BR": "Barra de Elétio Encantada",
+        "de_DE": "Verzauberter Elethiumbarren",
+        "en_GB": "Enchanted Elethium Bar",
+        "es_ES": "Barra de eletio encantado",
+        "fr_FR": "Barre d’éléthium enchanté",
+        "it_IT": "Lingotto di Elezio Incantato",
+        "ru_RU": "Зачарованный элетиевый слиток",
+        "ko_KR": "마력 깃든 엘레튬 주괴",
+        "zh_TW": "附魔艾雷希錠",
+        "zh_CN": "魔化阴铁锭"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/42659?namespace=static-12.0.1_65617-us"
@@ -16,7 +29,20 @@
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/item/172437?namespace=static-12.0.1_65617-us"
         },
-        "name": "Enchanted Elethium Bar",
+        "name": {
+            "en_US": "Enchanted Elethium Bar",
+            "es_MX": "Barra de eletio encantado",
+            "pt_BR": "Barra de Elétio Encantada",
+            "de_DE": "Verzauberter Elethiumbarren",
+            "en_GB": "Enchanted Elethium Bar",
+            "es_ES": "Barra de eletio encantado",
+            "fr_FR": "Barre d’éléthium enchanté",
+            "it_IT": "Lingotto di Elezio Incantato",
+            "ru_RU": "Зачарованный элетиевый слиток",
+            "ko_KR": "마력 깃든 엘레튬 주괴",
+            "zh_TW": "附魔艾雷希錠",
+            "zh_CN": "魔化阴铁锭"
+        },
         "id": 172437
     },
     "reagents": [
@@ -25,7 +51,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/172230?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Soul Dust",
+                "name": {
+                    "en_US": "Soul Dust",
+                    "es_MX": "Polvo de alma",
+                    "pt_BR": "Pó d'Alma",
+                    "de_DE": "Seelenstaub",
+                    "en_GB": "Soul Dust",
+                    "es_ES": "Polvo de alma",
+                    "fr_FR": "Poussière d’âme",
+                    "it_IT": "Polvere d'Anima",
+                    "ru_RU": "Пыль духа",
+                    "ko_KR": "영혼 가루",
+                    "zh_TW": "靈魂之塵",
+                    "zh_CN": "灵魂之尘"
+                },
                 "id": 172230
             },
             "quantity": 1
@@ -35,7 +74,20 @@
                 "key": {
                     "href": "https://us.api.blizzard.com/data/wow/item/171833?namespace=static-12.0.1_65617-us"
                 },
-                "name": "Elethium Ore",
+                "name": {
+                    "en_US": "Elethium Ore",
+                    "es_MX": "Mena de eletio",
+                    "pt_BR": "Minério de Elétio",
+                    "de_DE": "Elethiumerz",
+                    "en_GB": "Elethium Ore",
+                    "es_ES": "Mena de eletio",
+                    "fr_FR": "Minerai d’éléthium",
+                    "it_IT": "Minerale di Elezio",
+                    "ru_RU": "Элетиевая руда",
+                    "ko_KR": "엘레튬 광석",
+                    "zh_TW": "艾雷希礦石",
+                    "zh_CN": "阴铁矿石"
+                },
                 "id": 171833
             },
             "quantity": 2

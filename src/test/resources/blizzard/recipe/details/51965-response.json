@@ -5,8 +5,34 @@
         }
     },
     "id": 51965,
-    "name": "Eversong Woods",
-    "description": "Recommended Skill: 1\r\n\r\nCalm and serene waters make it an ideal location for Anglers to begin exploring what the depths have to offer.\r\n\r\nPools found in this zone:\r\n- Sunwell Swarm\r\n- Bubbling Bloom\r\n- Bloom Swarm\r\n- Viscous Void\r\n- Careless Cargo\r\n- Lost Treasures",
+    "name": {
+        "en_US": "Eversong Woods",
+        "es_MX": "Bosque Canción Eterna",
+        "pt_BR": "Floresta do Canto Eterno",
+        "de_DE": "Immersangwald",
+        "en_GB": "Eversong Woods",
+        "es_ES": "Bosque Canción Eterna",
+        "fr_FR": "Bois des Chants éternels",
+        "it_IT": "Boschi di Cantoeterno",
+        "ru_RU": "Леса Вечной Песни",
+        "ko_KR": "영원노래 숲",
+        "zh_TW": "永歌森林",
+        "zh_CN": "永歌森林"
+    },
+    "description": {
+        "en_US": "Recommended Skill: 1\r\n\r\nCalm and serene waters make it an ideal location for Anglers to begin exploring what the depths have to offer.\r\n\r\nPools found in this zone:\r\n- Sunwell Swarm\r\n- Bubbling Bloom\r\n- Bloom Swarm\r\n- Viscous Void\r\n- Careless Cargo\r\n- Lost Treasures",
+        "es_MX": "Habilidad recomendada: 1\r\n\r\nLas aguas calmas y serenas son ideales para que los pescadores comiencen a explorar lo que tienen para ofrecer las profundidades.\r\n\r\nEstanques que se encuentran en esta zona:\r\n- Enjambre de Fuente del Sol\r\n- Florecimiento burbujeante\r\n- Enjambre florecido\r\n- Vacío viscoso\r\n- Cargamento descuidado\r\n- Tesoros perdidos",
+        "pt_BR": "Perícia recomendada: 1\r\n\r\nÁguas calmas e serenas tornam este local ideal para pescadores começarem a explorar o que as profundezas têm a oferecer.\r\n\r\nPesqueiros encontrados nessa área:\r\n- Enxame da Nascente do Sol\r\n- Floração Borbulhante\r\n- Enxame de Florações\r\n- Caos Viscoso\r\n- Carga Descuidada\r\n- Tesouros Perdidos",
+        "de_DE": "Empfohlene Fertigkeit: 1\r\n\r\nDie ruhigen Gewässer machen dieses Gebiet zum idealen Ziel für Angler, die gerade erst damit anfangen, zu entdecken, was sich in den Untiefen tummelt.\r\n\r\nSchwärme in dieser Zone:\r\n- Sonnenbrunnenschwarm\r\n- Blubbernde Blüte\r\n- Blütenschwarm\r\n- Zähflüssige Leere\r\n- Verschlampte Fracht\r\n- Verlorene Schätze",
+        "en_GB": "Recommended Skill: 1\r\n\r\nCalm and serene waters make it an ideal location for Anglers to begin exploring what the depths have to offer.\r\n\r\nPools found in this zone:\r\n- Sunwell Swarm\r\n- Bubbling Bloom\r\n- Bloom Swarm\r\n- Viscous Void\r\n- Careless Cargo\r\n- Lost Treasures",
+        "es_ES": "Habilidad recomendada: 1\r\n\r\nSus aguas tranquilas y serenas la convierten en una ubicación ideal para que los pescadores comiencen a explorar lo que pueden ofrecer las profundidades.\r\n\r\nBancos de pesca en esta zona:\r\n- Enjambre de La Fuente del Sol\r\n- Flor burbujeante\r\n- Enjambre de flores\r\n- Vacío viscoso\r\n- Cargamento descuidado\r\n- Tesoros perdidos",
+        "fr_FR": "Niveau de compétence recommandé : 1\r\n\r\nLes eaux calmes et paisibles en font l’endroit idéal pour commencer à explorer ce que les profondeurs ont à offrir.\r\n\r\nBassins trouvés dans cette zone :\r\n– banc du Puits de soleil ;\r\n– floraison frémissante ;\r\n– banc fleuri ;\r\n– Vide visqueux ;\r\n– cargaison peu sûre ;\r\n– trésor perdu.",
+        "it_IT": "Competenza consigliata: 1\r\n\r\nAcque calme e serene ne fanno il luogo ideale per i pescatori che vogliono iniziare a esplorare le meraviglie delle profondità.\r\n\r\nPozze disponibili in questa zona:\r\n- Sciame del Pozzo Solare\r\n- Fioritura Ribollente\r\n- Sciame della Fioritura\r\n- Vuoto Viscoso\r\n- Carico Distratto\r\n- Tesori Perduti",
+        "ru_RU": "Рекомендуемый уровень навыка: 1\r\n\r\nТихие и спокойные воды идеально подходят для начинающих удильщиков.\r\n\r\nКосяки рыб в этой зоне:\r\n- Стая Солнечного Колодца\r\n- Бурлящий расцвет\r\n- Цветостая\r\n- Жижа Бездны\r\n- Неряшливый груз\r\n- Потерянные сокровища",
+        "ko_KR": "권장 숙련도: 1\r\n\r\n고요하고 평화로운 물줄기는 강태공이 심해가 품은 비밀을 탐험하기에 이상적인 장소입니다.\r\n\r\n이 지역의 웅덩이\r\n- 태양샘 떼\r\n- 부글거리는 꽃송이\r\n- 꽃송이 떼\r\n- 흐물거리는 공허\r\n- 부주의한 화물\r\n- 잃어버린 보물",
+        "zh_TW": "建議技能：1\r\n\r\n平靜無比的水域使其成為釣手開始探索水中漁獲的理想地點。\r\n\r\n在此地區發現的水池：\r\n- 太陽之井魚群\r\n- 冒泡花魚\r\n- 花魚群\r\n- 黏稠虛無\r\n- 粗心釣上的貨物\r\n- 失落寶藏",
+        "zh_CN": "推荐技能等级：1\r\n\r\n平静安宁的水域，是垂钓客开始探索深海奥秘的理想之地。\r\n\r\n该地区可找到的垂钓池：\r\n- 太阳之井鱼群\r\n- 冒泡之花\r\n- 绽华之群\r\n- 粘稠的虚空\r\n- 散落的货物\r\n- 丢失的宝物"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/51965?namespace=static-12.0.1_65617-us"

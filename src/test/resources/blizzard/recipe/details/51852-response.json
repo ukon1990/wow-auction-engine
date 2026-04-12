@@ -5,8 +5,34 @@
         }
     },
     "id": 51852,
-    "name": "Sanguithorn",
-    "description": "Once only usable as an edible plant for fleeting magical power, recent evolutionary changes and alchemical breakthroughs with bloodthistle have led to it's use across the professions. This more potent growth has come to be known as sanguithorn, and still boasts fearsome magical capabilities.\r\n\r\nSanguithorn are known to tether themselves to rocks, either above or under the ground, so check for them in more rugged terrain.",
+    "name": {
+        "en_US": "Sanguithorn",
+        "es_MX": "Sangrespina",
+        "pt_BR": "Sanguispinho",
+        "de_DE": "Rotdorn",
+        "en_GB": "Sanguithorn",
+        "es_ES": "Sanguispino",
+        "fr_FR": "Sanguironce",
+        "it_IT": "Rovosangue",
+        "ru_RU": "Кровотерн",
+        "ko_KR": "핏빛찔레",
+        "zh_TW": "血棘",
+        "zh_CN": "血艳蓟"
+    },
+    "description": {
+        "en_US": "Once only usable as an edible plant for fleeting magical power, recent evolutionary changes and alchemical breakthroughs with bloodthistle have led to it's use across the professions. This more potent growth has come to be known as sanguithorn, and still boasts fearsome magical capabilities.\r\n\r\nSanguithorn are known to tether themselves to rocks, either above or under the ground, so check for them in more rugged terrain.",
+        "es_MX": "En el pasado, se usaba como planta comestible para obtener un efímero poder mágico, pero ahora, gracias a los recientes cambios evolutivos y los descubrimientos alquímicos relacionados con el cardo de sangre, se utiliza en todas las profesiones. A esta hierba más potente se la conoció como \"sangrespina\", y aún ostenta temibles poderes mágicos.\r\n\r\nSe sabe que la sangrespina se aferra a las rocas, tanto bajo el suelo como en la superficie. Podrás encontrarla en terrenos irregulares.",
+        "pt_BR": "Antes utilizado apenas como uma planta comestível que concedia poder mágico temporariamente, mudanças evolutivas e descobertas alquímicas recentes com o Cardossangue levaram ao seu uso em diversas profissões. Esta brotação mais potente passou a ser conhecida como Sanguispinho e ainda ostenta temíveis capacidades mágicas.\r\n\r\nO Sanguispinho é conhecido por se prender a rochas, seja acima ou abaixo do solo. Procure por ele em terrenos mais acidentados.",
+        "de_DE": "Die einst nur wegen der gewährten flüchtigen magischen Kräfte als essbare Pflanze verwendete Blutdistel ist heute dank neuer evolutionärer Veränderungen und Durchbrüche auf dem Gebiet der Alchemie bei allen Berufen beliebt. Diese mächtigere Variante ist als Rotdorn bekannt und ist von furchteinflößender magischer Wirkung.\r\n\r\nRotdorn heftet sich sowohl über- als auch unterirdisch an Felsen. Ihr werdet ihn also meist in unwegsamem Gelände finden.",
+        "en_GB": "Once only usable as an edible plant for fleeting magical power, recent evolutionary changes and alchemical breakthroughs with bloodthistle have led to it's use across the professions. This more potent growth has come to be known as sanguithorn, and still boasts fearsome magical capabilities.\r\n\r\nSanguithorn are known to tether themselves to rocks, either above or under the ground, so check for them in more rugged terrain.",
+        "es_ES": "Antes solo se usaba como planta comestible para obtener poder mágico fugazmente, pero los recientes cambios evolutivos y avances alquímicos con el cardo de sangre han llevado a su utilización en todas las profesiones. Este brote más potente se conoce como sanguispino y sigue contando con un imponente potencial mágico.\r\n\r\nEl sanguispino se adhiere a las rocas, ya sea en la superficie o bajo tierra, así que búscalo en terrenos más accidentados.",
+        "fr_FR": "Plante autrefois uniquement consommée pour obtenir des pouvoirs magiques éphémères, les récentes évolutions et avancées alchimiques concernant le chardon sanglant ont conduit à son utilisation par tous les métiers. Cette variété plus puissante est connue sous le nom de « sanguironce » et bénéfice toujours de redoutables propriétés magiques.\r\n\r\nLa sanguironce s’accroche aux rochers, à la surface ou sous terre, alors cherchez les terrains plus accidentés pour en trouver.",
+        "it_IT": "Un tempo utilizzabile solo come pianta commestibile per il suo fugace potere magico, il Cardosangue ha subito recenti mutazioni evolutive e innovazioni alchemiche che ne hanno ampliato l'uso in diverse professioni. Questa varietà più potente è ormai conosciuta come Rovosangue e conserva ancora temibili capacità magiche.\r\n\r\nIl Rovosangue si ancora alle rocce, sia in superficie che nel sottosuolo, quindi lo si trova più facilmente nei terreni accidentati.",
+        "ru_RU": "Когда-то кровопийку использовали только как съедобное растение, обладающее небольшой магической силой. Но после того как алхимики открыли ее новые свойства, улучшенную кровопийку стали использовать в самых разных профессиях. Это новое растение, получившее название кровотерн, обладает мощными магическими свойствами.\r\n\r\nКровотерн обычно растет среди камней, на земле или под землей, поэтому искать его лучше всего в гористой местности.",
+        "ko_KR": "한때는 일시적인 마력을 얻기 위한 식용 식물에 불과했지만, 최근 피엉겅퀴와의 진화적 변화와 연금술 성과를 통해 전문 기술 전반에서 활용할 수 있게 되었습니다. 더욱더 강력해진 이 품종은 핏빛찔레라 불리며, 두려운 수준의 마법적 잠재력을 간직하고 있습니다.\r\n\r\n핏빛찔레는 바위에 뿌리를 얽어 고정하는 성질이 있어, 지상은 물론 지하의 바위에도 달라붙으므로 험난한 지형을 탐색할 때 주의 깊게 살펴봐야 합니다.",
+        "zh_TW": "血薊過去只作為食用植物，用於獲取短效魔力，最近的革命性變化和鍊金突破使其可擴大運用在許多專業技能。這種更強效的品種被人稱為血棘，而且依然保留驚人的魔法功效。\r\n\r\n無論是在地上或地下，血棘經常會攀附在岩石上，所以可到地形崎嶇的地方尋找它們的蹤跡。",
+        "zh_CN": "血蓟曾经只能作为短效魔力补充的食用植物，但随着近期的进化变异以及血蓟炼金术的重大突破，它在众多专业中都有了用武之地。这种药效更强的变种被称为血艳蓟，依然保持着令人敬畏的魔法特性。\r\n\r\n血艳蓟会牢牢附着在岩石上，不论地上地下，所以要在崎岖地形中进行寻找。"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/51852?namespace=static-12.0.1_65617-us"

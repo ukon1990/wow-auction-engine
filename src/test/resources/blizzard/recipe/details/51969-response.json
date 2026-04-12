@@ -5,8 +5,34 @@
         }
     },
     "id": 51969,
-    "name": "Bloomtail Minnow",
-    "description": "Its truly unique tail fin resembles that of a flower in bloom. The light emitting from its tail dulls in motion and illuminates when stagnant. Its small size and tendency to travel in schools add a fluorescent motion to the depths of the Harandar.\r\n\r\nSpecial: \r\n\r\n Bloom Baubles\r\n\r\nSalvaging this fish with the Cooking skill can produce Bloom Baubles.\r\n\r\nAreas you can find this fish:\r\n- Harandar\r\n\r\nFishing Pools:\r\n- Lashing Waves",
+    "name": {
+        "en_US": "Bloomtail Minnow",
+        "es_MX": "Pescardo colaflor",
+        "pt_BR": "Manjubinha Caudaflora",
+        "de_DE": "Blütenfinnenpfrille",
+        "en_GB": "Bloomtail Minnow",
+        "es_ES": "Pececillo colaflora",
+        "fr_FR": "Vairon florequeue",
+        "it_IT": "Sanguinerola Fiorcoda",
+        "ru_RU": "Цветохвостая минога",
+        "ko_KR": "만개꼬리 송사리",
+        "zh_TW": "花尾小鯉",
+        "zh_CN": "绽尾鲦鱼"
+    },
+    "description": {
+        "en_US": "Its truly unique tail fin resembles that of a flower in bloom. The light emitting from its tail dulls in motion and illuminates when stagnant. Its small size and tendency to travel in schools add a fluorescent motion to the depths of the Harandar.\r\n\r\nSpecial: \r\n\r\n Bloom Baubles\r\n\r\nSalvaging this fish with the Cooking skill can produce Bloom Baubles.\r\n\r\nAreas you can find this fish:\r\n- Harandar\r\n\r\nFishing Pools:\r\n- Lashing Waves",
+        "es_MX": "Su aleta caudal verdaderamente única recuerda a una hermosa flor. La luz que emite su cola se atenúa cuando se mueve y brilla cuando permanece quieto. Dados su pequeño tamaño y su tendencia a andar en cardúmenes, estos peces crean un movimiento fluorescente en las profundidades de Harandar.\r\n\r\nEspecial: \r\n\r\n Adornos florecidos\r\n\r\nUtilizar este pescado con la habilidad de cocina puede producir adornos florecidos.\r\n\r\nÁreas donde puedes encontrar este pez:\r\n- Harandar\r\n\r\nEstanques de pesca:\r\n- Olas azotantes",
+        "pt_BR": "Sua distinta nadadeira caudal se assemelha a uma flor em pleno desabrochar. A luz que emite da cauda se suaviza em movimento e se intensifica ao parar. Seu pequeno porte e sua tendência de viajar em cardumes acrescentam um movimento fluorescente às profundezas de Harandar.\r\n\r\nEspecial: \r\n\r\n Iscas da Floração\r\n\r\nProcessar este peixe com a perícia em Culinária pode produzir Iscas da Floração.\r\n\r\nÁreas de ocorrência desse peixe:\r\n- Harandar\r\n\r\nPesqueiros:\r\n- Ondas Açoitadeiras",
+        "de_DE": "Ihre einzigartige Schwanzflosse erinnert an eine blühende Blume. Wenn sie sich bewegt, wird das Licht ihres Schwanzes schwächer, um im Ruhezustand wieder aufzuleuchten. Ihre kleine Statur und die Vorliebe, sich in Schwärmen zu bewegen, sorgen für ein Lichtspiel in den Tiefen von Harandar.\r\n\r\nBesondere Verwendung: \r\n\r\n Blütenkugeln\r\n\r\nDie Verwertung dieses Fisches mit der Kochfertigkeit kann Blütenkugeln ergeben.\r\n\r\nVerbreitungsgebiete:\r\n- Harandar\r\n\r\nFischschwärme:\r\n- Peitschende Wellen",
+        "en_GB": "Its truly unique tail fin resembles that of a flower in bloom. The light emitting from its tail dulls in motion and illuminates when stagnant. Its small size and tendency to travel in schools add a fluorescent motion to the depths of the Harandar.\r\n\r\nSpecial: \r\n\r\n Bloom Baubles\r\n\r\nSalvaging this fish with the Cooking skill can produce Bloom Baubles.\r\n\r\nAreas you can find this fish:\r\n- Harandar\r\n\r\nFishing Pools:\r\n- Lashing Waves",
+        "es_ES": "Su aleta caudal, verdaderamente única, se asemeja a una flor al brotar. Además, la luz que emite esa cola se apaga en movimiento y se ilumina cuando se detiene. Por su pequeño tamaño y su tendencia a desplazarse en bancos, las profundidades de la Harandar adquieren unos trazos fluorescentes.\r\n\r\nEspecial: \r\n\r\n Fruslerías de floración\r\n\r\nCon habilidad de cocina, se le pueden sacar fruslerías de floración a este pez.\r\n\r\nZonas en las que puedes encontrarlo:\r\n- Harandar\r\n\r\nZonas de pesca:\r\n- Olas azotadoras",
+        "fr_FR": "La nageoire caudale unique de ce poisson ressemble à une fleur éclose. La lumière que sa queue émet s’atténue lorsqu’il bouge et s’intensifie lorsqu’il est immobile. Sa petite taille et sa tendance à se déplacer en banc ajoutent une touche de mouvement fluorescent dans les profondeurs d’Harandar.\r\n\r\nUtilisation spéciale : \r\n\r\n Verroteries fleuries\r\n\r\nEn utilisant ce poisson avec la compétence en cuisine, vous pouvez obtenir des verroteries fleuries.\r\n\r\nPoisson présent dans les régions suivantes :\r\n– Harandar.\r\n\r\nBancs de poissons :\r\n– vagues flagellantes.",
+        "it_IT": "La sua pinna caudale davvero unica ricorda un fiore che sboccia. La luce che emette dalla coda si attenua quando è in movimento e si illumina quando resta immobile. Le dimensioni ridotte e la tendenza a muoversi in banchi aggiungono un tocco fluorescente alle profondità di Harandar.\r\n\r\nSpeciale:\r\n\r\n Bolle in Bocciolo\r\n\r\nRecuperare questo pesce con la competenza in Cucina può produrre Bolle in Bocciolo\r\n\r\nAree in cui si può trovare questo pesce:\r\n- Harandar\r\n\r\nPozze di Pesca:\r\n- Onde Sferzanti",
+        "ru_RU": "Уникальный хвостовой плавник этой рыбы напоминает распустившийся цветок, который светится ярче, когда рыба замирает на месте, и тускнеет, когда она двигается. Эти небольшие рыбки часто сбиваются в косяки, создавая мерцающие волны в глубинах Харандара.\r\n\r\nОсобое свойство: \r\n\r\n Цветущие безделушки\r\n\r\nС помощью навыка кулинарии можно разделать эту рыбу и получить цветущие безделушки.\r\n\r\nЗоны обитания:\r\n- Харандар\r\n\r\nКосяки рыб:\r\n- Хлещущие волны",
+        "ko_KR": "꽃이 피어나는 듯한 모양의 독특한 꼬리지느러미가 특징입니다. 움직일 때는 희미해지고 멈춰 있을 때는 빛을 내뿜습니다. 작은 몸집과 무리지어 다니는 습성 덕분에 뿌리의 땅 깊은 물속에서는 빛나는 군무와 같은 움직임을 보입니다.\r\n\r\n특수\r\n\r\n 꽃송이 장신구\r\n\r\n요리 전문기술로 이 물고기를 손질하면 꽃송이 장신구를 획득합니다.\r\n\r\n이 생선을 잡을 수 있는 지역\r\n- 하란다르\r\n\r\n낚시 웅덩이\r\n- 채찍질하는 파도",
+        "zh_TW": "其獨一無二的尾鰭看起來就像是盛開的花朵。魚尾發出的光在游動時變暗，並在停下時再次亮起。牠體型嬌小，而且習慣成群結隊行動，在哈朗達的深水區織出一道道流光。\r\n\r\n特殊：\r\n\r\n綻放小珠\r\n\r\n以烹飪技能處理這種魚，可製造綻放小珠。\r\n\r\n可以找到這種魚的地區：\r\n- 哈朗達\r\n\r\n釣魚池：\r\n- 鞭笞浪潮",
+        "zh_CN": "它独特的尾鳍宛如盛开的花朵。尾部散发的光芒在游动时变暗，静止时明亮。小巧的体型和群体游动的习性为哈籁恩达尔的深水区增添了荧光般的动态美感。\r\n\r\n特殊效果：\r\n\r\n绽华小珠\r\n\r\n使用烹饪技能处理这种鱼可以获得绽华小珠。\r\n\r\n可以找到这种鱼的地方：\r\n- 哈籁恩达尔\r\n\r\n垂钓池：\r\n- 奔腾波流"
+    },
     "media": {
         "key": {
             "href": "https://us.api.blizzard.com/data/wow/media/recipe/51969?namespace=static-12.0.1_65617-us"
