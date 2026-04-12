@@ -5,7 +5,6 @@ import path from "node:path";
 
 const BASE_URL = process.env.BLIZZARD_BASE_URL ?? "https://us.api.blizzard.com/data/wow";
 const TOKEN_URL = process.env.BLIZZARD_TOKEN_URL ?? "https://eu.battle.net/oauth/token";
-const LOCALE = process.env.BLIZZARD_LOCALE ?? "en_US";
 const NAMESPACE = process.env.BLIZZARD_NAMESPACE ?? "static-us";
 const SAMPLE_PER_TIER = parseInt(process.env.PROFESSION_FIXTURE_SAMPLE_SIZE ?? "6", 10);
 
@@ -113,7 +112,6 @@ async function fetchAccessToken() {
 async function getJson(endpointPath, token) {
     const url = new URL(`${BASE_URL}/${endpointPath.replace(/^\//, "")}`);
     url.searchParams.set("namespace", NAMESPACE);
-    url.searchParams.set("locale", LOCALE);
 
     const response = await fetch(url, {
         headers: {
@@ -124,6 +122,7 @@ async function getJson(endpointPath, token) {
         const text = await response.text();
         throw new Error(`GET ${url} failed (${response.status}): ${text}`);
     }
+
     return response.json();
 }
 
@@ -246,7 +245,7 @@ async function main() {
 
             sampleManifest.push({
                 professionId: profession.id,
-                professionName: profession.name,
+                professionName: professionPayload.name ?? "unknown",
                 skillTierId: tierId,
                 skillTierName: tierPayload.name ?? "unknown",
                 recipes: chosenRecipes,
