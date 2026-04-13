@@ -71,9 +71,11 @@ Tests:
 node --test .\tools\analyze-auction-field.test.mjs
 ```
 
-## `refresh-profession-fixtures.mjs`
+## `refresh-fixtures.mjs`
 
 Fetches and refreshes profession/skill-tier/recipe fixture data for test resources using Blizzard Game Data APIs.
+
+The refresher is config-driven internally so new resource groups can be added later without rewriting the script flow. Today it manages profession index/detail fixtures, sampled skill-tier fixtures, sampled recipe fixtures, and the manifest that ties them together.
 
 By default it updates:
 
@@ -103,19 +105,39 @@ Optional overrides:
 Default refresh (sample size defaults to `6`, constrained to `5..10`):
 
 ```powershell
-node .\tools\refresh-profession-fixtures.mjs
+node .\tools\refresh-fixtures.mjs
+```
+
+Project-root Maven entry point:
+
+```powershell
+.\mvnw exec:exec@refresh-fixtures
 ```
 
 Dry run:
 
 ```powershell
-node .\tools\refresh-profession-fixtures.mjs --dry-run
+node .\tools\refresh-fixtures.mjs --dry-run
+```
+
+Dry run through Maven:
+
+```powershell
+.\mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--dry-run'
 ```
 
 Refresh only selected professions:
 
 ```powershell
-node .\tools\refresh-profession-fixtures.mjs --profession-id 333,164 --sample-size 8
+node .\tools\refresh-fixtures.mjs --profession-id 333,164 --sample-size 8
 ```
+
+Refresh only selected professions through Maven:
+
+```powershell
+.\mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--profession-id 333,164 --sample-size 8'
+```
+
+The Maven entry point still requires a local `node` executable on `PATH`. Override it with `-Dnode.executable=<path-to-node>` if needed.
 
 

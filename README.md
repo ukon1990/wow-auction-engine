@@ -210,6 +210,20 @@ Current sample policy:
 - tiers: Midnight + one older tier per profession
 - recipe sampling: 5-10 recipes per selected skill tier (default 6)
 
+Refresh the checked-in Blizzard fixtures from the project root with:
+
+```bash
+./mvnw exec:exec@refresh-fixtures
+```
+
+Pass script flags through Maven with `-Drefresh.fixtures.args=...`, for example:
+
+```bash
+./mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--dry-run --profession-id 164'
+```
+
+This command requires a local `node` binary. Override it with `-Dnode.executable=/path/to/node` if your shell does not expose `node` on `PATH`.
+
 ## Useful Commands
 
 Run the app:
