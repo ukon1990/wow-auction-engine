@@ -1,5 +1,7 @@
 package net.jonasmf.auctionengine.mapper
 
+import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
+import net.jonasmf.auctionengine.dbo.rds.localeSourceKey
 import net.jonasmf.auctionengine.dbo.rds.item.InventoryTypeDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemAppearanceDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemAppearanceReferenceDBO
@@ -124,7 +126,7 @@ fun ItemAppearanceDTO.toDomain() =
 fun ItemQuality.toDBO() =
     ItemQualityDBO(
         type = type,
-        name = name.toDBO(),
+        name = name.toDBO(LocaleSourceType.ITEM_QUALITY, localeSourceKey(type), "name"),
     )
 
 fun ItemQualityDBO.toDomain() =
@@ -136,7 +138,7 @@ fun ItemQualityDBO.toDomain() =
 fun InventoryType.toDBO() =
     InventoryTypeDBO(
         type = type,
-        name = name.toDBO(),
+        name = name.toDBO(LocaleSourceType.INVENTORY_TYPE, localeSourceKey(type), "name"),
     )
 
 fun InventoryTypeDBO.toDomain() =
@@ -160,7 +162,7 @@ fun ItemAppearanceReferenceDBO.toDomain() =
 fun ItemSummary.toDBO() =
     ItemSummaryDBO(
         id = id,
-        name = name.toDBO(),
+        name = name.toDBO(LocaleSourceType.ITEM_SUMMARY, localeSourceKey(id), "name"),
         href = href,
     )
 
@@ -174,7 +176,7 @@ fun ItemSummaryDBO.toDomain() =
 fun ItemClass.toDBO() =
     ItemClassDBO(
         id = id,
-        name = name.toDBO(),
+        name = name.toDBO(LocaleSourceType.ITEM_CLASS, localeSourceKey(id), "name"),
         itemSubclasses = itemSubclasses.map { it.toDBO() }.toMutableList(),
     )
 
@@ -189,7 +191,12 @@ fun ItemSubclass.toDBO() =
     ItemSubclassDBO(
         classId = classId,
         subclassId = subclassId,
-        displayName = displayName.toDBO(),
+        displayName =
+            displayName.toDBO(
+                LocaleSourceType.ITEM_SUBCLASS,
+                localeSourceKey(classId, subclassId),
+                "display_name",
+            ),
         hideSubclassInTooltips = hideSubclassInTooltips,
     )
 
@@ -204,7 +211,7 @@ fun ItemSubclassDBO.toDomain() =
 fun Item.toDBO() =
     ItemDBO(
         id = id,
-        name = name.toDBO(),
+        name = name.toDBO(LocaleSourceType.ITEM, localeSourceKey(id), "name"),
         quality = quality.toDBO(),
         level = level,
         requiredLevel = requiredLevel,

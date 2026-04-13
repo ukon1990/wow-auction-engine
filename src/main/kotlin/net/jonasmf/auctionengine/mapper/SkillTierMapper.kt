@@ -1,5 +1,7 @@
 package net.jonasmf.auctionengine.mapper
 
+import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
+import net.jonasmf.auctionengine.dbo.rds.localeSourceKey
 import net.jonasmf.auctionengine.dbo.rds.profession.ProfessionCategoryDBO
 import net.jonasmf.auctionengine.dbo.rds.profession.SkillTierDBO
 import net.jonasmf.auctionengine.domain.profession.ProfessionCategory
@@ -23,9 +25,12 @@ fun SkillTierDTO.toDomain(): SkillTier =
         categories = categories.map { it.toDomain() },
     )
 
-fun ProfessionCategory.toDBO() =
+fun ProfessionCategory.toDBO(
+    skillTierId: Int,
+    categoryIndex: Int,
+) =
     ProfessionCategoryDBO(
-        name = name.toDBO(),
+        name = name.toDBO(LocaleSourceType.PROFESSION_CATEGORY, localeSourceKey(skillTierId, categoryIndex), "name"),
         recipes = recipes.map { it.toDBO() }.toMutableList(),
     )
 
@@ -38,10 +43,10 @@ fun ProfessionCategoryDBO.toDomain() =
 fun SkillTier.toDBO() =
     SkillTierDBO(
         id = id,
-        name = name.toDBO(),
+        name = name.toDBO(LocaleSourceType.SKILL_TIER, localeSourceKey(id), "name"),
         minimumSkillLevel = minimumSkillLevel,
         maximumSkillLevel = maximumSkillLevel,
-        categories = categories.map { it.toDBO() }.toMutableList(),
+        categories = categories.mapIndexed { index, category -> category.toDBO(id, index) }.toMutableList(),
     )
 
 fun SkillTierDBO.toDomain() =

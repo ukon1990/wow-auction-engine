@@ -1,5 +1,7 @@
 package net.jonasmf.auctionengine.mapper
 
+import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
+import net.jonasmf.auctionengine.dbo.rds.localeSourceKey
 import net.jonasmf.auctionengine.dbo.rds.profession.ModifiedCraftingCategoryDBO
 import net.jonasmf.auctionengine.domain.profession.ModifiedCraftingCategory
 import net.jonasmf.auctionengine.domain.profession.ModifiedCraftingSlot
@@ -22,7 +24,21 @@ fun ReagentSlotTypeDTO.toDomain() =
 fun ModifiedCraftingCategory.toDBO() =
     ModifiedCraftingCategoryDBO(
         categoryId = id,
-        name = name.toDBO(),
+        name = name.toDBO(LocaleSourceType.MODIFIED_CRAFTING_CATEGORY_METADATA, localeSourceKey(id), "name"),
+    )
+
+fun ModifiedCraftingCategory.toDBO(
+    recipeId: Int,
+    slotId: Int,
+) =
+    ModifiedCraftingCategoryDBO(
+        categoryId = id,
+        name =
+            name.toDBO(
+                LocaleSourceType.MODIFIED_CRAFTING_CATEGORY,
+                localeSourceKey(recipeId, slotId, id),
+                "name",
+            ),
     )
 
 fun ModifiedCraftingCategoryDBO.toDomain() =

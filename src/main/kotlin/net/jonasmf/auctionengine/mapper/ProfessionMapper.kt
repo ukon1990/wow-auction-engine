@@ -1,5 +1,7 @@
 package net.jonasmf.auctionengine.mapper
 
+import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
+import net.jonasmf.auctionengine.dbo.rds.localeSourceKey
 import net.jonasmf.auctionengine.dbo.rds.profession.ProfessionDBO
 import net.jonasmf.auctionengine.domain.profession.Profession
 import net.jonasmf.auctionengine.domain.profession.SkillTier
@@ -21,8 +23,8 @@ fun ProfessionDTO.toDomain(
 fun Profession.toDBO() =
     ProfessionDBO(
         id = id,
-        name = name.toDBO(),
-        description = description.toDBO(),
+        name = name.toDBO(LocaleSourceType.PROFESSION, localeSourceKey(id), "name"),
+        description = description.toDBO(LocaleSourceType.PROFESSION, localeSourceKey(id), "description"),
         mediaUrl = mediaUrl,
         lastModified = lastModified,
         skillTiers = skillTiers.map { it.toDBO() }.toMutableList(),

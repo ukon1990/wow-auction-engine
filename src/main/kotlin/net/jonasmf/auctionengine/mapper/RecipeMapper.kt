@@ -1,5 +1,7 @@
 package net.jonasmf.auctionengine.mapper
 
+import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
+import net.jonasmf.auctionengine.dbo.rds.localeSourceKey
 import net.jonasmf.auctionengine.dbo.rds.profession.ModifiedCraftingSlotDBO
 import net.jonasmf.auctionengine.dbo.rds.profession.RecipeDBO
 import net.jonasmf.auctionengine.dbo.rds.profession.RecipeReagentDBO
@@ -47,10 +49,18 @@ fun RecipeDTO.toDomain(lastModified: Instant? = null) =
         modifiedCraftingSlots = modifiedCraftingSlots.map { it.toDomain() },
     )
 
-fun RecipeReagent.toDBO() =
+fun RecipeReagent.toDBO(
+    recipeId: Int,
+    reagentIndex: Int,
+) =
     RecipeReagentDBO(
         itemId = itemId,
-        name = name.toDBO(),
+        name =
+            name.toDBO(
+                LocaleSourceType.RECIPE_REAGENT,
+                localeSourceKey(recipeId, reagentIndex, itemId),
+                "name",
+            ),
         quantity = quantity,
     )
 
@@ -61,11 +71,16 @@ fun RecipeReagentDBO.toDomain() =
         quantity = quantity,
     )
 
-fun ModifiedCraftingSlot.toDBO() =
+fun ModifiedCraftingSlot.toDBO(recipeId: Int) =
     ModifiedCraftingSlotDBO(
         slotTypeId = id,
-        description = description.toDBO(),
-        compatibleCategories = compatibleCategories.map { it.toDBO() }.toMutableList(),
+        description =
+            description.toDBO(
+                LocaleSourceType.MODIFIED_CRAFTING_SLOT,
+                localeSourceKey(recipeId, id),
+                "description",
+            ),
+        compatibleCategories = compatibleCategories.map { it.toDBO(recipeId, id) }.toMutableList(),
         displayOrder = displayOrder,
     )
 
@@ -80,15 +95,15 @@ fun ModifiedCraftingSlotDBO.toDomain() =
 fun Recipe.toDBO() =
     RecipeDBO(
         id = id,
-        name = name.toDBO(),
-        description = description?.toDBO(),
+        name = name.toDBO(LocaleSourceType.RECIPE, localeSourceKey(id), "name"),
+        description = description?.toDBO(LocaleSourceType.RECIPE, localeSourceKey(id), "description"),
         mediaUrl = mediaUrl,
         lastModified = lastModified,
         rank = rank,
         craftedItemId = craftedItemId,
         craftedQuantity = craftedQuantity,
-        reagents = reagents.map { it.toDBO() }.toMutableList(),
-        modifiedCraftingSlots = modifiedCraftingSlots.map { it.toDBO() }.toMutableList(),
+        reagents = reagents.mapIndexed { index, reagent -> reagent.toDBO(id, index) }.toMutableList(),
+        modifiedCraftingSlots = modifiedCraftingSlots.map { it.toDBO(id) }.toMutableList(),
     )
 
 fun RecipeDBO.toDomain() =
