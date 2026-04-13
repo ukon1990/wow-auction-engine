@@ -61,6 +61,7 @@ blizzard:
   client-id: ${BLIZZARD_CLIENT_ID}
   client-secret: ${BLIZZARD_CLIENT_SECRET}
   regions: ${WAE_BLIZZARD_REGIONS:${WAE_BLIZZARD_REGION}}
+  static-data-region: ${WAE_STATIC_DATA_REGION:Europe}
   token-url: https://eu.battle.net/oauth/token
   base-url: api.blizzard.com/data/wow/
 
