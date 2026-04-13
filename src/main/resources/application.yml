@@ -50,6 +50,10 @@ app:
   scheduling:
     enabled: true
     initial-delay: PT30S
+    profession-recipe-sync-cron: "0 0 8 ? * WED"
+    profession-recipe-sync-zone: GMT+1
+    profession-recipe-sync-startup-delay: PT30S
+    profession-recipe-sync-startup-repeat-delay: P3650D
   health:
     stuck-update-threshold: PT20M
 

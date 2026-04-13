@@ -1,0 +1,102 @@
+package net.jonasmf.auctionengine.schedules
+
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import net.jonasmf.auctionengine.config.BlizzardApiProperties
+import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
+class ProfessionRecipeScheduleTest {
+    private val properties =
+        BlizzardApiProperties(
+            baseUrl = "https://example.test/",
+            tokenUrl = "https://example.test/token",
+            clientId = "id",
+            clientSecret = "secret",
+            regions = listOf(Region.Europe, Region.Taiwan),
+        )
+
+    @Test
+    fun `syncProfessionRecipes skips and logs when sync already running`() {
+        val service = mockk<ProfessionRecipeSyncService>()
+        val started = CountDownLatch(1)
+        val release = CountDownLatch(1)
+        val executor = Executors.newSingleThreadExecutor()
+        val listAppender = attachAppender()
+
+        every { service.syncAllConfiguredRegions() } answers {
+            started.countDown()
+            release.await(5, TimeUnit.SECONDS)
+            emptyList()
+        }
+
+        try {
+            val schedule = ProfessionRecipeSchedule(properties, service)
+            val future = executor.submit<Unit> { schedule.syncProfessionRecipes() }
+            assertTrue(started.await(5, TimeUnit.SECONDS))
+
+            schedule.syncProfessionRecipes()
+
+            val messages = listAppender.list.map(ILoggingEvent::getFormattedMessage)
+            assertTrue(messages.any { it.contains("Skipping manual profession/recipe sync because sync already running.") })
+            verify(exactly = 1) { service.syncAllConfiguredRegions() }
+
+            release.countDown()
+            future.get(5, TimeUnit.SECONDS)
+        } finally {
+            release.countDown()
+            executor.shutdownNow()
+            detachAppender(listAppender)
+        }
+    }
+
+    @Test
+    fun `syncProfessionRecipes clears guard after success`() {
+        val service = mockk<ProfessionRecipeSyncService>()
+        every { service.syncAllConfiguredRegions() } returns emptyList()
+
+        val schedule = ProfessionRecipeSchedule(properties, service)
+
+        schedule.syncProfessionRecipes()
+        schedule.syncProfessionRecipes()
+
+        verify(exactly = 2) { service.syncAllConfiguredRegions() }
+    }
+
+    @Test
+    fun `syncProfessionRecipes clears guard after exception`() {
+        val service = mockk<ProfessionRecipeSyncService>()
+        every { service.syncAllConfiguredRegions() } throws RuntimeException("boom") andThen emptyList()
+
+        val schedule = ProfessionRecipeSchedule(properties, service)
+
+        runCatching { schedule.syncProfessionRecipes() }
+        schedule.syncProfessionRecipes()
+
+        verify(exactly = 2) { service.syncAllConfiguredRegions() }
+    }
+
+    private fun attachAppender(): ListAppender<ILoggingEvent> {
+        val logger = LoggerFactory.getLogger(ProfessionRecipeSchedule::class.java) as Logger
+        return ListAppender<ILoggingEvent>().also {
+            it.start()
+            logger.addAppender(it)
+        }
+    }
+
+    private fun detachAppender(appender: ListAppender<ILoggingEvent>) {
+        val logger = LoggerFactory.getLogger(ProfessionRecipeSchedule::class.java) as Logger
+        logger.detachAppender(appender)
+        appender.stop()
+    }
+}
