@@ -46,10 +46,12 @@ class ProfessionApiClientTest {
 
     private fun professionIndexBody(): String = loadFixture(this, "/blizzard/profession/index-response.json")
 
-    private fun professionById(id: Int): String = loadFixture(this, "/blizzard/profession/details/$id-response.json")
+    private fun professionById(id: Int): String = loadFixture(this, "/blizzard/profession/$id-response.json")
 
-    private fun professionSkillTierById(id: Int): String =
-        loadFixture(this, "/blizzard/profession/skill-tier/$id-response.json")
+    private fun professionSkillTierById(
+        professionId: Int,
+        skillTierId: Int,
+    ): String = loadFixture(this, "/blizzard/profession/$professionId/skill-tier/$skillTierId-response.json")
 
     fun handleRequest(request: ClientRequest): Mono<ClientResponse> {
         val path = request.url().path
@@ -64,7 +66,10 @@ class ProfessionApiClientTest {
             }
 
             path.matches(Regex(""".*/profession/\d+/skill-tier/\d+$""")) -> {
-                okJson(professionSkillTierById(path.substringAfterLast('/').toInt()))
+                val parts = path.split("/")
+                val professionId = parts[parts.size - 3].toInt()
+                val skillTierId = parts.last().toInt()
+                okJson(professionSkillTierById(professionId, skillTierId))
             }
 
             else -> {
