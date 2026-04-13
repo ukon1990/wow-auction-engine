@@ -1,0 +1,87 @@
+package net.jonasmf.auctionengine.mapper
+
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import net.jonasmf.auctionengine.dto.item.ItemDTO
+import net.jonasmf.auctionengine.dto.itemappearance.ItemAppearanceDTO
+import net.jonasmf.auctionengine.dto.itemclass.ItemClassDTO
+import net.jonasmf.auctionengine.dto.itemclass.ItemSubclassDTO
+import net.jonasmf.auctionengine.dto.profession.SkillTierDTO
+import net.jonasmf.auctionengine.dto.recipe.RecipeDTO
+import net.jonasmf.auctionengine.testsupport.loadFixture
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+
+class BlizzardMapperTest {
+    private val mapper = jacksonObjectMapper()
+
+    @Test
+    fun `should map skill tier dto to domain with recipe stubs`() {
+        val dto: SkillTierDTO = mapper.readValue(loadFixture(this, "/blizzard/profession/356/skill-tier/2911-response.json"))
+
+        val domain = dto.toDomain()
+
+        assertEquals(2911, domain.id)
+        assertEquals(6, domain.categories.size)
+        assertEquals(51945, domain.categories.first().recipes.first().id)
+        assertEquals(null, domain.categories.first().recipes.first().description)
+    }
+
+    @Test
+    fun `should map recipe dto to domain with modified crafting slots`() {
+        val dto: RecipeDTO = mapper.readValue(loadFixture(this, "/blizzard/recipe/42363-response.json"))
+
+        val domain = dto.toDomain()
+
+        assertEquals(42363, domain.id)
+        assertEquals(1, domain.modifiedCraftingSlots.size)
+        assertEquals(46, domain.modifiedCraftingSlots.first().id)
+        assertEquals(0, domain.modifiedCraftingSlots.first().displayOrder)
+    }
+
+    @Test
+    fun `should round trip profession graph through dbo`() {
+        val skillTierDto: SkillTierDTO = mapper.readValue(loadFixture(this, "/blizzard/profession/356/skill-tier/2911-response.json"))
+        val profession =
+            net.jonasmf.auctionengine.domain.profession.Profession(
+                id = 356,
+                name = net.jonasmf.auctionengine.dto.LocaleDTO(en_US = "Fishing", en_GB = "Fishing"),
+                description = net.jonasmf.auctionengine.dto.LocaleDTO(en_US = "desc", en_GB = "desc"),
+                mediaUrl = "https://example.test/profession/356",
+                skillTiers = listOf(skillTierDto.toDomain()),
+            )
+
+        val roundTrip = profession.toDBO().toDomain()
+
+        assertEquals(356, roundTrip.id)
+        assertEquals(2911, roundTrip.skillTiers.first().id)
+        assertEquals(51965, roundTrip.skillTiers.first().categories[1].recipes.first().id)
+    }
+
+    @Test
+    fun `should round trip item family through dbo`() {
+        val itemDto: ItemDTO = mapper.readValue(loadFixture(this, "/blizzard/item/171374-response.json"))
+        val itemClassDto: ItemClassDTO = mapper.readValue(loadFixture(this, "/blizzard/item-class/4-response.json"))
+        val itemSubclassDto: ItemSubclassDTO =
+            mapper.readValue(loadFixture(this, "/blizzard/item-class/4/item-subclass/4-response.json"))
+        val itemAppearanceDto: ItemAppearanceDTO =
+            mapper.readValue(loadFixture(this, "/blizzard/item-appearance/42763-response.json"))
+
+        val item = itemDto.toDomain()
+        val itemClass = itemClassDto.toDomain()
+        val itemSubclass = itemSubclassDto.toDomain()
+        val itemAppearance = itemAppearanceDto.toDomain()
+
+        val roundTripItem = item.toDBO().toDomain()
+        val roundTripAppearance = itemAppearance.toDBO().toDomain()
+
+        assertEquals(4, itemClass.id)
+        assertEquals(4, itemSubclass.subclassId)
+        assertEquals(4, roundTripItem.itemClass.id)
+        assertEquals(4, roundTripItem.itemSubclass.subclassId)
+        assertEquals(1, roundTripItem.appearances.size)
+        assertEquals(2, roundTripAppearance.items.size)
+        assertEquals(4, roundTripAppearance.itemClass.id)
+        assertEquals(4, roundTripAppearance.itemSubclass.subclassId)
+    }
+}
