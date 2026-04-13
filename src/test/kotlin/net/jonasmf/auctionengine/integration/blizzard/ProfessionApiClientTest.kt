@@ -45,8 +45,22 @@ class ProfessionApiClientTest {
         assertEquals("Fishing", profession.name.en_US)
         assertEquals(2, profession.skillTiers.size)
         assertEquals(2911, profession.skillTiers[1].id)
-        assertEquals(51965, profession.skillTiers[1].categories[1].recipes.first().id)
-        assertEquals(null, profession.skillTiers[1].categories[1].recipes.first().description)
+        assertEquals(
+            51965,
+            profession.skillTiers[1]
+                .categories[1]
+                .recipes
+                .first()
+                .id,
+        )
+        assertEquals(
+            null,
+            profession.skillTiers[1]
+                .categories[1]
+                .recipes
+                .first()
+                .description,
+        )
     }
 
     private fun professionIndexBody(): String = loadFixture(this, "/blizzard/profession/index-response.json")

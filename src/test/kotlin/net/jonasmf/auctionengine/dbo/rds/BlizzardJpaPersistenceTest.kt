@@ -29,12 +29,19 @@ class BlizzardJpaPersistenceTest : IntegrationTestBase() {
 
     @Test
     fun `profession graph persists through jpa`() {
-        val skillTierDto: SkillTierDTO = mapper.readValue(loadFixture(this, "/blizzard/profession/356/skill-tier/2911-response.json"))
+        val skillTierDto: SkillTierDTO =
+            mapper.readValue(
+                loadFixture(this, "/blizzard/profession/356/skill-tier/2911-response.json"),
+            )
         val profession =
             net.jonasmf.auctionengine.domain.profession.Profession(
                 id = 356,
-                name = net.jonasmf.auctionengine.dto.LocaleDTO(en_US = "Fishing", en_GB = "Fishing"),
-                description = net.jonasmf.auctionengine.dto.LocaleDTO(en_US = "desc", en_GB = "desc"),
+                name =
+                    net.jonasmf.auctionengine.dto
+                        .LocaleDTO(en_US = "Fishing", en_GB = "Fishing"),
+                description =
+                    net.jonasmf.auctionengine.dto
+                        .LocaleDTO(en_US = "desc", en_GB = "desc"),
                 mediaUrl = "https://example.test/profession/356",
                 skillTiers = listOf(skillTierDto.toDomain()),
             )
@@ -46,8 +53,21 @@ class BlizzardJpaPersistenceTest : IntegrationTestBase() {
         val loaded = entityManager.find(ProfessionDBO::class.java, 356)
 
         assertEquals(1, loaded.skillTiers.size)
-        assertEquals(6, loaded.skillTiers.first().categories.size)
-        assertEquals(51965, loaded.skillTiers.first().categories[1].recipes.first().id)
+        assertEquals(
+            6,
+            loaded.skillTiers
+                .first()
+                .categories.size,
+        )
+        assertEquals(
+            51965,
+            loaded.skillTiers
+                .first()
+                .categories[1]
+                .recipes
+                .first()
+                .id,
+        )
     }
 
     @Test
@@ -85,7 +105,10 @@ class BlizzardJpaPersistenceTest : IntegrationTestBase() {
 
     @Test
     fun `item appearance graph persists through jpa`() {
-        val appearanceDto: ItemAppearanceDTO = mapper.readValue(loadFixture(this, "/blizzard/item-appearance/42763-response.json"))
+        val appearanceDto: ItemAppearanceDTO =
+            mapper.readValue(
+                loadFixture(this, "/blizzard/item-appearance/42763-response.json"),
+            )
 
         entityManager.persist(appearanceDto.toDomain().toDBO())
         entityManager.flush()

@@ -17,14 +17,31 @@ class BlizzardMapperTest {
 
     @Test
     fun `should map skill tier dto to domain with recipe stubs`() {
-        val dto: SkillTierDTO = mapper.readValue(loadFixture(this, "/blizzard/profession/356/skill-tier/2911-response.json"))
+        val dto: SkillTierDTO =
+            mapper.readValue(
+                loadFixture(this, "/blizzard/profession/356/skill-tier/2911-response.json"),
+            )
 
         val domain = dto.toDomain()
 
         assertEquals(2911, domain.id)
         assertEquals(6, domain.categories.size)
-        assertEquals(51945, domain.categories.first().recipes.first().id)
-        assertEquals(null, domain.categories.first().recipes.first().description)
+        assertEquals(
+            51945,
+            domain.categories
+                .first()
+                .recipes
+                .first()
+                .id,
+        )
+        assertEquals(
+            null,
+            domain.categories
+                .first()
+                .recipes
+                .first()
+                .description,
+        )
     }
 
     @Test
@@ -46,12 +63,19 @@ class BlizzardMapperTest {
 
     @Test
     fun `should round trip profession graph through dbo`() {
-        val skillTierDto: SkillTierDTO = mapper.readValue(loadFixture(this, "/blizzard/profession/356/skill-tier/2911-response.json"))
+        val skillTierDto: SkillTierDTO =
+            mapper.readValue(
+                loadFixture(this, "/blizzard/profession/356/skill-tier/2911-response.json"),
+            )
         val profession =
             net.jonasmf.auctionengine.domain.profession.Profession(
                 id = 356,
-                name = net.jonasmf.auctionengine.dto.LocaleDTO(en_US = "Fishing", en_GB = "Fishing"),
-                description = net.jonasmf.auctionengine.dto.LocaleDTO(en_US = "desc", en_GB = "desc"),
+                name =
+                    net.jonasmf.auctionengine.dto
+                        .LocaleDTO(en_US = "Fishing", en_GB = "Fishing"),
+                description =
+                    net.jonasmf.auctionengine.dto
+                        .LocaleDTO(en_US = "desc", en_GB = "desc"),
                 mediaUrl = "https://example.test/profession/356",
                 skillTiers = listOf(skillTierDto.toDomain()),
             )
@@ -60,7 +84,15 @@ class BlizzardMapperTest {
 
         assertEquals(356, roundTrip.id)
         assertEquals(2911, roundTrip.skillTiers.first().id)
-        assertEquals(51965, roundTrip.skillTiers.first().categories[1].recipes.first().id)
+        assertEquals(
+            51965,
+            roundTrip.skillTiers
+                .first()
+                .categories[1]
+                .recipes
+                .first()
+                .id,
+        )
     }
 
     @Test
