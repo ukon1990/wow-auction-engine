@@ -39,8 +39,10 @@ class ProfessionRecipeSyncService(
 ) {
     private val log = LoggerFactory.getLogger(ProfessionRecipeSyncService::class.java)
 
-    fun syncAllConfiguredRegions(): List<ProfessionRecipeSyncResult> =
-        properties.configuredRegions.map { region -> syncRegion(region) }
+    fun syncAllConfiguredRegions(): List<ProfessionRecipeSyncResult> = listOf(syncConfiguredStaticDataRegion())
+
+    fun syncConfiguredStaticDataRegion(): ProfessionRecipeSyncResult =
+        syncRegion(properties.staticDataRegion)
 
     fun syncRegion(region: Region): ProfessionRecipeSyncResult {
         val startTime = System.currentTimeMillis()

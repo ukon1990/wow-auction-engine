@@ -42,9 +42,19 @@ class ProfessionRecipeSchedule(
         }
 
         try {
-            log.info("Starting {} profession/recipe sync for regions {}", trigger, properties.configuredRegions)
-            professionRecipeSyncService.syncAllConfiguredRegions()
-            log.info("Completed {} profession/recipe sync for regions {}", trigger, properties.configuredRegions)
+            log.info(
+                "Starting {} profession/recipe sync for region {} (configured regions={})",
+                trigger,
+                properties.staticDataRegion,
+                properties.configuredRegions,
+            )
+            professionRecipeSyncService.syncConfiguredStaticDataRegion()
+            log.info(
+                "Completed {} profession/recipe sync for region {} (configured regions={})",
+                trigger,
+                properties.staticDataRegion,
+                properties.configuredRegions,
+            )
         } finally {
             syncRunning.set(false)
         }
