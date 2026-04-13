@@ -2,15 +2,15 @@ package net.jonasmf.auctionengine.domain.profession
 
 import net.jonasmf.auctionengine.dto.LocaleDTO
 
-class Category(
+data class ProfessionCategory(
     val name: LocaleDTO,
-    val recipes: Map<Int, Recipe?>,
+    val recipes: List<Recipe> = emptyList(),
 )
 
-class SkillTier(
+data class SkillTier(
     val id: Int,
     val name: LocaleDTO,
     val minimumSkillLevel: Int,
     val maximumSkillLevel: Int,
-    val categories: List<Category>,
+    val categories: List<ProfessionCategory> = emptyList(),
 )

@@ -2,10 +2,10 @@ package net.jonasmf.auctionengine.domain.profession
 
 import net.jonasmf.auctionengine.dto.LocaleDTO
 
-class Profession(
+data class Profession(
     val id: Int,
     val name: LocaleDTO,
     val description: LocaleDTO,
     val mediaUrl: String,
-    val skillTiers: MutableList<SkillTier>,
+    val skillTiers: List<SkillTier> = emptyList(),
 )
