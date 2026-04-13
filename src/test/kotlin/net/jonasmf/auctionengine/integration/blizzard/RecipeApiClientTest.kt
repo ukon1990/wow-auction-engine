@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
+import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.buildWebClient
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.createSupport
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.okJson
@@ -16,7 +17,7 @@ class RecipeApiClientTest {
         val webClient = buildWebClient { handleRequest(it) }
         val client = RecipeApiClient(createSupport(webClient))
 
-        val recipe = client.getById(42363)
+        val recipe = client.getById(42363, Region.Europe)
 
         assertEquals(42363, recipe.id)
         assertEquals("Ceremonious Breastplate", recipe.name.en_US)

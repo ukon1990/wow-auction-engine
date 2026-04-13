@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
+import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.buildWebClient
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.createSupport
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.okJson
@@ -19,7 +20,7 @@ class ProfessionApiClientTest {
             val webClient = buildWebClient { handleRequest(it) }
             val client = ProfessionApiClient(createSupport(webClient))
 
-            val professions = client.getAll()
+            val professions = client.getAll(Region.Europe)
 
             assertEquals(4, professions.size)
             assertEquals(2, professions[0].skillTiers.size)
@@ -39,7 +40,7 @@ class ProfessionApiClientTest {
         val webClient = buildWebClient { handleRequest(it) }
         val client = ProfessionApiClient(createSupport(webClient))
 
-        val profession = client.getById(356)
+        val profession = client.getById(356, Region.Europe)
 
         assertEquals(356, profession.id)
         assertEquals("Fishing", profession.name.en_US)
