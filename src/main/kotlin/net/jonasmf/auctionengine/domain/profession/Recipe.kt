@@ -14,11 +14,20 @@ data class ModifiedCraftingSlot(
     val displayOrder: Int? = null,
 )
 
+data class RecipeReagent(
+    val itemId: Int,
+    val name: LocaleDTO,
+    val quantity: Int,
+)
+
 data class Recipe(
     val id: Int,
     val name: LocaleDTO,
     val description: LocaleDTO? = null,
     val mediaUrl: String? = null,
     val rank: Int? = null,
+    val craftedItemId: Int? = null,
+    val craftedQuantity: Int? = null,
+    val reagents: List<RecipeReagent> = emptyList(),
     val modifiedCraftingSlots: List<ModifiedCraftingSlot> = emptyList(),
 )

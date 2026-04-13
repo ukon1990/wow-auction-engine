@@ -16,6 +16,17 @@ data class RecipeModifiedCraftingSlotDTO(
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+data class RecipeReagentDTO(
+    val reagent: ReferenceDTO,
+    val quantity: Int,
+)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class CraftedQuantityDTO(
+    val value: Int,
+)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class RecipeDTO(
     @JsonProperty("_links")
     val links: Links,
@@ -23,6 +34,11 @@ data class RecipeDTO(
     val name: LocaleDTO,
     val description: LocaleDTO? = null,
     val media: MediaDTO,
+    @JsonProperty("crafted_item")
+    val craftedItem: ReferenceDTO? = null,
+    val reagents: List<RecipeReagentDTO> = emptyList(),
+    @JsonProperty("crafted_quantity")
+    val craftedQuantity: CraftedQuantityDTO? = null,
     val rank: Int? = null,
     @JsonProperty("modified_crafting_slots")
     val modifiedCraftingSlots: List<RecipeModifiedCraftingSlotDTO> = emptyList(),

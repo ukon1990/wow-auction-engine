@@ -3,6 +3,8 @@ package net.jonasmf.auctionengine.dbo.rds.profession
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToMany
@@ -33,6 +35,18 @@ class ModifiedCraftingSlotDBO(
 )
 
 @Entity
+@Table(name = "recipe_reagent")
+class RecipeReagentDBO(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val internalId: Long? = null,
+    val itemId: Int,
+    @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
+    val name: LocaleDBO,
+    val quantity: Int,
+)
+
+@Entity
 @Table(name = "recipe")
 class RecipeDBO(
     @Id
@@ -43,6 +57,11 @@ class RecipeDBO(
     val description: LocaleDBO? = null,
     val mediaUrl: String? = null,
     val rank: Int? = null,
+    val craftedItemId: Int? = null,
+    val craftedQuantity: Int? = null,
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "recipe_id")
+    val reagents: MutableList<RecipeReagentDBO> = mutableListOf(),
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "recipe_id")
     val modifiedCraftingSlots: MutableList<ModifiedCraftingSlotDBO> = mutableListOf(),
