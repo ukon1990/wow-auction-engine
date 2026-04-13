@@ -1,5 +1,7 @@
 package net.jonasmf.auctionengine.service
 
+import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
+import net.jonasmf.auctionengine.dbo.rds.localeSourceKey
 import net.jonasmf.auctionengine.dbo.rds.profession.ModifiedCraftingCategoryMetadataDBO
 import net.jonasmf.auctionengine.dbo.rds.profession.ModifiedCraftingSlotMetadataDBO
 import net.jonasmf.auctionengine.domain.profession.ModifiedCraftingCategory
@@ -13,6 +15,7 @@ import net.jonasmf.auctionengine.repository.rds.ModifiedCraftingCategoryMetadata
 import net.jonasmf.auctionengine.repository.rds.ModifiedCraftingSlotMetadataRepository
 import net.jonasmf.auctionengine.repository.rds.ProfessionRecipeJdbcRepository
 import org.slf4j.LoggerFactory
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -33,6 +36,7 @@ class ProfessionRecipeBulkSyncService(
     private val modifiedCraftingCategoryMetadataRepository: ModifiedCraftingCategoryMetadataRepository,
     private val modifiedCraftingSlotMetadataRepository: ModifiedCraftingSlotMetadataRepository,
     private val professionRecipeJdbcRepository: ProfessionRecipeJdbcRepository,
+    private val jdbcTemplate: JdbcTemplate,
 ) {
     private val log = LoggerFactory.getLogger(ProfessionRecipeBulkSyncService::class.java)
 
@@ -130,13 +134,23 @@ class ProfessionRecipeBulkSyncService(
     ) {
         modifiedCraftingSlotMetadataRepository.deleteAllInBatch()
         modifiedCraftingCategoryMetadataRepository.deleteAllInBatch()
+        jdbcTemplate.update(
+            "DELETE FROM locale_dbo WHERE source_type IN (?, ?)",
+            LocaleSourceType.MODIFIED_CRAFTING_CATEGORY_METADATA,
+            LocaleSourceType.MODIFIED_CRAFTING_SLOT_METADATA,
+        )
 
         if (modifiedCraftingCategories.isNotEmpty()) {
             modifiedCraftingCategoryMetadataRepository.saveAll(
                 modifiedCraftingCategories.map {
                     ModifiedCraftingCategoryMetadataDBO(
                         id = it.id,
-                        name = it.name.toDBO(),
+                        name =
+                            it.name.toDBO(
+                                LocaleSourceType.MODIFIED_CRAFTING_CATEGORY_METADATA,
+                                localeSourceKey(it.id),
+                                "name",
+                            ),
                     )
                 },
             )
@@ -147,7 +161,12 @@ class ProfessionRecipeBulkSyncService(
                 modifiedCraftingSlots.map {
                     ModifiedCraftingSlotMetadataDBO(
                         id = it.id,
-                        description = it.description.toDBO(),
+                        description =
+                            it.description.toDBO(
+                                LocaleSourceType.MODIFIED_CRAFTING_SLOT_METADATA,
+                                localeSourceKey(it.id),
+                                "description",
+                            ),
                         compatibleCategoryIds = it.compatibleCategories.map(ModifiedCraftingCategory::id).toMutableSet(),
                     )
                 },
