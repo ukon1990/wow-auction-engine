@@ -79,6 +79,32 @@ class ProfessionRecipeBulkSyncServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `sync allows duplicate slot types within the same recipe`() {
+        val profession = professionWithRecipe(103, 1003)
+        val category = ModifiedCraftingCategory(3003, locale("Optional Category"))
+        val slotMetadata = ModifiedCraftingSlot(4003, locale("Optional Slot"), listOf(category))
+        val recipe =
+            recipeDetail(1003, reagentIds = emptyList(), includeSlot = false).copy(
+                modifiedCraftingSlots =
+                    listOf(
+                        ModifiedCraftingSlot(id = 4003, description = locale("Optional Slot"), displayOrder = 0),
+                        ModifiedCraftingSlot(id = 4003, description = locale("Optional Slot"), displayOrder = 1),
+                    ),
+            )
+
+        professionRecipeBulkSyncService.sync(listOf(profession), listOf(recipe), listOf(category), listOf(slotMetadata))
+
+        assertEquals(2, countRows("modified_crafting_slot"))
+        assertEquals(
+            2,
+            countRowsWhere(
+                "locale",
+                "source_type = 'modified_crafting_slot' AND source_key LIKE '1003:%:4003' AND source_field = 'description'",
+            ),
+        )
+    }
+
+    @Test
     fun `sync persists data queryable for downstream item id extraction`() {
         val profession = professionWithRecipe(102, 1002)
         val recipe = recipeDetail(1002, reagentIds = listOf(2004, 2005), includeSlot = false)
