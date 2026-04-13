@@ -1,5 +1,7 @@
 package net.jonasmf.auctionengine.repository.rds
 
+import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
+import net.jonasmf.auctionengine.dbo.rds.localeSourceKey
 import net.jonasmf.auctionengine.domain.profession.ModifiedCraftingSlot
 import net.jonasmf.auctionengine.domain.profession.Profession
 import net.jonasmf.auctionengine.domain.profession.ProfessionCategory
@@ -13,7 +15,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.sql.Timestamp
-import java.time.Instant
 
 private const val PROFESSION_RECIPE_JDBC_CHUNK_SIZE = 500
 
@@ -38,23 +39,17 @@ class ProfessionRecipeJdbcRepository(
         val oldRecipeIds = findRecipeIdsByCategoryIds(oldCategoryIds)
 
         val currentRecipeIds = skillTier.categories.flatMap(ProfessionCategory::recipes).map(Recipe::id).toSet()
-        insertCategoriesAndUpsertRecipes(skillTier.id, skillTier.categories)
+        val retainedCategoryIds = upsertCategoriesAndUpsertRecipes(skillTier.id, skillTier.categories)
 
         val removedRecipeIds = oldRecipeIds - currentRecipeIds
         deleteRecipes(removedRecipeIds)
-        deleteCategories(oldCategoryIds)
+        deleteCategories(oldCategoryIds - retainedCategoryIds)
     }
 
     private fun upsertProfession(profession: Profession) {
-        val existing =
-            jdbcTemplate.query(
-                "SELECT name_id, description_id FROM profession WHERE id = ?",
-                { rs, _ -> rs.getLong("name_id") to rs.getLong("description_id") },
-                profession.id,
-            ).firstOrNull()
-
-        val nameId = existing?.first?.also { updateLocale(it, profession.name) } ?: insertLocale(profession.name)
-        val descriptionId = existing?.second?.also { updateLocale(it, profession.description) } ?: insertLocale(profession.description)
+        val sourceKey = localeSourceKey(profession.id)
+        val nameId = upsertLocale(LocaleSourceType.PROFESSION, sourceKey, "name", profession.name)
+        val descriptionId = upsertLocale(LocaleSourceType.PROFESSION, sourceKey, "description", profession.description)
 
         jdbcTemplate.update(
             """
@@ -78,13 +73,7 @@ class ProfessionRecipeJdbcRepository(
         professionId: Int,
         skillTier: SkillTier,
     ) {
-        val existingNameId =
-            jdbcTemplate.query(
-                "SELECT name_id FROM skill_tier WHERE id = ?",
-                { rs, _ -> rs.getLong("name_id") },
-                skillTier.id,
-            ).firstOrNull()
-        val nameId = existingNameId?.also { updateLocale(it, skillTier.name) } ?: insertLocale(skillTier.name)
+        val nameId = upsertLocale(LocaleSourceType.SKILL_TIER, localeSourceKey(skillTier.id), "name", skillTier.name)
 
         jdbcTemplate.update(
             """
@@ -104,46 +93,65 @@ class ProfessionRecipeJdbcRepository(
         )
     }
 
-    private fun insertCategoriesAndUpsertRecipes(
+    private data class ExistingCategory(
+        val internalId: Long,
+        val localeId: Long,
+    )
+
+    private fun upsertCategoriesAndUpsertRecipes(
         skillTierId: Int,
         categories: List<ProfessionCategory>,
-    ): Map<Int, Long> {
-        val recipeCategoryMap = mutableMapOf<Int, Long>()
-        categories.forEach { category ->
+    ): Set<Long> {
+        val existingCategories = findExistingCategories(skillTierId)
+        val retainedCategoryIds = mutableSetOf<Long>()
+
+        categories.forEachIndexed { index, category ->
+            val existingCategory = existingCategories.getOrNull(index)
             val categoryId =
-                categoryInsert.executeAndReturnKey(
-                    MapSqlParameterSource()
-                        .addValue("name_id", insertLocale(category.name))
-                        .addValue("skill_tier_id", skillTierId),
-                ).toLong()
-            category.recipes.forEach { recipe ->
-                upsertRecipe(categoryId, recipe)
-                recipeCategoryMap[recipe.id] = categoryId
-            }
+                if (existingCategory != null) {
+                    updateLocale(
+                        existingCategory.localeId,
+                        LocaleSourceType.PROFESSION_CATEGORY,
+                        localeSourceKey(skillTierId, index),
+                        "name",
+                        category.name,
+                    )
+                    existingCategory.internalId
+                } else {
+                    val categoryLocaleId =
+                        insertLocale(
+                            LocaleSourceType.PROFESSION_CATEGORY,
+                            localeSourceKey(skillTierId, index),
+                            "name",
+                            category.name,
+                        )
+                    categoryInsert.executeAndReturnKey(
+                        MapSqlParameterSource()
+                            .addValue("name_id", categoryLocaleId)
+                            .addValue("skill_tier_id", skillTierId),
+                    ).toLong()
+                }
+            retainedCategoryIds += categoryId
+            category.recipes.forEach { recipe -> upsertRecipe(categoryId, recipe) }
         }
-        return recipeCategoryMap
+
+        return retainedCategoryIds
     }
 
     private fun upsertRecipe(
         categoryId: Long,
         recipe: Recipe,
     ) {
-        val existing =
+        val existingDescriptionId =
             jdbcTemplate.query(
-                "SELECT name_id, description_id FROM recipe WHERE id = ?",
-                { rs, _ ->
-                    rs.getLong("name_id") to rs.getLong("description_id").takeIf { !rs.wasNull() }
-                },
+                "SELECT description_id FROM recipe WHERE id = ?",
+                { rs, _ -> rs.getLong("description_id").takeIf { !rs.wasNull() } },
                 recipe.id,
             ).firstOrNull()
 
-        val nameId = existing?.first?.also { updateLocale(it, recipe.name) } ?: insertLocale(recipe.name)
-        val descriptionId =
-            when {
-                recipe.description == null -> null
-                existing?.second != null -> existing.second!!.also { updateLocale(it, recipe.description!!) }
-                else -> insertLocale(recipe.description!!)
-            }
+        val sourceKey = localeSourceKey(recipe.id)
+        val nameId = upsertLocale(LocaleSourceType.RECIPE, sourceKey, "name", recipe.name)
+        val descriptionId = recipe.description?.let { upsertLocale(LocaleSourceType.RECIPE, sourceKey, "description", it) }
 
         jdbcTemplate.update(
             """
@@ -179,6 +187,10 @@ class ProfessionRecipeJdbcRepository(
             categoryId,
         )
 
+        if (descriptionId == null && existingDescriptionId != null) {
+            deleteLocaleIds(setOf(existingDescriptionId))
+        }
+
         replaceRecipeReagents(recipe.id, recipe.reagents)
         replaceRecipeModifiedCraftingSlots(recipe.id, recipe.modifiedCraftingSlots)
     }
@@ -188,11 +200,18 @@ class ProfessionRecipeJdbcRepository(
         reagents: List<RecipeReagent>,
     ) {
         jdbcTemplate.update("DELETE FROM recipe_reagent WHERE recipe_id = ?", recipeId)
-        reagents.forEach { reagent ->
+        reagents.forEachIndexed { index, reagent ->
+            val localeId =
+                upsertLocale(
+                    LocaleSourceType.RECIPE_REAGENT,
+                    localeSourceKey(recipeId, index, reagent.itemId),
+                    "name",
+                    reagent.name,
+                )
             jdbcTemplate.update(
                 "INSERT INTO recipe_reagent (item_id, name_id, quantity, recipe_id) VALUES (?, ?, ?, ?)",
                 reagent.itemId,
-                insertLocale(reagent.name),
+                localeId,
                 reagent.quantity,
                 recipeId,
             )
@@ -215,19 +234,33 @@ class ProfessionRecipeJdbcRepository(
         jdbcTemplate.update("DELETE FROM modified_crafting_slot WHERE recipe_id = ?", recipeId)
 
         slots.forEach { slot ->
+            val slotLocaleId =
+                upsertLocale(
+                    LocaleSourceType.MODIFIED_CRAFTING_SLOT,
+                    localeSourceKey(recipeId, slot.id),
+                    "description",
+                    slot.description,
+                )
             val slotId =
                 slotInsert.executeAndReturnKey(
                     MapSqlParameterSource()
                         .addValue("slot_type_id", slot.id)
-                        .addValue("description_id", insertLocale(slot.description))
+                        .addValue("description_id", slotLocaleId)
                         .addValue("display_order", slot.displayOrder)
                         .addValue("recipe_id", recipeId),
                 ).toLong()
             slot.compatibleCategories.forEach { category ->
+                val categoryLocaleId =
+                    upsertLocale(
+                        LocaleSourceType.MODIFIED_CRAFTING_CATEGORY,
+                        localeSourceKey(recipeId, slot.id, category.id),
+                        "name",
+                        category.name,
+                    )
                 slotCategoryInsert.execute(
                     MapSqlParameterSource()
                         .addValue("category_id", category.id)
-                        .addValue("name_id", insertLocale(category.name))
+                        .addValue("name_id", categoryLocaleId)
                         .addValue("modified_crafting_slot_id", slotId),
                 )
             }
@@ -240,6 +273,13 @@ class ProfessionRecipeJdbcRepository(
             { rs, _ -> rs.getLong("internal_id") },
             skillTierId,
         ).toSet()
+
+    private fun findExistingCategories(skillTierId: Int): List<ExistingCategory> =
+        jdbcTemplate.query(
+            "SELECT internal_id, name_id FROM profession_category WHERE skill_tier_id = ? ORDER BY internal_id",
+            { rs, _ -> ExistingCategory(rs.getLong("internal_id"), rs.getLong("name_id")) },
+            skillTierId,
+        )
 
     private fun findRecipeIdsByCategoryIds(categoryIds: Set<Long>): Set<Int> {
         if (categoryIds.isEmpty()) return emptySet()
@@ -261,12 +301,47 @@ class ProfessionRecipeJdbcRepository(
                     { rs, _ -> rs.getLong("internal_id") },
                     *chunk.toTypedArray(),
                 )
-            existingSlotIds.forEach { slotId ->
-                jdbcTemplate.update("DELETE FROM modified_crafting_category WHERE modified_crafting_slot_id = ?", slotId)
+            val localeIds = mutableSetOf<Long>()
+            localeIds +=
+                jdbcTemplate.query(
+                    "SELECT name_id FROM recipe_reagent WHERE recipe_id IN ($placeholders)",
+                    { rs, _ -> rs.getLong("name_id") },
+                    *chunk.toTypedArray(),
+                )
+            localeIds +=
+                jdbcTemplate.query(
+                    "SELECT description_id FROM modified_crafting_slot WHERE recipe_id IN ($placeholders)",
+                    { rs, _ -> rs.getLong("description_id") },
+                    *chunk.toTypedArray(),
+                )
+            if (existingSlotIds.isNotEmpty()) {
+                val slotPlaceholders = existingSlotIds.joinToString(",") { "?" }
+                localeIds +=
+                    jdbcTemplate.query(
+                        "SELECT name_id FROM modified_crafting_category WHERE modified_crafting_slot_id IN ($slotPlaceholders)",
+                        { rs, _ -> rs.getLong("name_id") },
+                        *existingSlotIds.toTypedArray(),
+                    )
+                existingSlotIds.forEach { slotId ->
+                    jdbcTemplate.update("DELETE FROM modified_crafting_category WHERE modified_crafting_slot_id = ?", slotId)
+                }
             }
+            localeIds +=
+                jdbcTemplate.query(
+                    "SELECT name_id FROM recipe WHERE id IN ($placeholders)",
+                    { rs, _ -> rs.getLong("name_id") },
+                    *chunk.toTypedArray(),
+                )
+            localeIds +=
+                jdbcTemplate.query(
+                    "SELECT description_id FROM recipe WHERE id IN ($placeholders) AND description_id IS NOT NULL",
+                    { rs, _ -> rs.getLong("description_id") },
+                    *chunk.toTypedArray(),
+                )
             jdbcTemplate.update("DELETE FROM modified_crafting_slot WHERE recipe_id IN ($placeholders)", *chunk.toTypedArray())
             jdbcTemplate.update("DELETE FROM recipe_reagent WHERE recipe_id IN ($placeholders)", *chunk.toTypedArray())
             jdbcTemplate.update("DELETE FROM recipe WHERE id IN ($placeholders)", *chunk.toTypedArray())
+            deleteLocaleIds(localeIds)
         }
     }
 
@@ -274,13 +349,55 @@ class ProfessionRecipeJdbcRepository(
         if (categoryIds.isEmpty()) return
         categoryIds.chunked(PROFESSION_RECIPE_JDBC_CHUNK_SIZE).forEach { chunk ->
             val placeholders = chunk.joinToString(",") { "?" }
+            val localeIds =
+                jdbcTemplate.query(
+                    "SELECT name_id FROM profession_category WHERE internal_id IN ($placeholders)",
+                    { rs, _ -> rs.getLong("name_id") },
+                    *chunk.toTypedArray(),
+                ).toSet()
             jdbcTemplate.update("DELETE FROM profession_category WHERE internal_id IN ($placeholders)", *chunk.toTypedArray())
+            deleteLocaleIds(localeIds)
         }
     }
 
-    private fun insertLocale(locale: LocaleDTO): Long =
+    private fun findLocaleId(
+        sourceType: String,
+        sourceKey: String,
+        sourceField: String,
+    ): Long? =
+        jdbcTemplate.query(
+            "SELECT id FROM locale_dbo WHERE source_type = ? AND source_key = ? AND source_field = ?",
+            { rs, _ -> rs.getLong("id") },
+            sourceType,
+            sourceKey,
+            sourceField,
+        ).firstOrNull()
+
+    private fun upsertLocale(
+        sourceType: String,
+        sourceKey: String,
+        sourceField: String,
+        locale: LocaleDTO,
+    ): Long {
+        val existingId = findLocaleId(sourceType, sourceKey, sourceField)
+        if (existingId != null) {
+            updateLocale(existingId, sourceType, sourceKey, sourceField, locale)
+            return existingId
+        }
+        return insertLocale(sourceType, sourceKey, sourceField, locale)
+    }
+
+    private fun insertLocale(
+        sourceType: String,
+        sourceKey: String,
+        sourceField: String,
+        locale: LocaleDTO,
+    ): Long =
         localeInsert.executeAndReturnKey(
             MapSqlParameterSource()
+                .addValue("source_type", sourceType)
+                .addValue("source_key", sourceKey)
+                .addValue("source_field", sourceField)
                 .addValue("en_us", locale.en_US)
                 .addValue("es_mx", locale.es_MX)
                 .addValue("pt_br", locale.pt_BR)
@@ -298,15 +415,22 @@ class ProfessionRecipeJdbcRepository(
 
     private fun updateLocale(
         id: Long,
+        sourceType: String,
+        sourceKey: String,
+        sourceField: String,
         locale: LocaleDTO,
     ) {
         jdbcTemplate.update(
             """
             UPDATE locale_dbo
-            SET en_us = ?, es_mx = ?, pt_br = ?, pt_pt = ?, de_de = ?, en_gb = ?, es_es = ?, fr_fr = ?,
+            SET source_type = ?, source_key = ?, source_field = ?,
+                en_us = ?, es_mx = ?, pt_br = ?, pt_pt = ?, de_de = ?, en_gb = ?, es_es = ?, fr_fr = ?,
                 it_it = ?, ru_ru = ?, ko_kr = ?, zh_tw = ?, zh_cn = ?
             WHERE id = ?
             """.trimIndent(),
+            sourceType,
+            sourceKey,
+            sourceField,
             locale.en_US,
             locale.es_MX,
             locale.pt_BR,
@@ -322,5 +446,13 @@ class ProfessionRecipeJdbcRepository(
             locale.zh_CN,
             id,
         )
+    }
+
+    private fun deleteLocaleIds(localeIds: Set<Long>) {
+        if (localeIds.isEmpty()) return
+        localeIds.chunked(PROFESSION_RECIPE_JDBC_CHUNK_SIZE).forEach { chunk ->
+            val placeholders = chunk.joinToString(",") { "?" }
+            jdbcTemplate.update("DELETE FROM locale_dbo WHERE id IN ($placeholders)", *chunk.toTypedArray())
+        }
     }
 }
