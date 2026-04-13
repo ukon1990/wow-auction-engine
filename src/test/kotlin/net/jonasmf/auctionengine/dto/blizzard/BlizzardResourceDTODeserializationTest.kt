@@ -21,6 +21,10 @@ class BlizzardResourceDTODeserializationTest {
         val dto: RecipeDTO = mapper.readValue(loadFixture(this, "/blizzard/recipe/42363-response.json"))
 
         assertEquals(42363, dto.id)
+        assertEquals(171374, dto.craftedItem?.id)
+        assertEquals(1, dto.craftedQuantity?.value)
+        assertEquals(2, dto.reagents.size)
+        assertEquals(171828, dto.reagents.first().reagent.id)
         assertEquals(1, dto.modifiedCraftingSlots.size)
         assertEquals(46, dto.modifiedCraftingSlots.first().slotType.id)
     }

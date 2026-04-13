@@ -7,9 +7,11 @@ import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.dbo.rds.item.ItemAppearanceDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemDBO
 import net.jonasmf.auctionengine.dbo.rds.profession.ProfessionDBO
+import net.jonasmf.auctionengine.dbo.rds.profession.RecipeDBO
 import net.jonasmf.auctionengine.dto.item.ItemDTO
 import net.jonasmf.auctionengine.dto.itemappearance.ItemAppearanceDTO
 import net.jonasmf.auctionengine.dto.profession.SkillTierDTO
+import net.jonasmf.auctionengine.dto.recipe.RecipeDTO
 import net.jonasmf.auctionengine.mapper.toDBO
 import net.jonasmf.auctionengine.mapper.toDomain
 import net.jonasmf.auctionengine.testsupport.loadFixture
@@ -46,6 +48,23 @@ class BlizzardJpaPersistenceTest : IntegrationTestBase() {
         assertEquals(1, loaded.skillTiers.size)
         assertEquals(6, loaded.skillTiers.first().categories.size)
         assertEquals(51965, loaded.skillTiers.first().categories[1].recipes.first().id)
+    }
+
+    @Test
+    fun `recipe graph persists through jpa without item rows`() {
+        val recipeDto: RecipeDTO = mapper.readValue(loadFixture(this, "/blizzard/recipe/42363-response.json"))
+
+        entityManager.persist(recipeDto.toDomain().toDBO())
+        entityManager.flush()
+        entityManager.clear()
+
+        val loaded = entityManager.find(RecipeDBO::class.java, 42363)
+
+        assertEquals(171374, loaded.craftedItemId)
+        assertEquals(1, loaded.craftedQuantity)
+        assertEquals(2, loaded.reagents.size)
+        assertEquals(171828, loaded.reagents.first().itemId)
+        assertEquals(12, loaded.reagents.first().quantity)
     }
 
     @Test

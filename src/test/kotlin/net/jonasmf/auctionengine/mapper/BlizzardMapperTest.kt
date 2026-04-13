@@ -28,12 +28,17 @@ class BlizzardMapperTest {
     }
 
     @Test
-    fun `should map recipe dto to domain with modified crafting slots`() {
+    fun `should map recipe dto to domain with reagents and modified crafting slots`() {
         val dto: RecipeDTO = mapper.readValue(loadFixture(this, "/blizzard/recipe/42363-response.json"))
 
         val domain = dto.toDomain()
 
         assertEquals(42363, domain.id)
+        assertEquals(171374, domain.craftedItemId)
+        assertEquals(1, domain.craftedQuantity)
+        assertEquals(2, domain.reagents.size)
+        assertEquals(171828, domain.reagents.first().itemId)
+        assertEquals(12, domain.reagents.first().quantity)
         assertEquals(1, domain.modifiedCraftingSlots.size)
         assertEquals(46, domain.modifiedCraftingSlots.first().id)
         assertEquals(0, domain.modifiedCraftingSlots.first().displayOrder)
