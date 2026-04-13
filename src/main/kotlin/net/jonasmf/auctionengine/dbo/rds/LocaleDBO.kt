@@ -1,11 +1,16 @@
 package net.jonasmf.auctionengine.dbo.rds
 
 import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Table
 
 @Entity
+@Table(name = "locale_dbo")
 class LocaleDBO(
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     val en_US: String,
     val es_MX: String,
