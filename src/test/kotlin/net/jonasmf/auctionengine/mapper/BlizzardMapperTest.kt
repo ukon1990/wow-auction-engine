@@ -123,8 +123,13 @@ class BlizzardMapperTest {
                 skillTiers = listOf(skillTierDto.toDomain()),
             )
 
-        val roundTrip = profession.toDBO().toDomain()
+        val professionDbo = profession.toDBO()
+        val roundTrip = professionDbo.toDomain()
 
+        assertEquals("profession", professionDbo.name.sourceType)
+        assertEquals("356", professionDbo.name.sourceKey)
+        assertEquals("name", professionDbo.name.sourceField)
+        assertEquals("skill_tier", professionDbo.skillTiers.first().name.sourceType)
         assertEquals(356, roundTrip.id)
         assertEquals(2911, roundTrip.skillTiers.first().id)
         assertEquals(
@@ -152,9 +157,16 @@ class BlizzardMapperTest {
         val itemSubclass = itemSubclassDto.toDomain()
         val itemAppearance = itemAppearanceDto.toDomain()
 
-        val roundTripItem = item.toDBO().toDomain()
-        val roundTripAppearance = itemAppearance.toDBO().toDomain()
+        val itemDbo = item.toDBO()
+        val itemAppearanceDbo = itemAppearance.toDBO()
+        val roundTripItem = itemDbo.toDomain()
+        val roundTripAppearance = itemAppearanceDbo.toDomain()
 
+        assertEquals("item", itemDbo.name.sourceType)
+        assertEquals(item.id.toString(), itemDbo.name.sourceKey)
+        assertEquals("item_class", itemDbo.itemClass.name.sourceType)
+        assertEquals("item_subclass", itemDbo.itemSubclass.displayName.sourceType)
+        assertEquals("inventory_type", itemAppearanceDbo.slot.name.sourceType)
         assertEquals(4, itemClass.id)
         assertEquals(4, itemSubclass.subclassId)
         assertEquals(4, roundTripItem.itemClass.id)

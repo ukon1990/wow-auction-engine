@@ -33,8 +33,11 @@ class ProfessionRecipeBulkSyncServiceTest : IntegrationTestBase() {
         val slot = ModifiedCraftingSlot(4000, locale("Optional Slot"), listOf(category))
 
         professionRecipeBulkSyncService.sync(listOf(profession), listOf(recipe), listOf(category), listOf(slot))
+        val localeRowsAfterFirstSync = countRows("locale_dbo")
+
         professionRecipeBulkSyncService.sync(listOf(profession), listOf(recipe), listOf(category), listOf(slot))
 
+        assertEquals(localeRowsAfterFirstSync, countRows("locale_dbo"))
         assertEquals(1, countRows("profession"))
         assertEquals(1, countRows("skill_tier"))
         assertEquals(1, countRows("profession_category"))
@@ -45,6 +48,8 @@ class ProfessionRecipeBulkSyncServiceTest : IntegrationTestBase() {
         assertEquals(1, countRows("modified_crafting_category_metadata"))
         assertEquals(1, countRows("modified_crafting_slot_metadata"))
         assertEquals(1, countRows("modified_crafting_slot_metadata_category"))
+        assertEquals(1, countRowsWhere("locale_dbo", "source_type = 'profession' AND source_key = '100' AND source_field = 'name'"))
+        assertEquals(1, countRowsWhere("locale_dbo", "source_type = 'recipe' AND source_key = '1000' AND source_field = 'name'"))
     }
 
     @Test
@@ -142,4 +147,10 @@ class ProfessionRecipeBulkSyncServiceTest : IntegrationTestBase() {
 
     private fun countRows(tableName: String): Int =
         jdbcTemplate.queryForObject("SELECT COUNT(*) FROM $tableName", Int::class.java)!!
+
+    private fun countRowsWhere(
+        tableName: String,
+        condition: String,
+    ): Int =
+        jdbcTemplate.queryForObject("SELECT COUNT(*) FROM $tableName WHERE $condition", Int::class.java)!!
 }
