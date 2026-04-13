@@ -21,12 +21,12 @@ fun ReagentSlotTypeDTO.toDomain() =
 
 fun ModifiedCraftingCategory.toDBO() =
     ModifiedCraftingCategoryDBO(
-        id = id,
+        categoryId = id,
         name = name.toDBO(),
     )
 
 fun ModifiedCraftingCategoryDBO.toDomain() =
     ModifiedCraftingCategory(
-        id = id,
+        id = categoryId,
         name = name.toDTO(),
     )

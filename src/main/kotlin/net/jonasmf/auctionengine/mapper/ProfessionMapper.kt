@@ -5,12 +5,16 @@ import net.jonasmf.auctionengine.domain.profession.Profession
 import net.jonasmf.auctionengine.domain.profession.SkillTier
 import net.jonasmf.auctionengine.dto.profession.ProfessionDTO
 
-fun ProfessionDTO.toDomain(skillTiers: List<SkillTier> = emptyList()) =
+fun ProfessionDTO.toDomain(
+    skillTiers: List<SkillTier> = emptyList(),
+    lastModified: java.time.Instant? = null,
+) =
     Profession(
         id = id,
         name = name,
         description = description,
         mediaUrl = media.key.href,
+        lastModified = lastModified,
         skillTiers = skillTiers,
     )
 
@@ -20,6 +24,7 @@ fun Profession.toDBO() =
         name = name.toDBO(),
         description = description.toDBO(),
         mediaUrl = mediaUrl,
+        lastModified = lastModified,
         skillTiers = skillTiers.map { it.toDBO() }.toMutableList(),
     )
 
@@ -29,5 +34,6 @@ fun ProfessionDBO.toDomain() =
         name = name.toDTO(),
         description = description.toDTO(),
         mediaUrl = mediaUrl,
+        lastModified = lastModified,
         skillTiers = skillTiers.map { it.toDomain() },
     )

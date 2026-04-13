@@ -2,10 +2,13 @@ package net.jonasmf.auctionengine.mapper
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import net.jonasmf.auctionengine.dto.recipe.CraftedQuantityDTO
 import net.jonasmf.auctionengine.dto.item.ItemDTO
 import net.jonasmf.auctionengine.dto.itemappearance.ItemAppearanceDTO
 import net.jonasmf.auctionengine.dto.itemclass.ItemClassDTO
 import net.jonasmf.auctionengine.dto.itemclass.ItemSubclassDTO
+import net.jonasmf.auctionengine.dto.modifiedcrafting.ModifiedCraftingCategoryDTO
+import net.jonasmf.auctionengine.dto.modifiedcrafting.ReagentSlotTypeDTO
 import net.jonasmf.auctionengine.dto.profession.SkillTierDTO
 import net.jonasmf.auctionengine.dto.recipe.RecipeDTO
 import net.jonasmf.auctionengine.testsupport.loadFixture
@@ -59,6 +62,46 @@ class BlizzardMapperTest {
         assertEquals(1, domain.modifiedCraftingSlots.size)
         assertEquals(46, domain.modifiedCraftingSlots.first().id)
         assertEquals(0, domain.modifiedCraftingSlots.first().displayOrder)
+    }
+
+    @Test
+    fun `should map modified crafting category dto to domain`() {
+        val dto: ModifiedCraftingCategoryDTO =
+            mapper.readValue(loadFixture(this, "/blizzard/modified-crafting/category/828-response.json"))
+
+        val domain = dto.toDomain()
+
+        assertEquals(828, domain.id)
+        assertEquals("Global Finishing Reagent 03", domain.name.en_US)
+    }
+
+    @Test
+    fun `should map reagent slot type dto to domain with compatible categories`() {
+        val dto: ReagentSlotTypeDTO =
+            mapper.readValue(loadFixture(this, "/blizzard/modified-crafting/reagent-slot-type/404-response.json"))
+
+        val domain = dto.toDomain()
+
+        assertEquals(404, domain.id)
+        assertEquals(1, domain.compatibleCategories.size)
+        assertEquals(776, domain.compatibleCategories.first().id)
+    }
+
+    @Test
+    fun `should map recipe dto when crafted item reference omits name`() {
+        val dto =
+            RecipeDTO(
+                links = net.jonasmf.auctionengine.dto.Links(net.jonasmf.auctionengine.dto.Link("https://example.test/recipe/1")),
+                id = 1,
+                name = net.jonasmf.auctionengine.dto.LocaleDTO(en_US = "Recipe", en_GB = "Recipe"),
+                media = net.jonasmf.auctionengine.dto.MediaDTO(net.jonasmf.auctionengine.dto.Href("https://example.test/media/1"), 1),
+                craftedItem = net.jonasmf.auctionengine.dto.ReferenceDTO(id = 42, key = net.jonasmf.auctionengine.dto.Href("https://example.test/item/42")),
+                craftedQuantity = CraftedQuantityDTO(1),
+            )
+
+        val domain = dto.toDomain()
+
+        assertEquals(42, domain.craftedItemId)
     }
 
     @Test

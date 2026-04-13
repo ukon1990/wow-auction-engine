@@ -10,6 +10,7 @@ import net.jonasmf.auctionengine.dto.ReferenceDTO
 import net.jonasmf.auctionengine.dto.recipe.RecipeDTO
 import net.jonasmf.auctionengine.dto.recipe.RecipeModifiedCraftingSlotDTO
 import net.jonasmf.auctionengine.dto.recipe.RecipeReagentDTO
+import java.time.Instant
 
 fun ReferenceDTO.toRecipeStub() =
     Recipe(
@@ -32,12 +33,13 @@ fun RecipeModifiedCraftingSlotDTO.toDomain() =
         displayOrder = displayOrder,
     )
 
-fun RecipeDTO.toDomain() =
+fun RecipeDTO.toDomain(lastModified: Instant? = null) =
     Recipe(
         id = id,
         name = name,
         description = description,
         mediaUrl = media.key.href,
+        lastModified = lastModified,
         rank = rank,
         craftedItemId = craftedItem?.id,
         craftedQuantity = craftedQuantity?.value,
@@ -61,7 +63,7 @@ fun RecipeReagentDBO.toDomain() =
 
 fun ModifiedCraftingSlot.toDBO() =
     ModifiedCraftingSlotDBO(
-        id = id,
+        slotTypeId = id,
         description = description.toDBO(),
         compatibleCategories = compatibleCategories.map { it.toDBO() }.toMutableList(),
         displayOrder = displayOrder,
@@ -69,7 +71,7 @@ fun ModifiedCraftingSlot.toDBO() =
 
 fun ModifiedCraftingSlotDBO.toDomain() =
     ModifiedCraftingSlot(
-        id = id,
+        id = slotTypeId,
         description = description.toDTO(),
         compatibleCategories = compatibleCategories.map { it.toDomain() },
         displayOrder = displayOrder,
@@ -81,6 +83,7 @@ fun Recipe.toDBO() =
         name = name.toDBO(),
         description = description?.toDBO(),
         mediaUrl = mediaUrl,
+        lastModified = lastModified,
         rank = rank,
         craftedItemId = craftedItemId,
         craftedQuantity = craftedQuantity,
@@ -94,6 +97,7 @@ fun RecipeDBO.toDomain() =
         name = name.toDTO(),
         description = description?.toDTO(),
         mediaUrl = mediaUrl,
+        lastModified = lastModified,
         rank = rank,
         craftedItemId = craftedItemId,
         craftedQuantity = craftedQuantity,
