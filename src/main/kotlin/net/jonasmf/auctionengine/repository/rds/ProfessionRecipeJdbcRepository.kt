@@ -22,7 +22,7 @@ private const val PROFESSION_RECIPE_JDBC_CHUNK_SIZE = 500
 class ProfessionRecipeJdbcRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) {
-    private val localeInsert = SimpleJdbcInsert(jdbcTemplate).withTableName("locale_dbo").usingGeneratedKeyColumns("id")
+    private val localeInsert = SimpleJdbcInsert(jdbcTemplate).withTableName("locale").usingGeneratedKeyColumns("id")
     private val categoryInsert = SimpleJdbcInsert(jdbcTemplate).withTableName("profession_category").usingGeneratedKeyColumns("internal_id")
     private val slotInsert = SimpleJdbcInsert(jdbcTemplate).withTableName("modified_crafting_slot").usingGeneratedKeyColumns("internal_id")
     private val slotCategoryInsert = SimpleJdbcInsert(jdbcTemplate).withTableName("modified_crafting_category").usingGeneratedKeyColumns("internal_id")
@@ -366,7 +366,7 @@ class ProfessionRecipeJdbcRepository(
         sourceField: String,
     ): Long? =
         jdbcTemplate.query(
-            "SELECT id FROM locale_dbo WHERE source_type = ? AND source_key = ? AND source_field = ?",
+            "SELECT id FROM locale WHERE source_type = ? AND source_key = ? AND source_field = ?",
             { rs, _ -> rs.getLong("id") },
             sourceType,
             sourceKey,
@@ -422,7 +422,7 @@ class ProfessionRecipeJdbcRepository(
     ) {
         jdbcTemplate.update(
             """
-            UPDATE locale_dbo
+            UPDATE locale
             SET source_type = ?, source_key = ?, source_field = ?,
                 en_us = ?, es_mx = ?, pt_br = ?, pt_pt = ?, de_de = ?, en_gb = ?, es_es = ?, fr_fr = ?,
                 it_it = ?, ru_ru = ?, ko_kr = ?, zh_tw = ?, zh_cn = ?
@@ -452,7 +452,7 @@ class ProfessionRecipeJdbcRepository(
         if (localeIds.isEmpty()) return
         localeIds.chunked(PROFESSION_RECIPE_JDBC_CHUNK_SIZE).forEach { chunk ->
             val placeholders = chunk.joinToString(",") { "?" }
-            jdbcTemplate.update("DELETE FROM locale_dbo WHERE id IN ($placeholders)", *chunk.toTypedArray())
+            jdbcTemplate.update("DELETE FROM locale WHERE id IN ($placeholders)", *chunk.toTypedArray())
         }
     }
 }

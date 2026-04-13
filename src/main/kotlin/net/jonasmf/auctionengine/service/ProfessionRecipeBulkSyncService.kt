@@ -135,7 +135,7 @@ class ProfessionRecipeBulkSyncService(
         modifiedCraftingSlotMetadataRepository.deleteAllInBatch()
         modifiedCraftingCategoryMetadataRepository.deleteAllInBatch()
         jdbcTemplate.update(
-            "DELETE FROM locale_dbo WHERE source_type IN (?, ?)",
+            "DELETE FROM locale WHERE source_type IN (?, ?)",
             LocaleSourceType.MODIFIED_CRAFTING_CATEGORY_METADATA,
             LocaleSourceType.MODIFIED_CRAFTING_SLOT_METADATA,
         )

@@ -8,14 +8,14 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 
-private const val LOCALE_TEXT_COLUMN_LENGTH = 512
+private const val LOCALE_TEXT_COLUMN_DEFINITION = "TEXT"
 
 @Entity
 @Table(
-    name = "locale_dbo",
+    name = "locale",
     uniqueConstraints = [
         UniqueConstraint(
-            name = "uk_locale_dbo_source",
+            name = "uk_locale_source",
             columnNames = ["source_type", "source_key", "source_field"],
         ),
     ],
@@ -30,30 +30,30 @@ class LocaleDBO(
     val sourceKey: String,
     @Column(name = "source_field", nullable = false)
     val sourceField: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val en_US: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val es_MX: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val pt_BR: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val pt_PT: String?,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val de_DE: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val en_GB: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val es_ES: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val fr_FR: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val it_IT: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val ru_RU: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val ko_KR: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val zh_TW: String,
-    @Column(length = LOCALE_TEXT_COLUMN_LENGTH)
+    @Column(columnDefinition = LOCALE_TEXT_COLUMN_DEFINITION)
     val zh_CN: String,
 )
