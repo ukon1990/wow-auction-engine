@@ -11,12 +11,15 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import net.jonasmf.auctionengine.dbo.rds.LocaleDBO
+import java.time.Instant
 
 @Entity
 @Table(name = "modified_crafting_category")
 class ModifiedCraftingCategoryDBO(
     @Id
-    val id: Int,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val internalId: Long? = null,
+    val categoryId: Int,
     @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
     val name: LocaleDBO,
 )
@@ -25,7 +28,9 @@ class ModifiedCraftingCategoryDBO(
 @Table(name = "modified_crafting_slot")
 class ModifiedCraftingSlotDBO(
     @Id
-    val id: Int,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val internalId: Long? = null,
+    val slotTypeId: Int,
     @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
     val description: LocaleDBO,
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
