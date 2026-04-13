@@ -29,7 +29,7 @@ class BlizzardApiSupport(
         val builder =
             UriComponentsBuilder
                 .fromUriString(determineBaseUrl(region))
-                .path(path.removePrefix("/"))
+                .path(normalizePathForBaseUrl(path))
 
         if (namespace != null) {
             builder.queryParam("namespace", namespace)
@@ -45,8 +45,13 @@ class BlizzardApiSupport(
     fun determineBaseUrl(region: Region = getPropertyRegionOrFallback()): String =
         "https://${region.code}.${properties.baseUrl.removePrefix("https://")}"
 
+    fun defaultRegion(): Region = getPropertyRegionOrFallback()
+
     fun dynamicNamespaceForRegion(region: Region = getPropertyRegionOrFallback()): NameSpace =
         NameSpace.getDynamicForRegion(region)
+
+    fun staticNamespaceForRegion(region: Region = getPropertyRegionOrFallback()): NameSpace =
+        NameSpace.getStaticForRegion(region)
 
     fun namespaceForBuild(gameBuild: GameBuildVersion): NameSpace =
         when (gameBuild) {
@@ -54,5 +59,19 @@ class BlizzardApiSupport(
             GameBuildVersion.RETAIL -> NameSpace.DYNAMIC_RETAIL
         }
 
-    private fun getPropertyRegionOrFallback(): Region = properties.region ?: Region.NorthAmerica
+    private fun normalizePathForBaseUrl(path: String): String {
+        val normalizedPath = "/${path.removePrefix("/")}"
+        val basePath = "/${properties.baseUrl.removePrefix("https://").substringAfter('/', "").trim('/')}"
+            .trimEnd('/')
+            .takeIf { it != "/" }
+            ?: ""
+
+        return when {
+            basePath.isNotEmpty() && normalizedPath == basePath -> ""
+            basePath.isNotEmpty() && normalizedPath.startsWith("$basePath/") -> normalizedPath.removePrefix(basePath)
+            else -> normalizedPath
+        }
+    }
+
+    private fun getPropertyRegionOrFallback(): Region = properties.configuredRegions.firstOrNull() ?: Region.NorthAmerica
 }
