@@ -35,6 +35,21 @@ class RuntimeConfigurationPropertiesTest {
 
                 assertEquals(listOf(Region.Korea, Region.Taiwan), properties.configuredRegions)
                 assertEquals(Region.Korea, properties.primaryRegion)
+                assertEquals(Region.Europe, properties.staticDataRegion)
+            }
+    }
+
+    @Test
+    fun `binds static data region independently of configured regions`() {
+        contextRunner
+            .withPropertyValues(
+                "blizzard.regions=Korea, Taiwan",
+                "blizzard.static-data-region=Europe",
+            ).run { context ->
+                val properties = context.getBean(BlizzardApiProperties::class.java)
+
+                assertEquals(listOf(Region.Korea, Region.Taiwan), properties.configuredRegions)
+                assertEquals(Region.Europe, properties.staticDataRegion)
             }
     }
 

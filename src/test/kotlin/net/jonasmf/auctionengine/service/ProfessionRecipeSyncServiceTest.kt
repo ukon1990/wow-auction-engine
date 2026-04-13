@@ -96,6 +96,40 @@ class ProfessionRecipeSyncServiceTest {
     }
 
     @Test
+    fun `syncAllConfiguredRegions only syncs configured static data region`() {
+        val multiRegionProperties =
+            BlizzardApiProperties(
+                baseUrl = "https://example.test/",
+                tokenUrl = "https://example.test/token",
+                clientId = "id",
+                clientSecret = "secret",
+                regions = listOf(Region.Korea, Region.Taiwan),
+                staticDataRegion = Region.Europe,
+            )
+        val service =
+            ProfessionRecipeSyncService(
+                properties = multiRegionProperties,
+                professionApiClient = professionApiClient,
+                recipeApiClient = recipeApiClient,
+                modifiedCraftingApiClient = modifiedCraftingApiClient,
+                professionRecipeBulkSyncService = bulkSyncService,
+            )
+
+        every { professionApiClient.getAll(Region.Europe) } returns emptyList()
+        every { modifiedCraftingApiClient.getAllCategories(Region.Europe) } returns emptyList()
+        every { modifiedCraftingApiClient.getAllSlotTypes(Region.Europe) } returns emptyList()
+        every { bulkSyncService.syncModifiedCraftingMetadata(emptyList(), emptyList()) } returns Unit
+
+        val results = service.syncAllConfiguredRegions()
+
+        assertEquals(1, results.size)
+        assertEquals(Region.Europe, results.single().region)
+        verify(exactly = 1) { professionApiClient.getAll(Region.Europe) }
+        verify(exactly = 0) { professionApiClient.getAll(Region.Korea) }
+        verify(exactly = 0) { professionApiClient.getAll(Region.Taiwan) }
+    }
+
+    @Test
     fun `syncRegion continues after recipe fetch failure`() {
         val service = createService()
         val profession = professionWithRecipeIds(301, listOf(3001, 3002))

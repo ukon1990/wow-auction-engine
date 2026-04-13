@@ -8,6 +8,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.service.ProfessionRecipeSyncResult
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -34,10 +35,10 @@ class ProfessionRecipeScheduleTest {
         val executor = Executors.newSingleThreadExecutor()
         val listAppender = attachAppender()
 
-        every { service.syncAllConfiguredRegions() } answers {
+        every { service.syncConfiguredStaticDataRegion() } answers {
             started.countDown()
             release.await(5, TimeUnit.SECONDS)
-            emptyList()
+            mockk<ProfessionRecipeSyncResult>(relaxed = true)
         }
 
         try {
@@ -49,7 +50,7 @@ class ProfessionRecipeScheduleTest {
 
             val messages = listAppender.list.map(ILoggingEvent::getFormattedMessage)
             assertTrue(messages.any { it.contains("Skipping manual profession/recipe sync because sync already running.") })
-            verify(exactly = 1) { service.syncAllConfiguredRegions() }
+            verify(exactly = 1) { service.syncConfiguredStaticDataRegion() }
 
             release.countDown()
             future.get(5, TimeUnit.SECONDS)
@@ -63,27 +64,27 @@ class ProfessionRecipeScheduleTest {
     @Test
     fun `syncProfessionRecipes clears guard after success`() {
         val service = mockk<ProfessionRecipeSyncService>()
-        every { service.syncAllConfiguredRegions() } returns emptyList()
+        every { service.syncConfiguredStaticDataRegion() } returns mockk<ProfessionRecipeSyncResult>(relaxed = true)
 
         val schedule = ProfessionRecipeSchedule(properties, service)
 
         schedule.syncProfessionRecipes()
         schedule.syncProfessionRecipes()
 
-        verify(exactly = 2) { service.syncAllConfiguredRegions() }
+        verify(exactly = 2) { service.syncConfiguredStaticDataRegion() }
     }
 
     @Test
     fun `syncProfessionRecipes clears guard after exception`() {
         val service = mockk<ProfessionRecipeSyncService>()
-        every { service.syncAllConfiguredRegions() } throws RuntimeException("boom") andThen emptyList()
+        every { service.syncConfiguredStaticDataRegion() } throws RuntimeException("boom") andThen mockk<ProfessionRecipeSyncResult>(relaxed = true)
 
         val schedule = ProfessionRecipeSchedule(properties, service)
 
         runCatching { schedule.syncProfessionRecipes() }
         schedule.syncProfessionRecipes()
 
-        verify(exactly = 2) { service.syncAllConfiguredRegions() }
+        verify(exactly = 2) { service.syncConfiguredStaticDataRegion() }
     }
 
     private fun attachAppender(): ListAppender<ILoggingEvent> {
