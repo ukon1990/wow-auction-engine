@@ -11,7 +11,7 @@ data class ModifiedCraftingCategoryDTO(
     @JsonProperty("_links")
     val links: Links,
     val id: Int,
-    val name: LocaleDTO,
+    val name: LocaleDTO = LocaleDTO(),
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -19,7 +19,7 @@ data class ReagentSlotTypeDTO(
     @JsonProperty("_links")
     val links: Links,
     val id: Int,
-    val description: LocaleDTO,
+    val description: LocaleDTO = LocaleDTO(),
     @JsonProperty("compatible_categories")
     val compatibleCategories: List<ReferenceDTO> = emptyList(),
 )

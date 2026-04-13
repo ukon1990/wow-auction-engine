@@ -37,6 +37,17 @@ class ModifiedCraftingApiClientTest {
         assertEquals(417, slots[1].id)
     }
 
+    @Test
+    fun `getAllCategories tolerates category responses without name`() {
+        val client = ModifiedCraftingApiClient(createSupport(buildWebClient { handleRequest(it) }))
+
+        val category = client.getCategoryById(502, Region.Europe)
+
+        assertEquals(502, category.id)
+        assertEquals("", category.name.en_US)
+        assertEquals("", category.name.en_GB)
+    }
+
     private fun handleRequest(request: ClientRequest): Mono<ClientResponse> {
         val path = request.url().path
         return when {
@@ -107,7 +118,21 @@ class ModifiedCraftingApiClientTest {
         }
     """.trimIndent()
 
-    private fun categoryById(id: Int): String = loadFixture(this, "/blizzard/modified-crafting/category/$id-response.json")
+    private fun categoryById(id: Int): String =
+        when (id) {
+            502 ->
+                """
+                {
+                  "_links": {
+                    "self": {
+                      "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/502?namespace=static-us"
+                    }
+                  },
+                  "id": 502
+                }
+                """.trimIndent()
+            else -> loadFixture(this, "/blizzard/modified-crafting/category/$id-response.json")
+        }
 
     private fun slotTypeById(id: Int): String = loadFixture(this, "/blizzard/modified-crafting/reagent-slot-type/$id-response.json")
 }
