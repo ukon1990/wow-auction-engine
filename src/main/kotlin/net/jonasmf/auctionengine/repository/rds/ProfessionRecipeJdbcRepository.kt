@@ -233,11 +233,11 @@ class ProfessionRecipeJdbcRepository(
         }
         jdbcTemplate.update("DELETE FROM modified_crafting_slot WHERE recipe_id = ?", recipeId)
 
-        slots.forEach { slot ->
+        slots.forEachIndexed { slotIndex, slot ->
             val slotLocaleId =
                 upsertLocale(
                     LocaleSourceType.MODIFIED_CRAFTING_SLOT,
-                    localeSourceKey(recipeId, slot.id),
+                    localeSourceKey(recipeId, slotIndex, slot.id),
                     "description",
                     slot.description,
                 )
@@ -253,7 +253,7 @@ class ProfessionRecipeJdbcRepository(
                 val categoryLocaleId =
                     upsertLocale(
                         LocaleSourceType.MODIFIED_CRAFTING_CATEGORY,
-                        localeSourceKey(recipeId, slot.id, category.id),
+                        localeSourceKey(recipeId, slotIndex, slot.id, category.id),
                         "name",
                         category.name,
                     )

@@ -29,6 +29,7 @@ fun ModifiedCraftingCategory.toDBO() =
 
 fun ModifiedCraftingCategory.toDBO(
     recipeId: Int,
+    slotIndex: Int,
     slotId: Int,
 ) =
     ModifiedCraftingCategoryDBO(
@@ -36,7 +37,7 @@ fun ModifiedCraftingCategory.toDBO(
         name =
             name.toDBO(
                 LocaleSourceType.MODIFIED_CRAFTING_CATEGORY,
-                localeSourceKey(recipeId, slotId, id),
+                localeSourceKey(recipeId, slotIndex, slotId, id),
                 "name",
             ),
     )

@@ -71,16 +71,19 @@ fun RecipeReagentDBO.toDomain() =
         quantity = quantity,
     )
 
-fun ModifiedCraftingSlot.toDBO(recipeId: Int) =
+fun ModifiedCraftingSlot.toDBO(
+    recipeId: Int,
+    slotIndex: Int,
+) =
     ModifiedCraftingSlotDBO(
         slotTypeId = id,
         description =
             description.toDBO(
                 LocaleSourceType.MODIFIED_CRAFTING_SLOT,
-                localeSourceKey(recipeId, id),
+                localeSourceKey(recipeId, slotIndex, id),
                 "description",
             ),
-        compatibleCategories = compatibleCategories.map { it.toDBO(recipeId, id) }.toMutableList(),
+        compatibleCategories = compatibleCategories.map { it.toDBO(recipeId, slotIndex, id) }.toMutableList(),
         displayOrder = displayOrder,
     )
 
@@ -103,7 +106,7 @@ fun Recipe.toDBO() =
         craftedItemId = craftedItemId,
         craftedQuantity = craftedQuantity,
         reagents = reagents.mapIndexed { index, reagent -> reagent.toDBO(id, index) }.toMutableList(),
-        modifiedCraftingSlots = modifiedCraftingSlots.map { it.toDBO(id) }.toMutableList(),
+        modifiedCraftingSlots = modifiedCraftingSlots.mapIndexed { index, slot -> slot.toDBO(id, index) }.toMutableList(),
     )
 
 fun RecipeDBO.toDomain() =
