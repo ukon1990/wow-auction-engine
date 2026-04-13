@@ -1,6 +1,7 @@
 package net.jonasmf.auctionengine.domain.profession
 
 import net.jonasmf.auctionengine.dto.LocaleDTO
+import java.time.Instant
 
 data class ModifiedCraftingCategory(
     val id: Int,
@@ -25,6 +26,7 @@ data class Recipe(
     val name: LocaleDTO,
     val description: LocaleDTO? = null,
     val mediaUrl: String? = null,
+    val lastModified: Instant? = null,
     val rank: Int? = null,
     val craftedItemId: Int? = null,
     val craftedQuantity: Int? = null,

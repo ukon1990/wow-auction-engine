@@ -11,6 +11,7 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import net.jonasmf.auctionengine.dbo.rds.LocaleDBO
+import java.time.Instant
 
 @Entity
 @Table(name = "profession_category")
@@ -49,6 +50,7 @@ class ProfessionDBO(
     @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
     val description: LocaleDBO,
     val mediaUrl: String,
+    val lastModified: Instant? = null,
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "profession_id")
     val skillTiers: MutableList<SkillTierDBO> = mutableListOf(),

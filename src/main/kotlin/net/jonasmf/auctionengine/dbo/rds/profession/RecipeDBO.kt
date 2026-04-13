@@ -61,6 +61,7 @@ class RecipeDBO(
     @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
     val description: LocaleDBO? = null,
     val mediaUrl: String? = null,
+    val lastModified: Instant? = null,
     val rank: Int? = null,
     val craftedItemId: Int? = null,
     val craftedQuantity: Int? = null,
