@@ -16,13 +16,6 @@ const val PROFESSION_INDEX_PATH = "$PROFESSION_BASE_PATH/index"
 class ProfessionApiClient(
     private val blizzardApiSupport: BlizzardApiSupport,
 ) {
-    /**
-     * This call is slow, as it will combine multiple calls sequentially to get throttled
-     * while we are downloading AH data etc.
-     *
-     * it is ok for this call, as a user will NEVER call this directly, but it is only meant to
-     * fetch data, process and store in the database.
-     */
     fun getAll(): List<Profession> {
         val uri =
             blizzardApiSupport.buildRegionalUri(
@@ -40,18 +33,13 @@ class ProfessionApiClient(
         return getProfessionsFromIndex(index)
     }
 
-    private fun getProfessionsFromIndex(index: ProfessionIndexDTO): List<Profession> {
-        val professions = mutableListOf<Profession>()
-        index.professions.forEach {
-            professions.add(getById(it.id))
-        }
-        return professions
-    }
+    private fun getProfessionsFromIndex(index: ProfessionIndexDTO): List<Profession> =
+        index.professions.map { getById(it.id) }
 
     fun getSkillTier(
         professionId: Int,
         skillTierId: Int,
-    ): List<SkillTier> {
+    ): SkillTier {
         val uri =
             blizzardApiSupport.buildRegionalUri(
                 path = "$PROFESSION_BASE_PATH/$professionId/skill-tier/$skillTierId",
@@ -65,7 +53,7 @@ class ProfessionApiClient(
                 .retrieve()
                 .bodyToMono<SkillTierDTO>()
                 .block()!!
-        return listOf(skillTier.toDomain())
+        return skillTier.toDomain()
     }
 
     fun getById(id: Int): Profession {
@@ -82,12 +70,7 @@ class ProfessionApiClient(
                 .retrieve()
                 .bodyToMono<ProfessionDTO>()
                 .block()!!
-        val domain = profession.toDomain()
-        val skillTiers =
-            profession.skillTiers.map { tier ->
-                getSkillTier(profession.id, tier.id).first()
-            }
-        domain.skillTiers.addAll(skillTiers)
-        return domain
+        val skillTiers = profession.skillTiers.map { tier -> getSkillTier(profession.id, tier.id) }
+        return profession.toDomain(skillTiers)
     }
 }
