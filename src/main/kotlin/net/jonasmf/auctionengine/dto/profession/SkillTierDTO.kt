@@ -19,5 +19,5 @@ data class SkillTierDTO(
     val minimumSkillLevel: Int,
     @JsonProperty("maximum_skill_level")
     val maximumSkillLevel: Int,
-    val categories: List<LocaleDTO>,
+    val categories: List<CategoryDTO>,
 )
