@@ -17,6 +17,7 @@ data class ProfessionTypeDTO(
 )
 
 data class ProfessionDTO(
+    @JsonProperty("_links")
     val links: Links,
     val id: Int,
     val name: LocaleDTO,

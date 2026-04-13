@@ -12,5 +12,5 @@ class SkillTier(
     val name: LocaleDTO,
     val minimumSkillLevel: Int,
     val maximumSkillLevel: Int,
-    val categories: List<Any>,
+    val categories: List<Category>,
 )

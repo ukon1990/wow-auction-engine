@@ -7,5 +7,5 @@ class Profession(
     val name: LocaleDTO,
     val description: LocaleDTO,
     val mediaUrl: String,
-    val skillTiers: List<SkillTier>,
+    val skillTiers: MutableList<SkillTier>,
 )

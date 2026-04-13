@@ -1,6 +1,5 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
-import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.domain.profession.Profession
 import net.jonasmf.auctionengine.domain.profession.SkillTier
 import net.jonasmf.auctionengine.dto.profession.ProfessionDTO
@@ -10,7 +9,7 @@ import net.jonasmf.auctionengine.mapper.toDomain
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.bodyToMono
 
-const val PROFESSION_BASE_PATH = "/data/wow/profession/index"
+const val PROFESSION_BASE_PATH = "/data/wow/profession"
 const val PROFESSION_INDEX_PATH = "$PROFESSION_BASE_PATH/index"
 
 @Component
@@ -44,27 +43,15 @@ class ProfessionApiClient(
     private fun getProfessionsFromIndex(index: ProfessionIndexDTO): List<Profession> {
         val professions = mutableListOf<Profession>()
         index.professions.forEach {
-            val uri =
-                blizzardApiSupport.buildRegionalUri(
-                    path = PROFESSION_BASE_PATH + "/${it.id}",
-                    namespace = blizzardApiSupport.dynamicNamespaceForRegion().value,
-                )
-            val profession =
-                blizzardApiSupport
-                    .webClient()
-                    .get()
-                    .uri(uri)
-                    .retrieve()
-                    .bodyToMono<ProfessionDTO>()
-                    .block()!!
-            val domain = profession.toDomain()
-
-            professions.add(domain)
+            professions.add(getById(it.id))
         }
         return professions
     }
 
-    fun getSkillTier(professionId: Int, skillTierId: Int): List<SkillTier> {
+    fun getSkillTier(
+        professionId: Int,
+        skillTierId: Int,
+    ): List<SkillTier> {
         val uri =
             blizzardApiSupport.buildRegionalUri(
                 path = "$PROFESSION_BASE_PATH/$professionId/skill-tier/$skillTierId",
@@ -79,7 +66,28 @@ class ProfessionApiClient(
                 .bodyToMono<SkillTierDTO>()
                 .block()!!
         return listOf(skillTier.toDomain())
-    }}
+    }
 
-    // fun getById(id: Int): Mono<Any> {}
+    fun getById(id: Int): Profession {
+        val uri =
+            blizzardApiSupport.buildRegionalUri(
+                path = "$PROFESSION_BASE_PATH/$id",
+                namespace = blizzardApiSupport.dynamicNamespaceForRegion().value,
+            )
+        val profession =
+            blizzardApiSupport
+                .webClient()
+                .get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono<ProfessionDTO>()
+                .block()!!
+        val domain = profession.toDomain()
+        val skillTiers =
+            profession.skillTiers.map { tier ->
+                getSkillTier(profession.id, tier.id).first()
+            }
+        domain.skillTiers.addAll(skillTiers)
+        return domain
+    }
 }
