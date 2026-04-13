@@ -75,15 +75,19 @@ node --test .\tools\analyze-auction-field.test.mjs
 
 Fetches and refreshes profession/skill-tier/recipe fixture data for test resources using Blizzard Game Data APIs.
 
-The refresher is config-driven internally so new resource groups can be added later without rewriting the script flow. Today it manages profession index/detail fixtures, sampled skill-tier fixtures, sampled recipe fixtures, and the manifest that ties them together.
+The refresher is config-driven internally and discovers dependent resources recursively from Blizzard `key.href` links. Today it manages filtered profession roots, sampled skill tiers, sampled recipes, and any non-media linked resources they reference, such as items, item classes, item appearances, and modified crafting metadata.
 
 By default it updates:
 
 - `src/test/resources/blizzard/profession/index-response.json`
-- `src/test/resources/blizzard/profession/details/*.json`
-- `src/test/resources/blizzard/profession/skill-tier/*.json`
-- `src/test/resources/blizzard/recipe/details/*.json`
+- `src/test/resources/blizzard/profession/<professionId>-response.json`
+- `src/test/resources/blizzard/profession/<professionId>/skill-tier/<skillTierId>-response.json`
+- `src/test/resources/blizzard/recipe/<recipeId>-response.json`
+- `src/test/resources/blizzard/item/<itemId>-response.json`
+- `src/test/resources/blizzard/modified-crafting/reagent-slot-type/<slotTypeId>-response.json`
 - `src/test/resources/blizzard/profession-recipe-sample-manifest.json`
+
+The on-disk layout mirrors the normalized Blizzard API path under `src/test/resources/blizzard`. Media links are intentionally excluded, and broken child links discovered during recursion are skipped instead of failing the whole refresh.
 
 ### Authentication
 
@@ -102,7 +106,7 @@ Optional overrides:
 
 ### Usage
 
-Default refresh (sample size defaults to `6`, constrained to `5..10`):
+Default refresh (sample size defaults to the checked-in root selection config and can be overridden with `--sample-size`):
 
 ```powershell
 node .\tools\refresh-fixtures.mjs

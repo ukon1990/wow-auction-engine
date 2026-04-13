@@ -6,6 +6,9 @@ import path from 'node:path';
 
 import {
   buildProfessionFixturePlan,
+  collectLinkedEndpointPaths,
+  endpointPathToFixturePath,
+  normalizeEndpointPath,
   parseArgs,
   pickRecipeIds,
   planManagedFilePrunes,
@@ -17,10 +20,10 @@ function createLocale(value) {
   return { en_US: value };
 }
 
-function createReference(id, name, type = 'recipe') {
+function createReference(id, name, endpointPath) {
   return {
     id,
-    key: { href: `https://example.test/${type}/${id}` },
+    key: { href: `https://us.api.blizzard.com/data/wow/${endpointPath}?namespace=static-us` },
     name: createLocale(name),
   };
 }
@@ -42,12 +45,33 @@ test('parseArgs keeps the current flags and supports resource selection', () => 
   assert.equal(parsed.sampleSize, 8);
 });
 
+test('normalizeEndpointPath strips the Blizzard base path and query string', () => {
+  assert.equal(
+    normalizeEndpointPath('https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2907?namespace=static-us'),
+    'profession/164/skill-tier/2907',
+  );
+  assert.equal(normalizeEndpointPath('https://example.test/other/164'), null);
+});
+
+test('endpointPathToFixturePath mirrors endpoint segments under blizzard resources', () => {
+  const base = 'E:/repo/src/test/resources/blizzard';
+
+  assert.equal(
+    endpointPathToFixturePath('profession/index', base),
+    path.join(base, 'profession', 'index-response.json'),
+  );
+  assert.equal(
+    endpointPathToFixturePath('profession/164/skill-tier/2907', base),
+    path.join(base, 'profession', '164', 'skill-tier', '2907-response.json'),
+  );
+});
+
 test('pickRecipeIds rotates across categories to keep fixture samples varied', () => {
   const selected = pickRecipeIds(
     {
       categories: [
-        { name: createLocale('Armor'), recipes: [createReference(1, 'One'), createReference(2, 'Two')] },
-        { name: createLocale('Weapons'), recipes: [createReference(3, 'Three'), createReference(4, 'Four')] },
+        { name: createLocale('Armor'), recipes: [createReference(1, 'One', 'recipe/1'), createReference(2, 'Two', 'recipe/2')] },
+        { name: createLocale('Weapons'), recipes: [createReference(3, 'Three', 'recipe/3'), createReference(4, 'Four', 'recipe/4')] },
       ],
     },
     3,
@@ -61,26 +85,23 @@ test('trimProfessionToSkillTiers keeps only downloaded tier references', () => {
     {
       id: 164,
       skill_tiers: [
-        createReference(2437, 'Kul Tiras', 'skill-tier'),
-        createReference(2907, 'Midnight', 'skill-tier'),
-        createReference(2751, 'Shadowlands', 'skill-tier'),
+        createReference(2437, 'Kul Tiras', 'profession/164/skill-tier/2437'),
+        createReference(2907, 'Midnight', 'profession/164/skill-tier/2907'),
+        createReference(2751, 'Shadowlands', 'profession/164/skill-tier/2751'),
       ],
     },
     [2907, 2751],
   );
 
-  assert.deepEqual(
-    trimmed.skill_tiers.map((tier) => tier.id),
-    [2907, 2751],
-  );
+  assert.deepEqual(trimmed.skill_tiers.map((tier) => tier.id), [2907, 2751]);
 });
 
 test('trimSkillTierToRecipes removes unselected recipes and empty categories', () => {
   const trimmed = trimSkillTierToRecipes(
     {
       categories: [
-        { name: createLocale('Armor'), recipes: [createReference(10, 'Ten'), createReference(11, 'Eleven')] },
-        { name: createLocale('Unused'), recipes: [createReference(12, 'Twelve')] },
+        { name: createLocale('Armor'), recipes: [createReference(10, 'Ten', 'recipe/10'), createReference(11, 'Eleven', 'recipe/11')] },
+        { name: createLocale('Unused'), recipes: [createReference(12, 'Twelve', 'recipe/12')] },
       ],
     },
     [11],
@@ -90,18 +111,51 @@ test('trimSkillTierToRecipes removes unselected recipes and empty categories', (
   assert.deepEqual(trimmed.categories[0].recipes.map((recipe) => recipe.id), [11]);
 });
 
-test('planManagedFilePrunes deletes unmanaged json files during a full refresh', async () => {
-  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'fixture-prune-'));
-  const managedDir = path.join(tempRoot, 'details');
-  await fs.mkdir(managedDir, { recursive: true });
+test('collectLinkedEndpointPaths discovers non-media key href links recursively', () => {
+  const payload = {
+    _links: {
+      self: {
+        href: 'https://us.api.blizzard.com/data/wow/recipe/5001?namespace=static-us',
+      },
+    },
+    crafted_item: createReference(9001, 'Crafted', 'item/9001'),
+    reagents: [
+      {
+        reagent: createReference(9002, 'Dust', 'item/9002'),
+      },
+    ],
+    modified_crafting_slots: [
+      {
+        slot_type: createReference(404, 'Eversinging Dust', 'modified-crafting/reagent-slot-type/404'),
+      },
+    ],
+    media: {
+      key: {
+        href: 'https://us.api.blizzard.com/data/wow/media/recipe/5001?namespace=static-us',
+      },
+    },
+  };
 
-  const keepFile = path.join(managedDir, 'keep.json');
-  const staleFile = path.join(managedDir, 'stale.json');
+  assert.deepEqual(collectLinkedEndpointPaths(payload), [
+    'item/9001',
+    'item/9002',
+    'modified-crafting/reagent-slot-type/404',
+  ]);
+});
+
+test('planManagedFilePrunes deletes unmanaged json files recursively during a full refresh', async () => {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'fixture-prune-'));
+  const managedDir = path.join(tempRoot, 'profession');
+  await fs.mkdir(path.join(managedDir, 'details'), { recursive: true });
+  await fs.mkdir(path.join(managedDir, '164', 'skill-tier'), { recursive: true });
+
+  const keepFile = path.join(managedDir, '164', 'skill-tier', '2907-response.json');
+  const staleFile = path.join(managedDir, 'details', '164-response.json');
   await fs.writeFile(keepFile, '{}\n', 'utf8');
   await fs.writeFile(staleFile, '{}\n', 'utf8');
 
   const deletes = await planManagedFilePrunes({
-    managedDirs: [managedDir],
+    managedRoots: [managedDir],
     desiredFiles: [keepFile],
     enablePrune: true,
   });
@@ -109,33 +163,25 @@ test('planManagedFilePrunes deletes unmanaged json files during a full refresh',
   assert.deepEqual(deletes, [{ filePath: staleFile, kind: 'delete' }]);
 });
 
-test('buildProfessionFixturePlan trims profession tiers, trims skill-tier recipes, and prunes stale files', async () => {
+test('buildProfessionFixturePlan mirrors paths and discovers linked item and slot type resources', async () => {
   const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'profession-refresh-'));
   const paths = {
     baseResources: path.join(tempRoot, 'src/test/resources/blizzard'),
-    professionRoot: path.join(tempRoot, 'src/test/resources/blizzard/profession'),
-    professionDetailsDir: path.join(tempRoot, 'src/test/resources/blizzard/profession/details'),
-    skillTierDir: path.join(tempRoot, 'src/test/resources/blizzard/profession/skill-tier'),
-    recipeRoot: path.join(tempRoot, 'src/test/resources/blizzard/recipe'),
-    recipeDetailsDir: path.join(tempRoot, 'src/test/resources/blizzard/recipe/details'),
-    professionIndexFile: path.join(tempRoot, 'src/test/resources/blizzard/profession/index-response.json'),
     manifestFile: path.join(tempRoot, 'src/test/resources/blizzard/profession-recipe-sample-manifest.json'),
   };
 
-  await fs.mkdir(paths.professionDetailsDir, { recursive: true });
-  await fs.mkdir(paths.skillTierDir, { recursive: true });
-  await fs.mkdir(paths.recipeDetailsDir, { recursive: true });
-  await fs.writeFile(path.join(paths.professionDetailsDir, '999-response.json'), '{}\n', 'utf8');
-  await fs.writeFile(path.join(paths.skillTierDir, '9999-response.json'), '{}\n', 'utf8');
-  await fs.writeFile(path.join(paths.recipeDetailsDir, '99999-response.json'), '{}\n', 'utf8');
+  await fs.mkdir(path.join(paths.baseResources, 'profession', 'details'), { recursive: true });
+  await fs.mkdir(path.join(paths.baseResources, 'recipe', 'details'), { recursive: true });
+  await fs.writeFile(path.join(paths.baseResources, 'profession', 'details', '999-response.json'), '{}\n', 'utf8');
+  await fs.writeFile(path.join(paths.baseResources, 'recipe', 'details', '999-response.json'), '{}\n', 'utf8');
 
   const payloads = new Map([
     [
       'profession/index',
       {
         professions: [
-          createReference(164, 'Blacksmithing', 'profession'),
-          createReference(333, 'Enchanting', 'profession'),
+          createReference(164, 'Blacksmithing', 'profession/164'),
+          createReference(333, 'Enchanting', 'profession/333'),
         ],
       },
     ],
@@ -145,9 +191,9 @@ test('buildProfessionFixturePlan trims profession tiers, trims skill-tier recipe
         id: 164,
         name: createLocale('Blacksmithing'),
         skill_tiers: [
-          createReference(2437, 'Kul Tiran Blacksmithing', 'skill-tier'),
-          createReference(2751, 'Shadowlands Blacksmithing', 'skill-tier'),
-          createReference(2907, 'Midnight Blacksmithing', 'skill-tier'),
+          createReference(2437, 'Kul Tiran Blacksmithing', 'profession/164/skill-tier/2437'),
+          createReference(2751, 'Shadowlands Blacksmithing', 'profession/164/skill-tier/2751'),
+          createReference(2907, 'Midnight Blacksmithing', 'profession/164/skill-tier/2907'),
         ],
       },
     ],
@@ -159,11 +205,7 @@ test('buildProfessionFixturePlan trims profession tiers, trims skill-tier recipe
         categories: [
           {
             name: createLocale('Armor'),
-            recipes: [createReference(5001, 'Helm'), createReference(5002, 'Boots')],
-          },
-          {
-            name: createLocale('Weapons'),
-            recipes: [createReference(5003, 'Sword')],
+            recipes: [createReference(5001, 'Helm', 'recipe/5001'), createReference(5002, 'Boots', 'recipe/5002')],
           },
         ],
       },
@@ -175,17 +217,28 @@ test('buildProfessionFixturePlan trims profession tiers, trims skill-tier recipe
         name: createLocale('Shadowlands Blacksmithing'),
         categories: [
           {
-            name: createLocale('Optional'),
-            recipes: [createReference(5010, 'Optional A'), createReference(5011, 'Optional B')],
+            name: createLocale('Weapons'),
+            recipes: [createReference(5003, 'Sword', 'recipe/5003')],
           },
         ],
       },
     ],
-    ['recipe/5001', { id: 5001, name: createLocale('Helm') }],
-    ['recipe/5002', { id: 5002, name: createLocale('Boots') }],
-    ['recipe/5003', { id: 5003, name: createLocale('Sword') }],
-    ['recipe/5010', { id: 5010, name: createLocale('Optional A') }],
-    ['recipe/5011', { id: 5011, name: createLocale('Optional B') }],
+    [
+      'recipe/5001',
+      {
+        id: 5001,
+        crafted_item: createReference(9001, 'Crafted Helm', 'item/9001'),
+        reagents: [{ reagent: createReference(9002, 'Dust', 'item/9002'), quantity: 2 }],
+        modified_crafting_slots: [{ slot_type: createReference(404, 'Dust Slot', 'modified-crafting/reagent-slot-type/404') }],
+        media: { key: { href: 'https://us.api.blizzard.com/data/wow/media/recipe/5001?namespace=static-us' } },
+      },
+    ],
+    ['recipe/5002', { id: 5002 }],
+    ['recipe/5003', { id: 5003 }],
+    ['item/9001', { id: 9001, item_class: createReference(2, 'Armor', 'item-class/2') }],
+    ['item/9002', { id: 9002 }],
+    ['item-class/2', { id: 2 }],
+    ['modified-crafting/reagent-slot-type/404', { id: 404 }],
   ]);
 
   const apiClient = {
@@ -203,32 +256,42 @@ test('buildProfessionFixturePlan trims profession tiers, trims skill-tier recipe
       dryRun: false,
       professionIds: null,
       resource: 'profession',
-      sampleSize: 5,
+      sampleSize: 2,
     },
-    definitions: [{ id: 164, name: 'Blacksmithing', tiers: [2907, 2751] }],
     paths,
+    selectionConfig: {
+      sampleSize: 2,
+      professions: [{ id: 164, name: 'Blacksmithing', skillTierIds: [2907, 2751] }],
+    },
   });
 
-  const professionWrite = plan.writes.find((operation) => operation.filePath.endsWith('164-response.json'));
-  const midnightWrite = plan.writes.find((operation) => operation.filePath.endsWith('2907-response.json'));
+  const writtenFiles = new Set(plan.writes.map((operation) => operation.filePath));
+
+  assert.ok(writtenFiles.has(path.join(paths.baseResources, 'profession', '164-response.json')));
+  assert.ok(writtenFiles.has(path.join(paths.baseResources, 'profession', '164', 'skill-tier', '2907-response.json')));
+  assert.ok(writtenFiles.has(path.join(paths.baseResources, 'recipe', '5001-response.json')));
+  assert.ok(writtenFiles.has(path.join(paths.baseResources, 'item', '9001-response.json')));
+  assert.ok(writtenFiles.has(path.join(paths.baseResources, 'item-class', '2-response.json')));
+  assert.ok(writtenFiles.has(path.join(paths.baseResources, 'modified-crafting', 'reagent-slot-type', '404-response.json')));
+
+  const professionWrite = plan.writes.find((operation) => operation.filePath.endsWith(path.join('profession', '164-response.json')));
+  const skillTierWrite = plan.writes.find((operation) => operation.filePath.endsWith(path.join('profession', '164', 'skill-tier', '2907-response.json')));
   const manifestWrite = plan.writes.find((operation) => operation.filePath.endsWith('profession-recipe-sample-manifest.json'));
 
-  assert.deepEqual(
-    professionWrite.payload.skill_tiers.map((tier) => tier.id),
-    [2751, 2907],
-  );
-  assert.deepEqual(
-    midnightWrite.payload.categories.map((category) => category.recipes.map((recipe) => recipe.id)),
-    [[5001, 5002], [5003]],
-  );
+  assert.deepEqual(professionWrite.payload.skill_tiers.map((tier) => tier.id), [2751, 2907]);
+  assert.deepEqual(skillTierWrite.payload.categories[0].recipes.map((recipe) => recipe.id), [5001, 5002]);
   assert.equal(manifestWrite.payload.length, 2);
   assert.deepEqual(
-    plan.deletes.map((operation) => path.basename(operation.filePath)).sort(),
-    ['999-response.json', '9999-response.json', '99999-response.json'],
+    plan.deletes.map((operation) => operation.filePath).sort(),
+    [
+      path.join(paths.baseResources, 'profession', 'details', '999-response.json'),
+      path.join(paths.baseResources, 'recipe', 'details', '999-response.json'),
+    ],
   );
-  assert.deepEqual(plan.summary, {
-    professions: 1,
-    recipes: 5,
-    skillTiers: 2,
-  });
+  assert.equal(plan.summary.professions, 1);
+  assert.equal(plan.summary.skillTiers, 2);
+  assert.equal(plan.summary.recipes, 3);
+  assert.equal(plan.summary.skipped, 0);
+  assert.equal(plan.summary.families.item, 2);
+  assert.equal(plan.summary.families['modified-crafting'], 1);
 });

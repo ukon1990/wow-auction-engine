@@ -199,10 +199,19 @@ Useful detail for onboarding:
 Profession and recipe integration fixtures now use a structured layout under [`src/test/resources/blizzard`](src/test/resources/blizzard):
 
 - [`src/test/resources/blizzard/profession/index-response.json`](src/test/resources/blizzard/profession/index-response.json)
-- [`src/test/resources/blizzard/profession/details`](src/test/resources/blizzard/profession/details) for `GET /profession/{id}`
-- [`src/test/resources/blizzard/profession/skill-tier`](src/test/resources/blizzard/profession/skill-tier) for `GET /profession/{id}/skill-tier/{skillTierId}`
-- [`src/test/resources/blizzard/recipe/details`](src/test/resources/blizzard/recipe/details) for `GET /recipe/{id}`
+- [`src/test/resources/blizzard/profession`](src/test/resources/blizzard/profession) for mirrored `profession/*` payloads
+- [`src/test/resources/blizzard/recipe`](src/test/resources/blizzard/recipe) for mirrored `recipe/*` payloads
+- [`src/test/resources/blizzard/item`](src/test/resources/blizzard/item) for recipe-linked item payloads
+- [`src/test/resources/blizzard/modified-crafting`](src/test/resources/blizzard/modified-crafting) for linked modified crafting metadata
 - [`src/test/resources/blizzard/profession-recipe-sample-manifest.json`](src/test/resources/blizzard/profession-recipe-sample-manifest.json) describing sampled tiers and recipe IDs
+
+The fixture refresher mirrors normalized Blizzard Game Data API paths under `src/test/resources/blizzard`, so examples now look like:
+
+- `profession/164-response.json`
+- `profession/164/skill-tier/2907-response.json`
+- `recipe/51818-response.json`
+- `item/236951-response.json`
+- `modified-crafting/reagent-slot-type/404-response.json`
 
 Current sample policy:
 
