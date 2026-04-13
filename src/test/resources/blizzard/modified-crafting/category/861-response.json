@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/861?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 861,
+    "name": {
+        "en_US": "Stabilizing Gemstone Bandolier",
+        "es_MX": "Bandolera de gemas de estabilización",
+        "pt_BR": "Bandoleira de Gemas Estabilizadora",
+        "de_DE": "Stabilisierender Juwelenschultergürtel",
+        "en_GB": "Stabilizing Gemstone Bandolier",
+        "es_ES": "Bandolera de gemas estabilizadora",
+        "fr_FR": "Cartouchière de gemmes de stabilisation",
+        "it_IT": "Bandoliera di Gemme Stabilizzante",
+        "ru_RU": "Стабилизирующее крепление для самоцветов",
+        "ko_KR": "안정화 보석 사선 주머니",
+        "zh_TW": "穩定寶石彈藥包",
+        "zh_CN": "稳定式宝石弹药带"
+    }
+}

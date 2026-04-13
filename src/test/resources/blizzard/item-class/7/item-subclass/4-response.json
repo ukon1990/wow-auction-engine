@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/4?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 4,
+    "display_name": {
+        "en_US": "Jewelcrafting",
+        "es_MX": "Joyería",
+        "pt_BR": "Joalheria",
+        "de_DE": "Juwelierskunst",
+        "en_GB": "Jewelcrafting",
+        "es_ES": "Joyería",
+        "fr_FR": "Joaillerie",
+        "it_IT": "Oreficeria",
+        "ru_RU": "Ювелирное дело",
+        "ko_KR": "보석세공",
+        "zh_TW": "珠寶設計",
+        "zh_CN": "珠宝加工"
+    },
+    "hide_subclass_in_tooltips": true
+}

@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/13?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 13,
+    "display_name": {
+        "en_US": "Fist Weapon",
+        "es_MX": "Arma de puño",
+        "pt_BR": "Arma de Punho",
+        "de_DE": "Faustwaffe",
+        "en_GB": "Fist Weapon",
+        "es_ES": "Arma de puño",
+        "fr_FR": "Arme de pugilat",
+        "it_IT": "Tirapugni",
+        "ru_RU": "Кистевое",
+        "ko_KR": "장착 무기",
+        "zh_TW": "拳套",
+        "zh_CN": "拳套"
+    },
+    "verbose_name": {
+        "en_US": "Fist Weapons",
+        "es_MX": "Armas de puño",
+        "pt_BR": "Armas de punho",
+        "de_DE": "Faustwaffen",
+        "en_GB": "Fist Weapons",
+        "es_ES": "Armas de puño",
+        "fr_FR": "Armes de pugilat",
+        "it_IT": "Tirapugni",
+        "ru_RU": "Кистевое",
+        "ko_KR": "장착 무기류",
+        "zh_TW": "拳套",
+        "zh_CN": "拳套"
+    }
+}

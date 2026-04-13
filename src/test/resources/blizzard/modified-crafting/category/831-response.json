@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/831?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 831,
+    "name": {
+        "en_US": "Blessed Pango Charm",
+        "es_MX": "Amuleto de pango bendecido",
+        "pt_BR": "Amuleto Pango Abençoado",
+        "de_DE": "Gesegnetes Schuppentieramulett",
+        "en_GB": "Blessed Pango Charm",
+        "es_ES": "Talismán de pangolín bendito",
+        "fr_FR": "Amulette de pango bénie",
+        "it_IT": "Talismano di Pango Benedetto",
+        "ru_RU": "Благословенный талисман панго",
+        "ko_KR": "축복받은 천산갑 부적",
+        "zh_TW": "受祝福的穿山甲符咒",
+        "zh_CN": "圣佑穿山甲护符"
+    }
+}

@@ -1,0 +1,609 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/186312?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 186312,
+    "name": {
+        "en_US": "Cuirass of the Lonely Citadel",
+        "es_MX": "Loriga de la ciudadela solitaria",
+        "pt_BR": "Corselete da Cidadela Solitária",
+        "de_DE": "Kürass der einsamen Zitadelle",
+        "en_GB": "Cuirass of the Lonely Citadel",
+        "es_ES": "Loriga de la ciudadela solitaria",
+        "fr_FR": "Cuirasse de la citadelle reculée",
+        "it_IT": "Corazza della Cittadella Solitaria",
+        "ru_RU": "Кираса одинокой цитадели",
+        "ko_KR": "고독한 성채의 흉갑",
+        "zh_TW": "孤堡背心甲",
+        "zh_CN": "孤寂堡垒胸甲"
+    },
+    "quality": {
+        "type": "EPIC",
+        "name": {
+            "en_US": "Epic",
+            "es_MX": "Épico",
+            "pt_BR": "Épico",
+            "de_DE": "Episch",
+            "en_GB": "Epic",
+            "es_ES": "Épico",
+            "fr_FR": "Épique",
+            "it_IT": "Epico",
+            "ru_RU": "Эпическое",
+            "ko_KR": "영웅",
+            "zh_TW": "史詩",
+            "zh_CN": "史诗"
+        }
+    },
+    "level": 226,
+    "required_level": 60,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/186312?namespace=static-12.0.1_65617-us"
+        },
+        "id": 186312
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Armor",
+            "es_MX": "Armadura",
+            "pt_BR": "Armadura",
+            "de_DE": "Rüstung",
+            "en_GB": "Armor",
+            "es_ES": "Armadura",
+            "fr_FR": "Armure",
+            "it_IT": "Armature",
+            "ru_RU": "Доспехи",
+            "ko_KR": "방어구",
+            "zh_TW": "護甲",
+            "zh_CN": "护甲"
+        },
+        "id": 4
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Plate",
+            "es_MX": "Placas",
+            "pt_BR": "Placas",
+            "de_DE": "Platte",
+            "en_GB": "Plate",
+            "es_ES": "Placas",
+            "fr_FR": "Plaques",
+            "it_IT": "Piastre",
+            "ru_RU": "Латы",
+            "ko_KR": "판금",
+            "zh_TW": "鎧甲",
+            "zh_CN": "板甲"
+        },
+        "id": 4
+    },
+    "inventory_type": {
+        "type": "CHEST",
+        "name": {
+            "en_US": "Chest",
+            "es_MX": "Pecho",
+            "pt_BR": "Torso",
+            "de_DE": "Brust",
+            "en_GB": "Chest",
+            "es_ES": "Torso",
+            "fr_FR": "Torse",
+            "it_IT": "Torso",
+            "ru_RU": "Грудь",
+            "ko_KR": "가슴",
+            "zh_TW": "胸部",
+            "zh_CN": "胸部"
+        }
+    },
+    "purchase_price": 4428921,
+    "sell_price": 885784,
+    "max_count": 0,
+    "is_equippable": true,
+    "is_stackable": false,
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/186312?namespace=static-12.0.1_65617-us"
+            },
+            "id": 186312
+        },
+        "quality": {
+            "type": "EPIC",
+            "name": {
+                "en_US": "Epic",
+                "es_MX": "Épico",
+                "pt_BR": "Épico",
+                "de_DE": "Episch",
+                "en_GB": "Epic",
+                "es_ES": "Épico",
+                "fr_FR": "Épique",
+                "it_IT": "Epico",
+                "ru_RU": "Эпическое",
+                "ko_KR": "영웅",
+                "zh_TW": "史詩",
+                "zh_CN": "史诗"
+            }
+        },
+        "name": {
+            "en_US": "Cuirass of the Lonely Citadel",
+            "es_MX": "Loriga de la ciudadela solitaria",
+            "pt_BR": "Corselete da Cidadela Solitária",
+            "de_DE": "Kürass der einsamen Zitadelle",
+            "en_GB": "Cuirass of the Lonely Citadel",
+            "es_ES": "Loriga de la ciudadela solitaria",
+            "fr_FR": "Cuirasse de la citadelle reculée",
+            "it_IT": "Corazza della Cittadella Solitaria",
+            "ru_RU": "Кираса одинокой цитадели",
+            "ko_KR": "고독한 성채의 흉갑",
+            "zh_TW": "孤堡背心甲",
+            "zh_CN": "孤寂堡垒胸甲"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/186312?namespace=static-12.0.1_65617-us"
+            },
+            "id": 186312
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Armor",
+                "es_MX": "Armadura",
+                "pt_BR": "Armadura",
+                "de_DE": "Rüstung",
+                "en_GB": "Armor",
+                "es_ES": "Armadura",
+                "fr_FR": "Armure",
+                "it_IT": "Armature",
+                "ru_RU": "Доспехи",
+                "ko_KR": "방어구",
+                "zh_TW": "護甲",
+                "zh_CN": "护甲"
+            },
+            "id": 4
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Plate",
+                "es_MX": "Placas",
+                "pt_BR": "Placas",
+                "de_DE": "Platte",
+                "en_GB": "Plate",
+                "es_ES": "Placas",
+                "fr_FR": "Plaques",
+                "it_IT": "Piastre",
+                "ru_RU": "Латы",
+                "ko_KR": "판금",
+                "zh_TW": "鎧甲",
+                "zh_CN": "板甲"
+            },
+            "id": 4
+        },
+        "inventory_type": {
+            "type": "CHEST",
+            "name": {
+                "en_US": "Chest",
+                "es_MX": "Pecho",
+                "pt_BR": "Torso",
+                "de_DE": "Brust",
+                "en_GB": "Chest",
+                "es_ES": "Torso",
+                "fr_FR": "Torse",
+                "it_IT": "Torso",
+                "ru_RU": "Грудь",
+                "ko_KR": "가슴",
+                "zh_TW": "胸部",
+                "zh_CN": "胸部"
+            }
+        },
+        "binding": {
+            "type": "ON_ACQUIRE",
+            "name": {
+                "en_US": "Binds when picked up",
+                "es_MX": "Se liga al recogerlo",
+                "pt_BR": "Vincula-se ao ser recolhido",
+                "de_DE": "Wird beim Aufheben gebunden",
+                "en_GB": "Binds when picked up",
+                "es_ES": "Se liga al recogerlo",
+                "fr_FR": "Lié quand ramassé",
+                "it_IT": "Si vincola alla raccolta",
+                "ru_RU": "Становится персональным при получении",
+                "ko_KR": "획득 시 귀속",
+                "zh_TW": "拾取後綁定",
+                "zh_CN": "拾取后绑定"
+            }
+        },
+        "armor": {
+            "value": 33,
+            "display": {
+                "display_string": {
+                    "en_US": "33 Armor",
+                    "es_MX": "33 p. de armadura",
+                    "pt_BR": "33 de Armadura",
+                    "de_DE": "33 Rüstung",
+                    "en_GB": "33 Armor",
+                    "es_ES": "33 p. de armadura",
+                    "fr_FR": "Armure : 33",
+                    "it_IT": "33 Armatura",
+                    "ru_RU": "Броня: 33",
+                    "ko_KR": "방어도 33",
+                    "zh_TW": "33點護甲",
+                    "zh_CN": "33点护甲"
+                },
+                "color": {
+                    "r": 255,
+                    "g": 255,
+                    "b": 255,
+                    "a": 1
+                }
+            }
+        },
+        "stats": [
+            {
+                "type": {
+                    "type": "INTELLECT",
+                    "name": {
+                        "en_US": "Intellect",
+                        "es_MX": "intelecto",
+                        "pt_BR": "Intelecto",
+                        "de_DE": "Intelligenz",
+                        "en_GB": "Intellect",
+                        "es_ES": "intelecto",
+                        "fr_FR": "Intelligence",
+                        "it_IT": "Intelletto",
+                        "ru_RU": "к интеллекту",
+                        "ko_KR": "지능",
+                        "zh_TW": "智力",
+                        "zh_CN": "智力"
+                    }
+                },
+                "value": 10,
+                "display": {
+                    "display_string": {
+                        "en_US": "+10 Intellect",
+                        "es_MX": "+10 intelecto",
+                        "pt_BR": "+10 Intelecto",
+                        "de_DE": "+10 Intelligenz",
+                        "en_GB": "+10 Intellect",
+                        "es_ES": "+10 intelecto",
+                        "fr_FR": "+10 Intelligence",
+                        "it_IT": "+10 Intelletto",
+                        "ru_RU": "+10 к интеллекту",
+                        "ko_KR": "지능 +10",
+                        "zh_TW": "+10智力",
+                        "zh_CN": "+10 智力"
+                    },
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 1
+                    }
+                }
+            },
+            {
+                "type": {
+                    "type": "STRENGTH",
+                    "name": {
+                        "en_US": "Strength",
+                        "es_MX": "fuerza",
+                        "pt_BR": "Força",
+                        "de_DE": "Stärke",
+                        "en_GB": "Strength",
+                        "es_ES": "fuerza",
+                        "fr_FR": "Force",
+                        "it_IT": "Forza",
+                        "ru_RU": "к силе",
+                        "ko_KR": "힘",
+                        "zh_TW": "力量",
+                        "zh_CN": "力量"
+                    }
+                },
+                "value": 10,
+                "is_negated": true,
+                "display": {
+                    "display_string": {
+                        "en_US": "+10 Strength",
+                        "es_MX": "+10 fuerza",
+                        "pt_BR": "+10 Força",
+                        "de_DE": "+10 Stärke",
+                        "en_GB": "+10 Strength",
+                        "es_ES": "+10 fuerza",
+                        "fr_FR": "+10 Force",
+                        "it_IT": "+10 Forza",
+                        "ru_RU": "+10 к силе",
+                        "ko_KR": "힘 +10",
+                        "zh_TW": "+10力量",
+                        "zh_CN": "+10 力量"
+                    },
+                    "color": {
+                        "r": 128,
+                        "g": 128,
+                        "b": 128,
+                        "a": 1
+                    }
+                }
+            },
+            {
+                "type": {
+                    "type": "STAMINA",
+                    "name": {
+                        "en_US": "Stamina",
+                        "es_MX": "aguante",
+                        "pt_BR": "Vigor",
+                        "de_DE": "Ausdauer",
+                        "en_GB": "Stamina",
+                        "es_ES": "aguante",
+                        "fr_FR": "Endurance",
+                        "it_IT": "Tempra",
+                        "ru_RU": "к выносливости",
+                        "ko_KR": "체력",
+                        "zh_TW": "耐力",
+                        "zh_CN": "耐力"
+                    }
+                },
+                "value": 15,
+                "display": {
+                    "display_string": {
+                        "en_US": "+15 Stamina",
+                        "es_MX": "+15 aguante",
+                        "pt_BR": "+15 Vigor",
+                        "de_DE": "+15 Ausdauer",
+                        "en_GB": "+15 Stamina",
+                        "es_ES": "+15 aguante",
+                        "fr_FR": "+15 Endurance",
+                        "it_IT": "+15 Tempra",
+                        "ru_RU": "+15 к выносливости",
+                        "ko_KR": "체력 +15",
+                        "zh_TW": "+15耐力",
+                        "zh_CN": "+15 耐力"
+                    },
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 1
+                    }
+                }
+            },
+            {
+                "type": {
+                    "type": "HASTE_RATING",
+                    "name": {
+                        "en_US": "Haste",
+                        "es_MX": "celeridad",
+                        "pt_BR": "Aceleração",
+                        "de_DE": "Tempo",
+                        "en_GB": "Haste",
+                        "es_ES": "celeridad",
+                        "fr_FR": "Hâte",
+                        "it_IT": "Indice di celerità",
+                        "ru_RU": "к скорости",
+                        "ko_KR": "가속",
+                        "zh_TW": "加速",
+                        "zh_CN": "急速"
+                    }
+                },
+                "value": 13,
+                "is_equip_bonus": true,
+                "display": {
+                    "display_string": {
+                        "en_US": "+13 Haste",
+                        "es_MX": "+13 celeridad",
+                        "pt_BR": "+13 Aceleração",
+                        "de_DE": "+13 Tempo",
+                        "en_GB": "+13 Haste",
+                        "es_ES": "+13 celeridad",
+                        "fr_FR": "+13 Hâte",
+                        "it_IT": "+13 Indice di celerità",
+                        "ru_RU": "+13 к скорости",
+                        "ko_KR": "가속 +13",
+                        "zh_TW": "+13加速",
+                        "zh_CN": "+13 急速"
+                    },
+                    "color": {
+                        "r": 0,
+                        "g": 255,
+                        "b": 0,
+                        "a": 1
+                    }
+                }
+            },
+            {
+                "type": {
+                    "type": "VERSATILITY",
+                    "name": {
+                        "en_US": "Versatility",
+                        "es_MX": "versatilidad",
+                        "pt_BR": "Versatilidade",
+                        "de_DE": "Vielseitigkeit",
+                        "en_GB": "Versatility",
+                        "es_ES": "versatilidad",
+                        "fr_FR": "Polyvalence",
+                        "it_IT": "Indice di versatilità",
+                        "ru_RU": "к универсальности",
+                        "ko_KR": "유연성",
+                        "zh_TW": "臨機應變",
+                        "zh_CN": "全能"
+                    }
+                },
+                "value": 7,
+                "is_equip_bonus": true,
+                "display": {
+                    "display_string": {
+                        "en_US": "+7 Versatility",
+                        "es_MX": "+7 versatilidad",
+                        "pt_BR": "+7 Versatilidade",
+                        "de_DE": "+7 Vielseitigkeit",
+                        "en_GB": "+7 Versatility",
+                        "es_ES": "+7 versatilidad",
+                        "fr_FR": "+7 Polyvalence",
+                        "it_IT": "+7 Indice di versatilità",
+                        "ru_RU": "+7 к универсальности",
+                        "ko_KR": "유연성 +7",
+                        "zh_TW": "+7臨機應變",
+                        "zh_CN": "+7 全能"
+                    },
+                    "color": {
+                        "r": 0,
+                        "g": 255,
+                        "b": 0,
+                        "a": 1
+                    }
+                }
+            }
+        ],
+        "sell_price": {
+            "value": 46519,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "4",
+                    "es_MX": "4",
+                    "pt_BR": "4",
+                    "de_DE": "4",
+                    "en_GB": "4",
+                    "es_ES": "4",
+                    "fr_FR": "4",
+                    "it_IT": "4",
+                    "ru_RU": "4",
+                    "ko_KR": "4",
+                    "zh_TW": "4",
+                    "zh_CN": "4"
+                },
+                "silver": {
+                    "en_US": "65",
+                    "es_MX": "65",
+                    "pt_BR": "65",
+                    "de_DE": "65",
+                    "en_GB": "65",
+                    "es_ES": "65",
+                    "fr_FR": "65",
+                    "it_IT": "65",
+                    "ru_RU": "65",
+                    "ko_KR": "65",
+                    "zh_TW": "65",
+                    "zh_CN": "65"
+                },
+                "copper": {
+                    "en_US": "19",
+                    "es_MX": "19",
+                    "pt_BR": "19",
+                    "de_DE": "19",
+                    "en_GB": "19",
+                    "es_ES": "19",
+                    "fr_FR": "19",
+                    "it_IT": "19",
+                    "ru_RU": "19",
+                    "ko_KR": "19",
+                    "zh_TW": "19",
+                    "zh_CN": "19"
+                }
+            }
+        },
+        "requirements": {
+            "level": {
+                "value": 60,
+                "display_string": {
+                    "en_US": "Requires Level 60",
+                    "es_MX": "Necesitas ser de nivel 60",
+                    "pt_BR": "Requer o Nível 60",
+                    "de_DE": "Benötigt Stufe 60",
+                    "en_GB": "Requires Level 60",
+                    "es_ES": "Necesitas ser de nivel 60",
+                    "fr_FR": "Niveau 60 requis",
+                    "it_IT": "Richiede il livello 60",
+                    "ru_RU": "Требуется 60-й уровень",
+                    "ko_KR": "최소 요구 레벨: 60",
+                    "zh_TW": "需要等級60",
+                    "zh_CN": "需要等级 60"
+                }
+            }
+        },
+        "level": {
+            "value": 49,
+            "display_string": {
+                "en_US": "Item Level 49",
+                "es_MX": "Nivel de objeto 49",
+                "pt_BR": "Nível do Item: 49",
+                "de_DE": "Gegenstandsstufe 49",
+                "en_GB": "Item Level 49",
+                "es_ES": "Nivel de objeto 49",
+                "fr_FR": "Niveau d'objet 49",
+                "it_IT": "Livello oggetto: 49",
+                "ru_RU": "Уровень предмета: 49",
+                "ko_KR": "아이템 레벨: 49",
+                "zh_TW": "物品等級49",
+                "zh_CN": "物品等级49"
+            }
+        },
+        "durability": {
+            "value": 165,
+            "display_string": {
+                "en_US": "Durability 165 / 165",
+                "es_MX": "Durabilidad 165 / 165",
+                "pt_BR": "Durabilidade 165 / 165",
+                "de_DE": "Haltbarkeit 165 / 165",
+                "en_GB": "Durability 165 / 165",
+                "es_ES": "Durabilidad 165 / 165",
+                "fr_FR": "Durabilité : 165 / 165",
+                "it_IT": "Integrità 165/165",
+                "ru_RU": "Прочность: 165 / 165",
+                "ko_KR": "내구도 165 / 165",
+                "zh_TW": "耐久度 165 / 165",
+                "zh_CN": "耐久度 165 / 165"
+            }
+        }
+    },
+    "purchase_quantity": 1,
+    "appearances": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42759?namespace=static-12.0.1_65617-us"
+            },
+            "id": 42759
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42762?namespace=static-12.0.1_65617-us"
+            },
+            "id": 42762
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42763?namespace=static-12.0.1_65617-us"
+            },
+            "id": 42763
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42760?namespace=static-12.0.1_65617-us"
+            },
+            "id": 42760
+        }
+    ]
+}

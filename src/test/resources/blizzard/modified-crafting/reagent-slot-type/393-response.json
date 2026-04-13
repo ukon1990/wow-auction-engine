@@ -1,0 +1,144 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 393,
+    "description": {
+        "en_US": "Customize Secondary Stats",
+        "es_MX": "Personaliza estadísticas secundarias",
+        "pt_BR": "Personalizar Atributos Secundários",
+        "de_DE": "Sekundärwerte anpassen",
+        "en_GB": "Customize Secondary Stats",
+        "es_ES": "Personalizar estadísticas secundarias",
+        "fr_FR": "Personnaliser les caractéristiques secondaires",
+        "it_IT": "Personalizza statistiche secondarie",
+        "ru_RU": "Позволяет указать второстепенные характеристики",
+        "ko_KR": "보조 능력치 지정",
+        "zh_TW": "自訂次要屬性",
+        "zh_CN": "自定义副属性"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/814?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Thalassian Missive of the Aurora",
+                "es_MX": "Misiva thalassiana de la aurora",
+                "pt_BR": "Missiva Talassiana da Aurora",
+                "de_DE": "Thalassisches Schreiben der Aurora",
+                "en_GB": "Thalassian Missive of the Aurora",
+                "es_ES": "Misiva thalassiana de la aurora",
+                "fr_FR": "Missive thalassienne de l’aurore",
+                "it_IT": "Missiva dell'Aurora Thalassiana",
+                "ru_RU": "Талассийское послание рассвета",
+                "ko_KR": "서광의 탈라시안 서신",
+                "zh_TW": "薩拉斯極光書狀",
+                "zh_CN": "曙光之萨拉斯公函"
+            },
+            "id": 814
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/813?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Thalassian Missive of the Feverflare",
+                "es_MX": "Misiva thalassiana de la llama febril",
+                "pt_BR": "Missiva Talassiana da Febre Ardente",
+                "de_DE": "Thalassisches Schreiben des Hitzeschocks",
+                "en_GB": "Thalassian Missive of the Feverflare",
+                "es_ES": "Misiva thalassiana de la llama febril",
+                "fr_FR": "Missive thalassienne de la poussée de fièvre",
+                "it_IT": "Missiva della Bramosia Thalassiana",
+                "ru_RU": "Талассийское послание лихорадочного света",
+                "ko_KR": "열꽃의 탈라시안 서신",
+                "zh_TW": "薩拉斯閃焰書狀",
+                "zh_CN": "灼光之萨拉斯公函"
+            },
+            "id": 813
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/812?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Thalassian Missive of the Fireflash",
+                "es_MX": "Misiva thalassiana del fuego rápido",
+                "pt_BR": "Missiva Talassiana do Clarão de Fogo",
+                "de_DE": "Thalassisches Schreiben des Feuersturms",
+                "en_GB": "Thalassian Missive of the Fireflash",
+                "es_ES": "Misiva thalassiana del fuegolátigo",
+                "fr_FR": "Missive thalassienne des Éclats-de-feu",
+                "it_IT": "Missiva della Folgore Thalassiana",
+                "ru_RU": "Талассийское послание огненной вспышки",
+                "ko_KR": "불꽃섬광의 탈라시안 서신",
+                "zh_TW": "薩拉斯炎光書狀",
+                "zh_CN": "燎火之萨拉斯公函"
+            },
+            "id": 812
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/811?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Thalassian Missive of the Harmonious",
+                "es_MX": "Misiva thalassiana del armónico",
+                "pt_BR": "Missiva Talassiana do Harmonioso",
+                "de_DE": "Thalassisches Schreiben der Harmonischen",
+                "en_GB": "Thalassian Missive of the Harmonious",
+                "es_ES": "Misiva thalassiana del armonioso",
+                "fr_FR": "Missive thalassienne de l’harmonie",
+                "it_IT": "Missiva dell'Armonia Thalassiana",
+                "ru_RU": "Талассийское послание безмятежности",
+                "ko_KR": "조화의 탈라시안 서신",
+                "zh_TW": "薩拉斯和諧書狀",
+                "zh_CN": "谐律之萨拉斯公函"
+            },
+            "id": 811
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/810?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Thalassian Missive of the Peerless",
+                "es_MX": "Misiva thalassiana del incomparable",
+                "pt_BR": "Missiva Talassiana do Inigualável",
+                "de_DE": "Thalassisches Schreiben der Unvergleichlichkeit",
+                "en_GB": "Thalassian Missive of the Peerless",
+                "es_ES": "Misiva thalassiana del incomparable",
+                "fr_FR": "Missive thalassienne des Incomparables",
+                "it_IT": "Missiva dell'Impareggiabile Thalassiana",
+                "ru_RU": "Талассийское послание бесподобия",
+                "ko_KR": "무쌍의 탈라시안 서신",
+                "zh_TW": "薩拉斯無雙書狀",
+                "zh_CN": "无双之萨拉斯公函"
+            },
+            "id": 810
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/809?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Thalassian Missive of the Quickblade",
+                "es_MX": "Misiva thalassiana de la hoja rauda",
+                "pt_BR": "Missiva Talassiana do Gumepresto",
+                "de_DE": "Thalassisches Schreiben der Schnellklinge",
+                "en_GB": "Thalassian Missive of the Quickblade",
+                "es_ES": "Misiva thalassiana de la navaja",
+                "fr_FR": "Missive thalassienne de la prestelame",
+                "it_IT": "Missiva della Lama Veloce Thalassiana",
+                "ru_RU": "Талассийское послание быстрого клинка",
+                "ko_KR": "쾌검의 탈라시안 서신",
+                "zh_TW": "薩拉斯速刃書狀",
+                "zh_CN": "快刀之萨拉斯公函"
+            },
+            "id": 809
+        }
+    ]
+}

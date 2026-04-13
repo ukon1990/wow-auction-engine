@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/0?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 0,
+    "subclass_id": 0,
+    "display_name": {
+        "en_US": "Explosives and Devices",
+        "es_MX": "Explosivos y dispositivos",
+        "pt_BR": "Explosivos e Dispositivos",
+        "de_DE": "Sprengstoff und Geräte",
+        "en_GB": "Explosives and Devices",
+        "es_ES": "Explosivos y dispositivos",
+        "fr_FR": "Explosifs et appareils",
+        "it_IT": "Esplosivi e congegni",
+        "ru_RU": "Взрывчатка и устройства",
+        "ko_KR": "폭발물 및 장치",
+        "zh_TW": "爆裂物與裝置",
+        "zh_CN": "爆炸物与装置"
+    },
+    "hide_subclass_in_tooltips": true
+}

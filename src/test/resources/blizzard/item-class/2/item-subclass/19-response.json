@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/19?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 19,
+    "display_name": {
+        "en_US": "Wand",
+        "es_MX": "Varita",
+        "pt_BR": "Varinha",
+        "de_DE": "Zauberstab",
+        "en_GB": "Wand",
+        "es_ES": "Varita",
+        "fr_FR": "Baguette",
+        "it_IT": "Bacchetta",
+        "ru_RU": "Жезл",
+        "ko_KR": "마법봉",
+        "zh_TW": "魔杖",
+        "zh_CN": "魔杖"
+    },
+    "verbose_name": {
+        "en_US": "Wands",
+        "es_MX": "Varitas",
+        "pt_BR": "Varinhas",
+        "de_DE": "Zauberstäbe",
+        "en_GB": "Wands",
+        "es_ES": "Varitas",
+        "fr_FR": "Baguettes",
+        "it_IT": "Bacchette",
+        "ru_RU": "Жезлы",
+        "ko_KR": "마법봉류",
+        "zh_TW": "魔杖",
+        "zh_CN": "魔杖"
+    }
+}

@@ -1,0 +1,316 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/243060?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 243060,
+    "name": {
+        "en_US": "Luminant Flux",
+        "es_MX": "Flujo luminante",
+        "pt_BR": "Fluxo Fulgurante",
+        "de_DE": "Leuchtender Fluxus",
+        "en_GB": "Luminant Flux",
+        "es_ES": "Flujo luminiscente",
+        "fr_FR": "Flux de luminance",
+        "it_IT": "Flusso Illuminante",
+        "ru_RU": "Сияющий плавень",
+        "ko_KR": "영롱한 융제",
+        "zh_TW": "發光助熔劑",
+        "zh_CN": "莹辉助熔剂"
+    },
+    "quality": {
+        "type": "COMMON",
+        "name": {
+            "en_US": "Common",
+            "es_MX": "Común",
+            "pt_BR": "Comum",
+            "de_DE": "Gewöhnlich",
+            "en_GB": "Common",
+            "es_ES": "Común",
+            "fr_FR": "Commun",
+            "it_IT": "Comune",
+            "ru_RU": "Обычное",
+            "ko_KR": "일반",
+            "zh_TW": "普通",
+            "zh_CN": "普通"
+        }
+    },
+    "level": 80,
+    "required_level": 0,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/243060?namespace=static-12.0.1_65617-us"
+        },
+        "id": 243060
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Tradeskill",
+            "es_MX": "Habilidad comercial",
+            "pt_BR": "Perícia profissional",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Tradeskill",
+            "es_ES": "Habilidad comercial",
+            "fr_FR": "Artisanat",
+            "it_IT": "Beni commerciali",
+            "ru_RU": "Ремесло",
+            "ko_KR": "전문 기술",
+            "zh_TW": "交易技能",
+            "zh_CN": "商业技能"
+        },
+        "id": 7
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/7?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Metal & Stone",
+            "es_MX": "Metal y piedra",
+            "pt_BR": "Metal e Pedra",
+            "de_DE": "Metalle & Steine",
+            "en_GB": "Metal & Stone",
+            "es_ES": "Metal y piedra",
+            "fr_FR": "Métal et pierre",
+            "it_IT": "Metallo e pietra",
+            "ru_RU": "Металл и камень",
+            "ko_KR": "광물",
+            "zh_TW": "金屬與石頭",
+            "zh_CN": "金属和矿石"
+        },
+        "id": 7
+    },
+    "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": {
+            "en_US": "Non-equippable",
+            "es_MX": "No equipable",
+            "pt_BR": "Não equipável",
+            "de_DE": "Nicht anlegbar",
+            "en_GB": "Non-equippable",
+            "es_ES": "No se puede equipar",
+            "fr_FR": "Objet hors équipement",
+            "it_IT": "Non equipaggiabile",
+            "ru_RU": "Неэкипируемое",
+            "ko_KR": "착용 불가",
+            "zh_TW": "無法裝備",
+            "zh_CN": "无法装备"
+        }
+    },
+    "purchase_price": 3000,
+    "sell_price": 600,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "description": {
+        "en_US": "Used to bond disparate metals into bonded alloys. Sold by Blacksmithing vendors.",
+        "es_MX": "Se usa para unir metales dispares y formar aleaciones. Lo venden los vendedores de herrería.",
+        "pt_BR": "Usado para fundir metais diferentes em ligas. Vendido por comerciantes de Ferraria.",
+        "de_DE": "Dient zur Bindung verschiedener Metalle in verbindungsfeste Legierungen. Ist bei Schmiedekunsthändlern erhältlich.",
+        "en_GB": "Used to bond disparate metals into bonded alloys. Sold by Blacksmithing vendors.",
+        "es_ES": "Se usa para convertir metales separados en aleaciones vinculadas. Se adquiere de los vendedores de herrería.",
+        "fr_FR": "Permet de fusionner des métaux variés pour en faire des alliages. Disponible auprès des vendeurs et vendeuses de fournitures de forge.",
+        "it_IT": "Reagente utilizzato per legare metalli diversi in leghe. Venduto dai mercanti di Forgiatura.",
+        "ru_RU": "Позволяет объединять разные металлы в сплавы. Продается поставщиками товаров для кузнечного дела.",
+        "ko_KR": "이질적인 금속을 결합해 하나의 합금으로 만드는 데 사용됩니다. 대장용품 상인에게서 살 수 있습니다.",
+        "zh_TW": "用來將不同的金屬黏合成黏著合金。可以向鍛造供應商購買。",
+        "zh_CN": "用来将不同的金属融合成合金。锻造商人有售。"
+    },
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/243060?namespace=static-12.0.1_65617-us"
+            },
+            "id": 243060
+        },
+        "quality": {
+            "type": "COMMON",
+            "name": {
+                "en_US": "Common",
+                "es_MX": "Común",
+                "pt_BR": "Comum",
+                "de_DE": "Gewöhnlich",
+                "en_GB": "Common",
+                "es_ES": "Común",
+                "fr_FR": "Commun",
+                "it_IT": "Comune",
+                "ru_RU": "Обычное",
+                "ko_KR": "일반",
+                "zh_TW": "普通",
+                "zh_CN": "普通"
+            }
+        },
+        "name": {
+            "en_US": "Luminant Flux",
+            "es_MX": "Flujo luminante",
+            "pt_BR": "Fluxo Fulgurante",
+            "de_DE": "Leuchtender Fluxus",
+            "en_GB": "Luminant Flux",
+            "es_ES": "Flujo luminiscente",
+            "fr_FR": "Flux de luminance",
+            "it_IT": "Flusso Illuminante",
+            "ru_RU": "Сияющий плавень",
+            "ko_KR": "영롱한 융제",
+            "zh_TW": "發光助熔劑",
+            "zh_CN": "莹辉助熔剂"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/243060?namespace=static-12.0.1_65617-us"
+            },
+            "id": 243060
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Tradeskill",
+                "es_MX": "Habilidad comercial",
+                "pt_BR": "Perícia profissional",
+                "de_DE": "Handwerksmaterial",
+                "en_GB": "Tradeskill",
+                "es_ES": "Habilidad comercial",
+                "fr_FR": "Artisanat",
+                "it_IT": "Beni commerciali",
+                "ru_RU": "Ремесло",
+                "ko_KR": "전문 기술",
+                "zh_TW": "交易技能",
+                "zh_CN": "商业技能"
+            },
+            "id": 7
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Metal & Stone",
+                "es_MX": "Metal y piedra",
+                "pt_BR": "Metal e Pedra",
+                "de_DE": "Metalle & Steine",
+                "en_GB": "Metal & Stone",
+                "es_ES": "Metal y piedra",
+                "fr_FR": "Métal et pierre",
+                "it_IT": "Metallo e pietra",
+                "ru_RU": "Металл и камень",
+                "ko_KR": "광물",
+                "zh_TW": "金屬與石頭",
+                "zh_CN": "金属和矿石"
+            },
+            "id": 7
+        },
+        "inventory_type": {
+            "type": "NON_EQUIP",
+            "name": {
+                "en_US": "Non-equippable",
+                "es_MX": "No equipable",
+                "pt_BR": "Não equipável",
+                "de_DE": "Nicht anlegbar",
+                "en_GB": "Non-equippable",
+                "es_ES": "No se puede equipar",
+                "fr_FR": "Objet hors équipement",
+                "it_IT": "Non equipaggiabile",
+                "ru_RU": "Неэкипируемое",
+                "ko_KR": "착용 불가",
+                "zh_TW": "無法裝備",
+                "zh_CN": "无法装备"
+            }
+        },
+        "sell_price": {
+            "value": 600,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                },
+                "silver": {
+                    "en_US": "6",
+                    "es_MX": "6",
+                    "pt_BR": "6",
+                    "de_DE": "6",
+                    "en_GB": "6",
+                    "es_ES": "6",
+                    "fr_FR": "6",
+                    "it_IT": "6",
+                    "ru_RU": "6",
+                    "ko_KR": "6",
+                    "zh_TW": "6",
+                    "zh_CN": "6"
+                },
+                "copper": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                }
+            }
+        },
+        "description": {
+            "en_US": "Used to bond disparate metals into bonded alloys. Sold by Blacksmithing vendors.",
+            "es_MX": "Se usa para unir metales dispares y formar aleaciones. Lo venden los vendedores de herrería.",
+            "pt_BR": "Usado para fundir metais diferentes em ligas. Vendido por comerciantes de Ferraria.",
+            "de_DE": "Dient zur Bindung verschiedener Metalle in verbindungsfeste Legierungen. Ist bei Schmiedekunsthändlern erhältlich.",
+            "en_GB": "Used to bond disparate metals into bonded alloys. Sold by Blacksmithing vendors.",
+            "es_ES": "Se usa para convertir metales separados en aleaciones vinculadas. Se adquiere de los vendedores de herrería.",
+            "fr_FR": "Permet de fusionner des métaux variés pour en faire des alliages. Disponible auprès des vendeurs et vendeuses de fournitures de forge.",
+            "it_IT": "Reagente utilizzato per legare metalli diversi in leghe. Venduto dai mercanti di Forgiatura.",
+            "ru_RU": "Позволяет объединять разные металлы в сплавы. Продается поставщиками товаров для кузнечного дела.",
+            "ko_KR": "이질적인 금속을 결합해 하나의 합금으로 만드는 데 사용됩니다. 대장용품 상인에게서 살 수 있습니다.",
+            "zh_TW": "用來將不同的金屬黏合成黏著合金。可以向鍛造供應商購買。",
+            "zh_CN": "用来将不同的金属融合成合金。锻造商人有售。"
+        },
+        "is_subclass_hidden": true,
+        "crafting_reagent": {
+            "en_US": "Crafting Reagent",
+            "es_MX": "Componente de creación",
+            "pt_BR": "Reagente de criação",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Crafting Reagent",
+            "es_ES": "Componente de profesión",
+            "fr_FR": "Composant d’artisanat",
+            "it_IT": "Reagente d'artigianato",
+            "ru_RU": "Используется для ремесел",
+            "ko_KR": "제작 재료",
+            "zh_TW": "製造材料",
+            "zh_CN": "制作材料"
+        }
+    },
+    "purchase_quantity": 1
+}

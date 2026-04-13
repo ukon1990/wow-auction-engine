@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/6?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 4,
+    "subclass_id": 6,
+    "display_name": {
+        "en_US": "Shield",
+        "es_MX": "Escudo",
+        "pt_BR": "Escudo",
+        "de_DE": "Schild",
+        "en_GB": "Shield",
+        "es_ES": "Escudo",
+        "fr_FR": "Bouclier",
+        "it_IT": "Scudo",
+        "ru_RU": "Щит",
+        "ko_KR": "방패",
+        "zh_TW": "盾牌",
+        "zh_CN": "盾牌"
+    },
+    "verbose_name": {
+        "en_US": "Shields",
+        "es_MX": "Escudos",
+        "pt_BR": "Escudos",
+        "de_DE": "Schilde",
+        "en_GB": "Shields",
+        "es_ES": "Escudos",
+        "fr_FR": "Boucliers",
+        "it_IT": "Scudi",
+        "ru_RU": "Щиты",
+        "ko_KR": "방패",
+        "zh_TW": "盾牌",
+        "zh_CN": "盾牌"
+    }
+}

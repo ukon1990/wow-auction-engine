@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/818?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 818,
+    "name": {
+        "en_US": "Thalassian Missive of Crafting Speed",
+        "es_MX": "Misiva thalassiana de velocidad de fabricación",
+        "pt_BR": "Missiva Talassiana da Velocidade de Criação",
+        "de_DE": "Thalassisches Schreiben der Herstellungsgeschwindigkeit",
+        "en_GB": "Thalassian Missive of Crafting Speed",
+        "es_ES": "Misiva thalassiana de velocidad de fabricación",
+        "fr_FR": "Missive thalassienne de vitesse d’artisanat",
+        "it_IT": "Missiva della Velocità di Creazione Thalassiana",
+        "ru_RU": "Талассийское послание скорости изготовления",
+        "ko_KR": "제작 속도의 탈라시안 서신",
+        "zh_TW": "薩拉斯製作速度書狀",
+        "zh_CN": "制作速度之萨拉斯公函"
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/9?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 9,
+    "display_name": {
+        "en_US": "Warglaives",
+        "es_MX": "Gujas de guerra",
+        "pt_BR": "Glaives de Guerra",
+        "de_DE": "Kriegsgleven",
+        "en_GB": "Warglaives",
+        "es_ES": "Gujas de guerra",
+        "fr_FR": "Glaives de guerre",
+        "it_IT": "Lame da Guerra",
+        "ru_RU": "Боевые клинки",
+        "ko_KR": "전투검",
+        "zh_TW": "戰刃",
+        "zh_CN": "战刃"
+    }
+}

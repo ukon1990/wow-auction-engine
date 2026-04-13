@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/838?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 838,
+    "name": {
+        "en_US": "Ingenuious Identity",
+        "es_MX": "Identidad ingeniosa",
+        "pt_BR": "Identidade Engenhosa",
+        "de_DE": "Geniale Identität",
+        "en_GB": "Ingenuious Identity",
+        "es_ES": "Identidad ingeniosa",
+        "fr_FR": "Identité inventive",
+        "it_IT": "Identità Ingegnosa",
+        "ru_RU": "Индикатор изобретательности",
+        "ko_KR": "독창적인 정체성",
+        "zh_TW": "精妙身分",
+        "zh_CN": "奇思标识"
+    }
+}

@@ -1,0 +1,34 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/12?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 12,
+    "display_name": {
+        "en_US": "Cat Claws",
+        "es_MX": "Garras de gato",
+        "pt_BR": "Unhas de Gato",
+        "de_DE": "Katzenkrallen",
+        "en_GB": "Cat Claws",
+        "es_ES": "Garras de felino",
+        "fr_FR": "Griffes de félin",
+        "it_IT": "Artigli da Felino",
+        "ru_RU": "Кошачьи когти",
+        "ko_KR": "표범 발톱",
+        "zh_TW": "豹爪",
+        "zh_CN": "豹爪"
+    },
+    "verbose_name": {
+        "en_US": "CatClaws",
+        "es_MX": "Garras de gato",
+        "pt_BR": "Unhas de Gato",
+        "en_GB": "CatClaws",
+        "it_IT": "Artigli da Felino",
+        "ko_KR": "표범 발톱",
+        "zh_TW": "豹爪",
+        "zh_CN": "豹爪"
+    },
+    "hide_subclass_in_tooltips": true
+}

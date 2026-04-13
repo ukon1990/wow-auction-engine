@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/835?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 835,
+    "name": {
+        "en_US": "Resourceful Rebar",
+        "es_MX": "Barra inventiva",
+        "pt_BR": "Vergalhão Desenvolto",
+        "de_DE": "Einfallsreicher Betonstahl",
+        "en_GB": "Resourceful Rebar",
+        "es_ES": "Ferralla ingeniosa",
+        "fr_FR": "Barre d’armature ingénieuse",
+        "it_IT": "Tondino Parsimonioso",
+        "ru_RU": "Набойка находчивости",
+        "ko_KR": "지혜로운 보강봉",
+        "zh_TW": "精明鋼筋",
+        "zh_CN": "充裕钢筋"
+    }
+}

@@ -1,0 +1,164 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/391?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 391,
+    "description": {
+        "en_US": "Add Embellishment",
+        "es_MX": "Agrega ornamento",
+        "pt_BR": "Adicionar Ornamento",
+        "de_DE": "Verzierung hinzufügen",
+        "en_GB": "Add Embellishment",
+        "es_ES": "Añadir adorno",
+        "fr_FR": "Ajout d’embellissement",
+        "it_IT": "Aggiungi abbellimento",
+        "ru_RU": "Добавляет украшение",
+        "ko_KR": "장식 추가",
+        "zh_TW": "添加裝飾",
+        "zh_CN": "添加修饰"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/831?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Blessed Pango Charm",
+                "es_MX": "Amuleto de pango bendecido",
+                "pt_BR": "Amuleto Pango Abençoado",
+                "de_DE": "Gesegnetes Schuppentieramulett",
+                "en_GB": "Blessed Pango Charm",
+                "es_ES": "Talismán de pangolín bendito",
+                "fr_FR": "Amulette de pango bénie",
+                "it_IT": "Talismano di Pango Benedetto",
+                "ru_RU": "Благословенный талисман панго",
+                "ko_KR": "축복받은 천산갑 부적",
+                "zh_TW": "受祝福的穿山甲符咒",
+                "zh_CN": "圣佑穿山甲护符"
+            },
+            "id": 831
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/832?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Primal Spore Binding",
+                "es_MX": "Lazo de esporas primigenias",
+                "pt_BR": "Vínculo de Esporos Primevo",
+                "de_DE": "Ursporenbindung",
+                "en_GB": "Primal Spore Binding",
+                "es_ES": "Atadura de esporas primigenia",
+                "fr_FR": "Lien de spore primordial",
+                "it_IT": "Vincolo di Spore Primordiali",
+                "ru_RU": "Изначальные споровые узы",
+                "ko_KR": "원시 포자 결속끈",
+                "zh_TW": "原始孢子之縛",
+                "zh_CN": "原始孢子缚带"
+            },
+            "id": 832
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/830?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Devouring Banding",
+                "es_MX": "Banda devoradora",
+                "pt_BR": "Elo Devorador",
+                "de_DE": "Verschlingende Bänder",
+                "en_GB": "Devouring Banding",
+                "es_ES": "Banda de la Devoración",
+                "fr_FR": "Bande dévorante",
+                "it_IT": "Legatura Divorante",
+                "ru_RU": "Пожирающая окантовка",
+                "ko_KR": "포식의 결속끈",
+                "zh_TW": "吞噬飾環",
+                "zh_CN": "吞噬绑带"
+            },
+            "id": 830
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/861?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Stabilizing Gemstone Bandolier",
+                "es_MX": "Bandolera de gemas de estabilización",
+                "pt_BR": "Bandoleira de Gemas Estabilizadora",
+                "de_DE": "Stabilisierender Juwelenschultergürtel",
+                "en_GB": "Stabilizing Gemstone Bandolier",
+                "es_ES": "Bandolera de gemas estabilizadora",
+                "fr_FR": "Cartouchière de gemmes de stabilisation",
+                "it_IT": "Bandoliera di Gemme Stabilizzante",
+                "ru_RU": "Стабилизирующее крепление для самоцветов",
+                "ko_KR": "안정화 보석 사선 주머니",
+                "zh_TW": "穩定寶石彈藥包",
+                "zh_CN": "稳定式宝石弹药带"
+            },
+            "id": 861
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/769?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Arcanoweave Lining",
+                "es_MX": "Revestimiento de tejido arcano",
+                "pt_BR": "Forro de Arcanotrama",
+                "de_DE": "Arkanostofffutter",
+                "en_GB": "Arcanoweave Lining",
+                "es_ES": "Forro de tejido Arcano",
+                "fr_FR": "Doublure en tisse-arcane",
+                "it_IT": "Imbottitura di Tramarcana",
+                "ru_RU": "Подкладка из тайной ткани",
+                "ko_KR": "비전매듭 안감",
+                "zh_TW": "奧紋內襯",
+                "zh_CN": "奥纹内衬"
+            },
+            "id": 769
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/770?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Sunfire Lining",
+                "es_MX": "Revestimiento de fuego solar",
+                "pt_BR": "Forro de Fogo Solar",
+                "de_DE": "Sonnenfeuerfutter",
+                "en_GB": "Sunfire Lining",
+                "es_ES": "Forro de fuego solar",
+                "fr_FR": "Doublure du feu solaire",
+                "it_IT": "Imbottitura di Fuoco Solare",
+                "ru_RU": "Подкладка солнечного огня",
+                "ko_KR": "태양불꽃 안감",
+                "zh_TW": "日炎內襯",
+                "zh_CN": "阳炎内衬"
+            },
+            "id": 770
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/854?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Lucky Keychain",
+                "es_MX": "Llavero de la suerte",
+                "pt_BR": "Chaveiro da Sorte",
+                "de_DE": "Glücksanhänger",
+                "en_GB": "Lucky Keychain",
+                "es_ES": "Llavero de la suerte",
+                "fr_FR": "Porte-clés porte-bonheur",
+                "it_IT": "Portachiavi Fortunato",
+                "ru_RU": "Счастливая связка ключей",
+                "ko_KR": "행운의 열쇠고리",
+                "zh_TW": "幸運鑰匙圈",
+                "zh_CN": "幸运钥匙串"
+            },
+            "id": 854
+        }
+    ]
+}

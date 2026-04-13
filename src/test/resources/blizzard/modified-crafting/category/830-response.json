@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/830?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 830,
+    "name": {
+        "en_US": "Devouring Banding",
+        "es_MX": "Banda devoradora",
+        "pt_BR": "Elo Devorador",
+        "de_DE": "Verschlingende Bänder",
+        "en_GB": "Devouring Banding",
+        "es_ES": "Banda de la Devoración",
+        "fr_FR": "Bande dévorante",
+        "it_IT": "Legatura Divorante",
+        "ru_RU": "Пожирающая окантовка",
+        "ko_KR": "포식의 결속끈",
+        "zh_TW": "吞噬飾環",
+        "zh_CN": "吞噬绑带"
+    }
+}

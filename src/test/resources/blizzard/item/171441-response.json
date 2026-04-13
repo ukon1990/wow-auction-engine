@@ -1,0 +1,368 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/171441?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 171441,
+    "name": {
+        "en_US": "Laestrite Skeleton Key",
+        "es_MX": "Llave maestra de lestrita",
+        "pt_BR": "Chave-mestra de Laestrita",
+        "de_DE": "Laestritdietrich",
+        "en_GB": "Laestrite Skeleton Key",
+        "es_ES": "Llave maestra de laestrita",
+        "fr_FR": "Passe-partout en læstrite",
+        "it_IT": "Chiave Universale di Laestrite",
+        "ru_RU": "Лестритовая отмычка",
+        "ko_KR": "레이스트라이트 해골 열쇠",
+        "zh_TW": "雷瑟瑞骷髏鑰匙",
+        "zh_CN": "苷铜万能钥匙"
+    },
+    "quality": {
+        "type": "UNCOMMON",
+        "name": {
+            "en_US": "Uncommon",
+            "es_MX": "Inusual",
+            "pt_BR": "Incomum",
+            "de_DE": "Ungewöhnlich",
+            "en_GB": "Uncommon",
+            "es_ES": "Inusual",
+            "fr_FR": "Inhabituel",
+            "it_IT": "Pregiato",
+            "ru_RU": "Необычное",
+            "ko_KR": "고급",
+            "zh_TW": "優秀",
+            "zh_CN": "优秀"
+        }
+    },
+    "level": 60,
+    "required_level": 51,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/171441?namespace=static-12.0.1_65617-us"
+        },
+        "id": 171441
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Consumable",
+            "es_MX": "Consumible",
+            "pt_BR": "Consumível",
+            "de_DE": "Verbrauchbares",
+            "en_GB": "Consumable",
+            "es_ES": "Consumible",
+            "fr_FR": "Consommable",
+            "it_IT": "Consumabili",
+            "ru_RU": "Расходуемые",
+            "ko_KR": "소비용품",
+            "zh_TW": "消耗品",
+            "zh_CN": "消耗品"
+        },
+        "id": 0
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Other",
+            "es_MX": "Otros",
+            "pt_BR": "Outro",
+            "de_DE": "Sonstiges",
+            "en_GB": "Other",
+            "es_ES": "Otros",
+            "fr_FR": "Autres",
+            "it_IT": "Altro",
+            "ru_RU": "Другое",
+            "ko_KR": "기타",
+            "zh_TW": "其他",
+            "zh_CN": "其它"
+        },
+        "id": 8
+    },
+    "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": {
+            "en_US": "Non-equippable",
+            "es_MX": "No equipable",
+            "pt_BR": "Não equipável",
+            "de_DE": "Nicht anlegbar",
+            "en_GB": "Non-equippable",
+            "es_ES": "No se puede equipar",
+            "fr_FR": "Objet hors équipement",
+            "it_IT": "Non equipaggiabile",
+            "ru_RU": "Неэкипируемое",
+            "ko_KR": "착용 불가",
+            "zh_TW": "無法裝備",
+            "zh_CN": "无法装备"
+        }
+    },
+    "purchase_price": 5000,
+    "sell_price": 1250,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/171441?namespace=static-12.0.1_65617-us"
+            },
+            "id": 171441
+        },
+        "quality": {
+            "type": "UNCOMMON",
+            "name": {
+                "en_US": "Uncommon",
+                "es_MX": "Inusual",
+                "pt_BR": "Incomum",
+                "de_DE": "Ungewöhnlich",
+                "en_GB": "Uncommon",
+                "es_ES": "Inusual",
+                "fr_FR": "Inhabituel",
+                "it_IT": "Pregiato",
+                "ru_RU": "Необычное",
+                "ko_KR": "고급",
+                "zh_TW": "優秀",
+                "zh_CN": "优秀"
+            }
+        },
+        "name": {
+            "en_US": "Laestrite Skeleton Key",
+            "es_MX": "Llave maestra de lestrita",
+            "pt_BR": "Chave-mestra de Laestrita",
+            "de_DE": "Laestritdietrich",
+            "en_GB": "Laestrite Skeleton Key",
+            "es_ES": "Llave maestra de laestrita",
+            "fr_FR": "Passe-partout en læstrite",
+            "it_IT": "Chiave Universale di Laestrite",
+            "ru_RU": "Лестритовая отмычка",
+            "ko_KR": "레이스트라이트 해골 열쇠",
+            "zh_TW": "雷瑟瑞骷髏鑰匙",
+            "zh_CN": "苷铜万能钥匙"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/171441?namespace=static-12.0.1_65617-us"
+            },
+            "id": 171441
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Consumable",
+                "es_MX": "Consumible",
+                "pt_BR": "Consumível",
+                "de_DE": "Verbrauchbares",
+                "en_GB": "Consumable",
+                "es_ES": "Consumible",
+                "fr_FR": "Consommable",
+                "it_IT": "Consumabili",
+                "ru_RU": "Расходуемые",
+                "ko_KR": "소비용품",
+                "zh_TW": "消耗品",
+                "zh_CN": "消耗品"
+            },
+            "id": 0
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Other",
+                "es_MX": "Otros",
+                "pt_BR": "Outro",
+                "de_DE": "Sonstiges",
+                "en_GB": "Other",
+                "es_ES": "Otros",
+                "fr_FR": "Autres",
+                "it_IT": "Altro",
+                "ru_RU": "Другое",
+                "ko_KR": "기타",
+                "zh_TW": "其他",
+                "zh_CN": "其它"
+            },
+            "id": 8
+        },
+        "inventory_type": {
+            "type": "NON_EQUIP",
+            "name": {
+                "en_US": "Non-equippable",
+                "es_MX": "No equipable",
+                "pt_BR": "Não equipável",
+                "de_DE": "Nicht anlegbar",
+                "en_GB": "Non-equippable",
+                "es_ES": "No se puede equipar",
+                "fr_FR": "Objet hors équipement",
+                "it_IT": "Non equipaggiabile",
+                "ru_RU": "Неэкипируемое",
+                "ko_KR": "착용 불가",
+                "zh_TW": "無法裝備",
+                "zh_CN": "无法装备"
+            }
+        },
+        "spells": [
+            {
+                "spell": {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/spell/346245?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Laestrite Skeleton Key",
+                        "es_MX": "Llave maestra de lestrita",
+                        "pt_BR": "Chave-mestra de Laestrita",
+                        "de_DE": "Laestritdietrich",
+                        "en_GB": "Laestrite Skeleton Key",
+                        "es_ES": "Llave maestra de laestrita",
+                        "fr_FR": "Passe-partout en læstrite",
+                        "it_IT": "Chiave Universale di Laestrite",
+                        "ru_RU": "Лестритовая отмычка",
+                        "ko_KR": "레이스트라이트 해골 열쇠",
+                        "zh_TW": "雷瑟瑞骷髏鑰匙",
+                        "zh_CN": "苷铜万能钥匙"
+                    },
+                    "id": 346245
+                },
+                "description": {
+                    "en_US": "Use: Allows opening of locks that require up to 60 lockpicking skill.  The lockpick is consumed in the process.",
+                    "es_MX": "Usar: Permite abrir cerraduras que requieren hasta 60 p. de habilidad de Forzar cerraduras. La ganzúa se consume durante el proceso.",
+                    "pt_BR": "Usar: Permite abrir fechaduras que exijam até 60 pontos de perícia em Arrombamento. A gazua é destruída após o uso.",
+                    "de_DE": "Benutzen: Ermöglicht das Öffnen von Schlössern, die eine Fertigkeit von bis zu 60 im Schlossknacken benötigen. Dieser Vorgang verbraucht den Dietrich.",
+                    "en_GB": "Use: Allows opening of locks that require up to 60 lockpicking skill.  The lockpick is consumed in the process.",
+                    "es_ES": "Uso: Permite abrir cerraduras que requieren hasta 60 p. de habilidad en forzar cerraduras. La ganzúa se consume durante el proceso.",
+                    "fr_FR": "Utiliser : Permet d’ouvrir les serrures nécessitant une compétence de crochetage de 60 au maximum. Le parchemin est détruit après utilisation.",
+                    "it_IT": "Usa: Permette l'apertura di serrature che richiedono 60 competenza in Scasso. Il grimaldello viene distrutto durante il procedimento.",
+                    "ru_RU": "Использование: Позволяет отпирать замки, требующие навык вскрытия замков не более 60. Эта отмычка – одноразовая.",
+                    "ko_KR": "사용 효과: 최대 60의 자물쇠 따기 숙련도가 필요한 자물쇠를 엽니다. 자물쇠따개는 1회용입니다.",
+                    "zh_TW": "使用： 可以打開需要60點開鎖技能的鎖，過程中將消耗開鎖工具。",
+                    "zh_CN": "使用： 可以打开需求开锁技能最高为60点的锁。此物品会在开锁过程中消耗掉。"
+                }
+            }
+        ],
+        "sell_price": {
+            "value": 1250,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                },
+                "silver": {
+                    "en_US": "12",
+                    "es_MX": "12",
+                    "pt_BR": "12",
+                    "de_DE": "12",
+                    "en_GB": "12",
+                    "es_ES": "12",
+                    "fr_FR": "12",
+                    "it_IT": "12",
+                    "ru_RU": "12",
+                    "ko_KR": "12",
+                    "zh_TW": "12",
+                    "zh_CN": "12"
+                },
+                "copper": {
+                    "en_US": "50",
+                    "es_MX": "50",
+                    "pt_BR": "50",
+                    "de_DE": "50",
+                    "en_GB": "50",
+                    "es_ES": "50",
+                    "fr_FR": "50",
+                    "it_IT": "50",
+                    "ru_RU": "50",
+                    "ko_KR": "50",
+                    "zh_TW": "50",
+                    "zh_CN": "50"
+                }
+            }
+        },
+        "requirements": {
+            "level": {
+                "value": 51,
+                "display_string": {
+                    "en_US": "Requires Level 51",
+                    "es_MX": "Necesitas ser de nivel 51",
+                    "pt_BR": "Requer o Nível 51",
+                    "de_DE": "Benötigt Stufe 51",
+                    "en_GB": "Requires Level 51",
+                    "es_ES": "Necesitas ser de nivel 51",
+                    "fr_FR": "Niveau 51 requis",
+                    "it_IT": "Richiede il livello 51",
+                    "ru_RU": "Требуется 51-й уровень",
+                    "ko_KR": "최소 요구 레벨: 51",
+                    "zh_TW": "需要等級51",
+                    "zh_CN": "需要等级 51"
+                }
+            },
+            "skill": {
+                "profession": {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/profession/2751?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Shadowlands Blacksmithing",
+                        "es_MX": "Herrería de Shadowlands",
+                        "pt_BR": "Ferraria de Shadowlands",
+                        "de_DE": "Schmiedekunst der Schattenlande",
+                        "en_GB": "Shadowlands Blacksmithing",
+                        "es_ES": "Herrería de Shadowlands",
+                        "fr_FR": "Forge d’Ombreterre",
+                        "it_IT": "Forgiatura di Shadowlands",
+                        "ru_RU": "Кузнечное дело Темных Земель",
+                        "ko_KR": "어둠땅 대장기술",
+                        "zh_TW": "暗影之境鍛造",
+                        "zh_CN": "暗影界锻造"
+                    },
+                    "id": 2751
+                },
+                "level": 1,
+                "display_string": {
+                    "en_US": "Requires Shadowlands Blacksmithing (1)",
+                    "es_MX": "Requiere Herrería de Shadowlands (1)",
+                    "pt_BR": "Requer Ferraria de Shadowlands (1)",
+                    "de_DE": "Benötigt Schmiedekunst der Schattenlande (1)",
+                    "en_GB": "Requires Shadowlands Blacksmithing (1)",
+                    "es_ES": "Requiere Herrería de Shadowlands (1)",
+                    "fr_FR": "Forge d’Ombreterre (1) requis",
+                    "it_IT": "Richiede: Forgiatura di Shadowlands (1)",
+                    "ru_RU": "Требуется: Кузнечное дело Темных Земель (1)",
+                    "ko_KR": "요구 사항: 어둠땅 대장기술 (1)",
+                    "zh_TW": "需要暗影之境鍛造（1）",
+                    "zh_CN": "需要暗影界锻造（1）"
+                }
+            }
+        },
+        "is_subclass_hidden": true
+    },
+    "purchase_quantity": 1
+}

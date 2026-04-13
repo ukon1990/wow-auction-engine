@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/807?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 807,
+    "name": {
+        "en_US": "Darkmoon Sigil: Rot",
+        "es_MX": "Sigilo Luna Negra: Podredumbre",
+        "pt_BR": "Signo de Negraluna: Podridão",
+        "de_DE": "Dunkelmondsiegel: Fäulnis",
+        "en_GB": "Darkmoon Sigil: Rot",
+        "es_ES": "Sigilo de la Luna Negra: Podredumbre",
+        "fr_FR": "Cachet de Sombrelune : Putréfaction",
+        "it_IT": "Sigillo di Lunacupa: Marciume",
+        "ru_RU": "Символ Новолуния \"Гниль\"",
+        "ko_KR": "다크문 인장: 부식",
+        "zh_TW": "暗月符印：腐爛",
+        "zh_CN": "暗月徽记：腐烂"
+    }
+}

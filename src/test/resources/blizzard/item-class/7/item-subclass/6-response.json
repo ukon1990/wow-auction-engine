@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/6?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 6,
+    "display_name": {
+        "en_US": "Leather",
+        "es_MX": "Cuero",
+        "pt_BR": "Couro",
+        "de_DE": "Leder",
+        "en_GB": "Leather",
+        "es_ES": "Cuero",
+        "fr_FR": "Cuir",
+        "it_IT": "Cuoio",
+        "ru_RU": "Кожа",
+        "ko_KR": "가죽",
+        "zh_TW": "皮革",
+        "zh_CN": "皮革"
+    },
+    "hide_subclass_in_tooltips": true
+}

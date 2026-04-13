@@ -1,0 +1,38 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/11?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 11,
+    "display_name": {
+        "en_US": "Bear Claws",
+        "es_MX": "Garras de oso",
+        "pt_BR": "Garras de Urso",
+        "de_DE": "Bärenklauen",
+        "en_GB": "Bear Claws",
+        "es_ES": "Garras de oso",
+        "fr_FR": "Griffes d’ours",
+        "it_IT": "Artigli da Orso",
+        "ru_RU": "Медвежьи когти",
+        "ko_KR": "곰 발톱",
+        "zh_TW": "熊爪",
+        "zh_CN": "熊爪"
+    },
+    "verbose_name": {
+        "en_US": "Bear Claws",
+        "es_MX": "Garras de oso",
+        "pt_BR": "Garras de Urso",
+        "de_DE": "Bärenklauen",
+        "en_GB": "Bear Claws",
+        "es_ES": "Garras de oso",
+        "fr_FR": "Griffes d’ours",
+        "it_IT": "Artigli da Orso",
+        "ru_RU": "Медвежьи когти",
+        "ko_KR": "곰 발톱",
+        "zh_TW": "熊爪",
+        "zh_CN": "熊爪"
+    },
+    "hide_subclass_in_tooltips": true
+}

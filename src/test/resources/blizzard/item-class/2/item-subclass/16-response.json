@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/16?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 16,
+    "display_name": {
+        "en_US": "Thrown",
+        "es_MX": "Arma arrojadiza",
+        "pt_BR": "Arremesso",
+        "de_DE": "Wurfwaffe",
+        "en_GB": "Thrown",
+        "es_ES": "Arma arrojadiza",
+        "fr_FR": "Armes de jet",
+        "it_IT": "Arma da lancio",
+        "ru_RU": "Метательное",
+        "ko_KR": "투척 무기",
+        "zh_TW": "投擲武器",
+        "zh_CN": "投掷武器"
+    },
+    "verbose_name": {
+        "en_US": "Thrown",
+        "es_MX": "Armas arrojadizas",
+        "pt_BR": "Arremesso",
+        "de_DE": "Wurfwaffen",
+        "en_GB": "Thrown",
+        "es_ES": "Armas arrojadizas",
+        "fr_FR": "Armes de jet",
+        "it_IT": "Armi da lancio",
+        "ru_RU": "Метательное",
+        "ko_KR": "투척 무기류",
+        "zh_TW": "投擲武器",
+        "zh_CN": "投掷武器"
+    }
+}

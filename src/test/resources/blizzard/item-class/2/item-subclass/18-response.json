@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/18?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 18,
+    "display_name": {
+        "en_US": "Crossbow",
+        "es_MX": "Ballesta",
+        "pt_BR": "Besta",
+        "de_DE": "Armbrust",
+        "en_GB": "Crossbow",
+        "es_ES": "Ballesta",
+        "fr_FR": "Arbalète",
+        "it_IT": "Balestra",
+        "ru_RU": "Арбалет",
+        "ko_KR": "석궁",
+        "zh_TW": "弩",
+        "zh_CN": "弩"
+    },
+    "verbose_name": {
+        "en_US": "Crossbows",
+        "es_MX": "Ballestas",
+        "pt_BR": "Bestas",
+        "de_DE": "Armbrüste",
+        "en_GB": "Crossbows",
+        "es_ES": "Ballestas",
+        "fr_FR": "Arbalètes",
+        "it_IT": "Balestre",
+        "ru_RU": "Арбалеты",
+        "ko_KR": "석궁류",
+        "zh_TW": "弩",
+        "zh_CN": "弩"
+    }
+}

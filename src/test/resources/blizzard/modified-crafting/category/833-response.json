@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/833?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 833,
+    "name": {
+        "en_US": "Multicraft Matrix",
+        "es_MX": "Matriz de fabricación múltiple",
+        "pt_BR": "Matriz de Multicriação",
+        "de_DE": "Mehrfachherstellungsmatrix",
+        "en_GB": "Multicraft Matrix",
+        "es_ES": "Matriz de multifabricación",
+        "fr_FR": "Matrice de fabrication multiple",
+        "it_IT": "Matrice della Creazione Multipla",
+        "ru_RU": "Матрица перепроизводства",
+        "ko_KR": "복수 제작 매트릭스",
+        "zh_TW": "複數製造矩陣",
+        "zh_CN": "产能矩阵"
+    }
+}

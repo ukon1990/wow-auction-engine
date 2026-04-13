@@ -1,0 +1,23 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/11?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 0,
+    "subclass_id": 11,
+    "display_name": {
+        "en_US": "Combat Curio",
+        "es_MX": "Singularidad de combate",
+        "pt_BR": "Badulaque de Combate",
+        "de_DE": "Kampfkuriosität",
+        "en_GB": "Combat Curio",
+        "es_ES": "Bibelot de combate",
+        "fr_FR": "Bibelot de combat",
+        "it_IT": "Reperto di Combattimento",
+        "ru_RU": "Боевая диковинка",
+        "ko_KR": "전투 수집품",
+        "zh_TW": "戰鬥珍品",
+        "zh_CN": "战斗珍玩"
+    }
+}

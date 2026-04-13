@@ -1,0 +1,316 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/238523?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 238523,
+    "name": {
+        "en_US": "Carving Canine",
+        "es_MX": "Canino trinchador",
+        "pt_BR": "Canino Cortante",
+        "de_DE": "Schnitzzahn",
+        "en_GB": "Carving Canine",
+        "es_ES": "Canino trinchante",
+        "fr_FR": "Canine tranchante",
+        "it_IT": "Canino da Incisione",
+        "ru_RU": "Пронзающий клык",
+        "ko_KR": "손질 송곳니",
+        "zh_TW": "雕刻犬牙",
+        "zh_CN": "锐锋犬齿"
+    },
+    "quality": {
+        "type": "UNCOMMON",
+        "name": {
+            "en_US": "Uncommon",
+            "es_MX": "Inusual",
+            "pt_BR": "Incomum",
+            "de_DE": "Ungewöhnlich",
+            "en_GB": "Uncommon",
+            "es_ES": "Inusual",
+            "fr_FR": "Inhabituel",
+            "it_IT": "Pregiato",
+            "ru_RU": "Необычное",
+            "ko_KR": "고급",
+            "zh_TW": "優秀",
+            "zh_CN": "优秀"
+        }
+    },
+    "level": 80,
+    "required_level": 0,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/238523?namespace=static-12.0.1_65617-us"
+        },
+        "id": 238523
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Tradeskill",
+            "es_MX": "Habilidad comercial",
+            "pt_BR": "Perícia profissional",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Tradeskill",
+            "es_ES": "Habilidad comercial",
+            "fr_FR": "Artisanat",
+            "it_IT": "Beni commerciali",
+            "ru_RU": "Ремесло",
+            "ko_KR": "전문 기술",
+            "zh_TW": "交易技能",
+            "zh_CN": "商业技能"
+        },
+        "id": 7
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/6?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Leather",
+            "es_MX": "Cuero",
+            "pt_BR": "Couro",
+            "de_DE": "Leder",
+            "en_GB": "Leather",
+            "es_ES": "Cuero",
+            "fr_FR": "Cuir",
+            "it_IT": "Cuoio",
+            "ru_RU": "Кожа",
+            "ko_KR": "가죽",
+            "zh_TW": "皮革",
+            "zh_CN": "皮革"
+        },
+        "id": 6
+    },
+    "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": {
+            "en_US": "Non-equippable",
+            "es_MX": "No equipable",
+            "pt_BR": "Não equipável",
+            "de_DE": "Nicht anlegbar",
+            "en_GB": "Non-equippable",
+            "es_ES": "No se puede equipar",
+            "fr_FR": "Objet hors équipement",
+            "it_IT": "Non equipaggiabile",
+            "ru_RU": "Неэкипируемое",
+            "ko_KR": "착용 불가",
+            "zh_TW": "無法裝備",
+            "zh_CN": "无法装备"
+        }
+    },
+    "purchase_price": 12500,
+    "sell_price": 2500,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "description": {
+        "en_US": "An uncommon species-specific material gathered from fanged creatures with the Skinning skill. Can be bought and sold on the Auction House.",
+        "es_MX": "Un material específico e inusual que se obtiene de criaturas con colmillos con la habilidad de desuello. Se puede comprar y vender en la casa de subastas.",
+        "pt_BR": "Material incomum, obtido especificamente de criaturas com presas por jogadores com perícia em Esfolamento. Pode ser comprado e vendido na Casa de Leilões.",
+        "de_DE": "Ein ungewöhnliches, von der Spezies abhängiges Material, das Spielercharaktere mit Kürschnerei von Kreaturen mit Fangzähnen sammeln können. Kann im Auktionshaus verkauft und erworben werden.",
+        "en_GB": "An uncommon species-specific material gathered from fanged creatures with the Skinning skill. Can be bought and sold on the Auction House.",
+        "es_ES": "Un material poco común de una especie con colmillos concreta que se recoge con la habilidad de desuello. Se puede comprar y vender en la casa de subastas.",
+        "fr_FR": "Un matériau spécifique à une espèce inhabituelle obtenu sur des bêtes à crocs grâce à la compétence en dépeçage. S’achète et se vend à l’hôtel des ventes.",
+        "it_IT": "Un materiale pregiato e specie-specifico raccolto dalle creature zannute grazie alla competenza in Scuoiatura. Può essere comprato e venduto alla Casa d'Aste.",
+        "ru_RU": "Необычный материал, который игроки с навыком снятия шкур добывают с клыкастых существ. Можно купить или продать на аукционе.",
+        "ko_KR": "송곳니를 지닌 생명체에게서만 얻을 수 있는 고급 재료입니다. 무두질 기술을 보유한 플레이어가 채집합니다. 경매장에서 거래할 수 있습니다.",
+        "zh_TW": "由剝皮師玩家從長著尖牙的生物身上採集的種族專屬罕見材料。可在拍賣場進行買賣。",
+        "zh_CN": "不常见的材料，只有特定物种才能提供，可凭借剥皮技能从獠牙生物身上采集。可以在拍卖行购买和出售。"
+    },
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/238523?namespace=static-12.0.1_65617-us"
+            },
+            "id": 238523
+        },
+        "quality": {
+            "type": "UNCOMMON",
+            "name": {
+                "en_US": "Uncommon",
+                "es_MX": "Inusual",
+                "pt_BR": "Incomum",
+                "de_DE": "Ungewöhnlich",
+                "en_GB": "Uncommon",
+                "es_ES": "Inusual",
+                "fr_FR": "Inhabituel",
+                "it_IT": "Pregiato",
+                "ru_RU": "Необычное",
+                "ko_KR": "고급",
+                "zh_TW": "優秀",
+                "zh_CN": "优秀"
+            }
+        },
+        "name": {
+            "en_US": "Carving Canine",
+            "es_MX": "Canino trinchador",
+            "pt_BR": "Canino Cortante",
+            "de_DE": "Schnitzzahn",
+            "en_GB": "Carving Canine",
+            "es_ES": "Canino trinchante",
+            "fr_FR": "Canine tranchante",
+            "it_IT": "Canino da Incisione",
+            "ru_RU": "Пронзающий клык",
+            "ko_KR": "손질 송곳니",
+            "zh_TW": "雕刻犬牙",
+            "zh_CN": "锐锋犬齿"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/238523?namespace=static-12.0.1_65617-us"
+            },
+            "id": 238523
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Tradeskill",
+                "es_MX": "Habilidad comercial",
+                "pt_BR": "Perícia profissional",
+                "de_DE": "Handwerksmaterial",
+                "en_GB": "Tradeskill",
+                "es_ES": "Habilidad comercial",
+                "fr_FR": "Artisanat",
+                "it_IT": "Beni commerciali",
+                "ru_RU": "Ремесло",
+                "ko_KR": "전문 기술",
+                "zh_TW": "交易技能",
+                "zh_CN": "商业技能"
+            },
+            "id": 7
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/6?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Leather",
+                "es_MX": "Cuero",
+                "pt_BR": "Couro",
+                "de_DE": "Leder",
+                "en_GB": "Leather",
+                "es_ES": "Cuero",
+                "fr_FR": "Cuir",
+                "it_IT": "Cuoio",
+                "ru_RU": "Кожа",
+                "ko_KR": "가죽",
+                "zh_TW": "皮革",
+                "zh_CN": "皮革"
+            },
+            "id": 6
+        },
+        "inventory_type": {
+            "type": "NON_EQUIP",
+            "name": {
+                "en_US": "Non-equippable",
+                "es_MX": "No equipable",
+                "pt_BR": "Não equipável",
+                "de_DE": "Nicht anlegbar",
+                "en_GB": "Non-equippable",
+                "es_ES": "No se puede equipar",
+                "fr_FR": "Objet hors équipement",
+                "it_IT": "Non equipaggiabile",
+                "ru_RU": "Неэкипируемое",
+                "ko_KR": "착용 불가",
+                "zh_TW": "無法裝備",
+                "zh_CN": "无法装备"
+            }
+        },
+        "sell_price": {
+            "value": 2500,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                },
+                "silver": {
+                    "en_US": "25",
+                    "es_MX": "25",
+                    "pt_BR": "25",
+                    "de_DE": "25",
+                    "en_GB": "25",
+                    "es_ES": "25",
+                    "fr_FR": "25",
+                    "it_IT": "25",
+                    "ru_RU": "25",
+                    "ko_KR": "25",
+                    "zh_TW": "25",
+                    "zh_CN": "25"
+                },
+                "copper": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                }
+            }
+        },
+        "description": {
+            "en_US": "An uncommon species-specific material gathered from fanged creatures with the Skinning skill. Can be bought and sold on the Auction House.",
+            "es_MX": "Un material específico e inusual que se obtiene de criaturas con colmillos con la habilidad de desuello. Se puede comprar y vender en la casa de subastas.",
+            "pt_BR": "Material incomum, obtido especificamente de criaturas com presas por jogadores com perícia em Esfolamento. Pode ser comprado e vendido na Casa de Leilões.",
+            "de_DE": "Ein ungewöhnliches, von der Spezies abhängiges Material, das Spielercharaktere mit Kürschnerei von Kreaturen mit Fangzähnen sammeln können. Kann im Auktionshaus verkauft und erworben werden.",
+            "en_GB": "An uncommon species-specific material gathered from fanged creatures with the Skinning skill. Can be bought and sold on the Auction House.",
+            "es_ES": "Un material poco común de una especie con colmillos concreta que se recoge con la habilidad de desuello. Se puede comprar y vender en la casa de subastas.",
+            "fr_FR": "Un matériau spécifique à une espèce inhabituelle obtenu sur des bêtes à crocs grâce à la compétence en dépeçage. S’achète et se vend à l’hôtel des ventes.",
+            "it_IT": "Un materiale pregiato e specie-specifico raccolto dalle creature zannute grazie alla competenza in Scuoiatura. Può essere comprato e venduto alla Casa d'Aste.",
+            "ru_RU": "Необычный материал, который игроки с навыком снятия шкур добывают с клыкастых существ. Можно купить или продать на аукционе.",
+            "ko_KR": "송곳니를 지닌 생명체에게서만 얻을 수 있는 고급 재료입니다. 무두질 기술을 보유한 플레이어가 채집합니다. 경매장에서 거래할 수 있습니다.",
+            "zh_TW": "由剝皮師玩家從長著尖牙的生物身上採集的種族專屬罕見材料。可在拍賣場進行買賣。",
+            "zh_CN": "不常见的材料，只有特定物种才能提供，可凭借剥皮技能从獠牙生物身上采集。可以在拍卖行购买和出售。"
+        },
+        "is_subclass_hidden": true,
+        "crafting_reagent": {
+            "en_US": "Crafting Reagent",
+            "es_MX": "Componente de creación",
+            "pt_BR": "Reagente de criação",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Crafting Reagent",
+            "es_ES": "Componente de profesión",
+            "fr_FR": "Composant d’artisanat",
+            "it_IT": "Reagente d'artigianato",
+            "ru_RU": "Используется для ремесел",
+            "ko_KR": "제작 재료",
+            "zh_TW": "製造材料",
+            "zh_CN": "制作材料"
+        }
+    },
+    "purchase_quantity": 1
+}

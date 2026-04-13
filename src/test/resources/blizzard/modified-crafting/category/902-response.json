@@ -1,0 +1,12 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/902?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 902,
+    "name": {
+        "en_US": "12.0 Optional Reagent - Outdoor Upgrade Dungeon - All",
+        "en_GB": "12.0 Optional Reagent - Outdoor Upgrade Dungeon - All"
+    }
+}

@@ -1,0 +1,639 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/171391?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 171391,
+    "name": {
+        "en_US": "Ceremonious Shield",
+        "es_MX": "Escudo ceremonioso",
+        "pt_BR": "Escudo Cerimonioso",
+        "de_DE": "Zeremonieller Schild",
+        "en_GB": "Ceremonious Shield",
+        "es_ES": "Escudo de ceremonia",
+        "fr_FR": "Bouclier de cérémonie",
+        "it_IT": "Scudo Cerimonioso",
+        "ru_RU": "Церемониальный щит",
+        "ko_KR": "격조의 방패",
+        "zh_TW": "典禮盾牌",
+        "zh_CN": "仪式盾牌"
+    },
+    "quality": {
+        "type": "UNCOMMON",
+        "name": {
+            "en_US": "Uncommon",
+            "es_MX": "Inusual",
+            "pt_BR": "Incomum",
+            "de_DE": "Ungewöhnlich",
+            "en_GB": "Uncommon",
+            "es_ES": "Inusual",
+            "fr_FR": "Inhabituel",
+            "it_IT": "Pregiato",
+            "ru_RU": "Необычное",
+            "ko_KR": "고급",
+            "zh_TW": "優秀",
+            "zh_CN": "优秀"
+        }
+    },
+    "level": 100,
+    "required_level": 50,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/171391?namespace=static-12.0.1_65617-us"
+        },
+        "id": 171391
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Armor",
+            "es_MX": "Armadura",
+            "pt_BR": "Armadura",
+            "de_DE": "Rüstung",
+            "en_GB": "Armor",
+            "es_ES": "Armadura",
+            "fr_FR": "Armure",
+            "it_IT": "Armature",
+            "ru_RU": "Доспехи",
+            "ko_KR": "방어구",
+            "zh_TW": "護甲",
+            "zh_CN": "护甲"
+        },
+        "id": 4
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/6?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Shield",
+            "es_MX": "Escudo",
+            "pt_BR": "Escudo",
+            "de_DE": "Schild",
+            "en_GB": "Shield",
+            "es_ES": "Escudo",
+            "fr_FR": "Bouclier",
+            "it_IT": "Scudo",
+            "ru_RU": "Щит",
+            "ko_KR": "방패",
+            "zh_TW": "盾牌",
+            "zh_CN": "盾牌"
+        },
+        "id": 6
+    },
+    "inventory_type": {
+        "type": "SHIELD",
+        "name": {
+            "en_US": "Off Hand",
+            "es_MX": "Mano izquierda",
+            "pt_BR": "Mão Secundária",
+            "de_DE": "Schildhand",
+            "en_GB": "Off Hand",
+            "es_ES": "Mano izquierda",
+            "fr_FR": "Main gauche",
+            "it_IT": "Mano secondaria",
+            "ru_RU": "Левая рука",
+            "ko_KR": "보조장비",
+            "zh_TW": "副手",
+            "zh_CN": "副手"
+        }
+    },
+    "purchase_price": 2274682,
+    "sell_price": 454936,
+    "max_count": 0,
+    "is_equippable": true,
+    "is_stackable": false,
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/171391?namespace=static-12.0.1_65617-us"
+            },
+            "id": 171391
+        },
+        "context": 0,
+        "bonus_list": [
+            6884
+        ],
+        "quality": {
+            "type": "UNCOMMON",
+            "name": {
+                "en_US": "Uncommon",
+                "es_MX": "Inusual",
+                "pt_BR": "Incomum",
+                "de_DE": "Ungewöhnlich",
+                "en_GB": "Uncommon",
+                "es_ES": "Inusual",
+                "fr_FR": "Inhabituel",
+                "it_IT": "Pregiato",
+                "ru_RU": "Необычное",
+                "ko_KR": "고급",
+                "zh_TW": "優秀",
+                "zh_CN": "优秀"
+            }
+        },
+        "name": {
+            "en_US": "Ceremonious Shield",
+            "es_MX": "Escudo ceremonioso",
+            "pt_BR": "Escudo Cerimonioso",
+            "de_DE": "Zeremonieller Schild",
+            "en_GB": "Ceremonious Shield",
+            "es_ES": "Escudo de ceremonia",
+            "fr_FR": "Bouclier de cérémonie",
+            "it_IT": "Scudo Cerimonioso",
+            "ru_RU": "Церемониальный щит",
+            "ko_KR": "격조의 방패",
+            "zh_TW": "典禮盾牌",
+            "zh_CN": "仪式盾牌"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/171391?namespace=static-12.0.1_65617-us"
+            },
+            "id": 171391
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Armor",
+                "es_MX": "Armadura",
+                "pt_BR": "Armadura",
+                "de_DE": "Rüstung",
+                "en_GB": "Armor",
+                "es_ES": "Armadura",
+                "fr_FR": "Armure",
+                "it_IT": "Armature",
+                "ru_RU": "Доспехи",
+                "ko_KR": "방어구",
+                "zh_TW": "護甲",
+                "zh_CN": "护甲"
+            },
+            "id": 4
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/6?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Shield",
+                "es_MX": "Escudo",
+                "pt_BR": "Escudo",
+                "de_DE": "Schild",
+                "en_GB": "Shield",
+                "es_ES": "Escudo",
+                "fr_FR": "Bouclier",
+                "it_IT": "Scudo",
+                "ru_RU": "Щит",
+                "ko_KR": "방패",
+                "zh_TW": "盾牌",
+                "zh_CN": "盾牌"
+            },
+            "id": 6
+        },
+        "inventory_type": {
+            "type": "SHIELD",
+            "name": {
+                "en_US": "Off Hand",
+                "es_MX": "Mano izquierda",
+                "pt_BR": "Mão Secundária",
+                "de_DE": "Schildhand",
+                "en_GB": "Off Hand",
+                "es_ES": "Mano izquierda",
+                "fr_FR": "Main gauche",
+                "it_IT": "Mano secondaria",
+                "ru_RU": "Левая рука",
+                "ko_KR": "보조장비",
+                "zh_TW": "副手",
+                "zh_CN": "副手"
+            }
+        },
+        "binding": {
+            "type": "ON_EQUIP",
+            "name": {
+                "en_US": "Binds when equipped",
+                "es_MX": "Se liga al equiparlo",
+                "pt_BR": "Vincula-se quando equipado",
+                "de_DE": "Wird beim Anlegen gebunden",
+                "en_GB": "Binds when equipped",
+                "es_ES": "Se liga al equiparlo",
+                "fr_FR": "Lié quand équipé",
+                "it_IT": "Si vincola all'equipaggiamento",
+                "ru_RU": "Становится персональным при надевании",
+                "ko_KR": "착용 시 귀속",
+                "zh_TW": "裝備後綁定",
+                "zh_CN": "装备后绑定"
+            }
+        },
+        "armor": {
+            "value": 70,
+            "display": {
+                "display_string": {
+                    "en_US": "70 Armor",
+                    "es_MX": "70 p. de armadura",
+                    "pt_BR": "70 de Armadura",
+                    "de_DE": "70 Rüstung",
+                    "en_GB": "70 Armor",
+                    "es_ES": "70 p. de armadura",
+                    "fr_FR": "Armure : 70",
+                    "it_IT": "70 Armatura",
+                    "ru_RU": "Броня: 70",
+                    "ko_KR": "방어도 70",
+                    "zh_TW": "70點護甲",
+                    "zh_CN": "70点护甲"
+                },
+                "color": {
+                    "r": 255,
+                    "g": 255,
+                    "b": 255,
+                    "a": 1
+                }
+            }
+        },
+        "shield_block": {
+            "value": 175,
+            "display": {
+                "display_string": {
+                    "en_US": "175 Block",
+                    "es_MX": "175 de bloqueo",
+                    "pt_BR": "Bloqueio de 175",
+                    "de_DE": "175 Blocken",
+                    "en_GB": "175 Block",
+                    "es_ES": "175 bloqueo",
+                    "fr_FR": "Bloquer : 175",
+                    "it_IT": "Blocco di 175",
+                    "ru_RU": "Вероятность блока: 175",
+                    "ko_KR": "방패 막기 175",
+                    "zh_TW": "175格擋",
+                    "zh_CN": "175点格挡"
+                },
+                "color": {
+                    "r": 255,
+                    "g": 255,
+                    "b": 255,
+                    "a": 1
+                }
+            }
+        },
+        "stats": [
+            {
+                "type": {
+                    "type": "INTELLECT",
+                    "name": {
+                        "en_US": "Intellect",
+                        "es_MX": "intelecto",
+                        "pt_BR": "Intelecto",
+                        "de_DE": "Intelligenz",
+                        "en_GB": "Intellect",
+                        "es_ES": "intelecto",
+                        "fr_FR": "Intelligence",
+                        "it_IT": "Intelletto",
+                        "ru_RU": "к интеллекту",
+                        "ko_KR": "지능",
+                        "zh_TW": "智力",
+                        "zh_CN": "智力"
+                    }
+                },
+                "value": 11,
+                "display": {
+                    "display_string": {
+                        "en_US": "+11 Intellect",
+                        "es_MX": "+11 intelecto",
+                        "pt_BR": "+11 Intelecto",
+                        "de_DE": "+11 Intelligenz",
+                        "en_GB": "+11 Intellect",
+                        "es_ES": "+11 intelecto",
+                        "fr_FR": "+11 Intelligence",
+                        "it_IT": "+11 Intelletto",
+                        "ru_RU": "+11 к интеллекту",
+                        "ko_KR": "지능 +11",
+                        "zh_TW": "+11智力",
+                        "zh_CN": "+11 智力"
+                    },
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 1
+                    }
+                }
+            },
+            {
+                "type": {
+                    "type": "STRENGTH",
+                    "name": {
+                        "en_US": "Strength",
+                        "es_MX": "fuerza",
+                        "pt_BR": "Força",
+                        "de_DE": "Stärke",
+                        "en_GB": "Strength",
+                        "es_ES": "fuerza",
+                        "fr_FR": "Force",
+                        "it_IT": "Forza",
+                        "ru_RU": "к силе",
+                        "ko_KR": "힘",
+                        "zh_TW": "力量",
+                        "zh_CN": "力量"
+                    }
+                },
+                "value": 4,
+                "is_negated": true,
+                "display": {
+                    "display_string": {
+                        "en_US": "+4 Strength",
+                        "es_MX": "+4 fuerza",
+                        "pt_BR": "+4 Força",
+                        "de_DE": "+4 Stärke",
+                        "en_GB": "+4 Strength",
+                        "es_ES": "+4 fuerza",
+                        "fr_FR": "+4 Force",
+                        "it_IT": "+4 Forza",
+                        "ru_RU": "+4 к силе",
+                        "ko_KR": "힘 +4",
+                        "zh_TW": "+4力量",
+                        "zh_CN": "+4 力量"
+                    },
+                    "color": {
+                        "r": 128,
+                        "g": 128,
+                        "b": 128,
+                        "a": 1
+                    }
+                }
+            },
+            {
+                "type": {
+                    "type": "STAMINA",
+                    "name": {
+                        "en_US": "Stamina",
+                        "es_MX": "aguante",
+                        "pt_BR": "Vigor",
+                        "de_DE": "Ausdauer",
+                        "en_GB": "Stamina",
+                        "es_ES": "aguante",
+                        "fr_FR": "Endurance",
+                        "it_IT": "Tempra",
+                        "ru_RU": "к выносливости",
+                        "ko_KR": "체력",
+                        "zh_TW": "耐力",
+                        "zh_CN": "耐力"
+                    }
+                },
+                "value": 5,
+                "display": {
+                    "display_string": {
+                        "en_US": "+5 Stamina",
+                        "es_MX": "+5 aguante",
+                        "pt_BR": "+5 Vigor",
+                        "de_DE": "+5 Ausdauer",
+                        "en_GB": "+5 Stamina",
+                        "es_ES": "+5 aguante",
+                        "fr_FR": "+5 Endurance",
+                        "it_IT": "+5 Tempra",
+                        "ru_RU": "+5 к выносливости",
+                        "ko_KR": "체력 +5",
+                        "zh_TW": "+5耐力",
+                        "zh_CN": "+5 耐力"
+                    },
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 1
+                    }
+                }
+            },
+            {
+                "type": {
+                    "type": "CRIT_RATING",
+                    "name": {
+                        "en_US": "Critical Strike",
+                        "es_MX": "golpe crítico",
+                        "pt_BR": "Acerto Crítico",
+                        "de_DE": "Kritischer Trefferwert",
+                        "en_GB": "Critical Strike",
+                        "es_ES": "golpe crítico",
+                        "fr_FR": "Score de crit.",
+                        "it_IT": "Indice di critico",
+                        "ru_RU": "к критическому удару",
+                        "ko_KR": "치명타 및 극대화",
+                        "zh_TW": "致命一擊",
+                        "zh_CN": "爆击"
+                    }
+                },
+                "value": 4,
+                "is_equip_bonus": true,
+                "display": {
+                    "display_string": {
+                        "en_US": "+4 Critical Strike",
+                        "es_MX": "+4 golpe crítico",
+                        "pt_BR": "+4 Acerto Crítico",
+                        "de_DE": "+4 Kritischer Trefferwert",
+                        "en_GB": "+4 Critical Strike",
+                        "es_ES": "+4 golpe crítico",
+                        "fr_FR": "+4 Score de crit.",
+                        "it_IT": "+4 Indice di critico",
+                        "ru_RU": "+4 к критическому удару",
+                        "ko_KR": "치명타 및 극대화 +4",
+                        "zh_TW": "+4致命一擊",
+                        "zh_CN": "+4 爆击"
+                    },
+                    "color": {
+                        "r": 0,
+                        "g": 255,
+                        "b": 0,
+                        "a": 1
+                    }
+                }
+            },
+            {
+                "type": {
+                    "type": "HASTE_RATING",
+                    "name": {
+                        "en_US": "Haste",
+                        "es_MX": "celeridad",
+                        "pt_BR": "Aceleração",
+                        "de_DE": "Tempo",
+                        "en_GB": "Haste",
+                        "es_ES": "celeridad",
+                        "fr_FR": "Hâte",
+                        "it_IT": "Indice di celerità",
+                        "ru_RU": "к скорости",
+                        "ko_KR": "가속",
+                        "zh_TW": "加速",
+                        "zh_CN": "急速"
+                    }
+                },
+                "value": 4,
+                "is_equip_bonus": true,
+                "display": {
+                    "display_string": {
+                        "en_US": "+4 Haste",
+                        "es_MX": "+4 celeridad",
+                        "pt_BR": "+4 Aceleração",
+                        "de_DE": "+4 Tempo",
+                        "en_GB": "+4 Haste",
+                        "es_ES": "+4 celeridad",
+                        "fr_FR": "+4 Hâte",
+                        "it_IT": "+4 Indice di celerità",
+                        "ru_RU": "+4 к скорости",
+                        "ko_KR": "가속 +4",
+                        "zh_TW": "+4加速",
+                        "zh_CN": "+4 急速"
+                    },
+                    "color": {
+                        "r": 0,
+                        "g": 255,
+                        "b": 0,
+                        "a": 1
+                    }
+                }
+            }
+        ],
+        "sell_price": {
+            "value": 3079,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                },
+                "silver": {
+                    "en_US": "30",
+                    "es_MX": "30",
+                    "pt_BR": "30",
+                    "de_DE": "30",
+                    "en_GB": "30",
+                    "es_ES": "30",
+                    "fr_FR": "30",
+                    "it_IT": "30",
+                    "ru_RU": "30",
+                    "ko_KR": "30",
+                    "zh_TW": "30",
+                    "zh_CN": "30"
+                },
+                "copper": {
+                    "en_US": "79",
+                    "es_MX": "79",
+                    "pt_BR": "79",
+                    "de_DE": "79",
+                    "en_GB": "79",
+                    "es_ES": "79",
+                    "fr_FR": "79",
+                    "it_IT": "79",
+                    "ru_RU": "79",
+                    "ko_KR": "79",
+                    "zh_TW": "79",
+                    "zh_CN": "79"
+                }
+            }
+        },
+        "level": {
+            "value": 28,
+            "display_string": {
+                "en_US": "Item Level 28",
+                "es_MX": "Nivel de objeto 28",
+                "pt_BR": "Nível do Item: 28",
+                "de_DE": "Gegenstandsstufe 28",
+                "en_GB": "Item Level 28",
+                "es_ES": "Nivel de objeto 28",
+                "fr_FR": "Niveau d'objet 28",
+                "it_IT": "Livello oggetto: 28",
+                "ru_RU": "Уровень предмета: 28",
+                "ko_KR": "아이템 레벨: 28",
+                "zh_TW": "物品等級28",
+                "zh_CN": "物品等级28"
+            }
+        },
+        "durability": {
+            "value": 80,
+            "display_string": {
+                "en_US": "Durability 80 / 80",
+                "es_MX": "Durabilidad 80 / 80",
+                "pt_BR": "Durabilidade 80 / 80",
+                "de_DE": "Haltbarkeit 80 / 80",
+                "en_GB": "Durability 80 / 80",
+                "es_ES": "Durabilidad 80 / 80",
+                "fr_FR": "Durabilité : 80 / 80",
+                "it_IT": "Integrità 80/80",
+                "ru_RU": "Прочность: 80 / 80",
+                "ko_KR": "내구도 80 / 80",
+                "zh_TW": "耐久度 80 / 80",
+                "zh_CN": "耐久度 80 / 80"
+            }
+        },
+        "modified_crafting_stat": [
+            {
+                "id": 36,
+                "type": "HASTE_RATING",
+                "name": {
+                    "en_US": "Haste",
+                    "es_MX": "celeridad",
+                    "pt_BR": "Aceleração",
+                    "de_DE": "Tempo",
+                    "en_GB": "Haste",
+                    "es_ES": "celeridad",
+                    "fr_FR": "Hâte",
+                    "it_IT": "Indice di celerità",
+                    "ru_RU": "к скорости",
+                    "ko_KR": "가속",
+                    "zh_TW": "加速",
+                    "zh_CN": "急速"
+                }
+            },
+            {
+                "id": 32,
+                "type": "CRIT_RATING",
+                "name": {
+                    "en_US": "Critical Strike",
+                    "es_MX": "golpe crítico",
+                    "pt_BR": "Acerto Crítico",
+                    "de_DE": "Kritischer Trefferwert",
+                    "en_GB": "Critical Strike",
+                    "es_ES": "golpe crítico",
+                    "fr_FR": "Score de crit.",
+                    "it_IT": "Indice di critico",
+                    "ru_RU": "к критическому удару",
+                    "ko_KR": "치명타 및 극대화",
+                    "zh_TW": "致命一擊",
+                    "zh_CN": "爆击"
+                }
+            }
+        ]
+    },
+    "purchase_quantity": 1,
+    "appearances": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42546?namespace=static-12.0.1_65617-us"
+            },
+            "id": 42546
+        }
+    ]
+}

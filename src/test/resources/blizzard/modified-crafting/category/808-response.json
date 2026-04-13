@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/808?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 808,
+    "name": {
+        "en_US": "Darkmoon Sigil: Void",
+        "es_MX": "Sigilo Luna Negra: Vacío",
+        "pt_BR": "Signo de Negraluna: Caos",
+        "de_DE": "Dunkelmondsiegel: Leere",
+        "en_GB": "Darkmoon Sigil: Void",
+        "es_ES": "Sigilo de la Luna Negra: Vacío",
+        "fr_FR": "Cachet de Sombrelune : Vide",
+        "it_IT": "Sigillo di Lunacupa: Vuoto",
+        "ru_RU": "Символ Новолуния \"Бездна\"",
+        "ko_KR": "다크문 인장: 공허",
+        "zh_TW": "暗月符印：虛無",
+        "zh_CN": "暗月徽记：虚空"
+    }
+}

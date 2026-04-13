@@ -1,0 +1,84 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/471?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 471,
+    "description": {
+        "en_US": "Competitor's Heraldry",
+        "es_MX": "Heráldica de competidor",
+        "pt_BR": "Heráldica do Competidor",
+        "de_DE": "Wappenbuch des Wettkämpfers",
+        "en_GB": "Competitor's Heraldry",
+        "es_ES": "Escudo de armas de competidor",
+        "fr_FR": "Blason de compétition",
+        "it_IT": "Stemma del Concorrente",
+        "ru_RU": "Геральдика участника соревнований",
+        "ko_KR": "경쟁자의 표상",
+        "zh_TW": "競技者徽章",
+        "zh_CN": "竞争者的饰章"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/878?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Galactic Combatant's Heraldry",
+                "es_MX": "Heráldica de Combatiente galáctico",
+                "pt_BR": "Heráldica do Combatente Galáctico",
+                "de_DE": "Wappenbuch des galaktischen Kämpfers",
+                "en_GB": "Galactic Combatant's Heraldry",
+                "es_ES": "Heráldica de Combatiente galáctico",
+                "fr_FR": "Blason du combattant galactique",
+                "it_IT": "Stemma del Combattente Galattico",
+                "ru_RU": "Геральдика галактического бойца",
+                "ko_KR": "우주를 호령하는 전투원의 표상",
+                "zh_TW": "銀河戰鬥者徽章",
+                "zh_CN": "星河争斗者的饰章"
+            },
+            "id": 878
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/879?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Galactic Aspirant's Heraldry",
+                "es_MX": "Heráldica de Aspirante galáctico",
+                "pt_BR": "Heráldica do Aspirante Galáctico",
+                "de_DE": "Wappenbuch des galaktischen Aspiranten",
+                "en_GB": "Galactic Aspirant's Heraldry",
+                "es_ES": "Heráldica de aspirante galáctico",
+                "fr_FR": "Blason d’aspirant galactique",
+                "it_IT": "Stemma del Pretendente Galattico",
+                "ru_RU": "Геральдика галактического претендента",
+                "ko_KR": "우주를 호령하는 지원자의 표상",
+                "zh_TW": "銀河志士徽章",
+                "zh_CN": "星河候选者的饰章"
+            },
+            "id": 879
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/880?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Galactic Gladiator's Heraldry",
+                "es_MX": "Heráldica de Gladiador galáctico",
+                "pt_BR": "Heráldica do Gladiador Galáctico",
+                "de_DE": "Wappenbuch des galaktischen Gladiators",
+                "en_GB": "Galactic Gladiator's Heraldry",
+                "es_ES": "Heráldica de Gladiador galáctico",
+                "fr_FR": "Blason du gladiateur galactique",
+                "it_IT": "Stemma del Gladiatore Galattico",
+                "ru_RU": "Геральдика галактического гладиатора",
+                "ko_KR": "우주를 호령하는 검투사의 표상",
+                "zh_TW": "銀河鬥士徽章",
+                "zh_CN": "星河角斗士的饰章"
+            },
+            "id": 880
+        }
+    ]
+}

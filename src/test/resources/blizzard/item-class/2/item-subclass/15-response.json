@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/15?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 15,
+    "display_name": {
+        "en_US": "Dagger",
+        "es_MX": "Daga",
+        "pt_BR": "Adaga",
+        "de_DE": "Dolch",
+        "en_GB": "Dagger",
+        "es_ES": "Daga",
+        "fr_FR": "Dague",
+        "it_IT": "Pugnale",
+        "ru_RU": "Кинжал",
+        "ko_KR": "단검",
+        "zh_TW": "匕首",
+        "zh_CN": "匕首"
+    },
+    "verbose_name": {
+        "en_US": "Daggers",
+        "es_MX": "Dagas",
+        "pt_BR": "Adagas",
+        "de_DE": "Dolche",
+        "en_GB": "Daggers",
+        "es_ES": "Dagas",
+        "fr_FR": "Dagues",
+        "it_IT": "Pugnali",
+        "ru_RU": "Кинжалы",
+        "ko_KR": "단검류",
+        "zh_TW": "匕首",
+        "zh_CN": "匕首"
+    }
+}

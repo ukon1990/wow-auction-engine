@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/10?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 4,
+    "subclass_id": 10,
+    "display_name": {
+        "en_US": "Sigil",
+        "es_MX": "Sigilo",
+        "pt_BR": "Signo",
+        "de_DE": "Siegel",
+        "en_GB": "Sigil",
+        "es_ES": "Sigilo",
+        "fr_FR": "Cachet",
+        "it_IT": "Sigillo",
+        "ru_RU": "Печать",
+        "ko_KR": "인장",
+        "zh_TW": "符印",
+        "zh_CN": "魔印"
+    },
+    "verbose_name": {
+        "en_US": "Sigils",
+        "es_MX": "Sigilo",
+        "pt_BR": "Signos",
+        "de_DE": "Siegel",
+        "en_GB": "Sigils",
+        "es_ES": "Sigilo",
+        "fr_FR": "Cachets",
+        "it_IT": "Sigilli",
+        "ru_RU": "Печати",
+        "ko_KR": "인장",
+        "zh_TW": "符印",
+        "zh_CN": "魔印"
+    }
+}

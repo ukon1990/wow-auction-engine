@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/805?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 805,
+    "name": {
+        "en_US": "Darkmoon Sigil: Blood",
+        "es_MX": "Sigilo Luna Negra: Sangre",
+        "pt_BR": "Signo de Negraluna: Sangue",
+        "de_DE": "Dunkelmondsiegel: Blut",
+        "en_GB": "Darkmoon Sigil: Blood",
+        "es_ES": "Sigilo de la Luna Negra: Sangre",
+        "fr_FR": "Cachet de Sombrelune : Sang",
+        "it_IT": "Sigillo di Lunacupa: Sangue",
+        "ru_RU": "Символ Новолуния \"Кровь\"",
+        "ko_KR": "다크문 인장: 혈기",
+        "zh_TW": "暗月符印：鮮血",
+        "zh_CN": "暗月徽记：鲜血"
+    }
+}

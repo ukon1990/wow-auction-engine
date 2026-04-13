@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/826?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 826,
+    "name": {
+        "en_US": "Apprentice's Scribbles",
+        "es_MX": "Garabatos de aprendiz",
+        "pt_BR": "Rascunhos do Aprendiz",
+        "de_DE": "Lehrlingsgekritzel",
+        "en_GB": "Apprentice's Scribbles",
+        "es_ES": "Garabatos de aprendiz",
+        "fr_FR": "Gribouillage de novice",
+        "it_IT": "Scarabocchi dell'Apprendista",
+        "ru_RU": "Каракули ученика",
+        "ko_KR": "수습생이 휘갈겨 쓴 글귀",
+        "zh_TW": "學徒速記",
+        "zh_CN": "学徒的涂鸦"
+    }
+}

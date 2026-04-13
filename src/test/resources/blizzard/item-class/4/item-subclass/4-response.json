@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 4,
+    "subclass_id": 4,
+    "display_name": {
+        "en_US": "Plate",
+        "es_MX": "Placas",
+        "pt_BR": "Placas",
+        "de_DE": "Platte",
+        "en_GB": "Plate",
+        "es_ES": "Placas",
+        "fr_FR": "Plaques",
+        "it_IT": "Piastre",
+        "ru_RU": "Латы",
+        "ko_KR": "판금",
+        "zh_TW": "鎧甲",
+        "zh_CN": "板甲"
+    },
+    "verbose_name": {
+        "en_US": "Plate",
+        "es_MX": "Placas",
+        "pt_BR": "Placas",
+        "de_DE": "Platte",
+        "en_GB": "Plate",
+        "es_ES": "Placas",
+        "fr_FR": "Plaques",
+        "it_IT": "Piastre",
+        "ru_RU": "Латные",
+        "ko_KR": "판금",
+        "zh_TW": "鎧甲",
+        "zh_CN": "板甲"
+    }
+}

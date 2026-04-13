@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/9?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 0,
+    "subclass_id": 9,
+    "display_name": {
+        "en_US": "Vantus Runes",
+        "es_MX": "Runas vantus",
+        "pt_BR": "Runas Vantus",
+        "de_DE": "Vantusrunen",
+        "en_GB": "Vantus Runes",
+        "es_ES": "Runas vantus",
+        "fr_FR": "Runes de Vantus",
+        "it_IT": "Rune Vantus",
+        "ru_RU": "Вантийские руны",
+        "ko_KR": "반투스 룬",
+        "zh_TW": "梵陀符文",
+        "zh_CN": "凡图斯符文"
+    },
+    "hide_subclass_in_tooltips": true
+}

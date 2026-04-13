@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/770?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 770,
+    "name": {
+        "en_US": "Sunfire Lining",
+        "es_MX": "Revestimiento de fuego solar",
+        "pt_BR": "Forro de Fogo Solar",
+        "de_DE": "Sonnenfeuerfutter",
+        "en_GB": "Sunfire Lining",
+        "es_ES": "Forro de fuego solar",
+        "fr_FR": "Doublure du feu solaire",
+        "it_IT": "Imbottitura di Fuoco Solare",
+        "ru_RU": "Подкладка солнечного огня",
+        "ko_KR": "태양불꽃 안감",
+        "zh_TW": "日炎內襯",
+        "zh_CN": "阳炎内衬"
+    }
+}

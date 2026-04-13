@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/751?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 751,
+    "name": {
+        "en_US": "Sterling Alloy",
+        "es_MX": "Aleación de plata fina",
+        "pt_BR": "Liga Excelente",
+        "de_DE": "Sterlinglegierung",
+        "en_GB": "Sterling Alloy",
+        "es_ES": "Aleación plateada",
+        "fr_FR": "Alliage en argent",
+        "it_IT": "Lega Eccellente",
+        "ru_RU": "Сплав высокой пробы",
+        "ko_KR": "순도 높은 합금",
+        "zh_TW": "純銀合金",
+        "zh_CN": "纯银合金"
+    }
+}

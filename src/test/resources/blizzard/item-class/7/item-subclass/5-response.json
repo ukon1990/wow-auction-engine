@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/5?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 5,
+    "display_name": {
+        "en_US": "Cloth",
+        "es_MX": "Tela",
+        "pt_BR": "Tecido",
+        "de_DE": "Stoffe",
+        "en_GB": "Cloth",
+        "es_ES": "Tela",
+        "fr_FR": "Tissu",
+        "it_IT": "Stoffa",
+        "ru_RU": "Ткань",
+        "ko_KR": "천",
+        "zh_TW": "布料",
+        "zh_CN": "布料"
+    },
+    "hide_subclass_in_tooltips": true
+}

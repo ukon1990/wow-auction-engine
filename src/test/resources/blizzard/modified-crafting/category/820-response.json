@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/820?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 820,
+    "name": {
+        "en_US": "Thalassian Missive of Resourcefulness",
+        "es_MX": "Misiva thalassiana de inventiva",
+        "pt_BR": "Missiva Talassiana da Desenvoltura",
+        "de_DE": "Thalassisches Schreiben des Einfallsreichtums",
+        "en_GB": "Thalassian Missive of Resourcefulness",
+        "es_ES": "Misiva thalassiana de ingenio",
+        "fr_FR": "Missive thalassienne d’ingéniosité",
+        "it_IT": "Missiva della Parsimonia Thalassiana",
+        "ru_RU": "Талассийское послание находчивости",
+        "ko_KR": "지혜의 탈라시안 서신",
+        "zh_TW": "薩拉斯精明書狀",
+        "zh_CN": "充裕之萨拉斯公函"
+    }
+}

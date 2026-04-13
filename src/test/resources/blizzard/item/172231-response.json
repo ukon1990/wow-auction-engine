@@ -1,0 +1,227 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/172231?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 172231,
+    "name": {
+        "en_US": "Sacred Shard",
+        "es_MX": "Fragmento sagrado",
+        "pt_BR": "Estilhaço Sagrado",
+        "de_DE": "Heiliger Splitter",
+        "en_GB": "Sacred Shard",
+        "es_ES": "Fragmento sagrado",
+        "fr_FR": "Éclat sacré",
+        "it_IT": "Scheggia Sacra",
+        "ru_RU": "Священный осколок",
+        "ko_KR": "신성한 조각",
+        "zh_TW": "神聖裂片",
+        "zh_CN": "圣洁碎片"
+    },
+    "quality": {
+        "type": "RARE",
+        "name": {
+            "en_US": "Rare",
+            "es_MX": "Raro",
+            "pt_BR": "Raro",
+            "de_DE": "Selten",
+            "en_GB": "Rare",
+            "es_ES": "Raro",
+            "fr_FR": "Rare",
+            "it_IT": "Raro",
+            "ru_RU": "Редкое",
+            "ko_KR": "희귀",
+            "zh_TW": "精良",
+            "zh_CN": "精良"
+        }
+    },
+    "level": 50,
+    "required_level": 0,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/172231?namespace=static-12.0.1_65617-us"
+        },
+        "id": 172231
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Tradeskill",
+            "es_MX": "Habilidad comercial",
+            "pt_BR": "Perícia profissional",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Tradeskill",
+            "es_ES": "Habilidad comercial",
+            "fr_FR": "Artisanat",
+            "it_IT": "Beni commerciali",
+            "ru_RU": "Ремесло",
+            "ko_KR": "전문 기술",
+            "zh_TW": "交易技能",
+            "zh_CN": "商业技能"
+        },
+        "id": 7
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/12?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Enchanting",
+            "es_MX": "Encantamiento",
+            "pt_BR": "Encantamento",
+            "de_DE": "Verzauberkunst",
+            "en_GB": "Enchanting",
+            "es_ES": "Encantamiento",
+            "fr_FR": "Enchantement",
+            "it_IT": "Incantamento",
+            "ru_RU": "Наложение чар",
+            "ko_KR": "마법부여",
+            "zh_TW": "附魔",
+            "zh_CN": "附魔材料"
+        },
+        "id": 12
+    },
+    "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": {
+            "en_US": "Non-equippable",
+            "es_MX": "No equipable",
+            "pt_BR": "Não equipável",
+            "de_DE": "Nicht anlegbar",
+            "en_GB": "Non-equippable",
+            "es_ES": "No se puede equipar",
+            "fr_FR": "Objet hors équipement",
+            "it_IT": "Non equipaggiabile",
+            "ru_RU": "Неэкипируемое",
+            "ko_KR": "착용 불가",
+            "zh_TW": "無法裝備",
+            "zh_CN": "无法装备"
+        }
+    },
+    "purchase_price": 0,
+    "sell_price": 0,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/172231?namespace=static-12.0.1_65617-us"
+            },
+            "id": 172231
+        },
+        "quality": {
+            "type": "RARE",
+            "name": {
+                "en_US": "Rare",
+                "es_MX": "Raro",
+                "pt_BR": "Raro",
+                "de_DE": "Selten",
+                "en_GB": "Rare",
+                "es_ES": "Raro",
+                "fr_FR": "Rare",
+                "it_IT": "Raro",
+                "ru_RU": "Редкое",
+                "ko_KR": "희귀",
+                "zh_TW": "精良",
+                "zh_CN": "精良"
+            }
+        },
+        "name": {
+            "en_US": "Sacred Shard",
+            "es_MX": "Fragmento sagrado",
+            "pt_BR": "Estilhaço Sagrado",
+            "de_DE": "Heiliger Splitter",
+            "en_GB": "Sacred Shard",
+            "es_ES": "Fragmento sagrado",
+            "fr_FR": "Éclat sacré",
+            "it_IT": "Scheggia Sacra",
+            "ru_RU": "Священный осколок",
+            "ko_KR": "신성한 조각",
+            "zh_TW": "神聖裂片",
+            "zh_CN": "圣洁碎片"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/172231?namespace=static-12.0.1_65617-us"
+            },
+            "id": 172231
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Tradeskill",
+                "es_MX": "Habilidad comercial",
+                "pt_BR": "Perícia profissional",
+                "de_DE": "Handwerksmaterial",
+                "en_GB": "Tradeskill",
+                "es_ES": "Habilidad comercial",
+                "fr_FR": "Artisanat",
+                "it_IT": "Beni commerciali",
+                "ru_RU": "Ремесло",
+                "ko_KR": "전문 기술",
+                "zh_TW": "交易技能",
+                "zh_CN": "商业技能"
+            },
+            "id": 7
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/12?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Enchanting",
+                "es_MX": "Encantamiento",
+                "pt_BR": "Encantamento",
+                "de_DE": "Verzauberkunst",
+                "en_GB": "Enchanting",
+                "es_ES": "Encantamiento",
+                "fr_FR": "Enchantement",
+                "it_IT": "Incantamento",
+                "ru_RU": "Наложение чар",
+                "ko_KR": "마법부여",
+                "zh_TW": "附魔",
+                "zh_CN": "附魔材料"
+            },
+            "id": 12
+        },
+        "inventory_type": {
+            "type": "NON_EQUIP",
+            "name": {
+                "en_US": "Non-equippable",
+                "es_MX": "No equipable",
+                "pt_BR": "Não equipável",
+                "de_DE": "Nicht anlegbar",
+                "en_GB": "Non-equippable",
+                "es_ES": "No se puede equipar",
+                "fr_FR": "Objet hors équipement",
+                "it_IT": "Non equipaggiabile",
+                "ru_RU": "Неэкипируемое",
+                "ko_KR": "착용 불가",
+                "zh_TW": "無法裝備",
+                "zh_CN": "无法装备"
+            }
+        },
+        "is_subclass_hidden": true,
+        "crafting_reagent": {
+            "en_US": "Crafting Reagent",
+            "es_MX": "Componente de creación",
+            "pt_BR": "Reagente de criação",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Crafting Reagent",
+            "es_ES": "Componente de profesión",
+            "fr_FR": "Composant d’artisanat",
+            "it_IT": "Reagente d'artigianato",
+            "ru_RU": "Используется для ремесел",
+            "ko_KR": "제작 재료",
+            "zh_TW": "製造材料",
+            "zh_CN": "制作材料"
+        }
+    },
+    "purchase_quantity": 3
+}

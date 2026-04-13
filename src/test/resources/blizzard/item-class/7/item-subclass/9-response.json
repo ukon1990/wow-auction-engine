@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/9?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 9,
+    "display_name": {
+        "en_US": "Herb",
+        "es_MX": "Hierba",
+        "pt_BR": "Planta",
+        "de_DE": "Kräuter",
+        "en_GB": "Herb",
+        "es_ES": "Hierbas",
+        "fr_FR": "Herbes",
+        "it_IT": "Erbe",
+        "ru_RU": "Трава",
+        "ko_KR": "약초",
+        "zh_TW": "草藥",
+        "zh_CN": "草药"
+    },
+    "hide_subclass_in_tooltips": true
+}

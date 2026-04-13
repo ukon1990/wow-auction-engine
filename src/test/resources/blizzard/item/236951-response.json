@@ -1,0 +1,316 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/236951?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 236951,
+    "name": {
+        "en_US": "Mote of Wild Magic",
+        "es_MX": "Mota de magia salvaje",
+        "pt_BR": "Grânulo de Magia Selvagem",
+        "de_DE": "Partikel der wilden Magie",
+        "en_GB": "Mote of Wild Magic",
+        "es_ES": "Mota de magia salvaje",
+        "fr_FR": "Particule de magie sauvage",
+        "it_IT": "Granulo di Magia Selvaggia",
+        "ru_RU": "Частица дикой магии",
+        "ko_KR": "야생 마력의 티끌",
+        "zh_TW": "狂野魔法微粒",
+        "zh_CN": "狂野魔法微粒"
+    },
+    "quality": {
+        "type": "RARE",
+        "name": {
+            "en_US": "Rare",
+            "es_MX": "Raro",
+            "pt_BR": "Raro",
+            "de_DE": "Selten",
+            "en_GB": "Rare",
+            "es_ES": "Raro",
+            "fr_FR": "Rare",
+            "it_IT": "Raro",
+            "ru_RU": "Редкое",
+            "ko_KR": "희귀",
+            "zh_TW": "精良",
+            "zh_CN": "精良"
+        }
+    },
+    "level": 80,
+    "required_level": 1,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/236951?namespace=static-12.0.1_65617-us"
+        },
+        "id": 236951
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Tradeskill",
+            "es_MX": "Habilidad comercial",
+            "pt_BR": "Perícia profissional",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Tradeskill",
+            "es_ES": "Habilidad comercial",
+            "fr_FR": "Artisanat",
+            "it_IT": "Beni commerciali",
+            "ru_RU": "Ремесло",
+            "ko_KR": "전문 기술",
+            "zh_TW": "交易技能",
+            "zh_CN": "商业技能"
+        },
+        "id": 7
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/11?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Other",
+            "es_MX": "Otros",
+            "pt_BR": "Outro",
+            "de_DE": "Sonstiges",
+            "en_GB": "Other",
+            "es_ES": "Otros",
+            "fr_FR": "Autres",
+            "it_IT": "Altro",
+            "ru_RU": "Другое",
+            "ko_KR": "기타",
+            "zh_TW": "其他",
+            "zh_CN": "其它"
+        },
+        "id": 11
+    },
+    "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": {
+            "en_US": "Non-equippable",
+            "es_MX": "No equipable",
+            "pt_BR": "Não equipável",
+            "de_DE": "Nicht anlegbar",
+            "en_GB": "Non-equippable",
+            "es_ES": "No se puede equipar",
+            "fr_FR": "Objet hors équipement",
+            "it_IT": "Non equipaggiabile",
+            "ru_RU": "Неэкипируемое",
+            "ko_KR": "착용 불가",
+            "zh_TW": "無法裝備",
+            "zh_CN": "无法装备"
+        }
+    },
+    "purchase_price": 10000,
+    "sell_price": 2000,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "description": {
+        "en_US": "Wild magic given a solid form. Can be bought and sold on the Auction House.",
+        "es_MX": "Magia salvaje en un cuerpo sólido. Se puede comprar y vender en la casa de subastas.",
+        "pt_BR": "Magia selvagem representada de forma sólida. Pode ser comprada e vendida na Casa de Leilões.",
+        "de_DE": "Wilde Magie in fester Form. Kann im Auktionshaus verkauft und erworben werden.",
+        "en_GB": "Wild magic given a solid form. Can be bought and sold on the Auction House.",
+        "es_ES": "Magia salvaje en forma sólida. Se puede comprar y vender en la casa de subastas.",
+        "fr_FR": "Un peu de magie sauvage sous une forme solide. S’achète et se vend à l’hôtel des ventes.",
+        "it_IT": "Magia selvaggia allo stato solido. Può essere comprato e venduto alla Casa d'Aste.",
+        "ru_RU": "Дикая магия в осязаемой форме. Можно купить или продать на аукционе.",
+        "ko_KR": "물리적인 형상을 얻은 야생 마력입니다. 경매장에서 거래할 수 있습니다.",
+        "zh_TW": "被賦予實體的狂野魔法。可在拍賣場進行買賣。",
+        "zh_CN": "形态稳定的狂野魔法。可以在拍卖行购买和出售。"
+    },
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/236951?namespace=static-12.0.1_65617-us"
+            },
+            "id": 236951
+        },
+        "quality": {
+            "type": "RARE",
+            "name": {
+                "en_US": "Rare",
+                "es_MX": "Raro",
+                "pt_BR": "Raro",
+                "de_DE": "Selten",
+                "en_GB": "Rare",
+                "es_ES": "Raro",
+                "fr_FR": "Rare",
+                "it_IT": "Raro",
+                "ru_RU": "Редкое",
+                "ko_KR": "희귀",
+                "zh_TW": "精良",
+                "zh_CN": "精良"
+            }
+        },
+        "name": {
+            "en_US": "Mote of Wild Magic",
+            "es_MX": "Mota de magia salvaje",
+            "pt_BR": "Grânulo de Magia Selvagem",
+            "de_DE": "Partikel der wilden Magie",
+            "en_GB": "Mote of Wild Magic",
+            "es_ES": "Mota de magia salvaje",
+            "fr_FR": "Particule de magie sauvage",
+            "it_IT": "Granulo di Magia Selvaggia",
+            "ru_RU": "Частица дикой магии",
+            "ko_KR": "야생 마력의 티끌",
+            "zh_TW": "狂野魔法微粒",
+            "zh_CN": "狂野魔法微粒"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/236951?namespace=static-12.0.1_65617-us"
+            },
+            "id": 236951
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Tradeskill",
+                "es_MX": "Habilidad comercial",
+                "pt_BR": "Perícia profissional",
+                "de_DE": "Handwerksmaterial",
+                "en_GB": "Tradeskill",
+                "es_ES": "Habilidad comercial",
+                "fr_FR": "Artisanat",
+                "it_IT": "Beni commerciali",
+                "ru_RU": "Ремесло",
+                "ko_KR": "전문 기술",
+                "zh_TW": "交易技能",
+                "zh_CN": "商业技能"
+            },
+            "id": 7
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/11?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Other",
+                "es_MX": "Otros",
+                "pt_BR": "Outro",
+                "de_DE": "Sonstiges",
+                "en_GB": "Other",
+                "es_ES": "Otros",
+                "fr_FR": "Autres",
+                "it_IT": "Altro",
+                "ru_RU": "Другое",
+                "ko_KR": "기타",
+                "zh_TW": "其他",
+                "zh_CN": "其它"
+            },
+            "id": 11
+        },
+        "inventory_type": {
+            "type": "NON_EQUIP",
+            "name": {
+                "en_US": "Non-equippable",
+                "es_MX": "No equipable",
+                "pt_BR": "Não equipável",
+                "de_DE": "Nicht anlegbar",
+                "en_GB": "Non-equippable",
+                "es_ES": "No se puede equipar",
+                "fr_FR": "Objet hors équipement",
+                "it_IT": "Non equipaggiabile",
+                "ru_RU": "Неэкипируемое",
+                "ko_KR": "착용 불가",
+                "zh_TW": "無法裝備",
+                "zh_CN": "无法装备"
+            }
+        },
+        "sell_price": {
+            "value": 2000,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                },
+                "silver": {
+                    "en_US": "20",
+                    "es_MX": "20",
+                    "pt_BR": "20",
+                    "de_DE": "20",
+                    "en_GB": "20",
+                    "es_ES": "20",
+                    "fr_FR": "20",
+                    "it_IT": "20",
+                    "ru_RU": "20",
+                    "ko_KR": "20",
+                    "zh_TW": "20",
+                    "zh_CN": "20"
+                },
+                "copper": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                }
+            }
+        },
+        "description": {
+            "en_US": "Wild magic given a solid form. Can be bought and sold on the Auction House.",
+            "es_MX": "Magia salvaje en un cuerpo sólido. Se puede comprar y vender en la casa de subastas.",
+            "pt_BR": "Magia selvagem representada de forma sólida. Pode ser comprada e vendida na Casa de Leilões.",
+            "de_DE": "Wilde Magie in fester Form. Kann im Auktionshaus verkauft und erworben werden.",
+            "en_GB": "Wild magic given a solid form. Can be bought and sold on the Auction House.",
+            "es_ES": "Magia salvaje en forma sólida. Se puede comprar y vender en la casa de subastas.",
+            "fr_FR": "Un peu de magie sauvage sous une forme solide. S’achète et se vend à l’hôtel des ventes.",
+            "it_IT": "Magia selvaggia allo stato solido. Può essere comprato e venduto alla Casa d'Aste.",
+            "ru_RU": "Дикая магия в осязаемой форме. Можно купить или продать на аукционе.",
+            "ko_KR": "물리적인 형상을 얻은 야생 마력입니다. 경매장에서 거래할 수 있습니다.",
+            "zh_TW": "被賦予實體的狂野魔法。可在拍賣場進行買賣。",
+            "zh_CN": "形态稳定的狂野魔法。可以在拍卖行购买和出售。"
+        },
+        "is_subclass_hidden": true,
+        "crafting_reagent": {
+            "en_US": "Crafting Reagent",
+            "es_MX": "Componente de creación",
+            "pt_BR": "Reagente de criação",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Crafting Reagent",
+            "es_ES": "Componente de profesión",
+            "fr_FR": "Composant d’artisanat",
+            "it_IT": "Reagente d'artigianato",
+            "ru_RU": "Используется для ремесел",
+            "ko_KR": "제작 재료",
+            "zh_TW": "製造材料",
+            "zh_CN": "制作材料"
+        }
+    },
+    "purchase_quantity": 1
+}

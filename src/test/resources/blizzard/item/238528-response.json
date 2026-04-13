@@ -1,0 +1,316 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/238528?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 238528,
+    "name": {
+        "en_US": "Majestic Claw",
+        "es_MX": "Zarpa majestuosa",
+        "pt_BR": "Garra Majestosa",
+        "de_DE": "Majestätische Klaue",
+        "en_GB": "Majestic Claw",
+        "es_ES": "Garra majestuosa",
+        "fr_FR": "Griffe majestueuse",
+        "it_IT": "Artiglio Maestoso",
+        "ru_RU": "Величественный коготь",
+        "ko_KR": "위엄 넘치는 발톱",
+        "zh_TW": "珍獸獸爪",
+        "zh_CN": "威风之爪"
+    },
+    "quality": {
+        "type": "EPIC",
+        "name": {
+            "en_US": "Epic",
+            "es_MX": "Épico",
+            "pt_BR": "Épico",
+            "de_DE": "Episch",
+            "en_GB": "Epic",
+            "es_ES": "Épico",
+            "fr_FR": "Épique",
+            "it_IT": "Epico",
+            "ru_RU": "Эпическое",
+            "ko_KR": "영웅",
+            "zh_TW": "史詩",
+            "zh_CN": "史诗"
+        }
+    },
+    "level": 80,
+    "required_level": 0,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/238528?namespace=static-12.0.1_65617-us"
+        },
+        "id": 238528
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Tradeskill",
+            "es_MX": "Habilidad comercial",
+            "pt_BR": "Perícia profissional",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Tradeskill",
+            "es_ES": "Habilidad comercial",
+            "fr_FR": "Artisanat",
+            "it_IT": "Beni commerciali",
+            "ru_RU": "Ремесло",
+            "ko_KR": "전문 기술",
+            "zh_TW": "交易技能",
+            "zh_CN": "商业技能"
+        },
+        "id": 7
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/6?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Leather",
+            "es_MX": "Cuero",
+            "pt_BR": "Couro",
+            "de_DE": "Leder",
+            "en_GB": "Leather",
+            "es_ES": "Cuero",
+            "fr_FR": "Cuir",
+            "it_IT": "Cuoio",
+            "ru_RU": "Кожа",
+            "ko_KR": "가죽",
+            "zh_TW": "皮革",
+            "zh_CN": "皮革"
+        },
+        "id": 6
+    },
+    "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": {
+            "en_US": "Non-equippable",
+            "es_MX": "No equipable",
+            "pt_BR": "Não equipável",
+            "de_DE": "Nicht anlegbar",
+            "en_GB": "Non-equippable",
+            "es_ES": "No se puede equipar",
+            "fr_FR": "Objet hors équipement",
+            "it_IT": "Non equipaggiabile",
+            "ru_RU": "Неэкипируемое",
+            "ko_KR": "착용 불가",
+            "zh_TW": "無法裝備",
+            "zh_CN": "无法装备"
+        }
+    },
+    "purchase_price": 50000,
+    "sell_price": 10000,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "description": {
+        "en_US": "A majestic material gathered from Renowned Beasts with the Skinning skill. Can be bought and sold on the Auction House.",
+        "es_MX": "Un material majestuoso que se obtiene con habilidad de desuello de las bestias con reconocimiento. Se puede comprar y vender en la casa de subastas.",
+        "pt_BR": "Material majestoso obtido de Feras Renomadas com a perícia de Esfolamento. Pode ser comprado e vendido na Casa de Leilões.",
+        "de_DE": "Ein majestätisches Material, das von berühmten Wildtieren mit der Kürschnerfertigkeit gewonnen wird. Kann im Auktionshaus verkauft und erworben werden.",
+        "en_GB": "A majestic material gathered from Renowned Beasts with the Skinning skill. Can be bought and sold on the Auction House.",
+        "es_ES": "Un material majestuoso de las bestias renombradas que se recoge con la habilidad de desuello. Se puede comprar y vender en la casa de subastas.",
+        "fr_FR": "Un matériau majestueux obtenu sur des bêtes de renom grâce à la compétence en dépeçage. S’achète et se vend à l’hôtel des ventes.",
+        "it_IT": "Materiale maestoso raccolto da bestie rinomate grazie alla competenza in Scuoiatura. Può essere comprato e venduto alla Casa d'Aste.",
+        "ru_RU": "Превосходный материал, который добывается у знаменитых зверей игроками с навыком снятия шкур. Можно купить или продать на аукционе.",
+        "ko_KR": "영예의 야수에게서만 얻을 수 있는 수려한 재료입니다. 무두질 기술을 보유한 플레이어가 채집합니다. 경매장에서 거래할 수 있습니다.",
+        "zh_TW": "由剝皮師玩家從知名野獸身上採集的貴重材料。可在拍賣場進行買賣。",
+        "zh_CN": "凭借剥皮技能从著名野兽身上采集的威风材料。可以在拍卖行购买和出售。"
+    },
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/238528?namespace=static-12.0.1_65617-us"
+            },
+            "id": 238528
+        },
+        "quality": {
+            "type": "EPIC",
+            "name": {
+                "en_US": "Epic",
+                "es_MX": "Épico",
+                "pt_BR": "Épico",
+                "de_DE": "Episch",
+                "en_GB": "Epic",
+                "es_ES": "Épico",
+                "fr_FR": "Épique",
+                "it_IT": "Epico",
+                "ru_RU": "Эпическое",
+                "ko_KR": "영웅",
+                "zh_TW": "史詩",
+                "zh_CN": "史诗"
+            }
+        },
+        "name": {
+            "en_US": "Majestic Claw",
+            "es_MX": "Zarpa majestuosa",
+            "pt_BR": "Garra Majestosa",
+            "de_DE": "Majestätische Klaue",
+            "en_GB": "Majestic Claw",
+            "es_ES": "Garra majestuosa",
+            "fr_FR": "Griffe majestueuse",
+            "it_IT": "Artiglio Maestoso",
+            "ru_RU": "Величественный коготь",
+            "ko_KR": "위엄 넘치는 발톱",
+            "zh_TW": "珍獸獸爪",
+            "zh_CN": "威风之爪"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/238528?namespace=static-12.0.1_65617-us"
+            },
+            "id": 238528
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Tradeskill",
+                "es_MX": "Habilidad comercial",
+                "pt_BR": "Perícia profissional",
+                "de_DE": "Handwerksmaterial",
+                "en_GB": "Tradeskill",
+                "es_ES": "Habilidad comercial",
+                "fr_FR": "Artisanat",
+                "it_IT": "Beni commerciali",
+                "ru_RU": "Ремесло",
+                "ko_KR": "전문 기술",
+                "zh_TW": "交易技能",
+                "zh_CN": "商业技能"
+            },
+            "id": 7
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/6?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Leather",
+                "es_MX": "Cuero",
+                "pt_BR": "Couro",
+                "de_DE": "Leder",
+                "en_GB": "Leather",
+                "es_ES": "Cuero",
+                "fr_FR": "Cuir",
+                "it_IT": "Cuoio",
+                "ru_RU": "Кожа",
+                "ko_KR": "가죽",
+                "zh_TW": "皮革",
+                "zh_CN": "皮革"
+            },
+            "id": 6
+        },
+        "inventory_type": {
+            "type": "NON_EQUIP",
+            "name": {
+                "en_US": "Non-equippable",
+                "es_MX": "No equipable",
+                "pt_BR": "Não equipável",
+                "de_DE": "Nicht anlegbar",
+                "en_GB": "Non-equippable",
+                "es_ES": "No se puede equipar",
+                "fr_FR": "Objet hors équipement",
+                "it_IT": "Non equipaggiabile",
+                "ru_RU": "Неэкипируемое",
+                "ko_KR": "착용 불가",
+                "zh_TW": "無法裝備",
+                "zh_CN": "无法装备"
+            }
+        },
+        "sell_price": {
+            "value": 10000,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "1",
+                    "es_MX": "1",
+                    "pt_BR": "1",
+                    "de_DE": "1",
+                    "en_GB": "1",
+                    "es_ES": "1",
+                    "fr_FR": "1",
+                    "it_IT": "1",
+                    "ru_RU": "1",
+                    "ko_KR": "1",
+                    "zh_TW": "1",
+                    "zh_CN": "1"
+                },
+                "silver": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                },
+                "copper": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                }
+            }
+        },
+        "description": {
+            "en_US": "A majestic material gathered from Renowned Beasts with the Skinning skill. Can be bought and sold on the Auction House.",
+            "es_MX": "Un material majestuoso que se obtiene con habilidad de desuello de las bestias con reconocimiento. Se puede comprar y vender en la casa de subastas.",
+            "pt_BR": "Material majestoso obtido de Feras Renomadas com a perícia de Esfolamento. Pode ser comprado e vendido na Casa de Leilões.",
+            "de_DE": "Ein majestätisches Material, das von berühmten Wildtieren mit der Kürschnerfertigkeit gewonnen wird. Kann im Auktionshaus verkauft und erworben werden.",
+            "en_GB": "A majestic material gathered from Renowned Beasts with the Skinning skill. Can be bought and sold on the Auction House.",
+            "es_ES": "Un material majestuoso de las bestias renombradas que se recoge con la habilidad de desuello. Se puede comprar y vender en la casa de subastas.",
+            "fr_FR": "Un matériau majestueux obtenu sur des bêtes de renom grâce à la compétence en dépeçage. S’achète et se vend à l’hôtel des ventes.",
+            "it_IT": "Materiale maestoso raccolto da bestie rinomate grazie alla competenza in Scuoiatura. Può essere comprato e venduto alla Casa d'Aste.",
+            "ru_RU": "Превосходный материал, который добывается у знаменитых зверей игроками с навыком снятия шкур. Можно купить или продать на аукционе.",
+            "ko_KR": "영예의 야수에게서만 얻을 수 있는 수려한 재료입니다. 무두질 기술을 보유한 플레이어가 채집합니다. 경매장에서 거래할 수 있습니다.",
+            "zh_TW": "由剝皮師玩家從知名野獸身上採集的貴重材料。可在拍賣場進行買賣。",
+            "zh_CN": "凭借剥皮技能从著名野兽身上采集的威风材料。可以在拍卖行购买和出售。"
+        },
+        "is_subclass_hidden": true,
+        "crafting_reagent": {
+            "en_US": "Crafting Reagent",
+            "es_MX": "Componente de creación",
+            "pt_BR": "Reagente de criação",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Crafting Reagent",
+            "es_ES": "Componente de profesión",
+            "fr_FR": "Composant d’artisanat",
+            "it_IT": "Reagente d'artigianato",
+            "ru_RU": "Используется для ремесел",
+            "ko_KR": "제작 재료",
+            "zh_TW": "製造材料",
+            "zh_CN": "制作材料"
+        }
+    },
+    "purchase_quantity": 1
+}

@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/832?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 832,
+    "name": {
+        "en_US": "Primal Spore Binding",
+        "es_MX": "Lazo de esporas primigenias",
+        "pt_BR": "Vínculo de Esporos Primevo",
+        "de_DE": "Ursporenbindung",
+        "en_GB": "Primal Spore Binding",
+        "es_ES": "Atadura de esporas primigenia",
+        "fr_FR": "Lien de spore primordial",
+        "it_IT": "Vincolo di Spore Primordiali",
+        "ru_RU": "Изначальные споровые узы",
+        "ko_KR": "원시 포자 결속끈",
+        "zh_TW": "原始孢子之縛",
+        "zh_CN": "原始孢子缚带"
+    }
+}

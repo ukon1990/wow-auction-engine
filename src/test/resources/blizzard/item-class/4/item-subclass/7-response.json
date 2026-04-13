@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/7?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 4,
+    "subclass_id": 7,
+    "display_name": {
+        "en_US": "Libram",
+        "es_MX": "Tratado",
+        "pt_BR": "Incunábulo",
+        "de_DE": "Buchband",
+        "en_GB": "Libram",
+        "es_ES": "Tratado",
+        "fr_FR": "Libram",
+        "it_IT": "Libram",
+        "ru_RU": "Манускрипт",
+        "ko_KR": "성서",
+        "zh_TW": "聖契",
+        "zh_CN": "圣契"
+    },
+    "verbose_name": {
+        "en_US": "Librams",
+        "es_MX": "Tratados",
+        "pt_BR": "Incunábulos",
+        "de_DE": "Buchbände",
+        "en_GB": "Librams",
+        "es_ES": "Tratados",
+        "fr_FR": "Librams",
+        "it_IT": "Libram",
+        "ru_RU": "Манускрипты",
+        "ko_KR": "성서",
+        "zh_TW": "聖契",
+        "zh_CN": "圣契"
+    }
+}

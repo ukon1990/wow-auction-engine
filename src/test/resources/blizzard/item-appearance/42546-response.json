@@ -1,0 +1,134 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-appearance/42546?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42546,
+    "slot": {
+        "type": "SHIELD",
+        "name": {
+            "en_US": "Off Hand",
+            "es_MX": "Mano izquierda",
+            "pt_BR": "Mão Secundária",
+            "de_DE": "Schildhand",
+            "en_GB": "Off Hand",
+            "es_ES": "Mano izquierda",
+            "fr_FR": "Main gauche",
+            "it_IT": "Mano secondaria",
+            "ru_RU": "Левая рука",
+            "ko_KR": "보조장비",
+            "zh_TW": "副手",
+            "zh_CN": "副手"
+        }
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Armor",
+            "es_MX": "Armadura",
+            "pt_BR": "Armadura",
+            "de_DE": "Rüstung",
+            "en_GB": "Armor",
+            "es_ES": "Armadura",
+            "fr_FR": "Armure",
+            "it_IT": "Armature",
+            "ru_RU": "Доспехи",
+            "ko_KR": "방어구",
+            "zh_TW": "護甲",
+            "zh_CN": "护甲"
+        },
+        "id": 4
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/6?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Shield",
+            "es_MX": "Escudo",
+            "pt_BR": "Escudo",
+            "de_DE": "Schild",
+            "en_GB": "Shield",
+            "es_ES": "Escudo",
+            "fr_FR": "Bouclier",
+            "it_IT": "Scudo",
+            "ru_RU": "Щит",
+            "ko_KR": "방패",
+            "zh_TW": "盾牌",
+            "zh_CN": "盾牌"
+        },
+        "id": 6
+    },
+    "item_display_info_id": 184017,
+    "items": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/171391?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Ceremonious Shield",
+                "es_MX": "Escudo ceremonioso",
+                "pt_BR": "Escudo Cerimonioso",
+                "de_DE": "Zeremonieller Schild",
+                "en_GB": "Ceremonious Shield",
+                "es_ES": "Escudo de ceremonia",
+                "fr_FR": "Bouclier de cérémonie",
+                "it_IT": "Scudo Cerimonioso",
+                "ru_RU": "Церемониальный щит",
+                "ko_KR": "격조의 방패",
+                "zh_TW": "典禮盾牌",
+                "zh_CN": "仪式盾牌"
+            },
+            "id": 171391
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/185887?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Vault Guardian's Targe",
+                "es_MX": "Tarja de guardián de la bóveda",
+                "pt_BR": "Tarja do Guardião da Cripta",
+                "de_DE": "Tartsche des Archivwächters",
+                "en_GB": "Vault Guardian's Targe",
+                "es_ES": "Tarja de guardián de la cámara",
+                "fr_FR": "Rondache de gardien du caveau",
+                "it_IT": "Scudo Targa del Guardiano degli Archivi",
+                "ru_RU": "Тарч стража хранилища",
+                "ko_KR": "금고 수호자의 타지 방패",
+                "zh_TW": "寶庫衛兵輕盾",
+                "zh_CN": "宝库守卫的圆盾"
+            },
+            "id": 185887
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/186758?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Korthian Keeper's Buckler",
+                "es_MX": "Rodela de guardián korthiano",
+                "pt_BR": "Broquel de Guardião Korthiano",
+                "de_DE": "Rundschild des korthianischen Hüters",
+                "en_GB": "Korthian Keeper's Buckler",
+                "es_ES": "Rodela de vigilante korthiano",
+                "fr_FR": "Targe de gardien korthien",
+                "it_IT": "Brocchiero del Custode di Korthia",
+                "ru_RU": "Кулачный щит кортийского хранителя",
+                "ko_KR": "코르시아 수호자의 버클러",
+                "zh_TW": "科西亞守衛者圓盾",
+                "zh_CN": "刻希亚守护者的轻盾"
+            },
+            "id": 186758
+        }
+    ],
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/3482400?namespace=static-12.0.1_65617-us"
+        },
+        "id": 3482400
+    }
+}

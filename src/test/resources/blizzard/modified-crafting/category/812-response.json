@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/812?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 812,
+    "name": {
+        "en_US": "Thalassian Missive of the Fireflash",
+        "es_MX": "Misiva thalassiana del fuego rápido",
+        "pt_BR": "Missiva Talassiana do Clarão de Fogo",
+        "de_DE": "Thalassisches Schreiben des Feuersturms",
+        "en_GB": "Thalassian Missive of the Fireflash",
+        "es_ES": "Misiva thalassiana del fuegolátigo",
+        "fr_FR": "Missive thalassienne des Éclats-de-feu",
+        "it_IT": "Missiva della Folgore Thalassiana",
+        "ru_RU": "Талассийское послание огненной вспышки",
+        "ko_KR": "불꽃섬광의 탈라시안 서신",
+        "zh_TW": "薩拉斯炎光書狀",
+        "zh_CN": "燎火之萨拉斯公函"
+    }
+}

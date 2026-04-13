@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/750?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 750,
+    "name": {
+        "en_US": "Gloaming Alloy",
+        "es_MX": "Aleación crepuscular",
+        "pt_BR": "Liga Crepuscular",
+        "de_DE": "Dämmerlichtlegierung",
+        "en_GB": "Gloaming Alloy",
+        "es_ES": "Aleación anochedora",
+        "fr_FR": "Alliage de la tombée du jour",
+        "it_IT": "Lega Crepuscolare",
+        "ru_RU": "Сумрачный сплав",
+        "ko_KR": "해거름 합금",
+        "zh_TW": "薄暮合金",
+        "zh_CN": "薄暮合金"
+    }
+}

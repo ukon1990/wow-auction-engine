@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/19?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 19,
+    "display_name": {
+        "en_US": "Finishing Reagents",
+        "es_MX": "Componentes de retoque",
+        "pt_BR": "Reagentes de Finalização",
+        "de_DE": "Fertigungsreagenzien",
+        "en_GB": "Finishing Reagents",
+        "es_ES": "Componentes de finalización",
+        "fr_FR": "Composants de finition",
+        "it_IT": "Reagenti di Finitura",
+        "ru_RU": "Завершающие реагенты",
+        "ko_KR": "마무리 재료",
+        "zh_TW": "最後加工材料",
+        "zh_CN": "成品材料"
+    },
+    "hide_subclass_in_tooltips": true
+}

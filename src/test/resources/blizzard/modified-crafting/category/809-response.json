@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/809?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 809,
+    "name": {
+        "en_US": "Thalassian Missive of the Quickblade",
+        "es_MX": "Misiva thalassiana de la hoja rauda",
+        "pt_BR": "Missiva Talassiana do Gumepresto",
+        "de_DE": "Thalassisches Schreiben der Schnellklinge",
+        "en_GB": "Thalassian Missive of the Quickblade",
+        "es_ES": "Misiva thalassiana de la navaja",
+        "fr_FR": "Missive thalassienne de la prestelame",
+        "it_IT": "Missiva della Lama Veloce Thalassiana",
+        "ru_RU": "Талассийское послание быстрого клинка",
+        "ko_KR": "쾌검의 탈라시안 서신",
+        "zh_TW": "薩拉斯速刃書狀",
+        "zh_CN": "快刀之萨拉斯公函"
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/1?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 1,
+    "display_name": {
+        "en_US": "Axe",
+        "es_MX": "Hacha",
+        "pt_BR": "Machado",
+        "de_DE": "Axt",
+        "en_GB": "Axe",
+        "es_ES": "Hacha",
+        "fr_FR": "Hache",
+        "it_IT": "Ascia",
+        "ru_RU": "Топор",
+        "ko_KR": "도끼",
+        "zh_TW": "斧",
+        "zh_CN": "斧"
+    },
+    "verbose_name": {
+        "en_US": "Two-Handed Axes",
+        "es_MX": "Hachas de dos manos",
+        "pt_BR": "Machados de Duas Mãos",
+        "de_DE": "Zweihandäxte",
+        "en_GB": "Two-Handed Axes",
+        "es_ES": "Hachas de dos manos",
+        "fr_FR": "Haches à deux mains",
+        "it_IT": "Asce a due mani",
+        "ru_RU": "Двуручные топоры",
+        "ko_KR": "양손 도끼류",
+        "zh_TW": "雙手斧",
+        "zh_CN": "双手斧"
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/775?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 775,
+    "name": {
+        "en_US": "Radiant Shard",
+        "es_MX": "Fragmento radiante",
+        "pt_BR": "Estilhaço Radiante",
+        "de_DE": "Strahlender Splitter",
+        "en_GB": "Radiant Shard",
+        "es_ES": "Fragmento radiante",
+        "fr_FR": "Éclat radieux",
+        "it_IT": "Scheggia Radiosa",
+        "ru_RU": "Лучистый осколок",
+        "ko_KR": "찬란한 조각",
+        "zh_TW": "璀璨裂片",
+        "zh_CN": "光耀碎片"
+    }
+}

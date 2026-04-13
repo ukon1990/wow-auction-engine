@@ -1,0 +1,227 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/172232?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 172232,
+    "name": {
+        "en_US": "Eternal Crystal",
+        "es_MX": "Cristal eterno",
+        "pt_BR": "Cristal Eterno",
+        "de_DE": "Ewiger Kristall",
+        "en_GB": "Eternal Crystal",
+        "es_ES": "Cristal eterno",
+        "fr_FR": "Cristal éternel",
+        "it_IT": "Cristallo Eterno",
+        "ru_RU": "Кристалл вечности",
+        "ko_KR": "영원한 수정",
+        "zh_TW": "永恆水晶",
+        "zh_CN": "永恒水晶"
+    },
+    "quality": {
+        "type": "EPIC",
+        "name": {
+            "en_US": "Epic",
+            "es_MX": "Épico",
+            "pt_BR": "Épico",
+            "de_DE": "Episch",
+            "en_GB": "Epic",
+            "es_ES": "Épico",
+            "fr_FR": "Épique",
+            "it_IT": "Epico",
+            "ru_RU": "Эпическое",
+            "ko_KR": "영웅",
+            "zh_TW": "史詩",
+            "zh_CN": "史诗"
+        }
+    },
+    "level": 50,
+    "required_level": 0,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/172232?namespace=static-12.0.1_65617-us"
+        },
+        "id": 172232
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Tradeskill",
+            "es_MX": "Habilidad comercial",
+            "pt_BR": "Perícia profissional",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Tradeskill",
+            "es_ES": "Habilidad comercial",
+            "fr_FR": "Artisanat",
+            "it_IT": "Beni commerciali",
+            "ru_RU": "Ремесло",
+            "ko_KR": "전문 기술",
+            "zh_TW": "交易技能",
+            "zh_CN": "商业技能"
+        },
+        "id": 7
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/12?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Enchanting",
+            "es_MX": "Encantamiento",
+            "pt_BR": "Encantamento",
+            "de_DE": "Verzauberkunst",
+            "en_GB": "Enchanting",
+            "es_ES": "Encantamiento",
+            "fr_FR": "Enchantement",
+            "it_IT": "Incantamento",
+            "ru_RU": "Наложение чар",
+            "ko_KR": "마법부여",
+            "zh_TW": "附魔",
+            "zh_CN": "附魔材料"
+        },
+        "id": 12
+    },
+    "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": {
+            "en_US": "Non-equippable",
+            "es_MX": "No equipable",
+            "pt_BR": "Não equipável",
+            "de_DE": "Nicht anlegbar",
+            "en_GB": "Non-equippable",
+            "es_ES": "No se puede equipar",
+            "fr_FR": "Objet hors équipement",
+            "it_IT": "Non equipaggiabile",
+            "ru_RU": "Неэкипируемое",
+            "ko_KR": "착용 불가",
+            "zh_TW": "無法裝備",
+            "zh_CN": "无法装备"
+        }
+    },
+    "purchase_price": 120000,
+    "sell_price": 0,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/172232?namespace=static-12.0.1_65617-us"
+            },
+            "id": 172232
+        },
+        "quality": {
+            "type": "EPIC",
+            "name": {
+                "en_US": "Epic",
+                "es_MX": "Épico",
+                "pt_BR": "Épico",
+                "de_DE": "Episch",
+                "en_GB": "Epic",
+                "es_ES": "Épico",
+                "fr_FR": "Épique",
+                "it_IT": "Epico",
+                "ru_RU": "Эпическое",
+                "ko_KR": "영웅",
+                "zh_TW": "史詩",
+                "zh_CN": "史诗"
+            }
+        },
+        "name": {
+            "en_US": "Eternal Crystal",
+            "es_MX": "Cristal eterno",
+            "pt_BR": "Cristal Eterno",
+            "de_DE": "Ewiger Kristall",
+            "en_GB": "Eternal Crystal",
+            "es_ES": "Cristal eterno",
+            "fr_FR": "Cristal éternel",
+            "it_IT": "Cristallo Eterno",
+            "ru_RU": "Кристалл вечности",
+            "ko_KR": "영원한 수정",
+            "zh_TW": "永恆水晶",
+            "zh_CN": "永恒水晶"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/172232?namespace=static-12.0.1_65617-us"
+            },
+            "id": 172232
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Tradeskill",
+                "es_MX": "Habilidad comercial",
+                "pt_BR": "Perícia profissional",
+                "de_DE": "Handwerksmaterial",
+                "en_GB": "Tradeskill",
+                "es_ES": "Habilidad comercial",
+                "fr_FR": "Artisanat",
+                "it_IT": "Beni commerciali",
+                "ru_RU": "Ремесло",
+                "ko_KR": "전문 기술",
+                "zh_TW": "交易技能",
+                "zh_CN": "商业技能"
+            },
+            "id": 7
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/12?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Enchanting",
+                "es_MX": "Encantamiento",
+                "pt_BR": "Encantamento",
+                "de_DE": "Verzauberkunst",
+                "en_GB": "Enchanting",
+                "es_ES": "Encantamiento",
+                "fr_FR": "Enchantement",
+                "it_IT": "Incantamento",
+                "ru_RU": "Наложение чар",
+                "ko_KR": "마법부여",
+                "zh_TW": "附魔",
+                "zh_CN": "附魔材料"
+            },
+            "id": 12
+        },
+        "inventory_type": {
+            "type": "NON_EQUIP",
+            "name": {
+                "en_US": "Non-equippable",
+                "es_MX": "No equipable",
+                "pt_BR": "Não equipável",
+                "de_DE": "Nicht anlegbar",
+                "en_GB": "Non-equippable",
+                "es_ES": "No se puede equipar",
+                "fr_FR": "Objet hors équipement",
+                "it_IT": "Non equipaggiabile",
+                "ru_RU": "Неэкипируемое",
+                "ko_KR": "착용 불가",
+                "zh_TW": "無法裝備",
+                "zh_CN": "无法装备"
+            }
+        },
+        "is_subclass_hidden": true,
+        "crafting_reagent": {
+            "en_US": "Crafting Reagent",
+            "es_MX": "Componente de creación",
+            "pt_BR": "Reagente de criação",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Crafting Reagent",
+            "es_ES": "Componente de profesión",
+            "fr_FR": "Composant d’artisanat",
+            "it_IT": "Reagente d'artigianato",
+            "ru_RU": "Используется для ремесел",
+            "ko_KR": "제작 재료",
+            "zh_TW": "製造材料",
+            "zh_CN": "制作材料"
+        }
+    },
+    "purchase_quantity": 1
+}

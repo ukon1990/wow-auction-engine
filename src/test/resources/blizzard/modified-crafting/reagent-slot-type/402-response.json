@@ -1,0 +1,44 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/402?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 402,
+    "description": {
+        "en_US": "Dawn Crystal",
+        "es_MX": "Cristal del alba",
+        "pt_BR": "Cristal da Aurora",
+        "de_DE": "Dämmerkristall",
+        "en_GB": "Dawn Crystal",
+        "es_ES": "Cristal del alba",
+        "fr_FR": "Cristal de l’aube",
+        "it_IT": "Cristallo dell'Alba",
+        "ru_RU": "Кристалл зари",
+        "ko_KR": "여명의 수정",
+        "zh_TW": "黎明水晶",
+        "zh_CN": "黎明水晶"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/777?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Dawn Crystal",
+                "es_MX": "Cristal del alba",
+                "pt_BR": "Cristal da Aurora",
+                "de_DE": "Dämmerkristall",
+                "en_GB": "Dawn Crystal",
+                "es_ES": "Cristal del alba",
+                "fr_FR": "Cristal de l’aube",
+                "it_IT": "Cristallo dell'Alba",
+                "ru_RU": "Кристалл зари",
+                "ko_KR": "여명의 수정",
+                "zh_TW": "黎明水晶",
+                "zh_CN": "黎明水晶"
+            },
+            "id": 777
+        }
+    ]
+}

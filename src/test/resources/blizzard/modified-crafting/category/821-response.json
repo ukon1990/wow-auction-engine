@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/821?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 821,
+    "name": {
+        "en_US": "Thalassian Missive of Ingenuity",
+        "es_MX": "Misiva thalassiana de ingenio",
+        "pt_BR": "Missiva Talassiana da Engenhosidade",
+        "de_DE": "Thalassisches Schreiben der Genialität",
+        "en_GB": "Thalassian Missive of Ingenuity",
+        "es_ES": "Misiva thalassiana de inventiva",
+        "fr_FR": "Missive thalassienne d’inventivité",
+        "it_IT": "Missiva dell'Ingegno Thalassiana",
+        "ru_RU": "Талассийское послание изобретательности",
+        "ko_KR": "독창성의 탈라시안 서신",
+        "zh_TW": "薩拉斯精妙書狀",
+        "zh_CN": "奇思之萨拉斯公函"
+    }
+}

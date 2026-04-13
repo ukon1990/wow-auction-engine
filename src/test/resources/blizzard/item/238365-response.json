@@ -1,0 +1,354 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/238365?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 238365,
+    "name": {
+        "en_US": "Sin'dorei Swarmer",
+        "es_MX": "Enjambrista sin'dorei",
+        "pt_BR": "Enxameador Sin'dorei",
+        "de_DE": "Sin'doreischwärmer",
+        "en_GB": "Sin'dorei Swarmer",
+        "es_ES": "Enjambrista sin'dorei",
+        "fr_FR": "Carnassier sin’dorei",
+        "it_IT": "Brulicatore dei Sin'dorei",
+        "ru_RU": "Син'дорайский роевик",
+        "ko_KR": "신도레이 무리붙이",
+        "zh_TW": "辛多雷群居魚",
+        "zh_CN": "辛多雷群聚鱼"
+    },
+    "quality": {
+        "type": "COMMON",
+        "name": {
+            "en_US": "Common",
+            "es_MX": "Común",
+            "pt_BR": "Comum",
+            "de_DE": "Gewöhnlich",
+            "en_GB": "Common",
+            "es_ES": "Común",
+            "fr_FR": "Commun",
+            "it_IT": "Comune",
+            "ru_RU": "Обычное",
+            "ko_KR": "일반",
+            "zh_TW": "普通",
+            "zh_CN": "普通"
+        }
+    },
+    "level": 90,
+    "required_level": 1,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/238365?namespace=static-12.0.1_65617-us"
+        },
+        "id": 238365
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Tradeskill",
+            "es_MX": "Habilidad comercial",
+            "pt_BR": "Perícia profissional",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Tradeskill",
+            "es_ES": "Habilidad comercial",
+            "fr_FR": "Artisanat",
+            "it_IT": "Beni commerciali",
+            "ru_RU": "Ремесло",
+            "ko_KR": "전문 기술",
+            "zh_TW": "交易技能",
+            "zh_CN": "商业技能"
+        },
+        "id": 7
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/8?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Cooking",
+            "es_MX": "Cocina",
+            "pt_BR": "Culinária",
+            "de_DE": "Kochkunst",
+            "en_GB": "Cooking",
+            "es_ES": "Cocina",
+            "fr_FR": "Cuisine",
+            "it_IT": "Cucina",
+            "ru_RU": "Кулинария",
+            "ko_KR": "요리",
+            "zh_TW": "烹飪",
+            "zh_CN": "烹饪"
+        },
+        "id": 8
+    },
+    "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": {
+            "en_US": "Non-equippable",
+            "es_MX": "No equipable",
+            "pt_BR": "Não equipável",
+            "de_DE": "Nicht anlegbar",
+            "en_GB": "Non-equippable",
+            "es_ES": "No se puede equipar",
+            "fr_FR": "Objet hors équipement",
+            "it_IT": "Non equipaggiabile",
+            "ru_RU": "Неэкипируемое",
+            "ko_KR": "착용 불가",
+            "zh_TW": "無法裝備",
+            "zh_CN": "无法装备"
+        }
+    },
+    "purchase_price": 6250,
+    "sell_price": 1250,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "description": {
+        "en_US": "A common fish in Quel'Thalas. Can be bought and sold on the Auction House.",
+        "es_MX": "Un pez común en Quel'Thalas. Se puede comprar y vender en la casa de subastas.",
+        "pt_BR": "Peixe comum em Quel'thalas. Pode ser comprado e vendido na Casa de Leilões.",
+        "de_DE": "Ein gewöhnlicher Fisch aus Quel'Thalas. Kann im Auktionshaus verkauft und erworben werden.",
+        "en_GB": "A common fish in Quel'Thalas. Can be bought and sold on the Auction House.",
+        "es_ES": "Pez común de Quel'Thalas. Se puede comprar y vender en la casa de subastas.",
+        "fr_FR": "Un poisson commun de Quel’Thalas. S’achète et se vend à l’hôtel des ventes.",
+        "it_IT": "Un pesce comune di Quel'Thalas. Può essere comprato e venduto alla Casa d'Aste.",
+        "ru_RU": "Обычная рыба, обитающая в водоемах Кель'Таласа. Можно купить или продать на аукционе.",
+        "ko_KR": "흔한 쿠엘탈라스 물고기입니다. 경매장에서 거래할 수 있습니다.",
+        "zh_TW": "奎爾薩拉斯的常見魚類。可在拍賣場進行買賣。",
+        "zh_CN": "奎尔萨拉斯的常见鱼类。可以在拍卖行购买和出售。"
+    },
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/238365?namespace=static-12.0.1_65617-us"
+            },
+            "id": 238365
+        },
+        "quality": {
+            "type": "COMMON",
+            "name": {
+                "en_US": "Common",
+                "es_MX": "Común",
+                "pt_BR": "Comum",
+                "de_DE": "Gewöhnlich",
+                "en_GB": "Common",
+                "es_ES": "Común",
+                "fr_FR": "Commun",
+                "it_IT": "Comune",
+                "ru_RU": "Обычное",
+                "ko_KR": "일반",
+                "zh_TW": "普通",
+                "zh_CN": "普通"
+            }
+        },
+        "name": {
+            "en_US": "Sin'dorei Swarmer",
+            "es_MX": "Enjambrista sin'dorei",
+            "pt_BR": "Enxameador Sin'dorei",
+            "de_DE": "Sin'doreischwärmer",
+            "en_GB": "Sin'dorei Swarmer",
+            "es_ES": "Enjambrista sin'dorei",
+            "fr_FR": "Carnassier sin’dorei",
+            "it_IT": "Brulicatore dei Sin'dorei",
+            "ru_RU": "Син'дорайский роевик",
+            "ko_KR": "신도레이 무리붙이",
+            "zh_TW": "辛多雷群居魚",
+            "zh_CN": "辛多雷群聚鱼"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/238365?namespace=static-12.0.1_65617-us"
+            },
+            "id": 238365
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Tradeskill",
+                "es_MX": "Habilidad comercial",
+                "pt_BR": "Perícia profissional",
+                "de_DE": "Handwerksmaterial",
+                "en_GB": "Tradeskill",
+                "es_ES": "Habilidad comercial",
+                "fr_FR": "Artisanat",
+                "it_IT": "Beni commerciali",
+                "ru_RU": "Ремесло",
+                "ko_KR": "전문 기술",
+                "zh_TW": "交易技能",
+                "zh_CN": "商业技能"
+            },
+            "id": 7
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/8?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Cooking",
+                "es_MX": "Cocina",
+                "pt_BR": "Culinária",
+                "de_DE": "Kochkunst",
+                "en_GB": "Cooking",
+                "es_ES": "Cocina",
+                "fr_FR": "Cuisine",
+                "it_IT": "Cucina",
+                "ru_RU": "Кулинария",
+                "ko_KR": "요리",
+                "zh_TW": "烹飪",
+                "zh_CN": "烹饪"
+            },
+            "id": 8
+        },
+        "inventory_type": {
+            "type": "NON_EQUIP",
+            "name": {
+                "en_US": "Non-equippable",
+                "es_MX": "No equipable",
+                "pt_BR": "Não equipável",
+                "de_DE": "Nicht anlegbar",
+                "en_GB": "Non-equippable",
+                "es_ES": "No se puede equipar",
+                "fr_FR": "Objet hors équipement",
+                "it_IT": "Non equipaggiabile",
+                "ru_RU": "Неэкипируемое",
+                "ko_KR": "착용 불가",
+                "zh_TW": "無法裝備",
+                "zh_CN": "无法装备"
+            }
+        },
+        "spells": [
+            {
+                "spell": {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/spell/1237942?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Chum",
+                        "es_MX": "Cebo",
+                        "pt_BR": "Isquinha",
+                        "de_DE": "Köder",
+                        "en_GB": "Chum",
+                        "es_ES": "Carnada",
+                        "fr_FR": "Appât",
+                        "it_IT": "Esca",
+                        "ru_RU": "Приманка",
+                        "ko_KR": "미끼",
+                        "zh_TW": "餌食",
+                        "zh_CN": "鱼饵"
+                    },
+                    "id": 1237942
+                },
+                "description": {
+                    "en_US": "Use: Throw the fish back into the water to gain 25 Midnight Fishing for 30 sec.\r\n\r\nThrowing multiple fish can extend this buff up to 5 min.",
+                    "es_MX": "Usar: Devuelve el pez al agua para obtener 25 p. de pesca de Midnight durante 30 s.\r\n\r\nDevolver varios peces puede extender esta potenciación hasta un máximo de 5 min.",
+                    "pt_BR": "Usar: Joga o peixe de volta na água para ganhar 25 de Pesca de Midnight por 30 s.\r\n\r\nJogar vários peixes pode estender este bônus para até 5 min.",
+                    "de_DE": "Benutzen: Wirft den Fisch zurück ins Wasser, um 30 Sek. lang 25 Angeln von Midnight zu erhalten.\r\n\r\nDurch das Zurückwerfen mehrerer Fische kann diese Stärkung auf bis zu 5 Min. verlängert werden.",
+                    "en_GB": "Use: Throw the fish back into the water to gain 25 Midnight Fishing for 30 sec.\r\n\r\nThrowing multiple fish can extend this buff up to 5 min.",
+                    "es_ES": "Uso: Devuelve el pez al agua para obtener 25 p. en pesca de Midnight durante 30 s.\r\n\r\nSi se lanzan varios peces, se puede ampliar el beneficio hasta los 5 min.",
+                    "fr_FR": "Utiliser : Vous rejetez le poisson à l’eau pour gagner un bonus de 25 à la compétence en pêche de Midnight pendant 30 s.\r\n\r\nLe rejet de plusieurs poissons permet d’augmenter la durée de cette amélioration jusqu’à un maximum de 5 min.",
+                    "it_IT": "Usa: Rilancia il pesce in acqua per ottenere 25 competenza in Pesca di Midnight per 30 s.\r\n\r\nLanciare più pesci estende questo beneficio fino a massimo 5 min.",
+                    "ru_RU": "Использование: Бросить рыбу в воду, чтобы повысить навык рыбной ловли Midnight на 25 на 30 сек.\r\n\r\nБросив несколько рыб, можно продлить действие эффекта до 5 мин.",
+                    "ko_KR": "사용 효과: 물고기를 물에 돌려보내 30초 동안 한밤 낚시 숙련도가 25만큼 증가합니다.\r\n\r\n다수의 물고기를 돌려보내면 강화 효과의 지속시간이 최대 5분까지 증가합니다.",
+                    "zh_TW": "使用： 把魚丟回水裡以獲得25點至暗之夜釣魚技能，持續30秒。\r\n\r\n多丟幾條魚可使此增益效果最多延長5分鐘。",
+                    "zh_CN": "使用： 将鱼扔回水中可以使至暗之夜钓鱼技能提高25点，持续30秒。\r\n\r\n投掷多条鱼最多可以将这个增益效果持续时间延长至5分钟。"
+                }
+            }
+        ],
+        "sell_price": {
+            "value": 1250,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                },
+                "silver": {
+                    "en_US": "12",
+                    "es_MX": "12",
+                    "pt_BR": "12",
+                    "de_DE": "12",
+                    "en_GB": "12",
+                    "es_ES": "12",
+                    "fr_FR": "12",
+                    "it_IT": "12",
+                    "ru_RU": "12",
+                    "ko_KR": "12",
+                    "zh_TW": "12",
+                    "zh_CN": "12"
+                },
+                "copper": {
+                    "en_US": "50",
+                    "es_MX": "50",
+                    "pt_BR": "50",
+                    "de_DE": "50",
+                    "en_GB": "50",
+                    "es_ES": "50",
+                    "fr_FR": "50",
+                    "it_IT": "50",
+                    "ru_RU": "50",
+                    "ko_KR": "50",
+                    "zh_TW": "50",
+                    "zh_CN": "50"
+                }
+            }
+        },
+        "description": {
+            "en_US": "A common fish in Quel'Thalas. Can be bought and sold on the Auction House.",
+            "es_MX": "Un pez común en Quel'Thalas. Se puede comprar y vender en la casa de subastas.",
+            "pt_BR": "Peixe comum em Quel'thalas. Pode ser comprado e vendido na Casa de Leilões.",
+            "de_DE": "Ein gewöhnlicher Fisch aus Quel'Thalas. Kann im Auktionshaus verkauft und erworben werden.",
+            "en_GB": "A common fish in Quel'Thalas. Can be bought and sold on the Auction House.",
+            "es_ES": "Pez común de Quel'Thalas. Se puede comprar y vender en la casa de subastas.",
+            "fr_FR": "Un poisson commun de Quel’Thalas. S’achète et se vend à l’hôtel des ventes.",
+            "it_IT": "Un pesce comune di Quel'Thalas. Può essere comprato e venduto alla Casa d'Aste.",
+            "ru_RU": "Обычная рыба, обитающая в водоемах Кель'Таласа. Можно купить или продать на аукционе.",
+            "ko_KR": "흔한 쿠엘탈라스 물고기입니다. 경매장에서 거래할 수 있습니다.",
+            "zh_TW": "奎爾薩拉斯的常見魚類。可在拍賣場進行買賣。",
+            "zh_CN": "奎尔萨拉斯的常见鱼类。可以在拍卖行购买和出售。"
+        },
+        "is_subclass_hidden": true,
+        "crafting_reagent": {
+            "en_US": "Crafting Reagent",
+            "es_MX": "Componente de creación",
+            "pt_BR": "Reagente de criação",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Crafting Reagent",
+            "es_ES": "Componente de profesión",
+            "fr_FR": "Composant d’artisanat",
+            "it_IT": "Reagente d'artigianato",
+            "ru_RU": "Используется для ремесел",
+            "ko_KR": "제작 재료",
+            "zh_TW": "製造材料",
+            "zh_CN": "制作材料"
+        }
+    },
+    "purchase_quantity": 1
+}

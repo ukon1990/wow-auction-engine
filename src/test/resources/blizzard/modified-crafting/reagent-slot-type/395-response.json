@@ -1,0 +1,104 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/395?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 395,
+    "description": {
+        "en_US": "Customize Crafting Stat",
+        "es_MX": "Personaliza estadística de fabricación",
+        "pt_BR": "Personalizar Atributo de Criação",
+        "de_DE": "Herstellungswerte anpassen",
+        "en_GB": "Customize Crafting Stat",
+        "es_ES": "Personalizar estadística de fabricación",
+        "fr_FR": "Personnaliser une caractéristique d’artisanat",
+        "it_IT": "Personalizza statistiche di creazione",
+        "ru_RU": "Позволяет выбрать характеристику при изготовлении",
+        "ko_KR": "제작 능력치 사용자 설정",
+        "zh_TW": "自訂製作屬性",
+        "zh_CN": "自定义制作属性"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/818?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Thalassian Missive of Crafting Speed",
+                "es_MX": "Misiva thalassiana de velocidad de fabricación",
+                "pt_BR": "Missiva Talassiana da Velocidade de Criação",
+                "de_DE": "Thalassisches Schreiben der Herstellungsgeschwindigkeit",
+                "en_GB": "Thalassian Missive of Crafting Speed",
+                "es_ES": "Misiva thalassiana de velocidad de fabricación",
+                "fr_FR": "Missive thalassienne de vitesse d’artisanat",
+                "it_IT": "Missiva della Velocità di Creazione Thalassiana",
+                "ru_RU": "Талассийское послание скорости изготовления",
+                "ko_KR": "제작 속도의 탈라시안 서신",
+                "zh_TW": "薩拉斯製作速度書狀",
+                "zh_CN": "制作速度之萨拉斯公函"
+            },
+            "id": 818
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/821?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Thalassian Missive of Ingenuity",
+                "es_MX": "Misiva thalassiana de ingenio",
+                "pt_BR": "Missiva Talassiana da Engenhosidade",
+                "de_DE": "Thalassisches Schreiben der Genialität",
+                "en_GB": "Thalassian Missive of Ingenuity",
+                "es_ES": "Misiva thalassiana de inventiva",
+                "fr_FR": "Missive thalassienne d’inventivité",
+                "it_IT": "Missiva dell'Ingegno Thalassiana",
+                "ru_RU": "Талассийское послание изобретательности",
+                "ko_KR": "독창성의 탈라시안 서신",
+                "zh_TW": "薩拉斯精妙書狀",
+                "zh_CN": "奇思之萨拉斯公函"
+            },
+            "id": 821
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/819?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Thalassian Missive of Multicraft",
+                "es_MX": "Misiva thalassiana de fabricación múltiple",
+                "pt_BR": "Missiva Talassiana da Multicriação",
+                "de_DE": "Thalassisches Schreiben der Mehrfachherstellung",
+                "en_GB": "Thalassian Missive of Multicraft",
+                "es_ES": "Misiva thalassiana de multifabricación",
+                "fr_FR": "Missive thalassienne de fabrication multiple",
+                "it_IT": "Missiva della Creazione Multipla Thalassiana",
+                "ru_RU": "Талассийское послание перепроизводства",
+                "ko_KR": "복수 제작의 탈라시안 서신",
+                "zh_TW": "薩拉斯複數製造書狀",
+                "zh_CN": "产能之萨拉斯公函"
+            },
+            "id": 819
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/820?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Thalassian Missive of Resourcefulness",
+                "es_MX": "Misiva thalassiana de inventiva",
+                "pt_BR": "Missiva Talassiana da Desenvoltura",
+                "de_DE": "Thalassisches Schreiben des Einfallsreichtums",
+                "en_GB": "Thalassian Missive of Resourcefulness",
+                "es_ES": "Misiva thalassiana de ingenio",
+                "fr_FR": "Missive thalassienne d’ingéniosité",
+                "it_IT": "Missiva della Parsimonia Thalassiana",
+                "ru_RU": "Талассийское послание находчивости",
+                "ko_KR": "지혜의 탈라시안 서신",
+                "zh_TW": "薩拉斯精明書狀",
+                "zh_CN": "充裕之萨拉斯公函"
+            },
+            "id": 820
+        }
+    ]
+}

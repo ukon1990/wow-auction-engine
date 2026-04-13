@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/2?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 0,
+    "subclass_id": 2,
+    "display_name": {
+        "en_US": "Elixirs",
+        "es_MX": "Elixires",
+        "pt_BR": "Elixires",
+        "de_DE": "Elixiere",
+        "en_GB": "Elixirs",
+        "es_ES": "Elixires",
+        "fr_FR": "Élixirs",
+        "it_IT": "Elisir",
+        "ru_RU": "Эликсиры",
+        "ko_KR": "비약",
+        "zh_TW": "藥劑",
+        "zh_CN": "药剂"
+    },
+    "hide_subclass_in_tooltips": true
+}

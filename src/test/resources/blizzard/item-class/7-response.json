@@ -1,0 +1,284 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "name": {
+        "en_US": "Tradeskill",
+        "es_MX": "Habilidad comercial",
+        "pt_BR": "Perícia profissional",
+        "de_DE": "Handwerksmaterial",
+        "en_GB": "Tradeskill",
+        "es_ES": "Habilidad comercial",
+        "fr_FR": "Artisanat",
+        "it_IT": "Beni commerciali",
+        "ru_RU": "Ремесло",
+        "ko_KR": "전문 기술",
+        "zh_TW": "交易技能",
+        "zh_CN": "商业技能"
+    },
+    "item_subclasses": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/1?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Parts",
+                "es_MX": "Piezas",
+                "pt_BR": "Peças",
+                "de_DE": "Teile",
+                "en_GB": "Parts",
+                "es_ES": "Piezas",
+                "fr_FR": "Composants",
+                "it_IT": "Componenti",
+                "ru_RU": "Детали",
+                "ko_KR": "부품",
+                "zh_TW": "零件",
+                "zh_CN": "零件"
+            },
+            "id": 1
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/4?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Jewelcrafting",
+                "es_MX": "Joyería",
+                "pt_BR": "Joalheria",
+                "de_DE": "Juwelierskunst",
+                "en_GB": "Jewelcrafting",
+                "es_ES": "Joyería",
+                "fr_FR": "Joaillerie",
+                "it_IT": "Oreficeria",
+                "ru_RU": "Ювелирное дело",
+                "ko_KR": "보석세공",
+                "zh_TW": "珠寶設計",
+                "zh_CN": "珠宝加工"
+            },
+            "id": 4
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/5?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Cloth",
+                "es_MX": "Tela",
+                "pt_BR": "Tecido",
+                "de_DE": "Stoffe",
+                "en_GB": "Cloth",
+                "es_ES": "Tela",
+                "fr_FR": "Tissu",
+                "it_IT": "Stoffa",
+                "ru_RU": "Ткань",
+                "ko_KR": "천",
+                "zh_TW": "布料",
+                "zh_CN": "布料"
+            },
+            "id": 5
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/6?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Leather",
+                "es_MX": "Cuero",
+                "pt_BR": "Couro",
+                "de_DE": "Leder",
+                "en_GB": "Leather",
+                "es_ES": "Cuero",
+                "fr_FR": "Cuir",
+                "it_IT": "Cuoio",
+                "ru_RU": "Кожа",
+                "ko_KR": "가죽",
+                "zh_TW": "皮革",
+                "zh_CN": "皮革"
+            },
+            "id": 6
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Metal & Stone",
+                "es_MX": "Metal y piedra",
+                "pt_BR": "Metal e Pedra",
+                "de_DE": "Metalle & Steine",
+                "en_GB": "Metal & Stone",
+                "es_ES": "Metal y piedra",
+                "fr_FR": "Métal et pierre",
+                "it_IT": "Metallo e pietra",
+                "ru_RU": "Металл и камень",
+                "ko_KR": "광물",
+                "zh_TW": "金屬與石頭",
+                "zh_CN": "金属和矿石"
+            },
+            "id": 7
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/8?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Cooking",
+                "es_MX": "Cocina",
+                "pt_BR": "Culinária",
+                "de_DE": "Kochkunst",
+                "en_GB": "Cooking",
+                "es_ES": "Cocina",
+                "fr_FR": "Cuisine",
+                "it_IT": "Cucina",
+                "ru_RU": "Кулинария",
+                "ko_KR": "요리",
+                "zh_TW": "烹飪",
+                "zh_CN": "烹饪"
+            },
+            "id": 8
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/9?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Herb",
+                "es_MX": "Hierba",
+                "pt_BR": "Planta",
+                "de_DE": "Kräuter",
+                "en_GB": "Herb",
+                "es_ES": "Hierbas",
+                "fr_FR": "Herbes",
+                "it_IT": "Erbe",
+                "ru_RU": "Трава",
+                "ko_KR": "약초",
+                "zh_TW": "草藥",
+                "zh_CN": "草药"
+            },
+            "id": 9
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/10?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Elemental",
+                "es_MX": "Elemental",
+                "pt_BR": "Elemental",
+                "de_DE": "Elemente",
+                "en_GB": "Elemental",
+                "es_ES": "Elemental",
+                "fr_FR": "Élémentaire",
+                "it_IT": "Elementale",
+                "ru_RU": "Стихии",
+                "ko_KR": "원소",
+                "zh_TW": "元素",
+                "zh_CN": "元素"
+            },
+            "id": 10
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/11?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Other",
+                "es_MX": "Otros",
+                "pt_BR": "Outro",
+                "de_DE": "Sonstiges",
+                "en_GB": "Other",
+                "es_ES": "Otros",
+                "fr_FR": "Autres",
+                "it_IT": "Altro",
+                "ru_RU": "Другое",
+                "ko_KR": "기타",
+                "zh_TW": "其他",
+                "zh_CN": "其它"
+            },
+            "id": 11
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/12?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Enchanting",
+                "es_MX": "Encantamiento",
+                "pt_BR": "Encantamento",
+                "de_DE": "Verzauberkunst",
+                "en_GB": "Enchanting",
+                "es_ES": "Encantamiento",
+                "fr_FR": "Enchantement",
+                "it_IT": "Incantamento",
+                "ru_RU": "Наложение чар",
+                "ko_KR": "마법부여",
+                "zh_TW": "附魔",
+                "zh_CN": "附魔材料"
+            },
+            "id": 12
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/16?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Inscription",
+                "es_MX": "Inscripción",
+                "pt_BR": "Escrivania",
+                "de_DE": "Inschriftenkunde",
+                "en_GB": "Inscription",
+                "es_ES": "Inscripción",
+                "fr_FR": "Calligraphie",
+                "it_IT": "Runografia",
+                "ru_RU": "Начертание",
+                "ko_KR": "주문각인",
+                "zh_TW": "銘文",
+                "zh_CN": "铭文"
+            },
+            "id": 16
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/18?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Optional Reagents",
+                "es_MX": "Componentes opcionales",
+                "pt_BR": "Reagentes Opcionais",
+                "de_DE": "Optionale Reagenzien",
+                "en_GB": "Optional Reagents",
+                "es_ES": "Componentes opcionales",
+                "fr_FR": "Composants optionnels",
+                "it_IT": "Reagenti Facoltativi",
+                "ru_RU": "Дополнительные реагенты",
+                "ko_KR": "선택 재료",
+                "zh_TW": "額外材料",
+                "zh_CN": "附加材料"
+            },
+            "id": 18
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/19?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Finishing Reagents",
+                "es_MX": "Componentes de retoque",
+                "pt_BR": "Reagentes de Finalização",
+                "de_DE": "Fertigungsreagenzien",
+                "en_GB": "Finishing Reagents",
+                "es_ES": "Componentes de finalización",
+                "fr_FR": "Composants de finition",
+                "it_IT": "Reagenti di Finitura",
+                "ru_RU": "Завершающие реагенты",
+                "ko_KR": "마무리 재료",
+                "zh_TW": "最後加工材料",
+                "zh_CN": "成品材料"
+            },
+            "id": 19
+        }
+    ]
+}

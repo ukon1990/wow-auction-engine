@@ -1,0 +1,38 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/15?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 0,
+    "subclass_id": 15,
+    "display_name": {
+        "en_US": "RESERVED 15",
+        "es_MX": "RESERVADO 15",
+        "pt_BR": "RESERVADO 15",
+        "de_DE": "RESERVIERT 15",
+        "en_GB": "RESERVED 15",
+        "es_ES": "RESERVADO 15",
+        "fr_FR": "RÉSERVE 15",
+        "it_IT": "PRENOTATO 15",
+        "ru_RU": "ЗАРЕЗЕРВИРОВАНО 15",
+        "ko_KR": "보존 15",
+        "zh_TW": "保留15",
+        "zh_CN": "预留 15"
+    },
+    "verbose_name": {
+        "en_US": "RESERVED 15",
+        "es_MX": "RESERVADO 15",
+        "pt_BR": "RESERVADO 15",
+        "de_DE": "RESERVIERT 15",
+        "en_GB": "RESERVED 15",
+        "es_ES": "RESERVADO 15",
+        "fr_FR": "RÉSERVE 15",
+        "it_IT": "PRENOTATO 15",
+        "ru_RU": "ЗАРЕЗЕРВИРОВАНО 15",
+        "ko_KR": "보존 15",
+        "zh_TW": "保留15",
+        "zh_CN": "预留 15"
+    },
+    "hide_subclass_in_tooltips": true
+}

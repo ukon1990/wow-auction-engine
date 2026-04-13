@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/878?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 878,
+    "name": {
+        "en_US": "Galactic Combatant's Heraldry",
+        "es_MX": "Heráldica de Combatiente galáctico",
+        "pt_BR": "Heráldica do Combatente Galáctico",
+        "de_DE": "Wappenbuch des galaktischen Kämpfers",
+        "en_GB": "Galactic Combatant's Heraldry",
+        "es_ES": "Heráldica de Combatiente galáctico",
+        "fr_FR": "Blason du combattant galactique",
+        "it_IT": "Stemma del Combattente Galattico",
+        "ru_RU": "Геральдика галактического бойца",
+        "ko_KR": "우주를 호령하는 전투원의 표상",
+        "zh_TW": "銀河戰鬥者徽章",
+        "zh_CN": "星河争斗者的饰章"
+    }
+}

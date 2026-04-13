@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/7?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 7,
+    "display_name": {
+        "en_US": "Sword",
+        "es_MX": "Espada",
+        "pt_BR": "Espada",
+        "de_DE": "Schwert",
+        "en_GB": "Sword",
+        "es_ES": "Espada",
+        "fr_FR": "Epée",
+        "it_IT": "Spada",
+        "ru_RU": "Меч",
+        "ko_KR": "도검",
+        "zh_TW": "劍",
+        "zh_CN": "剑"
+    },
+    "verbose_name": {
+        "en_US": "One-Handed Swords",
+        "es_MX": "Espadas de una mano",
+        "pt_BR": "Espadas de Uma Mão",
+        "de_DE": "Einhandschwerter",
+        "en_GB": "One-Handed Swords",
+        "es_ES": "Espadas de una mano",
+        "fr_FR": "Epées à une main",
+        "it_IT": "Spade a una mano",
+        "ru_RU": "Одноручные мечи",
+        "ko_KR": "한손 도검류",
+        "zh_TW": "單手劍",
+        "zh_CN": "单手剑"
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/6?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 6,
+    "display_name": {
+        "en_US": "Polearm",
+        "es_MX": "Arma de asta",
+        "pt_BR": "Arma de Haste",
+        "de_DE": "Stangenwaffe",
+        "en_GB": "Polearm",
+        "es_ES": "Arma de asta",
+        "fr_FR": "Arme d’hast",
+        "it_IT": "Arma ad asta",
+        "ru_RU": "Древковое",
+        "ko_KR": "장창",
+        "zh_TW": "長柄武器",
+        "zh_CN": "长柄武器"
+    },
+    "verbose_name": {
+        "en_US": "Polearms",
+        "es_MX": "Armas de asta",
+        "pt_BR": "Armas de Haste",
+        "de_DE": "Stangenwaffen",
+        "en_GB": "Polearms",
+        "es_ES": "Armas de asta",
+        "fr_FR": "Armes d'hast",
+        "it_IT": "Armi ad asta",
+        "ru_RU": "Древковое",
+        "ko_KR": "장창류",
+        "zh_TW": "長柄武器",
+        "zh_CN": "长柄武器"
+    }
+}

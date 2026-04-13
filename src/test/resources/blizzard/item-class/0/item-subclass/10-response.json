@@ -1,0 +1,23 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/10?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 0,
+    "subclass_id": 10,
+    "display_name": {
+        "en_US": "Utility Curio",
+        "es_MX": "Singularidad de utilidad",
+        "pt_BR": "Badulaque Utilitário",
+        "de_DE": "Unterstützungskuriosität",
+        "en_GB": "Utility Curio",
+        "es_ES": "Bibelot de utilidad",
+        "fr_FR": "Bibelot utilitaire",
+        "it_IT": "Reperto di Utilità",
+        "ru_RU": "Вспомогательная диковинка",
+        "ko_KR": "보조 수집품",
+        "zh_TW": "通用珍品",
+        "zh_CN": "效能珍玩"
+    }
+}

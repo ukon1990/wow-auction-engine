@@ -1,0 +1,114 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-appearance/42529?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42529,
+    "slot": {
+        "type": "WEAPON",
+        "name": {
+            "en_US": "One-Hand",
+            "es_MX": "Una mano",
+            "pt_BR": "Uma Mão",
+            "de_DE": "Einhändig",
+            "en_GB": "One-Hand",
+            "es_ES": "Una mano",
+            "fr_FR": "À une main",
+            "it_IT": "Una mano",
+            "ru_RU": "Одноручное",
+            "ko_KR": "한손 장비",
+            "zh_TW": "單手",
+            "zh_CN": "单手"
+        }
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Weapon",
+            "es_MX": "Arma",
+            "pt_BR": "Arma",
+            "de_DE": "Waffe",
+            "en_GB": "Weapon",
+            "es_ES": "Arma",
+            "fr_FR": "Arme",
+            "it_IT": "Arma",
+            "ru_RU": "Оружие",
+            "ko_KR": "무기",
+            "zh_TW": "武器",
+            "zh_CN": "武器"
+        },
+        "id": 2
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Axe",
+            "es_MX": "Hacha",
+            "pt_BR": "Machado",
+            "de_DE": "Axt",
+            "en_GB": "Axe",
+            "es_ES": "Hacha",
+            "fr_FR": "Hache",
+            "it_IT": "Ascia",
+            "ru_RU": "Топор",
+            "ko_KR": "도끼",
+            "zh_TW": "斧",
+            "zh_CN": "斧"
+        },
+        "id": 0
+    },
+    "item_display_info_id": 183999,
+    "items": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/171388?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Ceremonious Axe",
+                "es_MX": "Hacha ceremoniosa",
+                "pt_BR": "Machado Cerimonioso",
+                "de_DE": "Zeremonielle Axt",
+                "en_GB": "Ceremonious Axe",
+                "es_ES": "Hacha de ceremonia",
+                "fr_FR": "Hache de cérémonie",
+                "it_IT": "Ascia Cerimoniosa",
+                "ru_RU": "Церемониальный топор",
+                "ko_KR": "격조의 도끼",
+                "zh_TW": "典禮之斧",
+                "zh_CN": "仪式之斧"
+            },
+            "id": 171388
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/178711?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Axe of the Deadgrove",
+                "es_MX": "Hacha de arboleda muerta",
+                "pt_BR": "Machado da Mata Morta",
+                "de_DE": "Axt des Totenhains",
+                "en_GB": "Axe of the Deadgrove",
+                "es_ES": "Hacha de la arboleda mortal",
+                "fr_FR": "Hache du bosquet mort",
+                "it_IT": "Ascia del Boscomorto",
+                "ru_RU": "Топор Мертвой рощи",
+                "ko_KR": "죽음숲 도끼",
+                "zh_TW": "死亡林地之斧",
+                "zh_CN": "亡林之斧"
+            },
+            "id": 178711
+        }
+    ],
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/3509650?namespace=static-12.0.1_65617-us"
+        },
+        "id": 3509650
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/50?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 50,
+    "name": {
+        "en_US": "Set Item Level",
+        "es_MX": "Establecer nivel de objeto",
+        "pt_BR": "Definir Nível de Item",
+        "de_DE": "Gegenstandsstufe festlegen",
+        "en_GB": "Set Item Level",
+        "es_ES": "Establecer nivel de objeto",
+        "fr_FR": "Changement de niveau d’objet",
+        "it_IT": "Impostazione Livello Oggetto",
+        "ru_RU": "Смена уровня предметов",
+        "ko_KR": "아이템 레벨 설정",
+        "zh_TW": "設定物品等級",
+        "zh_CN": "设置物品等级"
+    }
+}

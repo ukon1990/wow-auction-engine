@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/10?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 10,
+    "display_name": {
+        "en_US": "Staff",
+        "es_MX": "Bastón",
+        "pt_BR": "Cajado",
+        "de_DE": "Stab",
+        "en_GB": "Staff",
+        "es_ES": "Bastón",
+        "fr_FR": "Bâton",
+        "it_IT": "Bastone",
+        "ru_RU": "Посох",
+        "ko_KR": "지팡이",
+        "zh_TW": "法杖",
+        "zh_CN": "法杖"
+    },
+    "verbose_name": {
+        "en_US": "Staves",
+        "es_MX": "Bastones",
+        "pt_BR": "Báculos",
+        "de_DE": "Stäbe",
+        "en_GB": "Staves",
+        "es_ES": "Bastones",
+        "fr_FR": "Bâtons",
+        "it_IT": "Bastoni",
+        "ru_RU": "Посохи",
+        "ko_KR": "지팡이류",
+        "zh_TW": "法杖",
+        "zh_CN": "法杖"
+    }
+}

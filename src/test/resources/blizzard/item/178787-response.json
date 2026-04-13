@@ -1,0 +1,288 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/178787?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 178787,
+    "name": {
+        "en_US": "Orboreal Shard",
+        "es_MX": "Fragmento orboreal",
+        "pt_BR": "Estilhaço Orbóreo",
+        "de_DE": "Orborealer Splitter",
+        "en_GB": "Orboreal Shard",
+        "es_ES": "Fragmento orbóreo",
+        "fr_FR": "Éclat orboréal",
+        "it_IT": "Scheggia Orborea",
+        "ru_RU": "Ориборейский осколок",
+        "ko_KR": "오리보리얼 파편",
+        "zh_TW": "奧睿博瑞爾裂片",
+        "zh_CN": "奥渺碎片"
+    },
+    "quality": {
+        "type": "RARE",
+        "name": {
+            "en_US": "Rare",
+            "es_MX": "Raro",
+            "pt_BR": "Raro",
+            "de_DE": "Selten",
+            "en_GB": "Rare",
+            "es_ES": "Raro",
+            "fr_FR": "Rare",
+            "it_IT": "Raro",
+            "ru_RU": "Редкое",
+            "ko_KR": "희귀",
+            "zh_TW": "精良",
+            "zh_CN": "精良"
+        }
+    },
+    "level": 50,
+    "required_level": 0,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/178787?namespace=static-12.0.1_65617-us"
+        },
+        "id": 178787
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Tradeskill",
+            "es_MX": "Habilidad comercial",
+            "pt_BR": "Perícia profissional",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Tradeskill",
+            "es_ES": "Habilidad comercial",
+            "fr_FR": "Artisanat",
+            "it_IT": "Beni commerciali",
+            "ru_RU": "Ремесло",
+            "ko_KR": "전문 기술",
+            "zh_TW": "交易技能",
+            "zh_CN": "商业技能"
+        },
+        "id": 7
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/10?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Elemental",
+            "es_MX": "Elemental",
+            "pt_BR": "Elemental",
+            "de_DE": "Elemente",
+            "en_GB": "Elemental",
+            "es_ES": "Elemental",
+            "fr_FR": "Élémentaire",
+            "it_IT": "Elementale",
+            "ru_RU": "Стихии",
+            "ko_KR": "원소",
+            "zh_TW": "元素",
+            "zh_CN": "元素"
+        },
+        "id": 10
+    },
+    "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": {
+            "en_US": "Non-equippable",
+            "es_MX": "No equipable",
+            "pt_BR": "Não equipável",
+            "de_DE": "Nicht anlegbar",
+            "en_GB": "Non-equippable",
+            "es_ES": "No se puede equipar",
+            "fr_FR": "Objet hors équipement",
+            "it_IT": "Non equipaggiabile",
+            "ru_RU": "Неэкипируемое",
+            "ko_KR": "착용 불가",
+            "zh_TW": "無法裝備",
+            "zh_CN": "无法装备"
+        }
+    },
+    "purchase_price": 1250000,
+    "sell_price": 312500,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/178787?namespace=static-12.0.1_65617-us"
+            },
+            "id": 178787
+        },
+        "quality": {
+            "type": "RARE",
+            "name": {
+                "en_US": "Rare",
+                "es_MX": "Raro",
+                "pt_BR": "Raro",
+                "de_DE": "Selten",
+                "en_GB": "Rare",
+                "es_ES": "Raro",
+                "fr_FR": "Rare",
+                "it_IT": "Raro",
+                "ru_RU": "Редкое",
+                "ko_KR": "희귀",
+                "zh_TW": "精良",
+                "zh_CN": "精良"
+            }
+        },
+        "name": {
+            "en_US": "Orboreal Shard",
+            "es_MX": "Fragmento orboreal",
+            "pt_BR": "Estilhaço Orbóreo",
+            "de_DE": "Orborealer Splitter",
+            "en_GB": "Orboreal Shard",
+            "es_ES": "Fragmento orbóreo",
+            "fr_FR": "Éclat orboréal",
+            "it_IT": "Scheggia Orborea",
+            "ru_RU": "Ориборейский осколок",
+            "ko_KR": "오리보리얼 파편",
+            "zh_TW": "奧睿博瑞爾裂片",
+            "zh_CN": "奥渺碎片"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/178787?namespace=static-12.0.1_65617-us"
+            },
+            "id": 178787
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Tradeskill",
+                "es_MX": "Habilidad comercial",
+                "pt_BR": "Perícia profissional",
+                "de_DE": "Handwerksmaterial",
+                "en_GB": "Tradeskill",
+                "es_ES": "Habilidad comercial",
+                "fr_FR": "Artisanat",
+                "it_IT": "Beni commerciali",
+                "ru_RU": "Ремесло",
+                "ko_KR": "전문 기술",
+                "zh_TW": "交易技能",
+                "zh_CN": "商业技能"
+            },
+            "id": 7
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/10?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Elemental",
+                "es_MX": "Elemental",
+                "pt_BR": "Elemental",
+                "de_DE": "Elemente",
+                "en_GB": "Elemental",
+                "es_ES": "Elemental",
+                "fr_FR": "Élémentaire",
+                "it_IT": "Elementale",
+                "ru_RU": "Стихии",
+                "ko_KR": "원소",
+                "zh_TW": "元素",
+                "zh_CN": "元素"
+            },
+            "id": 10
+        },
+        "inventory_type": {
+            "type": "NON_EQUIP",
+            "name": {
+                "en_US": "Non-equippable",
+                "es_MX": "No equipable",
+                "pt_BR": "Não equipável",
+                "de_DE": "Nicht anlegbar",
+                "en_GB": "Non-equippable",
+                "es_ES": "No se puede equipar",
+                "fr_FR": "Objet hors équipement",
+                "it_IT": "Non equipaggiabile",
+                "ru_RU": "Неэкипируемое",
+                "ko_KR": "착용 불가",
+                "zh_TW": "無法裝備",
+                "zh_CN": "无法装备"
+            }
+        },
+        "sell_price": {
+            "value": 312500,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "31",
+                    "es_MX": "31",
+                    "pt_BR": "31",
+                    "de_DE": "31",
+                    "en_GB": "31",
+                    "es_ES": "31",
+                    "fr_FR": "31",
+                    "it_IT": "31",
+                    "ru_RU": "31",
+                    "ko_KR": "31",
+                    "zh_TW": "31",
+                    "zh_CN": "31"
+                },
+                "silver": {
+                    "en_US": "25",
+                    "es_MX": "25",
+                    "pt_BR": "25",
+                    "de_DE": "25",
+                    "en_GB": "25",
+                    "es_ES": "25",
+                    "fr_FR": "25",
+                    "it_IT": "25",
+                    "ru_RU": "25",
+                    "ko_KR": "25",
+                    "zh_TW": "25",
+                    "zh_CN": "25"
+                },
+                "copper": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                }
+            }
+        },
+        "is_subclass_hidden": true,
+        "crafting_reagent": {
+            "en_US": "Crafting Reagent",
+            "es_MX": "Componente de creación",
+            "pt_BR": "Reagente de criação",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Crafting Reagent",
+            "es_ES": "Componente de profesión",
+            "fr_FR": "Composant d’artisanat",
+            "it_IT": "Reagente d'artigianato",
+            "ru_RU": "Используется для ремесел",
+            "ko_KR": "제작 재료",
+            "zh_TW": "製造材料",
+            "zh_CN": "制作材料"
+        }
+    },
+    "purchase_quantity": 1
+}
