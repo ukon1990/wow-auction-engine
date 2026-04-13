@@ -3,8 +3,15 @@ package net.jonasmf.auctionengine.mapper
 import net.jonasmf.auctionengine.dbo.rds.LocaleDBO
 import net.jonasmf.auctionengine.dto.LocaleDTO
 
-fun LocaleDTO.toDBO() =
+fun LocaleDTO.toDBO(
+    sourceType: String,
+    sourceKey: String,
+    sourceField: String,
+) =
     LocaleDBO(
+        sourceType = sourceType,
+        sourceKey = sourceKey,
+        sourceField = sourceField,
         en_US = en_US,
         en_GB = en_GB,
         es_ES = es_ES,
