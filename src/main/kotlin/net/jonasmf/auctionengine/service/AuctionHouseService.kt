@@ -32,7 +32,10 @@ class AuctionHouseService(
             connectedRealm.realms
                 .first()
                 .region.type
-        val auctionHouse = connectedRealm.auctionHouse
+        val auctionHouse =
+            auctionHouseEntityRepository
+                .findByConnectedId(connectedRealm.id)
+                .orElse(connectedRealm.auctionHouse)
 
         auctionHouse.connectedId = connectedRealm.id
         auctionHouse.region = region
@@ -43,7 +46,10 @@ class AuctionHouseService(
         auctionHouse.highestDelay = auctionHouse.highestDelay ?: 0L
         auctionHouse.updateAttempts = auctionHouse.updateAttempts ?: 0
 
-        auctionHouseEntityRepository.save(auctionHouse)
+        val savedAuctionHouse = auctionHouseEntityRepository.save(auctionHouse)
+        if (connectedRealm.auctionHouse.id != savedAuctionHouse.id) {
+            connectedRealm.auctionHouse = savedAuctionHouse
+        }
     }
 
     fun updateTimes(

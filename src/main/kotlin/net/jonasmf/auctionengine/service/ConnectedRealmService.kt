@@ -22,6 +22,7 @@ import java.time.Instant
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.emptyList
 import kotlin.text.get
+import net.jonasmf.auctionengine.repository.rds.AuctionHouseRepository as AuctionHouseEntityRepository
 
 @Service
 class ConnectedRealmService(
@@ -32,6 +33,7 @@ class ConnectedRealmService(
     private val regionRepository: RegionRepository,
     private val auctionHouseService: AuctionHouseService,
     private val connectedRealmBulkSyncService: ConnectedRealmBulkSyncService,
+    private val auctionHouseEntityRepository: AuctionHouseEntityRepository,
 ) {
     val log: Logger = LoggerFactory.getLogger(ConnectedRealmService::class.java)
     private val seededAt: Instant = Instant.EPOCH
@@ -142,7 +144,20 @@ class ConnectedRealmService(
         }
     }
 
-    fun getById(id: Int): ConnectedRealm? = connectedRealmRepository.findById(id).orElse(null)
+    fun getById(id: Int): ConnectedRealm? {
+        val connectedRealm = connectedRealmRepository.findById(id).orElse(null) ?: return null
+        val authoritativeAuctionHouse =
+            auctionHouseEntityRepository
+                .findByConnectedId(id)
+                .orElse(null) ?: return connectedRealm
+
+        if (connectedRealm.auctionHouse.id == authoritativeAuctionHouse.id) {
+            return connectedRealm
+        }
+
+        connectedRealm.auctionHouse = authoritativeAuctionHouse
+        return connectedRealmRepository.save(connectedRealm)
+    }
 
     fun getAllForRegion(region: Region) = connectedRealmRepository.findAllByRegion(region)
 
