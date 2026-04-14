@@ -294,6 +294,39 @@ class BlizzardAuctionServiceTest {
     }
 
     @Test
+    fun `updateAuctionHouses marks update as failed when latest dump lookup throws`() {
+        val service = createService()
+
+        every { blizzardAuctionApiClient.getLatestAuctionDump(1, Region.Europe, any()) } returns
+            Mono.error(RuntimeException("boom"))
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
+
+        service.updateAuctionHouses(
+            Region.Europe,
+            listOf(AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe)),
+        )
+
+        io.mockk.verify(exactly = 1) { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) }
+        io.mockk.verify(exactly = 0) { realmService.getById(any()) }
+    }
+
+    @Test
+    fun `updateAuctionHouses marks update as failed when latest dump lookup returns no response`() {
+        val service = createService()
+
+        every { blizzardAuctionApiClient.getLatestAuctionDump(1, Region.Europe, any()) } returns Mono.empty()
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
+
+        service.updateAuctionHouses(
+            Region.Europe,
+            listOf(AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe)),
+        )
+
+        io.mockk.verify(exactly = 1) { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) }
+        io.mockk.verify(exactly = 0) { realmService.getById(any()) }
+    }
+
+    @Test
     fun `updateAuctionHouses logs known client failures without error stack trace`() {
         val appender = attachAppender()
         val service = createService()

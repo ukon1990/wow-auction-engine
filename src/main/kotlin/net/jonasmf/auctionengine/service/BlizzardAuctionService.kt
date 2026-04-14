@@ -98,12 +98,14 @@ class BlizzardAuctionService(
                     .getLatestAuctionDump(connectedRealmId, region)
                     .block() ?: run {
                     logger.error("Latest dump path lookup returned no response for realm {}", connectedRealmId)
+                    markAuctionUpdateFailed(connectedRealmId)
                     return
                 }
 
             val connectedRealm = realmService.getById(connectedRealmId)
             if (connectedRealm == null) {
                 logger.error("ConnectedRealm not found for id $connectedRealmId")
+                markAuctionUpdateFailed(connectedRealmId)
                 return
             }
 
@@ -141,7 +143,19 @@ class BlizzardAuctionService(
                 failure = error,
                 action = "get latest dump path",
             )
+            markAuctionUpdateFailed(connectedRealmId)
         }
+    }
+
+    private fun markAuctionUpdateFailed(
+        connectedRealmId: Int,
+        lastModified: ZonedDateTime? = null,
+    ) {
+        auctionHouseService.updateTimes(
+            connectedRealmId,
+            lastModified?.toInstant()?.toKotlin(),
+            false,
+        )
     }
 
     private fun processAuctionData(
@@ -170,11 +184,7 @@ class BlizzardAuctionService(
                     .downloadAuctionData(url)
                     .block() ?: run {
                     logger.error("Auction data download returned no payload for realm {}", connectedRealmId)
-                    auctionHouseService.updateTimes(
-                        connectedRealmId,
-                        lastModified.toInstant().toKotlin(),
-                        false,
-                    )
+                    markAuctionUpdateFailed(connectedRealmId, lastModified)
                     return
                 }
             try {
@@ -198,11 +208,7 @@ class BlizzardAuctionService(
                         "Auction payload archive failed for realm {}. Marking update as failed.",
                         connectedRealmId,
                     )
-                    auctionHouseService.updateTimes(
-                        connectedRealmId,
-                        lastModified.toInstant().toKotlin(),
-                        false,
-                    )
+                    markAuctionUpdateFailed(connectedRealmId, lastModified)
                     return
                 }
                 logger.info(
@@ -226,11 +232,7 @@ class BlizzardAuctionService(
                     )
                 if (hourlyStatsSummary.processedAuctions == 0) {
                     logger.warn("No auctions found for realm {}", connectedRealmId)
-                    auctionHouseService.updateTimes(
-                        connectedRealmId,
-                        lastModified.toInstant().toKotlin(),
-                        false,
-                    )
+                    markAuctionUpdateFailed(connectedRealmId, lastModified)
                     return
                 }
                 logger.info(
@@ -282,12 +284,7 @@ class BlizzardAuctionService(
                 region = region,
                 connectedRealmId = connectedRealmId,
             )
-            auctionHouseService.updateTimes(
-                // TODO: Cleanup so that the original lastModified also is Instant
-                connectedRealmId,
-                lastModified.toInstant().toKotlin(),
-                false,
-            )
+            markAuctionUpdateFailed(connectedRealmId, lastModified)
         }
     }
 
