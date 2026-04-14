@@ -54,6 +54,8 @@ class ProfessionRecipeSyncServiceIntegrationTest {
     @Test
     fun `syncRegion downloads and persists full profession recipe graph`() {
         val result = professionRecipeSyncService.syncRegion(Region.Europe)
+        val categoryMetadataLocaleTable = referencedLocaleTable("modified_crafting_category_metadata", "name_id")
+        val slotMetadataLocaleTable = referencedLocaleTable("modified_crafting_slot_metadata", "description_id")
 
         assertEquals(1, result.professionsFetched)
         assertEquals(1, result.skillTiersFetched)
@@ -71,6 +73,20 @@ class ProfessionRecipeSyncServiceIntegrationTest {
         assertEquals(2, countRows("modified_crafting_category_metadata"))
         assertEquals(2, countRows("modified_crafting_slot_metadata"))
         assertEquals(3, countRows("modified_crafting_slot_metadata_category"))
+        assertEquals(
+            2,
+            countRowsWhere(
+                categoryMetadataLocaleTable,
+                "source_type = 'modified_crafting_category_metadata' AND source_field = 'name'",
+            ),
+        )
+        assertEquals(
+            2,
+            countRowsWhere(
+                slotMetadataLocaleTable,
+                "source_type = 'modified_crafting_slot_metadata' AND source_field = 'description'",
+            ),
+        )
         assertEquals(2, recipeRepository.findDistinctCraftedItemIds().size)
         assertEquals(2, recipeRepository.findDistinctReagentItemIds().size)
         assertEquals(4, recipeRepository.findDistinctReferencedItemIds().size)
@@ -78,6 +94,29 @@ class ProfessionRecipeSyncServiceIntegrationTest {
 
     private fun countRows(tableName: String): Int =
         jdbcTemplate.queryForObject("SELECT COUNT(*) FROM $tableName", Int::class.java)!!
+
+    private fun countRowsWhere(
+        tableName: String,
+        condition: String,
+    ): Int = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM $tableName WHERE $condition", Int::class.java)!!
+
+    private fun referencedLocaleTable(
+        tableName: String,
+        columnName: String,
+    ): String =
+        jdbcTemplate.queryForObject(
+            """
+            SELECT referenced_table_name
+            FROM information_schema.KEY_COLUMN_USAGE
+            WHERE table_schema = DATABASE()
+              AND table_name = ?
+              AND column_name = ?
+              AND referenced_table_name IS NOT NULL
+            """.trimIndent(),
+            String::class.java,
+            tableName,
+            columnName,
+        )!!
 
     companion object {
         @JvmStatic

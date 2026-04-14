@@ -31,13 +31,14 @@ class ProfessionRecipeBulkSyncServiceTest : IntegrationTestBase() {
         val recipe = recipeDetail(1000, reagentIds = listOf(2000, 2001), includeSlot = true)
         val category = ModifiedCraftingCategory(3000, locale("Optional Category"))
         val slot = ModifiedCraftingSlot(4000, locale("Optional Slot"), listOf(category))
+        val metadataLocaleTable = referencedLocaleTable("modified_crafting_category_metadata", "name_id")
 
         professionRecipeBulkSyncService.sync(listOf(profession), listOf(recipe), listOf(category), listOf(slot))
-        val localeRowsAfterFirstSync = countRows("locale")
+        val localeRowsAfterFirstSync = countRows(metadataLocaleTable)
 
         professionRecipeBulkSyncService.sync(listOf(profession), listOf(recipe), listOf(category), listOf(slot))
 
-        assertEquals(localeRowsAfterFirstSync, countRows("locale"))
+        assertEquals(localeRowsAfterFirstSync, countRows(metadataLocaleTable))
         assertEquals(1, countRows("profession"))
         assertEquals(1, countRows("skill_tier"))
         assertEquals(1, countRows("profession_category"))
@@ -50,11 +51,17 @@ class ProfessionRecipeBulkSyncServiceTest : IntegrationTestBase() {
         assertEquals(1, countRows("modified_crafting_slot_metadata_category"))
         assertEquals(
             1,
-            countRowsWhere("locale", "source_type = 'profession' AND source_key = '100' AND source_field = 'name'"),
+            countRowsWhere(
+                metadataLocaleTable,
+                "source_type = 'modified_crafting_category_metadata' AND source_key = '3000' AND source_field = 'name'",
+            ),
         )
         assertEquals(
             1,
-            countRowsWhere("locale", "source_type = 'recipe' AND source_key = '1000' AND source_field = 'name'"),
+            countRowsWhere(
+                metadataLocaleTable,
+                "source_type = 'modified_crafting_slot_metadata' AND source_key = '4000' AND source_field = 'description'",
+            ),
         )
     }
 
@@ -184,4 +191,22 @@ class ProfessionRecipeBulkSyncServiceTest : IntegrationTestBase() {
         tableName: String,
         condition: String,
     ): Int = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM $tableName WHERE $condition", Int::class.java)!!
+
+    private fun referencedLocaleTable(
+        tableName: String,
+        columnName: String,
+    ): String =
+        jdbcTemplate.queryForObject(
+            """
+            SELECT referenced_table_name
+            FROM information_schema.KEY_COLUMN_USAGE
+            WHERE table_schema = DATABASE()
+              AND table_name = ?
+              AND column_name = ?
+              AND referenced_table_name IS NOT NULL
+            """.trimIndent(),
+            String::class.java,
+            tableName,
+            columnName,
+        )!!
 }

@@ -394,7 +394,8 @@ class ProfessionRecipeBulkSyncService(
                 { rs, _ -> rs.getString("referenced_table_name") },
                 tableName,
                 columnName,
-            ).firstOrNull() ?: "locale"
+            ).firstOrNull()
+            ?: error("Missing referenced locale table for $tableName.$columnName")
 
     private fun SkillTier.resolveRecipeDetails(
         recipesById: Map<Int, Recipe>,
