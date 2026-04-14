@@ -1,8 +1,10 @@
 package net.jonasmf.auctionengine.schedules
 
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
+import net.jonasmf.auctionengine.config.WaeS3Properties
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.util.concurrent.atomic.AtomicBoolean
@@ -10,7 +12,10 @@ import java.util.concurrent.atomic.AtomicBoolean
 @Component
 class ProfessionRecipeSchedule(
     private val properties: BlizzardApiProperties,
+    private val s3Properties: WaeS3Properties,
     private val professionRecipeSyncService: ProfessionRecipeSyncService,
+    @Value("\${spring.cloud.aws.region.static}")
+    private val deploymentAwsRegion: String,
 ) {
     private val log = LoggerFactory.getLogger(ProfessionRecipeSchedule::class.java)
     private val syncRunning = AtomicBoolean(false)
@@ -20,6 +25,7 @@ class ProfessionRecipeSchedule(
         zone = "\${app.scheduling.profession-recipe-sync-zone:GMT+1}",
     )
     fun syncProfessionRecipesOnSchedule() {
+        if (!shouldRunInCurrentDeploymentRegion("scheduled")) return
         runSync("scheduled")
     }
 
@@ -28,11 +34,27 @@ class ProfessionRecipeSchedule(
         fixedDelayString = "\${app.scheduling.profession-recipe-sync-startup-repeat-delay:P3650D}",
     )
     fun syncProfessionRecipesAfterStartup() {
+        if (!shouldRunInCurrentDeploymentRegion("startup")) return
         runSync("startup")
     }
 
     fun syncProfessionRecipes() {
         runSync("manual")
+    }
+
+    private fun shouldRunInCurrentDeploymentRegion(trigger: String): Boolean {
+        val expectedAwsRegion = s3Properties.bucketFor(properties.staticDataRegion).bucketRegion
+        if (deploymentAwsRegion != expectedAwsRegion) {
+            log.info(
+                "Skipping {} profession/recipe sync because deployment AWS region {} does not match static data region {} bucket region {}.",
+                trigger,
+                deploymentAwsRegion,
+                properties.staticDataRegion,
+                expectedAwsRegion,
+            )
+            return false
+        }
+        return true
     }
 
     private fun runSync(trigger: String) {

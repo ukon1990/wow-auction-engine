@@ -7,6 +7,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
+import net.jonasmf.auctionengine.config.BucketConfig
+import net.jonasmf.auctionengine.config.WaeS3Properties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncResult
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
@@ -26,6 +28,16 @@ class ProfessionRecipeScheduleTest {
             clientSecret = "secret",
             regions = listOf(Region.Europe, Region.Taiwan),
         )
+    private val s3Properties =
+        WaeS3Properties(
+            buckets =
+                mapOf(
+                    "europe" to BucketConfig("wah-data-eu", "eu-west-1"),
+                    "northamerica" to BucketConfig("wah-data-us", "us-west-1"),
+                    "korea" to BucketConfig("wah-data-as", "ap-northeast-2"),
+                    "taiwan" to BucketConfig("wah-data-as", "ap-northeast-2"),
+                ),
+        )
 
     @Test
     fun `syncProfessionRecipes skips and logs when sync already running`() {
@@ -42,7 +54,7 @@ class ProfessionRecipeScheduleTest {
         }
 
         try {
-            val schedule = ProfessionRecipeSchedule(properties, service)
+            val schedule = ProfessionRecipeSchedule(properties, s3Properties, service, "eu-west-1")
             val future = executor.submit<Unit> { schedule.syncProfessionRecipes() }
             assertTrue(started.await(5, TimeUnit.SECONDS))
 
@@ -68,7 +80,7 @@ class ProfessionRecipeScheduleTest {
         val service = mockk<ProfessionRecipeSyncService>()
         every { service.syncConfiguredStaticDataRegion() } returns mockk<ProfessionRecipeSyncResult>(relaxed = true)
 
-        val schedule = ProfessionRecipeSchedule(properties, service)
+        val schedule = ProfessionRecipeSchedule(properties, s3Properties, service, "eu-west-1")
 
         schedule.syncProfessionRecipes()
         schedule.syncProfessionRecipes()
@@ -82,12 +94,35 @@ class ProfessionRecipeScheduleTest {
         every { service.syncConfiguredStaticDataRegion() } throws RuntimeException("boom") andThen
             mockk<ProfessionRecipeSyncResult>(relaxed = true)
 
-        val schedule = ProfessionRecipeSchedule(properties, service)
+        val schedule = ProfessionRecipeSchedule(properties, s3Properties, service, "eu-west-1")
 
         runCatching { schedule.syncProfessionRecipes() }
         schedule.syncProfessionRecipes()
 
         verify(exactly = 2) { service.syncConfiguredStaticDataRegion() }
+    }
+
+    @Test
+    fun `scheduled sync skips when deployment region does not match static data region`() {
+        val service = mockk<ProfessionRecipeSyncService>()
+        val listAppender = attachAppender()
+        val schedule = ProfessionRecipeSchedule(properties, s3Properties, service, "us-west-1")
+
+        try {
+            schedule.syncProfessionRecipesOnSchedule()
+
+            val messages = listAppender.list.map(ILoggingEvent::getFormattedMessage)
+            assertTrue(
+                messages.any {
+                    it.contains(
+                        "Skipping scheduled profession/recipe sync because deployment AWS region us-west-1 does not match static data region Europe bucket region eu-west-1.",
+                    )
+                },
+            )
+            verify(exactly = 0) { service.syncConfiguredStaticDataRegion() }
+        } finally {
+            detachAppender(listAppender)
+        }
     }
 
     private fun attachAppender(): ListAppender<ILoggingEvent> {
