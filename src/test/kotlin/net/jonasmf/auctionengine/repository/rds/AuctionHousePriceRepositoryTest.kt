@@ -12,6 +12,7 @@ import net.jonasmf.auctionengine.dto.auction.ModifierDTO
 import net.jonasmf.auctionengine.service.HourlyPriceStatisticsService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
@@ -66,6 +67,52 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             )
 
         assertEquals(1, bonusKeyColumnCount)
+    }
+
+    @Test
+    fun `should align hourly auction stats indexes and storage layout`() {
+        val secondaryIndexes =
+            jdbcTemplate
+                .query(
+                    """
+                    SELECT index_name, GROUP_CONCAT(column_name ORDER BY seq_in_index) AS columns_csv
+                    FROM information_schema.statistics
+                    WHERE table_schema = DATABASE()
+                      AND table_name = 'hourly_auction_stats'
+                      AND index_name <> 'PRIMARY'
+                    GROUP BY index_name
+                    """.trimIndent(),
+                ) { rs, _ -> rs.getString("index_name") to rs.getString("columns_csv") }
+                .toMap()
+
+        assertEquals(
+            mapOf(
+                "idx_hourly_auction_stats_connected_realm_id_date" to "connected_realm_id,date",
+                "idx_hourly_auction_stats_connected_realm_id_item_id_date" to "connected_realm_id,item_id,date",
+            ),
+            secondaryIndexes,
+        )
+
+        val createTable =
+            jdbcTemplate.queryForObject(
+                "SHOW CREATE TABLE hourly_auction_stats",
+                { rs, _ -> rs.getString("Create Table") },
+            ) ?: error(
+                "SHOW CREATE TABLE returned no definition for hourly_auction_stats",
+            )
+
+        val normalizedCreateTable =
+            createTable
+                .lowercase()
+                .replace("`", "")
+                .replace(Regex("\\s+"), " ")
+
+        assertTrue(normalizedCreateTable.contains("engine=innodb"))
+        assertTrue(normalizedCreateTable.contains("default charset=utf8mb3"))
+        assertTrue(normalizedCreateTable.contains("collate=utf8mb3_general_ci"))
+        assertTrue(normalizedCreateTable.contains("max_rows=82300000"))
+        assertTrue(normalizedCreateTable.contains("partition by hash (to_days(date))"))
+        assertTrue(normalizedCreateTable.contains("partitions 31"))
     }
 
     @Test

@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.dbo.rds.auction
 
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import jakarta.persistence.Table
 
 /**
  * The reason I have gone with this approach instead of having multiple rows per day, is 1 to save space,
@@ -14,6 +15,7 @@ import jakarta.persistence.Entity
  * This was the fastest and cheapest approach I could find as I don't want to spend lots of money on an expensive database.
  */
 @Entity
+@Table(name = "hourly_auction_stats")
 data class HourlyAuctionStats(
     @EmbeddedId
     val id: AuctionStatsId,
