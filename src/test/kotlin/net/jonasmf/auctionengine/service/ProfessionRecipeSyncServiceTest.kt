@@ -130,10 +130,9 @@ class ProfessionRecipeSyncServiceTest {
     }
 
     @Test
-    fun `syncRegion continues after recipe fetch failure`() {
+    fun `syncRegion skips tier persistence after recipe fetch failure`() {
         val service = createService()
         val profession = professionWithRecipeIds(301, listOf(3001, 3002))
-        val recipesSlot = slot<List<Recipe>>()
 
         every { professionApiClient.getAll(Region.Europe) } returns listOf(profession)
         every { recipeApiClient.getById(3001, Region.Europe) } returns recipeDetail(3001)
@@ -141,13 +140,13 @@ class ProfessionRecipeSyncServiceTest {
         every { modifiedCraftingApiClient.getAllCategories(Region.Europe) } returns emptyList()
         every { modifiedCraftingApiClient.getAllSlotTypes(Region.Europe) } returns emptyList()
         every { bulkSyncService.syncModifiedCraftingMetadata(emptyList(), emptyList()) } returns Unit
-        every { bulkSyncService.syncProfessionSkillTier(any(), any(), capture(recipesSlot), any()) } returns summary(recipes = 1, slots = 0)
 
         val result = service.syncRegion(Region.Europe)
 
         assertEquals(1, result.recipesFetched)
         assertEquals(1, result.recipeFailures)
-        assertEquals(listOf(3001), recipesSlot.captured.map { it.id })
+        assertEquals(0, result.persistenceSummary.recipesUpserted)
+        verify(exactly = 0) { bulkSyncService.syncProfessionSkillTier(any(), any(), any(), any()) }
     }
 
     private fun professionWithRecipeIds(

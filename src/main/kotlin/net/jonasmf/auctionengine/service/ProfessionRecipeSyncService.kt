@@ -3,8 +3,6 @@ package net.jonasmf.auctionengine.service
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.domain.profession.Recipe
-import net.jonasmf.auctionengine.domain.profession.Profession
-import net.jonasmf.auctionengine.domain.profession.SkillTier
 import net.jonasmf.auctionengine.integration.blizzard.ModifiedCraftingApiClient
 import net.jonasmf.auctionengine.integration.blizzard.ProfessionApiClient
 import net.jonasmf.auctionengine.integration.blizzard.RecipeApiClient
@@ -15,6 +13,12 @@ import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 
 private const val PROFESSION_RECIPE_FETCH_CONCURRENCY = 20
+
+private data class RecipeFetchOutcome(
+    val recipeId: Int,
+    val recipe: Recipe? = null,
+    val error: Throwable? = null,
+)
 
 data class ProfessionRecipeSyncResult(
     val region: Region,
@@ -124,30 +128,34 @@ class ProfessionRecipeSyncService(
                 )
 
                 val recipeFetchStartTime = System.currentTimeMillis()
-                val fetchedTierRecipes = mutableListOf<Recipe>()
-                val tierRecipeFailures = mutableListOf<Int>()
-                Flux
-                    .fromIterable(recipeIds)
-                    .flatMap({ recipeId ->
-                        Mono
-                            .fromCallable { recipeApiClient.getById(recipeId, region) }
-                            .subscribeOn(Schedulers.boundedElastic())
-                            .doOnNext(fetchedTierRecipes::add)
-                            .onErrorResume { error ->
-                                tierRecipeFailures += recipeId
-                                log.warn(
-                                    "Skipping recipe {} for region {} professionId={} skillTierId={} after fetch failure: {}",
-                                    recipeId,
-                                    region,
-                                    profession.id,
-                                    skillTier.id,
-                                    error.message ?: error::class.simpleName ?: "unknown error",
-                                )
-                                Mono.empty()
-                            }
-                    }, PROFESSION_RECIPE_FETCH_CONCURRENCY)
-                    .collectList()
-                    .block()
+                val recipeOutcomes =
+                    Flux
+                        .fromIterable(recipeIds)
+                        .flatMap({ recipeId ->
+                            Mono
+                                .fromCallable { recipeApiClient.getById(recipeId, region) }
+                                .map<RecipeFetchOutcome> { recipe ->
+                                    RecipeFetchOutcome(recipeId = recipeId, recipe = recipe)
+                                }.subscribeOn(Schedulers.boundedElastic())
+                                .onErrorResume { error ->
+                                    Mono.just(RecipeFetchOutcome(recipeId = recipeId, error = error))
+                                }
+                        }, PROFESSION_RECIPE_FETCH_CONCURRENCY)
+                        .collectList()
+                        .block()
+                        .orEmpty()
+                val fetchedTierRecipes = recipeOutcomes.mapNotNull(RecipeFetchOutcome::recipe)
+                val tierRecipeFailures = recipeOutcomes.filter { it.error != null }
+                tierRecipeFailures.forEach { failure ->
+                    log.warn(
+                        "Skipping recipe {} for region {} professionId={} skillTierId={} after fetch failure: {}",
+                        failure.recipeId,
+                        region,
+                        profession.id,
+                        skillTier.id,
+                        failure.error?.message ?: failure.error?.javaClass?.simpleName ?: "unknown error",
+                    )
+                }
                 recipesFetched += fetchedTierRecipes.size
                 recipeFailures += tierRecipeFailures.size
                 log.info(
@@ -158,6 +166,16 @@ class ProfessionRecipeSyncService(
                     tierRecipeFailures.size,
                     System.currentTimeMillis() - recipeFetchStartTime,
                 )
+
+                if (tierRecipeFailures.isNotEmpty()) {
+                    log.warn(
+                        "Skipping persistence for professionId={} skillTierId={} because {} recipe fetches failed.",
+                        profession.id,
+                        skillTier.id,
+                        tierRecipeFailures.size,
+                    )
+                    return@forEachIndexed
+                }
 
                 val persistenceStartTime = System.currentTimeMillis()
                 val tierSummary =
