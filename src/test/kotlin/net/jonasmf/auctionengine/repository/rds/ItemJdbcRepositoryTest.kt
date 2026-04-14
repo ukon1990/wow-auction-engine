@@ -54,7 +54,7 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `findDistinctAuctionItemIdsForDate only returns todays non-pet item ids`() {
+    fun `findMissingItemIdsForDate returns combined missing ids without loading existing ids in memory`() {
         val today = LocalDate.of(2026, 4, 14)
         val yesterday = today.minusDays(1)
         connectedRealmRepository.save(
@@ -90,7 +90,7 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
             GameBuildVersion.RETAIL.ordinal,
             1001,
             today,
-            0,
+            -1,
             "",
             "",
         )
@@ -110,7 +110,7 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
             GameBuildVersion.RETAIL.ordinal,
             1001,
             today,
-            0,
+            -1,
             "mod",
             "bonus",
         )
@@ -130,7 +130,7 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
             GameBuildVersion.RETAIL.ordinal,
             1002,
             yesterday,
-            0,
+            -1,
             "",
             "",
         )
@@ -154,10 +154,32 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
             "",
             "",
         )
+        jdbcTemplate.update(
+            "INSERT INTO recipe (id, crafted_item_id) VALUES (?, ?)",
+            5001,
+            3001,
+        )
+        jdbcTemplate.update(
+            "INSERT INTO recipe (id, crafted_item_id) VALUES (?, ?)",
+            5002,
+            171374,
+        )
+        jdbcTemplate.update(
+            "INSERT INTO recipe_reagent (internal_id, item_id, quantity) VALUES (?, ?, ?)",
+            7001,
+            4001,
+            2,
+        )
+        itemJdbcRepository.syncItems(listOf(loadItem(171374)))
 
-        val itemIds = itemJdbcRepository.findDistinctAuctionItemIdsForDate(today)
+        val discovery = itemJdbcRepository.findMissingItemIdsForDate(today)
 
-        assertEquals(listOf(1001), itemIds)
+        assertEquals(1, discovery.auctionSourceCount)
+        assertEquals(2, discovery.recipeCraftedSourceCount)
+        assertEquals(1, discovery.recipeReagentSourceCount)
+        assertEquals(4, discovery.candidateItemCount)
+        assertEquals(1, discovery.existingItemCount)
+        assertEquals(listOf(1001, 3001, 4001), discovery.missingItemIds)
     }
 
     @Test

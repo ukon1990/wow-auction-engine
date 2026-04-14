@@ -29,23 +29,143 @@ data class ItemPersistenceSummary(
     val itemAppearanceLinksUpserted: Int,
 )
 
+data class ItemSourceDiscovery(
+    val auctionSourceCount: Int,
+    val recipeCraftedSourceCount: Int,
+    val recipeReagentSourceCount: Int,
+    val candidateItemCount: Int,
+    val existingItemCount: Int,
+    val missingItemIds: List<Int>,
+)
+
 @Repository
 class ItemJdbcRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) {
-    fun findDistinctAuctionItemIdsForDate(date: LocalDate): List<Int> =
+    fun findMissingItemIdsForDate(date: LocalDate): ItemSourceDiscovery {
+        val missingItemIds = mutableListOf<Int>()
+        var auctionSourceCount = 0
+        var recipeCraftedSourceCount = 0
+        var recipeReagentSourceCount = 0
+        var candidateItemCount = 0
+        var existingItemCount = 0
+
         jdbcTemplate.query(
             """
-            SELECT DISTINCT item_id
-            FROM hourly_auction_stats
-            WHERE date = ?
-              AND pet_species_id = 0
-              AND item_id > 0
-            ORDER BY item_id
+            WITH auction_source AS (
+                SELECT item_id
+                FROM hourly_auction_stats
+                WHERE date = ?
+                  AND item_id > 0
+                  AND (pet_species_id IS NULL OR pet_species_id IN (-1, 0))
+                GROUP BY item_id
+            ),
+            crafted_source AS (
+                SELECT crafted_item_id AS item_id
+                FROM recipe
+                WHERE crafted_item_id IS NOT NULL
+                GROUP BY crafted_item_id
+            ),
+            reagent_source AS (
+                SELECT item_id
+                FROM recipe_reagent
+                WHERE item_id IS NOT NULL
+                GROUP BY item_id
+            ),
+            source_ids AS (
+                SELECT item_id, 1 AS from_auction, 0 AS from_crafted, 0 AS from_reagent FROM auction_source
+                UNION ALL
+                SELECT item_id, 0 AS from_auction, 1 AS from_crafted, 0 AS from_reagent FROM crafted_source
+                UNION ALL
+                SELECT item_id, 0 AS from_auction, 0 AS from_crafted, 1 AS from_reagent FROM reagent_source
+            ),
+            aggregated AS (
+                SELECT
+                    item_id,
+                    MAX(from_auction) AS from_auction,
+                    MAX(from_crafted) AS from_crafted,
+                    MAX(from_reagent) AS from_reagent
+                FROM source_ids
+                GROUP BY item_id
+            ),
+            classified AS (
+                SELECT
+                    aggregated.item_id,
+                    aggregated.from_auction,
+                    aggregated.from_crafted,
+                    aggregated.from_reagent,
+                    CASE WHEN item.id IS NULL THEN 1 ELSE 0 END AS is_missing
+                FROM aggregated
+                LEFT JOIN `item` item ON item.id = aggregated.item_id
+            ),
+            summary AS (
+                SELECT
+                    COALESCE(SUM(from_auction), 0) AS auction_source_count,
+                    COALESCE(SUM(from_crafted), 0) AS recipe_crafted_source_count,
+                    COALESCE(SUM(from_reagent), 0) AS recipe_reagent_source_count,
+                    COUNT(*) AS candidate_item_count,
+                    COALESCE(SUM(CASE WHEN is_missing = 0 THEN 1 ELSE 0 END), 0) AS existing_item_count,
+                    COALESCE(SUM(is_missing), 0) AS missing_item_count
+                FROM classified
+            )
+            SELECT
+                sort_order,
+                item_id,
+                auction_source_count,
+                recipe_crafted_source_count,
+                recipe_reagent_source_count,
+                candidate_item_count,
+                existing_item_count,
+                missing_item_count
+            FROM (
+                SELECT
+                    0 AS sort_order,
+                    NULL AS item_id,
+                    auction_source_count,
+                    recipe_crafted_source_count,
+                    recipe_reagent_source_count,
+                    candidate_item_count,
+                    existing_item_count,
+                    missing_item_count
+                FROM summary
+                UNION ALL
+                SELECT
+                    1 AS sort_order,
+                    classified.item_id,
+                    NULL AS auction_source_count,
+                    NULL AS recipe_crafted_source_count,
+                    NULL AS recipe_reagent_source_count,
+                    NULL AS candidate_item_count,
+                    NULL AS existing_item_count,
+                    NULL AS missing_item_count
+                FROM classified
+                WHERE is_missing = 1
+            ) result
+            ORDER BY sort_order, item_id
             """.trimIndent(),
-            { rs, _ -> rs.getInt("item_id") },
+            { rs ->
+                if (rs.getInt("sort_order") == 0) {
+                    auctionSourceCount = rs.getInt("auction_source_count")
+                    recipeCraftedSourceCount = rs.getInt("recipe_crafted_source_count")
+                    recipeReagentSourceCount = rs.getInt("recipe_reagent_source_count")
+                    candidateItemCount = rs.getInt("candidate_item_count")
+                    existingItemCount = rs.getInt("existing_item_count")
+                } else {
+                    missingItemIds += rs.getInt("item_id")
+                }
+            },
             date,
         )
+
+        return ItemSourceDiscovery(
+            auctionSourceCount = auctionSourceCount,
+            recipeCraftedSourceCount = recipeCraftedSourceCount,
+            recipeReagentSourceCount = recipeReagentSourceCount,
+            candidateItemCount = candidateItemCount,
+            existingItemCount = existingItemCount,
+            missingItemIds = missingItemIds,
+        )
+    }
 
     fun findExistingItemIds(itemIds: Collection<Int>): Set<Int> {
         if (itemIds.isEmpty()) return emptySet()

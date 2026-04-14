@@ -108,6 +108,7 @@ class ItemScheduleTest {
             missingItemCount = 0,
             fetchedItemCount = 0,
             itemFetchFailures = 0,
+            persistedItemCount = 0,
             persistenceSummary =
                 ItemPersistenceSummary(
                     localesUpserted = 0,

@@ -15,7 +15,7 @@ import net.jonasmf.auctionengine.dto.LocaleDTO
 import net.jonasmf.auctionengine.integration.blizzard.ItemApiClient
 import net.jonasmf.auctionengine.repository.rds.ItemJdbcRepository
 import net.jonasmf.auctionengine.repository.rds.ItemPersistenceSummary
-import net.jonasmf.auctionengine.repository.rds.RecipeRepository
+import net.jonasmf.auctionengine.repository.rds.ItemSourceDiscovery
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.Clock
@@ -33,7 +33,6 @@ class ItemSyncServiceTest {
         )
     private val itemApiClient = mockk<ItemApiClient>()
     private val itemJdbcRepository = mockk<ItemJdbcRepository>()
-    private val recipeRepository = mockk<RecipeRepository>()
     private val itemBulkSyncService = mockk<ItemBulkSyncService>()
     private val clock = Clock.fixed(Instant.parse("2026-04-14T08:00:00Z"), ZoneOffset.UTC)
 
@@ -42,7 +41,6 @@ class ItemSyncServiceTest {
             properties = properties,
             itemApiClient = itemApiClient,
             itemJdbcRepository = itemJdbcRepository,
-            recipeRepository = recipeRepository,
             itemBulkSyncService = itemBulkSyncService,
             clock = clock,
         )
@@ -52,10 +50,16 @@ class ItemSyncServiceTest {
         val service = createService()
         val item = item(1001)
 
-        every { itemJdbcRepository.findDistinctAuctionItemIdsForDate(any()) } returns listOf(1001, 1002)
-        every { recipeRepository.findDistinctCraftedItemIds() } returns listOf(1002, 1003)
-        every { recipeRepository.findDistinctReagentItemIds() } returns listOf(1003, 1004)
-        every { itemJdbcRepository.findExistingItemIds(listOf(1001, 1002, 1003, 1004)) } returns setOf(1002, 1004)
+        every { itemJdbcRepository.findMissingItemIdsForDate(any()) } returns
+            ItemSourceDiscovery(
+                auctionSourceCount = 2,
+                recipeCraftedSourceCount = 2,
+                recipeReagentSourceCount = 2,
+                candidateItemCount = 4,
+                existingItemCount = 2,
+                missingItemIds = listOf(1001, 1003),
+            )
+        every { itemJdbcRepository.findExistingItemIds(listOf(1001)) } returns setOf(1001)
         every { itemApiClient.getById(1001, Region.Europe) } returns item
         every { itemApiClient.getById(1003, Region.Europe) } throws RuntimeException("boom")
         every { itemBulkSyncService.syncItems(listOf(item)) } returns summary(items = 1)
@@ -70,20 +74,27 @@ class ItemSyncServiceTest {
         assertEquals(2, result.missingItemCount)
         assertEquals(1, result.fetchedItemCount)
         assertEquals(1, result.itemFetchFailures)
+        assertEquals(1, result.persistedItemCount)
         assertEquals(1, result.persistenceSummary.itemsUpserted)
         verify(exactly = 1) { itemApiClient.getById(1001, Region.Europe) }
         verify(exactly = 1) { itemApiClient.getById(1003, Region.Europe) }
     }
 
     @Test
-    fun `syncRegion continues with auction source when recipe queries fail`() {
+    fun `syncRegion uses combined source discovery query`() {
         val service = createService()
         val item = item(2001)
 
-        every { itemJdbcRepository.findDistinctAuctionItemIdsForDate(any()) } returns listOf(2001)
-        every { recipeRepository.findDistinctCraftedItemIds() } throws RuntimeException("crafted unavailable")
-        every { recipeRepository.findDistinctReagentItemIds() } throws RuntimeException("reagent unavailable")
-        every { itemJdbcRepository.findExistingItemIds(listOf(2001)) } returns emptySet()
+        every { itemJdbcRepository.findMissingItemIdsForDate(any()) } returns
+            ItemSourceDiscovery(
+                auctionSourceCount = 1,
+                recipeCraftedSourceCount = 0,
+                recipeReagentSourceCount = 0,
+                candidateItemCount = 1,
+                existingItemCount = 0,
+                missingItemIds = listOf(2001),
+            )
+        every { itemJdbcRepository.findExistingItemIds(listOf(2001)) } returns setOf(2001)
         every { itemApiClient.getById(2001, Region.Europe) } returns item
         every { itemBulkSyncService.syncItems(listOf(item)) } returns summary(items = 1)
 
@@ -93,6 +104,8 @@ class ItemSyncServiceTest {
         assertEquals(0, result.recipeCraftedSourceCount)
         assertEquals(0, result.recipeReagentSourceCount)
         assertEquals(1, result.fetchedItemCount)
+        assertEquals(1, result.persistedItemCount)
+        verify(exactly = 1) { itemJdbcRepository.findMissingItemIdsForDate(any()) }
     }
 
     private fun item(id: Int) =
