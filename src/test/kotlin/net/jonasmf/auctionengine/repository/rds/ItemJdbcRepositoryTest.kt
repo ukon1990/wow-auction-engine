@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
+import java.time.Instant
 import java.time.LocalDate
-import java.time.ZonedDateTime
 
 class ItemJdbcRepositoryTest : IntegrationTestBase() {
     @Autowired
@@ -64,7 +64,7 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
                     AuctionHouse(
                         lastModified = null,
                         lastRequested = null,
-                        nextUpdate = ZonedDateTime.now(),
+                        nextUpdate = Instant.now(),
                         lowestDelay = 0L,
                         highestDelay = 0L,
                         tsmFile = null,
