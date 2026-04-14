@@ -6,10 +6,12 @@ import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.cr
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.okJson
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ClientResponse
 import reactor.core.publisher.Mono
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 class ModifiedCraftingApiClientTest {
     @Test
@@ -48,6 +50,30 @@ class ModifiedCraftingApiClientTest {
         assertEquals("", category.name.en_GB)
     }
 
+    @Test
+    fun `getAllCategories fails when category detail fetch fails`() {
+        val client = ModifiedCraftingApiClient(createSupport(buildWebClient { failingCategoryRequest(it) }))
+
+        val error =
+            assertFails {
+                client.getAllCategories(Region.Europe)
+            }
+
+        assertEquals(true, error.cause is BlizzardApiClientException)
+    }
+
+    @Test
+    fun `getAllSlotTypes fails when slot detail fetch fails`() {
+        val client = ModifiedCraftingApiClient(createSupport(buildWebClient { failingSlotTypeRequest(it) }))
+
+        val error =
+            assertFails {
+                client.getAllSlotTypes(Region.Europe)
+            }
+
+        assertEquals(true, error.cause is BlizzardApiClientException)
+    }
+
     private fun handleRequest(request: ClientRequest): Mono<ClientResponse> {
         val path = request.url().path
         return when {
@@ -64,7 +90,32 @@ class ModifiedCraftingApiClientTest {
         }
     }
 
-    private fun rootIndexBody(): String = """
+    private fun failingCategoryRequest(request: ClientRequest): Mono<ClientResponse> {
+        val path = request.url().path
+        if (path.endsWith("/modified-crafting/category/828")) {
+            return errorResponse()
+        }
+        return handleRequest(request)
+    }
+
+    private fun failingSlotTypeRequest(request: ClientRequest): Mono<ClientResponse> {
+        val path = request.url().path
+        if (path.endsWith("/modified-crafting/reagent-slot-type/417")) {
+            return errorResponse()
+        }
+        return handleRequest(request)
+    }
+
+    private fun errorResponse(): Mono<ClientResponse> =
+        Mono.just(
+            ClientResponse
+                .create(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("boom")
+                .build(),
+        )
+
+    private fun rootIndexBody(): String =
+        """
         {
           "_links": {
             "self": {
@@ -72,9 +123,10 @@ class ModifiedCraftingApiClientTest {
             }
           }
         }
-    """.trimIndent()
+        """.trimIndent()
 
-    private fun categoryIndexBody(): String = """
+    private fun categoryIndexBody(): String =
+        """
         {
           "_links": {
             "self": {
@@ -94,9 +146,10 @@ class ModifiedCraftingApiClientTest {
             }
           ]
         }
-    """.trimIndent()
+        """.trimIndent()
 
-    private fun slotTypeIndexBody(): String = """
+    private fun slotTypeIndexBody(): String =
+        """
         {
           "_links": {
             "self": {
@@ -116,7 +169,7 @@ class ModifiedCraftingApiClientTest {
             }
           ]
         }
-    """.trimIndent()
+        """.trimIndent()
 
     private fun categoryById(id: Int): String =
         when (id) {
@@ -134,5 +187,6 @@ class ModifiedCraftingApiClientTest {
             else -> loadFixture(this, "/blizzard/modified-crafting/category/$id-response.json")
         }
 
-    private fun slotTypeById(id: Int): String = loadFixture(this, "/blizzard/modified-crafting/reagent-slot-type/$id-response.json")
+    private fun slotTypeById(id: Int): String =
+        loadFixture(this, "/blizzard/modified-crafting/reagent-slot-type/$id-response.json")
 }

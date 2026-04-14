@@ -33,17 +33,7 @@ class ModifiedCraftingApiClient(
         getRootIndex(region)
         val uri = buildUri(region, MODIFIED_CRAFTING_CATEGORY_INDEX_PATH)
         val index = fetch<ModifiedCraftingCategoryIndexDTO>(uri, "fetch modified crafting category index")
-        return index.categories.mapNotNull { category ->
-            runCatching { getCategoryById(category.id, region) }
-                .onFailure { error ->
-                    logger.warn(
-                        "Skipping modified crafting category {} for region {} after fetch failure: {}",
-                        category.id,
-                        region,
-                        error.message ?: error::class.simpleName ?: "unknown error",
-                    )
-                }.getOrNull()
-        }
+        return index.categories.map { category -> getCategoryById(category.id, region) }
     }
 
     fun getCategoryById(
@@ -58,17 +48,7 @@ class ModifiedCraftingApiClient(
         getRootIndex(region)
         val uri = buildUri(region, MODIFIED_CRAFTING_SLOT_TYPE_INDEX_PATH)
         val index = fetch<ReagentSlotTypeIndexDTO>(uri, "fetch modified crafting reagent slot type index")
-        return index.slotTypes.mapNotNull { slotType ->
-            runCatching { getSlotTypeById(slotType.id, region) }
-                .onFailure { error ->
-                    logger.warn(
-                        "Skipping modified crafting slot type {} for region {} after fetch failure: {}",
-                        slotType.id,
-                        region,
-                        error.message ?: error::class.simpleName ?: "unknown error",
-                    )
-                }.getOrNull()
-        }
+        return index.slotTypes.map { slotType -> getSlotTypeById(slotType.id, region) }
     }
 
     fun getSlotTypeById(
