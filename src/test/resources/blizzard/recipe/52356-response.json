@@ -1,0 +1,170 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52356?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 52356,
+    "name": {
+        "en_US": "Blood-Tempered Gauntlets",
+        "es_MX": "Guanteletes templados en sangre",
+        "pt_BR": "Manoplas Temperadas em Sangue",
+        "de_DE": "Blutgehärtete Stulpen",
+        "en_GB": "Blood-Tempered Gauntlets",
+        "es_ES": "Guanteletes templados en sangre",
+        "fr_FR": "Gantelets à la trempe de sang",
+        "it_IT": "Guanti Lunghi Temprati nel Sangue",
+        "ru_RU": "Кровокаленые рукавицы",
+        "ko_KR": "피로 담금질한 건틀릿",
+        "zh_TW": "血淬護手",
+        "zh_CN": "淬血手铠"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52356?namespace=static-12.0.1_65617-us"
+        },
+        "id": 52356
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/243060?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Luminant Flux",
+                    "es_MX": "Flujo luminante",
+                    "pt_BR": "Fluxo Fulgurante",
+                    "de_DE": "Leuchtender Fluxus",
+                    "en_GB": "Luminant Flux",
+                    "es_ES": "Flujo luminiscente",
+                    "fr_FR": "Flux de luminance",
+                    "it_IT": "Flusso Illuminante",
+                    "ru_RU": "Сияющий плавень",
+                    "ko_KR": "영롱한 융제",
+                    "zh_TW": "發光助熔劑",
+                    "zh_CN": "莹辉助熔剂"
+                },
+                "id": 243060
+            },
+            "quantity": 2
+        }
+    ],
+    "modified_crafting_slots": [
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/386?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Refulgent Copper Ingot",
+                    "es_MX": "Lingote de cobre refulgente",
+                    "pt_BR": "Lingote de Cobre Refulgente",
+                    "de_DE": "Glänzender Kupferbarren",
+                    "en_GB": "Refulgent Copper Ingot",
+                    "es_ES": "Lingote de cobre refulgente",
+                    "fr_FR": "Lingot de cuivre éclatant",
+                    "it_IT": "Lingotto di Rame Rifulgente",
+                    "ru_RU": "Слиток сверкающей меди",
+                    "ko_KR": "광명구리 주괴",
+                    "zh_TW": "輝煌銅合金",
+                    "zh_CN": "耀辉铜锭"
+                },
+                "id": 386
+            },
+            "display_order": 0
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/391?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Add Embellishment",
+                    "es_MX": "Agrega ornamento",
+                    "pt_BR": "Adicionar Ornamento",
+                    "de_DE": "Verzierung hinzufügen",
+                    "en_GB": "Add Embellishment",
+                    "es_ES": "Añadir adorno",
+                    "fr_FR": "Ajout d’embellissement",
+                    "it_IT": "Aggiungi abbellimento",
+                    "ru_RU": "Добавляет украшение",
+                    "ko_KR": "장식 추가",
+                    "zh_TW": "添加裝飾",
+                    "zh_CN": "添加修饰"
+                },
+                "id": 391
+            },
+            "display_order": 1
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Customize Secondary Stats",
+                    "es_MX": "Personaliza estadísticas secundarias",
+                    "pt_BR": "Personalizar Atributos Secundários",
+                    "de_DE": "Sekundärwerte anpassen",
+                    "en_GB": "Customize Secondary Stats",
+                    "es_ES": "Personalizar estadísticas secundarias",
+                    "fr_FR": "Personnaliser les caractéristiques secondaires",
+                    "it_IT": "Personalizza statistiche secondarie",
+                    "ru_RU": "Позволяет указать второстепенные характеристики",
+                    "ko_KR": "보조 능력치 지정",
+                    "zh_TW": "自訂次要屬性",
+                    "zh_CN": "自定义副属性"
+                },
+                "id": 393
+            },
+            "display_order": 2
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/470?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Empower",
+                    "es_MX": "Potenciar",
+                    "pt_BR": "Potencializar",
+                    "de_DE": "Ermächtigen",
+                    "en_GB": "Empower",
+                    "es_ES": "Potenciar",
+                    "fr_FR": "Renforcement",
+                    "it_IT": "Potenzia",
+                    "ru_RU": "Усиление",
+                    "ko_KR": "강화",
+                    "zh_TW": "強化",
+                    "zh_CN": "强化"
+                },
+                "id": 470
+            },
+            "display_order": 3
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Artisan's Authenticity",
+                    "es_MX": "Autenticidad del artesano",
+                    "pt_BR": "Autenticidade do Artífice",
+                    "de_DE": "Authentizität des Kunsthandwerks",
+                    "en_GB": "Artisan's Authenticity",
+                    "es_ES": "Autenticidad de artesano",
+                    "fr_FR": "Authenticité artisanale",
+                    "it_IT": "Autenticità dell'Artigiano",
+                    "ru_RU": "Почерк ремесленника",
+                    "ko_KR": "장인의 진정성",
+                    "zh_TW": "工匠之保證",
+                    "zh_CN": "匠人之真"
+                },
+                "id": 388
+            },
+            "display_order": 4
+        }
+    ]
+}

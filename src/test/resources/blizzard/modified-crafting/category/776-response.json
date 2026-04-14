@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/776?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 776,
+    "name": {
+        "en_US": "Eversinging Dust",
+        "es_MX": "Polvo cantoeterno",
+        "pt_BR": "Pó de Eternelegia",
+        "de_DE": "Ewigsingender Staub",
+        "en_GB": "Eversinging Dust",
+        "es_ES": "Polvo cantoeterno",
+        "fr_FR": "Poussière de chant éternel",
+        "it_IT": "Polvere di Suoneterno",
+        "ru_RU": "Вечнопоющая пыль",
+        "ko_KR": "영원히 노래하는 가루",
+        "zh_TW": "永歌之塵",
+        "zh_CN": "永歌之尘"
+    }
+}

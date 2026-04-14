@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/828?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 828,
+    "name": {
+        "en_US": "Global Finishing Reagent 03",
+        "es_MX": "Componente de retoque global 03",
+        "pt_BR": "Reagente de Finalização Global 03",
+        "de_DE": "Globales Fertigungsreagenz 03",
+        "en_GB": "Global Finishing Reagent 03",
+        "es_ES": "Componente de finalización global 03",
+        "fr_FR": "Composant de finition global 03",
+        "it_IT": "Reagente di Finitura Globale 03",
+        "ru_RU": "Общий завершающий реагент 03",
+        "ko_KR": "전역 마무리 재료 03",
+        "zh_TW": "通用最後加工材料03",
+        "zh_CN": "全局成品材料03"
+    }
+}

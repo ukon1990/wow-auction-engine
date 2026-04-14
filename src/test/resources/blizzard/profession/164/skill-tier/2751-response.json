@@ -1,0 +1,254 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2751?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 2751,
+    "name": {
+        "en_US": "Shadowlands Blacksmithing",
+        "es_MX": "Herrería de Shadowlands",
+        "pt_BR": "Ferraria de Shadowlands",
+        "de_DE": "Schmiedekunst der Schattenlande",
+        "en_GB": "Shadowlands Blacksmithing",
+        "es_ES": "Herrería de Shadowlands",
+        "fr_FR": "Forge d’Ombreterre",
+        "it_IT": "Forgiatura di Shadowlands",
+        "ru_RU": "Кузнечное дело Темных Земель",
+        "ko_KR": "어둠땅 대장기술",
+        "zh_TW": "暗影之境鍛造",
+        "zh_CN": "暗影界锻造"
+    },
+    "minimum_skill_level": 1,
+    "maximum_skill_level": 100,
+    "categories": [
+        {
+            "name": {
+                "en_US": "Armor",
+                "es_MX": "Armadura",
+                "pt_BR": "Armadura",
+                "de_DE": "Rüstung",
+                "en_GB": "Armor",
+                "es_ES": "Armadura",
+                "fr_FR": "Armure",
+                "it_IT": "Armature",
+                "ru_RU": "Доспехи",
+                "ko_KR": "방어구",
+                "zh_TW": "護甲",
+                "zh_CN": "护甲"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42363?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Ceremonious Breastplate",
+                        "es_MX": "Coraza ceremoniosa",
+                        "pt_BR": "Peitoral Cerimonioso",
+                        "de_DE": "Zeremonielle Brustplatte",
+                        "en_GB": "Ceremonious Breastplate",
+                        "es_ES": "Coraza de ceremonia",
+                        "fr_FR": "Cuirasse de cérémonie",
+                        "it_IT": "Pettorale Corazzato Cerimonioso",
+                        "ru_RU": "Церемониальная кираса",
+                        "ko_KR": "격조의 가슴보호갑",
+                        "zh_TW": "典禮胸甲",
+                        "zh_CN": "仪式胸甲"
+                    },
+                    "id": 42363
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Shields",
+                "es_MX": "Escudos",
+                "pt_BR": "Escudos",
+                "de_DE": "Schilde",
+                "en_GB": "Shields",
+                "es_ES": "Escudos",
+                "fr_FR": "Boucliers",
+                "it_IT": "Scudi",
+                "ru_RU": "Щиты",
+                "ko_KR": "방패",
+                "zh_TW": "盾牌",
+                "zh_CN": "盾牌"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42368?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Ceremonious Shield",
+                        "es_MX": "Escudo ceremonioso",
+                        "pt_BR": "Escudo Cerimonioso",
+                        "de_DE": "Zeremonieller Schild",
+                        "en_GB": "Ceremonious Shield",
+                        "es_ES": "Escudo de ceremonia",
+                        "fr_FR": "Bouclier de cérémonie",
+                        "it_IT": "Scudo Cerimonioso",
+                        "ru_RU": "Церемониальный щит",
+                        "ko_KR": "격조의 방패",
+                        "zh_TW": "典禮盾牌",
+                        "zh_CN": "仪式盾牌"
+                    },
+                    "id": 42368
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Specialized Armor",
+                "es_MX": "Armadura especializada",
+                "pt_BR": "Armadura Especializada",
+                "de_DE": "Spezialrüstung",
+                "en_GB": "Specialized Armor",
+                "es_ES": "Armadura especializada",
+                "fr_FR": "Armure spécialisée",
+                "it_IT": "Armature Specializzate",
+                "ru_RU": "Специализированные доспехи",
+                "ko_KR": "특제 방어구",
+                "zh_TW": "精製護甲",
+                "zh_CN": "特化护甲"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42381?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Shadowghast Breastplate",
+                        "es_MX": "Coraza de sombra fantasmal",
+                        "pt_BR": "Peitoral de Umbromedo",
+                        "de_DE": "Schattenschreckbrustplatte",
+                        "en_GB": "Shadowghast Breastplate",
+                        "es_ES": "Coraza de terror sombrío",
+                        "fr_FR": "Cuirasse ombrepeur",
+                        "it_IT": "Pettorale Corazzato di Spettrombra",
+                        "ru_RU": "Эребиевая кираса",
+                        "ko_KR": "어둠혼 가슴보호갑",
+                        "zh_TW": "影怖胸甲",
+                        "zh_CN": "影怖胸甲"
+                    },
+                    "id": 42381
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Reagents",
+                "es_MX": "Componentes",
+                "pt_BR": "Reagentes",
+                "de_DE": "Reagenzien",
+                "en_GB": "Reagents",
+                "es_ES": "Componentes",
+                "fr_FR": "Composants",
+                "it_IT": "Reagenti",
+                "ru_RU": "Реагенты",
+                "ko_KR": "재료",
+                "zh_TW": "材料",
+                "zh_CN": "材料"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42389?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Shadowghast Ingot",
+                        "es_MX": "Lingote de sombra fantasmal",
+                        "pt_BR": "Lingote de Umbromedo",
+                        "de_DE": "Schattenschreckbarren",
+                        "en_GB": "Shadowghast Ingot",
+                        "es_ES": "Lingote de terror sombrío",
+                        "fr_FR": "Lingot ombrepeur",
+                        "it_IT": "Lingotto di Spettrombra",
+                        "ru_RU": "Слиток эребия",
+                        "ko_KR": "어둠혼 주괴",
+                        "zh_TW": "影怖錠",
+                        "zh_CN": "影怖之锭"
+                    },
+                    "id": 42389
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Other",
+                "es_MX": "Otros",
+                "pt_BR": "Outros",
+                "de_DE": "Sonstiges",
+                "en_GB": "Other",
+                "es_ES": "Otros",
+                "fr_FR": "Autres",
+                "it_IT": "Altro",
+                "ru_RU": "Другое",
+                "ko_KR": "기타",
+                "zh_TW": "其他",
+                "zh_CN": "其它"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42397?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Laestrite Skeleton Key",
+                        "es_MX": "Llave maestra de lestrita",
+                        "pt_BR": "Chave-mestra de Laestrita",
+                        "de_DE": "Laestritdietrich",
+                        "en_GB": "Laestrite Skeleton Key",
+                        "es_ES": "Llave maestra de laestrita",
+                        "fr_FR": "Passe-partout en læstrite",
+                        "it_IT": "Chiave Universale di Laestrite",
+                        "ru_RU": "Лестритовая отмычка",
+                        "ko_KR": "레이스트라이트 해골 열쇠",
+                        "zh_TW": "雷瑟瑞骷髏鑰匙",
+                        "zh_CN": "苷铜万能钥匙"
+                    },
+                    "id": 42397
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Weapons",
+                "es_MX": "Armas",
+                "pt_BR": "Armas",
+                "de_DE": "Waffen",
+                "en_GB": "Weapons",
+                "es_ES": "Armas",
+                "fr_FR": "Armes",
+                "it_IT": "Armi",
+                "ru_RU": "Оружие",
+                "ko_KR": "무기",
+                "zh_TW": "武器",
+                "zh_CN": "武器"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42406?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Ceremonious Axe",
+                        "es_MX": "Hacha ceremoniosa",
+                        "pt_BR": "Machado Cerimonioso",
+                        "de_DE": "Zeremonielle Axt",
+                        "en_GB": "Ceremonious Axe",
+                        "es_ES": "Hacha de ceremonia",
+                        "fr_FR": "Hache de cérémonie",
+                        "it_IT": "Ascia Cerimoniosa",
+                        "ru_RU": "Церемониальный топор",
+                        "ko_KR": "격조의 도끼",
+                        "zh_TW": "典禮之斧",
+                        "zh_CN": "仪式之斧"
+                    },
+                    "id": 42406
+                }
+            ]
+        }
+    ]
+}

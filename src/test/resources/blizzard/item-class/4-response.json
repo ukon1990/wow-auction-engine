@@ -1,0 +1,264 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 4,
+    "name": {
+        "en_US": "Armor",
+        "es_MX": "Armadura",
+        "pt_BR": "Armadura",
+        "de_DE": "Rüstung",
+        "en_GB": "Armor",
+        "es_ES": "Armadura",
+        "fr_FR": "Armure",
+        "it_IT": "Armature",
+        "ru_RU": "Доспехи",
+        "ko_KR": "방어구",
+        "zh_TW": "護甲",
+        "zh_CN": "护甲"
+    },
+    "item_subclasses": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/0?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Miscellaneous",
+                "es_MX": "Miscelánea",
+                "pt_BR": "Diversos",
+                "de_DE": "Verschiedenes",
+                "en_GB": "Miscellaneous",
+                "es_ES": "Miscelánea",
+                "fr_FR": "Divers",
+                "it_IT": "Varie",
+                "ru_RU": "Разное",
+                "ko_KR": "기타",
+                "zh_TW": "雜項",
+                "zh_CN": "其它"
+            },
+            "id": 0
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/1?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Cloth",
+                "es_MX": "Tela",
+                "pt_BR": "Tecido",
+                "de_DE": "Stoff",
+                "en_GB": "Cloth",
+                "es_ES": "Tela",
+                "fr_FR": "Tissu",
+                "it_IT": "Stoffa",
+                "ru_RU": "Ткань",
+                "ko_KR": "천",
+                "zh_TW": "布甲",
+                "zh_CN": "布甲"
+            },
+            "id": 1
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/2?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Leather",
+                "es_MX": "Cuero",
+                "pt_BR": "Couro",
+                "de_DE": "Leder",
+                "en_GB": "Leather",
+                "es_ES": "Cuero",
+                "fr_FR": "Cuir",
+                "it_IT": "Cuoio",
+                "ru_RU": "Кожа",
+                "ko_KR": "가죽",
+                "zh_TW": "皮甲",
+                "zh_CN": "皮甲"
+            },
+            "id": 2
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/3?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Mail",
+                "es_MX": "Malla",
+                "pt_BR": "Malha",
+                "de_DE": "Kette",
+                "en_GB": "Mail",
+                "es_ES": "Malla",
+                "fr_FR": "Mailles",
+                "it_IT": "Maglia",
+                "ru_RU": "Кольчуга",
+                "ko_KR": "사슬",
+                "zh_TW": "鎖甲",
+                "zh_CN": "锁甲"
+            },
+            "id": 3
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Plate",
+                "es_MX": "Placas",
+                "pt_BR": "Placas",
+                "de_DE": "Platte",
+                "en_GB": "Plate",
+                "es_ES": "Placas",
+                "fr_FR": "Plaques",
+                "it_IT": "Piastre",
+                "ru_RU": "Латы",
+                "ko_KR": "판금",
+                "zh_TW": "鎧甲",
+                "zh_CN": "板甲"
+            },
+            "id": 4
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/5?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Cosmetic",
+                "es_MX": "Cosmético",
+                "pt_BR": "Cosmético",
+                "de_DE": "Kosmetisch",
+                "en_GB": "Cosmetic",
+                "es_ES": "Cosmético",
+                "fr_FR": "Ornemental",
+                "it_IT": "Cosmetico",
+                "ru_RU": "Декоративный предмет",
+                "ko_KR": "장식",
+                "zh_TW": "造型",
+                "zh_CN": "装饰品"
+            },
+            "id": 5
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/6?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Shield",
+                "es_MX": "Escudo",
+                "pt_BR": "Escudo",
+                "de_DE": "Schild",
+                "en_GB": "Shield",
+                "es_ES": "Escudo",
+                "fr_FR": "Bouclier",
+                "it_IT": "Scudo",
+                "ru_RU": "Щит",
+                "ko_KR": "방패",
+                "zh_TW": "盾牌",
+                "zh_CN": "盾牌"
+            },
+            "id": 6
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Libram",
+                "es_MX": "Tratado",
+                "pt_BR": "Incunábulo",
+                "de_DE": "Buchband",
+                "en_GB": "Libram",
+                "es_ES": "Tratado",
+                "fr_FR": "Libram",
+                "it_IT": "Libram",
+                "ru_RU": "Манускрипт",
+                "ko_KR": "성서",
+                "zh_TW": "聖契",
+                "zh_CN": "圣契"
+            },
+            "id": 7
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/8?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Idol",
+                "es_MX": "Ídolo",
+                "pt_BR": "Ídolo",
+                "de_DE": "Götze",
+                "en_GB": "Idol",
+                "es_ES": "Ídolo",
+                "fr_FR": "Idole",
+                "it_IT": "Idolo",
+                "ru_RU": "Идол",
+                "ko_KR": "우상",
+                "zh_TW": "塑像",
+                "zh_CN": "神像"
+            },
+            "id": 8
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/9?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Totem",
+                "es_MX": "Tótem",
+                "pt_BR": "Totem",
+                "de_DE": "Totem",
+                "en_GB": "Totem",
+                "es_ES": "Tótem",
+                "fr_FR": "Totem",
+                "it_IT": "Totem",
+                "ru_RU": "Тотем",
+                "ko_KR": "토템",
+                "zh_TW": "圖騰",
+                "zh_CN": "图腾"
+            },
+            "id": 9
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/10?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Sigil",
+                "es_MX": "Sigilo",
+                "pt_BR": "Signo",
+                "de_DE": "Siegel",
+                "en_GB": "Sigil",
+                "es_ES": "Sigilo",
+                "fr_FR": "Cachet",
+                "it_IT": "Sigillo",
+                "ru_RU": "Печать",
+                "ko_KR": "인장",
+                "zh_TW": "符印",
+                "zh_CN": "魔印"
+            },
+            "id": 10
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/11?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Relic",
+                "es_MX": "Reliquia",
+                "pt_BR": "Relíquia",
+                "de_DE": "Relikt",
+                "en_GB": "Relic",
+                "es_ES": "Reliquia",
+                "fr_FR": "Relique",
+                "it_IT": "Reliquia",
+                "ru_RU": "Реликвия",
+                "ko_KR": "성물",
+                "zh_TW": "聖物",
+                "zh_CN": "圣物"
+            },
+            "id": 11
+        }
+    ]
+}

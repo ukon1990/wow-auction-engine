@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/880?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 880,
+    "name": {
+        "en_US": "Galactic Gladiator's Heraldry",
+        "es_MX": "Heráldica de Gladiador galáctico",
+        "pt_BR": "Heráldica do Gladiador Galáctico",
+        "de_DE": "Wappenbuch des galaktischen Gladiators",
+        "en_GB": "Galactic Gladiator's Heraldry",
+        "es_ES": "Heráldica de Gladiador galáctico",
+        "fr_FR": "Blason du gladiateur galactique",
+        "it_IT": "Stemma del Gladiatore Galattico",
+        "ru_RU": "Геральдика галактического гладиатора",
+        "ko_KR": "우주를 호령하는 검투사의 표상",
+        "zh_TW": "銀河鬥士徽章",
+        "zh_CN": "星河角斗士的饰章"
+    }
+}

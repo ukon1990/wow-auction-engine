@@ -1,0 +1,42 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51968?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51968,
+    "name": {
+        "en_US": "Twisted Tetra",
+        "es_MX": "Tetra retorcido",
+        "pt_BR": "Tetra Perverso",
+        "de_DE": "Verdrehter Tetra",
+        "en_GB": "Twisted Tetra",
+        "es_ES": "Tetra retorcido",
+        "fr_FR": "Tétra distordu",
+        "it_IT": "Tetra Corrotta",
+        "ru_RU": "Искаженная тетра",
+        "ko_KR": "뒤틀린 열대어",
+        "zh_TW": "扭曲燈魚",
+        "zh_CN": "扭曲的脂鲤"
+    },
+    "description": {
+        "en_US": "An eel whose body camouflages within the roots that make up the riverbeds of the Harandar. The Twisted Tetra lies in wait for Bloomtail Minnows who become too comfortable with their surroundings.\r\n\r\nSpecial: \r\n\r\n Fresh Fillet\r\n\r\nSalvaging this fish with the Cooking skill can produce Fresh Fillet.\r\n\r\nAreas you can find this fish:\r\n- Harandar\r\n- Zul'Aman\r\n\r\nFishing Pools:\r\n- Obscured School\r\n- Lashing Waves",
+        "es_MX": "Una anguila cuyo cuerpo se camufla entre las raíces que conforman el lecho de Harandar. El tetra retorcido yace a la espera de pescardos colaflores que olvidan estar alertas a su entorno.\r\n\r\nEspecial: \r\n\r\n Filete fresco\r\n\r\nPreparar este pescado con la habilidad de cocina puede producir filete fresco.\r\n\r\nÁreas donde puedes encontrar este pez:\r\n- Harandar\r\n- Zul'Aman\r\n\r\nEstanques de pesca:\r\n- Cardumen escondido\r\n- Olas azotantes",
+        "pt_BR": "Uma enguia cujo corpo se camufla entre as raízes que dão forma aos leitos dos rios de Harandar. O Tetra Perverso fica à espreita das Manjubinhas Caudaflora que confiam demais em seus arredores.\r\n\r\nEspecial: \r\n\r\n Filé Fresco\r\n\r\nProcessar este peixe com a perícia em Culinária pode produzir Filé Fresco.\r\n\r\nÁreas de ocorrência desse peixe:\r\n- Harandar\r\n- Zul'Aman\r\n\r\nPesqueiros:\r\n- Cardume Obscurecido\r\n- Ondas Açoitadeiras",
+        "de_DE": "Ein Aal, dessen Körper perfekt mit den Wurzeln verschmilzt, die das Flussbett von Harandar bedecken. Verdrehte Tetras lauern Blütenfinnenpfrillen auf, die sich in ihrem Zuhause zu sicher fühlen.\r\n\r\nBesondere Verwendung: \r\n\r\n Frisches Filet\r\n\r\nDie Verwertung dieses Fisches mit der Kochfertigkeit kann frisches Filet ergeben.\r\n\r\nVerbreitungsgebiete:\r\n- Harandar\r\n- Zul'Aman\r\n\r\nFischschwärme:\r\n- Verschleierter Schwarm\r\n- Peitschende Wellen",
+        "en_GB": "An eel whose body camouflages within the roots that make up the riverbeds of the Harandar. The Twisted Tetra lies in wait for Bloomtail Minnows who become too comfortable with their surroundings.\r\n\r\nSpecial: \r\n\r\n Fresh Fillet\r\n\r\nSalvaging this fish with the Cooking skill can produce Fresh Fillet.\r\n\r\nAreas you can find this fish:\r\n- Harandar\r\n- Zul'Aman\r\n\r\nFishing Pools:\r\n- Obscured School\r\n- Lashing Waves",
+        "es_ES": "Una anguila cuyo cuerpo se camufla con las raíces que componen los lechos fluviales de la Harandar. El tetra retorcido aguarda pacientemente a los pececillos colaflora que se acomodan demasiado a su entorno.\r\n\r\nEspecial: \r\n\r\n Filete fresco\r\n\r\nCon habilidad en cocina, se le pueden sacar filetes frescos a este pez.\r\n\r\nZonas en las que puedes encontrarlo:\r\n- Harandar\r\n- Zul'Aman\r\n\r\nZonas de pesca:\r\n- Banco oscurecido\r\n- Olas azotadoras",
+        "fr_FR": "Le corps de cette anguille est presque impossible à distinguer au milieu des racines qui tapissent le lit des rivières d’Harandar. Le tétra distordu guette les vairons florequeues qui cessent de se méfier de leur environnement.\r\n\r\nUtilisation spéciale : \r\n\r\n Filet frais\r\n\r\nLa compétence en cuisine permet d’utiliser ce poisson pour obtenir des filets frais.\r\n\r\nPoisson présent dans les régions suivantes :\r\n– Harandar ;\r\n– Zul’Aman.\r\n\r\nBancs de poissons :\r\n– banc obscurci ;\r\n– vagues flagellantes.",
+        "it_IT": "Un'anguilla il cui corpo si mimetizza tra le radici che compongono i letti dei fiumi di Harandar. La Tetra Corrotta attende in agguato le Sanguinerole Fiorcoda che sono diventate troppo spavalde nel loro ambiente.\r\n\r\nSpeciale:\r\n\r\n Filetto Fresco\r\n\r\nRecuperare questo pesce con la competenza in Cucina può produrre Filetto Fresco.\r\n\r\nAree in cui si può trovare questo pesce:\r\n- Harandar\r\n- Zul'aman\r\n\r\nPozze di Pesca:\r\n- Banco Oscurato\r\n- Onde Sferzanti",
+        "ru_RU": "Этот вид угрей маскируется под корни, переплетающиеся на дне рек Харандара. Искаженная тетра нападает из засады на зазевавшихся цветохвостых миног.\r\n\r\nОсобое свойство: \r\n\r\n Свежее филе\r\n\r\nС помощью навыка кулинарии можно разделать эту рыбу и изготовить свежее филе.\r\n\r\nЗоны обитания:\r\n- Харандар\r\n- Зул'Аман\r\n\r\nКосяки рыб:\r\n- Незаметный косяк\r\n- Хлещущие волны",
+        "ko_KR": "하란다르 강바닥을 이루는 뿌리 사이에 몸을 숨기는 습성을 지닌 장어입니다. 이렇게 매복 중인 뒤틀린 열대어는 주변 환경에 적응해 방심한 만개꼬리 송사리를 노립니다.\r\n\r\n특수\r\n\r\n 신선한 생선살\r\n\r\n요리 전문기술로 이 물고기를 손질하면 신선한 생선살을 획득합니다.\r\n\r\n이 생선을 잡을 수 있는 지역\r\n- 하란다르\r\n- 줄아만\r\n\r\n낚시 웅덩이\r\n- 흐릿한 물고기 떼\r\n- 채찍질하는 파도",
+        "zh_TW": "這種鰻魚會巧妙偽裝自己，藏身在構成哈朗達河床的樹根中。扭曲燈魚會靜靜等待周圍的花尾小鯉放下戒心的那一刻。\r\n\r\n特殊：\r\n\r\n新鮮魚片\r\n\r\n以烹飪技能處理這種魚，可製造新鮮魚片。\r\n\r\n可以找到這種魚的地區：\r\n- 哈朗達\r\n- 祖阿曼\r\n\r\n釣魚池：\r\n- 隱匿魚群\r\n- 鞭笞浪潮",
+        "zh_CN": "这种鳗鱼的身体能在构成哈籁恩达尔河床的根系中完美伪装。扭曲的脂鲤正在潜伏等待，寻机捕食那些对周围环境过于放松警惕的绽尾鲦鱼。\r\n\r\n特殊效果：\r\n\r\n鲜鱼片\r\n\r\n使用烹饪技能处理这条鱼可以产出鲜鱼片。\r\n\r\n可以找到这种鱼的地方：\r\n- 哈籁恩达尔\r\n- 祖阿曼\r\n\r\n垂钓池：\r\n- 胧影鱼群\r\n- 奔腾波流"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51968?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51968
+    }
+}

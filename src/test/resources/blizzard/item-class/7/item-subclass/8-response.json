@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/8?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 8,
+    "display_name": {
+        "en_US": "Cooking",
+        "es_MX": "Cocina",
+        "pt_BR": "Culinária",
+        "de_DE": "Kochkunst",
+        "en_GB": "Cooking",
+        "es_ES": "Cocina",
+        "fr_FR": "Cuisine",
+        "it_IT": "Cucina",
+        "ru_RU": "Кулинария",
+        "ko_KR": "요리",
+        "zh_TW": "烹飪",
+        "zh_CN": "烹饪"
+    },
+    "hide_subclass_in_tooltips": true
+}

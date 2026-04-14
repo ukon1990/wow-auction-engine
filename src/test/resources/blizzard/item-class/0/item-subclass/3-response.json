@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/3?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 0,
+    "subclass_id": 3,
+    "display_name": {
+        "en_US": "Flasks & Phials",
+        "es_MX": "Frascos y ampollas",
+        "pt_BR": "Frascos",
+        "de_DE": "Fläschchen & Phiolen",
+        "en_GB": "Flasks & Phials",
+        "es_ES": "Frascos y ampollas",
+        "fr_FR": "Flacons & flasques",
+        "it_IT": "Tonici e Fiale",
+        "ru_RU": "Настои и флаконы",
+        "ko_KR": "영약 및 약병",
+        "zh_TW": "精煉藥劑與藥瓶",
+        "zh_CN": "合剂和瓶剂"
+    },
+    "hide_subclass_in_tooltips": true
+}

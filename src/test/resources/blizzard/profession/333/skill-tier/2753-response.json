@@ -1,0 +1,254 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2753?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 2753,
+    "name": {
+        "en_US": "Shadowlands Enchanting",
+        "es_MX": "Encantamiento de Shadowlands",
+        "pt_BR": "Encantamento de Shadowlands",
+        "de_DE": "Verzauberkunst der Schattenlande",
+        "en_GB": "Shadowlands Enchanting",
+        "es_ES": "Encantamiento de Shadowlands",
+        "fr_FR": "Enchantement d’Ombreterre",
+        "it_IT": "Incantamento di Shadowlands",
+        "ru_RU": "Наложение чар Темных Земель",
+        "ko_KR": "어둠땅 마법부여",
+        "zh_TW": "暗影之境附魔",
+        "zh_CN": "暗影界附魔"
+    },
+    "minimum_skill_level": 1,
+    "maximum_skill_level": 115,
+    "categories": [
+        {
+            "name": {
+                "en_US": "Boot Enchantments",
+                "es_MX": "Encantamientos de botas",
+                "pt_BR": "Encantamentos de Botas",
+                "de_DE": "Stiefelverzauberungen",
+                "en_GB": "Boot Enchantments",
+                "es_ES": "Encantamientos de botas",
+                "fr_FR": "Enchantements de bottes",
+                "it_IT": "Incantamenti per Stivali",
+                "ru_RU": "Чары для обуви",
+                "ko_KR": "장화 마법부여",
+                "zh_TW": "長靴附魔",
+                "zh_CN": "靴子附魔"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42637?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Eternal Agility",
+                        "es_MX": "Agilidad eterna",
+                        "pt_BR": "Agilidade Eterna",
+                        "de_DE": "Ewige Beweglichkeit",
+                        "en_GB": "Eternal Agility",
+                        "es_ES": "Agilidad eterna",
+                        "fr_FR": "Agilité éternelle",
+                        "it_IT": "Agilità Eterna",
+                        "ru_RU": "Вечная ловкость",
+                        "ko_KR": "영원의 민첩성",
+                        "zh_TW": "永恆敏捷",
+                        "zh_CN": "永恒敏捷"
+                    },
+                    "id": 42637
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Chest Enchantments",
+                "es_MX": "Encantamientos de pecheras",
+                "pt_BR": "Encantamentos de Torso",
+                "de_DE": "Brustverzauberungen",
+                "en_GB": "Chest Enchantments",
+                "es_ES": "Encantamientos de pechera",
+                "fr_FR": "Enchantements de torse",
+                "it_IT": "Incantamenti per Corazze",
+                "ru_RU": "Чары для нагрудных доспехов",
+                "ko_KR": "가슴 마법부여",
+                "zh_TW": "胸部附魔",
+                "zh_CN": "胸甲附魔"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42638?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Eternal Bulwark",
+                        "es_MX": "Baluarte eterno",
+                        "pt_BR": "Baluarte Eterno",
+                        "de_DE": "Ewiges Bollwerk",
+                        "en_GB": "Eternal Bulwark",
+                        "es_ES": "Baluarte eterno",
+                        "fr_FR": "Rempart éternel",
+                        "it_IT": "Baluardo Eterno",
+                        "ru_RU": "Вечный оплот",
+                        "ko_KR": "영원의 보루",
+                        "zh_TW": "永恆壁壘",
+                        "zh_CN": "永恒壁垒"
+                    },
+                    "id": 42638
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Cloak Enchantments",
+                "es_MX": "Encantamientos de capas",
+                "pt_BR": "Encantamentos de Mantos",
+                "de_DE": "Umhangverzauberungen",
+                "en_GB": "Cloak Enchantments",
+                "es_ES": "Encantamientos de capas",
+                "fr_FR": "Enchantements de cape",
+                "it_IT": "Incantamenti per Mantelli",
+                "ru_RU": "Чары для плаща",
+                "ko_KR": "망토 마법부여",
+                "zh_TW": "披風附魔",
+                "zh_CN": "披风附魔"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42639?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Fortified Speed",
+                        "es_MX": "Velocidad fortificada",
+                        "pt_BR": "Velocidade Fortificada",
+                        "de_DE": "Verstärkte Geschwindigkeit",
+                        "en_GB": "Fortified Speed",
+                        "es_ES": "Velocidad reforzada",
+                        "fr_FR": "Vitesse augmentée",
+                        "it_IT": "Velocità Rinforzata",
+                        "ru_RU": "Повышенная скорость",
+                        "ko_KR": "강화된 속도",
+                        "zh_TW": "強化速度",
+                        "zh_CN": "强化速度"
+                    },
+                    "id": 42639
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Glove Enchantments",
+                "es_MX": "Encantamientos de guantes",
+                "pt_BR": "Encantamentos de Luvas",
+                "de_DE": "Handschuhverzauberungen",
+                "en_GB": "Glove Enchantments",
+                "es_ES": "Encantamientos de guantes",
+                "fr_FR": "Enchantements de gants",
+                "it_IT": "Incantamenti per Guanti",
+                "ru_RU": "Чары для перчаток",
+                "ko_KR": "장갑 마법부여",
+                "zh_TW": "手套附魔",
+                "zh_CN": "手套附魔"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42643?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Shadowlands Gathering",
+                        "es_MX": "Recolección de Shadowlands",
+                        "pt_BR": "Coleta nas Terras Sombrias",
+                        "de_DE": "Sammeln der Schattenlande",
+                        "en_GB": "Shadowlands Gathering",
+                        "es_ES": "Recolección de las Tierras Sombrías",
+                        "fr_FR": "Récolte d’Ombreterre",
+                        "it_IT": "Raccolta di Shadowlands",
+                        "ru_RU": "Сбор ресурсов в Темных Землях",
+                        "ko_KR": "어둠땅 채집",
+                        "zh_TW": "暗影之境採集",
+                        "zh_CN": "暗影界采集"
+                    },
+                    "id": 42643
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Bracer Enchantments",
+                "es_MX": "Encantamientos de brazales",
+                "pt_BR": "Encantamentos de Braçadeiras",
+                "de_DE": "Armschienenverzauberungen",
+                "en_GB": "Bracer Enchantments",
+                "es_ES": "Encantamientos de brazal",
+                "fr_FR": "Enchantements de brassards",
+                "it_IT": "Incantamenti per Bracciali",
+                "ru_RU": "Чары для наручей",
+                "ko_KR": "손목 마법부여",
+                "zh_TW": "護腕附魔",
+                "zh_CN": "护腕附魔"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42655?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Illuminated Soul",
+                        "es_MX": "Alma iluminada",
+                        "pt_BR": "Alma Iluminada",
+                        "de_DE": "Erleuchtete Seele",
+                        "en_GB": "Illuminated Soul",
+                        "es_ES": "Alma iluminada",
+                        "fr_FR": "Âme illuminée",
+                        "it_IT": "Anima Illuminata",
+                        "ru_RU": "Освещенная душа",
+                        "ko_KR": "빛나는 영혼",
+                        "zh_TW": "光明之魂",
+                        "zh_CN": "光耀灵魂"
+                    },
+                    "id": 42655
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Reagents",
+                "es_MX": "Componentes",
+                "pt_BR": "Reagentes",
+                "de_DE": "Reagenzien",
+                "en_GB": "Reagents",
+                "es_ES": "Componentes",
+                "fr_FR": "Composants",
+                "it_IT": "Reagenti",
+                "ru_RU": "Реагенты",
+                "ko_KR": "재료",
+                "zh_TW": "材料",
+                "zh_CN": "材料"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42659?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Enchanted Elethium Bar",
+                        "es_MX": "Barra de eletio encantado",
+                        "pt_BR": "Barra de Elétio Encantada",
+                        "de_DE": "Verzauberter Elethiumbarren",
+                        "en_GB": "Enchanted Elethium Bar",
+                        "es_ES": "Barra de eletio encantado",
+                        "fr_FR": "Barre d’éléthium enchanté",
+                        "it_IT": "Lingotto di Elezio Incantato",
+                        "ru_RU": "Зачарованный элетиевый слиток",
+                        "ko_KR": "마력 깃든 엘레튬 주괴",
+                        "zh_TW": "附魔艾雷希錠",
+                        "zh_CN": "魔化阴铁锭"
+                    },
+                    "id": 42659
+                }
+            ]
+        }
+    ]
+}

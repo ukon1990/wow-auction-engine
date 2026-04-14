@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/813?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 813,
+    "name": {
+        "en_US": "Thalassian Missive of the Feverflare",
+        "es_MX": "Misiva thalassiana de la llama febril",
+        "pt_BR": "Missiva Talassiana da Febre Ardente",
+        "de_DE": "Thalassisches Schreiben des Hitzeschocks",
+        "en_GB": "Thalassian Missive of the Feverflare",
+        "es_ES": "Misiva thalassiana de la llama febril",
+        "fr_FR": "Missive thalassienne de la poussée de fièvre",
+        "it_IT": "Missiva della Bramosia Thalassiana",
+        "ru_RU": "Талассийское послание лихорадочного света",
+        "ko_KR": "열꽃의 탈라시안 서신",
+        "zh_TW": "薩拉斯閃焰書狀",
+        "zh_CN": "灼光之萨拉斯公函"
+    }
+}

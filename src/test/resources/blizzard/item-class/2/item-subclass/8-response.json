@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/8?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 8,
+    "display_name": {
+        "en_US": "Sword",
+        "es_MX": "Espada",
+        "pt_BR": "Espada",
+        "de_DE": "Schwert",
+        "en_GB": "Sword",
+        "es_ES": "Espada",
+        "fr_FR": "Epée",
+        "it_IT": "Spada",
+        "ru_RU": "Меч",
+        "ko_KR": "도검",
+        "zh_TW": "劍",
+        "zh_CN": "剑"
+    },
+    "verbose_name": {
+        "en_US": "Two-Handed Swords",
+        "es_MX": "Espadas de dos manos",
+        "pt_BR": "Espadas de Duas Mãos",
+        "de_DE": "Zweihandschwerter",
+        "en_GB": "Two-Handed Swords",
+        "es_ES": "Espadas de dos manos",
+        "fr_FR": "Epées à deux mains",
+        "it_IT": "Spade a due mani",
+        "ru_RU": "Двуручные мечи",
+        "ko_KR": "양손 도검류",
+        "zh_TW": "雙手劍",
+        "zh_CN": "双手剑"
+    }
+}

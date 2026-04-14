@@ -1,0 +1,42 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/47909?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 47909,
+    "name": {
+        "en_US": "Temporal Dragonhead",
+        "es_MX": "Cabeza dracónica temporal",
+        "pt_BR": "Cabeça de Dragão Temporal",
+        "de_DE": "Temporaler Drachenkopf",
+        "en_GB": "Temporal Dragonhead",
+        "es_ES": "Cabezadragón temporal",
+        "fr_FR": "Tête-de-Dragon temporel",
+        "it_IT": "Testa di Drago Temporale",
+        "ru_RU": "Темпоральная драконоголовка",
+        "ko_KR": "시간의 용머리",
+        "zh_TW": "時光龍頭魚",
+        "zh_CN": "时光龙头鱼"
+    },
+    "description": {
+        "en_US": "Temporal Dragonhead are a peculiar fish whose scales seem to displace forwards and backwards every few seconds. Keep your fingers away from their sharp snout!\r\n\r\nThese freshwater schools can be found primarily in the vast lakes and sprawling river systems around the Dragon Isles.\r\n\r\nThey are especially active in areas such as the Uktulut Backwater in The Waking Shores.",
+        "es_MX": "Las cabezas dracónicas temporales son peces peculiares cuyas escamas parecen moverse hacia adelante y hacia atrás a cada segundo. ¡Mantén los dedos lejos de su filosa trompa!\r\n\r\nEstos cardúmenes de agua dulce pueden encontrarse principalmente en los lagos grandes y los sistemas fluviales de las Islas Dragón.\r\n\r\nSe encuentran sobre todo en el Remanso Uktulut, en las Costas del Despertar.",
+        "pt_BR": "O Cabeça de Dragão Temporal é um peixe peculiar cujas escamas parece se mover à frente ou atrás em intervalos de poucos segundos. Mantenha os dedos longe da boca dele!\r\n\r\nEsses cardumes de água doce podem ser encontrados principalmente em grandes lagos e nos vastos sistemas fluviais das Ilhas do Dragão.\r\n\r\nSão especialmente ativos em áreas como o Cafundó de Uktulut, na Costa Desperta.",
+        "de_DE": "Temporale Drachenköpfe sind merkwürdige Fische, deren Schuppen so wirken, als würden sie alle paar Sekunden ein wenig vor und zurück versetzt. Finger weg vom scharfen Maul!\r\n\r\nDiese Süßwasserschwärme findet man größtenteils in den großen Seen und weitverzweigten Flüssen der Dracheninseln.\r\n\r\nBesonders viele treiben sich im Uktulutaltwasser der Küste des Erwachens herum.",
+        "en_GB": "Temporal Dragonhead are a peculiar fish whose scales seem to displace forwards and backwards every few seconds. Keep your fingers away from their sharp snout!\r\n\r\nThese freshwater schools can be found primarily in the vast lakes and sprawling river systems around the Dragon Isles.\r\n\r\nThey are especially active in areas such as the Uktulut Backwater in The Waking Shores.",
+        "es_ES": "El cabezadragón temporal es un pez peculiar cuyas escamas parecen desplazarse hacia delante y hacia atrás cada pocos segundos. ¡Ni se te ocurra acercarte a su afilado hocico!\r\n\r\nEstos peces de agua dulce se encuentran principalmente en los enormes lagos y los largos ríos de las Islas Dragón.\r\n\r\nEstán especialmente activos en zonas como el Remanso Uktulut, en las Orillas del Despertar.",
+        "fr_FR": "Les têtes-de-Dragon temporels sont de curieux poissons dont les écailles semblent fluctuer dans le temps à intervalles réguliers. Méfiez-vous de leur mâchoire si vous tenez à vos doigts !\r\n\r\nCes bancs de poissons d’eau douce évoluent principalement dans les vastes lacs et le réseau hydrographique tentaculaire des îles aux Dragons.\r\n\r\nIls sont particulièrement nombreux dans certaines régions, comme les eaux dormantes d’Uktulut, sur les rivages de l’Éveil.",
+        "it_IT": "Le Teste di Drago Temporali sono pesci particolari, le cui scaglie sembrano spostarsi avanti e indietro ogni pochi secondi. Meglio tenere le mani lontane da quel muso tagliente!\r\n\r\nQuesti banchi di pesci d'acqua dolce si trovano soprattutto nei grandi laghi e nei sistemi fluviali sparpagliati nelle Isole dei Draghi.\r\n\r\nSono particolarmente attivi nelle aree dell'Acquitrino degli Uktulut nelle Sponde del Risveglio.",
+        "ru_RU": "Темпоральная драконоголовка — диковинная рыба. Ее чешуйки будто смещаются туда-сюда каждые несколько секунд. Берегите пальцы!\r\n\r\nЭту пресноводную рыбу можно найти преимущественно в больших озерах и обширных речных системах по всем Драконьим островам.\r\n\r\nОсобенно активна в местах вроде заводи Уктулут, что на берегах Пробуждения.",
+        "ko_KR": "시간의 용머리는 비늘이 몇 초마다 앞뒤로 변위를 일으키는 듯한 독특한 물고기입니다. 다만 주둥이 부위가 매우 예리하니 함부로 손가락을 갖다 대지 않도록 주의해야 하빈다!\r\n\r\n이 민물고기 떼는 주로 용의 섬 곳곳에 분포되어 있는 넓은 호수나 강줄기에서 찾아볼 수 있습니다.\r\n\r\n특히 깨어나는 해안의 우크툴루트 후미 같은 지역에서 왕성하게 서식합니다.",
+        "zh_TW": "時光龍頭魚是相當奇特的魚類，身上的魚鱗排列方向似乎每隔幾秒就會改變一次。手指記得離它們鋒利的嘴巴遠一點！\r\n\r\n這些淡水生物主要出沒於巨龍群島的浩瀚湖泊和蜿蜒河道中。\r\n\r\n它們在甦醒海岸的屋克杜魯靜水等地區特別活躍。",
+        "zh_CN": "时光龙头鱼是一种奇特的鱼，它的鳞片似乎每隔几秒就会前后移动。你的手指一定要远离他们锋利的鼻子！\r\n\r\n这些淡水鱼群主要分布在巨龙群岛周围巨大的湖泊和广阔的河流系统中。\r\n\r\n它们尤其活跃在诸如觉醒海岸的乌克图鲁特畔河村等地区。"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/47909?namespace=static-12.0.1_65617-us"
+        },
+        "id": 47909
+    }
+}

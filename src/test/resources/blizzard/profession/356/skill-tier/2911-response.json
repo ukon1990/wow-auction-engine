@@ -1,0 +1,254 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2911?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 2911,
+    "name": {
+        "en_US": "Midnight Fishing",
+        "es_MX": "Pesca de Midnight",
+        "pt_BR": "Pesca de Midnight",
+        "de_DE": "Angeln von Midnight",
+        "en_GB": "Midnight Fishing",
+        "es_ES": "Pesca de Midnight",
+        "fr_FR": "Pêche de Midnight",
+        "it_IT": "Pesca di Midnight",
+        "ru_RU": "Рыбная ловля Midnight",
+        "ko_KR": "한밤 낚시",
+        "zh_TW": "至暗之夜釣魚",
+        "zh_CN": "至暗之夜钓鱼"
+    },
+    "minimum_skill_level": 1,
+    "maximum_skill_level": 300,
+    "categories": [
+        {
+            "name": {
+                "en_US": "Common Fish",
+                "es_MX": "Peces comunes",
+                "pt_BR": "Peixes Comuns",
+                "de_DE": "Gewöhnlicher Fisch",
+                "en_GB": "Common Fish",
+                "es_ES": "Peces comunes",
+                "fr_FR": "Poisson ordinaire",
+                "it_IT": "Pesci Comuni",
+                "ru_RU": "Обычная рыба",
+                "ko_KR": "일반 생선",
+                "zh_TW": "常見魚種",
+                "zh_CN": "普通鱼类"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51945?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Sin'dorei Swarmer",
+                        "es_MX": "Enjambrista sin'dorei",
+                        "pt_BR": "Enxameador Sin'dorei",
+                        "de_DE": "Sin'doreischwärmer",
+                        "en_GB": "Sin'dorei Swarmer",
+                        "es_ES": "Enjambrista sin'dorei",
+                        "fr_FR": "Carnassier sin’dorei",
+                        "it_IT": "Brulicatore dei Sin'dorei",
+                        "ru_RU": "Син'дорайский роевик",
+                        "ko_KR": "신도레이 무리붙이",
+                        "zh_TW": "辛多雷魚群",
+                        "zh_CN": "辛多雷群聚鱼"
+                    },
+                    "id": 51945
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Zones",
+                "es_MX": "Zonas",
+                "pt_BR": "Áreas",
+                "de_DE": "Zonen",
+                "en_GB": "Zones",
+                "es_ES": "Zonas",
+                "fr_FR": "Régions",
+                "it_IT": "Zone",
+                "ru_RU": "Зоны",
+                "ko_KR": "지역",
+                "zh_TW": "區域",
+                "zh_CN": "区域"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51965?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Eversong Woods",
+                        "es_MX": "Bosque Canción Eterna",
+                        "pt_BR": "Floresta do Canto Eterno",
+                        "de_DE": "Immersangwald",
+                        "en_GB": "Eversong Woods",
+                        "es_ES": "Bosque Canción Eterna",
+                        "fr_FR": "Bois des Chants éternels",
+                        "it_IT": "Boschi di Cantoeterno",
+                        "ru_RU": "Леса Вечной Песни",
+                        "ko_KR": "영원노래 숲",
+                        "zh_TW": "永歌森林",
+                        "zh_CN": "永歌森林"
+                    },
+                    "id": 51965
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Rare Fish",
+                "es_MX": "Peces raros",
+                "pt_BR": "Peixes Raros",
+                "de_DE": "Seltener Fisch",
+                "en_GB": "Rare Fish",
+                "es_ES": "Peces poco comunes",
+                "fr_FR": "Poisson rare",
+                "it_IT": "Pesci Rari",
+                "ru_RU": "Редкая рыба",
+                "ko_KR": "희귀 생선",
+                "zh_TW": "稀有魚種",
+                "zh_CN": "精良鱼类"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51968?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Twisted Tetra",
+                        "es_MX": "Tetra retorcido",
+                        "pt_BR": "Tetra Perverso",
+                        "de_DE": "Verdrehter Tetra",
+                        "en_GB": "Twisted Tetra",
+                        "es_ES": "Tetra retorcido",
+                        "fr_FR": "Tétra distordu",
+                        "it_IT": "Tetra Corrotta",
+                        "ru_RU": "Искаженная тетра",
+                        "ko_KR": "뒤틀린 열대어",
+                        "zh_TW": "扭曲燈魚",
+                        "zh_CN": "扭曲的脂鲤"
+                    },
+                    "id": 51968
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Uncommon Fish",
+                "es_MX": "Peces poco comunes",
+                "pt_BR": "Peixes Incomuns",
+                "de_DE": "Ungewöhnlicher Fisch",
+                "en_GB": "Uncommon Fish",
+                "es_ES": "Peces inusuales",
+                "fr_FR": "Poisson inhabituel",
+                "it_IT": "Pesci Pregiati",
+                "ru_RU": "Необычная рыба",
+                "ko_KR": "고급 생선",
+                "zh_TW": "優秀魚種",
+                "zh_CN": "优秀鱼类"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51969?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Bloomtail Minnow",
+                        "es_MX": "Pescardo colaflor",
+                        "pt_BR": "Manjubinha Caudaflora",
+                        "de_DE": "Blütenfinnenpfrille",
+                        "en_GB": "Bloomtail Minnow",
+                        "es_ES": "Pececillo colaflora",
+                        "fr_FR": "Vairon florequeue",
+                        "it_IT": "Sanguinerola Fiorcoda",
+                        "ru_RU": "Цветохвостая минога",
+                        "ko_KR": "만개꼬리 송사리",
+                        "zh_TW": "花尾小鯉",
+                        "zh_CN": "绽尾鲦鱼"
+                    },
+                    "id": 51969
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Information",
+                "es_MX": "Información",
+                "pt_BR": "Informações",
+                "de_DE": "Information",
+                "en_GB": "Information",
+                "es_ES": "Información",
+                "fr_FR": "Information",
+                "it_IT": "Informazioni",
+                "ru_RU": "Информация",
+                "ko_KR": "정보",
+                "zh_TW": "資訊",
+                "zh_CN": "信息"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51988?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Midnight Anglin'",
+                        "es_MX": "Pesca de Midnight",
+                        "pt_BR": "Pesca em Midnight",
+                        "de_DE": "Angeln von Midnight",
+                        "en_GB": "Midnight Anglin'",
+                        "es_ES": "Pesca en Midnight",
+                        "fr_FR": "Pêche de Midnight",
+                        "it_IT": "Pesca di Midnight",
+                        "ru_RU": "Рыбалка Midnight",
+                        "ko_KR": "한밤 강태공",
+                        "zh_TW": "至暗之夜釣魚",
+                        "zh_CN": "至暗之夜渔夫"
+                    },
+                    "id": 51988
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Crafting",
+                "es_MX": "Fabricación",
+                "pt_BR": "Criação",
+                "de_DE": "Herstellung",
+                "en_GB": "Crafting",
+                "es_ES": "Fabricación",
+                "fr_FR": "Artisanat",
+                "it_IT": "Artigianato",
+                "ru_RU": "Изготовление",
+                "ko_KR": "제작 기술",
+                "zh_TW": "製作中",
+                "zh_CN": "制造"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52039?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Lucky Loa Lure",
+                        "es_MX": "Cebo de loa de la suerte",
+                        "pt_BR": "Isca de Loa da Sorte",
+                        "de_DE": "Köder für glückliche Loa",
+                        "en_GB": "Lucky Loa Lure",
+                        "es_ES": "Cebo de loa de la suerte",
+                        "fr_FR": "Appât à Loa porte-bonheur",
+                        "it_IT": "Esca per Loa della Fortuna",
+                        "ru_RU": "Приманка на счастливого лоа",
+                        "ko_KR": "행운의 로아 미끼",
+                        "zh_TW": "幸運羅亞誘餌",
+                        "zh_CN": "好运神灵鱼诱饵"
+                    },
+                    "id": 52039
+                }
+            ]
+        }
+    ]
+}

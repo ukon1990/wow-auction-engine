@@ -1,0 +1,42 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51851?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51851,
+    "name": {
+        "en_US": "Tranquility Bloom",
+        "es_MX": "Flor de tranquilidad",
+        "pt_BR": "Floração da Tranquilidade",
+        "de_DE": "Harmonieblume",
+        "en_GB": "Tranquility Bloom",
+        "es_ES": "Flor de tranquilidad",
+        "fr_FR": "Tranquillette",
+        "it_IT": "Bocciolo Tranquillo",
+        "ru_RU": "Тихоцвет",
+        "ko_KR": "평온의 꽃송이",
+        "zh_TW": "靜心花",
+        "zh_CN": "宁心花"
+    },
+    "description": {
+        "en_US": "The environmental factors and changes of Quel'Thalas and the surrounding regions has had a profound impact on the local flora, including even the humble Peacebloom. It is still a staple of local crafting and is utilized in a wide variety of recipes, and a recent strain that has adapted to those changes has been dubbed Tranquility Bloom.",
+        "es_MX": "Los cambios y factores ambientales de Quel'Thalas y sus alrededores han tenido un profundo impacto en la flora local, y la humilde flor de paz no es la excepción. Sigue siendo un material esencial para las fabricaciones locales y se utiliza en una gran variedad de recetas. Una variante reciente se ha adaptado a esos cambios y fue denominada flor de tranquilidad.",
+        "pt_BR": "Em Quel'Thalas e regiões próximas, certas mudanças ambientais tiveram um impacto significativo na flora local, inclusive no humilde botão-da-paz. Mesmo assim, ele continua sendo um componente importante da criação local e ainda é utilizado em inúmeras receitas. Além disso, uma linhagem recente dessa planta conseguiu se adaptar a essas mudanças e acabou ganhando o nome de Floração da Tranquilidade.",
+        "de_DE": "Die Veränderungen und neuen ökologischen Faktoren in Quel'Thalas und den umliegenden Regionen hatten einen tiefgreifenden Einfluss auf die örtliche Flora, einschließlich der unscheinbaren Friedensblume. Sie ist nach wie vor ein fester Bestandteil der lokalen Handwerkskunst und wird für eine Vielzahl an Rezepten verwendet. Eine kürzlich entstandene Variante, die sich den Veränderungen angepasst hat, wird als Harmonieblume bezeichnet.",
+        "en_GB": "The environmental factors and changes of Quel'Thalas and the surrounding regions has had a profound impact on the local flora, including even the humble Peacebloom. It is still a staple of local crafting and is utilized in a wide variety of recipes, and a recent strain that has adapted to those changes has been dubbed Tranquility Bloom.",
+        "es_ES": "Los factores y cambios medioambientales de Quel'Thalas y las regiones colindantes han tenido un profundo impacto en la flora local, incluida la modesta flor de paz. Sigue siendo un ingrediente fundamental para la artesanía regional, que se utiliza en un amplio abanico de recetas, y una variedad reciente que se ha adaptado a esos cambios ha recibido el nombre de flor de tranquilidad.",
+        "fr_FR": "Les facteurs et changements environnementaux de Quel’Thalas et des régions voisines ont eu un impact considérable sur la flore locale, même sur la simple pacifique. Elle demeure un incontournable de l’artisanat local, utilisée dans une grande variété de recettes et on a nommé une nouvelle variété qui a su s’adapter aux changements « tranquillette ».",
+        "it_IT": "I fattori ambientali e i cambiamenti avvenuti a Quel'Thalas e nelle regioni circostanti hanno avuto un impatto profondo sulla flora locale, coinvolgendo persino l'umile Sbocciapace. Quest'erba resta un pilastro dell'artigianato locale ed è impiegata in un'ampia gamma di ricette. La varietà più recente, adattatasi a tali mutamenti, è stata ribattezzata Bocciolo Tranquillo.",
+        "ru_RU": "Факторы окружающей среды и изменения, произошедшие в Кель'Таласе и прилежащих регионах, сильно повлияли на местную флору, включая даже непримечательный мироцвет. Последний по-прежнему активно используется во множестве рецептов, а новая его разновидность, адаптировавшаяся к недавним переменам, получила название тихоцвет.",
+        "ko_KR": "쿠엘탈라스와 그 주변 지역의 환경적 요인과 변화는 토착 식물에 깊은 영향을 주었고, 평온초와 같은 소박한 식물도 예외는 아니었습니다. 물론 오늘날에도 다양한 제작법에서 기본 재료로 쓰이고 있으며, 이러한 변화에 적응한 새로운 변종은 평온의 꽃송이라는 명칭으로 불리게 되었죠.",
+        "zh_TW": "奎爾薩拉斯及周邊地區的環境因素和變化對當地植物產生深遠的影響，其中甚至包含不起眼的寧神花。它還是當地的主要製作材料，用於各種不同的配方，而適應了那些變化的最新品種則被命名為靜心花。",
+        "zh_CN": "奎尔萨拉斯及其周边地区的环境变迁对当地植被产生了深远影响，就连平凡的宁神花也未能幸免。这种草药依然是本地制作工艺的重要材料，广泛用于各类配方之中。经过环境变化洗礼后诞生的新品种，被人们称作宁心花。"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51851?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51851
+    }
+}

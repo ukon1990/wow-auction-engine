@@ -1,0 +1,44 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/417?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 417,
+    "description": {
+        "en_US": "Duskshrouded Stone",
+        "es_MX": "Piedra ocasovelada",
+        "pt_BR": "Pedra Crepusculada",
+        "de_DE": "Dämmerschleierstein",
+        "en_GB": "Duskshrouded Stone",
+        "es_ES": "Piedra velocrepúsculo",
+        "fr_FR": "Pierre voile-de-brune",
+        "it_IT": "Pietra Ammantata di Vespro",
+        "ru_RU": "Затененный камень",
+        "ko_KR": "어스름장막 돌",
+        "zh_TW": "暮罩石",
+        "zh_CN": "暮胧石"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/791?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Duskshrouded Stone",
+                "es_MX": "Piedra ocasovelada",
+                "pt_BR": "Pedra Crepusculada",
+                "de_DE": "Dämmerschleierstein",
+                "en_GB": "Duskshrouded Stone",
+                "es_ES": "Piedra velocrepúsculo",
+                "fr_FR": "Pierre voile-de-brune",
+                "it_IT": "Pietra Ammantata di Vespro",
+                "ru_RU": "Затененный камень",
+                "ko_KR": "어스름장막 돌",
+                "zh_TW": "暮罩石",
+                "zh_CN": "暮胧石"
+            },
+            "id": 791
+        }
+    ]
+}

@@ -54,6 +54,10 @@ Required for local startup:
 - `BLIZZARD_CLIENT_SECRET`
 - `WAE_BLIZZARD_REGIONS`
 
+Recommended for static/reference Blizzard data syncs:
+
+- `WAE_STATIC_DATA_REGION=Europe`
+
 For local development, AWS settings default to obvious dummy values:
 
 - `WAE_AWS_REGION=eu-west-1`
@@ -130,8 +134,9 @@ docker compose -f docker-compose-db.yml down
 | --- | --- | --- | --- |
 | `BLIZZARD_CLIENT_ID` | Yes | `your-blizzard-client-id` | Used to fetch OAuth tokens from Blizzard. |
 | `BLIZZARD_CLIENT_SECRET` | Yes | `your-blizzard-client-secret` | Used together with the client ID. |
-| `WAE_BLIZZARD_REGIONS` | Yes | `Europe` or `Korea,Taiwan` | Comma-separated app enum values, not `eu`/`kr`. |
+| `WAE_BLIZZARD_REGIONS` | Yes | `Europe` or `Korea,Taiwan` | Comma-separated app enum values, not `eu`/`kr`. Auction/realm processing follows these regions. |
 | `WAE_BLIZZARD_REGION` | No | `Europe` | Deprecated compatibility fallback for single-region setups. |
+| `WAE_STATIC_DATA_REGION` | No | `Europe` | Region used for static/reference Blizzard data such as professions, recipes, items, and related metadata. Defaults to `Europe`. |
 | `WAE_AWS_REGION` | No | `eu-west-1` | Optional locally; defaults to `eu-west-1`. |
 | `AWS_ACCESS_KEY` | No | `local-dev-key` | Optional locally; defaults to a dummy value. |
 | `AWS_SECRET_KEY` | No | `local-dev-secret` | Optional locally; defaults to a dummy value. |
@@ -168,14 +173,15 @@ That means a new developer normally does not need to set any database environmen
 The app deployment region and the S3 bucket region are related but not identical configuration concerns.
 
 - `WAE_AWS_REGION` is the region where the application instance runs.
-- `WAE_BLIZZARD_REGIONS` is the Blizzard data scope that instance processes.
+- `WAE_BLIZZARD_REGIONS` is the Blizzard data scope that instance processes for auction/realm flows.
+- `WAE_STATIC_DATA_REGION` is the single source region used for static/reference Blizzard data such as professions, recipes, items, and related metadata.
 - S3 bucket name and bucket AWS region are resolved internally from app config per Blizzard region.
 
 Current production layout:
 
-- Europe deployment: `eu-west-1`, updates `Europe`, writes to `wah-data-eu` in `eu-west-1`
-- North America deployment: `us-west-1`, updates `NorthAmerica`, writes to `wah-data-us` in `us-west-1`
-- Asia deployment: `ap-northeast-2`, updates `Korea,Taiwan`, writes to `wah-data-as` in `ap-northeast-2`
+- Europe deployment: `eu-west-1`, auction/realm updates `Europe`, static data defaults to `Europe`, writes to `wah-data-eu` in `eu-west-1`
+- North America deployment: `us-west-1`, auction/realm updates `NorthAmerica`, static data can still point to `Europe`, writes to `wah-data-us` in `us-west-1`
+- Asia deployment: `ap-northeast-2`, auction/realm updates `Korea,Taiwan`, static data can still point to `Europe`, writes to `wah-data-as` in `ap-northeast-2`
 
 ## Running Tests
 
@@ -193,6 +199,45 @@ Useful detail for onboarding:
 - DynamoDB and S3 are provided through Floci-backed Testcontainers in integration tests
 - Docker Desktop or another working Docker daemon must be running for tests to pass
 - `WAE_BLIZZARD_REGION` is still accepted as a fallback, but new config and deployment work should use `WAE_BLIZZARD_REGIONS`
+
+## Profession/Recipe Test Fixtures
+
+Profession and recipe integration fixtures now use a structured layout under [`src/test/resources/blizzard`](src/test/resources/blizzard):
+
+- [`src/test/resources/blizzard/profession/index-response.json`](src/test/resources/blizzard/profession/index-response.json)
+- [`src/test/resources/blizzard/profession`](src/test/resources/blizzard/profession) for mirrored `profession/*` payloads
+- [`src/test/resources/blizzard/recipe`](src/test/resources/blizzard/recipe) for mirrored `recipe/*` payloads
+- [`src/test/resources/blizzard/item`](src/test/resources/blizzard/item) for recipe-linked item payloads
+- [`src/test/resources/blizzard/modified-crafting`](src/test/resources/blizzard/modified-crafting) for linked modified crafting metadata
+- [`src/test/resources/blizzard/profession-recipe-sample-manifest.json`](src/test/resources/blizzard/profession-recipe-sample-manifest.json) describing sampled tiers and recipe IDs
+
+The fixture refresher mirrors normalized Blizzard Game Data API paths under `src/test/resources/blizzard`, so examples now look like:
+
+- `profession/164-response.json`
+- `profession/164/skill-tier/2907-response.json`
+- `recipe/51818-response.json`
+- `item/236951-response.json`
+- `modified-crafting/reagent-slot-type/404-response.json`
+
+Current sample policy:
+
+- professions: Blacksmithing, Enchanting, Herbalism, Fishing
+- tiers: Midnight + one older tier per profession
+- recipe sampling: 5-10 recipes per selected skill tier (default 6)
+
+Refresh the checked-in Blizzard fixtures from the project root with:
+
+```bash
+./mvnw exec:exec@refresh-fixtures
+```
+
+Pass script flags through Maven with `-Drefresh.fixtures.args=...`, for example:
+
+```bash
+./mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--dry-run --profession-id 164'
+```
+
+This command requires a local `node` binary. Override it with `-Dnode.executable=/path/to/node` if your shell does not expose `node` on `PATH`.
 
 ## Useful Commands
 

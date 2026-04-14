@@ -1,0 +1,43 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/34769?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 34769,
+    "name": {
+        "en_US": "Aethril",
+        "es_MX": "Aethril",
+        "pt_BR": "Aethril",
+        "de_DE": "Aethril",
+        "en_GB": "Aethril",
+        "es_ES": "Aethril",
+        "fr_FR": "Aethril",
+        "it_IT": "Aethril",
+        "ru_RU": "Айтрил",
+        "ko_KR": "에이트릴",
+        "zh_TW": "紫地根草",
+        "zh_CN": "安瑟瑞尔花"
+    },
+    "description": {
+        "en_US": "Find rare materials when gathering aethril.",
+        "es_MX": "Encuentra materiales poco comunes mientras recolectas aethril.",
+        "pt_BR": "Encontra materiais raros ao coletar aethril.",
+        "de_DE": "Findet seltene Materialien beim Sammeln von Aethril.",
+        "en_GB": "Find rare materials when gathering aethril.",
+        "es_ES": "Encuentra materiales poco comunes al recolectar aethril.",
+        "fr_FR": "Vous trouvez des matériaux rares en ramassant de l’aethril.",
+        "it_IT": "Permette di trovare materiali rari quando si raccoglie l'Aethril.",
+        "ru_RU": "Собирая айтрил, вы также находите редкие материалы.",
+        "ko_KR": "에이트릴을 채집할 때 희귀한 재료를 함께 획득할 수도 있습니다.",
+        "zh_TW": "在採集紫地根草時發現稀有材料。",
+        "zh_CN": "在采集安瑟瑞尔花的同时可以找到稀有材料。"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/34769?namespace=static-12.0.1_65617-us"
+        },
+        "id": 34769
+    },
+    "rank": 2
+}

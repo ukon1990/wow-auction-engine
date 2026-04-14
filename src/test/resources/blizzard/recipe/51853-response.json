@@ -1,0 +1,42 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51853?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51853,
+    "name": {
+        "en_US": "Azeroot",
+        "es_MX": "Azerraíz",
+        "pt_BR": "Raizeroth",
+        "de_DE": "Azerwurz",
+        "en_GB": "Azeroot",
+        "es_ES": "Azerraíz",
+        "fr_FR": "Azeracine",
+        "it_IT": "Azeradice",
+        "ru_RU": "Азефит",
+        "ko_KR": "아제뿌리",
+        "zh_TW": "杜根草",
+        "zh_CN": "艾泽之根"
+    },
+    "description": {
+        "en_US": "The hearty earthroot plant has grown stronger in recent years. Difficult to gather, but just as potent in crafting, azeroot is key to many recipes in Quel'Thalas.\r\n\r\nThis sturdy wooden herb can be found on or around trees in the Quel'Thalas region.",
+        "es_MX": "Esta vigorosa planta de raíz de tierra se ha fortalecido durante los últimos años. Es difícil de recolectar, pero, al ser igual de potente para distintas fabricaciones, la azerraíz es un elemento clave en muchas recetas de Quel'Thalas.\r\n\r\nEsta resistente hierba de madera se puede encontrar en los árboles de la región de Quel'Thalas y sus alrededores.",
+        "pt_BR": "A vigorosa raiz-telúrica ficou ainda mais forte nos últimos anos. Difícil de coletar, mas igualmente potente na criação, a raizeroth é a base de muitas receitas de Quel'Thalas.\r\n\r\nEsta planta robusta e lenhosa pode ser encontrada em árvores ou perto delas na região de Quel'Thalas.",
+        "de_DE": "Die kräftige Erdwurzelpflanze ist in den letzten Jahren noch robuster geworden. Sie lässt sich zwar nur mühsam sammeln, ist jedoch ungemein nützlich als Rohstoff und daher ein wichtiger Teil vieler Rezepte aus Quel'Thalas.\r\n\r\nDieses zähe, holzige Kraut kann auf oder in der Nähe von Bäumen im Gebiet von Quel'Thalas gefunden werden.",
+        "en_GB": "The hearty earthroot plant has grown stronger in recent years. Difficult to gather, but just as potent in crafting, azeroot is key to many recipes in Quel'Thalas.\r\n\r\nThis sturdy wooden herb can be found on or around trees in the Quel'Thalas region.",
+        "es_ES": "La recia planta raíz de tierra se ha fortalecido aún más en los últimos años. La azerraíz, difícil de recolectar pero igual de potente como ingrediente, es esencial para muchas recetas en Quel'Thalas.\r\n\r\nEsta resistente hierba de madera se puede encontrar en la región de Quel'Thalas sobre los árboles o alrededor de ellos.",
+        "fr_FR": "Cette terrestrine solide s’est renforcée au cours des dernières années. Difficile à cueillir, mais tout aussi efficace en artisanat, l’azeracine est l’ingrédient clé dans de nombreuses recettes de Quel’Thalas.\r\n\r\nIl est possible de trouver cette plante solide faite de racines sur ou au pied des arbres de la région de Quel’Thalas.",
+        "it_IT": "La robusta pianta del Bulboterro si è rinforzata negli ultimi anni. Difficile da raccogliere, ma estremamente potente per gli alchimisti, l'Azeradice è un ingrediente fondamentale in molte ricette di Quel'Thalas.\r\n\r\nQuesta tenace erba legnosa si trova spesso nelle vicinanze degli alberi della regione di Quel'Thalas.",
+        "ru_RU": "В последние годы полезные свойства этого растения, обладающего развитыми корнями, заметно усилились. Оно используется в Кель'Таласе во множестве рецептов, хотя собирать его непросто.\r\n\r\nНайти его можно на деревьях в Кель'Таласе или вокруг них.",
+        "ko_KR": "튼튼한 대지뿌리는 최근 들어 더욱 강인하게 성장해 왔습니다. 채집은 어렵지만 제작 분야에서 사용될 때의 효능은 여전해, 쿠엘탈라스의 여러 제작법에서 핵심 재료로 위상을 과시하고 있습니다.\r\n\r\n이 단단한 목질성 약초는 쿠엘탈라스 전역의 나무나 주변에서 찾아볼 수 있습니다.",
+        "zh_TW": "近年來，營養豐富的地根植物變得更強健了。杜根草很難採集，不過依然是實用的製作材料，在奎爾薩拉斯的許多配方中扮演關鍵角色。\r\n\r\n這種強韌的木本草藥可在奎爾薩拉斯地區的樹上或其周圍找到。",
+        "zh_CN": "坚韧的地根草近年来变得更加茁壮。艾泽之根虽然采集困难，但制作效果同样出色，是奎尔萨拉斯众多配方的核心材料。\r\n\r\n这种坚硬的木质草药生长在奎尔萨拉斯地区的树木上或树木附近。"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51853?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51853
+    }
+}

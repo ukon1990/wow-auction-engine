@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/20?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 20,
+    "display_name": {
+        "en_US": "Fishing Pole",
+        "es_MX": "Caña de pescar",
+        "pt_BR": "Vara de Pescar",
+        "de_DE": "Angelrute",
+        "en_GB": "Fishing Pole",
+        "es_ES": "Caña de pescar",
+        "fr_FR": "Canne à pêche",
+        "it_IT": "Canna da pesca",
+        "ru_RU": "Удочка",
+        "ko_KR": "낚싯대",
+        "zh_TW": "魚竿",
+        "zh_CN": "鱼竿"
+    },
+    "verbose_name": {
+        "en_US": "Fishing Poles",
+        "es_MX": "Cañas de pescar",
+        "pt_BR": "Varas de Pescar",
+        "de_DE": "Angelruten",
+        "en_GB": "Fishing Poles",
+        "es_ES": "Cañas de pescar",
+        "fr_FR": "Cannes à pêche",
+        "it_IT": "Canne da pesca",
+        "ru_RU": "Удочки",
+        "ko_KR": "낚싯대",
+        "zh_TW": "魚竿",
+        "zh_CN": "鱼竿"
+    }
+}

@@ -1,0 +1,164 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/396?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 396,
+    "description": {
+        "en_US": "Artisan's Authenticity",
+        "es_MX": "Autenticidad del artesano",
+        "pt_BR": "Autenticidade do Artífice",
+        "de_DE": "Authentizität des Kunsthandwerks",
+        "en_GB": "Artisan's Authenticity",
+        "es_ES": "Autenticidad de artesano",
+        "fr_FR": "Authenticité artisanale",
+        "it_IT": "Autenticità dell'Artigiano",
+        "ru_RU": "Почерк ремесленника",
+        "ko_KR": "장인의 진정성",
+        "zh_TW": "工匠之保證",
+        "zh_CN": "匠人之真"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/826?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Apprentice's Scribbles",
+                "es_MX": "Garabatos de aprendiz",
+                "pt_BR": "Rascunhos do Aprendiz",
+                "de_DE": "Lehrlingsgekritzel",
+                "en_GB": "Apprentice's Scribbles",
+                "es_ES": "Garabatos de aprendiz",
+                "fr_FR": "Gribouillage de novice",
+                "it_IT": "Scarabocchi dell'Apprendista",
+                "ru_RU": "Каракули ученика",
+                "ko_KR": "수습생이 휘갈겨 쓴 글귀",
+                "zh_TW": "學徒速記",
+                "zh_CN": "学徒的涂鸦"
+            },
+            "id": 826
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/827?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Global Finishing Reagent 02",
+                "es_MX": "Componente de retoque global 02",
+                "pt_BR": "Reagente de Finalização Global 02",
+                "de_DE": "Globales Fertigungsreagenz 02",
+                "en_GB": "Global Finishing Reagent 02",
+                "es_ES": "Componente de finalización global 02",
+                "fr_FR": "Composant de finition global 02",
+                "it_IT": "Reagente di Finitura Globale 02",
+                "ru_RU": "Общий завершающий реагент 02",
+                "ko_KR": "전역 마무리 재료 02",
+                "zh_TW": "通用最後加工材料02",
+                "zh_CN": "全局成品材料02"
+            },
+            "id": 827
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/828?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Global Finishing Reagent 03",
+                "es_MX": "Componente de retoque global 03",
+                "pt_BR": "Reagente de Finalização Global 03",
+                "de_DE": "Globales Fertigungsreagenz 03",
+                "en_GB": "Global Finishing Reagent 03",
+                "es_ES": "Componente de finalización global 03",
+                "fr_FR": "Composant de finition global 03",
+                "it_IT": "Reagente di Finitura Globale 03",
+                "ru_RU": "Общий завершающий реагент 03",
+                "ko_KR": "전역 마무리 재료 03",
+                "zh_TW": "通用最後加工材料03",
+                "zh_CN": "全局成品材料03"
+            },
+            "id": 828
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/829?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Artisan's Consortium Gold Star",
+                "es_MX": "Estrella de oro de la Sociedad de Artesanos",
+                "pt_BR": "Estrela de Ouro do Consórcio do Artífice",
+                "de_DE": "Goldstern des Handwerkerkonsortiums",
+                "en_GB": "Artisan's Consortium Gold Star",
+                "es_ES": "Estrella dorada del Consorcio de Artesanía",
+                "fr_FR": "Étoile dorée du Consortium d’artisanat",
+                "it_IT": "Stella Dorata del Consorzio degli Artigiani",
+                "ru_RU": "Золотая звезда консорциума ремесленников",
+                "ko_KR": "장인 무역연합 금빛 별",
+                "zh_TW": "工匠聯盟黃金星星",
+                "zh_CN": "工匠商盟金星奖章"
+            },
+            "id": 829
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/833?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Multicraft Matrix",
+                "es_MX": "Matriz de fabricación múltiple",
+                "pt_BR": "Matriz de Multicriação",
+                "de_DE": "Mehrfachherstellungsmatrix",
+                "en_GB": "Multicraft Matrix",
+                "es_ES": "Matriz de multifabricación",
+                "fr_FR": "Matrice de fabrication multiple",
+                "it_IT": "Matrice della Creazione Multipla",
+                "ru_RU": "Матрица перепроизводства",
+                "ko_KR": "복수 제작 매트릭스",
+                "zh_TW": "複數製造矩陣",
+                "zh_CN": "产能矩阵"
+            },
+            "id": 833
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/835?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Resourceful Rebar",
+                "es_MX": "Barra inventiva",
+                "pt_BR": "Vergalhão Desenvolto",
+                "de_DE": "Einfallsreicher Betonstahl",
+                "en_GB": "Resourceful Rebar",
+                "es_ES": "Ferralla ingeniosa",
+                "fr_FR": "Barre d’armature ingénieuse",
+                "it_IT": "Tondino Parsimonioso",
+                "ru_RU": "Набойка находчивости",
+                "ko_KR": "지혜로운 보강봉",
+                "zh_TW": "精明鋼筋",
+                "zh_CN": "充裕钢筋"
+            },
+            "id": 835
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/838?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Ingenuious Identity",
+                "es_MX": "Identidad ingeniosa",
+                "pt_BR": "Identidade Engenhosa",
+                "de_DE": "Geniale Identität",
+                "en_GB": "Ingenuious Identity",
+                "es_ES": "Identidad ingeniosa",
+                "fr_FR": "Identité inventive",
+                "it_IT": "Identità Ingegnosa",
+                "ru_RU": "Индикатор изобретательности",
+                "ko_KR": "독창적인 정체성",
+                "zh_TW": "精妙身分",
+                "zh_CN": "奇思标识"
+            },
+            "id": 838
+        }
+    ]
+}

@@ -1,0 +1,207 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52935?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 52935,
+    "name": {
+        "en_US": "Enchant Chest - Mark of Nalorakk",
+        "es_MX": "Encantar pechera: Marca de Nalorakk",
+        "pt_BR": "Encantamento da Marca de Nalorakk - Torso",
+        "de_DE": "Brust - Zeichen von Nalorakk",
+        "en_GB": "Enchant Chest - Mark of Nalorakk",
+        "es_ES": "Encantar torso: Marca de Nalorakk",
+        "fr_FR": "Enchantement de plastron – marque de Nalorakk",
+        "it_IT": "Incantamento Torso - Marchio di Nalorakk",
+        "ru_RU": "Чары для нагрудника – метка Налоракка",
+        "ko_KR": "가슴보호구 마법부여 - 날로라크의 징표",
+        "zh_TW": "附魔胸甲 - 納羅拉克印記",
+        "zh_CN": "附魔胸甲 - 纳洛拉克印记"
+    },
+    "description": {
+        "en_US": "Permanently enchants chest armor with Mark of Nalorakk, increasing Strength by $ec1 and Stamina by $ec2. Cannot be applied to items lower than level $ecim.\r\n\r\nAmani Augments - Zul'Aman Zeal",
+        "es_MX": "Encanta una armadura de pecho con Marca de Nalorakk de forma permanente, lo que aumenta la fuerza $ec1 p. y el aguante $ec2 p. No se puede aplicar a objetos de nivel inferior a $ecim.\r\n\r\nMejoras amani - Fervor de Zul'aman",
+        "pt_BR": "Encanta permanentemente uma armadura de torso com a Marca de Nalorakk, aumentando em $ec1 a Força e em $ec2 o Vigor. Não é possível aplicar a itens abaixo do nível $ecim.\r\n\r\nAprimoramentos Amani - Zelo de Zul'Aman",
+        "de_DE": "Eine Brustrüstung dauerhaft mit dem Zeichen von Nalorakk verzaubern, wodurch die Stärke um $ec1 und die Ausdauer um $ec2 erhöht werden. Kann nicht auf Gegenstände unter Stufe $ecim angewandt werden.\r\n\r\nAmanianpassungen - Zorn von Zul'Aman",
+        "en_GB": "Permanently enchants chest armor with Mark of Nalorakk, increasing Strength by $ec1 and Stamina by $ec2. Cannot be applied to items lower than level $ecim.\r\n\r\nAmani Augments - Zul'Aman Zeal",
+        "es_ES": "Encantas de forma permanente una pieza de armadura de torso con Marca de Nalorakk, que aumenta $ec1 p. la fuerza y $ec2 p. el aguante. No se puede aplicar a objetos de nivel inferior a $ecim.\r\n\r\nAumentos Amani: Celo de Zul'Aman",
+        "fr_FR": "Enchante une pièce d’armure de torse de manière permanente avec la marque de Nalorakk. Augmente votre Force de $ec1 et votre Endurance de $ec2. Ne peut être appliqué sur des objets d’un niveau inférieur à $ecim.\r\n\r\nAméliorations amani – zèle de Zul’Aman",
+        "it_IT": "Incanta in modo permanente un equipaggiamento per torso con il Marchio di Nalorakk, aumentando la Forza di $ec1 e la Tempra di $ec2. Non applicabile a oggetti di livello inferiore a $ecim.\r\n\r\nMiglioramenti degli Amani - Zelo di Zul'aman",
+        "ru_RU": "Применяет к нагруднику постоянные чары \"Метка Налоракка\", повышающие силу на $ec1, а выносливость – на $ec2. Нельзя применить к предметам ниже $ecim-го уровня.\r\n\r\nУсиления амани – рвение Зул'Амана",
+        "ko_KR": "가슴보호구에 영구적으로 날로라크의 징표 마법을 부여해 착용자의 힘을 $ec1만큼, 체력을 $ec2만큼 증가시킵니다. $ecim 레벨 미만의 아이템에는 사용할 수 없습니다.\r\n\r\n아마니 증강 - 줄아만의 열정",
+        "zh_TW": "永久性地為一件胸甲附魔納羅拉克印記，使力量提高$ec1點，耐力提高$ec2點。無法用在等級低於$ecim的物品。\r\n\r\n阿曼尼增強 - 祖阿曼狂熱",
+        "zh_CN": "永久性地为胸甲附魔纳洛拉克印记，使力量提高$ec1点，耐力提高$ec2点。不能对物品等级低于$ecim的物品使用。\r\n\r\n阿曼尼增强 - 祖阿曼热忱"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52935?namespace=static-12.0.1_65617-us"
+        },
+        "id": 52935
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/236951?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Mote of Wild Magic",
+                    "es_MX": "Mota de magia salvaje",
+                    "pt_BR": "Grânulo de Magia Selvagem",
+                    "de_DE": "Partikel der wilden Magie",
+                    "en_GB": "Mote of Wild Magic",
+                    "es_ES": "Mota de magia salvaje",
+                    "fr_FR": "Particule de magie sauvage",
+                    "it_IT": "Granulo di Magia Selvaggia",
+                    "ru_RU": "Частица дикой магии",
+                    "ko_KR": "야생 마력의 티끌",
+                    "zh_TW": "狂野魔法微粒",
+                    "zh_CN": "狂野魔法微粒"
+                },
+                "id": 236951
+            },
+            "quantity": 5
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/238528?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Majestic Claw",
+                    "es_MX": "Zarpa majestuosa",
+                    "pt_BR": "Garra Majestosa",
+                    "de_DE": "Majestätische Klaue",
+                    "en_GB": "Majestic Claw",
+                    "es_ES": "Garra majestuosa",
+                    "fr_FR": "Griffe majestueuse",
+                    "it_IT": "Artiglio Maestoso",
+                    "ru_RU": "Величественный коготь",
+                    "ko_KR": "위엄 넘치는 발톱",
+                    "zh_TW": "珍獸獸爪",
+                    "zh_CN": "威风之爪"
+                },
+                "id": 238528
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/251285?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Petrified Root",
+                    "es_MX": "Raíz petrificada",
+                    "pt_BR": "Raiz Petrificada",
+                    "de_DE": "Versteinerte Wurzel",
+                    "en_GB": "Petrified Root",
+                    "es_ES": "Raíz petrificada",
+                    "fr_FR": "Racine pétrifiée",
+                    "it_IT": "Radice Pietrificata",
+                    "ru_RU": "Окаменелый корень",
+                    "ko_KR": "석화된 뿌리",
+                    "zh_TW": "石化根",
+                    "zh_CN": "石化之根"
+                },
+                "id": 251285
+            },
+            "quantity": 2
+        }
+    ],
+    "modified_crafting_slots": [
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/404?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Eversinging Dust",
+                    "es_MX": "Polvo cantoeterno",
+                    "pt_BR": "Pó de Eternelegia",
+                    "de_DE": "Ewigsingender Staub",
+                    "en_GB": "Eversinging Dust",
+                    "es_ES": "Polvo cantoeterno",
+                    "fr_FR": "Poussière de chant éternel",
+                    "it_IT": "Polvere di Suoneterno",
+                    "ru_RU": "Вечнопоющая пыль",
+                    "ko_KR": "영원히 노래하는 가루",
+                    "zh_TW": "永歌之塵",
+                    "zh_CN": "永歌之尘"
+                },
+                "id": 404
+            },
+            "display_order": 0
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/403?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Radiant Shard",
+                    "es_MX": "Fragmento radiante",
+                    "pt_BR": "Estilhaço Radiante",
+                    "de_DE": "Strahlender Splitter",
+                    "en_GB": "Radiant Shard",
+                    "es_ES": "Fragmento radiante",
+                    "fr_FR": "Éclat radieux",
+                    "it_IT": "Scheggia Radiosa",
+                    "ru_RU": "Лучистый осколок",
+                    "ko_KR": "찬란한 조각",
+                    "zh_TW": "璀璨裂片",
+                    "zh_CN": "光耀碎片"
+                },
+                "id": 403
+            },
+            "display_order": 1
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/402?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Dawn Crystal",
+                    "es_MX": "Cristal del alba",
+                    "pt_BR": "Cristal da Aurora",
+                    "de_DE": "Dämmerkristall",
+                    "en_GB": "Dawn Crystal",
+                    "es_ES": "Cristal del alba",
+                    "fr_FR": "Cristal de l’aube",
+                    "it_IT": "Cristallo dell'Alba",
+                    "ru_RU": "Кристалл зари",
+                    "ko_KR": "여명의 수정",
+                    "zh_TW": "黎明水晶",
+                    "zh_CN": "黎明水晶"
+                },
+                "id": 402
+            },
+            "display_order": 2
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Artisan's Authenticity",
+                    "es_MX": "Autenticidad del artesano",
+                    "pt_BR": "Autenticidade do Artífice",
+                    "de_DE": "Authentizität des Kunsthandwerks",
+                    "en_GB": "Artisan's Authenticity",
+                    "es_ES": "Autenticidad de artesano",
+                    "fr_FR": "Authenticité artisanale",
+                    "it_IT": "Autenticità dell'Artigiano",
+                    "ru_RU": "Почерк ремесленника",
+                    "ko_KR": "장인의 진정성",
+                    "zh_TW": "工匠之保證",
+                    "zh_CN": "匠人之真"
+                },
+                "id": 388
+            },
+            "display_order": 3
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/10?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 10,
+    "display_name": {
+        "en_US": "Elemental",
+        "es_MX": "Elemental",
+        "pt_BR": "Elemental",
+        "de_DE": "Elemente",
+        "en_GB": "Elemental",
+        "es_ES": "Elemental",
+        "fr_FR": "Élémentaire",
+        "it_IT": "Elementale",
+        "ru_RU": "Стихии",
+        "ko_KR": "원소",
+        "zh_TW": "元素",
+        "zh_CN": "元素"
+    },
+    "hide_subclass_in_tooltips": true
+}

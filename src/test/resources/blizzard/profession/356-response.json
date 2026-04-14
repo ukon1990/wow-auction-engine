@@ -1,0 +1,101 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/356?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 356,
+    "name": {
+        "en_US": "Fishing",
+        "es_MX": "Pesca",
+        "pt_BR": "Pesca",
+        "de_DE": "Angeln",
+        "en_GB": "Fishing",
+        "es_ES": "Pesca",
+        "fr_FR": "Pêche",
+        "it_IT": "Pesca",
+        "ru_RU": "Рыбная ловля",
+        "ko_KR": "낚시",
+        "zh_TW": "釣魚",
+        "zh_CN": "钓鱼"
+    },
+    "description": {
+        "en_US": "Higher fishing skill increases your chance of catching fish in bodies of water around the world.  If you are having trouble catching fish in a given area, move to a lower level area or purchase a fishing lure and try again.",
+        "es_MX": "Con un nivel alto de habilidad en pesca aumentará la probabilidad de que pesques algo en las aguas del mundo. Si te cuesta mucho pescar, ve a pescar a otra área de nivel inferior o compra un cebo.",
+        "pt_BR": "Um alto nível na perícia pesca aumenta a chance de pegar peixes pelo mundo. Se você tiver problemas para pescar em determinada área, vá para uma área de nível mais baixo ou use uma isca de pesca e tente novamente.",
+        "de_DE": "Eine hohe Angelfertigkeit steigert Eure Chance, Fische in einem Gewässer zu fangen. Wenn Ihr in einem bestimmten Gebiet Probleme habt, Fische zu angeln, versucht es in einem Gebiet mit einer niedrigeren Stufe oder benutzt einen Fischköder.",
+        "en_GB": "Higher fishing skill increases your chance of catching fish in bodies of water around the world.  If you are having trouble catching fish in a given area, move to a lower level area or purchase a fishing lure and try again.",
+        "es_ES": "Con un nivel alto de habilidad en pesca aumentará la probabilidad de que pesques algo en las aguas del mundo. Si te cuesta mucho pescar, ve a pescar a otra área de nivel inferior o compra un cebo.",
+        "fr_FR": "Un plus haut score dans la compétence pêche augmente vos chances d'attraper des poissons dans le monde. Si vous n'arrivez pas à pêcher dans une zone spécifique, allez dans des zones de plus bas niveau ou utilisez des appâts.",
+        "it_IT": "Una maggiore competenza in Pesca aumenta la probabilità di catturare pesci nelle pozze d'acqua in giro per il mondo. Se non riesci a catturare pesci in una specifica area, prova a spostarti in aree di livello più basso o aggiungi un'esca.",
+        "ru_RU": "Чем лучше развит этот навык, тем больше вероятность поимки рыбы в любом из водоемов. Если вам не везет на рыбалке, перейдите в область более низкого уровня или купите приманку.",
+        "ko_KR": "낚시 숙련도가 올라갈수록 물고기를 낚을 확률이 증가합니다. 만약 해당 지역에서 물고기를 낚을 수 없다면 좀 더 낮은 레벨의 장소로 이동하거나 미끼를 사용해 보십시오.",
+        "zh_TW": "高級的釣魚技能使你可以釣到高級的魚。如果你在某個區域釣不到魚，請到低等級區域去釣魚，或者購買魚餌再來嘗試。",
+        "zh_CN": "高级的钓鱼技能使你可以钓到高级的鱼。如果你在某个区域钓不到鱼，请到低等级区域去钓鱼，或者购买鱼饵再来尝试。"
+    },
+    "type": {
+        "type": "SECONDARY",
+        "name": {
+            "en_US": "Secondary",
+            "es_MX": "Secundario",
+            "pt_BR": "Secundário",
+            "de_DE": "Sekundär",
+            "en_GB": "Secondary",
+            "es_ES": "Secundario",
+            "fr_FR": "Secondaires",
+            "it_IT": "Secondario",
+            "ru_RU": "Дополнительное",
+            "ko_KR": "보조",
+            "zh_TW": "次要",
+            "zh_CN": "次要"
+        }
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/profession/356?namespace=static-12.0.1_65617-us"
+        },
+        "id": 356
+    },
+    "skill_tiers": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2826?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Dragon Isles Fishing",
+                "es_MX": "Pesca de las Islas Dragón",
+                "pt_BR": "Pesca nas Ilhas do Dragão",
+                "de_DE": "Angeln auf den Dracheninseln",
+                "en_GB": "Dragon Isles Fishing",
+                "es_ES": "Pesca de las Islas Dragón",
+                "fr_FR": "Pêche des îles aux Dragons",
+                "it_IT": "Pesca delle Isole dei Draghi",
+                "ru_RU": "Рыбная ловля Драконьих островов",
+                "ko_KR": "용의 섬 낚시",
+                "zh_TW": "巨龍群島釣魚",
+                "zh_CN": "巨龙群岛钓鱼"
+            },
+            "id": 2826
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2911?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Midnight Fishing",
+                "es_MX": "Pesca de Midnight",
+                "pt_BR": "Pesca de Midnight",
+                "de_DE": "Angeln von Midnight",
+                "en_GB": "Midnight Fishing",
+                "es_ES": "Pesca de Midnight",
+                "fr_FR": "Pêche de Midnight",
+                "it_IT": "Pesca di Midnight",
+                "ru_RU": "Рыбная ловля Midnight",
+                "ko_KR": "한밤 낚시",
+                "zh_TW": "至暗之夜釣魚",
+                "zh_CN": "至暗之夜钓鱼"
+            },
+            "id": 2911
+        }
+    ]
+}

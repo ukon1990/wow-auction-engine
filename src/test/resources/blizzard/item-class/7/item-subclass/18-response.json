@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/18?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 18,
+    "display_name": {
+        "en_US": "Optional Reagents",
+        "es_MX": "Componentes opcionales",
+        "pt_BR": "Reagentes Opcionais",
+        "de_DE": "Optionale Reagenzien",
+        "en_GB": "Optional Reagents",
+        "es_ES": "Componentes opcionales",
+        "fr_FR": "Composants optionnels",
+        "it_IT": "Reagenti Facoltativi",
+        "ru_RU": "Дополнительные реагенты",
+        "ko_KR": "선택 재료",
+        "zh_TW": "額外材料",
+        "zh_CN": "附加材料"
+    },
+    "hide_subclass_in_tooltips": true
+}

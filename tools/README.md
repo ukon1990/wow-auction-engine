@@ -71,4 +71,77 @@ Tests:
 node --test .\tools\analyze-auction-field.test.mjs
 ```
 
+## `refresh-fixtures.mjs`
+
+Fetches and refreshes profession/skill-tier/recipe fixture data for test resources using Blizzard Game Data APIs.
+
+The refresher is config-driven internally and discovers dependent resources recursively from Blizzard `key.href` links. Today it manages filtered profession roots, sampled skill tiers, sampled recipes, and any non-media linked resources they reference, such as items, item classes, item appearances, and modified crafting metadata.
+
+By default it updates:
+
+- `src/test/resources/blizzard/profession/index-response.json`
+- `src/test/resources/blizzard/profession/<professionId>-response.json`
+- `src/test/resources/blizzard/profession/<professionId>/skill-tier/<skillTierId>-response.json`
+- `src/test/resources/blizzard/recipe/<recipeId>-response.json`
+- `src/test/resources/blizzard/item/<itemId>-response.json`
+- `src/test/resources/blizzard/modified-crafting/reagent-slot-type/<slotTypeId>-response.json`
+- `src/test/resources/blizzard/profession-recipe-sample-manifest.json`
+
+The on-disk layout mirrors the normalized Blizzard API path under `src/test/resources/blizzard`. Media links are intentionally excluded, and broken child links discovered during recursion are skipped instead of failing the whole refresh.
+
+### Authentication
+
+Uses the same app environment variables for Blizzard OAuth:
+
+- `BLIZZARD_CLIENT_ID`
+- `BLIZZARD_CLIENT_SECRET`
+
+Optional overrides:
+
+- `BLIZZARD_ACCESS_TOKEN` (use an existing bearer token instead of OAuth refresh)
+- `BLIZZARD_TOKEN_URL` (default: `https://eu.battle.net/oauth/token`)
+- `BLIZZARD_BASE_URL` (default: `https://us.api.blizzard.com/data/wow`)
+- `BLIZZARD_NAMESPACE` (default: `static-us`)
+- `BLIZZARD_LOCALE` (default: `en_US`)
+
+### Usage
+
+Default refresh (sample size defaults to the checked-in root selection config and can be overridden with `--sample-size`):
+
+```powershell
+node .\tools\refresh-fixtures.mjs
+```
+
+Project-root Maven entry point:
+
+```powershell
+.\mvnw exec:exec@refresh-fixtures
+```
+
+Dry run:
+
+```powershell
+node .\tools\refresh-fixtures.mjs --dry-run
+```
+
+Dry run through Maven:
+
+```powershell
+.\mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--dry-run'
+```
+
+Refresh only selected professions:
+
+```powershell
+node .\tools\refresh-fixtures.mjs --profession-id 333,164 --sample-size 8
+```
+
+Refresh only selected professions through Maven:
+
+```powershell
+.\mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--profession-id 333,164 --sample-size 8'
+```
+
+The Maven entry point still requires a local `node` executable on `PATH`. Override it with `-Dnode.executable=<path-to-node>` if needed.
+
 

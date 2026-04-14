@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/814?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 814,
+    "name": {
+        "en_US": "Thalassian Missive of the Aurora",
+        "es_MX": "Misiva thalassiana de la aurora",
+        "pt_BR": "Missiva Talassiana da Aurora",
+        "de_DE": "Thalassisches Schreiben der Aurora",
+        "en_GB": "Thalassian Missive of the Aurora",
+        "es_ES": "Misiva thalassiana de la aurora",
+        "fr_FR": "Missive thalassienne de l’aurore",
+        "it_IT": "Missiva dell'Aurora Thalassiana",
+        "ru_RU": "Талассийское послание рассвета",
+        "ko_KR": "서광의 탈라시안 서신",
+        "zh_TW": "薩拉斯極光書狀",
+        "zh_CN": "曙光之萨拉斯公函"
+    }
+}

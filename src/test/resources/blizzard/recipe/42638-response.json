@@ -1,0 +1,93 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42638?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42638,
+    "name": {
+        "en_US": "Eternal Bulwark",
+        "es_MX": "Baluarte eterno",
+        "pt_BR": "Baluarte Eterno",
+        "de_DE": "Ewiges Bollwerk",
+        "en_GB": "Eternal Bulwark",
+        "es_ES": "Baluarte eterno",
+        "fr_FR": "Rempart éternel",
+        "it_IT": "Baluardo Eterno",
+        "ru_RU": "Вечный оплот",
+        "ko_KR": "영원의 보루",
+        "zh_TW": "永恆壁壘",
+        "zh_CN": "永恒壁垒"
+    },
+    "description": {
+        "en_US": "Permanently enchants your chest to increase your Armor by 4 and your Strength or Agility by 3. Your highest stat is always chosen. Cannot be applied to items lower than level 10.",
+        "es_MX": "Encanta tu pechera de forma permanente para aumentar 4 p. tu armadura y 3 p. tu fuerza o agilidad. Siempre se elige tu estadística más alta. No se puede aplicar a objetos de nivel inferior a 10.",
+        "pt_BR": "Encanta permanentemente o item de torso para aumentar em 4 a Armadura e em 3 a Força ou a Agilidade. O atributo mais alto é sempre o escolhido. Não pode ser aplicado a itens abaixo do nível 10.",
+        "de_DE": "Eine Brustrüstung dauerhaft verzaubern, sodass die Rüstung um 4 sowie die Stärke oder Beweglichkeit um 3 erhöht wird. Es wird immer der höchste Wert gewählt. Kann nicht auf Gegenstände unter Stufe 10 angewandt werden.",
+        "en_GB": "Permanently enchants your chest to increase your Armor by 4 and your Strength or Agility by 3. Your highest stat is always chosen. Cannot be applied to items lower than level 10.",
+        "es_ES": "Encanta de forma permanente tu pechera para que aumente 4 p. tu armadura y 3 p. tu fuerza o tu agilidad. Siempre se elige la estadística más elevada. No se puede aplicar a objetos de nivel inferior a 10.",
+        "fr_FR": "Enchante une pièce d’armure de torse de manière permanente. Augmente votre Armure de 4, et votre Force ou votre Agilité de 3. C’est toujours la caractéristique la plus élevée qui est choisie. Ne peut être appliqué sur des objets d’un niveau inférieur à 10.",
+        "it_IT": "Incanta in modo permanente un equipaggiamento per torso, aumentando l'armatura di 4 e la Forza o l'Agilità di 3. Viene sempre scelto il tuo attributo più alto. Non applicabile a un oggetto di livello inferiore a 10.",
+        "ru_RU": "Применяет к нагруднику постоянные чары, укрепляющие вашу броню на 4 и повышающие силу или ловкость на 3. Всегда выбирается наивысшая характеристика. Не действует на предметы ниже 10-го уровня.",
+        "ko_KR": "가슴보호구에 영구적으로 마법을 부여해 방어도를 4만큼, 힘 또는 민첩성을 3만큼 증가시킵니다. 항상 두 능력치 중 높은 능력치가 증가합니다. 10 레벨 미만의 아이템에는 사용할 수 없습니다.",
+        "zh_TW": "永久性地為你的胸甲附魔，使你的護甲值提高4點，你的力量或敏捷提高3點。提高的該項屬性以你最高的屬性為準。無法用在等級低於10的物品。",
+        "zh_CN": "永久地为你的胸部装备附魔，使你的护甲值提高4点，力量或敏捷提高3点。总是选择你最高的属性。不能对物品等级低于10的物品使用。"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42638?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42638
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/172232?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Eternal Crystal",
+                    "es_MX": "Cristal eterno",
+                    "pt_BR": "Cristal Eterno",
+                    "de_DE": "Ewiger Kristall",
+                    "en_GB": "Eternal Crystal",
+                    "es_ES": "Cristal eterno",
+                    "fr_FR": "Cristal éternel",
+                    "it_IT": "Cristallo Eterno",
+                    "ru_RU": "Кристалл вечности",
+                    "ko_KR": "영원한 수정",
+                    "zh_TW": "永恆水晶",
+                    "zh_CN": "永恒水晶"
+                },
+                "id": 172232
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/172231?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Sacred Shard",
+                    "es_MX": "Fragmento sagrado",
+                    "pt_BR": "Estilhaço Sagrado",
+                    "de_DE": "Heiliger Splitter",
+                    "en_GB": "Sacred Shard",
+                    "es_ES": "Fragmento sagrado",
+                    "fr_FR": "Éclat sacré",
+                    "it_IT": "Scheggia Sacra",
+                    "ru_RU": "Священный осколок",
+                    "ko_KR": "신성한 조각",
+                    "zh_TW": "神聖裂片",
+                    "zh_CN": "圣洁碎片"
+                },
+                "id": 172231
+            },
+            "quantity": 2
+        }
+    ],
+    "crafted_quantity": {
+        "value": 1
+    }
+}

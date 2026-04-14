@@ -1,0 +1,44 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/386?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 386,
+    "description": {
+        "en_US": "Refulgent Copper Ingot",
+        "es_MX": "Lingote de cobre refulgente",
+        "pt_BR": "Lingote de Cobre Refulgente",
+        "de_DE": "Glänzender Kupferbarren",
+        "en_GB": "Refulgent Copper Ingot",
+        "es_ES": "Lingote de cobre refulgente",
+        "fr_FR": "Lingot de cuivre éclatant",
+        "it_IT": "Lingotto di Rame Rifulgente",
+        "ru_RU": "Слиток сверкающей меди",
+        "ko_KR": "광명구리 주괴",
+        "zh_TW": "輝煌銅合金",
+        "zh_CN": "耀辉铜锭"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/749?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Refulgent Copper Ingot",
+                "es_MX": "Lingote de cobre refulgente",
+                "pt_BR": "Lingote de Cobre Refulgente",
+                "de_DE": "Glänzender Kupferbarren",
+                "en_GB": "Refulgent Copper Ingot",
+                "es_ES": "Lingote de cobre refulgente",
+                "fr_FR": "Lingot de cuivre éclatant",
+                "it_IT": "Lingotto di Rame Rifulgente",
+                "ru_RU": "Слиток сверкающей меди",
+                "ko_KR": "광명구리 주괴",
+                "zh_TW": "輝煌銅合金",
+                "zh_CN": "耀辉铜锭"
+            },
+            "id": 749
+        }
+    ]
+}

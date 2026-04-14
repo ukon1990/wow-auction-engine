@@ -1,0 +1,595 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/178711?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 178711,
+    "name": {
+        "en_US": "Axe of the Deadgrove",
+        "es_MX": "Hacha de arboleda muerta",
+        "pt_BR": "Machado da Mata Morta",
+        "de_DE": "Axt des Totenhains",
+        "en_GB": "Axe of the Deadgrove",
+        "es_ES": "Hacha de la arboleda mortal",
+        "fr_FR": "Hache du bosquet mort",
+        "it_IT": "Ascia del Boscomorto",
+        "ru_RU": "Топор Мертвой рощи",
+        "ko_KR": "죽음숲 도끼",
+        "zh_TW": "死亡林地之斧",
+        "zh_CN": "亡林之斧"
+    },
+    "quality": {
+        "type": "RARE",
+        "name": {
+            "en_US": "Rare",
+            "es_MX": "Raro",
+            "pt_BR": "Raro",
+            "de_DE": "Selten",
+            "en_GB": "Rare",
+            "es_ES": "Raro",
+            "fr_FR": "Rare",
+            "it_IT": "Raro",
+            "ru_RU": "Редкое",
+            "ko_KR": "희귀",
+            "zh_TW": "精良",
+            "zh_CN": "精良"
+        }
+    },
+    "level": 158,
+    "required_level": 60,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/178711?namespace=static-12.0.1_65617-us"
+        },
+        "id": 178711
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Weapon",
+            "es_MX": "Arma",
+            "pt_BR": "Arma",
+            "de_DE": "Waffe",
+            "en_GB": "Weapon",
+            "es_ES": "Arma",
+            "fr_FR": "Arme",
+            "it_IT": "Arma",
+            "ru_RU": "Оружие",
+            "ko_KR": "무기",
+            "zh_TW": "武器",
+            "zh_CN": "武器"
+        },
+        "id": 2
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Axe",
+            "es_MX": "Hacha",
+            "pt_BR": "Machado",
+            "de_DE": "Axt",
+            "en_GB": "Axe",
+            "es_ES": "Hacha",
+            "fr_FR": "Hache",
+            "it_IT": "Ascia",
+            "ru_RU": "Топор",
+            "ko_KR": "도끼",
+            "zh_TW": "斧",
+            "zh_CN": "斧"
+        },
+        "id": 0
+    },
+    "inventory_type": {
+        "type": "WEAPON",
+        "name": {
+            "en_US": "One-Hand",
+            "es_MX": "Una mano",
+            "pt_BR": "Uma Mão",
+            "de_DE": "Einhändig",
+            "en_GB": "One-Hand",
+            "es_ES": "Una mano",
+            "fr_FR": "À une main",
+            "it_IT": "Una mano",
+            "ru_RU": "Одноручное",
+            "ko_KR": "한손 장비",
+            "zh_TW": "單手",
+            "zh_CN": "单手"
+        }
+    },
+    "purchase_price": 4489138,
+    "sell_price": 897827,
+    "max_count": 0,
+    "is_equippable": true,
+    "is_stackable": false,
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/178711?namespace=static-12.0.1_65617-us"
+            },
+            "id": 178711
+        },
+        "quality": {
+            "type": "RARE",
+            "name": {
+                "en_US": "Rare",
+                "es_MX": "Raro",
+                "pt_BR": "Raro",
+                "de_DE": "Selten",
+                "en_GB": "Rare",
+                "es_ES": "Raro",
+                "fr_FR": "Rare",
+                "it_IT": "Raro",
+                "ru_RU": "Редкое",
+                "ko_KR": "희귀",
+                "zh_TW": "精良",
+                "zh_CN": "精良"
+            }
+        },
+        "name": {
+            "en_US": "Axe of the Deadgrove",
+            "es_MX": "Hacha de arboleda muerta",
+            "pt_BR": "Machado da Mata Morta",
+            "de_DE": "Axt des Totenhains",
+            "en_GB": "Axe of the Deadgrove",
+            "es_ES": "Hacha de la arboleda mortal",
+            "fr_FR": "Hache du bosquet mort",
+            "it_IT": "Ascia del Boscomorto",
+            "ru_RU": "Топор Мертвой рощи",
+            "ko_KR": "죽음숲 도끼",
+            "zh_TW": "死亡林地之斧",
+            "zh_CN": "亡林之斧"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/178711?namespace=static-12.0.1_65617-us"
+            },
+            "id": 178711
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Weapon",
+                "es_MX": "Arma",
+                "pt_BR": "Arma",
+                "de_DE": "Waffe",
+                "en_GB": "Weapon",
+                "es_ES": "Arma",
+                "fr_FR": "Arme",
+                "it_IT": "Arma",
+                "ru_RU": "Оружие",
+                "ko_KR": "무기",
+                "zh_TW": "武器",
+                "zh_CN": "武器"
+            },
+            "id": 2
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Axe",
+                "es_MX": "Hacha",
+                "pt_BR": "Machado",
+                "de_DE": "Axt",
+                "en_GB": "Axe",
+                "es_ES": "Hacha",
+                "fr_FR": "Hache",
+                "it_IT": "Ascia",
+                "ru_RU": "Топор",
+                "ko_KR": "도끼",
+                "zh_TW": "斧",
+                "zh_CN": "斧"
+            },
+            "id": 0
+        },
+        "inventory_type": {
+            "type": "WEAPON",
+            "name": {
+                "en_US": "One-Hand",
+                "es_MX": "Una mano",
+                "pt_BR": "Uma Mão",
+                "de_DE": "Einhändig",
+                "en_GB": "One-Hand",
+                "es_ES": "Una mano",
+                "fr_FR": "À une main",
+                "it_IT": "Una mano",
+                "ru_RU": "Одноручное",
+                "ko_KR": "한손 장비",
+                "zh_TW": "單手",
+                "zh_CN": "单手"
+            }
+        },
+        "binding": {
+            "type": "ON_ACQUIRE",
+            "name": {
+                "en_US": "Binds when picked up",
+                "es_MX": "Se liga al recogerlo",
+                "pt_BR": "Vincula-se ao ser recolhido",
+                "de_DE": "Wird beim Aufheben gebunden",
+                "en_GB": "Binds when picked up",
+                "es_ES": "Se liga al recogerlo",
+                "fr_FR": "Lié quand ramassé",
+                "it_IT": "Si vincola alla raccolta",
+                "ru_RU": "Становится персональным при получении",
+                "ko_KR": "획득 시 귀속",
+                "zh_TW": "拾取後綁定",
+                "zh_CN": "拾取后绑定"
+            }
+        },
+        "weapon": {
+            "damage": {
+                "min_value": 7,
+                "max_value": 16,
+                "display_string": {
+                    "en_US": "7 - 16 Damage",
+                    "es_MX": "7 - 16 p. de daño",
+                    "pt_BR": "7 - 16 de Dano",
+                    "de_DE": "7 - 16 Schaden",
+                    "en_GB": "7 - 16 Damage",
+                    "es_ES": "7 - 16 p. de daño",
+                    "fr_FR": "Dégâts : 7 - 16",
+                    "it_IT": "7 - 16 Danni",
+                    "ru_RU": "Урон: 7 - 16",
+                    "ko_KR": "공격력 7 ~ 16",
+                    "zh_TW": "7-16點傷害",
+                    "zh_CN": "7 - 16点伤害"
+                },
+                "damage_class": {
+                    "type": "PHYSICAL",
+                    "name": {
+                        "en_US": "Physical",
+                        "es_MX": "Físico",
+                        "pt_BR": "Físico",
+                        "de_DE": "Körperlich",
+                        "en_GB": "Physical",
+                        "es_ES": "Físico",
+                        "fr_FR": "Physique",
+                        "it_IT": "Fisico",
+                        "ru_RU": "физический",
+                        "ko_KR": "물리",
+                        "zh_TW": "物理",
+                        "zh_CN": "物理"
+                    }
+                }
+            },
+            "attack_speed": {
+                "value": 2600,
+                "display_string": {
+                    "en_US": "Speed 2.60",
+                    "es_MX": "Velocidad 2.60",
+                    "pt_BR": "Velocidade 2,60",
+                    "de_DE": "Geschwindigkeit 2,60",
+                    "en_GB": "Speed 2.60",
+                    "es_ES": "Velocidad 2,60",
+                    "fr_FR": "Vitesse 2,60",
+                    "it_IT": "Velocità 2,60",
+                    "ru_RU": "Скорость 2,60",
+                    "ko_KR": "속도 2.60",
+                    "zh_TW": "速度 2.60",
+                    "zh_CN": "速度 2.60"
+                }
+            },
+            "dps": {
+                "value": 4.4230766,
+                "display_string": {
+                    "en_US": "(4.4 damage per second)",
+                    "es_MX": "(4.4 p. de daño por segundo)",
+                    "pt_BR": "(4,4 de dano por segundo)",
+                    "de_DE": "(4,4 Schaden pro Sekunde)",
+                    "en_GB": "(4.4 damage per second)",
+                    "es_ES": "(4,4 p. de daño por segundo)",
+                    "fr_FR": "(4,4 dégâts par seconde)",
+                    "it_IT": "(4,4 danni per secondo)",
+                    "ru_RU": "(4,4 ед. урона в секунду)",
+                    "ko_KR": "(초당 공격력 4.4)",
+                    "zh_TW": "（每秒4.4點傷害）",
+                    "zh_CN": "（每秒伤害4.4）"
+                }
+            }
+        },
+        "stats": [
+            {
+                "type": {
+                    "type": "STRENGTH",
+                    "name": {
+                        "en_US": "Strength",
+                        "es_MX": "fuerza",
+                        "pt_BR": "Força",
+                        "de_DE": "Stärke",
+                        "en_GB": "Strength",
+                        "es_ES": "fuerza",
+                        "fr_FR": "Force",
+                        "it_IT": "Forza",
+                        "ru_RU": "к силе",
+                        "ko_KR": "힘",
+                        "zh_TW": "力量",
+                        "zh_CN": "力量"
+                    }
+                },
+                "value": 4,
+                "is_negated": true,
+                "display": {
+                    "display_string": {
+                        "en_US": "+4 Strength",
+                        "es_MX": "+4 fuerza",
+                        "pt_BR": "+4 Força",
+                        "de_DE": "+4 Stärke",
+                        "en_GB": "+4 Strength",
+                        "es_ES": "+4 fuerza",
+                        "fr_FR": "+4 Force",
+                        "it_IT": "+4 Forza",
+                        "ru_RU": "+4 к силе",
+                        "ko_KR": "힘 +4",
+                        "zh_TW": "+4力量",
+                        "zh_CN": "+4 力量"
+                    },
+                    "color": {
+                        "r": 128,
+                        "g": 128,
+                        "b": 128,
+                        "a": 1
+                    }
+                }
+            },
+            {
+                "type": {
+                    "type": "STAMINA",
+                    "name": {
+                        "en_US": "Stamina",
+                        "es_MX": "aguante",
+                        "pt_BR": "Vigor",
+                        "de_DE": "Ausdauer",
+                        "en_GB": "Stamina",
+                        "es_ES": "aguante",
+                        "fr_FR": "Endurance",
+                        "it_IT": "Tempra",
+                        "ru_RU": "к выносливости",
+                        "ko_KR": "체력",
+                        "zh_TW": "耐力",
+                        "zh_CN": "耐力"
+                    }
+                },
+                "value": 6,
+                "display": {
+                    "display_string": {
+                        "en_US": "+6 Stamina",
+                        "es_MX": "+6 aguante",
+                        "pt_BR": "+6 Vigor",
+                        "de_DE": "+6 Ausdauer",
+                        "en_GB": "+6 Stamina",
+                        "es_ES": "+6 aguante",
+                        "fr_FR": "+6 Endurance",
+                        "it_IT": "+6 Tempra",
+                        "ru_RU": "+6 к выносливости",
+                        "ko_KR": "체력 +6",
+                        "zh_TW": "+6耐力",
+                        "zh_CN": "+6 耐力"
+                    },
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 1
+                    }
+                }
+            },
+            {
+                "type": {
+                    "type": "HASTE_RATING",
+                    "name": {
+                        "en_US": "Haste",
+                        "es_MX": "celeridad",
+                        "pt_BR": "Aceleração",
+                        "de_DE": "Tempo",
+                        "en_GB": "Haste",
+                        "es_ES": "celeridad",
+                        "fr_FR": "Hâte",
+                        "it_IT": "Indice di celerità",
+                        "ru_RU": "к скорости",
+                        "ko_KR": "가속",
+                        "zh_TW": "加速",
+                        "zh_CN": "急速"
+                    }
+                },
+                "value": 3,
+                "is_equip_bonus": true,
+                "display": {
+                    "display_string": {
+                        "en_US": "+3 Haste",
+                        "es_MX": "+3 celeridad",
+                        "pt_BR": "+3 Aceleração",
+                        "de_DE": "+3 Tempo",
+                        "en_GB": "+3 Haste",
+                        "es_ES": "+3 celeridad",
+                        "fr_FR": "+3 Hâte",
+                        "it_IT": "+3 Indice di celerità",
+                        "ru_RU": "+3 к скорости",
+                        "ko_KR": "가속 +3",
+                        "zh_TW": "+3加速",
+                        "zh_CN": "+3 急速"
+                    },
+                    "color": {
+                        "r": 0,
+                        "g": 255,
+                        "b": 0,
+                        "a": 1
+                    }
+                }
+            },
+            {
+                "type": {
+                    "type": "VERSATILITY",
+                    "name": {
+                        "en_US": "Versatility",
+                        "es_MX": "versatilidad",
+                        "pt_BR": "Versatilidade",
+                        "de_DE": "Vielseitigkeit",
+                        "en_GB": "Versatility",
+                        "es_ES": "versatilidad",
+                        "fr_FR": "Polyvalence",
+                        "it_IT": "Indice di versatilità",
+                        "ru_RU": "к универсальности",
+                        "ko_KR": "유연성",
+                        "zh_TW": "臨機應變",
+                        "zh_CN": "全能"
+                    }
+                },
+                "value": 5,
+                "is_equip_bonus": true,
+                "display": {
+                    "display_string": {
+                        "en_US": "+5 Versatility",
+                        "es_MX": "+5 versatilidad",
+                        "pt_BR": "+5 Versatilidade",
+                        "de_DE": "+5 Vielseitigkeit",
+                        "en_GB": "+5 Versatility",
+                        "es_ES": "+5 versatilidad",
+                        "fr_FR": "+5 Polyvalence",
+                        "it_IT": "+5 Indice di versatilità",
+                        "ru_RU": "+5 к универсальности",
+                        "ko_KR": "유연성 +5",
+                        "zh_TW": "+5臨機應變",
+                        "zh_CN": "+5 全能"
+                    },
+                    "color": {
+                        "r": 0,
+                        "g": 255,
+                        "b": 0,
+                        "a": 1
+                    }
+                }
+            }
+        ],
+        "sell_price": {
+            "value": 16402,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "1",
+                    "es_MX": "1",
+                    "pt_BR": "1",
+                    "de_DE": "1",
+                    "en_GB": "1",
+                    "es_ES": "1",
+                    "fr_FR": "1",
+                    "it_IT": "1",
+                    "ru_RU": "1",
+                    "ko_KR": "1",
+                    "zh_TW": "1",
+                    "zh_CN": "1"
+                },
+                "silver": {
+                    "en_US": "64",
+                    "es_MX": "64",
+                    "pt_BR": "64",
+                    "de_DE": "64",
+                    "en_GB": "64",
+                    "es_ES": "64",
+                    "fr_FR": "64",
+                    "it_IT": "64",
+                    "ru_RU": "64",
+                    "ko_KR": "64",
+                    "zh_TW": "64",
+                    "zh_CN": "64"
+                },
+                "copper": {
+                    "en_US": "2",
+                    "es_MX": "2",
+                    "pt_BR": "2",
+                    "de_DE": "2",
+                    "en_GB": "2",
+                    "es_ES": "2",
+                    "fr_FR": "2",
+                    "it_IT": "2",
+                    "ru_RU": "2",
+                    "ko_KR": "2",
+                    "zh_TW": "2",
+                    "zh_CN": "2"
+                }
+            }
+        },
+        "requirements": {
+            "level": {
+                "value": 60,
+                "display_string": {
+                    "en_US": "Requires Level 60",
+                    "es_MX": "Necesitas ser de nivel 60",
+                    "pt_BR": "Requer o Nível 60",
+                    "de_DE": "Benötigt Stufe 60",
+                    "en_GB": "Requires Level 60",
+                    "es_ES": "Necesitas ser de nivel 60",
+                    "fr_FR": "Niveau 60 requis",
+                    "it_IT": "Richiede il livello 60",
+                    "ru_RU": "Требуется 60-й уровень",
+                    "ko_KR": "최소 요구 레벨: 60",
+                    "zh_TW": "需要等級60",
+                    "zh_CN": "需要等级 60"
+                }
+            }
+        },
+        "level": {
+            "value": 37,
+            "display_string": {
+                "en_US": "Item Level 37",
+                "es_MX": "Nivel de objeto 37",
+                "pt_BR": "Nível do Item: 37",
+                "de_DE": "Gegenstandsstufe 37",
+                "en_GB": "Item Level 37",
+                "es_ES": "Nivel de objeto 37",
+                "fr_FR": "Niveau d'objet 37",
+                "it_IT": "Livello oggetto: 37",
+                "ru_RU": "Уровень предмета: 37",
+                "ko_KR": "아이템 레벨: 37",
+                "zh_TW": "物品等級37",
+                "zh_CN": "物品等级37"
+            }
+        },
+        "durability": {
+            "value": 90,
+            "display_string": {
+                "en_US": "Durability 90 / 90",
+                "es_MX": "Durabilidad 90 / 90",
+                "pt_BR": "Durabilidade 90 / 90",
+                "de_DE": "Haltbarkeit 90 / 90",
+                "en_GB": "Durability 90 / 90",
+                "es_ES": "Durabilidad 90 / 90",
+                "fr_FR": "Durabilité : 90 / 90",
+                "it_IT": "Integrità 90/90",
+                "ru_RU": "Прочность: 90 / 90",
+                "ko_KR": "내구도 90 / 90",
+                "zh_TW": "耐久度 90 / 90",
+                "zh_CN": "耐久度 90 / 90"
+            }
+        }
+    },
+    "purchase_quantity": 1,
+    "appearances": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42529?namespace=static-12.0.1_65617-us"
+            },
+            "id": 42529
+        }
+    ]
+}

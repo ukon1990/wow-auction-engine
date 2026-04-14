@@ -1,0 +1,43 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/34773?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 34773,
+    "name": {
+        "en_US": "Dreamleaf",
+        "es_MX": "Frondasueño",
+        "pt_BR": "Folha-de-sonho",
+        "de_DE": "Traumlaub",
+        "en_GB": "Dreamleaf",
+        "es_ES": "Frondasueño",
+        "fr_FR": "Songefeuille",
+        "it_IT": "Erbonirica",
+        "ru_RU": "Грезолист",
+        "ko_KR": "꿈잎사귀",
+        "zh_TW": "幻夢草",
+        "zh_CN": "入梦叶"
+    },
+    "description": {
+        "en_US": "Gather even more materials from each dreamleaf plant.",
+        "es_MX": "Recolecta aún más materiales de cada planta frondasueño.",
+        "pt_BR": "Coleta ainda mais materiais de cada folha-de-sonho.",
+        "de_DE": "Sammelt noch mehr Materialien von jeder Traumlaubpflanze.",
+        "en_GB": "Gather even more materials from each dreamleaf plant.",
+        "es_ES": "Recolecta aún más materiales de cada planta de frondasueño.",
+        "fr_FR": "Vous récoltez encore plus de matériaux sur chaque plant de songefeuille.",
+        "it_IT": "Permette di raccogliere materiali aggiuntivi da ogni erbonirica.",
+        "ru_RU": "Позволяет собирать еще больше материалов с каждого грезолиста.",
+        "ko_KR": "꿈잎사귀에서 더 많은 재료를 획득합니다.",
+        "zh_TW": "從每一棵幻夢草上採集到更多材料。",
+        "zh_CN": "从每株入梦叶植物上收集更多的材料。"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/34773?namespace=static-12.0.1_65617-us"
+        },
+        "id": 34773
+    },
+    "rank": 3
+}

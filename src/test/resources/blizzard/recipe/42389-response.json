@@ -1,0 +1,168 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42389?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42389,
+    "name": {
+        "en_US": "Shadowghast Ingot",
+        "es_MX": "Lingote de sombra fantasmal",
+        "pt_BR": "Lingote de Umbromedo",
+        "de_DE": "Schattenschreckbarren",
+        "en_GB": "Shadowghast Ingot",
+        "es_ES": "Lingote de terror sombrío",
+        "fr_FR": "Lingot ombrepeur",
+        "it_IT": "Lingotto di Spettrombra",
+        "ru_RU": "Слиток эребия",
+        "ko_KR": "어둠혼 주괴",
+        "zh_TW": "影怖錠",
+        "zh_CN": "影怖之锭"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42389?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42389
+    },
+    "crafted_item": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item/171428?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Shadowghast Ingot",
+            "es_MX": "Lingote de sombra fantasmal",
+            "pt_BR": "Lingote de Umbromedo",
+            "de_DE": "Schattenschreckbarren",
+            "en_GB": "Shadowghast Ingot",
+            "es_ES": "Lingote de terror sombrío",
+            "fr_FR": "Lingot ombrepeur",
+            "it_IT": "Lingotto di Spettrombra",
+            "ru_RU": "Слиток эребия",
+            "ko_KR": "어둠혼 주괴",
+            "zh_TW": "影怖錠",
+            "zh_CN": "影怖之锭"
+        },
+        "id": 171428
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171829?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Solenium Ore",
+                    "es_MX": "Mena de solenio",
+                    "pt_BR": "Minério de Solênio",
+                    "de_DE": "Soleniumerz",
+                    "en_GB": "Solenium Ore",
+                    "es_ES": "Mena de solenio",
+                    "fr_FR": "Minerai de solénium",
+                    "it_IT": "Minerale di Solenio",
+                    "ru_RU": "Соленитовая руда",
+                    "ko_KR": "솔레늄 광석",
+                    "zh_TW": "陽炎金礦石",
+                    "zh_CN": "珀银矿石"
+                },
+                "id": 171829
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171832?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Sinvyr Ore",
+                    "es_MX": "Mena de sinvyr",
+                    "pt_BR": "Minério de Pecavyr",
+                    "de_DE": "Sinvyrerz",
+                    "en_GB": "Sinvyr Ore",
+                    "es_ES": "Mena de sinvyr",
+                    "fr_FR": "Minerai de vicevyr",
+                    "it_IT": "Minerale di Peccavyr",
+                    "ru_RU": "Греховировая руда",
+                    "ko_KR": "신비르 광석",
+                    "zh_TW": "鋅維爾礦石",
+                    "zh_CN": "罪钒矿石"
+                },
+                "id": 171832
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171831?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Phaedrum Ore",
+                    "es_MX": "Mena de fedrum",
+                    "pt_BR": "Minério de Faedro",
+                    "de_DE": "Phaedrumerz",
+                    "en_GB": "Phaedrum Ore",
+                    "es_ES": "Mena de faedro",
+                    "fr_FR": "Minerai de phædrum",
+                    "it_IT": "Minerale di Fedrio",
+                    "ru_RU": "Федритовая руда",
+                    "ko_KR": "페이드럼 광석",
+                    "zh_TW": "菲卓姆礦石",
+                    "zh_CN": "炽钴矿石"
+                },
+                "id": 171831
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171830?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Oxxein Ore",
+                    "es_MX": "Mena de oxxina",
+                    "pt_BR": "Minério de Oxxeína",
+                    "de_DE": "Oxxeinerz",
+                    "en_GB": "Oxxein Ore",
+                    "es_ES": "Mena de oxxeína",
+                    "fr_FR": "Minerai d’oxxéine",
+                    "it_IT": "Minerale di Oxeina",
+                    "ru_RU": "Оксеиновая руда",
+                    "ko_KR": "옥세인 광석",
+                    "zh_TW": "奧辛礦石",
+                    "zh_CN": "髓硫矿石"
+                },
+                "id": 171830
+            },
+            "quantity": 1
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Luminous Flux",
+                    "es_MX": "Flujo luminoso",
+                    "pt_BR": "Fluxo Luminoso",
+                    "de_DE": "Leuchtender Fluxus",
+                    "en_GB": "Luminous Flux",
+                    "es_ES": "Flujo luminoso",
+                    "fr_FR": "Flux lumineux",
+                    "it_IT": "Flusso Luminoso",
+                    "ru_RU": "Светящийся плавень",
+                    "ko_KR": "영롱한 유동체",
+                    "zh_TW": "夜光熔劑",
+                    "zh_CN": "辉光助熔剂"
+                },
+                "id": 180733
+            },
+            "quantity": 4
+        }
+    ],
+    "crafted_quantity": {
+        "value": 2
+    }
+}

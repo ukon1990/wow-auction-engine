@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/1?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 1,
+    "display_name": {
+        "en_US": "Parts",
+        "es_MX": "Piezas",
+        "pt_BR": "Peças",
+        "de_DE": "Teile",
+        "en_GB": "Parts",
+        "es_ES": "Piezas",
+        "fr_FR": "Composants",
+        "it_IT": "Componenti",
+        "ru_RU": "Детали",
+        "ko_KR": "부품",
+        "zh_TW": "零件",
+        "zh_CN": "零件"
+    },
+    "hide_subclass_in_tooltips": true
+}

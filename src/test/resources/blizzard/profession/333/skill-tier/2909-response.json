@@ -1,0 +1,254 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2909?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 2909,
+    "name": {
+        "en_US": "Midnight Enchanting",
+        "es_MX": "Encantamiento de Midnight",
+        "pt_BR": "Encantamento de Midnight",
+        "de_DE": "Verzauberkunst von Midnight",
+        "en_GB": "Midnight Enchanting",
+        "es_ES": "Encantamiento de Midnight",
+        "fr_FR": "Enchantement de Midnight",
+        "it_IT": "Incantamento di Midnight",
+        "ru_RU": "Наложение чар Midnight",
+        "ko_KR": "한밤 마법부여",
+        "zh_TW": "至暗之夜附魔",
+        "zh_CN": "至暗之夜附魔"
+    },
+    "minimum_skill_level": 1,
+    "maximum_skill_level": 100,
+    "categories": [
+        {
+            "name": {
+                "en_US": "Recrafting",
+                "es_MX": "Refabricación",
+                "pt_BR": "Recriação",
+                "de_DE": "Umfertigen",
+                "en_GB": "Recrafting",
+                "es_ES": "Refabricación",
+                "fr_FR": "Refaçonner",
+                "it_IT": "Nuova Creazione",
+                "ru_RU": "Переделка",
+                "ko_KR": "재제작",
+                "zh_TW": "重新製作",
+                "zh_CN": "再造"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51521?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Recraft Equipment",
+                        "es_MX": "Refabricar equipamiento",
+                        "pt_BR": "Recriar Equipamento",
+                        "de_DE": "Ausrüstung umfertigen",
+                        "en_GB": "Recraft Equipment",
+                        "es_ES": "Refabricar equipo",
+                        "fr_FR": "Refaçonner de l’équipement",
+                        "it_IT": "Ricreazione Equipaggiamento",
+                        "ru_RU": "Переделка снаряжения",
+                        "ko_KR": "장비 재제작",
+                        "zh_TW": "重新製作裝備",
+                        "zh_CN": "再造装备"
+                    },
+                    "id": 51521
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Chest Enchants",
+                "es_MX": "Encantamientos de cofres",
+                "pt_BR": "Encantamentos de Torso",
+                "de_DE": "Brustverzauberungen",
+                "en_GB": "Chest Enchants",
+                "es_ES": "Encantamientos de torsos",
+                "fr_FR": "Enchantements de torse",
+                "it_IT": "Incantamenti per Corazze",
+                "ru_RU": "Чары для нагрудника",
+                "ko_KR": "가슴 마법부여",
+                "zh_TW": "胸甲附魔",
+                "zh_CN": "胸甲附魔"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52935?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Enchant Chest - Mark of Nalorakk",
+                        "es_MX": "Encantar pechera: Marca de Nalorakk",
+                        "pt_BR": "Encantamento da Marca de Nalorakk - Torso",
+                        "de_DE": "Brust - Zeichen von Nalorakk",
+                        "en_GB": "Enchant Chest - Mark of Nalorakk",
+                        "es_ES": "Encantar torso: Marca de Nalorakk",
+                        "fr_FR": "Enchantement de plastron – marque de Nalorakk",
+                        "it_IT": "Incantamento Torso - Marchio di Nalorakk",
+                        "ru_RU": "Чары для нагрудника – метка Налоракка",
+                        "ko_KR": "가슴보호구 마법부여 - 날로라크의 징표",
+                        "zh_TW": "附魔胸甲 - 納羅拉克印記",
+                        "zh_CN": "附魔胸甲 - 纳洛拉克印记"
+                    },
+                    "id": 52935
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Helm Enchants",
+                "es_MX": "Encantamientos de yelmos",
+                "pt_BR": "Encantamentos de Elmo",
+                "de_DE": "Helmverzauberungen",
+                "en_GB": "Helm Enchants",
+                "es_ES": "Encantamientos de yelmos",
+                "fr_FR": "Enchantements de heaume",
+                "it_IT": "Incantamenti per Elmi",
+                "ru_RU": "Чары для шлема",
+                "ko_KR": "투구 마법부여",
+                "zh_TW": "頭盔附魔",
+                "zh_CN": "头盔附魔"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52936?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Enchant Helm - Hex of Leeching",
+                        "es_MX": "Encantar yelmo: Maleficio chupasangre",
+                        "pt_BR": "Encantamento de Bagata Sorvedora - Elmo",
+                        "de_DE": "Helm - Lebensraubzauber",
+                        "en_GB": "Enchant Helm - Hex of Leeching",
+                        "es_ES": "Encantar yelmo: Maleficio de parasitismo",
+                        "fr_FR": "Enchantement de casque – maléfice de sangsue",
+                        "it_IT": "Incantamento Elmo - Maleficio dell'Assorbimento",
+                        "ru_RU": "Чары для шлема – сглаз самоисцеления",
+                        "ko_KR": "투구 마법부여 - 생기흡수의 사술",
+                        "zh_TW": "附魔頭盔 - 汲取妖術",
+                        "zh_CN": "附魔头盔 - 吸血妖术"
+                    },
+                    "id": 52936
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Boot Enchants",
+                "es_MX": "Encantamientos de botas",
+                "pt_BR": "Encantamentos de Botas",
+                "de_DE": "Stiefelverzauberungen",
+                "en_GB": "Boot Enchants",
+                "es_ES": "Encantamientos de botas",
+                "fr_FR": "Enchantements de bottes",
+                "it_IT": "Incantamenti per Stivali",
+                "ru_RU": "Чары для обуви",
+                "ko_KR": "장화 마법부여",
+                "zh_TW": "長靴附魔",
+                "zh_CN": "靴子附魔"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52938?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Enchant Boots - Lynx's Dexterity",
+                        "es_MX": "Encantar botas: Destreza de lince",
+                        "pt_BR": "Encantamento de Destreza do Lince - Botas",
+                        "de_DE": "Stiefel - Gewandtheit des Luchses",
+                        "en_GB": "Enchant Boots - Lynx's Dexterity",
+                        "es_ES": "Encantar botas: Destreza de lince",
+                        "fr_FR": "Enchantement de bottes – dextérité du lynx",
+                        "it_IT": "Incantamento Stivali - Destrezza della Lince",
+                        "ru_RU": "Чары для обуви – рысья стремительность",
+                        "ko_KR": "장화 마법부여 - 스라소니의 기민함",
+                        "zh_TW": "附魔靴子 - 山貓迅敏",
+                        "zh_CN": "附魔靴子 - 山猫之敏"
+                    },
+                    "id": 52938
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Rings Enchants",
+                "es_MX": "Encantamientos de anillos",
+                "pt_BR": "Encantamentos de Anéis",
+                "de_DE": "Ringverzauberungen",
+                "en_GB": "Rings Enchants",
+                "es_ES": "Encantamientos de anillos",
+                "fr_FR": "Enchantements d’anneaux",
+                "it_IT": "Incantamenti per Anelli",
+                "ru_RU": "Чары для колец",
+                "ko_KR": "반지 마법부여",
+                "zh_TW": "戒指附魔",
+                "zh_CN": "戒指附魔"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52939?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Enchant Ring - Amani Mastery",
+                        "es_MX": "Encantar anillo: Maestría amani",
+                        "pt_BR": "Encantamento de Maestria Amani - Anel",
+                        "de_DE": "Ring - Amanimeisterschaft",
+                        "en_GB": "Enchant Ring - Amani Mastery",
+                        "es_ES": "Encantar anillo: Maestría Amani",
+                        "fr_FR": "Enchantement d’anneau – maîtrise amani",
+                        "it_IT": "Incantamento Anello - Maestria degli Amani",
+                        "ru_RU": "Чары для кольца – аманийская искусность",
+                        "ko_KR": "반지 마법부여 - 아마니의 특화",
+                        "zh_TW": "附魔戒指 - 阿曼尼精通",
+                        "zh_CN": "附魔戒指 - 阿曼尼精通"
+                    },
+                    "id": 52939
+                }
+            ]
+        },
+        {
+            "name": {
+                "en_US": "Shoulder Enchants",
+                "es_MX": "Encantamientos de hombros",
+                "pt_BR": "Encantamentos de Ombros",
+                "de_DE": "Schulterverzauberungen",
+                "en_GB": "Shoulder Enchants",
+                "es_ES": "Encantamientos de hombros",
+                "fr_FR": "Enchantements d’épaulières",
+                "it_IT": "Incantamenti per Spalle",
+                "ru_RU": "Чары для наплечников",
+                "ko_KR": "어깨보호구 마법부여",
+                "zh_TW": "肩部附魔",
+                "zh_CN": "护肩附魔"
+            },
+            "recipes": [
+                {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52942?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Enchant Shoulders - Flight of the Eagle",
+                        "es_MX": "Encantar sobrehombros: Vuelo del águila",
+                        "pt_BR": "Encantamento do Voo da Águia - Ombros",
+                        "de_DE": "Schultern - Flug des Adlers",
+                        "en_GB": "Enchant Shoulders - Flight of the Eagle",
+                        "es_ES": "Encantar hombros: Vuelo del águila",
+                        "fr_FR": "Enchantement d’épaulières – Vol de l’aigle",
+                        "it_IT": "Incantamento Spalle - Volo dell'Aquila",
+                        "ru_RU": "Чары для наплечников – полет орла",
+                        "ko_KR": "어깨보호구 마법부여 - 독수리의 비행",
+                        "zh_TW": "附魔肩膀 - 老鷹之翔",
+                        "zh_CN": "附魔护肩 - 鹰翔长空"
+                    },
+                    "id": 52942
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/11?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 4,
+    "subclass_id": 11,
+    "display_name": {
+        "en_US": "Relic",
+        "es_MX": "Reliquia",
+        "pt_BR": "Relíquia",
+        "de_DE": "Relikt",
+        "en_GB": "Relic",
+        "es_ES": "Reliquia",
+        "fr_FR": "Relique",
+        "it_IT": "Reliquia",
+        "ru_RU": "Реликвия",
+        "ko_KR": "성물",
+        "zh_TW": "聖物",
+        "zh_CN": "圣物"
+    }
+}

@@ -1,0 +1,304 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 0,
+    "name": {
+        "en_US": "Consumable",
+        "es_MX": "Consumible",
+        "pt_BR": "Consumível",
+        "de_DE": "Verbrauchbares",
+        "en_GB": "Consumable",
+        "es_ES": "Consumible",
+        "fr_FR": "Consommable",
+        "it_IT": "Consumabili",
+        "ru_RU": "Расходуемые",
+        "ko_KR": "소비용품",
+        "zh_TW": "消耗品",
+        "zh_CN": "消耗品"
+    },
+    "item_subclasses": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/0?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Explosives and Devices",
+                "es_MX": "Explosivos y dispositivos",
+                "pt_BR": "Explosivos e Dispositivos",
+                "de_DE": "Sprengstoff und Geräte",
+                "en_GB": "Explosives and Devices",
+                "es_ES": "Explosivos y dispositivos",
+                "fr_FR": "Explosifs et appareils",
+                "it_IT": "Esplosivi e congegni",
+                "ru_RU": "Взрывчатка и устройства",
+                "ko_KR": "폭발물 및 장치",
+                "zh_TW": "爆裂物與裝置",
+                "zh_CN": "爆炸物与装置"
+            },
+            "id": 0
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/1?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Potions",
+                "es_MX": "Pociones",
+                "pt_BR": "Poções",
+                "de_DE": "Tränke",
+                "en_GB": "Potions",
+                "es_ES": "Pociones",
+                "fr_FR": "Potions",
+                "it_IT": "Pozioni",
+                "ru_RU": "Зелья",
+                "ko_KR": "물약",
+                "zh_TW": "藥水",
+                "zh_CN": "药水"
+            },
+            "id": 1
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/2?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Elixirs",
+                "es_MX": "Elixires",
+                "pt_BR": "Elixires",
+                "de_DE": "Elixiere",
+                "en_GB": "Elixirs",
+                "es_ES": "Elixires",
+                "fr_FR": "Élixirs",
+                "it_IT": "Elisir",
+                "ru_RU": "Эликсиры",
+                "ko_KR": "비약",
+                "zh_TW": "藥劑",
+                "zh_CN": "药剂"
+            },
+            "id": 2
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/3?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Flasks & Phials",
+                "es_MX": "Frascos y ampollas",
+                "pt_BR": "Frascos",
+                "de_DE": "Fläschchen & Phiolen",
+                "en_GB": "Flasks & Phials",
+                "es_ES": "Frascos y ampollas",
+                "fr_FR": "Flacons & flasques",
+                "it_IT": "Tonici e Fiale",
+                "ru_RU": "Настои и флаконы",
+                "ko_KR": "영약 및 약병",
+                "zh_TW": "精煉藥劑與藥瓶",
+                "zh_CN": "合剂和瓶剂"
+            },
+            "id": 3
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/5?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Food & Drink",
+                "es_MX": "Comida y bebida",
+                "pt_BR": "Comida e Bebida",
+                "de_DE": "Speis & Trank",
+                "en_GB": "Food & Drink",
+                "es_ES": "Comida y bebida",
+                "fr_FR": "Nourriture et boissons",
+                "it_IT": "Cibo e bevande",
+                "ru_RU": "Еда и напитки",
+                "ko_KR": "음식과 음료",
+                "zh_TW": "食物和飲料",
+                "zh_CN": "食物和饮水"
+            },
+            "id": 5
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Bandages",
+                "es_MX": "Vendas",
+                "pt_BR": "Bandagens",
+                "de_DE": "Verbände",
+                "en_GB": "Bandages",
+                "es_ES": "Vendas",
+                "fr_FR": "Bandages",
+                "it_IT": "Bende",
+                "ru_RU": "Бинты",
+                "ko_KR": "붕대",
+                "zh_TW": "繃帶",
+                "zh_CN": "绷带"
+            },
+            "id": 7
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Other",
+                "es_MX": "Otros",
+                "pt_BR": "Outro",
+                "de_DE": "Sonstiges",
+                "en_GB": "Other",
+                "es_ES": "Otros",
+                "fr_FR": "Autres",
+                "it_IT": "Altro",
+                "ru_RU": "Другое",
+                "ko_KR": "기타",
+                "zh_TW": "其他",
+                "zh_CN": "其它"
+            },
+            "id": 8
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/9?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Vantus Runes",
+                "es_MX": "Runas vantus",
+                "pt_BR": "Runas Vantus",
+                "de_DE": "Vantusrunen",
+                "en_GB": "Vantus Runes",
+                "es_ES": "Runas vantus",
+                "fr_FR": "Runes de Vantus",
+                "it_IT": "Rune Vantus",
+                "ru_RU": "Вантийские руны",
+                "ko_KR": "반투스 룬",
+                "zh_TW": "梵陀符文",
+                "zh_CN": "凡图斯符文"
+            },
+            "id": 9
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/10?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Utility Curio",
+                "es_MX": "Singularidad de utilidad",
+                "pt_BR": "Badulaque Utilitário",
+                "de_DE": "Unterstützungskuriosität",
+                "en_GB": "Utility Curio",
+                "es_ES": "Bibelot de utilidad",
+                "fr_FR": "Bibelot utilitaire",
+                "it_IT": "Reperto di Utilità",
+                "ru_RU": "Вспомогательная диковинка",
+                "ko_KR": "보조 수집품",
+                "zh_TW": "通用珍品",
+                "zh_CN": "效能珍玩"
+            },
+            "id": 10
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/11?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Combat Curio",
+                "es_MX": "Singularidad de combate",
+                "pt_BR": "Badulaque de Combate",
+                "de_DE": "Kampfkuriosität",
+                "en_GB": "Combat Curio",
+                "es_ES": "Bibelot de combate",
+                "fr_FR": "Bibelot de combat",
+                "it_IT": "Reperto di Combattimento",
+                "ru_RU": "Боевая диковинка",
+                "ko_KR": "전투 수집품",
+                "zh_TW": "戰鬥珍品",
+                "zh_CN": "战斗珍玩"
+            },
+            "id": 11
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/12?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Relic",
+                "es_MX": "Reliquia",
+                "pt_BR": "Relíquia",
+                "de_DE": "Relikt",
+                "en_GB": "Relic",
+                "es_ES": "Reliquia",
+                "fr_FR": "Relique",
+                "it_IT": "Reliquia",
+                "ru_RU": "Реликвия",
+                "ko_KR": "성물",
+                "zh_TW": "聖物",
+                "zh_CN": "圣物"
+            },
+            "id": 12
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/13?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "RESERVED 13",
+                "es_MX": "RESERVADO 13",
+                "pt_BR": "RESERVADO 13",
+                "de_DE": "RESERVIERT 13",
+                "en_GB": "RESERVED 13",
+                "es_ES": "RESERVADO 13",
+                "fr_FR": "RÉSERVE 13",
+                "it_IT": "PRENOTATO 13",
+                "ru_RU": "ЗАРЕЗЕРВИРОВАНО 13",
+                "ko_KR": "보존 13",
+                "zh_TW": "保留13",
+                "zh_CN": "预留 13"
+            },
+            "id": 13
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/14?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "RESERVED 14",
+                "es_MX": "RESERVADO 14",
+                "pt_BR": "RESERVADO 14",
+                "de_DE": "RESERVIERT 14",
+                "en_GB": "RESERVED 14",
+                "es_ES": "RESERVADO 14",
+                "fr_FR": "RÉSERVE 14",
+                "it_IT": "PRENOTATO 14",
+                "ru_RU": "ЗАРЕЗЕРВИРОВАНО 14",
+                "ko_KR": "보존 14",
+                "zh_TW": "保留14",
+                "zh_CN": "预留 14"
+            },
+            "id": 14
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/15?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "RESERVED 15",
+                "es_MX": "RESERVADO 15",
+                "pt_BR": "RESERVADO 15",
+                "de_DE": "RESERVIERT 15",
+                "en_GB": "RESERVED 15",
+                "es_ES": "RESERVADO 15",
+                "fr_FR": "RÉSERVE 15",
+                "it_IT": "PRENOTATO 15",
+                "ru_RU": "ЗАРЕЗЕРВИРОВАНО 15",
+                "ko_KR": "보존 15",
+                "zh_TW": "保留15",
+                "zh_CN": "预留 15"
+            },
+            "id": 15
+        }
+    ]
+}

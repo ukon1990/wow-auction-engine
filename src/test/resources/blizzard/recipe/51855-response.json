@@ -1,0 +1,42 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51855?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51855,
+    "name": {
+        "en_US": "Mana Lily",
+        "es_MX": "Lirio de maná",
+        "pt_BR": "Lírio de Mana",
+        "de_DE": "Manalilie",
+        "en_GB": "Mana Lily",
+        "es_ES": "Lirio de maná",
+        "fr_FR": "Lys de mana",
+        "it_IT": "Giglio di Mana",
+        "ru_RU": "Маналилия",
+        "ko_KR": "마나 백합",
+        "zh_TW": "法力百合",
+        "zh_CN": "法力百合"
+    },
+    "description": {
+        "en_US": "Another recent offshoot species, mana lily is a new variant of mageroyal. The latent magic present in the Quel'Thalas region has seeped into the mana lily, giving them potent properties for crafting.\r\n\r\nIf you're ever gathering around bodies of water, you can expect to find mana lilies somewhere nearby.",
+        "es_MX": "El lirio de maná, otra especie derivada reciente, es una nueva variante de marregal. La magia latente presente en la región de Quel'Thalas se ha infiltrado en el lirio de maná y le otorgó propiedades poderosas para la fabricación.\r\n\r\nSi alguna vez andas recolectando hierbas en los alrededores de cuerpos de agua, te encontrarás con lirios de maná.",
+        "pt_BR": "O lírio de mana, uma nova variante de magi-real, provém de mais uma ramificação recente dessa espécie. Por ser nativo da região de Quel'Thalas, o lírio de mana acabou absorvendo o poder mágico latente da área, o que acabou lhe concedendo fortes propriedades de criação.\r\n\r\nSe você estiver passando por perto de recursos hídricos, provavelmente encontrará lírios de mana ao seu redor.",
+        "de_DE": "Die Manalilie ist eine erst kürzlich entstandene Variante des Maguskönigskrauts. Die latente Magie von Quel'Thalas hat die Manalilie durchdrungen und macht sie zu einem mächtigen Rohstoff.\r\n\r\nWenn Ihr in der Nähe von Gewässern nach Ressourcen sucht, werdet Ihr wahrscheinlich auch einige Manalilien finden.",
+        "en_GB": "Another recent offshoot species, mana lily is a new variant of mageroyal. The latent magic present in the Quel'Thalas region has seeped into the mana lily, giving them potent properties for crafting.\r\n\r\nIf you're ever gathering around bodies of water, you can expect to find mana lilies somewhere nearby.",
+        "es_ES": "El lirio de maná es otra reciente especie derivada, en este caso del marregal. La latente magia presente en la región de Quel'Thalas ha calado en el lirio de maná y le confiere potentes propiedades para la artesanía.\r\n\r\nSi alguna vez te encuentras recolectando cerca de masas de agua, es posible que haya lirios de maná por ahí cerca.",
+        "fr_FR": "Autre espèce de pousse récente, le lys de mana est une nouvelle variante du mage royal. La magie latente présente dans la région de Quel’Thalas s’est infiltrée dans le lys de mana, lui conférant des propriétés puissantes pour l’artisanat.\r\n\r\nSi jamais vous cueillez des herbes près d’étendues d’eau, vous trouverez très certainement des lys de mana dans les alentours.",
+        "it_IT": "Ennesima specie sbocciata di recente, il giglio di mana è una nuova variante della Magareale. Questo fiore filtra la magia latente presente nella regione di Quel'Thalas, ottenendo potenti proprietà utili per l'artigianato.\r\n\r\nCi si può aspettare di trovare dei Gigli di Mana quando si raccolgono erbe nelle vicinanze degli specchi d'acqua.",
+        "ru_RU": "Маналилия – еще одна недавно появившаяся боковая ветвь уже известного семейства растений, в данном случае магорозы. Маналилии в Кель'Таласе абсорбируют латентную магическую энергию, получая ряд ценных свойств.\r\n\r\nЕсли вы собираете травы у водоемов, ищите маналилии – они часто растут в таких местах.",
+        "ko_KR": "마나 백합은 마법초에서 갈라져 나온 새로운 변종입니다. 쿠엘탈라스의 토양과 공기에 깃든 잠재적인 마력이 이 식물에 스며들어 제작 분야에서 강력한 특성을 발휘하게 되었습니다.\r\n\r\n물가 주변을 탐색할 때 마나 백합을 찾아볼 수 있습니다.",
+        "zh_TW": "法力百合是另一種最近衍生的品種，屬於魔皇草的新變種。潛藏在奎爾薩拉斯地區的魔法滲透到法力百合中，使其在製作中發揮強大功效。\r\n\r\n如果你在水邊採集植物，應該就能在附近發現法力百合。",
+        "zh_CN": "法力百合是另一个新近出现的分支品种，属于魔皇草的变种。奎尔萨拉斯地区蕴含的潜在魔力渗入了法力百合，赋予它们强大的制作特性。\r\n\r\n在水域周围采集时，在附近就能找到法力百合。"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51855?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51855
+    }
+}

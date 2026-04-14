@@ -1,0 +1,316 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 180733,
+    "name": {
+        "en_US": "Luminous Flux",
+        "es_MX": "Flujo luminoso",
+        "pt_BR": "Fluxo Luminoso",
+        "de_DE": "Leuchtender Fluxus",
+        "en_GB": "Luminous Flux",
+        "es_ES": "Flujo luminoso",
+        "fr_FR": "Flux lumineux",
+        "it_IT": "Flusso Luminoso",
+        "ru_RU": "Светящийся плавень",
+        "ko_KR": "영롱한 유동체",
+        "zh_TW": "夜光熔劑",
+        "zh_CN": "辉光助熔剂"
+    },
+    "quality": {
+        "type": "COMMON",
+        "name": {
+            "en_US": "Common",
+            "es_MX": "Común",
+            "pt_BR": "Comum",
+            "de_DE": "Gewöhnlich",
+            "en_GB": "Common",
+            "es_ES": "Común",
+            "fr_FR": "Commun",
+            "it_IT": "Comune",
+            "ru_RU": "Обычное",
+            "ko_KR": "일반",
+            "zh_TW": "普通",
+            "zh_CN": "普通"
+        }
+    },
+    "level": 50,
+    "required_level": 0,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/180733?namespace=static-12.0.1_65617-us"
+        },
+        "id": 180733
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Tradeskill",
+            "es_MX": "Habilidad comercial",
+            "pt_BR": "Perícia profissional",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Tradeskill",
+            "es_ES": "Habilidad comercial",
+            "fr_FR": "Artisanat",
+            "it_IT": "Beni commerciali",
+            "ru_RU": "Ремесло",
+            "ko_KR": "전문 기술",
+            "zh_TW": "交易技能",
+            "zh_CN": "商业技能"
+        },
+        "id": 7
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/7?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Metal & Stone",
+            "es_MX": "Metal y piedra",
+            "pt_BR": "Metal e Pedra",
+            "de_DE": "Metalle & Steine",
+            "en_GB": "Metal & Stone",
+            "es_ES": "Metal y piedra",
+            "fr_FR": "Métal et pierre",
+            "it_IT": "Metallo e pietra",
+            "ru_RU": "Металл и камень",
+            "ko_KR": "광물",
+            "zh_TW": "金屬與石頭",
+            "zh_CN": "金属和矿石"
+        },
+        "id": 7
+    },
+    "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": {
+            "en_US": "Non-equippable",
+            "es_MX": "No equipable",
+            "pt_BR": "Não equipável",
+            "de_DE": "Nicht anlegbar",
+            "en_GB": "Non-equippable",
+            "es_ES": "No se puede equipar",
+            "fr_FR": "Objet hors équipement",
+            "it_IT": "Non equipaggiabile",
+            "ru_RU": "Неэкипируемое",
+            "ko_KR": "착용 불가",
+            "zh_TW": "無法裝備",
+            "zh_CN": "无法装备"
+        }
+    },
+    "purchase_price": 90000,
+    "sell_price": 22500,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "description": {
+        "en_US": "Used for removing impurities from metal. Sold by Blacksmithing vendors.",
+        "es_MX": "Se usa para eliminar impurezas del metal. Se puede adquirir a los vendedores de herrería.",
+        "pt_BR": "Serve para remover impurezas do metal. Vendido por comerciantes de Ferraria.",
+        "de_DE": "Dient zum Entfernen von Unreinheiten auf Metall. Ist bei Schmiedekunsthändlern erhältlich.",
+        "en_GB": "Used for removing impurities from metal. Sold by Blacksmithing vendors.",
+        "es_ES": "Se usa para eliminar impurezas del metal. Se adquiere de los vendedores de herrería.",
+        "fr_FR": "Permet de supprimer les impuretés du métal. Disponible auprès des vendeurs de fournitures de forgeron.",
+        "it_IT": "Utilizzato per rimuovere le impurità dal metallo. Venduto dai Mercanti di Forgiatura.",
+        "ru_RU": "Позволяет очищать металлы. Продается поставщиками товаров для кузнечного дела.",
+        "ko_KR": "금속의 불순물을 제거하는 데 쓰입니다. 대장용품 상인에게서 살 수 있습니다.",
+        "zh_TW": "用來去除金屬的雜質。可以向鍛造供應商購買。",
+        "zh_CN": "用来去除金属杂质。锻造商人有售。"
+    },
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.1_65617-us"
+            },
+            "id": 180733
+        },
+        "quality": {
+            "type": "COMMON",
+            "name": {
+                "en_US": "Common",
+                "es_MX": "Común",
+                "pt_BR": "Comum",
+                "de_DE": "Gewöhnlich",
+                "en_GB": "Common",
+                "es_ES": "Común",
+                "fr_FR": "Commun",
+                "it_IT": "Comune",
+                "ru_RU": "Обычное",
+                "ko_KR": "일반",
+                "zh_TW": "普通",
+                "zh_CN": "普通"
+            }
+        },
+        "name": {
+            "en_US": "Luminous Flux",
+            "es_MX": "Flujo luminoso",
+            "pt_BR": "Fluxo Luminoso",
+            "de_DE": "Leuchtender Fluxus",
+            "en_GB": "Luminous Flux",
+            "es_ES": "Flujo luminoso",
+            "fr_FR": "Flux lumineux",
+            "it_IT": "Flusso Luminoso",
+            "ru_RU": "Светящийся плавень",
+            "ko_KR": "영롱한 유동체",
+            "zh_TW": "夜光熔劑",
+            "zh_CN": "辉光助熔剂"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/180733?namespace=static-12.0.1_65617-us"
+            },
+            "id": 180733
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Tradeskill",
+                "es_MX": "Habilidad comercial",
+                "pt_BR": "Perícia profissional",
+                "de_DE": "Handwerksmaterial",
+                "en_GB": "Tradeskill",
+                "es_ES": "Habilidad comercial",
+                "fr_FR": "Artisanat",
+                "it_IT": "Beni commerciali",
+                "ru_RU": "Ремесло",
+                "ko_KR": "전문 기술",
+                "zh_TW": "交易技能",
+                "zh_CN": "商业技能"
+            },
+            "id": 7
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Metal & Stone",
+                "es_MX": "Metal y piedra",
+                "pt_BR": "Metal e Pedra",
+                "de_DE": "Metalle & Steine",
+                "en_GB": "Metal & Stone",
+                "es_ES": "Metal y piedra",
+                "fr_FR": "Métal et pierre",
+                "it_IT": "Metallo e pietra",
+                "ru_RU": "Металл и камень",
+                "ko_KR": "광물",
+                "zh_TW": "金屬與石頭",
+                "zh_CN": "金属和矿石"
+            },
+            "id": 7
+        },
+        "inventory_type": {
+            "type": "NON_EQUIP",
+            "name": {
+                "en_US": "Non-equippable",
+                "es_MX": "No equipable",
+                "pt_BR": "Não equipável",
+                "de_DE": "Nicht anlegbar",
+                "en_GB": "Non-equippable",
+                "es_ES": "No se puede equipar",
+                "fr_FR": "Objet hors équipement",
+                "it_IT": "Non equipaggiabile",
+                "ru_RU": "Неэкипируемое",
+                "ko_KR": "착용 불가",
+                "zh_TW": "無法裝備",
+                "zh_CN": "无法装备"
+            }
+        },
+        "sell_price": {
+            "value": 22500,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "2",
+                    "es_MX": "2",
+                    "pt_BR": "2",
+                    "de_DE": "2",
+                    "en_GB": "2",
+                    "es_ES": "2",
+                    "fr_FR": "2",
+                    "it_IT": "2",
+                    "ru_RU": "2",
+                    "ko_KR": "2",
+                    "zh_TW": "2",
+                    "zh_CN": "2"
+                },
+                "silver": {
+                    "en_US": "25",
+                    "es_MX": "25",
+                    "pt_BR": "25",
+                    "de_DE": "25",
+                    "en_GB": "25",
+                    "es_ES": "25",
+                    "fr_FR": "25",
+                    "it_IT": "25",
+                    "ru_RU": "25",
+                    "ko_KR": "25",
+                    "zh_TW": "25",
+                    "zh_CN": "25"
+                },
+                "copper": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                }
+            }
+        },
+        "description": {
+            "en_US": "Used for removing impurities from metal. Sold by Blacksmithing vendors.",
+            "es_MX": "Se usa para eliminar impurezas del metal. Se puede adquirir a los vendedores de herrería.",
+            "pt_BR": "Serve para remover impurezas do metal. Vendido por comerciantes de Ferraria.",
+            "de_DE": "Dient zum Entfernen von Unreinheiten auf Metall. Ist bei Schmiedekunsthändlern erhältlich.",
+            "en_GB": "Used for removing impurities from metal. Sold by Blacksmithing vendors.",
+            "es_ES": "Se usa para eliminar impurezas del metal. Se adquiere de los vendedores de herrería.",
+            "fr_FR": "Permet de supprimer les impuretés du métal. Disponible auprès des vendeurs de fournitures de forgeron.",
+            "it_IT": "Utilizzato per rimuovere le impurità dal metallo. Venduto dai Mercanti di Forgiatura.",
+            "ru_RU": "Позволяет очищать металлы. Продается поставщиками товаров для кузнечного дела.",
+            "ko_KR": "금속의 불순물을 제거하는 데 쓰입니다. 대장용품 상인에게서 살 수 있습니다.",
+            "zh_TW": "用來去除金屬的雜質。可以向鍛造供應商購買。",
+            "zh_CN": "用来去除金属杂质。锻造商人有售。"
+        },
+        "is_subclass_hidden": true,
+        "crafting_reagent": {
+            "en_US": "Crafting Reagent",
+            "es_MX": "Componente de creación",
+            "pt_BR": "Reagente de criação",
+            "de_DE": "Handwerksmaterial",
+            "en_GB": "Crafting Reagent",
+            "es_ES": "Componente de profesión",
+            "fr_FR": "Composant d’artisanat",
+            "it_IT": "Reagente d'artigianato",
+            "ru_RU": "Используется для ремесел",
+            "ko_KR": "제작 재료",
+            "zh_TW": "製造材料",
+            "zh_CN": "制作材料"
+        }
+    },
+    "purchase_quantity": 1
+}

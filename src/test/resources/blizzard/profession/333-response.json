@@ -1,0 +1,101 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/333?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 333,
+    "name": {
+        "en_US": "Enchanting",
+        "es_MX": "Encantamiento",
+        "pt_BR": "Encantamento",
+        "de_DE": "Verzauberkunst",
+        "en_GB": "Enchanting",
+        "es_ES": "Encantamiento",
+        "fr_FR": "Enchantement",
+        "it_IT": "Incantamento",
+        "ru_RU": "Наложение чар",
+        "ko_KR": "마법부여",
+        "zh_TW": "附魔",
+        "zh_CN": "附魔"
+    },
+    "description": {
+        "en_US": "Higher enchanting skill allows you to learn more powerful formulae.  Formulae can be found on trainers around the world as well as from quests and monsters.",
+        "es_MX": "Con un alto nivel de habilidad en encantamiento, podrás aprender formulas mucho más poderosas. Visita a los instructores dispersos por el mundo, completa misiones y derrota a los monstruos para conseguirlas.",
+        "pt_BR": "Um alto nível na perícia encantamento permite aprender fórmulas de nível mais alto. As fórmulas podem ser aprendidas ou compradas dos instrutores de encantamento espalhados pelo mundo, bem como saqueadas de monstros e obtidas como recompensa de missões.",
+        "de_DE": "Eine hohe Verzauberfertigkeit ermöglicht es Euch, mächtigere Formeln zu benutzen. Verzauberungsformeln könnt Ihr bei Lehrern überall in der Welt erwerben und auch bei toten Gegnern und beim Questen finden.",
+        "en_GB": "Higher enchanting skill allows you to learn more powerful formulae.  Formulae can be found on trainers around the world as well as from quests and monsters.",
+        "es_ES": "Con un alto nivel de habilidad en encantamiento, podrás aprender formulas mucho más poderosas. Visita a los instructores dispersos por el mundo, completa misiones y derrota a los monstruos para conseguirlas.",
+        "fr_FR": "Un plus haut score dans la compétence enchantement vous permet d'apprendre des formules plus puissantes. Ces formules peuvent être trouvées auprès de maîtres un peu partout dans le monde, sur des monstres ou en récompense de quêtes.",
+        "it_IT": "Una maggiore competenza in Incantamento permette di apprendere formule di livello superiore. Le formule possono essere acquistate da venditori o istruttori in giro per il mondo o essere ottenute attraverso missioni o uccidendo mostri.",
+        "ru_RU": "Чем лучше развит этот навык, тем более сложные формулы вы можете использовать. Формулы можно найти у учителей, а также получить в качестве добычи или награды.",
+        "ko_KR": "마법부여 숙련도가 올라갈수록 더 강력한 주문식을 배울 수 있습니다. 주문식은 전문 마법부여사나 퀘스트를 통해 배우거나 몬스터에게서 얻을 수 있습니다.",
+        "zh_TW": "高級的附魔技能使你可以學習高級的附魔公式。你可以在訓練師那裡學習新的公式，也可以通過完成任務或殺死怪物獲得新的公式。",
+        "zh_CN": "高级的附魔技能使你可以学习高级的附魔公式。你可以在训练师那里学习新的公式，也可以通过完成任务或杀死怪物获得新的公式。"
+    },
+    "type": {
+        "type": "PRIMARY",
+        "name": {
+            "en_US": "Primary",
+            "es_MX": "Principal",
+            "pt_BR": "Principal",
+            "de_DE": "Primär",
+            "en_GB": "Primary",
+            "es_ES": "Principal",
+            "fr_FR": "Principaux",
+            "it_IT": "Primario",
+            "ru_RU": "Основное",
+            "ko_KR": "주",
+            "zh_TW": "主要",
+            "zh_CN": "主要"
+        }
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/profession/333?namespace=static-12.0.1_65617-us"
+        },
+        "id": 333
+    },
+    "skill_tiers": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2753?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Shadowlands Enchanting",
+                "es_MX": "Encantamiento de Shadowlands",
+                "pt_BR": "Encantamento de Shadowlands",
+                "de_DE": "Verzauberkunst der Schattenlande",
+                "en_GB": "Shadowlands Enchanting",
+                "es_ES": "Encantamiento de Shadowlands",
+                "fr_FR": "Enchantement d’Ombreterre",
+                "it_IT": "Incantamento di Shadowlands",
+                "ru_RU": "Наложение чар Темных Земель",
+                "ko_KR": "어둠땅 마법부여",
+                "zh_TW": "暗影之境附魔",
+                "zh_CN": "暗影界附魔"
+            },
+            "id": 2753
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2909?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Midnight Enchanting",
+                "es_MX": "Encantamiento de Midnight",
+                "pt_BR": "Encantamento de Midnight",
+                "de_DE": "Verzauberkunst von Midnight",
+                "en_GB": "Midnight Enchanting",
+                "es_ES": "Encantamiento de Midnight",
+                "fr_FR": "Enchantement de Midnight",
+                "it_IT": "Incantamento di Midnight",
+                "ru_RU": "Наложение чар Midnight",
+                "ko_KR": "한밤 마법부여",
+                "zh_TW": "至暗之夜附魔",
+                "zh_CN": "至暗之夜附魔"
+            },
+            "id": 2909
+        }
+    ]
+}

@@ -1,0 +1,84 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/110?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 110,
+    "description": {
+        "en_US": "Increase Rank",
+        "es_MX": "Aumenta el rango",
+        "pt_BR": "Aumentar Nível",
+        "de_DE": "Rang erhöhen",
+        "en_GB": "Increase Rank",
+        "es_ES": "Aumentar rango",
+        "fr_FR": "Augmentation du rang",
+        "it_IT": "Aumenta il grado",
+        "ru_RU": "Повышает ранг предмета",
+        "ko_KR": "등급 증가",
+        "zh_TW": "提高等級",
+        "zh_CN": "提升技能等级"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/50?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Set Item Level",
+                "es_MX": "Establecer nivel de objeto",
+                "pt_BR": "Definir Nível de Item",
+                "de_DE": "Gegenstandsstufe festlegen",
+                "en_GB": "Set Item Level",
+                "es_ES": "Establecer nivel de objeto",
+                "fr_FR": "Changement de niveau d’objet",
+                "it_IT": "Impostazione Livello Oggetto",
+                "ru_RU": "Смена уровня предметов",
+                "ko_KR": "아이템 레벨 설정",
+                "zh_TW": "設定物品等級",
+                "zh_CN": "设置物品等级"
+            },
+            "id": 50
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/55?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Set Item Level",
+                "es_MX": "Establecer nivel de objeto",
+                "pt_BR": "Definir Nível de Item",
+                "de_DE": "Gegenstandsstufe festlegen",
+                "en_GB": "Set Item Level",
+                "es_ES": "Establecer nv. objeto",
+                "fr_FR": "Changement de niveau d’objet",
+                "it_IT": "Impostazione Livello Oggetto",
+                "ru_RU": "Смена уровня предметов",
+                "ko_KR": "아이템 레벨 설정",
+                "zh_TW": "設定物品等級",
+                "zh_CN": "设置物品等级"
+            },
+            "id": 55
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/83?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Set Item Level",
+                "es_MX": "Establecer nivel de objeto",
+                "pt_BR": "Definir nível de item",
+                "de_DE": "Gegenstandsstufe festlegen",
+                "en_GB": "Set Item Level",
+                "es_ES": "Establecer nv. objeto",
+                "fr_FR": "Changement de niveau d’objet",
+                "it_IT": "Impostazione Livello Oggetto",
+                "ru_RU": "Смена уровня предметов",
+                "ko_KR": "아이템 레벨 설정",
+                "zh_TW": "設定物品等級",
+                "zh_CN": "设置物品等级"
+            },
+            "id": 83
+        }
+    ]
+}

@@ -1,0 +1,444 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "name": {
+        "en_US": "Weapon",
+        "es_MX": "Arma",
+        "pt_BR": "Arma",
+        "de_DE": "Waffe",
+        "en_GB": "Weapon",
+        "es_ES": "Arma",
+        "fr_FR": "Arme",
+        "it_IT": "Arma",
+        "ru_RU": "Оружие",
+        "ko_KR": "무기",
+        "zh_TW": "武器",
+        "zh_CN": "武器"
+    },
+    "item_subclasses": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Axe",
+                "es_MX": "Hacha",
+                "pt_BR": "Machado",
+                "de_DE": "Axt",
+                "en_GB": "Axe",
+                "es_ES": "Hacha",
+                "fr_FR": "Hache",
+                "it_IT": "Ascia",
+                "ru_RU": "Топор",
+                "ko_KR": "도끼",
+                "zh_TW": "斧",
+                "zh_CN": "斧"
+            },
+            "id": 0
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/1?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Axe",
+                "es_MX": "Hacha",
+                "pt_BR": "Machado",
+                "de_DE": "Axt",
+                "en_GB": "Axe",
+                "es_ES": "Hacha",
+                "fr_FR": "Hache",
+                "it_IT": "Ascia",
+                "ru_RU": "Топор",
+                "ko_KR": "도끼",
+                "zh_TW": "斧",
+                "zh_CN": "斧"
+            },
+            "id": 1
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/2?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Bow",
+                "es_MX": "Arco",
+                "pt_BR": "Arco",
+                "de_DE": "Bogen",
+                "en_GB": "Bow",
+                "es_ES": "Arco",
+                "fr_FR": "Arc",
+                "it_IT": "Arco",
+                "ru_RU": "Лук",
+                "ko_KR": "활",
+                "zh_TW": "弓",
+                "zh_CN": "弓"
+            },
+            "id": 2
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/3?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Gun",
+                "es_MX": "Arma de fuego",
+                "pt_BR": "Arma de fogo",
+                "de_DE": "Schusswaffe",
+                "en_GB": "Gun",
+                "es_ES": "Arma de fuego",
+                "fr_FR": "Arme à feu",
+                "it_IT": "Arma da fuoco",
+                "ru_RU": "Огнестрельное",
+                "ko_KR": "총",
+                "zh_TW": "槍械",
+                "zh_CN": "枪械"
+            },
+            "id": 3
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/4?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Mace",
+                "es_MX": "Maza",
+                "pt_BR": "Maça",
+                "de_DE": "Streitkolben",
+                "en_GB": "Mace",
+                "es_ES": "Maza",
+                "fr_FR": "Masse",
+                "it_IT": "Mazza",
+                "ru_RU": "Дробящее",
+                "ko_KR": "둔기",
+                "zh_TW": "錘",
+                "zh_CN": "锤"
+            },
+            "id": 4
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/5?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Mace",
+                "es_MX": "Maza",
+                "pt_BR": "Maça",
+                "de_DE": "Streitkolben",
+                "en_GB": "Mace",
+                "es_ES": "Maza",
+                "fr_FR": "Masse",
+                "it_IT": "Mazza",
+                "ru_RU": "Дробящее",
+                "ko_KR": "둔기",
+                "zh_TW": "錘",
+                "zh_CN": "锤"
+            },
+            "id": 5
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/6?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Polearm",
+                "es_MX": "Arma de asta",
+                "pt_BR": "Arma de Haste",
+                "de_DE": "Stangenwaffe",
+                "en_GB": "Polearm",
+                "es_ES": "Arma de asta",
+                "fr_FR": "Arme d’hast",
+                "it_IT": "Arma ad asta",
+                "ru_RU": "Древковое",
+                "ko_KR": "장창",
+                "zh_TW": "長柄武器",
+                "zh_CN": "长柄武器"
+            },
+            "id": 6
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/7?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Sword",
+                "es_MX": "Espada",
+                "pt_BR": "Espada",
+                "de_DE": "Schwert",
+                "en_GB": "Sword",
+                "es_ES": "Espada",
+                "fr_FR": "Epée",
+                "it_IT": "Spada",
+                "ru_RU": "Меч",
+                "ko_KR": "도검",
+                "zh_TW": "劍",
+                "zh_CN": "剑"
+            },
+            "id": 7
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/8?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Sword",
+                "es_MX": "Espada",
+                "pt_BR": "Espada",
+                "de_DE": "Schwert",
+                "en_GB": "Sword",
+                "es_ES": "Espada",
+                "fr_FR": "Epée",
+                "it_IT": "Spada",
+                "ru_RU": "Меч",
+                "ko_KR": "도검",
+                "zh_TW": "劍",
+                "zh_CN": "剑"
+            },
+            "id": 8
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/9?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Warglaives",
+                "es_MX": "Gujas de guerra",
+                "pt_BR": "Glaives de Guerra",
+                "de_DE": "Kriegsgleven",
+                "en_GB": "Warglaives",
+                "es_ES": "Gujas de guerra",
+                "fr_FR": "Glaives de guerre",
+                "it_IT": "Lame da Guerra",
+                "ru_RU": "Боевые клинки",
+                "ko_KR": "전투검",
+                "zh_TW": "戰刃",
+                "zh_CN": "战刃"
+            },
+            "id": 9
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/10?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Staff",
+                "es_MX": "Bastón",
+                "pt_BR": "Cajado",
+                "de_DE": "Stab",
+                "en_GB": "Staff",
+                "es_ES": "Bastón",
+                "fr_FR": "Bâton",
+                "it_IT": "Bastone",
+                "ru_RU": "Посох",
+                "ko_KR": "지팡이",
+                "zh_TW": "法杖",
+                "zh_CN": "法杖"
+            },
+            "id": 10
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/11?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Bear Claws",
+                "es_MX": "Garras de oso",
+                "pt_BR": "Garras de Urso",
+                "de_DE": "Bärenklauen",
+                "en_GB": "Bear Claws",
+                "es_ES": "Garras de oso",
+                "fr_FR": "Griffes d’ours",
+                "it_IT": "Artigli da Orso",
+                "ru_RU": "Медвежьи когти",
+                "ko_KR": "곰 발톱",
+                "zh_TW": "熊爪",
+                "zh_CN": "熊爪"
+            },
+            "id": 11
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/12?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Cat Claws",
+                "es_MX": "Garras de gato",
+                "pt_BR": "Unhas de Gato",
+                "de_DE": "Katzenkrallen",
+                "en_GB": "Cat Claws",
+                "es_ES": "Garras de felino",
+                "fr_FR": "Griffes de félin",
+                "it_IT": "Artigli da Felino",
+                "ru_RU": "Кошачьи когти",
+                "ko_KR": "표범 발톱",
+                "zh_TW": "豹爪",
+                "zh_CN": "豹爪"
+            },
+            "id": 12
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/13?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Fist Weapon",
+                "es_MX": "Arma de puño",
+                "pt_BR": "Arma de Punho",
+                "de_DE": "Faustwaffe",
+                "en_GB": "Fist Weapon",
+                "es_ES": "Arma de puño",
+                "fr_FR": "Arme de pugilat",
+                "it_IT": "Tirapugni",
+                "ru_RU": "Кистевое",
+                "ko_KR": "장착 무기",
+                "zh_TW": "拳套",
+                "zh_CN": "拳套"
+            },
+            "id": 13
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/14?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Miscellaneous",
+                "es_MX": "Miscelánea",
+                "pt_BR": "Diversos",
+                "de_DE": "Verschiedenes",
+                "en_GB": "Miscellaneous",
+                "es_ES": "Miscelánea",
+                "fr_FR": "Divers",
+                "it_IT": "Varie",
+                "ru_RU": "Разное",
+                "ko_KR": "기타",
+                "zh_TW": "雜項",
+                "zh_CN": "其它"
+            },
+            "id": 14
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/15?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Dagger",
+                "es_MX": "Daga",
+                "pt_BR": "Adaga",
+                "de_DE": "Dolch",
+                "en_GB": "Dagger",
+                "es_ES": "Daga",
+                "fr_FR": "Dague",
+                "it_IT": "Pugnale",
+                "ru_RU": "Кинжал",
+                "ko_KR": "단검",
+                "zh_TW": "匕首",
+                "zh_CN": "匕首"
+            },
+            "id": 15
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/16?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Thrown",
+                "es_MX": "Arma arrojadiza",
+                "pt_BR": "Arremesso",
+                "de_DE": "Wurfwaffe",
+                "en_GB": "Thrown",
+                "es_ES": "Arma arrojadiza",
+                "fr_FR": "Armes de jet",
+                "it_IT": "Arma da lancio",
+                "ru_RU": "Метательное",
+                "ko_KR": "투척 무기",
+                "zh_TW": "投擲武器",
+                "zh_CN": "投掷武器"
+            },
+            "id": 16
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/17?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Spear",
+                "es_MX": "Lanza",
+                "pt_BR": "Lança",
+                "de_DE": "Speer",
+                "en_GB": "Spear",
+                "es_ES": "Lanza",
+                "fr_FR": "Lance",
+                "it_IT": "Lancia",
+                "ru_RU": "Копье",
+                "ko_KR": "창",
+                "zh_TW": "矛",
+                "zh_CN": "矛"
+            },
+            "id": 17
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/18?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Crossbow",
+                "es_MX": "Ballesta",
+                "pt_BR": "Besta",
+                "de_DE": "Armbrust",
+                "en_GB": "Crossbow",
+                "es_ES": "Ballesta",
+                "fr_FR": "Arbalète",
+                "it_IT": "Balestra",
+                "ru_RU": "Арбалет",
+                "ko_KR": "석궁",
+                "zh_TW": "弩",
+                "zh_CN": "弩"
+            },
+            "id": 18
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/19?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Wand",
+                "es_MX": "Varita",
+                "pt_BR": "Varinha",
+                "de_DE": "Zauberstab",
+                "en_GB": "Wand",
+                "es_ES": "Varita",
+                "fr_FR": "Baguette",
+                "it_IT": "Bacchetta",
+                "ru_RU": "Жезл",
+                "ko_KR": "마법봉",
+                "zh_TW": "魔杖",
+                "zh_CN": "魔杖"
+            },
+            "id": 19
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/20?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Fishing Pole",
+                "es_MX": "Caña de pescar",
+                "pt_BR": "Vara de Pescar",
+                "de_DE": "Angelrute",
+                "en_GB": "Fishing Pole",
+                "es_ES": "Caña de pescar",
+                "fr_FR": "Canne à pêche",
+                "it_IT": "Canna da pesca",
+                "ru_RU": "Удочка",
+                "ko_KR": "낚싯대",
+                "zh_TW": "魚竿",
+                "zh_CN": "鱼竿"
+            },
+            "id": 20
+        }
+    ]
+}

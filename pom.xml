@@ -42,6 +42,9 @@
         <ktlint.version>3.5.0</ktlint.version>
         <ktlint.plugin.version>3.5.0</ktlint.plugin.version>
         <testcontainers.version>1.21.4</testcontainers.version>
+        <exec.maven.plugin.version>3.6.1</exec.maven.plugin.version>
+        <node.executable>node</node.executable>
+        <refresh.fixtures.args/>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -270,6 +273,24 @@
                 <configuration>
                     <argLine>@{argLine} -Djdk.attach.allowAttachSelf=true -XX:+EnableDynamicAgentLoading -Xshare:off --sun-misc-unsafe-memory-access=allow -Daws.java.v1.disableDeprecationAnnouncement=true</argLine>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec.maven.plugin.version}</version>
+                <configuration>
+                    <workingDirectory>${project.basedir}</workingDirectory>
+                    <executable>${node.executable}</executable>
+                    <commandlineArgs>${project.basedir}/tools/refresh-fixtures.mjs ${refresh.fixtures.args}</commandlineArgs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>refresh-fixtures</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

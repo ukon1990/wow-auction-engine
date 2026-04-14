@@ -1,0 +1,76 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42397?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42397,
+    "name": {
+        "en_US": "Laestrite Skeleton Key",
+        "es_MX": "Llave maestra de lestrita",
+        "pt_BR": "Chave-mestra de Laestrita",
+        "de_DE": "Laestritdietrich",
+        "en_GB": "Laestrite Skeleton Key",
+        "es_ES": "Llave maestra de laestrita",
+        "fr_FR": "Passe-partout en læstrite",
+        "it_IT": "Chiave Universale di Laestrite",
+        "ru_RU": "Лестритовая отмычка",
+        "ko_KR": "레이스트라이트 해골 열쇠",
+        "zh_TW": "雷瑟瑞骷髏鑰匙",
+        "zh_CN": "苷铜万能钥匙"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42397?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42397
+    },
+    "crafted_item": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item/171441?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Laestrite Skeleton Key",
+            "es_MX": "Llave maestra de lestrita",
+            "pt_BR": "Chave-mestra de Laestrita",
+            "de_DE": "Laestritdietrich",
+            "en_GB": "Laestrite Skeleton Key",
+            "es_ES": "Llave maestra de laestrita",
+            "fr_FR": "Passe-partout en læstrite",
+            "it_IT": "Chiave Universale di Laestrite",
+            "ru_RU": "Лестритовая отмычка",
+            "ko_KR": "레이스트라이트 해골 열쇠",
+            "zh_TW": "雷瑟瑞骷髏鑰匙",
+            "zh_CN": "苷铜万能钥匙"
+        },
+        "id": 171441
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/171828?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Laestrite Ore",
+                    "es_MX": "Mena de lestrita",
+                    "pt_BR": "Minério de Laestrita",
+                    "de_DE": "Laestriterz",
+                    "en_GB": "Laestrite Ore",
+                    "es_ES": "Mena de laestrita",
+                    "fr_FR": "Minerai de læstrite",
+                    "it_IT": "Minerale di Laestrite",
+                    "ru_RU": "Лестритовая руда",
+                    "ko_KR": "레이스트라이트 광석",
+                    "zh_TW": "雷瑟瑞礦石",
+                    "zh_CN": "苷铜矿石"
+                },
+                "id": 171828
+            },
+            "quantity": 2
+        }
+    ],
+    "crafted_quantity": {
+        "value": 1
+    }
+}

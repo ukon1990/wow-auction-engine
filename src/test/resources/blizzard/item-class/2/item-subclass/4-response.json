@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/4?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 2,
+    "subclass_id": 4,
+    "display_name": {
+        "en_US": "Mace",
+        "es_MX": "Maza",
+        "pt_BR": "Maça",
+        "de_DE": "Streitkolben",
+        "en_GB": "Mace",
+        "es_ES": "Maza",
+        "fr_FR": "Masse",
+        "it_IT": "Mazza",
+        "ru_RU": "Дробящее",
+        "ko_KR": "둔기",
+        "zh_TW": "錘",
+        "zh_CN": "锤"
+    },
+    "verbose_name": {
+        "en_US": "One-Handed Maces",
+        "es_MX": "Mazas de una mano",
+        "pt_BR": "Maças de Uma Mão",
+        "de_DE": "Einhandstreitkolben",
+        "en_GB": "One-Handed Maces",
+        "es_ES": "Mazas de una mano",
+        "fr_FR": "Masses à une main",
+        "it_IT": "Mazze a una mano",
+        "ru_RU": "Одноручное дробящее",
+        "ko_KR": "한손 둔기류",
+        "zh_TW": "單手錘",
+        "zh_CN": "单手锤"
+    }
+}

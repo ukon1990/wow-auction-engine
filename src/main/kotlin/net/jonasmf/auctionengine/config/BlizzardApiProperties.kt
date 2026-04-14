@@ -14,6 +14,7 @@ data class BlizzardApiProperties
         val clientSecret: String,
         val region: Region? = null,
         val regions: List<Region> = emptyList(),
+        val staticDataRegion: Region = Region.Europe,
     ) {
         init {
             require(region != null || regions.isNotEmpty()) {

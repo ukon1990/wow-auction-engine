@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/879?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 879,
+    "name": {
+        "en_US": "Galactic Aspirant's Heraldry",
+        "es_MX": "Heráldica de Aspirante galáctico",
+        "pt_BR": "Heráldica do Aspirante Galáctico",
+        "de_DE": "Wappenbuch des galaktischen Aspiranten",
+        "en_GB": "Galactic Aspirant's Heraldry",
+        "es_ES": "Heráldica de aspirante galáctico",
+        "fr_FR": "Blason d’aspirant galactique",
+        "it_IT": "Stemma del Pretendente Galattico",
+        "ru_RU": "Геральдика галактического претендента",
+        "ko_KR": "우주를 호령하는 지원자의 표상",
+        "zh_TW": "銀河志士徽章",
+        "zh_CN": "星河候选者的饰章"
+    }
+}

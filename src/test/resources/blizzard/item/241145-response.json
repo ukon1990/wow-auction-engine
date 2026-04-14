@@ -1,0 +1,331 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item/241145?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 241145,
+    "name": {
+        "en_US": "Lucky Loa Lure",
+        "es_MX": "Cebo de loa de la suerte",
+        "pt_BR": "Isca de Loa da Sorte",
+        "de_DE": "Köder für glückliche Loa",
+        "en_GB": "Lucky Loa Lure",
+        "es_ES": "Cebo de loa de la suerte",
+        "fr_FR": "Appât à Loa porte-bonheur",
+        "it_IT": "Esca per Loa della Fortuna",
+        "ru_RU": "Приманка на счастливого лоа",
+        "ko_KR": "행운의 로아 미끼",
+        "zh_TW": "幸運羅亞誘餌",
+        "zh_CN": "好运神灵鱼诱饵"
+    },
+    "quality": {
+        "type": "UNCOMMON",
+        "name": {
+            "en_US": "Uncommon",
+            "es_MX": "Inusual",
+            "pt_BR": "Incomum",
+            "de_DE": "Ungewöhnlich",
+            "en_GB": "Uncommon",
+            "es_ES": "Inusual",
+            "fr_FR": "Inhabituel",
+            "it_IT": "Pregiato",
+            "ru_RU": "Необычное",
+            "ko_KR": "고급",
+            "zh_TW": "優秀",
+            "zh_CN": "优秀"
+        }
+    },
+    "level": 1,
+    "required_level": 80,
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/item/241145?namespace=static-12.0.1_65617-us"
+        },
+        "id": 241145
+    },
+    "item_class": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Consumable",
+            "es_MX": "Consumible",
+            "pt_BR": "Consumível",
+            "de_DE": "Verbrauchbares",
+            "en_GB": "Consumable",
+            "es_ES": "Consumible",
+            "fr_FR": "Consommable",
+            "it_IT": "Consumabili",
+            "ru_RU": "Расходуемые",
+            "ko_KR": "소비용품",
+            "zh_TW": "消耗品",
+            "zh_CN": "消耗品"
+        },
+        "id": 0
+    },
+    "item_subclass": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.1_65617-us"
+        },
+        "name": {
+            "en_US": "Other",
+            "es_MX": "Otros",
+            "pt_BR": "Outro",
+            "de_DE": "Sonstiges",
+            "en_GB": "Other",
+            "es_ES": "Otros",
+            "fr_FR": "Autres",
+            "it_IT": "Altro",
+            "ru_RU": "Другое",
+            "ko_KR": "기타",
+            "zh_TW": "其他",
+            "zh_CN": "其它"
+        },
+        "id": 8
+    },
+    "inventory_type": {
+        "type": "NON_EQUIP",
+        "name": {
+            "en_US": "Non-equippable",
+            "es_MX": "No equipable",
+            "pt_BR": "Não equipável",
+            "de_DE": "Nicht anlegbar",
+            "en_GB": "Non-equippable",
+            "es_ES": "No se puede equipar",
+            "fr_FR": "Objet hors équipement",
+            "it_IT": "Non equipaggiabile",
+            "ru_RU": "Неэкипируемое",
+            "ko_KR": "착용 불가",
+            "zh_TW": "無法裝備",
+            "zh_CN": "无法装备"
+        }
+    },
+    "purchase_price": 37500,
+    "sell_price": 7500,
+    "max_count": 0,
+    "is_equippable": false,
+    "is_stackable": true,
+    "preview_item": {
+        "item": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item/241145?namespace=static-12.0.1_65617-us"
+            },
+            "id": 241145
+        },
+        "quality": {
+            "type": "UNCOMMON",
+            "name": {
+                "en_US": "Uncommon",
+                "es_MX": "Inusual",
+                "pt_BR": "Incomum",
+                "de_DE": "Ungewöhnlich",
+                "en_GB": "Uncommon",
+                "es_ES": "Inusual",
+                "fr_FR": "Inhabituel",
+                "it_IT": "Pregiato",
+                "ru_RU": "Необычное",
+                "ko_KR": "고급",
+                "zh_TW": "優秀",
+                "zh_CN": "优秀"
+            }
+        },
+        "name": {
+            "en_US": "Lucky Loa Lure",
+            "es_MX": "Cebo de loa de la suerte",
+            "pt_BR": "Isca de Loa da Sorte",
+            "de_DE": "Köder für glückliche Loa",
+            "en_GB": "Lucky Loa Lure",
+            "es_ES": "Cebo de loa de la suerte",
+            "fr_FR": "Appât à Loa porte-bonheur",
+            "it_IT": "Esca per Loa della Fortuna",
+            "ru_RU": "Приманка на счастливого лоа",
+            "ko_KR": "행운의 로아 미끼",
+            "zh_TW": "幸運羅亞誘餌",
+            "zh_CN": "好运神灵鱼诱饵"
+        },
+        "media": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/media/item/241145?namespace=static-12.0.1_65617-us"
+            },
+            "id": 241145
+        },
+        "item_class": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Consumable",
+                "es_MX": "Consumible",
+                "pt_BR": "Consumível",
+                "de_DE": "Verbrauchbares",
+                "en_GB": "Consumable",
+                "es_ES": "Consumible",
+                "fr_FR": "Consommable",
+                "it_IT": "Consumabili",
+                "ru_RU": "Расходуемые",
+                "ko_KR": "소비용품",
+                "zh_TW": "消耗品",
+                "zh_CN": "消耗品"
+            },
+            "id": 0
+        },
+        "item_subclass": {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Other",
+                "es_MX": "Otros",
+                "pt_BR": "Outro",
+                "de_DE": "Sonstiges",
+                "en_GB": "Other",
+                "es_ES": "Otros",
+                "fr_FR": "Autres",
+                "it_IT": "Altro",
+                "ru_RU": "Другое",
+                "ko_KR": "기타",
+                "zh_TW": "其他",
+                "zh_CN": "其它"
+            },
+            "id": 8
+        },
+        "inventory_type": {
+            "type": "NON_EQUIP",
+            "name": {
+                "en_US": "Non-equippable",
+                "es_MX": "No equipable",
+                "pt_BR": "Não equipável",
+                "de_DE": "Nicht anlegbar",
+                "en_GB": "Non-equippable",
+                "es_ES": "No se puede equipar",
+                "fr_FR": "Objet hors équipement",
+                "it_IT": "Non equipaggiabile",
+                "ru_RU": "Неэкипируемое",
+                "ko_KR": "착용 불가",
+                "zh_TW": "無法裝備",
+                "zh_CN": "无法装备"
+            }
+        },
+        "spells": [
+            {
+                "spell": {
+                    "key": {
+                        "href": "https://us.api.blizzard.com/data/wow/spell/1237964?namespace=static-12.0.1_65617-us"
+                    },
+                    "name": {
+                        "en_US": "Lucky Loa Lure",
+                        "es_MX": "Cebo de loa de la suerte",
+                        "pt_BR": "Isca de Loa da Sorte",
+                        "de_DE": "Köder für glückliche Loa",
+                        "en_GB": "Lucky Loa Lure",
+                        "es_ES": "Cebo de loa de la suerte",
+                        "fr_FR": "Appât à Loa porte-bonheur",
+                        "it_IT": "Esca per Loa della Fortuna",
+                        "ru_RU": "Приманка на счастливого лоа",
+                        "ko_KR": "행운의 로아 미끼",
+                        "zh_TW": "幸運羅亞誘餌",
+                        "zh_CN": "好运神灵鱼诱饵"
+                    },
+                    "id": 1237964
+                },
+                "description": {
+                    "en_US": "Use: Increases the chance to catch Lucky Loas for 30 min. (1 Sec Cooldown)",
+                    "es_MX": "Usar: Aumenta la probabilidad de pescar loa de la suerte durante 30 min. (1 s de tiempo de reutilización)",
+                    "pt_BR": "Usar: Aumenta a chance de pescar Loas da Sorte por 30 min. (1 s de recarga)",
+                    "de_DE": "Benutzen: Erhöht 30 Min. lang die Chance, glückliche Loas zu fangen. (1 Sek. Abklingzeit)",
+                    "en_GB": "Use: Increases the chance to catch Lucky Loas for 30 min. (1 Sec Cooldown)",
+                    "es_ES": "Uso: Aumenta la probabilidad de pescar loa de la suerte durante 30 min. (1 s de tiempo de reutilización).",
+                    "fr_FR": "Utiliser : Augmente les chances de pêcher des Loas porte-bonheur pendant 30 min. (1 s de recharge)",
+                    "it_IT": "Usa: Aumenta la probabilità di pescare Loa della Fortuna per 30 min. (1 s di recupero)",
+                    "ru_RU": "Использование: Повышает вероятность поймать счастливого лоа на 30 мин. (Восстановление: 1 с.)",
+                    "ko_KR": "사용 효과: 30분 동안 행운의 로아를 낚을 확률이 증가합니다. (1초 후 재사용 가능)",
+                    "zh_TW": "使用： 提高釣到幸運羅亞的機率，持續30分鐘。 （1秒冷卻時間）",
+                    "zh_CN": "使用： 使钓获好运神灵鱼的几率提高，持续30分钟。 （1秒冷却）"
+                }
+            }
+        ],
+        "sell_price": {
+            "value": 7500,
+            "display_strings": {
+                "header": {
+                    "en_US": "Sell Price:",
+                    "es_MX": "Precio de venta:",
+                    "pt_BR": "Preço de Venda:",
+                    "de_DE": "Verkaufspreis:",
+                    "en_GB": "Sell Price:",
+                    "es_ES": "Precio de venta:",
+                    "fr_FR": "Prix de vente :",
+                    "it_IT": "Prezzo di vendita:",
+                    "ru_RU": "Цена продажи:",
+                    "ko_KR": "판매 가격:",
+                    "zh_TW": "售價:",
+                    "zh_CN": "卖价:"
+                },
+                "gold": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                },
+                "silver": {
+                    "en_US": "75",
+                    "es_MX": "75",
+                    "pt_BR": "75",
+                    "de_DE": "75",
+                    "en_GB": "75",
+                    "es_ES": "75",
+                    "fr_FR": "75",
+                    "it_IT": "75",
+                    "ru_RU": "75",
+                    "ko_KR": "75",
+                    "zh_TW": "75",
+                    "zh_CN": "75"
+                },
+                "copper": {
+                    "en_US": "0",
+                    "es_MX": "0",
+                    "pt_BR": "0",
+                    "de_DE": "0",
+                    "en_GB": "0",
+                    "es_ES": "0",
+                    "fr_FR": "0",
+                    "it_IT": "0",
+                    "ru_RU": "0",
+                    "ko_KR": "0",
+                    "zh_TW": "0",
+                    "zh_CN": "0"
+                }
+            }
+        },
+        "requirements": {
+            "level": {
+                "value": 80,
+                "display_string": {
+                    "en_US": "Requires Level 80",
+                    "es_MX": "Necesitas ser de nivel 80",
+                    "pt_BR": "Requer o Nível 80",
+                    "de_DE": "Benötigt Stufe 80",
+                    "en_GB": "Requires Level 80",
+                    "es_ES": "Necesitas ser de nivel 80",
+                    "fr_FR": "Niveau 80 requis",
+                    "it_IT": "Richiede il livello 80",
+                    "ru_RU": "Требуется 80-й уровень",
+                    "ko_KR": "최소 요구 레벨: 80",
+                    "zh_TW": "需要等級80",
+                    "zh_CN": "需要等级 80"
+                }
+            }
+        },
+        "is_subclass_hidden": true
+    },
+    "purchase_quantity": 1
+}

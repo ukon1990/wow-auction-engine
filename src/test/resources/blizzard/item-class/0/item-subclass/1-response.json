@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/1?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 0,
+    "subclass_id": 1,
+    "display_name": {
+        "en_US": "Potions",
+        "es_MX": "Pociones",
+        "pt_BR": "Poções",
+        "de_DE": "Tränke",
+        "en_GB": "Potions",
+        "es_ES": "Pociones",
+        "fr_FR": "Potions",
+        "it_IT": "Pozioni",
+        "ru_RU": "Зелья",
+        "ko_KR": "물약",
+        "zh_TW": "藥水",
+        "zh_CN": "药水"
+    },
+    "hide_subclass_in_tooltips": true
+}

@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/811?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 811,
+    "name": {
+        "en_US": "Thalassian Missive of the Harmonious",
+        "es_MX": "Misiva thalassiana del armónico",
+        "pt_BR": "Missiva Talassiana do Harmonioso",
+        "de_DE": "Thalassisches Schreiben der Harmonischen",
+        "en_GB": "Thalassian Missive of the Harmonious",
+        "es_ES": "Misiva thalassiana del armonioso",
+        "fr_FR": "Missive thalassienne de l’harmonie",
+        "it_IT": "Missiva dell'Armonia Thalassiana",
+        "ru_RU": "Талассийское послание безмятежности",
+        "ko_KR": "조화의 탈라시안 서신",
+        "zh_TW": "薩拉斯和諧書狀",
+        "zh_CN": "谐律之萨拉斯公函"
+    }
+}

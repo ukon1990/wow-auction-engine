@@ -1,0 +1,184 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 390,
+    "description": {
+        "en_US": "Add Embellishment",
+        "es_MX": "Agrega ornamento",
+        "pt_BR": "Adicionar Ornamento",
+        "de_DE": "Verzierung hinzufügen",
+        "en_GB": "Add Embellishment",
+        "es_ES": "Añadir adorno",
+        "fr_FR": "Ajout d’embellissement",
+        "it_IT": "Aggiungi abbellimento",
+        "ru_RU": "Добавляет украшение",
+        "ko_KR": "장식 추가",
+        "zh_TW": "添加裝飾",
+        "zh_CN": "添加修饰"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/831?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Blessed Pango Charm",
+                "es_MX": "Amuleto de pango bendecido",
+                "pt_BR": "Amuleto Pango Abençoado",
+                "de_DE": "Gesegnetes Schuppentieramulett",
+                "en_GB": "Blessed Pango Charm",
+                "es_ES": "Talismán de pangolín bendito",
+                "fr_FR": "Amulette de pango bénie",
+                "it_IT": "Talismano di Pango Benedetto",
+                "ru_RU": "Благословенный талисман панго",
+                "ko_KR": "축복받은 천산갑 부적",
+                "zh_TW": "受祝福的穿山甲符咒",
+                "zh_CN": "圣佑穿山甲护符"
+            },
+            "id": 831
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/832?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Primal Spore Binding",
+                "es_MX": "Lazo de esporas primigenias",
+                "pt_BR": "Vínculo de Esporos Primevo",
+                "de_DE": "Ursporenbindung",
+                "en_GB": "Primal Spore Binding",
+                "es_ES": "Atadura de esporas primigenia",
+                "fr_FR": "Lien de spore primordial",
+                "it_IT": "Vincolo di Spore Primordiali",
+                "ru_RU": "Изначальные споровые узы",
+                "ko_KR": "원시 포자 결속끈",
+                "zh_TW": "原始孢子之縛",
+                "zh_CN": "原始孢子缚带"
+            },
+            "id": 832
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/830?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Devouring Banding",
+                "es_MX": "Banda devoradora",
+                "pt_BR": "Elo Devorador",
+                "de_DE": "Verschlingende Bänder",
+                "en_GB": "Devouring Banding",
+                "es_ES": "Banda de la Devoración",
+                "fr_FR": "Bande dévorante",
+                "it_IT": "Legatura Divorante",
+                "ru_RU": "Пожирающая окантовка",
+                "ko_KR": "포식의 결속끈",
+                "zh_TW": "吞噬飾環",
+                "zh_CN": "吞噬绑带"
+            },
+            "id": 830
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/854?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Lucky Keychain",
+                "es_MX": "Llavero de la suerte",
+                "pt_BR": "Chaveiro da Sorte",
+                "de_DE": "Glücksanhänger",
+                "en_GB": "Lucky Keychain",
+                "es_ES": "Llavero de la suerte",
+                "fr_FR": "Porte-clés porte-bonheur",
+                "it_IT": "Portachiavi Fortunato",
+                "ru_RU": "Счастливая связка ключей",
+                "ko_KR": "행운의 열쇠고리",
+                "zh_TW": "幸運鑰匙圈",
+                "zh_CN": "幸运钥匙串"
+            },
+            "id": 854
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/805?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Darkmoon Sigil: Blood",
+                "es_MX": "Sigilo Luna Negra: Sangre",
+                "pt_BR": "Signo de Negraluna: Sangue",
+                "de_DE": "Dunkelmondsiegel: Blut",
+                "en_GB": "Darkmoon Sigil: Blood",
+                "es_ES": "Sigilo de la Luna Negra: Sangre",
+                "fr_FR": "Cachet de Sombrelune : Sang",
+                "it_IT": "Sigillo di Lunacupa: Sangue",
+                "ru_RU": "Символ Новолуния \"Кровь\"",
+                "ko_KR": "다크문 인장: 혈기",
+                "zh_TW": "暗月符印：鮮血",
+                "zh_CN": "暗月徽记：鲜血"
+            },
+            "id": 805
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/806?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Darkmoon Sigil: Hunt",
+                "es_MX": "Sigilo Luna Negra: Caza",
+                "pt_BR": "Signo de Negraluna: Caçada",
+                "de_DE": "Dunkelmondsiegel: Jagd",
+                "en_GB": "Darkmoon Sigil: Hunt",
+                "es_ES": "Sigilo de la Luna Negra: Caza",
+                "fr_FR": "Cachet de Sombrelune : Chasse",
+                "it_IT": "Sigillo di Lunacupa: Caccia",
+                "ru_RU": "Символ Новолуния \"Охота\"",
+                "ko_KR": "다크문 인장: 사냥",
+                "zh_TW": "暗月符印：狩獵",
+                "zh_CN": "暗月徽记：狩猎"
+            },
+            "id": 806
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/807?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Darkmoon Sigil: Rot",
+                "es_MX": "Sigilo Luna Negra: Podredumbre",
+                "pt_BR": "Signo de Negraluna: Podridão",
+                "de_DE": "Dunkelmondsiegel: Fäulnis",
+                "en_GB": "Darkmoon Sigil: Rot",
+                "es_ES": "Sigilo de la Luna Negra: Podredumbre",
+                "fr_FR": "Cachet de Sombrelune : Putréfaction",
+                "it_IT": "Sigillo di Lunacupa: Marciume",
+                "ru_RU": "Символ Новолуния \"Гниль\"",
+                "ko_KR": "다크문 인장: 부식",
+                "zh_TW": "暗月符印：腐爛",
+                "zh_CN": "暗月徽记：腐烂"
+            },
+            "id": 807
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/808?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Darkmoon Sigil: Void",
+                "es_MX": "Sigilo Luna Negra: Vacío",
+                "pt_BR": "Signo de Negraluna: Caos",
+                "de_DE": "Dunkelmondsiegel: Leere",
+                "en_GB": "Darkmoon Sigil: Void",
+                "es_ES": "Sigilo de la Luna Negra: Vacío",
+                "fr_FR": "Cachet de Sombrelune : Vide",
+                "it_IT": "Sigillo di Lunacupa: Vuoto",
+                "ru_RU": "Символ Новолуния \"Бездна\"",
+                "ko_KR": "다크문 인장: 공허",
+                "zh_TW": "暗月符印：虛無",
+                "zh_CN": "暗月徽记：虚空"
+            },
+            "id": 808
+        }
+    ]
+}

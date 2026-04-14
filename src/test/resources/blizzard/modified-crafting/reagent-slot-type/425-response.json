@@ -1,0 +1,44 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/425?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 425,
+    "description": {
+        "en_US": "Silvermoon Weapon Wrap",
+        "es_MX": "Cubierta de arma de Lunargenta",
+        "pt_BR": "Invólucro de Arma de Luaprata",
+        "de_DE": "Silbermondwaffenwickel",
+        "en_GB": "Silvermoon Weapon Wrap",
+        "es_ES": "Cubrearmas de Lunargenta",
+        "fr_FR": "Barde d’arme de Lune-d’Argent",
+        "it_IT": "Fascia per Arma di Lunargenta",
+        "ru_RU": "Луносветская обмотка для оружия",
+        "ko_KR": "실버문 무기 보호대",
+        "zh_TW": "銀月武器裹布",
+        "zh_CN": "银月城武器裹皮"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/797?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Silvermoon Weapon Wrap",
+                "es_MX": "Cubierta de arma de Lunargenta",
+                "pt_BR": "Invólucro de Arma de Luaprata",
+                "de_DE": "Silbermondwaffenwickel",
+                "en_GB": "Silvermoon Weapon Wrap",
+                "es_ES": "Cubrearmas de Lunargenta",
+                "fr_FR": "Barde d’arme de Lune-d’Argent",
+                "it_IT": "Fascia per Arma di Lunargenta",
+                "ru_RU": "Луносветская обмотка для оружия",
+                "ko_KR": "실버문 무기 보호대",
+                "zh_TW": "銀月武器裹布",
+                "zh_CN": "银月城武器裹皮"
+            },
+            "id": 797
+        }
+    ]
+}

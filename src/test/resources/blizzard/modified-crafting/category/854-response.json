@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/854?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 854,
+    "name": {
+        "en_US": "Lucky Keychain",
+        "es_MX": "Llavero de la suerte",
+        "pt_BR": "Chaveiro da Sorte",
+        "de_DE": "Glücksanhänger",
+        "en_GB": "Lucky Keychain",
+        "es_ES": "Llavero de la suerte",
+        "fr_FR": "Porte-clés porte-bonheur",
+        "it_IT": "Portachiavi Fortunato",
+        "ru_RU": "Счастливая связка ключей",
+        "ko_KR": "행운의 열쇠고리",
+        "zh_TW": "幸運鑰匙圈",
+        "zh_CN": "幸运钥匙串"
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/769?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 769,
+    "name": {
+        "en_US": "Arcanoweave Lining",
+        "es_MX": "Revestimiento de tejido arcano",
+        "pt_BR": "Forro de Arcanotrama",
+        "de_DE": "Arkanostofffutter",
+        "en_GB": "Arcanoweave Lining",
+        "es_ES": "Forro de tejido Arcano",
+        "fr_FR": "Doublure en tisse-arcane",
+        "it_IT": "Imbottitura di Tramarcana",
+        "ru_RU": "Подкладка из тайной ткани",
+        "ko_KR": "비전매듭 안감",
+        "zh_TW": "奧紋內襯",
+        "zh_CN": "奥纹内衬"
+    }
+}

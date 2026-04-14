@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/16?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 16,
+    "display_name": {
+        "en_US": "Inscription",
+        "es_MX": "Inscripción",
+        "pt_BR": "Escrivania",
+        "de_DE": "Inschriftenkunde",
+        "en_GB": "Inscription",
+        "es_ES": "Inscripción",
+        "fr_FR": "Calligraphie",
+        "it_IT": "Runografia",
+        "ru_RU": "Начертание",
+        "ko_KR": "주문각인",
+        "zh_TW": "銘文",
+        "zh_CN": "铭文"
+    },
+    "hide_subclass_in_tooltips": true
+}

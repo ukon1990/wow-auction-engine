@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/829?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 829,
+    "name": {
+        "en_US": "Artisan's Consortium Gold Star",
+        "es_MX": "Estrella de oro de la Sociedad de Artesanos",
+        "pt_BR": "Estrela de Ouro do Consórcio do Artífice",
+        "de_DE": "Goldstern des Handwerkerkonsortiums",
+        "en_GB": "Artisan's Consortium Gold Star",
+        "es_ES": "Estrella dorada del Consorcio de Artesanía",
+        "fr_FR": "Étoile dorée du Consortium d’artisanat",
+        "it_IT": "Stella Dorata del Consorzio degli Artigiani",
+        "ru_RU": "Золотая звезда консорциума ремесленников",
+        "ko_KR": "장인 무역연합 금빛 별",
+        "zh_TW": "工匠聯盟黃金星星",
+        "zh_CN": "工匠商盟金星奖章"
+    }
+}

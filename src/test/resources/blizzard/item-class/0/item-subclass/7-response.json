@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/7?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 0,
+    "subclass_id": 7,
+    "display_name": {
+        "en_US": "Bandages",
+        "es_MX": "Vendas",
+        "pt_BR": "Bandagens",
+        "de_DE": "Verbände",
+        "en_GB": "Bandages",
+        "es_ES": "Vendas",
+        "fr_FR": "Bandages",
+        "it_IT": "Bende",
+        "ru_RU": "Бинты",
+        "ko_KR": "붕대",
+        "zh_TW": "繃帶",
+        "zh_CN": "绷带"
+    },
+    "hide_subclass_in_tooltips": true
+}

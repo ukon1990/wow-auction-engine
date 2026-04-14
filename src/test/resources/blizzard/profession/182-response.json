@@ -1,0 +1,101 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/182?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 182,
+    "name": {
+        "en_US": "Herbalism",
+        "es_MX": "Herboristería",
+        "pt_BR": "Herborismo",
+        "de_DE": "Kräuterkunde",
+        "en_GB": "Herbalism",
+        "es_ES": "Herboristería",
+        "fr_FR": "Herboristerie",
+        "it_IT": "Erbalismo",
+        "ru_RU": "Травничество",
+        "ko_KR": "약초채집",
+        "zh_TW": "草藥學",
+        "zh_CN": "草药学"
+    },
+    "description": {
+        "en_US": "Higher herbalism skill allows you to harvest more difficult herbs around the world.  If you cannot harvest a specific herb, then increase your skill by harvesting easier to gather herbs in lower level areas.",
+        "es_MX": "Con un nivel alto de habilidad en herboristería podrás recolectar hierbas difíciles de encontrar por el mundo. Si no puedes conseguir una hierba en particular, aumenta tu habilidad recolectando hierbas más fáciles de conseguir en áreas de nivel inferior.",
+        "pt_BR": "Um alto nível na perícia herborismo permite coletar plantas mais raras pelo mundo. Se você não puder coletar um tipo específico de planta, deverá aumentar o seu nível de perícia coletando plantas menos raras em áreas de nível mais baixo.",
+        "de_DE": "Eine hohe Kräuterkundefertigkeit ermöglicht es Euch, schwierigere Kräuter zu ernten. Wenn Ihr ein bestimmtes Kraut nicht ernten könnt, steigert Eure Kräuterkundefertigkeit, indem Ihr in niedrigstufigeren Gebieten leichtere Kräuter erntet.",
+        "en_GB": "Higher herbalism skill allows you to harvest more difficult herbs around the world.  If you cannot harvest a specific herb, then increase your skill by harvesting easier to gather herbs in lower level areas.",
+        "es_ES": "Con un nivel alto de habilidad en herboristería podrás recolectar hierbas difíciles de encontrar por el mundo. Si no puedes conseguir una hierba en particular, aumenta tu habilidad recolectando hierbas más fáciles de conseguir en áreas de nivel inferior.",
+        "fr_FR": "Un plus haut score dans la compétence herboristerie vous permet de récolter des herbes plus difficiles. Si vous ne pouvez pas récolter une herbe donnée, augmentez votre score en récoltant des herbes plus accessibles dans des zones de niveau inférieur.",
+        "it_IT": "Una maggiore competenza in Erbalismo permette di raccogliere piante di livello superiore. Se non puoi raccogliere una specifica pianta, aumenta la tua competenza raccogliendo piante in aree di livello più basso.",
+        "ru_RU": "Чем лучше развит этот навык, тем больше различных видов растений вы можете собирать. Если вам не удается собрать какое-либо растение, потренируйтесь на простых травах, растущих в областях более низкого уровня.",
+        "ko_KR": "약초채집 숙련도가 올라갈수록 좀더 희귀한 약초를 채집할 수 있습니다. 특정한 약초을 채집할 수 없다면 그 전 단계의 쉬운 약초를 채집하여 숙련도를 올리십시오.",
+        "zh_TW": "高級的草藥學技能使你可以採集高級的草藥。如果你不能採集某種草藥，請先在較低等級的地區採集低等級草藥，以此提高你的草藥學技能。",
+        "zh_CN": "高级的草药学技能使你可以采集高级的草药。如果你不能采集某种草药，请先在较低等级的地区采集低等级草药，以此提高你的草药学技能。"
+    },
+    "type": {
+        "type": "PRIMARY",
+        "name": {
+            "en_US": "Primary",
+            "es_MX": "Principal",
+            "pt_BR": "Principal",
+            "de_DE": "Primär",
+            "en_GB": "Primary",
+            "es_ES": "Principal",
+            "fr_FR": "Principaux",
+            "it_IT": "Primario",
+            "ru_RU": "Основное",
+            "ko_KR": "주",
+            "zh_TW": "主要",
+            "zh_CN": "主要"
+        }
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/profession/182?namespace=static-12.0.1_65617-us"
+        },
+        "id": 182
+    },
+    "skill_tiers": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2550?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Legion Herbalism",
+                "es_MX": "Herboristería de Legion",
+                "pt_BR": "Herborismo de Legion",
+                "de_DE": "Kräuterkunde der Verheerten Inseln",
+                "en_GB": "Legion Herbalism",
+                "es_ES": "Herboristería de Legion",
+                "fr_FR": "Herboristerie de Legion",
+                "it_IT": "Erbalismo di Legion",
+                "ru_RU": "Травничество Legion",
+                "ko_KR": "군단 약초채집",
+                "zh_TW": "軍團草藥學",
+                "zh_CN": "军团草药学"
+            },
+            "id": 2550
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2912?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Midnight Herbalism",
+                "es_MX": "Herboristería de Midnight",
+                "pt_BR": "Herborismo de Midnight",
+                "de_DE": "Kräuterkunde von Midnight",
+                "en_GB": "Midnight Herbalism",
+                "es_ES": "Herboristería de Midnight",
+                "fr_FR": "Herboristerie de Midnight",
+                "it_IT": "Erbalismo di Midnight",
+                "ru_RU": "Травничество Midnight",
+                "ko_KR": "한밤 약초채집",
+                "zh_TW": "至暗之夜草藥學",
+                "zh_CN": "至暗之夜草药学"
+            },
+            "id": 2912
+        }
+    ]
+}

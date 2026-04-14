@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/810?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 810,
+    "name": {
+        "en_US": "Thalassian Missive of the Peerless",
+        "es_MX": "Misiva thalassiana del incomparable",
+        "pt_BR": "Missiva Talassiana do Inigualável",
+        "de_DE": "Thalassisches Schreiben der Unvergleichlichkeit",
+        "en_GB": "Thalassian Missive of the Peerless",
+        "es_ES": "Misiva thalassiana del incomparable",
+        "fr_FR": "Missive thalassienne des Incomparables",
+        "it_IT": "Missiva dell'Impareggiabile Thalassiana",
+        "ru_RU": "Талассийское послание бесподобия",
+        "ko_KR": "무쌍의 탈라시안 서신",
+        "zh_TW": "薩拉斯無雙書狀",
+        "zh_CN": "无双之萨拉斯公函"
+    }
+}

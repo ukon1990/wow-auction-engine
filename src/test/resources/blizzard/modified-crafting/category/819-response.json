@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/819?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 819,
+    "name": {
+        "en_US": "Thalassian Missive of Multicraft",
+        "es_MX": "Misiva thalassiana de fabricación múltiple",
+        "pt_BR": "Missiva Talassiana da Multicriação",
+        "de_DE": "Thalassisches Schreiben der Mehrfachherstellung",
+        "en_GB": "Thalassian Missive of Multicraft",
+        "es_ES": "Misiva thalassiana de multifabricación",
+        "fr_FR": "Missive thalassienne de fabrication multiple",
+        "it_IT": "Missiva della Creazione Multipla Thalassiana",
+        "ru_RU": "Талассийское послание перепроизводства",
+        "ko_KR": "복수 제작의 탈라시안 서신",
+        "zh_TW": "薩拉斯複數製造書狀",
+        "zh_CN": "产能之萨拉斯公函"
+    }
+}

@@ -1,0 +1,42 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51988?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51988,
+    "name": {
+        "en_US": "Midnight Anglin'",
+        "es_MX": "Pesca de Midnight",
+        "pt_BR": "Pesca em Midnight",
+        "de_DE": "Angeln von Midnight",
+        "en_GB": "Midnight Anglin'",
+        "es_ES": "Pesca en Midnight",
+        "fr_FR": "Pêche de Midnight",
+        "it_IT": "Pesca di Midnight",
+        "ru_RU": "Рыбалка Midnight",
+        "ko_KR": "한밤 강태공",
+        "zh_TW": "至暗之夜釣魚",
+        "zh_CN": "至暗之夜渔夫"
+    },
+    "description": {
+        "en_US": "Becoming an Angler is easy!\r\n\r\nCast your line and reel in the many secrets Midnight has to offer.\r\n\r\nCaught Fish will appear here in your trusty Fishing Journal. The records here will detail these fanciful fish and give indication on where you might find them again!\r\n\r\n",
+        "es_MX": "¡Convertirse en pescador es fácil!\r\n\r\nLanza tu sedal y pesca los numerosos secretos que ofrece Midnight.\r\n\r\nLos peces capturados aparecerán aquí, en tu confiable diario de pesca. ¡Los registros detallarán estos peces extravagantes y te indicarán dónde puedes encontrarlos de nuevo!\r\n\r\n",
+        "pt_BR": "Se tornar pescador é fácil!\r\n\r\nAtire a linha e pesque os muitos segredos que Midnight tem a oferecer.\r\n\r\nOs peixes obtidos aparecerão no seu indispensável Diário de Pesca. Os registros nele detalham esses peixes incríveis e dão indicações de onde encontrá-los de novo!\r\n\r\n",
+        "de_DE": "Angler werden ist nicht schwer!\r\n\r\nWerft Eure Leine aus und holt die zahlreichen Geheimnisse hervor, die in Midnight schlummern.\r\n\r\nIn Eurem treuen Angeltagebuch werden Informationen über gefangene Fische festgehalten. Die Aufzeichnungen geben Aufschluss über die feinen Fische und wo Ihr sie womöglich wiederfinden könnt!\r\n\r\n",
+        "en_GB": "Becoming an Angler is easy!\r\n\r\nCast your line and reel in the many secrets Midnight has to offer.\r\n\r\nCaught Fish will appear here in your trusty Fishing Journal. The records here will detail these fanciful fish and give indication on where you might find them again!\r\n\r\n",
+        "es_ES": "¡Convertirse en pescador es muy sencillo!\r\n\r\nLanza la caña y descubre los muchos secretos que esconde Midnight.\r\n\r\nLos peces que pesques aparecerán en tu fiel diario de pesca. Las entradas te ofrecerán información sobre esos fantásticos peces y te indicarán dónde puedes volver a encontrarlos.\r\n\r\n",
+        "fr_FR": "La pêche, c’est facile !\r\n\r\nLancez votre ligne et pêchez les nombreux secrets qu’offre Midnight.\r\n\r\nLes poissons pêchés apparaîtront ici dans votre fidèle journal de pêche. Les registres détaillent ces poissons fantastiques et donnent des indications sur l’endroit où vous pouvez les retrouver !\r\n\r\n",
+        "it_IT": "Diventare un pescatore è facile!\r\n\r\nPrendi la canna da pesca e lancia la lenza per pescare i tanti segreti che Midnight ha da offrire.\r\n\r\nI pesci catturati compaiono qui, nelle tue fidate Cronache di Pesca. Questi registri riportano tutti i dettagli dei pesci più rari e forniscono indicazioni su dove ritrovarli!\r\n\r\n",
+        "ru_RU": "Ловить рыбу очень просто!\r\n\r\nЗабросьте удочку и выудите одну из многих загадок Midnight.\r\n\r\nПойманная рыба будет отображаться в вашем рыболовном журнале. В нем вы найдете сведения о разных удивительных видах рыбы и подсказки на тему того, где их ловить!\r\n\r\n",
+        "ko_KR": "낚시꾼이 되는 것은 쉽습니다!\r\n\r\n한밤이 선사하는 무수한 비밀에 낚싯줄을 드리우고 감아 올리세요.\r\n\r\n잡은 물고기는 믿음직한 낚시 일지에 기록됩니다. 일지 기록을 통해 멋진 물고기에 관한 자세한 정보와 어장 위치를 다시 확인하는 것도 가능합니다!\r\n\r\n",
+        "zh_TW": "人人都能成為釣手！\r\n\r\n拋出魚線，在至暗之夜釣起各種不為人知的東西。\r\n\r\n捕到的魚都會記錄在可靠的釣魚日誌當中。這裡的記錄會詳細說明這些五花八門的魚類，並告訴你哪裡才能再次釣到！\r\n\r\n",
+        "zh_CN": "成为垂钓大师很容易！\r\n\r\n扔出你的鱼线，收回至暗之夜地区的众多秘密。\r\n\r\n你可以在可靠的钓鱼日志中查看捕获的鱼。这里的记录将详细介绍这些奇妙的鱼类，并向你指明可能在哪里再次找到它们！\r\n\r\n"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51988?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51988
+    }
+}

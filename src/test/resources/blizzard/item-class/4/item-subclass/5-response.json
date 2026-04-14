@@ -1,0 +1,38 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/5?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 4,
+    "subclass_id": 5,
+    "display_name": {
+        "en_US": "Cosmetic",
+        "es_MX": "Cosmético",
+        "pt_BR": "Cosmético",
+        "de_DE": "Kosmetisch",
+        "en_GB": "Cosmetic",
+        "es_ES": "Cosmético",
+        "fr_FR": "Ornemental",
+        "it_IT": "Cosmetico",
+        "ru_RU": "Декоративный предмет",
+        "ko_KR": "장식",
+        "zh_TW": "造型",
+        "zh_CN": "装饰品"
+    },
+    "verbose_name": {
+        "en_US": "Cosmetic",
+        "es_MX": "Cosmético",
+        "pt_BR": "Cosmético",
+        "de_DE": "Kosmetisch",
+        "en_GB": "Cosmetic",
+        "es_ES": "Cosmético",
+        "fr_FR": "Ornemental",
+        "it_IT": "Cosmetico",
+        "ru_RU": "Декоративные",
+        "ko_KR": "장식",
+        "zh_TW": "造型",
+        "zh_CN": "装饰品"
+    },
+    "hide_subclass_in_tooltips": true
+}

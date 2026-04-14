@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/7?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 7,
+    "display_name": {
+        "en_US": "Metal & Stone",
+        "es_MX": "Metal y piedra",
+        "pt_BR": "Metal e Pedra",
+        "de_DE": "Metalle & Steine",
+        "en_GB": "Metal & Stone",
+        "es_ES": "Metal y piedra",
+        "fr_FR": "Métal et pierre",
+        "it_IT": "Metallo e pietra",
+        "ru_RU": "Металл и камень",
+        "ko_KR": "광물",
+        "zh_TW": "金屬與石頭",
+        "zh_CN": "金属和矿石"
+    },
+    "hide_subclass_in_tooltips": true
+}

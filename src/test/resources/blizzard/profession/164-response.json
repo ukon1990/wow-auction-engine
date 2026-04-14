@@ -1,0 +1,101 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/profession/164?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 164,
+    "name": {
+        "en_US": "Blacksmithing",
+        "es_MX": "Herrería",
+        "pt_BR": "Ferraria",
+        "de_DE": "Schmiedekunst",
+        "en_GB": "Blacksmithing",
+        "es_ES": "Herrería",
+        "fr_FR": "Forge",
+        "it_IT": "Forgiatura",
+        "ru_RU": "Кузнечное дело",
+        "ko_KR": "대장기술",
+        "zh_TW": "鍛造",
+        "zh_CN": "锻造"
+    },
+    "description": {
+        "en_US": "Higher smithing skill allows you to learn higher level smithing plans.  Blacksmithing plans can be found on trainers around the world as well as from quests and monsters.",
+        "es_MX": "Con un nivel alto de habilidad en herrería, podrás aprender mejores diseños de herrería. Visita a los instructores dispersos por el mundo, completa misiones y derrota a los monstruos para conseguirlos.",
+        "pt_BR": "Um alto nível na perícia ferraria permite aprender instruções de nível mais alto. As instruções podem ser aprendidas ou compradas dos instrutores de ferraria espalhados pelo mundo, bem como saqueadas de monstros e obtidas como recompensa de missões.",
+        "de_DE": "Eine hohe Schmiedefertigkeit ermöglicht es Euch, höherstufigere Schmiedepläne zu benutzen. Pläne könnt Ihr bei Lehrern überall in der Welt erwerben. Tote Gegner hinterlassen manchmal Schmiedepläne oder Ihr erhaltet sie als Questbelohnung.",
+        "en_GB": "Higher smithing skill allows you to learn higher level smithing plans.  Blacksmithing plans can be found on trainers around the world as well as from quests and monsters.",
+        "es_ES": "Con un nivel alto de habilidad en herrería, podrás aprender mejores diseños de herrería. Visita a los instructores dispersos por el mundo, completa misiones y derrota a los monstruos para conseguirlos.",
+        "fr_FR": "Un plus haut score dans la compétence forge vous permet d’apprendre des plans plus difficiles. Les plans pour forgerons se trouvent dans le monde entier auprès de maîtres aussi bien qu’en récompense de quêtes ou qu’en butin de monstres.",
+        "it_IT": "Una maggiore competenza in Forgiatura permette di apprendere progetti di livello superiore. I progetti possono essere acquistati da venditori o istruttori in giro per il mondo o essere ottenuti attraverso missioni o uccidendo mostri.",
+        "ru_RU": "Чем лучше развит этот навык, тем более сложные кузнечные чертежи вы можете использовать. Чертежи можно найти у учителей, а также получить в качестве добычи или награды.",
+        "ko_KR": "대장기술 숙련도가 올라갈수록 고레벨의 대장기술 도면을 배울 수 있습니다. 도면은 전문 대장장이나 퀘스트를 통해 배우거나 몬스터에게서 얻을 수 있습니다.",
+        "zh_TW": "高級的鍛造技能使你可以學習高級的鍛造設計圖。你可以在訓練師那裡學習新的設計圖，也可以通過完成任務或殺死怪物獲得新的設計圖。",
+        "zh_CN": "高级的锻造技能使你可以学习高级的锻造设计图。你可以在训练师那里学习新的设计图，也可以通过完成任务或杀死怪物获得新的设计图。"
+    },
+    "type": {
+        "type": "PRIMARY",
+        "name": {
+            "en_US": "Primary",
+            "es_MX": "Principal",
+            "pt_BR": "Principal",
+            "de_DE": "Primär",
+            "en_GB": "Primary",
+            "es_ES": "Principal",
+            "fr_FR": "Principaux",
+            "it_IT": "Primario",
+            "ru_RU": "Основное",
+            "ko_KR": "주",
+            "zh_TW": "主要",
+            "zh_CN": "主要"
+        }
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/profession/164?namespace=static-12.0.1_65617-us"
+        },
+        "id": 164
+    },
+    "skill_tiers": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2751?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Shadowlands Blacksmithing",
+                "es_MX": "Herrería de Shadowlands",
+                "pt_BR": "Ferraria de Shadowlands",
+                "de_DE": "Schmiedekunst der Schattenlande",
+                "en_GB": "Shadowlands Blacksmithing",
+                "es_ES": "Herrería de Shadowlands",
+                "fr_FR": "Forge d’Ombreterre",
+                "it_IT": "Forgiatura di Shadowlands",
+                "ru_RU": "Кузнечное дело Темных Земель",
+                "ko_KR": "어둠땅 대장기술",
+                "zh_TW": "暗影之境鍛造",
+                "zh_CN": "暗影界锻造"
+            },
+            "id": 2751
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2907?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "Midnight Blacksmithing",
+                "es_MX": "Herrería de Midnight",
+                "pt_BR": "Ferraria de Midnight",
+                "de_DE": "Schmiedekunst von Midnight",
+                "en_GB": "Midnight Blacksmithing",
+                "es_ES": "Herrería de Midnight",
+                "fr_FR": "Forge de Midnight",
+                "it_IT": "Forgiatura di Midnight",
+                "ru_RU": "Кузнечное дело Midnight",
+                "ko_KR": "한밤 대장기술",
+                "zh_TW": "至暗之夜鍛造",
+                "zh_CN": "至暗之夜锻造"
+            },
+            "id": 2907
+        }
+    ]
+}

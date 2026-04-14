@@ -1,0 +1,70 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42643?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42643,
+    "name": {
+        "en_US": "Shadowlands Gathering",
+        "es_MX": "Recolección de Shadowlands",
+        "pt_BR": "Coleta nas Terras Sombrias",
+        "de_DE": "Sammeln der Schattenlande",
+        "en_GB": "Shadowlands Gathering",
+        "es_ES": "Recolección de las Tierras Sombrías",
+        "fr_FR": "Récolte d’Ombreterre",
+        "it_IT": "Raccolta di Shadowlands",
+        "ru_RU": "Сбор ресурсов в Темных Землях",
+        "ko_KR": "어둠땅 채집",
+        "zh_TW": "暗影之境採集",
+        "zh_CN": "暗影界采集"
+    },
+    "description": {
+        "en_US": "Permanently enchants gloves to increase the speed of gathering in the Shadowlands.",
+        "es_MX": "Encanta unos guantes de forma permanente para aumentar la velocidad de recolección en las Tierras de las Sombras.",
+        "pt_BR": "Encanta luvas permanentemente para aumentar a velocidade de coleta nas Terras Sombrias.",
+        "de_DE": "Handschuhe dauerhaft verzaubern, sodass die Geschwindigkeit des Sammelns in den Schattenlanden erhöht wird.",
+        "en_GB": "Permanently enchants gloves to increase the speed of gathering in the Shadowlands.",
+        "es_ES": "Encanta de forma permanente unos guantes para que aumenten la velocidad de recolección en las Tierras Sombrías.",
+        "fr_FR": "Enchante des gants de manière permanente. Ces derniers augmentent votre vitesse de récolte en Ombreterre.",
+        "it_IT": "Incanta in modo permanente un equipaggiamento per mani, aumentando la velocità di raccolta dei materiali nelle Terretetre.",
+        "ru_RU": "Наложение на перчатки чар, повышающих скорость сбора ресурсов в Темных Землях.",
+        "ko_KR": "장갑에 영구적으로 마법을 부여해 어둠땅에서 채집 속도를 증가시킵니다.",
+        "zh_TW": "為一雙手套永久附魔，提高在暗影之境的採集速度。",
+        "zh_CN": "永久性地为一双手套附魔，提高在暗影界的采集速度。"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42643?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42643
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/172230?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Soul Dust",
+                    "es_MX": "Polvo de alma",
+                    "pt_BR": "Pó d'Alma",
+                    "de_DE": "Seelenstaub",
+                    "en_GB": "Soul Dust",
+                    "es_ES": "Polvo de alma",
+                    "fr_FR": "Poussière d’âme",
+                    "it_IT": "Polvere d'Anima",
+                    "ru_RU": "Пыль духа",
+                    "ko_KR": "영혼 가루",
+                    "zh_TW": "靈魂之塵",
+                    "zh_CN": "灵魂之尘"
+                },
+                "id": 172230
+            },
+            "quantity": 3
+        }
+    ],
+    "crafted_quantity": {
+        "value": 1
+    }
+}

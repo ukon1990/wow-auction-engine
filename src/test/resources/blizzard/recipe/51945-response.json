@@ -1,0 +1,42 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51945?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 51945,
+    "name": {
+        "en_US": "Sin'dorei Swarmer",
+        "es_MX": "Enjambrista sin'dorei",
+        "pt_BR": "Enxameador Sin'dorei",
+        "de_DE": "Sin'doreischwärmer",
+        "en_GB": "Sin'dorei Swarmer",
+        "es_ES": "Enjambrista sin'dorei",
+        "fr_FR": "Carnassier sin’dorei",
+        "it_IT": "Brulicatore dei Sin'dorei",
+        "ru_RU": "Син'дорайский роевик",
+        "ko_KR": "신도레이 무리붙이",
+        "zh_TW": "辛多雷魚群",
+        "zh_CN": "辛多雷群聚鱼"
+    },
+    "description": {
+        "en_US": "A mixture of crimson and cerulean scales adorns this nimble fish. A common fish in Eversong Woods, the Sin'dorei Swarmer travels and interacts with the waters in accordance to the school it's a part of.\r\n\r\nSpecial: \r\n\r\n Chum\r\n\r\nThrow the fish back into the water to gain 25 Midnight Fishing for 30 sec.\r\n\r\nThrowing multiple fish can extend this buff up to 5 min.\r\n\r\nAreas you can find this fish:\r\n- Eversong Woods\r\n- Zul'Aman\r\n\r\nFishing Pools:\r\n- Bubbling Bloom\r\n- Sunwell Swarm\r\n- Surface Ripple",
+        "es_MX": "Una mezcla de escamas carmesí y cerúleas embellecen a este ágil pez. El enjambrista sin'dorei es común en el Bosque Canción Eterna, y viaja e interactúa con las aguas según el cardumen del que sea parte.\r\n\r\nEspecial: \r\n\r\n Cebo\r\n\r\nDevuelve el pez al agua para obtener 25 p. de pesca de Midnight durante 30 s.\r\n\r\nDevolver varios peces puede extender esta potenciación hasta un máximo de 5 min.\r\n\r\nÁreas donde puedes encontrar este pez:\r\n- Bosque Canción Eterna\r\n- Zul'Aman\r\n\r\nEstanques de pesca:\r\n- Florecimiento burbujeante\r\n- Enjambre de Fuente del Sol\r\n- Ondas superficiales",
+        "pt_BR": "Uma mistura de escamas carmesins e cerúleas adorna este peixe ágil. Comum na Floresta do Canto Eterno, o Enxameador Sin'dorei se movimenta e interage com as águas de acordo com o cardume do qual faz parte.\r\n\r\nEspecial: \r\n\r\n Isquinha\r\n\r\nJoga o peixe de volta na água para ganhar 25 de Pesca de Midnight por 30 s.\r\n\r\nJogar vários peixes pode estender este bônus para até 5 min.\r\n\r\nÁreas de ocorrência desse peixe:\r\n- Floresta do Canto Eterno\r\n- Zul'Aman\r\n\r\nPesqueiros:\r\n- Floração Borbulhante\r\n- Enxame da Nascente do Sol\r\n- Ondinha Superficial",
+        "de_DE": "Eine Mischung aus karmesinroten und himmelblauen Schuppen ziert diesen flinken Fisch. Der Sin'doreischwärmer ist im Immersangwald weit verbreitet und reist und interagiert im Wasser gemäß den Regeln des Schwarms, dem er angehört.\r\n\r\nBesondere Verwendung: \r\n\r\n Köder\r\n\r\nWirft den Fisch zurück ins Wasser, um 30 Sek. lang 25 Angeln von Midnight zu erhalten.\r\n\r\nDurch das Zurückwerfen mehrerer Fische kann diese Stärkung auf bis zu 5 Min. verlängert werden.\r\n\r\nVerbreitungsgebiete:\r\n- Immersangwald\r\n- Zul'Aman\r\n\r\nFischschwärme:\r\n- Blubbernde Blüte\r\n- Sonnenbrunnenschwarm\r\n- Oberflächenkräuseln",
+        "en_GB": "A mixture of crimson and cerulean scales adorns this nimble fish. A common fish in Eversong Woods, the Sin'dorei Swarmer travels and interacts with the waters in accordance to the school it's a part of.\r\n\r\nSpecial: \r\n\r\n Chum\r\n\r\nThrow the fish back into the water to gain 25 Midnight Fishing for 30 sec.\r\n\r\nThrowing multiple fish can extend this buff up to 5 min.\r\n\r\nAreas you can find this fish:\r\n- Eversong Woods\r\n- Zul'Aman\r\n\r\nFishing Pools:\r\n- Bubbling Bloom\r\n- Sunwell Swarm\r\n- Surface Ripple",
+        "es_ES": "Una mezcla de escamas carmesíes y cerúleas adorna este ágil pez. El enjambrista sin'dorei, un pez común en el Bosque Canción Eterna, viaja e interactúa con las aguas según el banco al que pertenece.\r\n\r\nEspecial: \r\n\r\n Carnada\r\n\r\nDevuelve el pez al agua para obtener 25 p. en pesca de Midnight durante 30 s.\r\n\r\nSi se lanzan varios peces, se puede ampliar el beneficio hasta los 5 min.\r\n\r\nZonas en las que puedes encontrarlo:\r\n- Bosque Canción Eterna\r\n- Zul'Aman\r\n\r\nZonas de pesca:\r\n- Flor burbujeante\r\n- Enjambre de La Fuente del Sol\r\n- Onda de la superficie",
+        "fr_FR": "Cette parure d’écailles cramoisies et céruléennes est caractéristique de ce poisson très agile. Très commun dans le bois des Chants éternels, le carnassier sin’dorei se déplace et interagit avec les eaux en fonction du banc auquel il appartient.\r\n\r\nUtilisation spéciale : \r\n\r\n Appât\r\n\r\nVous rejetez le poisson à l’eau pour gagner un bonus de 25 à la compétence en pêche de Midnight pendant 30 s.\r\n\r\nLe rejet de plusieurs poissons permet d’augmenter la durée de cette amélioration jusqu’à un maximum de 5 min.\r\n\r\nPoisson présent dans les régions suivantes :\r\n– bois des Chants éternels ;\r\n– Zul’Aman.\r\n\r\nBancs de poissons :\r\n– floraison frémissante ;\r\n– banc du Puits de soleil ;\r\n– ondulation de surface.",
+        "it_IT": "Un misto di scaglie cremisi e cerulee adorna questo agile pesce. Piuttosto comune nei Boschi di Cantoeterno, il Brulicatore dei Sin'dorei si muove e interagisce con le acque in base al banco di cui fa parte.\r\n\r\nSpeciale:\r\n\r\n Esca\r\n\r\nRilancia il pesce in acqua per ottenere 25 competenza in Pesca di Midnight per 30 s.\r\n\r\nLanciare più pesci estende questo beneficio fino a massimo 5 min.\r\n\r\nAree in cui si può trovare questo pesce:\r\n- Boschi di Cantoeterno\r\n- Zul'aman\r\n\r\nPozze di Pesca:\r\n- Fioritura Ribollente\r\n- Sciame del Pozzo Solare\r\n- Increspatura Superficiale",
+        "ru_RU": "Син'дорайский роевик – проворная рыба с багровой и голубой чешуей, часто встречающаяся в лесах Вечной Песни. Разные косяки этих рыб могут вести себя очень по-разному.\r\n\r\nОсобое свойство: \r\n\r\n Приманка\r\n\r\nБросить рыбу в воду, чтобы повысить навык рыбной ловли Midnight на 25 на 30 сек.\r\n\r\nБросив несколько рыб, можно продлить действие эффекта до 5 мин.\r\n\r\nЗоны обитания:\r\n- Леса Вечной Песни\r\n- Зул'Аман\r\n\r\nКосяки рыб:\r\n- Бурлящий расцвет\r\n- Стая Солнечного Колодца\r\n- Рябь на поверхности",
+        "ko_KR": "진홍빛과 하늘빛이 어우러진 비늘이 이 날렵한 물고기를 장식하고 있습니다. 신도레이 무리붙이는 영원노래 숲에서 흔히 잡히는 물고기이며, 무리의 흐름에 따라 함께 이동하고 물속에서 교감하며 살아갑니다.\r\n\r\n특수 \r\n\r\n 미끼\r\n\r\n물고기를 물에 돌려보내 30초 동안 한밤 낚시 숙련도가 25만큼 증가합니다.\r\n\r\n다수의 물고기를 돌려보내면 강화 효과의 지속시간이 최대 5분까지 증가합니다.\r\n\r\n이 생선을 잡을 수 있는 지역\r\n- 영원노래 숲\r\n- 줄아만\r\n\r\n낚시 웅덩이\r\n- 부글거리는 꽃송이\r\n- 태양샘 떼\r\n- 표면의 잔물결",
+        "zh_TW": "這種魚類生性機警，身體由赤紅和天藍鱗片交織而成。辛多雷群居魚是永歌森林的常見魚類，會跟著所屬的魚群穿梭在不同水域之間。\r\n\r\n特殊：\r\n\r\n餌食\r\n\r\n把魚丟回水裡以獲得25點至暗之夜釣魚技能，持續30秒。\r\n\r\n多丟幾條魚可使此增益效果最多延長5分鐘。\r\n\r\n可以找到這種魚的地區：\r\n- 永歌森林\r\n- 祖阿曼\r\n\r\n釣魚池：\r\n- 冒泡花魚\r\n- 太陽之井魚群\r\n- 水面漣漪",
+        "zh_CN": "深红与天蓝色的鳞片装点着这种敏捷的鱼类。作为永歌森林的常见鱼种，辛多雷群聚鱼会根据所属群体在水中协调游动。\r\n\r\n特殊效果：\r\n\r\n 鱼饵\r\n\r\n将鱼扔回水中可以使至暗之夜钓鱼技能提高25点，持续30秒。\r\n\r\n投掷多条鱼最多可以将这个增益效果持续时间延长至5分钟。\r\n\r\n可以找到这种鱼的地方：\r\n- 永歌森林\r\n- 祖阿曼\r\n\r\n垂钓池：\r\n- 冒泡之花\r\n- 太阳之井鱼群\r\n- 浮面涟漪"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51945?namespace=static-12.0.1_65617-us"
+        },
+        "id": 51945
+    }
+}

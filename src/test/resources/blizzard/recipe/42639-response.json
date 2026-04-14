@@ -1,0 +1,93 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42639?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 42639,
+    "name": {
+        "en_US": "Fortified Speed",
+        "es_MX": "Velocidad fortificada",
+        "pt_BR": "Velocidade Fortificada",
+        "de_DE": "Verstärkte Geschwindigkeit",
+        "en_GB": "Fortified Speed",
+        "es_ES": "Velocidad reforzada",
+        "fr_FR": "Vitesse augmentée",
+        "it_IT": "Velocità Rinforzata",
+        "ru_RU": "Повышенная скорость",
+        "ko_KR": "강화된 속도",
+        "zh_TW": "強化速度",
+        "zh_CN": "强化速度"
+    },
+    "description": {
+        "en_US": "Permanently enchants a cloak to increase your Stamina by 3 and your Speed by 5. Cannot be applied to items lower than level 10.",
+        "es_MX": "Encanta una capa de forma permanente para aumentar 3 p. tu aguante y 5 p. tu velocidad. No se puede aplicar a objetos de nivel inferior a 10.",
+        "pt_BR": "Encanta permanentemente um manto para aumentar em 3 o Vigor e em 5 a Velocidade. Não pode ser aplicado a itens abaixo do nível 10.",
+        "de_DE": "Einen Umhang dauerhaft verzaubern, sodass die Ausdauer um 3 und das Tempo um 5 erhöht wird. Kann nicht auf Gegenstände unter Stufe 10 angewandt werden.",
+        "en_GB": "Permanently enchants a cloak to increase your Stamina by 3 and your Speed by 5. Cannot be applied to items lower than level 10.",
+        "es_ES": "Encanta de forma permanente una capa para que aumente 3 p. tu aguante y tu velocidad 5 p. No se puede aplicar a objetos de nivel inferior a 10.",
+        "fr_FR": "Enchante une cape de manière permanente. Augmente votre Endurance de 3 et votre Vitesse de 5. Ne peut être appliqué sur des objets d’un niveau inférieur à 10.",
+        "it_IT": "Incanta in modo permanente un equipaggiamento per schiena, aumentando la Tempra di 3 e la velocità di movimento di 5. Non applicabile a oggetti di livello inferiore a 10.",
+        "ru_RU": "Применяет к плащу постоянные чары, повышающие выносливость на 3, а скорость передвижения – на 5. Не действует на предметы ниже 10-го уровня.",
+        "ko_KR": "망토에 영구적으로 마법을 부여해 착용자의 체력을 3만큼, 이동 속도를 5만큼 증가시킵니다. 10 레벨 미만의 아이템에는 사용할 수 없습니다.",
+        "zh_TW": "永久性地為披風附魔，使你的耐力提高3點，速度提高5點。無法用在等級低於10的物品。",
+        "zh_CN": "永久性地为一件披风附魔，使你的耐力提高3点，加速提高5。不能对物品等级低于10的物品使用。"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42639?namespace=static-12.0.1_65617-us"
+        },
+        "id": 42639
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/172231?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Sacred Shard",
+                    "es_MX": "Fragmento sagrado",
+                    "pt_BR": "Estilhaço Sagrado",
+                    "de_DE": "Heiliger Splitter",
+                    "en_GB": "Sacred Shard",
+                    "es_ES": "Fragmento sagrado",
+                    "fr_FR": "Éclat sacré",
+                    "it_IT": "Scheggia Sacra",
+                    "ru_RU": "Священный осколок",
+                    "ko_KR": "신성한 조각",
+                    "zh_TW": "神聖裂片",
+                    "zh_CN": "圣洁碎片"
+                },
+                "id": 172231
+            },
+            "quantity": 2
+        },
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/172230?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Soul Dust",
+                    "es_MX": "Polvo de alma",
+                    "pt_BR": "Pó d'Alma",
+                    "de_DE": "Seelenstaub",
+                    "en_GB": "Soul Dust",
+                    "es_ES": "Polvo de alma",
+                    "fr_FR": "Poussière d’âme",
+                    "it_IT": "Polvere d'Anima",
+                    "ru_RU": "Пыль духа",
+                    "ko_KR": "영혼 가루",
+                    "zh_TW": "靈魂之塵",
+                    "zh_CN": "灵魂之尘"
+                },
+                "id": 172230
+            },
+            "quantity": 4
+        }
+    ],
+    "crafted_quantity": {
+        "value": 1
+    }
+}

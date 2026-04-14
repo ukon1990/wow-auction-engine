@@ -1,0 +1,24 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/12?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "class_id": 7,
+    "subclass_id": 12,
+    "display_name": {
+        "en_US": "Enchanting",
+        "es_MX": "Encantamiento",
+        "pt_BR": "Encantamento",
+        "de_DE": "Verzauberkunst",
+        "en_GB": "Enchanting",
+        "es_ES": "Encantamiento",
+        "fr_FR": "Enchantement",
+        "it_IT": "Incantamento",
+        "ru_RU": "Наложение чар",
+        "ko_KR": "마법부여",
+        "zh_TW": "附魔",
+        "zh_CN": "附魔材料"
+    },
+    "hide_subclass_in_tooltips": true
+}

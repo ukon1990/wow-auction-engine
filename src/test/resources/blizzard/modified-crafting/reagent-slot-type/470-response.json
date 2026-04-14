@@ -1,0 +1,34 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/470?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 470,
+    "description": {
+        "en_US": "Empower",
+        "es_MX": "Potenciar",
+        "pt_BR": "Potencializar",
+        "de_DE": "Ermächtigen",
+        "en_GB": "Empower",
+        "es_ES": "Potenciar",
+        "fr_FR": "Renforcement",
+        "it_IT": "Potenzia",
+        "ru_RU": "Усиление",
+        "ko_KR": "강화",
+        "zh_TW": "強化",
+        "zh_CN": "强化"
+    },
+    "compatible_categories": [
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/902?namespace=static-12.0.1_65617-us"
+            },
+            "name": {
+                "en_US": "12.0 Optional Reagent - Outdoor Upgrade Dungeon - All",
+                "en_GB": "12.0 Optional Reagent - Outdoor Upgrade Dungeon - All"
+            },
+            "id": 902
+        }
+    ]
+}

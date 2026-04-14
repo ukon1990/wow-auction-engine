@@ -1,0 +1,42 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/47907?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 47907,
+    "name": {
+        "en_US": "Cerulean Spinefish",
+        "es_MX": "Pez espinoso cerúleo",
+        "pt_BR": "Peixe-espinho Cerúleo",
+        "de_DE": "Himmelblauer Stachelfisch",
+        "en_GB": "Cerulean Spinefish",
+        "es_ES": "Pez espinoso cerúleo",
+        "fr_FR": "Poisson-hérisson céruléen",
+        "it_IT": "Pesce Scorpione Ceruleo",
+        "ru_RU": "Лазурная иглоспинка",
+        "ko_KR": "하늘빛 가시고기",
+        "zh_TW": "天藍棘魚",
+        "zh_CN": "天蓝刺皮鱼"
+    },
+    "description": {
+        "en_US": "Cerulean Spinefish are a sturdy fish adorned with many sharp spines.\r\n\r\nThese saltwater schools can be found primarily in the ocean and other bodies of water connected to it.\r\n\r\nThey are especially active in areas such as the river openings around The Waking Shores.",
+        "es_MX": "Los peces espinosos cerúleos son robustos y tienen muchas espinas filosas.\r\n\r\nSus cardúmenes de agua salada pueden encontrarse principalmente en el océano y otros cuerpos de agua que llegan a él.\r\n\r\nSe encuentran sobre todo en las cabeceras de los ríos de las Costas del Despertar.",
+        "pt_BR": "O Peixe-espinho Cerúleo é um peixe robusto adornado com diversas espinhos pontudos.\r\n\r\nOs cardumes de água salgada podem ser encontrados principalmente no oceano e em outros corpos d'água conectados a ele.\r\n\r\nSão especialmente ativos em áreas como os rios da Costa Desperta.",
+        "de_DE": "Himmelblaue Stachelfische sind robuste stachelbedeckte Fische.\r\n\r\nDiese Salzwasserschwärme findet man gewöhnlich im Meer und damit verbundenen Gewässern.\r\n\r\nBesonders viele treiben sich in den Flussmündungen an der Küste des Erwachens herum.",
+        "en_GB": "Cerulean Spinefish are a sturdy fish adorned with many sharp spines.\r\n\r\nThese saltwater schools can be found primarily in the ocean and other bodies of water connected to it.\r\n\r\nThey are especially active in areas such as the river openings around The Waking Shores.",
+        "es_ES": "El pez espinoso cerúleo es un pez robusto cubierta de espinas afiladas.\r\n\r\nSus bancos pueden encontrarse en océanos o masas de agua cercanas.\r\n\r\nEstán especialmente activos en zonas como las desembocaduras de los ríos de las Orillas del Despertar.",
+        "fr_FR": "Comme leur nom l’indique, les robustes poissons-hérissons céruléens sont couverts d’épines acérées.\r\n\r\nCes bancs de poissons d’eau salée vivent principalement dans l’océan et les cours d’eau qui s’y jettent.\r\n\r\nIls sont particulièrement nombreux dans certaines régions, comme les embouchures des rivages de l’Éveil.",
+        "it_IT": "Il Pesce Scorpione Ceruleo è dotato di molte scaglie taglienti.\r\n\r\nQuesti banchi di pesci d'acqua salata si trovano soprattutto nell'oceano e nei bacini d'acqua a esso collegato.\r\n\r\nSono particolarmente attivi alle foci dei fiumi nelle Sponde del Risveglio.",
+        "ru_RU": "Лазурная иглоспинка — большая сильная рыба, украшенная множеством острых шипов.\r\n\r\nСтаи этой солоноводной рыбы водятся в океане и примыкающих к нему водоемах.\r\n\r\nОсобенно активна в речных проемах возле Берегов Пробуждения.",
+        "ko_KR": "하늘빛 가시고기는 날카로운 가시가 수없이 자라나 있는 튼튼한 물고기입니다.\r\n\r\n이 바닷물고기 떼는 주로 바다나 인접한 물가에서 찾아볼 수 있습니다.\r\n\r\n특히 깨어나는 해안 강 하구 같은 지역에서 왕성하게 서식합니다.",
+        "zh_TW": "天藍棘魚是很強壯的魚類，身上長有許多銳利脊刺。\r\n\r\n這些鹹水生物主要出沒於海洋，以及其他與海洋相連的水體中。\r\n\r\n它們在甦醒海岸周圍的河口特別活躍。",
+        "zh_CN": "天蓝刺皮鱼是一种强壮的鱼，它的身上有许多尖锐的刺。\r\n\r\n这些咸水鱼群主要分布于海洋和与之相连的其他水域中。\r\n\r\n它们尤其活跃于诸如觉醒海岸附近的河口等地区。"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/47907?namespace=static-12.0.1_65617-us"
+        },
+        "id": 47907
+    }
+}

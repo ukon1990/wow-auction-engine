@@ -1,0 +1,22 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/806?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 806,
+    "name": {
+        "en_US": "Darkmoon Sigil: Hunt",
+        "es_MX": "Sigilo Luna Negra: Caza",
+        "pt_BR": "Signo de Negraluna: Caçada",
+        "de_DE": "Dunkelmondsiegel: Jagd",
+        "en_GB": "Darkmoon Sigil: Hunt",
+        "es_ES": "Sigilo de la Luna Negra: Caza",
+        "fr_FR": "Cachet de Sombrelune : Chasse",
+        "it_IT": "Sigillo di Lunacupa: Caccia",
+        "ru_RU": "Символ Новолуния \"Охота\"",
+        "ko_KR": "다크문 인장: 사냥",
+        "zh_TW": "暗月符印：狩獵",
+        "zh_CN": "暗月徽记：狩猎"
+    }
+}

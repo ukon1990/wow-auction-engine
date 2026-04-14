@@ -1,0 +1,113 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52936?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 52936,
+    "name": {
+        "en_US": "Enchant Helm - Hex of Leeching",
+        "es_MX": "Encantar yelmo: Maleficio chupasangre",
+        "pt_BR": "Encantamento de Bagata Sorvedora - Elmo",
+        "de_DE": "Helm - Lebensraubzauber",
+        "en_GB": "Enchant Helm - Hex of Leeching",
+        "es_ES": "Encantar yelmo: Maleficio de parasitismo",
+        "fr_FR": "Enchantement de casque – maléfice de sangsue",
+        "it_IT": "Incantamento Elmo - Maleficio dell'Assorbimento",
+        "ru_RU": "Чары для шлема – сглаз самоисцеления",
+        "ko_KR": "투구 마법부여 - 생기흡수의 사술",
+        "zh_TW": "附魔頭盔 - 汲取妖術",
+        "zh_CN": "附魔头盔 - 吸血妖术"
+    },
+    "description": {
+        "en_US": "Permanently enchants helm armor with Hex of Leeching, increasing Leech by $ec1. Cannot be applied to items lower than level $ecim.\r\n\r\nAmani Augments - Berserker Brawn ",
+        "es_MX": "Encanta una armadura de yelmo con Maleficio chupasangre de forma permanente, lo que aumenta $ec1 p. el robo de vida. No se puede aplicar a objetos de nivel inferior a $ecim.\r\n\r\nMejoras amani - Mole rabiosa ",
+        "pt_BR": "Encanta permanentemente um elmo com a Bagata Sorvedora, aumentando em $ec1 o Sorver. Não é possível aplicar a itens abaixo do nível $ecim.\r\n\r\nAprimoramentos Amani - Brutalidade de Berserker ",
+        "de_DE": "Einen Helm dauerhaft mit dem Lebensraubzauber verzaubern, wodurch der Lebensraub um $ec1 erhöht wird. Kann nicht auf Gegenstände unter Stufe $ecim angewandt werden.\r\n\r\nAmanianpassungen - Brutalität des Berserkers ",
+        "en_GB": "Permanently enchants helm armor with Hex of Leeching, increasing Leech by $ec1. Cannot be applied to items lower than level $ecim.\r\n\r\nAmani Augments - Berserker Brawn ",
+        "es_ES": "Encantas de forma permanente un yelmo con Maleficio de parasitismo, que aumenta $ec1 p. el parasitar. No se puede aplicar a objetos de nivel inferior a $ecim.\r\n\r\nAumentos Amani: Lozanía rabiosa ",
+        "fr_FR": "Enchante un casque de manière permanente avec le maléfice de sangsue. Augmente votre Ponction de $ec1. Ne peut être appliqué sur des objets d’un niveau inférieur à $ecim.\r\n\r\nAméliorations amani – vigueur de berserker ",
+        "it_IT": "Incanta in modo permanente un equipaggiamento per testa con il Maleficio dell'Assorbimento, aumentando l'indice di ritorno vitale di $ec1. Non applicabile a oggetti di livello inferiore a $ecim.\r\n\r\nMiglioramenti degli Amani - Muscoli da Berserker ",
+        "ru_RU": "Применяет к шлему постоянные чары \"Сглаз самоисцеления\", усиливающие самоисцеление на $ec1. Нельзя применить к предметам ниже $ecim-го уровня.\r\n\r\nУсиления амани – мощь берсерка ",
+        "ko_KR": "머리보호구에 영구적으로 생기흡수의 사술 마법을 부여해 생기흡수를 $ec1만큼 증가시킵니다. $ecim 레벨 미만의 아이템에는 사용할 수 없습니다.\r\n\r\n아마니 증강 - 광전사의 완력 ",
+        "zh_TW": "永久性地為一件頭盔附魔汲取妖術，使汲取提高$ec1點。無法用在等級低於$ecim的物品。\r\n\r\n阿曼尼增強 - 狂戰士健壯 ",
+        "zh_CN": "永久性地为头盔附魔吸血妖术，使吸血提高$ec1。不能对物品等级低于$ecim的物品使用。\r\n\r\n阿曼尼增强 - 狂战威势 "
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52936?namespace=static-12.0.1_65617-us"
+        },
+        "id": 52936
+    },
+    "modified_crafting_slots": [
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/404?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Eversinging Dust",
+                    "es_MX": "Polvo cantoeterno",
+                    "pt_BR": "Pó de Eternelegia",
+                    "de_DE": "Ewigsingender Staub",
+                    "en_GB": "Eversinging Dust",
+                    "es_ES": "Polvo cantoeterno",
+                    "fr_FR": "Poussière de chant éternel",
+                    "it_IT": "Polvere di Suoneterno",
+                    "ru_RU": "Вечнопоющая пыль",
+                    "ko_KR": "영원히 노래하는 가루",
+                    "zh_TW": "永歌之塵",
+                    "zh_CN": "永歌之尘"
+                },
+                "id": 404
+            },
+            "display_order": 0
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/403?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Radiant Shard",
+                    "es_MX": "Fragmento radiante",
+                    "pt_BR": "Estilhaço Radiante",
+                    "de_DE": "Strahlender Splitter",
+                    "en_GB": "Radiant Shard",
+                    "es_ES": "Fragmento radiante",
+                    "fr_FR": "Éclat radieux",
+                    "it_IT": "Scheggia Radiosa",
+                    "ru_RU": "Лучистый осколок",
+                    "ko_KR": "찬란한 조각",
+                    "zh_TW": "璀璨裂片",
+                    "zh_CN": "光耀碎片"
+                },
+                "id": 403
+            },
+            "display_order": 1
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Artisan's Authenticity",
+                    "es_MX": "Autenticidad del artesano",
+                    "pt_BR": "Autenticidade do Artífice",
+                    "de_DE": "Authentizität des Kunsthandwerks",
+                    "en_GB": "Artisan's Authenticity",
+                    "es_ES": "Autenticidad de artesano",
+                    "fr_FR": "Authenticité artisanale",
+                    "it_IT": "Autenticità dell'Artigiano",
+                    "ru_RU": "Почерк ремесленника",
+                    "ko_KR": "장인의 진정성",
+                    "zh_TW": "工匠之保證",
+                    "zh_CN": "匠人之真"
+                },
+                "id": 388
+            },
+            "display_order": 2
+        }
+    ]
+}

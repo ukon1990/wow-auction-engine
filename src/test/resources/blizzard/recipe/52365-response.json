@@ -1,0 +1,193 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52365?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 52365,
+    "name": {
+        "en_US": "Thalassian Competitor's Sword",
+        "es_MX": "Espada de Competidor thalassiano",
+        "pt_BR": "Espada do Competidor Talassiano",
+        "de_DE": "Schwert des thalassischen Wettkämpfers",
+        "en_GB": "Thalassian Competitor's Sword",
+        "es_ES": "Espada de competidor thalassiano",
+        "fr_FR": "Épée de compétition thalassienne",
+        "it_IT": "Spada del Concorrente Thalassiano",
+        "ru_RU": "Меч талассийского бойца",
+        "ko_KR": "탈라시안 경쟁자의 검",
+        "zh_TW": "薩拉斯競技者之劍",
+        "zh_CN": "萨拉斯竞争者之剑"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52365?namespace=static-12.0.1_65617-us"
+        },
+        "id": 52365
+    },
+    "reagents": [
+        {
+            "reagent": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/item/243060?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Luminant Flux",
+                    "es_MX": "Flujo luminante",
+                    "pt_BR": "Fluxo Fulgurante",
+                    "de_DE": "Leuchtender Fluxus",
+                    "en_GB": "Luminant Flux",
+                    "es_ES": "Flujo luminiscente",
+                    "fr_FR": "Flux de luminance",
+                    "it_IT": "Flusso Illuminante",
+                    "ru_RU": "Сияющий плавень",
+                    "ko_KR": "영롱한 융제",
+                    "zh_TW": "發光助熔劑",
+                    "zh_CN": "莹辉助熔剂"
+                },
+                "id": 243060
+            },
+            "quantity": 8
+        }
+    ],
+    "modified_crafting_slots": [
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/466?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Gloaming Alloy",
+                    "es_MX": "Aleación crepuscular",
+                    "pt_BR": "Liga Crepuscular",
+                    "de_DE": "Dämmerlichtlegierung",
+                    "en_GB": "Gloaming Alloy",
+                    "es_ES": "Aleación anochedora",
+                    "fr_FR": "Alliage de la tombée du jour",
+                    "it_IT": "Lega Crepuscolare",
+                    "ru_RU": "Сумрачный сплав",
+                    "ko_KR": "해거름 합금",
+                    "zh_TW": "薄暮合金",
+                    "zh_CN": "薄暮合金"
+                },
+                "id": 466
+            },
+            "display_order": 0
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/425?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Silvermoon Weapon Wrap",
+                    "es_MX": "Cubierta de arma de Lunargenta",
+                    "pt_BR": "Invólucro de Arma de Luaprata",
+                    "de_DE": "Silbermondwaffenwickel",
+                    "en_GB": "Silvermoon Weapon Wrap",
+                    "es_ES": "Cubrearmas de Lunargenta",
+                    "fr_FR": "Barde d’arme de Lune-d’Argent",
+                    "it_IT": "Fascia per Arma di Lunargenta",
+                    "ru_RU": "Луносветская обмотка для оружия",
+                    "ko_KR": "실버문 무기 보호대",
+                    "zh_TW": "銀月武器裹布",
+                    "zh_CN": "银月城武器裹皮"
+                },
+                "id": 425
+            },
+            "display_order": 1
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/471?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Competitor's Heraldry",
+                    "es_MX": "Heráldica de competidor",
+                    "pt_BR": "Heráldica do Competidor",
+                    "de_DE": "Wappenbuch des Wettkämpfers",
+                    "en_GB": "Competitor's Heraldry",
+                    "es_ES": "Escudo de armas de competidor",
+                    "fr_FR": "Blason de compétition",
+                    "it_IT": "Stemma del Concorrente",
+                    "ru_RU": "Геральдика участника соревнований",
+                    "ko_KR": "경쟁자의 표상",
+                    "zh_TW": "競技者徽章",
+                    "zh_CN": "竞争者的饰章"
+                },
+                "id": 471
+            },
+            "display_order": 2
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Add Embellishment",
+                    "es_MX": "Agrega ornamento",
+                    "pt_BR": "Adicionar Ornamento",
+                    "de_DE": "Verzierung hinzufügen",
+                    "en_GB": "Add Embellishment",
+                    "es_ES": "Añadir adorno",
+                    "fr_FR": "Ajout d’embellissement",
+                    "it_IT": "Aggiungi abbellimento",
+                    "ru_RU": "Добавляет украшение",
+                    "ko_KR": "장식 추가",
+                    "zh_TW": "添加裝飾",
+                    "zh_CN": "添加修饰"
+                },
+                "id": 390
+            },
+            "display_order": 3
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Customize Secondary Stats",
+                    "es_MX": "Personaliza estadísticas secundarias",
+                    "pt_BR": "Personalizar Atributos Secundários",
+                    "de_DE": "Sekundärwerte anpassen",
+                    "en_GB": "Customize Secondary Stats",
+                    "es_ES": "Personalizar estadísticas secundarias",
+                    "fr_FR": "Personnaliser les caractéristiques secondaires",
+                    "it_IT": "Personalizza statistiche secondarie",
+                    "ru_RU": "Позволяет указать второстепенные характеристики",
+                    "ko_KR": "보조 능력치 지정",
+                    "zh_TW": "自訂次要屬性",
+                    "zh_CN": "自定义副属性"
+                },
+                "id": 393
+            },
+            "display_order": 4
+        },
+        {
+            "slot_type": {
+                "key": {
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+                },
+                "name": {
+                    "en_US": "Artisan's Authenticity",
+                    "es_MX": "Autenticidad del artesano",
+                    "pt_BR": "Autenticidade do Artífice",
+                    "de_DE": "Authentizität des Kunsthandwerks",
+                    "en_GB": "Artisan's Authenticity",
+                    "es_ES": "Autenticidad de artesano",
+                    "fr_FR": "Authenticité artisanale",
+                    "it_IT": "Autenticità dell'Artigiano",
+                    "ru_RU": "Почерк ремесленника",
+                    "ko_KR": "장인의 진정성",
+                    "zh_TW": "工匠之保證",
+                    "zh_CN": "匠人之真"
+                },
+                "id": 388
+            },
+            "display_order": 5
+        }
+    ]
+}

@@ -1,0 +1,43 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/recipe/34768?namespace=static-12.0.1_65617-us"
+        }
+    },
+    "id": 34768,
+    "name": {
+        "en_US": "Aethril",
+        "es_MX": "Aethril",
+        "pt_BR": "Aethril",
+        "de_DE": "Aethril",
+        "en_GB": "Aethril",
+        "es_ES": "Aethril",
+        "fr_FR": "Aethril",
+        "it_IT": "Aethril",
+        "ru_RU": "Айтрил",
+        "ko_KR": "에이트릴",
+        "zh_TW": "紫地根草",
+        "zh_CN": "安瑟瑞尔花"
+    },
+    "description": {
+        "en_US": "Gather aethril more effectively.",
+        "es_MX": "Recolecta aethril de forma más eficiente.",
+        "pt_BR": "Coleta aethril com mais eficiência.",
+        "de_DE": "Sammelt Aethril effektiver.",
+        "en_GB": "Gather aethril more effectively.",
+        "es_ES": "Recolecta aethril con mayor eficacia.",
+        "fr_FR": "Vous ramassez l’aethril plus efficacement.",
+        "it_IT": "Permette di raccogliere l'Aethril più efficacemente.",
+        "ru_RU": "Более эффективный сбор айтрила.",
+        "ko_KR": "에이트릴을 더 효율적으로 채집합니다.",
+        "zh_TW": "更有效率地採集紫地根草。",
+        "zh_CN": "更有效率地采集安瑟瑞尔花。"
+    },
+    "media": {
+        "key": {
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/34768?namespace=static-12.0.1_65617-us"
+        },
+        "id": 34768
+    },
+    "rank": 1
+}

@@ -1,49 +1,41 @@
 package net.jonasmf.auctionengine.dto.item
 
-import net.jonasmf.auctionengine.dto.Href
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 import net.jonasmf.auctionengine.dto.Links
 import net.jonasmf.auctionengine.dto.LocaleDTO
 import net.jonasmf.auctionengine.dto.MediaDTO
 
-data class Quality(
-    val type: String,
-    val name: LocaleDTO,
-)
-
-data class ItemClass(
-    val id: Int,
-    val key: Href,
-    val name: LocaleDTO,
-)
-
-data class ItemSubclass(
-    val id: Int,
-    val name: LocaleDTO,
-    val key: Href,
-)
-
-data class InventoryType(
-    val type: String,
-    val name: LocaleDTO,
-)
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class ItemDTO(
-    val _links: Links,
+    @JsonProperty("_links")
+    val links: Links,
     val id: Int,
     val name: LocaleDTO,
-    val quality: Quality,
-    val level: Int,
-    val required_level: Int,
+    val quality: ItemQualityDTO,
+    val level: Int = 0,
+    @JsonProperty("required_level")
+    val requiredLevel: Int = 0,
     val media: MediaDTO,
-    val item_class: ItemClass,
-    val item_subclass: ItemSubclass,
-    val inventory_type: InventoryType,
-    val purchase_price: Int,
-    val sell_price: Int,
-    val max_count: Int,
-    val is_equippable: Boolean,
-    val is_stackable: Boolean,
-    val preview_item: ItemPreviewDTO,
-    val purchase_quantity: Int,
-    val appearances: List<Appearance>,
+    @JsonProperty("item_class")
+    val itemClass: ItemClassReferenceDTO,
+    @JsonProperty("item_subclass")
+    val itemSubclass: ItemSubclassReferenceDTO,
+    @JsonProperty("inventory_type")
+    val inventoryType: InventoryTypeDTO,
+    @JsonProperty("purchase_price")
+    val purchasePrice: Int = 0,
+    @JsonProperty("sell_price")
+    val sellPrice: Int = 0,
+    @JsonProperty("max_count")
+    val maxCount: Int = 0,
+    @JsonProperty("is_equippable")
+    val isEquippable: Boolean = false,
+    @JsonProperty("is_stackable")
+    val isStackable: Boolean = false,
+    @JsonProperty("preview_item")
+    val previewItem: ItemPreviewDTO? = null,
+    @JsonProperty("purchase_quantity")
+    val purchaseQuantity: Int = 0,
+    val appearances: List<ItemAppearanceReferenceDTO> = emptyList(),
 )
