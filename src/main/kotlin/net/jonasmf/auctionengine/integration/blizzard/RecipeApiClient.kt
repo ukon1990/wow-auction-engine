@@ -55,7 +55,10 @@ class RecipeApiClient(
                 }.block()!!
         val recipe = requireNotNull(response.body) { "Recipe body missing for $uri" }
         return recipe.toDomain(
-            lastModified = response.headers.lastModified.takeIf { it > 0 }?.let(Instant::ofEpochMilli),
+            lastModified =
+                response.headers.lastModified
+                    .takeIf { it > 0 }
+                    ?.let(Instant::ofEpochMilli),
         )
     }
 }

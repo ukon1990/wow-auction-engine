@@ -45,8 +45,7 @@ class ProfessionRecipeSyncService(
 
     fun syncAllConfiguredRegions(): List<ProfessionRecipeSyncResult> = listOf(syncConfiguredStaticDataRegion())
 
-    fun syncConfiguredStaticDataRegion(): ProfessionRecipeSyncResult =
-        syncRegion(properties.staticDataRegion)
+    fun syncConfiguredStaticDataRegion(): ProfessionRecipeSyncResult = syncRegion(properties.staticDataRegion)
 
     fun syncRegion(region: Region): ProfessionRecipeSyncResult {
         val startTime = System.currentTimeMillis()
@@ -113,7 +112,11 @@ class ProfessionRecipeSyncService(
             )
             profession.skillTiers.forEachIndexed { skillTierIndex, skillTier ->
                 val tierStartTime = System.currentTimeMillis()
-                val recipeIds = skillTier.categories.flatMap { it.recipes }.map(Recipe::id).distinct()
+                val recipeIds =
+                    skillTier.categories
+                        .flatMap { it.recipes }
+                        .map(Recipe::id)
+                        .distinct()
                 recipeReferencesDiscovered += recipeIds.size
                 skillTiersFetched += 1
                 log.info(

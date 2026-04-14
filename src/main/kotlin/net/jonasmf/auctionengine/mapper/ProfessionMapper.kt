@@ -10,15 +10,14 @@ import net.jonasmf.auctionengine.dto.profession.ProfessionDTO
 fun ProfessionDTO.toDomain(
     skillTiers: List<SkillTier> = emptyList(),
     lastModified: java.time.Instant? = null,
-) =
-    Profession(
-        id = id,
-        name = name,
-        description = description,
-        mediaUrl = media.key.href,
-        lastModified = lastModified,
-        skillTiers = skillTiers,
-    )
+) = Profession(
+    id = id,
+    name = name,
+    description = description,
+    mediaUrl = media.key.href,
+    lastModified = lastModified,
+    skillTiers = skillTiers,
+)
 
 fun Profession.toDBO() =
     ProfessionDBO(

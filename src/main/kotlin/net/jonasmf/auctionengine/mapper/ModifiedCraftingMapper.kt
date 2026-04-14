@@ -31,16 +31,15 @@ fun ModifiedCraftingCategory.toDBO(
     recipeId: Int,
     slotIndex: Int,
     slotId: Int,
-) =
-    ModifiedCraftingCategoryDBO(
-        categoryId = id,
-        name =
-            name.toDBO(
-                LocaleSourceType.MODIFIED_CRAFTING_CATEGORY,
-                localeSourceKey(recipeId, slotIndex, slotId, id),
-                "name",
-            ),
-    )
+) = ModifiedCraftingCategoryDBO(
+    categoryId = id,
+    name =
+        name.toDBO(
+            LocaleSourceType.MODIFIED_CRAFTING_CATEGORY,
+            localeSourceKey(recipeId, slotIndex, slotId, id),
+            "name",
+        ),
+)
 
 fun ModifiedCraftingCategoryDBO.toDomain() =
     ModifiedCraftingCategory(

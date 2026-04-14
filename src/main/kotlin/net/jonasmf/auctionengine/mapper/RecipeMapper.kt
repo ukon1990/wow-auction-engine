@@ -52,17 +52,16 @@ fun RecipeDTO.toDomain(lastModified: Instant? = null) =
 fun RecipeReagent.toDBO(
     recipeId: Int,
     reagentIndex: Int,
-) =
-    RecipeReagentDBO(
-        itemId = itemId,
-        name =
-            name.toDBO(
-                LocaleSourceType.RECIPE_REAGENT,
-                localeSourceKey(recipeId, reagentIndex, itemId),
-                "name",
-            ),
-        quantity = quantity,
-    )
+) = RecipeReagentDBO(
+    itemId = itemId,
+    name =
+        name.toDBO(
+            LocaleSourceType.RECIPE_REAGENT,
+            localeSourceKey(recipeId, reagentIndex, itemId),
+            "name",
+        ),
+    quantity = quantity,
+)
 
 fun RecipeReagentDBO.toDomain() =
     RecipeReagent(
@@ -74,18 +73,17 @@ fun RecipeReagentDBO.toDomain() =
 fun ModifiedCraftingSlot.toDBO(
     recipeId: Int,
     slotIndex: Int,
-) =
-    ModifiedCraftingSlotDBO(
-        slotTypeId = id,
-        description =
-            description.toDBO(
-                LocaleSourceType.MODIFIED_CRAFTING_SLOT,
-                localeSourceKey(recipeId, slotIndex, id),
-                "description",
-            ),
-        compatibleCategories = compatibleCategories.map { it.toDBO(recipeId, slotIndex, id) }.toMutableList(),
-        displayOrder = displayOrder,
-    )
+) = ModifiedCraftingSlotDBO(
+    slotTypeId = id,
+    description =
+        description.toDBO(
+            LocaleSourceType.MODIFIED_CRAFTING_SLOT,
+            localeSourceKey(recipeId, slotIndex, id),
+            "description",
+        ),
+    compatibleCategories = compatibleCategories.map { it.toDBO(recipeId, slotIndex, id) }.toMutableList(),
+    displayOrder = displayOrder,
+)
 
 fun ModifiedCraftingSlotDBO.toDomain() =
     ModifiedCraftingSlot(
@@ -106,7 +104,14 @@ fun Recipe.toDBO() =
         craftedItemId = craftedItemId,
         craftedQuantity = craftedQuantity,
         reagents = reagents.mapIndexed { index, reagent -> reagent.toDBO(id, index) }.toMutableList(),
-        modifiedCraftingSlots = modifiedCraftingSlots.mapIndexed { index, slot -> slot.toDBO(id, index) }.toMutableList(),
+        modifiedCraftingSlots =
+            modifiedCraftingSlots
+                .mapIndexed {
+                    index,
+                    slot,
+                    ->
+                    slot.toDBO(id, index)
+                }.toMutableList(),
     )
 
 fun RecipeDBO.toDomain() =

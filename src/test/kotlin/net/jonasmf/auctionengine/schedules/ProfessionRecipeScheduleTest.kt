@@ -49,7 +49,9 @@ class ProfessionRecipeScheduleTest {
             schedule.syncProfessionRecipes()
 
             val messages = listAppender.list.map(ILoggingEvent::getFormattedMessage)
-            assertTrue(messages.any { it.contains("Skipping manual profession/recipe sync because sync already running.") })
+            assertTrue(
+                messages.any { it.contains("Skipping manual profession/recipe sync because sync already running.") },
+            )
             verify(exactly = 1) { service.syncConfiguredStaticDataRegion() }
 
             release.countDown()
@@ -77,7 +79,8 @@ class ProfessionRecipeScheduleTest {
     @Test
     fun `syncProfessionRecipes clears guard after exception`() {
         val service = mockk<ProfessionRecipeSyncService>()
-        every { service.syncConfiguredStaticDataRegion() } throws RuntimeException("boom") andThen mockk<ProfessionRecipeSyncResult>(relaxed = true)
+        every { service.syncConfiguredStaticDataRegion() } throws RuntimeException("boom") andThen
+            mockk<ProfessionRecipeSyncResult>(relaxed = true)
 
         val schedule = ProfessionRecipeSchedule(properties, service)
 

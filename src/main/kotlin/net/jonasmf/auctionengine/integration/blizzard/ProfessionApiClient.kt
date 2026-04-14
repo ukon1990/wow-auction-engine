@@ -155,7 +155,10 @@ class ProfessionApiClient(
             }
         return profession.toDomain(
             skillTiers = skillTiers,
-            lastModified = response.headers.lastModified.takeIf { it > 0 }?.let(Instant::ofEpochMilli),
+            lastModified =
+                response.headers.lastModified
+                    .takeIf { it > 0 }
+                    ?.let(Instant::ofEpochMilli),
         )
     }
 }

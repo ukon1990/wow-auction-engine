@@ -2,8 +2,10 @@ package net.jonasmf.auctionengine.service
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import net.jonasmf.auctionengine.testsupport.database.TestDataCleaner
+import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.repository.rds.RecipeRepository
 import net.jonasmf.auctionengine.testsupport.container.SharedTestContainers
+import net.jonasmf.auctionengine.testsupport.database.TestDataCleaner
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -18,6 +20,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -26,9 +29,6 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
-import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.repository.rds.RecipeRepository
-import org.springframework.jdbc.core.JdbcTemplate
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -98,7 +98,8 @@ class ProfessionRecipeSyncServiceIntegrationTest {
         @Bean
         @Primary
         fun fixtureWebClient(): WebClient =
-            WebClient.builder()
+            WebClient
+                .builder()
                 .exchangeFunction(ExchangeFunction(::handleRequest))
                 .build()
 
@@ -111,15 +112,31 @@ class ProfessionRecipeSyncServiceIntegrationTest {
                 path.endsWith("/data/wow/profession/index") -> jsonResponse(trimmedProfessionIndex())
                 path.matches(Regex(".*/data/wow/profession/\\d+$")) -> jsonResponse(trimmedProfessionDetail())
                 path.matches(Regex(".*/data/wow/profession/\\d+/skill-tier/\\d+$")) -> jsonResponse(trimmedSkillTier())
-                path.matches(Regex(".*/data/wow/recipe/\\d+$")) -> jsonResponse(fixture("/blizzard/recipe/${path.substringAfterLast('/')}-response.json"))
-                path.endsWith("/data/wow/modified-crafting/index") -> jsonResponse(fixture("/blizzard/modified-crafting/category/827-response.json"))
-                path.endsWith("/data/wow/modified-crafting/category/index") -> jsonResponse(modifiedCraftingCategoryIndex())
+                path.matches(
+                    Regex(".*/data/wow/recipe/\\d+$"),
+                ) -> jsonResponse(fixture("/blizzard/recipe/${path.substringAfterLast('/')}-response.json"))
+                path.endsWith(
+                    "/data/wow/modified-crafting/index",
+                ) -> jsonResponse(fixture("/blizzard/modified-crafting/category/827-response.json"))
+                path.endsWith(
+                    "/data/wow/modified-crafting/category/index",
+                ) -> jsonResponse(modifiedCraftingCategoryIndex())
                 path.matches(Regex(".*/data/wow/modified-crafting/category/\\d+$")) -> {
-                    jsonResponse(fixture("/blizzard/modified-crafting/category/${path.substringAfterLast('/')}-response.json"))
+                    jsonResponse(
+                        fixture("/blizzard/modified-crafting/category/${path.substringAfterLast('/')}-response.json"),
+                    )
                 }
-                path.endsWith("/data/wow/modified-crafting/reagent-slot-type/index") -> jsonResponse(modifiedCraftingSlotTypeIndex())
+                path.endsWith(
+                    "/data/wow/modified-crafting/reagent-slot-type/index",
+                ) -> jsonResponse(modifiedCraftingSlotTypeIndex())
                 path.matches(Regex(".*/data/wow/modified-crafting/reagent-slot-type/\\d+$")) -> {
-                    jsonResponse(fixture("/blizzard/modified-crafting/reagent-slot-type/${path.substringAfterLast('/')}-response.json"))
+                    jsonResponse(
+                        fixture(
+                            "/blizzard/modified-crafting/reagent-slot-type/${path.substringAfterLast(
+                                '/',
+                            )}-response.json",
+                        ),
+                    )
                 }
                 else -> error("Unexpected request: ${request.method()} ${request.url()}")
             }
@@ -127,7 +144,8 @@ class ProfessionRecipeSyncServiceIntegrationTest {
 
         private fun jsonResponse(body: String): Mono<ClientResponse> =
             Mono.just(
-                ClientResponse.create(HttpStatus.OK)
+                ClientResponse
+                    .create(HttpStatus.OK)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                     .body(body)
                     .build(),
@@ -139,22 +157,25 @@ class ProfessionRecipeSyncServiceIntegrationTest {
             referencesIndexJson(
                 selfHref = "https://eu.api.blizzard.test/data/wow/modified-crafting/category/index?namespace=static-eu",
                 fieldName = "categories",
-                detailPaths = listOf(
-                    "src/test/resources/blizzard/modified-crafting/category/29-response.json",
-                    "src/test/resources/blizzard/modified-crafting/category/45-response.json",
-                ),
+                detailPaths =
+                    listOf(
+                        "src/test/resources/blizzard/modified-crafting/category/29-response.json",
+                        "src/test/resources/blizzard/modified-crafting/category/45-response.json",
+                    ),
                 hrefBase = "https://eu.api.blizzard.test/data/wow/modified-crafting/category",
                 labelFieldName = "name",
             )
 
         private fun modifiedCraftingSlotTypeIndex(): String =
             referencesIndexJson(
-                selfHref = "https://eu.api.blizzard.test/data/wow/modified-crafting/reagent-slot-type/index?namespace=static-eu",
+                selfHref =
+                    "https://eu.api.blizzard.test/data/wow/modified-crafting/reagent-slot-type/index?namespace=static-eu",
                 fieldName = "slot_types",
-                detailPaths = listOf(
-                    "src/test/resources/blizzard/modified-crafting/reagent-slot-type/46-response.json",
-                    "src/test/resources/blizzard/modified-crafting/reagent-slot-type/77-response.json",
-                ),
+                detailPaths =
+                    listOf(
+                        "src/test/resources/blizzard/modified-crafting/reagent-slot-type/46-response.json",
+                        "src/test/resources/blizzard/modified-crafting/reagent-slot-type/77-response.json",
+                    ),
                 hrefBase = "https://eu.api.blizzard.test/data/wow/modified-crafting/reagent-slot-type",
                 labelFieldName = "description",
             )
@@ -169,8 +190,9 @@ class ProfessionRecipeSyncServiceIntegrationTest {
             val entries =
                 detailPaths.joinToString(",\n") { path ->
                     val payload = fixture(path.removePrefix("src/test/resources"))
-                    val id = Regex("\"id\"\\s*:\\s*(\\d+)").find(payload)?.groupValues?.get(1)
-                        ?: error("Missing id in fixture $path")
+                    val id =
+                        Regex("\"id\"\\s*:\\s*(\\d+)").find(payload)?.groupValues?.get(1)
+                            ?: error("Missing id in fixture $path")
                     val nameJson =
                         Regex("\"$labelFieldName\"\\s*:\\s*(\\{.*?\\})", setOf(RegexOption.DOT_MATCHES_ALL))
                             .find(payload)
@@ -189,17 +211,17 @@ class ProfessionRecipeSyncServiceIntegrationTest {
                 }
 
             return """
-            {
-              "_links": {
-                "self": {
-                  "href": "$selfHref"
+                {
+                  "_links": {
+                    "self": {
+                      "href": "$selfHref"
+                    }
+                  },
+                  "$fieldName": [
+                    $entries
+                  ]
                 }
-              },
-              "$fieldName": [
-                $entries
-              ]
-            }
-            """.trimIndent()
+                """.trimIndent()
         }
 
         private fun trimmedProfessionIndex(): String =

@@ -1,7 +1,6 @@
 package net.jonasmf.auctionengine.mapper
 
 import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
-import net.jonasmf.auctionengine.dbo.rds.localeSourceKey
 import net.jonasmf.auctionengine.dbo.rds.item.InventoryTypeDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemAppearanceDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemAppearanceReferenceDBO
@@ -10,6 +9,7 @@ import net.jonasmf.auctionengine.dbo.rds.item.ItemDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemQualityDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemSubclassDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemSummaryDBO
+import net.jonasmf.auctionengine.dbo.rds.localeSourceKey
 import net.jonasmf.auctionengine.domain.item.InventoryType
 import net.jonasmf.auctionengine.domain.item.Item
 import net.jonasmf.auctionengine.domain.item.ItemAppearance

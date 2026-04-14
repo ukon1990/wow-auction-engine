@@ -60,7 +60,12 @@ class ProfessionRecipeSyncServiceTest {
         every { modifiedCraftingApiClient.getAllSlotTypes(Region.Europe) } returns slots
         every { bulkSyncService.syncModifiedCraftingMetadata(categories, slots) } returns Unit
         every {
-            bulkSyncService.syncProfessionSkillTier(any(), capture(skillTierSlot), capture(recipesSlot), capture(slotsSlot))
+            bulkSyncService.syncProfessionSkillTier(
+                any(),
+                capture(skillTierSlot),
+                capture(recipesSlot),
+                capture(slotsSlot),
+            )
         } returns summary(recipes = 2, slots = 1)
 
         val result = service.syncRegion(Region.Europe)
@@ -87,7 +92,8 @@ class ProfessionRecipeSyncServiceTest {
         every { modifiedCraftingApiClient.getAllCategories(Region.Europe) } returns emptyList()
         every { modifiedCraftingApiClient.getAllSlotTypes(Region.Europe) } returns emptyList()
         every { bulkSyncService.syncModifiedCraftingMetadata(emptyList(), emptyList()) } returns Unit
-        every { bulkSyncService.syncProfessionSkillTier(any(), any(), any(), any()) } returns summary(recipes = 2, slots = 0)
+        every { bulkSyncService.syncProfessionSkillTier(any(), any(), any(), any()) } returns
+            summary(recipes = 2, slots = 0)
 
         service.syncRegion(Region.Europe)
 
@@ -189,18 +195,17 @@ class ProfessionRecipeSyncServiceTest {
     private fun summary(
         recipes: Int,
         slots: Int,
-    ) =
-        ProfessionRecipePersistenceSummary(
-            professionsUpserted = 1,
-            skillTiersUpserted = 1,
-            categoriesReplaced = 1,
-            recipesUpserted = recipes,
-            reagentsReplaced = 0,
-            recipeSlotsReplaced = slots,
-            modifiedCraftingCategoriesUpserted = 0,
-            modifiedCraftingSlotsUpserted = 0,
-            slotCategoryLinksReplaced = 0,
-        )
+    ) = ProfessionRecipePersistenceSummary(
+        professionsUpserted = 1,
+        skillTiersUpserted = 1,
+        categoriesReplaced = 1,
+        recipesUpserted = recipes,
+        reagentsReplaced = 0,
+        recipeSlotsReplaced = slots,
+        modifiedCraftingCategoriesUpserted = 0,
+        modifiedCraftingSlotsUpserted = 0,
+        slotCategoryLinksReplaced = 0,
+    )
 
     private fun locale(value: String) = LocaleDTO(en_US = value, en_GB = value)
 }

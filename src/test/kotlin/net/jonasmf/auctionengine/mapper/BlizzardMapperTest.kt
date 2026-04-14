@@ -2,7 +2,6 @@ package net.jonasmf.auctionengine.mapper
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import net.jonasmf.auctionengine.dto.recipe.CraftedQuantityDTO
 import net.jonasmf.auctionengine.dto.item.ItemDTO
 import net.jonasmf.auctionengine.dto.itemappearance.ItemAppearanceDTO
 import net.jonasmf.auctionengine.dto.itemclass.ItemClassDTO
@@ -10,6 +9,7 @@ import net.jonasmf.auctionengine.dto.itemclass.ItemSubclassDTO
 import net.jonasmf.auctionengine.dto.modifiedcrafting.ModifiedCraftingCategoryDTO
 import net.jonasmf.auctionengine.dto.modifiedcrafting.ReagentSlotTypeDTO
 import net.jonasmf.auctionengine.dto.profession.SkillTierDTO
+import net.jonasmf.auctionengine.dto.recipe.CraftedQuantityDTO
 import net.jonasmf.auctionengine.dto.recipe.RecipeDTO
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Test
@@ -91,11 +91,28 @@ class BlizzardMapperTest {
     fun `should map recipe dto when crafted item reference omits name`() {
         val dto =
             RecipeDTO(
-                links = net.jonasmf.auctionengine.dto.Links(net.jonasmf.auctionengine.dto.Link("https://example.test/recipe/1")),
+                links =
+                    net.jonasmf.auctionengine.dto.Links(
+                        net.jonasmf.auctionengine.dto
+                            .Link("https://example.test/recipe/1"),
+                    ),
                 id = 1,
-                name = net.jonasmf.auctionengine.dto.LocaleDTO(en_US = "Recipe", en_GB = "Recipe"),
-                media = net.jonasmf.auctionengine.dto.MediaDTO(net.jonasmf.auctionengine.dto.Href("https://example.test/media/1"), 1),
-                craftedItem = net.jonasmf.auctionengine.dto.ReferenceDTO(id = 42, key = net.jonasmf.auctionengine.dto.Href("https://example.test/item/42")),
+                name =
+                    net.jonasmf.auctionengine.dto
+                        .LocaleDTO(en_US = "Recipe", en_GB = "Recipe"),
+                media =
+                    net.jonasmf.auctionengine.dto.MediaDTO(
+                        net.jonasmf.auctionengine.dto
+                            .Href("https://example.test/media/1"),
+                        1,
+                    ),
+                craftedItem =
+                    net.jonasmf.auctionengine.dto.ReferenceDTO(
+                        id = 42,
+                        key =
+                            net.jonasmf.auctionengine.dto
+                                .Href("https://example.test/item/42"),
+                    ),
                 craftedQuantity = CraftedQuantityDTO(1),
             )
 
@@ -129,7 +146,12 @@ class BlizzardMapperTest {
         assertEquals("profession", professionDbo.name.sourceType)
         assertEquals("356", professionDbo.name.sourceKey)
         assertEquals("name", professionDbo.name.sourceField)
-        assertEquals("skill_tier", professionDbo.skillTiers.first().name.sourceType)
+        assertEquals(
+            "skill_tier",
+            professionDbo.skillTiers
+                .first()
+                .name.sourceType,
+        )
         assertEquals(356, roundTrip.id)
         assertEquals(2911, roundTrip.skillTiers.first().id)
         assertEquals(

@@ -28,11 +28,10 @@ fun SkillTierDTO.toDomain(): SkillTier =
 fun ProfessionCategory.toDBO(
     skillTierId: Int,
     categoryIndex: Int,
-) =
-    ProfessionCategoryDBO(
-        name = name.toDBO(LocaleSourceType.PROFESSION_CATEGORY, localeSourceKey(skillTierId, categoryIndex), "name"),
-        recipes = recipes.map { it.toDBO() }.toMutableList(),
-    )
+) = ProfessionCategoryDBO(
+    name = name.toDBO(LocaleSourceType.PROFESSION_CATEGORY, localeSourceKey(skillTierId, categoryIndex), "name"),
+    recipes = recipes.map { it.toDBO() }.toMutableList(),
+)
 
 fun ProfessionCategoryDBO.toDomain() =
     ProfessionCategory(

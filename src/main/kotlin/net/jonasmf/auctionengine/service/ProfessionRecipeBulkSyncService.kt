@@ -68,7 +68,13 @@ class ProfessionRecipeBulkSyncService(
 
         professions.forEach { profession ->
             profession.skillTiers.forEach { skillTier ->
-                val summary = syncProfessionSkillTier(profession.copy(skillTiers = emptyList()), skillTier, recipes, modifiedCraftingSlots)
+                val summary =
+                    syncProfessionSkillTier(
+                        profession.copy(skillTiers = emptyList()),
+                        skillTier,
+                        recipes,
+                        modifiedCraftingSlots,
+                    )
                 professionsUpserted += summary.professionsUpserted
                 skillTiersUpserted += summary.skillTiersUpserted
                 categoriesReplaced += summary.categoriesReplaced

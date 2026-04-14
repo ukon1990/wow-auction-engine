@@ -61,10 +61,11 @@ class BlizzardApiSupport(
 
     private fun normalizePathForBaseUrl(path: String): String {
         val normalizedPath = "/${path.removePrefix("/")}"
-        val basePath = "/${properties.baseUrl.removePrefix("https://").substringAfter('/', "").trim('/')}"
-            .trimEnd('/')
-            .takeIf { it != "/" }
-            ?: ""
+        val basePath =
+            "/${properties.baseUrl.removePrefix("https://").substringAfter('/', "").trim('/')}"
+                .trimEnd('/')
+                .takeIf { it != "/" }
+                ?: ""
 
         return when {
             basePath.isNotEmpty() && normalizedPath == basePath -> ""
@@ -73,5 +74,6 @@ class BlizzardApiSupport(
         }
     }
 
-    private fun getPropertyRegionOrFallback(): Region = properties.configuredRegions.firstOrNull() ?: Region.NorthAmerica
+    private fun getPropertyRegionOrFallback(): Region =
+        properties.configuredRegions.firstOrNull() ?: Region.NorthAmerica
 }
