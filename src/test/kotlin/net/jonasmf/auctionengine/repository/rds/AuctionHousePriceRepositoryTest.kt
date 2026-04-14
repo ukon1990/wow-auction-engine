@@ -12,6 +12,7 @@ import net.jonasmf.auctionengine.dto.auction.ModifierDTO
 import net.jonasmf.auctionengine.service.HourlyPriceStatisticsService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
@@ -66,6 +67,38 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             )
 
         assertEquals(1, bonusKeyColumnCount)
+    }
+
+    @Test
+    fun `should align hourly auction stats indexes and storage layout`() {
+        val indexes =
+            jdbcTemplate.queryForList(
+                """
+                SELECT DISTINCT index_name
+                FROM information_schema.statistics
+                WHERE table_schema = DATABASE()
+                  AND table_name = 'hourly_auction_stats'
+                """.trimIndent(),
+                String::class.java,
+            )
+
+        assertTrue(indexes.contains("idx_hourly_auction_stats_connected_realm_id_date"))
+        assertTrue(indexes.contains("idx_hourly_auction_stats_connected_realm_id_item_id_date"))
+
+        val createTable =
+            jdbcTemplate.queryForObject(
+                "SHOW CREATE TABLE hourly_auction_stats",
+                { rs, _ -> rs.getString("Create Table") },
+            ) ?: error("SHOW CREATE TABLE returned no definition for hourly_auction_stats")
+
+        val normalizedCreateTable = createTable.lowercase().replace("`", "").replace(Regex("\\s+"), " ")
+
+        assertTrue(normalizedCreateTable.contains("engine=innodb"))
+        assertTrue(normalizedCreateTable.contains("default charset=utf8mb3"))
+        assertTrue(normalizedCreateTable.contains("collate=utf8mb3_general_ci"))
+        assertTrue(normalizedCreateTable.contains("max_rows=82300000"))
+        assertTrue(normalizedCreateTable.contains("partition by hash (to_days(date))"))
+        assertTrue(normalizedCreateTable.contains("partitions 31"))
     }
 
     @Test
