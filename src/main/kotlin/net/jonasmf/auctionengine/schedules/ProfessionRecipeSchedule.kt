@@ -29,6 +29,9 @@ class ProfessionRecipeSchedule(
         runSync("scheduled")
     }
 
+    /* TODO: Uncomment later, need to find a smart way of dealing with this.
+    The import takes a while and I don't really want to run it every time
+    but for fresh databases only basically.
     @Scheduled(
         initialDelayString = "\${app.scheduling.profession-recipe-sync-startup-delay:PT2M}",
         fixedDelayString = "\${app.scheduling.profession-recipe-sync-startup-repeat-delay:P3650D}",
@@ -36,7 +39,7 @@ class ProfessionRecipeSchedule(
     fun syncProfessionRecipesAfterStartup() {
         if (!shouldRunInCurrentDeploymentRegion("startup")) return
         runSync("startup")
-    }
+    }*/
 
     fun syncProfessionRecipes() {
         runSync("manual")
