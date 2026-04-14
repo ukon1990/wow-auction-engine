@@ -20,4 +20,5 @@ data class ItemPreviewDTO(
     val itemSubclass: ItemSubclassReferenceDTO? = null,
     @JsonProperty("inventory_type")
     val inventoryType: InventoryTypeDTO? = null,
+    val binding: ItemBindingDTO? = null,
 )

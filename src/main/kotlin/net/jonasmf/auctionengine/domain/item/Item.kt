@@ -12,6 +12,11 @@ data class InventoryType(
     val name: LocaleDTO,
 )
 
+data class ItemBinding(
+    val type: String,
+    val name: LocaleDTO,
+)
+
 data class ItemAppearanceReference(
     val id: Int,
     val href: String,
@@ -33,6 +38,7 @@ data class Item(
     val itemClass: ItemClass,
     val itemSubclass: ItemSubclass,
     val inventoryType: InventoryType,
+    val binding: ItemBinding? = null,
     val purchasePrice: Int,
     val sellPrice: Int,
     val maxCount: Int,

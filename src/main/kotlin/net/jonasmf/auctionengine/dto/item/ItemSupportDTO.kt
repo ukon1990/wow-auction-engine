@@ -31,6 +31,12 @@ data class InventoryTypeDTO(
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+data class ItemBindingDTO(
+    val type: String = "",
+    val name: LocaleDTO = LocaleDTO(),
+)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class ItemAppearanceReferenceDTO(
     val key: Href,
     val id: Int,

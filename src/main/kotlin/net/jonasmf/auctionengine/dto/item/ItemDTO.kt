@@ -23,6 +23,7 @@ data class ItemDTO(
     val itemSubclass: ItemSubclassReferenceDTO,
     @JsonProperty("inventory_type")
     val inventoryType: InventoryTypeDTO,
+    val binding: ItemBindingDTO? = null,
     @JsonProperty("purchase_price")
     val purchasePrice: Int = 0,
     @JsonProperty("sell_price")

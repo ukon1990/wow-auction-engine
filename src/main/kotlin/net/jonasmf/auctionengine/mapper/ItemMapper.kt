@@ -4,6 +4,7 @@ import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
 import net.jonasmf.auctionengine.dbo.rds.item.InventoryTypeDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemAppearanceDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemAppearanceReferenceDBO
+import net.jonasmf.auctionengine.dbo.rds.item.ItemBindingDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemClassDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemDBO
 import net.jonasmf.auctionengine.dbo.rds.item.ItemQualityDBO
@@ -14,6 +15,7 @@ import net.jonasmf.auctionengine.domain.item.InventoryType
 import net.jonasmf.auctionengine.domain.item.Item
 import net.jonasmf.auctionengine.domain.item.ItemAppearance
 import net.jonasmf.auctionengine.domain.item.ItemAppearanceReference
+import net.jonasmf.auctionengine.domain.item.ItemBinding
 import net.jonasmf.auctionengine.domain.item.ItemClass
 import net.jonasmf.auctionengine.domain.item.ItemQuality
 import net.jonasmf.auctionengine.domain.item.ItemSubclass
@@ -21,6 +23,7 @@ import net.jonasmf.auctionengine.domain.item.ItemSummary
 import net.jonasmf.auctionengine.dto.ReferenceDTO
 import net.jonasmf.auctionengine.dto.item.InventoryTypeDTO
 import net.jonasmf.auctionengine.dto.item.ItemAppearanceReferenceDTO
+import net.jonasmf.auctionengine.dto.item.ItemBindingDTO
 import net.jonasmf.auctionengine.dto.item.ItemClassReferenceDTO
 import net.jonasmf.auctionengine.dto.item.ItemDTO
 import net.jonasmf.auctionengine.dto.item.ItemQualityDTO
@@ -37,6 +40,12 @@ fun ItemQualityDTO.toDomain() =
 
 fun InventoryTypeDTO.toDomain() =
     InventoryType(
+        type = type,
+        name = name,
+    )
+
+fun ItemBindingDTO.toDomain() =
+    ItemBinding(
         type = type,
         name = name,
     )
@@ -88,6 +97,7 @@ fun ItemDTO.toDomain() =
         itemClass = itemClass.toDomain(),
         itemSubclass = itemSubclass.toDomain(itemClass.id),
         inventoryType = inventoryType.toDomain(),
+        binding = binding?.toDomain() ?: previewItem?.binding?.toDomain(),
         purchasePrice = purchasePrice,
         sellPrice = sellPrice,
         maxCount = maxCount,
@@ -143,6 +153,18 @@ fun InventoryType.toDBO() =
 
 fun InventoryTypeDBO.toDomain() =
     InventoryType(
+        type = type,
+        name = name.toDTO(),
+    )
+
+fun ItemBinding.toDBO() =
+    ItemBindingDBO(
+        type = type,
+        name = name.toDBO(LocaleSourceType.ITEM_BINDING, localeSourceKey(type), "name"),
+    )
+
+fun ItemBindingDBO.toDomain() =
+    ItemBinding(
         type = type,
         name = name.toDTO(),
     )
@@ -219,6 +241,7 @@ fun Item.toDBO() =
         itemClass = itemClass.toDBO(),
         itemSubclass = itemSubclass.toDBO(),
         inventoryType = inventoryType.toDBO(),
+        binding = binding?.toDBO(),
         purchasePrice = purchasePrice,
         sellPrice = sellPrice,
         maxCount = maxCount,
@@ -239,6 +262,7 @@ fun ItemDBO.toDomain() =
         itemClass = itemClass.toDomain(),
         itemSubclass = itemSubclass.toDomain(),
         inventoryType = inventoryType.toDomain(),
+        binding = binding?.toDomain(),
         purchasePrice = purchasePrice,
         sellPrice = sellPrice,
         maxCount = maxCount,

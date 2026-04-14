@@ -89,6 +89,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             mapOf(
                 "idx_hourly_auction_stats_connected_realm_id_date" to "connected_realm_id,date",
                 "idx_hourly_auction_stats_connected_realm_id_item_id_date" to "connected_realm_id,item_id,date",
+                "idx_hourly_auction_stats_date_pet_species_item_id" to "date,pet_species_id,item_id",
             ),
             secondaryIndexes,
         )
