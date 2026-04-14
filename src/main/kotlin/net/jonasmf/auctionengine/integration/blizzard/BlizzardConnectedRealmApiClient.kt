@@ -8,19 +8,26 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
 private const val CONNECTED_REALM_INDEX_PATH = "connected-realm/index"
-private const val CONNECTED_REALM_DEFAULT_LOCALE = "en_GB"
 
 @Component
 class BlizzardConnectedRealmApiClient(
     private val blizzardApiSupport: BlizzardApiSupport,
 ) {
+    private fun defaultLocaleFor(region: Region): String =
+        when (region) {
+            Region.NorthAmerica -> "en_US"
+            Region.Europe -> "en_GB"
+            Region.Korea -> "ko_KR"
+            Region.Taiwan -> "zh_TW"
+        }
+
     fun getConnectedRealmIndex(region: Region): Mono<ConnectedRealmIndex> {
         val uri =
             blizzardApiSupport.buildRegionalUri(
                 region = region,
                 path = CONNECTED_REALM_INDEX_PATH,
                 namespace = blizzardApiSupport.dynamicNamespaceForRegion(region).value,
-                locale = CONNECTED_REALM_DEFAULT_LOCALE,
+                locale = defaultLocaleFor(region),
             )
 
         return blizzardApiSupport
@@ -48,7 +55,7 @@ class BlizzardConnectedRealmApiClient(
                 region = region,
                 path = "connected-realm/$id",
                 namespace = blizzardApiSupport.dynamicNamespaceForRegion(region).value,
-                locale = CONNECTED_REALM_DEFAULT_LOCALE,
+                locale = defaultLocaleFor(region),
             )
 
         return blizzardApiSupport

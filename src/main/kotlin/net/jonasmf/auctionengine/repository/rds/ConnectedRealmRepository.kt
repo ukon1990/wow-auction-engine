@@ -14,7 +14,7 @@ interface ConnectedRealmRepository : JpaRepository<ConnectedRealm, Int> {
         select distinct connectedRealm
         from ConnectedRealm connectedRealm
         join connectedRealm.realms realm
-        where upper(realm.region.name) = upper(:#{#region.code})
+        where realm.region.type = :region
         """,
     )
     fun findAllByRegion(

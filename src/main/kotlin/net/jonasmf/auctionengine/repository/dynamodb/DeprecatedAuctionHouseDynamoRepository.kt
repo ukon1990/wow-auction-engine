@@ -20,7 +20,7 @@ const val AUCTION_HOUSE_TABLE_NAME = "wah_auction_houses"
         "Retained as a fallback after issue #26 " +
             "because DynamoDB cost was not worth it for the auction-house scheduling path.",
 )
-interface AuctionHouseDynamoRepository {
+interface DeprecatedAuctionHouseDynamoRepository {
     fun findById(id: Int?): Optional<AuctionHouse>
 
     fun findAllByRegion(region: Region): List<AuctionHouseDynamo>
@@ -36,10 +36,10 @@ interface AuctionHouseDynamoRepository {
         "Retained as a fallback after issue #26 " +
             "because DynamoDB cost was not worth it for the auction-house scheduling path.",
 )
-class AuctionHouseDynamoRepositoryIml(
+class DeprecatedAuctionHouseDynamoRepositoryImpl(
     private val dynamoDbOperations: DynamoDbOperations,
     private val logRepository: AuctionHouseUpdateLogDynamoRepository,
-) : AuctionHouseDynamoRepository {
+) : DeprecatedAuctionHouseDynamoRepository {
     override fun findById(id: Int?): Optional<AuctionHouse> {
         if (id == null) {
             return Optional.empty()

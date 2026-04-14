@@ -26,7 +26,7 @@ SET @copy_avg_delay_sql = (
               AND table_name = 'auction_house'
               AND column_name = 'average_delay'
         ),
-        'UPDATE auction_house SET avg_delay = COALESCE(avg_delay, average_delay)',
+        'UPDATE auction_house SET avg_delay = average_delay WHERE (avg_delay IS NULL OR avg_delay = 0) AND average_delay IS NOT NULL',
         'SELECT 1'
     )
 );
@@ -43,7 +43,7 @@ SET @copy_update_attempts_sql = (
               AND table_name = 'auction_house'
               AND column_name = 'failed_attempts'
         ),
-        'UPDATE auction_house SET update_attempts = COALESCE(update_attempts, failed_attempts)',
+        'UPDATE auction_house SET update_attempts = failed_attempts WHERE (update_attempts IS NULL OR update_attempts = 0) AND failed_attempts IS NOT NULL',
         'SELECT 1'
     )
 );
@@ -54,7 +54,76 @@ DEALLOCATE PREPARE copy_update_attempts_stmt;
 UPDATE auction_house ah
 JOIN connected_realm cr ON cr.auction_house_id = ah.id
 SET ah.connected_id = cr.id
-WHERE ah.connected_id = 0;
+WHERE ah.connected_id IS NULL OR ah.connected_id <> cr.id;
+
+UPDATE auction_house ah
+LEFT JOIN connected_realm cr ON cr.auction_house_id = ah.id
+SET ah.connected_id = ah.id
+WHERE (ah.connected_id IS NULL OR ah.connected_id = 0)
+  AND cr.id IS NULL;
+
+DROP TEMPORARY TABLE IF EXISTS tmp_auction_house_dedup;
+CREATE TEMPORARY TABLE tmp_auction_house_dedup (
+    duplicate_id INT NOT NULL PRIMARY KEY,
+    keeper_id INT NOT NULL
+);
+
+INSERT INTO tmp_auction_house_dedup (duplicate_id, keeper_id)
+SELECT ah.id AS duplicate_id,
+       keeper.keeper_id
+FROM auction_house ah
+JOIN (
+    SELECT grouped.connected_id,
+           COALESCE(
+               MIN(CASE WHEN cr.id IS NOT NULL THEN ah2.id END),
+               MIN(ah2.id)
+           ) AS keeper_id
+    FROM auction_house ah2
+    LEFT JOIN connected_realm cr ON cr.auction_house_id = ah2.id
+    JOIN (
+        SELECT connected_id
+        FROM auction_house
+        WHERE connected_id IS NOT NULL
+        GROUP BY connected_id
+        HAVING COUNT(*) > 1
+    ) grouped ON grouped.connected_id = ah2.connected_id
+    GROUP BY grouped.connected_id
+) keeper ON keeper.connected_id = ah.connected_id
+WHERE ah.id <> keeper.keeper_id;
+
+UPDATE connected_realm cr
+JOIN tmp_auction_house_dedup dedup ON dedup.duplicate_id = cr.auction_house_id
+SET cr.auction_house_id = dedup.keeper_id;
+
+SET @repoint_log_fk_sql = (
+    SELECT IF(
+        EXISTS (
+            SELECT 1
+            FROM information_schema.columns
+            WHERE table_schema = DATABASE()
+              AND table_name = 'auction_house_file_log'
+              AND column_name = 'auction_house_id'
+        ),
+        'UPDATE auction_house_file_log log_entry
+         JOIN tmp_auction_house_dedup dedup ON dedup.duplicate_id = log_entry.auction_house_id
+         SET auction_house_id = dedup.keeper_id',
+        'SELECT 1'
+    )
+);
+PREPARE repoint_log_fk_stmt FROM @repoint_log_fk_sql;
+EXECUTE repoint_log_fk_stmt;
+DEALLOCATE PREPARE repoint_log_fk_stmt;
+
+DELETE ah
+FROM auction_house ah
+JOIN tmp_auction_house_dedup dedup ON dedup.duplicate_id = ah.id;
+
+DROP TEMPORARY TABLE IF EXISTS tmp_auction_house_dedup;
+
+UPDATE auction_house ah
+JOIN connected_realm cr ON cr.auction_house_id = ah.id
+SET ah.connected_id = cr.id
+WHERE ah.connected_id IS NULL OR ah.connected_id <> cr.id;
 
 UPDATE auction_house ah
 JOIN connected_realm cr ON cr.auction_house_id = ah.id

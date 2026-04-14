@@ -1,6 +1,5 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.RealmDynamo
 import net.jonasmf.auctionengine.dbo.dynamodb.StatsDynamo
@@ -20,7 +19,7 @@ import net.jonasmf.auctionengine.repository.AuctionHouseRepository as AuctionHou
 import net.jonasmf.auctionengine.repository.AuctionHouseUpdateLogRepository as AuctionHouseLogRepository
 
 @Repository
-class MariaDbAuctionHouseRepository(
+class AuctionHouseStateRepositoryImpl(
     private val auctionHouseRepository: AuctionHouseRepository,
     private val connectedRealmRepository: ConnectedRealmRepository,
     private val auctionHouseUpdateLogRepository: AuctionHouseLogRepository,
@@ -93,7 +92,7 @@ class MariaDbAuctionHouseRepository(
 }
 
 @Repository
-class MariaDbAuctionHouseUpdateLogRepository(
+class AuctionHouseUpdateLogRepositoryImpl(
     private val auctionHouseRepository: AuctionHouseRepository,
     private val connectedRealmRepository: ConnectedRealmRepository,
     private val auctionHouseFileLogRepository: AuctionHouseFileLogRepository,
@@ -169,7 +168,6 @@ class MariaDbAuctionHouseUpdateLogRepository(
 }
 
 private fun AuctionHouse.applyDomain(domain: AuctionHouseDomain): AuctionHouse {
-    val mapper = jacksonObjectMapper()
     val connectedIdValue = domain.connectedId.takeIf { it != 0 } ?: domain.id ?: 0
     val regionValue =
         domain.region.takeIf { connectedIdValue < 0 || it != Region.Europe || domain.id == null }
@@ -191,10 +189,8 @@ private fun AuctionHouse.applyDomain(domain: AuctionHouseDomain): AuctionHouse {
         lastTrendUpdateInitiation = domain.lastTrendUpdateInitiation?.toJavaInstant()
         lowestDelay = domain.lowestDelay
         nextUpdate = domain.nextUpdate?.toJavaInstant()
-        realmSlugs = domain.realmSlugs
         statsLastModified = domain.stats.lastModified
         updateAttempts = domain.updateAttempts
-        realmsJson = mapper.writeValueAsString(domain.realms)
         auctionFile = domain.url.toFileReference(domain.size, auctionFile)
         statsFile = domain.stats.url.toFileReference(statsFile?.size ?: 0.0, statsFile)
     }
@@ -219,7 +215,6 @@ private fun AuctionHouse.toDomain(realms: List<RealmDynamo>): AuctionHouseDomain
         lowestDelay = lowestDelay ?: 0L,
         nextUpdate = nextUpdate?.toKotlin(),
         realms = realms,
-        realmSlugs = realmSlugs ?: "",
         size = auctionFile?.size ?: 0.0,
         stats =
             StatsDynamo(

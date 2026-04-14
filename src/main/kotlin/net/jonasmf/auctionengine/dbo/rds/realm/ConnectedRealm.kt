@@ -9,7 +9,6 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
-import jakarta.persistence.Lob
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
@@ -77,8 +76,6 @@ class AuctionHouse(
     @Nullable
     var lastTrendUpdateInitiation: Instant? = null,
     @Nullable
-    var realmSlugs: String = "",
-    @Nullable
     var statsLastModified: Long = 0L,
     @Nullable
     var updateAttempts: Int = 0,
@@ -91,9 +88,6 @@ class AuctionHouse(
     @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     @Nullable
     var auctionFile: FileReference? = null,
-    @Lob
-    @Nullable
-    var realmsJson: String? = null,
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, mappedBy = "auctionHouse", orphanRemoval = true)
     @OrderBy("lastModified DESC")
     var updateLog: MutableList<AuctionHouseFileLog> = mutableListOf(),

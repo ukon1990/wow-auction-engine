@@ -2,7 +2,6 @@ package net.jonasmf.auctionengine.service
 
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
-import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.repository.AuctionHouseRepository
 import net.jonasmf.auctionengine.repository.AuctionHouseUpdateLogRepository
 import org.springframework.stereotype.Service
@@ -11,31 +10,35 @@ import kotlin.math.min
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+import kotlin.time.toJavaInstant
+import net.jonasmf.auctionengine.repository.rds.AuctionHouseRepository as AuctionHouseEntityRepository
 
 @Service
 class AuctionHouseService(
     val repository: AuctionHouseRepository,
     val auctionHouseLogRepository: AuctionHouseUpdateLogRepository,
+    private val auctionHouseEntityRepository: AuctionHouseEntityRepository,
 ) {
     fun createIfMissing(connectedRealm: ConnectedRealm) {
-        val auctionHouse = repository.findById(connectedRealm.id)
-        if (auctionHouse.isPresent && auctionHouse.get().lastModified != null) return
         if (connectedRealm.realms.isEmpty()) return
-        val seededAt = Instant.fromEpochSeconds(0L)
-        val newAuctionHouse =
-            AuctionHouse(
-                id = connectedRealm.id,
-                connectedId = connectedRealm.id,
-                region =
-                    connectedRealm.realms
-                        .first()
-                        .region.type,
-                realmSlugs = connectedRealm.realms.joinToString(",") { it.slug },
-                // Only for new auction houses. We set it way back in the past
-                lastModified = seededAt,
-                nextUpdate = seededAt,
-            )
-        repository.save(newAuctionHouse)
+
+        val seededAt = Instant.fromEpochSeconds(0L).toJavaInstant()
+        val region =
+            connectedRealm.realms
+                .first()
+                .region.type
+        val auctionHouse = connectedRealm.auctionHouse
+
+        auctionHouse.connectedId = connectedRealm.id
+        auctionHouse.region = region
+        auctionHouse.lastModified = auctionHouse.lastModified ?: seededAt
+        auctionHouse.nextUpdate = auctionHouse.nextUpdate ?: seededAt
+        auctionHouse.lowestDelay = auctionHouse.lowestDelay ?: 0L
+        auctionHouse.avgDelay = auctionHouse.avgDelay ?: 60L
+        auctionHouse.highestDelay = auctionHouse.highestDelay ?: 0L
+        auctionHouse.updateAttempts = auctionHouse.updateAttempts ?: 0
+
+        auctionHouseEntityRepository.save(auctionHouse)
     }
 
     fun updateTimes(

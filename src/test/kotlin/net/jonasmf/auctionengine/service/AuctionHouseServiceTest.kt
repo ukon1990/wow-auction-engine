@@ -185,6 +185,55 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
             assertEquals(0L, saved.nextUpdate!!.epochSeconds)
             assertEquals(1, auctionHouseService.getReadyForUpdate(Region.Europe).count { it.id == 999 })
         }
+
+        @Test
+        fun `should repair existing auction house metadata from connected realm`() {
+            val connectedRealm =
+                ConnectedRealm(
+                    id = 1000,
+                    auctionHouse =
+                        RealmAuctionHouse(
+                            connectedId = 0,
+                            region = Region.Korea,
+                            lastModified = null,
+                            lastRequested = null,
+                            nextUpdate = null,
+                            lowestDelay = 0,
+                            avgDelay = 60,
+                            highestDelay = 0,
+                            tsmFile = null,
+                            statsFile = null,
+                            auctionFile = null,
+                            updateAttempts = 0,
+                        ),
+                    realms =
+                        mutableListOf(
+                            Realm(
+                                id = 1000,
+                                region = RegionDBO(id = 2, name = "Europe", type = Region.Europe),
+                                name = "Repaired Realm",
+                                category = "Normal",
+                                locale = Locale.EN_GB,
+                                timezone = "UTC",
+                                gameBuild = GameBuildVersion.RETAIL,
+                                slug = "repaired-realm",
+                            ),
+                        ),
+                )
+            connectedRealmRepository.save(connectedRealm)
+
+            auctionHouseService.createIfMissing(connectedRealmRepository.findById(1000).orElseThrow())
+
+            val saved = repository.findById(1000).orElseThrow()
+            assertEquals(1000, saved.connectedId)
+            assertEquals(Region.Europe, saved.region)
+            assertEquals(0L, saved.lastModified!!.epochSeconds)
+            assertEquals(0L, saved.nextUpdate!!.epochSeconds)
+            assertEquals(60L, saved.avgDelay)
+            assertEquals(0L, saved.lowestDelay)
+            assertEquals(0L, saved.highestDelay)
+            assertEquals(0, saved.updateAttempts)
+        }
     }
 
     @Nested
@@ -282,7 +331,6 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
                     statsFile = null,
                     auctionFile = null,
                     updateAttempts = auctionHouse.updateAttempts,
-                    realmSlugs = auctionHouse.realmSlugs,
                 ),
             realms =
                 mutableListOf(

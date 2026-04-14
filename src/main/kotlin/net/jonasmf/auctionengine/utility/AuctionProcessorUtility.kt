@@ -74,7 +74,7 @@ class AuctionProcessorUtility(
     ) {
         val statsId =
             AuctionStatsId(
-                connectedRealm = connectedRealm,
+                connectedRealmId = connectedRealm.id,
                 gameBuildVersion = GameBuildVersion.RETAIL,
                 itemId = auctionDTO.item.id,
                 date = LocalDate.now(),
@@ -148,7 +148,7 @@ class AuctionProcessorUtility(
     ) {
         val statsId =
             AuctionStatsId(
-                connectedRealm = connectedRealm,
+                connectedRealmId = connectedRealm.id,
                 gameBuildVersion = GameBuildVersion.RETAIL,
                 itemId = auctionDTO.item.id,
                 date = LocalDate.now(),

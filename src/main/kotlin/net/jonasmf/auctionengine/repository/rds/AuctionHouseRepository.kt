@@ -12,6 +12,8 @@ import java.util.Optional
 interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
     fun findByConnectedId(connectedId: Int): Optional<AuctionHouse>
 
+    fun findAllByConnectedIdIn(connectedIds: Collection<Int>): List<AuctionHouse>
+
     fun findAllByRegion(region: Region): List<AuctionHouse>
 
     fun findAllByRegionAndNextUpdateLessThanEqualOrderByNextUpdateAsc(
