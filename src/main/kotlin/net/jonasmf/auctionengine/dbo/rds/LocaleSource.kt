@@ -16,6 +16,7 @@ object LocaleSourceType {
     const val ITEM_SUBCLASS = "item_subclass"
     const val ITEM_QUALITY = "item_quality"
     const val INVENTORY_TYPE = "inventory_type"
+    const val ITEM_BINDING = "item_binding"
 }
 
 fun localeSourceKey(vararg parts: Any): String = parts.joinToString(":") { it.toString() }

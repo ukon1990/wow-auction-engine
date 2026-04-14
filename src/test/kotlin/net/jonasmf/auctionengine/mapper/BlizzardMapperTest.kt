@@ -188,6 +188,8 @@ class BlizzardMapperTest {
         assertEquals(item.id.toString(), itemDbo.name.sourceKey)
         assertEquals("item_class", itemDbo.itemClass.name.sourceType)
         assertEquals("item_subclass", itemDbo.itemSubclass.displayName.sourceType)
+        assertEquals("item_binding", itemDbo.binding?.name?.sourceType)
+        assertEquals("ON_EQUIP", roundTripItem.binding?.type)
         assertEquals("inventory_type", itemAppearanceDbo.slot.name.sourceType)
         assertEquals(4, itemClass.id)
         assertEquals(4, itemSubclass.subclassId)
