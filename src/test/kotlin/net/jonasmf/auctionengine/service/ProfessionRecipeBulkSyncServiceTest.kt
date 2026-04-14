@@ -48,8 +48,14 @@ class ProfessionRecipeBulkSyncServiceTest : IntegrationTestBase() {
         assertEquals(1, countRows("modified_crafting_category_metadata"))
         assertEquals(1, countRows("modified_crafting_slot_metadata"))
         assertEquals(1, countRows("modified_crafting_slot_metadata_category"))
-        assertEquals(1, countRowsWhere("locale", "source_type = 'profession' AND source_key = '100' AND source_field = 'name'"))
-        assertEquals(1, countRowsWhere("locale", "source_type = 'recipe' AND source_key = '1000' AND source_field = 'name'"))
+        assertEquals(
+            1,
+            countRowsWhere("locale", "source_type = 'profession' AND source_key = '100' AND source_field = 'name'"),
+        )
+        assertEquals(
+            1,
+            countRowsWhere("locale", "source_type = 'recipe' AND source_key = '1000' AND source_field = 'name'"),
+        )
     }
 
     @Test
@@ -177,6 +183,5 @@ class ProfessionRecipeBulkSyncServiceTest : IntegrationTestBase() {
     private fun countRowsWhere(
         tableName: String,
         condition: String,
-    ): Int =
-        jdbcTemplate.queryForObject("SELECT COUNT(*) FROM $tableName WHERE $condition", Int::class.java)!!
+    ): Int = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM $tableName WHERE $condition", Int::class.java)!!
 }
