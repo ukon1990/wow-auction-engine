@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
-import java.time.ZonedDateTime
+import java.time.Instant
 import kotlin.collections.emptyList
 import kotlin.text.get
 
@@ -33,6 +33,7 @@ class ConnectedRealmService(
     private val connectedRealmBulkSyncService: ConnectedRealmBulkSyncService,
 ) {
     val log: Logger = LoggerFactory.getLogger(ConnectedRealmService::class.java)
+    private val seededAt: Instant = Instant.EPOCH
 
     @Scheduled(
         fixedDelayString = "PT1H",
@@ -75,16 +76,18 @@ class ConnectedRealmService(
                             ),
                         auctionHouse =
                             AuctionHouse(
-                                lastModified = null,
+                                connectedId = id,
+                                region = region.type,
+                                lastModified = seededAt,
                                 lastRequested = null,
-                                nextUpdate = ZonedDateTime.now(),
+                                nextUpdate = seededAt,
                                 lowestDelay = 60,
-                                averageDelay = 60,
+                                avgDelay = 60,
                                 highestDelay = 60,
                                 tsmFile = null,
                                 statsFile = null,
                                 auctionFile = null,
-                                failedAttempts = 0,
+                                updateAttempts = 0,
                             ),
                     )
                 communityRealms.add(connectedRealmRepository.save(connectedRealm))
@@ -119,13 +122,13 @@ class ConnectedRealmService(
 
     fun updateLatestDump(
         connectedId: Int,
-        lastModified: ZonedDateTime,
+        lastModified: Instant,
     ) {
         val connectedRealm = connectedRealmRepository.findById(connectedId)
         if (connectedRealm.isPresent) {
             val house = connectedRealm.get().auctionHouse
             house.lastModified = lastModified
-            house.nextUpdate = lastModified.plusMinutes(house.averageDelay)
+            house.nextUpdate = lastModified.plusSeconds(house.avgDelay * 60)
             connectedRealmRepository.save(connectedRealm.get())
         }
     }

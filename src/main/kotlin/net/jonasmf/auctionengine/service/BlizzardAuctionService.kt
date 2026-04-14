@@ -2,10 +2,10 @@ package net.jonasmf.auctionengine.service
 
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.dbo.dynamodb.converters.toKotlin
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
+import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
@@ -52,7 +52,7 @@ class BlizzardAuctionService(
 
     fun updateAuctionHouses(
         region: Region,
-        auctionHousesToUpdate: List<AuctionHouseDynamo>,
+        auctionHousesToUpdate: List<AuctionHouse>,
     ) {
         val batchStartTime = System.currentTimeMillis()
         logger.info(
@@ -109,13 +109,14 @@ class BlizzardAuctionService(
 
             val house = connectedRealm.auctionHouse
             // TODO: Cleanup so that the original lastModified also is Instant
+            val lastModifiedInstant = Instant.ofEpochMilli(response.lastModified)
             val lastModified =
                 ZonedDateTime.ofInstant(
-                    Instant.ofEpochMilli(response.lastModified),
+                    lastModifiedInstant,
                     TimeZone.getDefault().toZoneId(),
                 )
 
-            if (house.lastModified == null || lastModified.isAfter(house.lastModified)) {
+            if (house.lastModified == null || lastModifiedInstant.isAfter(house.lastModified)) {
                 logger.info("New auction data available for $connectedRealmId. Last modified: $lastModified")
                 saveDumpPathToS3(region, connectedRealmId, response)
                 processAuctionData(response.url, region, connectedRealm, connectedRealmId, lastModified)
@@ -394,7 +395,7 @@ class BlizzardAuctionService(
         try {
             val updateHistory = updateHistoryService.startUpdate(connectedRealm, auctionCount, lastModified)
             processAuctionsInBatches(data.auctions, connectedRealm, connectedRealmId, updateHistory, startTime)
-            realmService.updateLatestDump(connectedRealmId, lastModified)
+            realmService.updateLatestDump(connectedRealmId, lastModified.toInstant())
             updateHistoryService.setUpdateToCompleted(connectedRealmId, lastModified)
             logger.info(
                 "Successfully processed $auctionCount auctions for $connectedRealmId in ${System.currentTimeMillis() - startTime}ms",

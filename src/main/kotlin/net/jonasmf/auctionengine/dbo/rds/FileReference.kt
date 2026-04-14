@@ -9,8 +9,9 @@ import java.time.ZonedDateTime
 data class FileReference(
     @Id
     @GeneratedValue
-    val id: Long,
-    val path: String,
-    val bucketName: String,
-    val created: ZonedDateTime,
+    val id: Long? = null,
+    val path: String = "",
+    val bucketName: String = "",
+    val created: ZonedDateTime = ZonedDateTime.now(),
+    val size: Double = 0.0,
 )

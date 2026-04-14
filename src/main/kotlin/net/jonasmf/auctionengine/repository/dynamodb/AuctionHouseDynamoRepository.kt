@@ -15,6 +15,11 @@ import java.util.Optional
 
 const val AUCTION_HOUSE_TABLE_NAME = "wah_auction_houses"
 
+@Deprecated(
+    message =
+        "Retained as a fallback after issue #26 " +
+            "because DynamoDB cost was not worth it for the auction-house scheduling path.",
+)
 interface AuctionHouseDynamoRepository {
     fun findById(id: Int?): Optional<AuctionHouse>
 
@@ -26,6 +31,11 @@ interface AuctionHouseDynamoRepository {
 }
 
 @Repository
+@Deprecated(
+    message =
+        "Retained as a fallback after issue #26 " +
+            "because DynamoDB cost was not worth it for the auction-house scheduling path.",
+)
 class AuctionHouseDynamoRepositoryIml(
     private val dynamoDbOperations: DynamoDbOperations,
     private val logRepository: AuctionHouseUpdateLogDynamoRepository,

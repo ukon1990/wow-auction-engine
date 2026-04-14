@@ -3,8 +3,8 @@ package net.jonasmf.auctionengine.service
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.domain.AuctionHouse
-import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseDynamoRepository
-import net.jonasmf.auctionengine.repository.dynamodb.AuctionHouseUpdateLogDynamoRepository
+import net.jonasmf.auctionengine.repository.AuctionHouseRepository
+import net.jonasmf.auctionengine.repository.AuctionHouseUpdateLogRepository
 import org.springframework.stereotype.Service
 import kotlin.math.max
 import kotlin.math.min
@@ -14,12 +14,12 @@ import kotlin.time.Instant
 
 @Service
 class AuctionHouseService(
-    val repository: AuctionHouseDynamoRepository,
-    val auctionHouseLogRepository: AuctionHouseUpdateLogDynamoRepository,
+    val repository: AuctionHouseRepository,
+    val auctionHouseLogRepository: AuctionHouseUpdateLogRepository,
 ) {
     fun createIfMissing(connectedRealm: ConnectedRealm) {
         val auctionHouse = repository.findById(connectedRealm.id)
-        if (!auctionHouse.isEmpty) return
+        if (auctionHouse.isPresent && auctionHouse.get().lastModified != null) return
         if (connectedRealm.realms.isEmpty()) return
         val seededAt = Instant.fromEpochSeconds(0L)
         val newAuctionHouse =

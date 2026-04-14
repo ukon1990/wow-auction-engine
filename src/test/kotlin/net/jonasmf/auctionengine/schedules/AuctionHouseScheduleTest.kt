@@ -8,7 +8,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
+import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.service.AuctionHouseService
 import net.jonasmf.auctionengine.service.BlizzardAuctionService
 import net.jonasmf.auctionengine.service.RuntimeHealthTracker
@@ -41,7 +41,7 @@ class AuctionHouseScheduleTest {
 
         every { auctionHouseService.getReadyForUpdate(Region.Europe) } returns
             listOf(
-                AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
+                AuctionHouse(id = 1, connectedId = 1, region = Region.Europe),
             )
         every { auctionHouseService.getReadyForUpdate(Region.Taiwan) } returns emptyList()
         every { blizzardAuctionService.updateAuctionHouses(any(), any()) } answers {
@@ -87,7 +87,7 @@ class AuctionHouseScheduleTest {
         val auctionHouseService = mockk<AuctionHouseService>()
         every { auctionHouseService.getReadyForUpdate(Region.Europe) } returns
             listOf(
-                AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
+                AuctionHouse(id = 1, connectedId = 1, region = Region.Europe),
             )
         every { auctionHouseService.getReadyForUpdate(Region.Taiwan) } returns emptyList()
         every { blizzardAuctionService.updateAuctionHouses(any(), any()) } returns Unit
@@ -112,7 +112,7 @@ class AuctionHouseScheduleTest {
         val auctionHouseService = mockk<AuctionHouseService>()
         every { auctionHouseService.getReadyForUpdate(Region.Europe) } returns
             listOf(
-                AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
+                AuctionHouse(id = 1, connectedId = 1, region = Region.Europe),
             )
         every { auctionHouseService.getReadyForUpdate(Region.Taiwan) } returns emptyList()
         every { blizzardAuctionService.updateAuctionHouses(any(), any()) } throws RuntimeException("boom") andThen Unit

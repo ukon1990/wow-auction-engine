@@ -10,7 +10,6 @@ import io.mockk.slot
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
@@ -29,6 +28,7 @@ import reactor.core.publisher.Mono
 import java.nio.file.Files
 import java.time.Duration
 import java.time.ZonedDateTime
+import net.jonasmf.auctionengine.domain.AuctionHouse as AuctionHouseDomain
 
 class BlizzardAuctionServiceTest {
     private val properties =
@@ -141,8 +141,8 @@ class BlizzardAuctionServiceTest {
         service.updateAuctionHouses(
             Region.Europe,
             listOf(
-                AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
-                AuctionHouseDynamo(connectedId = 2, region = Region.Europe),
+                AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe),
+                AuctionHouseDomain(id = 2, connectedId = 2, region = Region.Europe),
             ),
         )
 
@@ -219,8 +219,8 @@ class BlizzardAuctionServiceTest {
         service.updateAuctionHouses(
             Region.Europe,
             listOf(
-                AuctionHouseDynamo(connectedId = 1, region = Region.Europe),
-                AuctionHouseDynamo(connectedId = 2, region = Region.Europe),
+                AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe),
+                AuctionHouseDomain(id = 2, connectedId = 2, region = Region.Europe),
             ),
         )
 
@@ -257,7 +257,10 @@ class BlizzardAuctionServiceTest {
             events += "complete"
         }
 
-        service.updateAuctionHouses(Region.Europe, listOf(AuctionHouseDynamo(connectedId = 1, region = Region.Europe)))
+        service.updateAuctionHouses(
+            Region.Europe,
+            listOf(AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe)),
+        )
 
         assertEquals(listOf("stats", "complete"), events)
         assertEquals("s3://first", completionMarker.captured)
@@ -278,7 +281,10 @@ class BlizzardAuctionServiceTest {
         every { amazonS3.uploadCompressedFile(eq(Region.Europe), any(), any()) } returns null
         every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
 
-        service.updateAuctionHouses(Region.Europe, listOf(AuctionHouseDynamo(connectedId = 1, region = Region.Europe)))
+        service.updateAuctionHouses(
+            Region.Europe,
+            listOf(AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe)),
+        )
 
         io.mockk.verify(exactly = 0) {
             hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(any(), any(), any())
@@ -310,7 +316,10 @@ class BlizzardAuctionServiceTest {
             )
         every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
 
-        service.updateAuctionHouses(Region.Europe, listOf(AuctionHouseDynamo(connectedId = 1, region = Region.Europe)))
+        service.updateAuctionHouses(
+            Region.Europe,
+            listOf(AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe)),
+        )
 
         val warnEvent = appender.list.single { it.level == Level.WARN }
         assertTrue(warnEvent.formattedMessage.contains("Failed to process auction data for realm 1"))
@@ -334,7 +343,10 @@ class BlizzardAuctionServiceTest {
         every { blizzardAuctionApiClient.downloadAuctionData("url-1") } returns Mono.error(RuntimeException("boom"))
         every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
 
-        service.updateAuctionHouses(Region.Europe, listOf(AuctionHouseDynamo(connectedId = 1, region = Region.Europe)))
+        service.updateAuctionHouses(
+            Region.Europe,
+            listOf(AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe)),
+        )
 
         val errorEvent = appender.list.single { it.level == Level.ERROR }
         assertTrue(errorEvent.formattedMessage.contains("Failed to process auction data for realm 1"))
@@ -350,16 +362,18 @@ class BlizzardAuctionServiceTest {
         id = id,
         auctionHouse =
             AuctionHouse(
-                lastModified = lastModified,
+                connectedId = id,
+                region = Region.Europe,
+                lastModified = lastModified?.toInstant(),
                 lastRequested = null,
-                nextUpdate = ZonedDateTime.now(),
+                nextUpdate = java.time.Instant.EPOCH,
                 lowestDelay = 60,
-                averageDelay = 60,
+                avgDelay = 60,
                 highestDelay = 60,
                 tsmFile = null,
                 statsFile = null,
                 auctionFile = null,
-                failedAttempts = 0,
+                updateAttempts = 0,
             ),
         realms = mutableListOf(),
     )

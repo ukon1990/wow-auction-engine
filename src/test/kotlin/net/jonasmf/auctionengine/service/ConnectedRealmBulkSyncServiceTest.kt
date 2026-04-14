@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
-import java.time.ZonedDateTime
+import java.time.Instant
 
 class ConnectedRealmBulkSyncServiceTest : IntegrationTestBase() {
     @Autowired
@@ -117,7 +117,7 @@ class ConnectedRealmBulkSyncServiceTest : IntegrationTestBase() {
     ): ConnectedRealm =
         ConnectedRealm(
             id = id,
-            auctionHouse = newAuctionHouse(),
+            auctionHouse = newAuctionHouse(id),
             realms =
                 buildList {
                     add(realm(id = id, name = realmName, slug = slug))
@@ -143,19 +143,21 @@ class ConnectedRealmBulkSyncServiceTest : IntegrationTestBase() {
             slug = slug,
         )
 
-    private fun newAuctionHouse(): AuctionHouse =
+    private fun newAuctionHouse(id: Int): AuctionHouse =
         AuctionHouse(
             id = null,
+            connectedId = id,
+            region = Region.Europe,
             lastModified = null,
             lastRequested = null,
-            nextUpdate = ZonedDateTime.now(),
+            nextUpdate = Instant.EPOCH,
             lowestDelay = 0L,
-            averageDelay = 60L,
+            avgDelay = 60L,
             highestDelay = 0L,
             tsmFile = null,
             statsFile = null,
             auctionFile = null,
-            failedAttempts = 0,
+            updateAttempts = 0,
             updateLog = mutableListOf(),
         )
 

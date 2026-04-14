@@ -13,6 +13,11 @@ import kotlin.time.toJavaInstant
 
 const val AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME = "wah_auction_houses_update_log"
 
+@Deprecated(
+    message =
+        "Retained as a fallback after issue #26 " +
+            "because DynamoDB cost was not worth it for the auction-house scheduling path.",
+)
 interface AuctionHouseUpdateLogDynamoRepository {
     fun findByIdAndMostRecentLastModified(connectedRealmId: Int): List<AuctionHouseUpdateLog>
 
@@ -27,6 +32,11 @@ interface AuctionHouseUpdateLogDynamoRepository {
 }
 
 @Repository
+@Deprecated(
+    message =
+        "Retained as a fallback after issue #26 " +
+            "because DynamoDB cost was not worth it for the auction-house scheduling path.",
+)
 class AuctionHouseUpdateLogDynamoRepositoryImpl(
     private val dynamoDbOperations: DynamoDbOperations,
 ) : AuctionHouseUpdateLogDynamoRepository {
