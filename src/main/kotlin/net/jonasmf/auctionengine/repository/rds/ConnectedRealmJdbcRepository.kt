@@ -63,7 +63,7 @@ class ConnectedRealmJdbcRepository(
                 INSERT INTO connected_realm (id, auction_house_id)
                 VALUES $placeholders
                 ON DUPLICATE KEY UPDATE
-                    id = VALUES(id)
+                    auction_house_id = VALUES(auction_house_id)
                 """.trimIndent()
 
             val params = ArrayList<Any?>(chunk.size * 2)

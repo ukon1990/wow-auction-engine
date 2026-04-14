@@ -74,7 +74,7 @@ class AuctionProcessorUtility(
     ) {
         val statsId =
             AuctionStatsId(
-                connectedRealm = connectedRealm,
+                connectedRealmId = connectedRealm.id,
                 gameBuildVersion = GameBuildVersion.RETAIL,
                 itemId = auctionDTO.item.id,
                 date = LocalDate.now(),
@@ -148,7 +148,7 @@ class AuctionProcessorUtility(
     ) {
         val statsId =
             AuctionStatsId(
-                connectedRealm = connectedRealm,
+                connectedRealmId = connectedRealm.id,
                 gameBuildVersion = GameBuildVersion.RETAIL,
                 itemId = auctionDTO.item.id,
                 date = LocalDate.now(),
@@ -168,16 +168,18 @@ class AuctionProcessorUtility(
             auctionHouse =
                 AuctionHouse(
                     id = null,
+                    connectedId = id,
+                    region = net.jonasmf.auctionengine.constant.Region.Europe,
                     lastModified = null,
                     lastRequested = null,
-                    nextUpdate = java.time.ZonedDateTime.now(),
+                    nextUpdate = java.time.Instant.EPOCH,
                     lowestDelay = 0L,
-                    averageDelay = 60,
+                    avgDelay = 60,
                     highestDelay = 0L,
                     tsmFile = null,
                     statsFile = null,
                     auctionFile = null,
-                    failedAttempts = 0,
+                    updateAttempts = 0,
                     updateLog = mutableListOf(),
                 ),
             realms = mutableListOf(),

@@ -23,7 +23,6 @@ class AuctionHouse(
     var lowestDelay: Long = 0,
     var nextUpdate: Instant? = null,
     var realms: List<RealmDynamo> = emptyList(),
-    var realmSlugs: String = "",
     var size: Double = 0.0,
     var stats: StatsDynamo =
         StatsDynamo(

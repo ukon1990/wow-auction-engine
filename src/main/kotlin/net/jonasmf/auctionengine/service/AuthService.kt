@@ -19,7 +19,9 @@ class AuthService(
 ) {
     @Volatile
     private var accessToken: String? = null
-    private var expiryDuration: Long = 0
+
+    @Volatile
+    private var tokenExpiresAtEpochMillis: Long = 0
 
     @EventListener(ApplicationReadyEvent::class)
     fun refreshTokenAfterStartup() {
@@ -54,7 +56,7 @@ class AuthService(
                     throw IllegalStateException("Token was not provided in the response")
                 }
                 accessToken = response.accessToken
-                expiryDuration = response.expiresIn
+                tokenExpiresAtEpochMillis = System.currentTimeMillis() + (response.expiresIn * 1000)
                 LOG.info("Token refreshed successfully. Access Token: ${response.accessToken}")
                 response.accessToken
             }.doOnError { error ->
@@ -66,9 +68,21 @@ class AuthService(
             }
     }
 
-    fun getToken(): Mono<String> = Mono.justOrEmpty(accessToken)
+    fun getToken(): Mono<String> =
+        Mono
+            .justOrEmpty(accessToken)
+            .filter { isTokenValid() }
+
+    fun ensureToken(): Mono<String> =
+        Mono.defer {
+            accessToken?.takeIf { isTokenValid() }?.let { Mono.just(it) } ?: refreshToken()
+        }
+
+    private fun isTokenValid(nowEpochMillis: Long = System.currentTimeMillis()): Boolean =
+        accessToken != null && nowEpochMillis < tokenExpiresAtEpochMillis - TOKEN_REFRESH_SKEW_MILLIS
 
     companion object {
+        private const val TOKEN_REFRESH_SKEW_MILLIS = 60_000L
         val LOG: Logger = LoggerFactory.getLogger(AuthService::class.java)
     }
 }

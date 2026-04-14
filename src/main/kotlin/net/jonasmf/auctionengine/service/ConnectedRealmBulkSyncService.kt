@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.service
 
+import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.repository.rds.AuctionHouseRepository
 import net.jonasmf.auctionengine.repository.rds.ConnectedRealmJdbcRepository
@@ -9,6 +10,7 @@ import net.jonasmf.auctionengine.repository.rds.RealmSyncRow
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 
 @Service
 class ConnectedRealmBulkSyncService(
@@ -26,16 +28,30 @@ class ConnectedRealmBulkSyncService(
         val connectedRealmIds = uniqueConnectedRealms.map { it.id }
         val existingAuctionHouseIds =
             connectedRealmJdbcRepository.findAuctionHouseIdsByConnectedRealmIds(connectedRealmIds).toMutableMap()
+        val auctionHousesByConnectedId =
+            auctionHouseRepository.findAllByConnectedIdIn(connectedRealmIds).associateBy { it.connectedId }
+        val auctionHousesById =
+            auctionHouseRepository.findAllById(existingAuctionHouseIds.values).associateBy { requireNotNull(it.id) }
 
         uniqueConnectedRealms.forEach { connectedRealm ->
-            if (existingAuctionHouseIds.containsKey(connectedRealm.id)) return@forEach
+            val existingAuctionHouse =
+                auctionHousesByConnectedId[connectedRealm.id]
+                    ?: existingAuctionHouseIds[connectedRealm.id]?.let(auctionHousesById::get)
 
-            val auctionHouseId =
-                requireNotNull(auctionHouseRepository.saveAndFlush(connectedRealm.auctionHouse).id) {
+            val savedAuctionHouse =
+                if (existingAuctionHouse != null) {
+                    auctionHouseRepository.save(normalizeAuctionHouse(existingAuctionHouse, connectedRealm))
+                } else {
+                    val createdAuctionHouse = normalizeAuctionHouse(connectedRealm.auctionHouse, connectedRealm)
+                    auctionHouseRepository.saveAndFlush(createdAuctionHouse).also {
+                        log.info("Created auction house {} for new connected realm {}", it.id, connectedRealm.id)
+                    }
+                }
+
+            existingAuctionHouseIds[connectedRealm.id] =
+                requireNotNull(savedAuctionHouse.id) {
                     "Auction house ID must be generated for connected realm ${connectedRealm.id}"
                 }
-            existingAuctionHouseIds[connectedRealm.id] = auctionHouseId
-            log.info("Created auction house {} for new connected realm {}", auctionHouseId, connectedRealm.id)
         }
 
         connectedRealmJdbcRepository.upsertConnectedRealms(
@@ -70,5 +86,27 @@ class ConnectedRealmBulkSyncService(
 
         val savedById = connectedRealmRepository.findAllById(connectedRealmIds).associateBy { it.id }
         return connectedRealmIds.mapNotNull(savedById::get)
+    }
+
+    private fun normalizeAuctionHouse(
+        auctionHouse: AuctionHouse,
+        connectedRealm: ConnectedRealm,
+    ): AuctionHouse {
+        val resolvedRegion =
+            connectedRealm.realms
+                .firstOrNull()
+                ?.region
+                ?.type ?: auctionHouse.region
+
+        return auctionHouse.apply {
+            connectedId = connectedRealm.id
+            region = resolvedRegion
+            lastModified = lastModified ?: Instant.EPOCH
+            nextUpdate = nextUpdate ?: Instant.EPOCH
+            lowestDelay = lowestDelay ?: 0L
+            avgDelay = avgDelay ?: 60L
+            highestDelay = highestDelay ?: 0L
+            updateAttempts = updateAttempts ?: 0
+        }
     }
 }

@@ -8,7 +8,7 @@ import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.Href
 import net.jonasmf.auctionengine.dto.LocaleTypeValue
-import java.time.ZonedDateTime
+import java.time.Instant
 
 data class ConnectedRealmDTO(
     val id: Int,
@@ -27,16 +27,18 @@ data class ConnectedRealmDTO(
             realms = realms.map { it.toDBO(region) }.toMutableList(),
             auctionHouse =
                 AuctionHouse(
-                    lastModified = null,
+                    connectedId = id,
+                    region = region,
+                    lastModified = Instant.EPOCH,
                     lastRequested = null,
-                    nextUpdate = ZonedDateTime.now(),
+                    nextUpdate = Instant.EPOCH,
                     lowestDelay = 0,
-                    averageDelay = 0,
+                    avgDelay = 0,
                     highestDelay = 0,
                     tsmFile = null,
                     statsFile = null,
                     auctionFile = null,
-                    failedAttempts = 0,
+                    updateAttempts = 0,
                     updateLog = mutableListOf(),
                 ),
         )

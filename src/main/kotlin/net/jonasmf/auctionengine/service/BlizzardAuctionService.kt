@@ -2,10 +2,10 @@ package net.jonasmf.auctionengine.service
 
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dbo.dynamodb.AuctionHouseDynamo
 import net.jonasmf.auctionengine.dbo.dynamodb.converters.toKotlin
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
+import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
@@ -52,7 +52,7 @@ class BlizzardAuctionService(
 
     fun updateAuctionHouses(
         region: Region,
-        auctionHousesToUpdate: List<AuctionHouseDynamo>,
+        auctionHousesToUpdate: List<AuctionHouse>,
     ) {
         val batchStartTime = System.currentTimeMillis()
         logger.info(
@@ -98,24 +98,27 @@ class BlizzardAuctionService(
                     .getLatestAuctionDump(connectedRealmId, region)
                     .block() ?: run {
                     logger.error("Latest dump path lookup returned no response for realm {}", connectedRealmId)
+                    markAuctionUpdateFailed(connectedRealmId)
                     return
                 }
 
             val connectedRealm = realmService.getById(connectedRealmId)
             if (connectedRealm == null) {
                 logger.error("ConnectedRealm not found for id $connectedRealmId")
+                markAuctionUpdateFailed(connectedRealmId)
                 return
             }
 
             val house = connectedRealm.auctionHouse
             // TODO: Cleanup so that the original lastModified also is Instant
+            val lastModifiedInstant = Instant.ofEpochMilli(response.lastModified)
             val lastModified =
                 ZonedDateTime.ofInstant(
-                    Instant.ofEpochMilli(response.lastModified),
+                    lastModifiedInstant,
                     TimeZone.getDefault().toZoneId(),
                 )
 
-            if (house.lastModified == null || lastModified.isAfter(house.lastModified)) {
+            if (house.lastModified == null || lastModifiedInstant.isAfter(house.lastModified)) {
                 logger.info("New auction data available for $connectedRealmId. Last modified: $lastModified")
                 saveDumpPathToS3(region, connectedRealmId, response)
                 processAuctionData(response.url, region, connectedRealm, connectedRealmId, lastModified)
@@ -140,7 +143,19 @@ class BlizzardAuctionService(
                 failure = error,
                 action = "get latest dump path",
             )
+            markAuctionUpdateFailed(connectedRealmId)
         }
+    }
+
+    private fun markAuctionUpdateFailed(
+        connectedRealmId: Int,
+        lastModified: ZonedDateTime? = null,
+    ) {
+        auctionHouseService.updateTimes(
+            connectedRealmId,
+            lastModified?.toInstant()?.toKotlin(),
+            false,
+        )
     }
 
     private fun processAuctionData(
@@ -169,11 +184,7 @@ class BlizzardAuctionService(
                     .downloadAuctionData(url)
                     .block() ?: run {
                     logger.error("Auction data download returned no payload for realm {}", connectedRealmId)
-                    auctionHouseService.updateTimes(
-                        connectedRealmId,
-                        lastModified.toInstant().toKotlin(),
-                        false,
-                    )
+                    markAuctionUpdateFailed(connectedRealmId, lastModified)
                     return
                 }
             try {
@@ -197,11 +208,7 @@ class BlizzardAuctionService(
                         "Auction payload archive failed for realm {}. Marking update as failed.",
                         connectedRealmId,
                     )
-                    auctionHouseService.updateTimes(
-                        connectedRealmId,
-                        lastModified.toInstant().toKotlin(),
-                        false,
-                    )
+                    markAuctionUpdateFailed(connectedRealmId, lastModified)
                     return
                 }
                 logger.info(
@@ -225,11 +232,7 @@ class BlizzardAuctionService(
                     )
                 if (hourlyStatsSummary.processedAuctions == 0) {
                     logger.warn("No auctions found for realm {}", connectedRealmId)
-                    auctionHouseService.updateTimes(
-                        connectedRealmId,
-                        lastModified.toInstant().toKotlin(),
-                        false,
-                    )
+                    markAuctionUpdateFailed(connectedRealmId, lastModified)
                     return
                 }
                 logger.info(
@@ -281,12 +284,7 @@ class BlizzardAuctionService(
                 region = region,
                 connectedRealmId = connectedRealmId,
             )
-            auctionHouseService.updateTimes(
-                // TODO: Cleanup so that the original lastModified also is Instant
-                connectedRealmId,
-                lastModified.toInstant().toKotlin(),
-                false,
-            )
+            markAuctionUpdateFailed(connectedRealmId, lastModified)
         }
     }
 
@@ -394,7 +392,7 @@ class BlizzardAuctionService(
         try {
             val updateHistory = updateHistoryService.startUpdate(connectedRealm, auctionCount, lastModified)
             processAuctionsInBatches(data.auctions, connectedRealm, connectedRealmId, updateHistory, startTime)
-            realmService.updateLatestDump(connectedRealmId, lastModified)
+            realmService.updateLatestDump(connectedRealmId, lastModified.toInstant())
             updateHistoryService.setUpdateToCompleted(connectedRealmId, lastModified)
             logger.info(
                 "Successfully processed $auctionCount auctions for $connectedRealmId in ${System.currentTimeMillis() - startTime}ms",

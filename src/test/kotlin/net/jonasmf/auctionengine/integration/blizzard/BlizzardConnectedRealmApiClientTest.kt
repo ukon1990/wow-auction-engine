@@ -30,7 +30,7 @@ class BlizzardConnectedRealmApiClientTest {
 
         assertEquals(1, result.connectedRealms.size)
         assertEquals(
-            "https://kr.api.blizzard.test/data/wow/connected-realm/index?namespace=dynamic-kr&locale=en_GB",
+            "https://kr.api.blizzard.test/data/wow/connected-realm/index?namespace=dynamic-kr&locale=ko_KR",
             capturedRequest!!.url().toString(),
         )
     }

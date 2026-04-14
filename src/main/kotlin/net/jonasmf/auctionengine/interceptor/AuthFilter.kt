@@ -10,16 +10,18 @@ fun authHeaderFilterFunction(
     blizzardApiProperties: BlizzardApiProperties,
 ): ExchangeFilterFunction {
     return ExchangeFilterFunction.ofRequestProcessor { clientRequest ->
+        if (!clientRequest.url().toString().contains(blizzardApiProperties.baseUrl)) {
+            return@ofRequestProcessor reactor.core.publisher.Mono
+                .just(clientRequest)
+        }
+
         authService
-            .getToken()
+            .ensureToken()
             .map { token ->
-                if (!clientRequest.url().toString().contains(blizzardApiProperties.baseUrl)) {
-                    return@map clientRequest
-                }
                 ClientRequest
                     .from(clientRequest)
                     .header("Authorization", "Bearer $token")
                     .build()
-            }.defaultIfEmpty(clientRequest)
+            }
     }
 }

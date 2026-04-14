@@ -18,9 +18,11 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
-import java.time.ZonedDateTime
+import java.time.Instant
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.emptyList
 import kotlin.text.get
+import net.jonasmf.auctionengine.repository.rds.AuctionHouseRepository as AuctionHouseEntityRepository
 
 @Service
 class ConnectedRealmService(
@@ -31,69 +33,36 @@ class ConnectedRealmService(
     private val regionRepository: RegionRepository,
     private val auctionHouseService: AuctionHouseService,
     private val connectedRealmBulkSyncService: ConnectedRealmBulkSyncService,
+    private val auctionHouseEntityRepository: AuctionHouseEntityRepository,
 ) {
     val log: Logger = LoggerFactory.getLogger(ConnectedRealmService::class.java)
+    private val seededAt: Instant = Instant.EPOCH
+    private val syncInProgress = AtomicBoolean(false)
 
     @Scheduled(
         fixedDelayString = "PT1H",
         initialDelayString = "\${app.scheduling.initial-delay:PT30S}",
     )
     fun updateRealms() {
-        // return // TODO: FInd a better way to determine when to run this or not. It's annoying to run every time
+        if (!syncInProgress.compareAndSet(false, true)) {
+            log.info("Skipping connected realm update because a previous sync is still running.")
+            return
+        }
+
+        try {
+            doUpdateRealms()
+        } finally {
+            syncInProgress.set(false)
+        }
+    }
+
+    private fun doUpdateRealms() {
         regionService.ensureRegionsExist()
         val configuredRegions = properties.configuredRegions
-        val communityIds = configuredRegions.map(::communityIdForRegion)
-        val communityRealms = mutableListOf<ConnectedRealm>()
-        communityIds.forEach { id ->
-            val connectedDBO = connectedRealmRepository.findById(id).orElse(null)
-            if (connectedDBO == null) {
-                log.info("Connected Realm with id $id not found. Creating it")
-
-                // Check if region exists first
-                val regionOptional = regionRepository.findById(id * -1)
-                if (regionOptional.isEmpty) {
-                    log.error("Region with id ${id * -1} not found. Cannot create ConnectedRealm for id $id")
-                    return@forEach
-                }
-
-                val region = regionOptional.get()
-                val connectedRealm =
-                    ConnectedRealm(
-                        id = id,
-                        realms =
-                            mutableListOf(
-                                Realm(
-                                    id = id,
-                                    name = "Community",
-                                    slug = "community",
-                                    locale = Locale.EN_GB,
-                                    region = region,
-                                    timezone = "UTC",
-                                    category = "Community",
-                                    gameBuild = GameBuildVersion.RETAIL,
-                                ),
-                            ),
-                        auctionHouse =
-                            AuctionHouse(
-                                lastModified = null,
-                                lastRequested = null,
-                                nextUpdate = ZonedDateTime.now(),
-                                lowestDelay = 60,
-                                averageDelay = 60,
-                                highestDelay = 60,
-                                tsmFile = null,
-                                statsFile = null,
-                                auctionFile = null,
-                                failedAttempts = 0,
-                            ),
-                    )
-                communityRealms.add(connectedRealmRepository.save(connectedRealm))
-                log.info("Successfully created ConnectedRealm with id $id")
-            } else {
-                communityRealms.add(connectedDBO)
-                log.debug("Connected Realm with id $id already exists")
-            }
-        }
+        val communityRealms =
+            connectedRealmBulkSyncService.sync(
+                configuredRegions.mapNotNull(::buildCommunityRealmForRegion),
+            )
 
         log.info("Checking for updates for configured regions: {}", configuredRegions)
         val connectedRealms =
@@ -117,20 +86,78 @@ class ConnectedRealmService(
             Region.Taiwan -> -4
         }
 
+    private fun buildCommunityRealmForRegion(region: Region): ConnectedRealm? {
+        val communityId = communityIdForRegion(region)
+        val regionDbo = regionRepository.findById(communityId * -1).orElse(null)
+        if (regionDbo == null) {
+            log.error(
+                "Region with id {} not found. Cannot create or repair ConnectedRealm for community id {}",
+                communityId * -1,
+                communityId,
+            )
+            return null
+        }
+
+        return ConnectedRealm(
+            id = communityId,
+            realms =
+                mutableListOf(
+                    Realm(
+                        id = communityId,
+                        name = "Community",
+                        slug = "community",
+                        locale = Locale.EN_GB,
+                        region = regionDbo,
+                        timezone = "UTC",
+                        category = "Community",
+                        gameBuild = GameBuildVersion.RETAIL,
+                    ),
+                ),
+            auctionHouse =
+                AuctionHouse(
+                    connectedId = communityId,
+                    region = regionDbo.type,
+                    lastModified = seededAt,
+                    lastRequested = null,
+                    nextUpdate = seededAt,
+                    lowestDelay = 60,
+                    avgDelay = 60,
+                    highestDelay = 60,
+                    tsmFile = null,
+                    statsFile = null,
+                    auctionFile = null,
+                    updateAttempts = 0,
+                ),
+        )
+    }
+
     fun updateLatestDump(
         connectedId: Int,
-        lastModified: ZonedDateTime,
+        lastModified: Instant,
     ) {
         val connectedRealm = connectedRealmRepository.findById(connectedId)
         if (connectedRealm.isPresent) {
             val house = connectedRealm.get().auctionHouse
             house.lastModified = lastModified
-            house.nextUpdate = lastModified.plusMinutes(house.averageDelay)
+            house.nextUpdate = lastModified.plusSeconds(house.avgDelay * 60)
             connectedRealmRepository.save(connectedRealm.get())
         }
     }
 
-    fun getById(id: Int): ConnectedRealm? = connectedRealmRepository.findById(id).orElse(null)
+    fun getById(id: Int): ConnectedRealm? {
+        val connectedRealm = connectedRealmRepository.findById(id).orElse(null) ?: return null
+        val authoritativeAuctionHouse =
+            auctionHouseEntityRepository
+                .findByConnectedId(id)
+                .orElse(null) ?: return connectedRealm
+
+        if (connectedRealm.auctionHouse.id == authoritativeAuctionHouse.id) {
+            return connectedRealm
+        }
+
+        connectedRealm.auctionHouse = authoritativeAuctionHouse
+        return connectedRealmRepository.save(connectedRealm)
+    }
 
     fun getAllForRegion(region: Region) = connectedRealmRepository.findAllByRegion(region)
 

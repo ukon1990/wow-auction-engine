@@ -2,26 +2,21 @@ package net.jonasmf.auctionengine.dbo.rds.auction
 
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
-import jakarta.persistence.FetchType
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 import net.jonasmf.auctionengine.constant.GameBuildVersion
-import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import java.io.Serializable
 import java.time.LocalDate
 
 @Embeddable
 data class AuctionStatsId(
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "connectedRealmId", insertable = false, updatable = false)
-    val connectedRealm: ConnectedRealm,
-    @Column(name = "ahTypeId")
+    @Column(name = "connected_realm_id")
+    val connectedRealmId: Int,
+    @Column(name = "ah_type_id")
     val gameBuildVersion: GameBuildVersion,
-    @Column(name = "itemId")
+    @Column(name = "item_id")
     val itemId: Int = 0,
     @Column(name = "date")
     val date: LocalDate,
-    @Column(name = "petSpeciesId")
+    @Column(name = "pet_species_id")
     val petSpeciesId: Int? = null,
     @Column(name = "modifier_key")
     val modifierKey: String = "",
@@ -29,5 +24,5 @@ data class AuctionStatsId(
     val bonusKey: String = "",
 ) : Serializable {
     override fun toString(): String =
-        "${connectedRealm.id}-$gameBuildVersion-$itemId-$date-${petSpeciesId ?: ""}-$modifierKey-$bonusKey"
+        "$connectedRealmId-$gameBuildVersion-$itemId-$date-${petSpeciesId ?: ""}-$modifierKey-$bonusKey"
 }

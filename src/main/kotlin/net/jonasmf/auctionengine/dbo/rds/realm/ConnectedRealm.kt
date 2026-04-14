@@ -3,17 +3,21 @@ package net.jonasmf.auctionengine.dbo.rds.realm
 import jakarta.annotation.Nullable
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
+import jakarta.persistence.OrderBy
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.FileReference
-import java.time.ZonedDateTime
+import java.time.Instant
 
 @Entity
 class ConnectedRealm(
@@ -30,9 +34,13 @@ class AuctionHouseFileLog(
     @Id
     @GeneratedValue
     var id: Long? = null,
-    var timestamp: ZonedDateTime,
-    @ManyToOne
-    var file: FileReference,
+    var lastModified: Instant? = null,
+    var timeSincePreviousDump: Long = 0L,
+    @ManyToOne(cascade = [CascadeType.ALL], optional = false)
+    var file: FileReference = FileReference(),
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "auction_house_id")
+    var auctionHouse: AuctionHouse? = null,
 )
 
 @Entity
@@ -40,28 +48,48 @@ class AuctionHouse(
     @Id
     @GeneratedValue
     var id: Int? = null,
-    var lastModified: ZonedDateTime?,
+    var connectedId: Int = 0,
+    @Enumerated(EnumType.STRING)
+    var region: Region = Region.Europe,
+    var autoUpdate: Boolean = false,
+    var lastModified: Instant? = null,
     @Nullable
-    var lastRequested: ZonedDateTime?,
+    var lastRequested: Instant? = null,
     @Nullable
-    var nextUpdate: ZonedDateTime,
+    var nextUpdate: Instant? = null,
     @Nullable
-    var lowestDelay: Long,
+    var lowestDelay: Long = 0,
     @Nullable
-    var averageDelay: Long = 60,
+    var avgDelay: Long = 60,
     @Nullable
-    var highestDelay: Long,
-    @ManyToOne
+    var highestDelay: Long = 0,
     @Nullable
-    var tsmFile: FileReference?,
-    @ManyToOne
+    var gameBuild: Int = 0,
     @Nullable
-    var statsFile: FileReference?,
-    @ManyToOne
+    var lastDailyPriceUpdate: Instant? = null,
     @Nullable
-    var auctionFile: FileReference?,
-    var failedAttempts: Int? = 0,
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    var lastHistoryDeleteEvent: Instant? = null,
+    @Nullable
+    var lastHistoryDeleteEventDaily: Instant? = null,
+    @Nullable
+    var lastStatsInsert: Instant? = null,
+    @Nullable
+    var lastTrendUpdateInitiation: Instant? = null,
+    @Nullable
+    var statsLastModified: Long = 0L,
+    @Nullable
+    var updateAttempts: Int = 0,
+    @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @Nullable
+    var tsmFile: FileReference? = null,
+    @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @Nullable
+    var statsFile: FileReference? = null,
+    @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @Nullable
+    var auctionFile: FileReference? = null,
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, mappedBy = "auctionHouse", orphanRemoval = true)
+    @OrderBy("lastModified DESC")
     var updateLog: MutableList<AuctionHouseFileLog> = mutableListOf(),
 )
 
