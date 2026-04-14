@@ -71,27 +71,41 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
 
     @Test
     fun `should align hourly auction stats indexes and storage layout`() {
-        val indexes =
-            jdbcTemplate.queryForList(
-                """
-                SELECT DISTINCT index_name
-                FROM information_schema.statistics
-                WHERE table_schema = DATABASE()
-                  AND table_name = 'hourly_auction_stats'
-                """.trimIndent(),
-                String::class.java,
-            )
+        val secondaryIndexes =
+            jdbcTemplate
+                .query(
+                    """
+                    SELECT index_name, GROUP_CONCAT(column_name ORDER BY seq_in_index) AS columns_csv
+                    FROM information_schema.statistics
+                    WHERE table_schema = DATABASE()
+                      AND table_name = 'hourly_auction_stats'
+                      AND index_name <> 'PRIMARY'
+                    GROUP BY index_name
+                    """.trimIndent(),
+                ) { rs, _ -> rs.getString("index_name") to rs.getString("columns_csv") }
+                .toMap()
 
-        assertTrue(indexes.contains("idx_hourly_auction_stats_connected_realm_id_date"))
-        assertTrue(indexes.contains("idx_hourly_auction_stats_connected_realm_id_item_id_date"))
+        assertEquals(
+            mapOf(
+                "idx_hourly_auction_stats_connected_realm_id_date" to "connected_realm_id,date",
+                "idx_hourly_auction_stats_connected_realm_id_item_id_date" to "connected_realm_id,item_id,date",
+            ),
+            secondaryIndexes,
+        )
 
         val createTable =
             jdbcTemplate.queryForObject(
                 "SHOW CREATE TABLE hourly_auction_stats",
                 { rs, _ -> rs.getString("Create Table") },
-            ) ?: error("SHOW CREATE TABLE returned no definition for hourly_auction_stats")
+            ) ?: error(
+                "SHOW CREATE TABLE returned no definition for hourly_auction_stats",
+            )
 
-        val normalizedCreateTable = createTable.lowercase().replace("`", "").replace(Regex("\\s+"), " ")
+        val normalizedCreateTable =
+            createTable
+                .lowercase()
+                .replace("`", "")
+                .replace(Regex("\\s+"), " ")
 
         assertTrue(normalizedCreateTable.contains("engine=innodb"))
         assertTrue(normalizedCreateTable.contains("default charset=utf8mb3"))

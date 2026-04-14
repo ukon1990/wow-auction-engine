@@ -2,7 +2,6 @@ package net.jonasmf.auctionengine.dbo.rds.auction
 
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
-import jakarta.persistence.Index
 import jakarta.persistence.Table
 
 /**
@@ -16,19 +15,7 @@ import jakarta.persistence.Table
  * This was the fastest and cheapest approach I could find as I don't want to spend lots of money on an expensive database.
  */
 @Entity
-@Table(
-    name = "hourly_auction_stats",
-    indexes = [
-        Index(
-            name = "idx_hourly_auction_stats_connected_realm_id_date",
-            columnList = "connected_realm_id, date",
-        ),
-        Index(
-            name = "idx_hourly_auction_stats_connected_realm_id_item_id_date",
-            columnList = "connected_realm_id, item_id, date",
-        ),
-    ],
-)
+@Table(name = "hourly_auction_stats")
 data class HourlyAuctionStats(
     @EmbeddedId
     val id: AuctionStatsId,

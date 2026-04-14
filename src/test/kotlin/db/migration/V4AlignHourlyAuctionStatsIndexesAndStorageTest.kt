@@ -22,6 +22,15 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
                 execute(
                     connection,
                     """
+                    ALTER TABLE hourly_auction_stats
+                        ADD INDEX idx_date_and_house (connected_realm_id, date),
+                        ADD INDEX idx_old_realm_item_date (connected_realm_id, item_id, date)
+                    """.trimIndent(),
+                )
+                execute(connection, auctionHousePricesViewSql())
+                execute(
+                    connection,
+                    """
                     INSERT INTO hourly_auction_stats (
                         connected_realm_id,
                         ah_type_id,
@@ -45,20 +54,27 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
                 assertTrue(normalizedCreateTable.contains("partition by hash (to_days(date))"))
                 assertTrue(normalizedCreateTable.contains("partitions 31"))
 
-                val indexes =
-                    queryColumn(
+                val secondaryIndexes =
+                    queryPairs(
                         connection,
                         """
-                        SELECT DISTINCT index_name
+                        SELECT index_name, GROUP_CONCAT(column_name ORDER BY seq_in_index) AS columns_csv
                         FROM information_schema.statistics
                         WHERE table_schema = DATABASE()
                           AND table_name = 'hourly_auction_stats'
+                          AND index_name <> 'PRIMARY'
+                        GROUP BY index_name
                         ORDER BY index_name
                         """.trimIndent(),
                     )
 
-                assertTrue(indexes.contains("idx_hourly_auction_stats_connected_realm_id_date"))
-                assertTrue(indexes.contains("idx_hourly_auction_stats_connected_realm_id_item_id_date"))
+                assertEquals(
+                    mapOf(
+                        "idx_hourly_auction_stats_connected_realm_id_date" to "connected_realm_id,date",
+                        "idx_hourly_auction_stats_connected_realm_id_item_id_date" to "connected_realm_id,item_id,date",
+                    ),
+                    secondaryIndexes,
+                )
 
                 val rowCount = queryInt(connection, "SELECT COUNT(*) FROM hourly_auction_stats")
                 assertEquals(1, rowCount)
@@ -136,6 +152,20 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
             }
         }
 
+    private fun queryPairs(
+        connection: Connection,
+        sql: String,
+    ): Map<String, String> =
+        connection.createStatement().use { statement ->
+            statement.executeQuery(sql).use { rs ->
+                buildMap {
+                    while (rs.next()) {
+                        put(rs.getString(1), rs.getString(2))
+                    }
+                }
+            }
+        }
+
     private fun oldHourlyAuctionStatsTableSql(): String =
         buildString {
             appendLine("CREATE TABLE hourly_auction_stats (")
@@ -156,6 +186,32 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
             )
             appendLine(")")
             append("ENGINE=InnoDB")
+        }
+
+    private fun auctionHousePricesViewSql(): String =
+        buildString {
+            appendLine("CREATE OR REPLACE VIEW v_auction_house_prices AS")
+            for (hour in 0..23) {
+                if (hour > 0) {
+                    appendLine("UNION ALL")
+                }
+                val paddedHour = hour.toString().padStart(2, '0')
+                appendLine(
+                    """
+                    SELECT connected_realm_id,
+                           ah_type_id,
+                           item_id,
+                           pet_species_id,
+                           modifier_key,
+                           bonus_key,
+                           TIMESTAMP(date, MAKETIME($hour, 0, 0)) AS auction_timestamp,
+                           price$paddedHour AS price,
+                           quantity$paddedHour AS quantity
+                    FROM hourly_auction_stats
+                    WHERE price$paddedHour IS NOT NULL OR quantity$paddedHour IS NOT NULL
+                    """.trimIndent(),
+                )
+            }
         }
 
     private class SimpleContext(

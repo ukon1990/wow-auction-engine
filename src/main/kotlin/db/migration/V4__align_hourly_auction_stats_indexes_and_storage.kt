@@ -21,23 +21,23 @@ class V4__align_hourly_auction_stats_indexes_and_storage : BaseJavaMigration() {
             if (!indexesAligned) {
                 normalizeIndexes(connection, schema, TABLE_NAME)
             }
-            recreateAuctionHousePricesView(connection)
             return
         }
 
-        rebuildHourlyAuctionStatsTable(connection, schema)
+        rebuildHourlyAuctionStatsTable(connection, schema, loadViewDefinition(connection, schema, VIEW_NAME))
     }
 
     private fun rebuildHourlyAuctionStatsTable(
         connection: Connection,
         schema: String,
+        viewDefinition: String?,
     ) {
         execute(connection, "DROP VIEW IF EXISTS `$VIEW_NAME`")
         execute(connection, "DROP TABLE IF EXISTS `$TEMP_TABLE_NAME`")
         execute(connection, "DROP TABLE IF EXISTS `$BACKUP_TABLE_NAME`")
         execute(connection, "CREATE TABLE `$TEMP_TABLE_NAME` LIKE `$TABLE_NAME`")
 
-        normalizeIndexes(connection, schema, TEMP_TABLE_NAME)
+        dropSecondaryIndexes(connection, schema, TEMP_TABLE_NAME)
         execute(
             connection,
             """
@@ -70,8 +70,9 @@ class V4__align_hourly_auction_stats_indexes_and_storage : BaseJavaMigration() {
                 `$TEMP_TABLE_NAME` TO `$TABLE_NAME`
             """.trimIndent(),
         )
+        normalizeIndexes(connection, schema, TABLE_NAME)
         execute(connection, "DROP TABLE `$BACKUP_TABLE_NAME`")
-        recreateAuctionHousePricesView(connection)
+        recreateAuctionHousePricesView(connection, viewDefinition)
     }
 
     private fun normalizeIndexes(
@@ -156,6 +157,25 @@ class V4__align_hourly_auction_stats_indexes_and_storage : BaseJavaMigration() {
             .filterKeys { it != "PRIMARY" }
             .filter { (name, columns) -> name != expectedName && columns == expectedColumns }
             .keys
+            .forEach { indexName ->
+                execute(
+                    connection,
+                    """
+                    ALTER TABLE `$tableName`
+                        DROP INDEX `$indexName`
+                    """.trimIndent(),
+                )
+            }
+    }
+
+    private fun dropSecondaryIndexes(
+        connection: Connection,
+        schema: String,
+        tableName: String,
+    ) {
+        loadIndexes(connection, schema, tableName)
+            .keys
+            .filter { it != "PRIMARY" }
             .forEach { indexName ->
                 execute(
                     connection,
@@ -253,9 +273,35 @@ class V4__align_hourly_auction_stats_indexes_and_storage : BaseJavaMigration() {
                 }
             }
 
-    private fun recreateAuctionHousePricesView(connection: Connection) {
-        execute(connection, "DROP VIEW IF EXISTS `$VIEW_NAME`")
-        execute(connection, AUCTION_HOUSE_PRICES_VIEW_SQL)
+    private fun loadViewDefinition(
+        connection: Connection,
+        schema: String,
+        viewName: String,
+    ): String? =
+        connection
+            .prepareStatement(
+                """
+                SELECT view_definition
+                FROM information_schema.views
+                WHERE table_schema = ?
+                  AND table_name = ?
+                """.trimIndent(),
+            ).use { statement ->
+                statement.setString(1, schema)
+                statement.setString(2, viewName)
+                statement.executeQuery().use { rs ->
+                    if (!rs.next()) return null
+                    "CREATE OR REPLACE VIEW `$viewName` AS ${rs.getString("view_definition")}"
+                }
+            }
+
+    private fun recreateAuctionHousePricesView(
+        connection: Connection,
+        viewDefinition: String?,
+    ) {
+        if (viewDefinition != null) {
+            execute(connection, viewDefinition)
+        }
     }
 
     private fun execute(
@@ -289,31 +335,5 @@ class V4__align_hourly_auction_stats_indexes_and_storage : BaseJavaMigration() {
         private const val REALM_ITEM_DATE_INDEX = "idx_hourly_auction_stats_connected_realm_id_item_id_date"
         private val REALM_DATE_COLUMNS = listOf("connected_realm_id", "date")
         private val REALM_ITEM_DATE_COLUMNS = listOf("connected_realm_id", "item_id", "date")
-
-        private val AUCTION_HOUSE_PRICES_VIEW_SQL =
-            buildString {
-                appendLine("CREATE OR REPLACE VIEW v_auction_house_prices AS")
-                for (hour in 0..23) {
-                    if (hour > 0) {
-                        appendLine("UNION ALL")
-                    }
-                    val paddedHour = hour.toString().padStart(2, '0')
-                    appendLine(
-                        """
-                        SELECT connected_realm_id,
-                               ah_type_id,
-                               item_id,
-                               pet_species_id,
-                               modifier_key,
-                               bonus_key,
-                               TIMESTAMP(date, MAKETIME($hour, 0, 0)) AS auction_timestamp,
-                               price$paddedHour AS price,
-                               quantity$paddedHour AS quantity
-                        FROM hourly_auction_stats
-                        WHERE price$paddedHour IS NOT NULL OR quantity$paddedHour IS NOT NULL
-                        """.trimIndent(),
-                    )
-                }
-            }
     }
 }
