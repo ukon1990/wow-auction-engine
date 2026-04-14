@@ -239,42 +239,139 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
     @Nested
     inner class UpdateTimes {
         @Test
-        fun `Should set next update time and calculate delay summary on update`() {
-            val connectedRealmId = 1
+        fun `should set next update time and calculate rounded delay summary on update`() {
+            val connectedRealmId = 5
             var house = repository.findById(connectedRealmId).get()
-            var startTime = house.lastModified
+            var lastModified = requireNotNull(house.lastModified)
 
             auctionHouseService.updateTimes(
                 connectedRealmId,
-                startTime?.plus(30.minutes),
+                lastModified.plus(35.minutes),
                 true,
                 "https://example.json/1",
             )
-            startTime = repository.findById(connectedRealmId).get().lastModified
+            lastModified = requireNotNull(repository.findById(connectedRealmId).get().lastModified)
 
             auctionHouseService.updateTimes(
                 connectedRealmId,
-                startTime?.plus(90.minutes),
+                lastModified.plus(48.minutes),
                 true,
                 "https://example.json/2",
             )
-            startTime = repository.findById(connectedRealmId).get().lastModified
-
-            List(10) {
-                auctionHouseService.updateTimes(
-                    connectedRealmId,
-                    startTime?.plus((it * 45).minutes),
-                    true,
-                    "https://example.json/3",
-                )
-            }
 
             house = repository.findById(connectedRealmId).get()
-            assertEquals(30, house.lowestDelay)
-            assertEquals(48, house.avgDelay)
-            assertEquals(90, house.highestDelay)
+            assertEquals(35, house.lowestDelay)
+            assertEquals(42, house.avgDelay)
+            assertEquals(48, house.highestDelay)
             assertTrue(house.nextUpdate!!.toEpochMilliseconds() > house.lastModified!!.toEpochMilliseconds())
-            assertEquals(30, house.nextUpdate!!.minus(house.lastModified!!).inWholeMinutes)
+            assertEquals(35, house.nextUpdate!!.minus(house.lastModified!!).inWholeMinutes)
+        }
+
+        @Test
+        fun `should default delay summary to 45 when no usable file log values are present`() {
+            val connectedRealmId = 1001
+            connectedRealmRepository.save(
+                connectedRealm(
+                    AuctionHouse(
+                        id = connectedRealmId,
+                        connectedId = connectedRealmId,
+                        autoUpdate = true,
+                        region = Region.Europe,
+                        avgDelay = 60,
+                        nextUpdate = getOffsetFromNow(-10),
+                        lastModified = null,
+                    ),
+                ),
+            )
+
+            auctionHouseService.updateTimes(
+                connectedRealmId,
+                getOffsetFromNow(-5),
+                true,
+                "https://example.json/default",
+            )
+
+            val result = repository.findById(connectedRealmId).get()
+            assertEquals(45, result.lowestDelay)
+            assertEquals(45, result.avgDelay)
+            assertEquals(45, result.highestDelay)
+            assertEquals(45, result.nextUpdate!!.minus(result.lastModified!!).inWholeMinutes)
+        }
+
+        @Test
+        fun `should ignore file log rows older than 72 hours when calculating delay summary`() {
+            val connectedRealmId = 1002
+            repository.save(
+                AuctionHouse(
+                    id = connectedRealmId,
+                    connectedId = connectedRealmId,
+                    autoUpdate = true,
+                    region = Region.Europe,
+                    avgDelay = 60,
+                    nextUpdate = getOffsetFromNow(-10),
+                    lastModified = getOffsetFromNow(-4400),
+                ),
+            )
+
+            var lastModified = requireNotNull(repository.findById(connectedRealmId).get().lastModified)
+            auctionHouseService.updateTimes(
+                connectedRealmId,
+                lastModified.plus(20.minutes),
+                true,
+                "https://example.json/old-window",
+            )
+            lastModified = requireNotNull(repository.findById(connectedRealmId).get().lastModified)
+
+            auctionHouseService.updateTimes(
+                connectedRealmId,
+                lastModified.plus(70.minutes),
+                true,
+                "https://example.json/recent-window",
+            )
+
+            val result = repository.findById(connectedRealmId).get()
+            assertEquals(70, result.lowestDelay)
+            assertEquals(70, result.avgDelay)
+            assertEquals(70, result.highestDelay)
+            assertEquals(70, result.nextUpdate!!.minus(result.lastModified!!).inWholeMinutes)
+        }
+
+        @Test
+        fun `should clamp min and max delay stats on update`() {
+            val connectedRealmId = 1003
+            repository.save(
+                AuctionHouse(
+                    id = connectedRealmId,
+                    connectedId = connectedRealmId,
+                    autoUpdate = true,
+                    region = Region.Europe,
+                    avgDelay = 60,
+                    nextUpdate = getOffsetFromNow(-10),
+                    lastModified = getOffsetFromNow(-300),
+                ),
+            )
+
+            var lastModified = requireNotNull(repository.findById(connectedRealmId).get().lastModified)
+            auctionHouseService.updateTimes(
+                connectedRealmId,
+                lastModified.plus(20.minutes),
+                true,
+                "https://example.json/min-clamp",
+            )
+            lastModified = requireNotNull(repository.findById(connectedRealmId).get().lastModified)
+
+            auctionHouseService.updateTimes(
+                connectedRealmId,
+                lastModified.plus(130.minutes),
+                true,
+                "https://example.json/max-clamp",
+            )
+
+            val result = repository.findById(connectedRealmId).get()
+            assertEquals(30, result.lowestDelay)
+            assertEquals(75, result.avgDelay)
+            assertEquals(120, result.highestDelay)
+            assertEquals(30, result.nextUpdate!!.minus(result.lastModified!!).inWholeMinutes)
         }
 
         @Test
@@ -286,6 +383,9 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
             val result = repository.findById(1).get()
             assertEquals(newLastModified, result.lastModified)
             assertTrue(result.lastModified!! < result.nextUpdate!!)
+            assertEquals(60, result.lowestDelay)
+            assertEquals(60, result.avgDelay)
+            assertEquals(60, result.highestDelay)
 
             val logEntries = auctionHouseUpdateLogRepository.findByIdAndMostRecentLastModified(1)
             assertEquals(2, logEntries.size)

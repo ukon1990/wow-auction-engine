@@ -3,9 +3,8 @@ package net.jonasmf.auctionengine.service
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.repository.AuctionHouseRepository
-import net.jonasmf.auctionengine.repository.AuctionHouseUpdateLogRepository
+import net.jonasmf.auctionengine.repository.rds.AuctionHouseFileLogRepository
 import org.springframework.stereotype.Service
-import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
@@ -16,9 +15,15 @@ import net.jonasmf.auctionengine.repository.rds.AuctionHouseRepository as Auctio
 @Service
 class AuctionHouseService(
     val repository: AuctionHouseRepository,
-    val auctionHouseLogRepository: AuctionHouseUpdateLogRepository,
     private val auctionHouseEntityRepository: AuctionHouseEntityRepository,
+    private val auctionHouseFileLogRepository: AuctionHouseFileLogRepository,
 ) {
+    companion object {
+        private const val DEFAULT_DELAY_MINUTES = 45L
+        private const val MINIMUM_DELAY_FLOOR_MINUTES = 30L
+        private const val MAXIMUM_DELAY_CEILING_MINUTES = 120L
+    }
+
     fun createIfMissing(connectedRealm: ConnectedRealm) {
         if (connectedRealm.realms.isEmpty()) return
 
@@ -52,16 +57,16 @@ class AuctionHouseService(
         if (isSuccess && newLastModified != null) {
             requireNotNull(url) { "URL must be provided for successful updates" }
 
-            val previousLastModified = auctionHouse.lastModified
             auctionHouse.lastModified = newLastModified
             auctionHouse.updateAttempts = 0
-            val (lowestDelay, avgDelay, highestDelay) = getUpdateStats(id, previousLastModified)
+            auctionHouse.url = url
+            repository.save(auctionHouse)
+
+            val (lowestDelay, avgDelay, highestDelay) = getUpdateStats(id)
             auctionHouse.lowestDelay = lowestDelay
             auctionHouse.avgDelay = avgDelay
             auctionHouse.highestDelay = highestDelay
-            auctionHouse.url = url
-            val nextUpdateTime = max(auctionHouse.lowestDelay, 30).minutes
-            auctionHouse.nextUpdate = newLastModified.plus(nextUpdateTime)
+            auctionHouse.nextUpdate = newLastModified.plus(lowestDelay.minutes)
         } else {
             val now = Clock.System.now()
             auctionHouse.updateAttempts += 1
@@ -75,44 +80,17 @@ class AuctionHouseService(
     }
 
     /**
-     * Returns the min, max and avg(in that order),
-     * based on the update history logs for the given realm
+     * Returns the min, avg and max delay summary based on file-log rows from the past 72 hours.
      */
-    private fun getUpdateStats(
-        id: Int,
-        lastModified: Instant?,
-    ): Triple<Long, Long, Long> {
-        val updateLogs =
-            auctionHouseLogRepository
-                .findByIdAndMostRecentLastModified(id)
-                .sortedByDescending { it.lastModified }
-        var min = 0L
-        var avg = 0L
-        var max = 0L
+    private fun getUpdateStats(id: Int): Triple<Long, Long, Long> {
+        val stats = auctionHouseFileLogRepository.findDelayStatsByConnectedId(id)
+        val lowestDelay =
+            stats.getMinDelayMinutes()?.coerceAtLeast(MINIMUM_DELAY_FLOOR_MINUTES) ?: DEFAULT_DELAY_MINUTES
+        val avgDelay = stats.getAvgDelayMinutes() ?: DEFAULT_DELAY_MINUTES
+        val highestDelay =
+            stats.getMaxDelayMinutes()?.coerceAtMost(MAXIMUM_DELAY_CEILING_MINUTES) ?: DEFAULT_DELAY_MINUTES
 
-        for ((index, log) in updateLogs.withIndex()) {
-            val previousTime =
-                if (index == 0) {
-                    lastModified
-                } else {
-                    updateLogs[index - 1].lastModified
-                }
-            if (previousTime == null) continue
-
-            val currentTime = updateLogs[index].lastModified
-            val difference = previousTime.minus(currentTime).inWholeMinutes
-
-            if (min == 0L || difference < min) min = difference
-            if (difference > max) max = difference
-            avg =
-                if (avg == 0L) {
-                    difference
-                } else {
-                    (difference + avg) / 2
-                }
-        }
-
-        return Triple(min, avg, max)
+        return Triple(lowestDelay, avgDelay, highestDelay)
     }
 
     fun findAllByRegion(region: Region) = repository.findAllByRegion(region)
