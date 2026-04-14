@@ -110,6 +110,22 @@ ALTER TABLE auction_house_file_log
     ADD INDEX IF NOT EXISTS ix_auction_house_file_log_house_last_modified (auction_house_id, last_modified DESC),
     ADD UNIQUE INDEX IF NOT EXISTS ux_auction_house_file_log_house_last_modified (auction_house_id, last_modified);
 
-ALTER TABLE auction_house_file_log
-    ADD CONSTRAINT fk_auction_house_file_log_auction_house
-        FOREIGN KEY (auction_house_id) REFERENCES auction_house (id);
+SET @add_log_fk_sql = (
+    SELECT IF(
+        EXISTS (
+            SELECT 1
+            FROM information_schema.table_constraints
+            WHERE table_schema = DATABASE()
+              AND table_name = 'auction_house_file_log'
+              AND constraint_type = 'FOREIGN KEY'
+              AND constraint_name = 'fk_auction_house_file_log_auction_house'
+        ),
+        'SELECT 1',
+        'ALTER TABLE auction_house_file_log
+            ADD CONSTRAINT fk_auction_house_file_log_auction_house
+                FOREIGN KEY (auction_house_id) REFERENCES auction_house (id)'
+    )
+);
+PREPARE add_log_fk_stmt FROM @add_log_fk_sql;
+EXECUTE add_log_fk_stmt;
+DEALLOCATE PREPARE add_log_fk_stmt;
