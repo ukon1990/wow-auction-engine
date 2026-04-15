@@ -57,7 +57,7 @@ data class AuctionItemModifier(
 @Table(
     name = "auction_item",
     indexes = [
-        Index(name = "idx_auction_item_item_id", columnList = "item_id"),
+        Index(name = "idx_auction_item_item_id", columnList = "item_id, id"),
     ],
     uniqueConstraints = [
         UniqueConstraint(
@@ -102,6 +102,10 @@ data class AuctionItem(
         Index(
             name = "idx_auction_connected_realm_update_deleted",
             columnList = "connected_realm_id, update_history_id, deleted_at",
+        ),
+        Index(
+            name = "idx_auction_realm_item_deleted_last_seen",
+            columnList = "connected_realm_id, item_id, deleted_at, last_seen",
         ),
         Index(name = "idx_auction_deleted_at", columnList = "deleted_at"),
     ],
