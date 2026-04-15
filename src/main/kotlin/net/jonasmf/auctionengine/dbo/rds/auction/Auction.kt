@@ -104,8 +104,8 @@ data class AuctionItem(
             columnList = "connected_realm_id, update_history_id, deleted_at",
         ),
         Index(
-            name = "idx_auction_realm_item_deleted_last_seen",
-            columnList = "connected_realm_id, item_id, deleted_at, last_seen",
+            name = "idx_auction_item_realm_deleted_last_seen",
+            columnList = "item_id, connected_realm_id, deleted_at, last_seen",
         ),
         Index(name = "idx_auction_deleted_at", columnList = "deleted_at"),
     ],
