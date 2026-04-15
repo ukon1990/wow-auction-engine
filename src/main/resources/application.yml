@@ -58,6 +58,8 @@ app:
     profession-recipe-sync-zone: GMT+1
     profession-recipe-sync-startup-delay: PT30S
     profession-recipe-sync-startup-repeat-delay: P3650D
+    deleted-auction-cleanup-cron: "0 0 4 * * *"
+    deleted-auction-cleanup-zone: GMT+1
   health:
     stuck-update-threshold: PT20M
 

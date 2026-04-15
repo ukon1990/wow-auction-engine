@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.repository.rds
 
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItem
+import net.jonasmf.auctionengine.utility.AuctionVariantKeyUtility
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -16,6 +17,17 @@ class AuctionItemRepositoryTest : IntegrationTestBase() {
         repository.save(
             AuctionItem(
                 itemId = 19019,
+                variantHash =
+                    AuctionVariantKeyUtility.variantHash(
+                        itemId = 19019,
+                        bonusKey = "12251,12252,12499",
+                        modifierKey = "",
+                        context = 52,
+                        petBreedId = null,
+                        petLevel = null,
+                        petQualityId = null,
+                        petSpeciesId = null,
+                    ),
                 bonusLists = "12251,12252,12499",
                 context = 52,
                 petBreedId = null,
@@ -27,6 +39,17 @@ class AuctionItemRepositoryTest : IntegrationTestBase() {
         repository.save(
             AuctionItem(
                 itemId = 19019,
+                variantHash =
+                    AuctionVariantKeyUtility.variantHash(
+                        itemId = 19019,
+                        bonusKey = "12251,12253,12499",
+                        modifierKey = "",
+                        context = 52,
+                        petBreedId = null,
+                        petLevel = null,
+                        petQualityId = null,
+                        petSpeciesId = null,
+                    ),
                 bonusLists = "12251,12253,12499",
                 context = 52,
                 petBreedId = null,
@@ -37,31 +60,37 @@ class AuctionItemRepositoryTest : IntegrationTestBase() {
         )
 
         val first =
-            repository.findByCompositeKeyWithNullHandlingList(
-                itemId = 19019,
-                petBreedId = null,
-                petLevel = null,
-                petQualityId = null,
-                petSpeciesId = null,
-                context = 52,
-                bonusLists = "12251,12252,12499",
+            repository.findByVariantHash(
+                AuctionVariantKeyUtility.variantHash(
+                    itemId = 19019,
+                    bonusKey = "12251,12252,12499",
+                    modifierKey = "",
+                    context = 52,
+                    petBreedId = null,
+                    petLevel = null,
+                    petQualityId = null,
+                    petSpeciesId = null,
+                ),
             )
         val second =
-            repository.findByCompositeKeyWithNullHandlingList(
-                itemId = 19019,
-                petBreedId = null,
-                petLevel = null,
-                petQualityId = null,
-                petSpeciesId = null,
-                context = 52,
-                bonusLists = "12251,12253,12499",
+            repository.findByVariantHash(
+                AuctionVariantKeyUtility.variantHash(
+                    itemId = 19019,
+                    bonusKey = "12251,12253,12499",
+                    modifierKey = "",
+                    context = 52,
+                    petBreedId = null,
+                    petLevel = null,
+                    petQualityId = null,
+                    petSpeciesId = null,
+                ),
             )
 
-        assertEquals(1, first.size)
-        assertEquals(1, second.size)
-        assertNotNull(first.single().id)
-        assertNotNull(second.single().id)
-        assertEquals("12251,12252,12499", first.single().bonusLists)
-        assertEquals("12251,12253,12499", second.single().bonusLists)
+        assertNotNull(first)
+        assertNotNull(second)
+        assertNotNull(first!!.id)
+        assertNotNull(second!!.id)
+        assertEquals("12251,12252,12499", first.bonusLists)
+        assertEquals("12251,12253,12499", second.bonusLists)
     }
 }
