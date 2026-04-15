@@ -289,6 +289,7 @@ Format Kotlin sources:
 
 ## Documentation
 
+- [Auction snapshot storage and query patterns](docs/auction-snapshot-storage.md)
 - [Production memory footprint and cost action criteria](docs/production-memory-footprint.md)
 - [AWS deployment and regional operations](infra/README.md)
 
