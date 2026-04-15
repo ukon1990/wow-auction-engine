@@ -217,10 +217,23 @@ class V7MigrateAuctionHouseScheduleStateFromDynamodbTest {
     }
 
     private fun dropMariaTables(connection: Connection) {
-        execute(connection, "DROP TABLE IF EXISTS auction_house_file_log")
-        execute(connection, "DROP TABLE IF EXISTS connected_realm")
-        execute(connection, "DROP TABLE IF EXISTS auction_house")
-        execute(connection, "DROP TABLE IF EXISTS file_reference")
+        execute(connection, "SET FOREIGN_KEY_CHECKS = 0")
+        try {
+            listOf(
+                "auction",
+                "auction_item_modifier_link",
+                "auction_item_modifiers",
+                "auction_item",
+                "auction_item_modifier",
+                "connected_realm_update_history",
+                "auction_house_file_log",
+                "connected_realm",
+                "auction_house",
+                "file_reference",
+            ).forEach { execute(connection, "DROP TABLE IF EXISTS $it") }
+        } finally {
+            execute(connection, "SET FOREIGN_KEY_CHECKS = 1")
+        }
     }
 
     private fun recreateDynamoTables(dynamoDbClient: DynamoDbClient) {

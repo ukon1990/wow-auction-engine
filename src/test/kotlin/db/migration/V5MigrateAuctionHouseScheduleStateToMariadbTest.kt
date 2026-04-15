@@ -15,11 +15,7 @@ class V5MigrateAuctionHouseScheduleStateToMariadbTest {
 
         databaseConnection().use { connection ->
             try {
-                execute(connection, "DROP TABLE IF EXISTS flyway_schema_history")
-                execute(connection, "DROP TABLE IF EXISTS auction_house_file_log")
-                execute(connection, "DROP TABLE IF EXISTS connected_realm")
-                execute(connection, "DROP TABLE IF EXISTS auction_house")
-                execute(connection, "DROP TABLE IF EXISTS file_reference")
+                dropTables(connection)
 
                 execute(connection, oldFileReferenceTableSql())
                 execute(connection, oldAuctionHouseTableSql())
@@ -108,11 +104,7 @@ class V5MigrateAuctionHouseScheduleStateToMariadbTest {
                     )
                 assertTrue(backfilledLogTimestamp.startsWith("2026-04-14 09:55:00"))
             } finally {
-                execute(connection, "DROP TABLE IF EXISTS flyway_schema_history")
-                execute(connection, "DROP TABLE IF EXISTS auction_house_file_log")
-                execute(connection, "DROP TABLE IF EXISTS connected_realm")
-                execute(connection, "DROP TABLE IF EXISTS auction_house")
-                execute(connection, "DROP TABLE IF EXISTS file_reference")
+                dropTables(connection)
             }
         }
     }
@@ -123,11 +115,7 @@ class V5MigrateAuctionHouseScheduleStateToMariadbTest {
 
         databaseConnection().use { connection ->
             try {
-                execute(connection, "DROP TABLE IF EXISTS flyway_schema_history")
-                execute(connection, "DROP TABLE IF EXISTS auction_house_file_log")
-                execute(connection, "DROP TABLE IF EXISTS connected_realm")
-                execute(connection, "DROP TABLE IF EXISTS auction_house")
-                execute(connection, "DROP TABLE IF EXISTS file_reference")
+                dropTables(connection)
 
                 execute(connection, oldFileReferenceTableSql())
                 execute(connection, oldAuctionHouseTableSql())
@@ -175,11 +163,7 @@ class V5MigrateAuctionHouseScheduleStateToMariadbTest {
                     queryInt(connection, "SELECT auction_house_id FROM auction_house_file_log WHERE id = 1"),
                 )
             } finally {
-                execute(connection, "DROP TABLE IF EXISTS flyway_schema_history")
-                execute(connection, "DROP TABLE IF EXISTS auction_house_file_log")
-                execute(connection, "DROP TABLE IF EXISTS connected_realm")
-                execute(connection, "DROP TABLE IF EXISTS auction_house")
-                execute(connection, "DROP TABLE IF EXISTS file_reference")
+                dropTables(connection)
             }
         }
     }
@@ -190,6 +174,27 @@ class V5MigrateAuctionHouseScheduleStateToMariadbTest {
             SharedTestContainers.mariaDbContainer.username,
             SharedTestContainers.mariaDbContainer.password,
         )
+
+    private fun dropTables(connection: Connection) {
+        execute(connection, "SET FOREIGN_KEY_CHECKS = 0")
+        try {
+            listOf(
+                "flyway_schema_history",
+                "auction",
+                "auction_item_modifier_link",
+                "auction_item_modifiers",
+                "auction_item",
+                "auction_item_modifier",
+                "connected_realm_update_history",
+                "auction_house_file_log",
+                "connected_realm",
+                "auction_house",
+                "file_reference",
+            ).forEach { execute(connection, "DROP TABLE IF EXISTS $it") }
+        } finally {
+            execute(connection, "SET FOREIGN_KEY_CHECKS = 1")
+        }
+    }
 
     private fun execute(
         connection: Connection,

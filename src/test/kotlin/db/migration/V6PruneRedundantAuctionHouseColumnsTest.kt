@@ -14,8 +14,7 @@ class V6PruneRedundantAuctionHouseColumnsTest {
 
         databaseConnection().use { connection ->
             try {
-                execute(connection, "DROP TABLE IF EXISTS flyway_schema_history")
-                execute(connection, "DROP TABLE IF EXISTS auction_house")
+                dropTables(connection)
                 execute(connection, oldAuctionHouseTableSql())
                 execute(
                     connection,
@@ -53,8 +52,7 @@ class V6PruneRedundantAuctionHouseColumnsTest {
                     countColumns(connection, "average_delay", "failed_attempts", "realm_slugs", "realms_json"),
                 )
             } finally {
-                execute(connection, "DROP TABLE IF EXISTS flyway_schema_history")
-                execute(connection, "DROP TABLE IF EXISTS auction_house")
+                dropTables(connection)
             }
         }
     }
@@ -65,6 +63,27 @@ class V6PruneRedundantAuctionHouseColumnsTest {
             SharedTestContainers.mariaDbContainer.username,
             SharedTestContainers.mariaDbContainer.password,
         )
+
+    private fun dropTables(connection: Connection) {
+        execute(connection, "SET FOREIGN_KEY_CHECKS = 0")
+        try {
+            listOf(
+                "flyway_schema_history",
+                "auction",
+                "auction_item_modifier_link",
+                "auction_item_modifiers",
+                "auction_item",
+                "auction_item_modifier",
+                "connected_realm_update_history",
+                "auction_house_file_log",
+                "connected_realm",
+                "auction_house",
+                "file_reference",
+            ).forEach { execute(connection, "DROP TABLE IF EXISTS $it") }
+        } finally {
+            execute(connection, "SET FOREIGN_KEY_CHECKS = 1")
+        }
+    }
 
     private fun execute(
         connection: Connection,
