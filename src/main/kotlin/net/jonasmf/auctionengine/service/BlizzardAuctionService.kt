@@ -13,7 +13,10 @@ import net.jonasmf.auctionengine.integration.blizzard.DownloadedAuctionPayload
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.core.NestedRuntimeException
+import org.springframework.dao.DataAccessException
 import org.springframework.stereotype.Service
+import java.sql.SQLException
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.Locale
@@ -319,15 +322,91 @@ class BlizzardAuctionService(
             return
         }
 
-        logger.error(
-            "Failed to {} for realm {} after {}ms: {}",
-            action,
+        val failureSummary = summarizeAuctionUpdateFailure(failure)
+        val logMessage = "Failed to {} for realm {} after {}ms: {}"
+        if (failureSummary.warnOnly) {
+            logger.warn(
+                logMessage,
+                action,
+                connectedRealmId,
+                elapsedMs,
+                failureSummary.message,
+            )
+        } else {
+            logger.error(
+                logMessage,
+                action,
+                connectedRealmId,
+                elapsedMs,
+                failureSummary.message,
+            )
+        }
+        logger.debug(
+            "Auction update diagnostics for realm {} while attempting to {}",
             connectedRealmId,
-            elapsedMs,
-            failure.message ?: failure::class.simpleName ?: "unknown error",
+            action,
             failure,
         )
     }
+
+    private fun summarizeAuctionUpdateFailure(failure: Exception): AuctionUpdateFailureSummary {
+        val mostSpecificCause =
+            when (failure) {
+                is NestedRuntimeException -> failure.mostSpecificCause
+                else -> failure
+            }
+
+        if (mostSpecificCause is SQLException) {
+            return summarizeSqlFailure(mostSpecificCause)
+        }
+        if (failure is DataAccessException) {
+            return AuctionUpdateFailureSummary(
+                message = sanitizeFailureMessage(failure.message ?: failure::class.simpleName ?: "data access error"),
+                warnOnly = false,
+            )
+        }
+        return AuctionUpdateFailureSummary(
+            message = sanitizeFailureMessage(failure.message ?: failure::class.simpleName ?: "unknown error"),
+            warnOnly = false,
+        )
+    }
+
+    private fun summarizeSqlFailure(sqlException: SQLException): AuctionUpdateFailureSummary {
+        val sanitizedMessage =
+            sanitizeFailureMessage(
+                sqlException.message ?: sqlException::class.simpleName ?: "SQL error",
+            )
+        val sqlStateSuffix = sqlException.sqlState?.takeIf { it.isNotBlank() }?.let { " sqlState=$it" } ?: ""
+        val vendorCodeSuffix = sqlException.errorCode.takeIf { it != 0 }?.let { " vendorCode=$it" } ?: ""
+        val isDeadlock =
+            sqlException.sqlState == "40001" ||
+                sqlException.errorCode == 1213 ||
+                sanitizedMessage.contains("Deadlock found when trying to get lock", ignoreCase = true)
+
+        return if (isDeadlock) {
+            AuctionUpdateFailureSummary(
+                message = "database deadlock$sqlStateSuffix$vendorCodeSuffix: $sanitizedMessage",
+                warnOnly = true,
+            )
+        } else {
+            AuctionUpdateFailureSummary(
+                message = "database error$sqlStateSuffix$vendorCodeSuffix: $sanitizedMessage",
+                warnOnly = false,
+            )
+        }
+    }
+
+    private fun sanitizeFailureMessage(message: String): String =
+        message
+            .replace(Regex(""";\s*SQL\s*\[.*$""", setOf(RegexOption.DOT_MATCHES_ALL, RegexOption.IGNORE_CASE)), "")
+            .replace(Regex("""\b(?:PreparedStatement|Statement|CallableStatement)Callback;?\s*"""), "")
+            .replace(Regex("""\s+"""), " ")
+            .trim()
+
+    private data class AuctionUpdateFailureSummary(
+        val message: String,
+        val warnOnly: Boolean,
+    )
 
     private fun saveAuctionDataToS3(
         region: Region,

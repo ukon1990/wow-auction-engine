@@ -17,12 +17,15 @@ import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
 import net.jonasmf.auctionengine.integration.blizzard.DownloadedAuctionPayload
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
+import org.springframework.dao.CannotAcquireLockException
 import reactor.core.publisher.Mono
 import java.nio.file.Files
+import java.sql.SQLException
 import java.time.Duration
 import java.time.ZonedDateTime
 import net.jonasmf.auctionengine.domain.AuctionHouse as AuctionHouseDomain
@@ -408,7 +411,7 @@ class BlizzardAuctionServiceTest {
     }
 
     @Test
-    fun `updateAuctionHouses keeps throwable on error for unexpected processing failures`() {
+    fun `updateAuctionHouses logs concise error without throwable for unexpected processing failures`() {
         val appender = attachAppender()
         val service = createService()
         val lastModified = ZonedDateTime.now().minusMinutes(5)
@@ -429,7 +432,55 @@ class BlizzardAuctionServiceTest {
         val errorEvent = appender.list.single { it.level == Level.ERROR }
         assertTrue(errorEvent.formattedMessage.contains("Failed to process auction data for realm 1"))
         assertTrue(errorEvent.formattedMessage.contains("boom"))
-        assertTrue(errorEvent.throwableProxy != null)
+        assertNull(errorEvent.throwableProxy)
+        detachAppender(appender)
+    }
+
+    @Test
+    fun `updateAuctionHouses redacts SQL and downgrades deadlock to warning`() {
+        val appender = attachAppender()
+        val service = createService()
+        val lastModified = ZonedDateTime.now().minusMinutes(5)
+        val realm = createRealm(1, lastModified.minusMinutes(1))
+        val data = createDownloadedPayload()
+
+        every { blizzardAuctionApiClient.getLatestAuctionDump(1, Region.Europe, any()) } returns
+            Mono.just(AuctionDataResponse(lastModified.toInstant().toEpochMilli(), "url-1", GameBuildVersion.RETAIL))
+        every { realmService.getById(1) } returns realm
+        every { amazonS3.uploadFile(eq(Region.Europe), any(), any<AuctionDataResponse>()) } returns "s3://dump"
+        every { blizzardAuctionApiClient.downloadAuctionData("url-1") } returns Mono.just(data)
+        every { amazonS3.uploadCompressedFile(eq(Region.Europe), any(), data.path) } returns "s3://payload"
+        every {
+            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(
+                eq(realm),
+                eq(data.path),
+                any(),
+            )
+        } returns
+            HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
+        every {
+            auctionSnapshotPersistenceService.saveSnapshot(eq(data.path), eq(realm), eq(1), any())
+        } throws
+            CannotAcquireLockException(
+                "PreparedStatementCallback; SQL [INSERT INTO auction (id, item_id) VALUES (?, ?)]; deadlock",
+                SQLException("Deadlock found when trying to get lock; try restarting transaction", "40001", 1213),
+            )
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
+
+        service.updateAuctionHouses(
+            Region.Europe,
+            listOf(AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe)),
+        )
+
+        val warnEvent =
+            appender.list.single { it.level == Level.WARN && it.formattedMessage.contains("realm 1") }
+        assertTrue(warnEvent.formattedMessage.contains("database deadlock"))
+        assertTrue(warnEvent.formattedMessage.contains("sqlState=40001"))
+        assertTrue(warnEvent.formattedMessage.contains("vendorCode=1213"))
+        assertFalse(warnEvent.formattedMessage.contains("SQL ["))
+        assertFalse(warnEvent.formattedMessage.contains("INSERT INTO auction"))
+        assertNull(warnEvent.throwableProxy)
+        assertTrue(appender.list.none { it.level == Level.ERROR && it.formattedMessage.contains("realm 1") })
         detachAppender(appender)
     }
 
