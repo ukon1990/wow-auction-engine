@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.dto.auction
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import net.jonasmf.auctionengine.mapper.toDBO
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

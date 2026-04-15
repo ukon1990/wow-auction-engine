@@ -8,57 +8,10 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface AuctionItemRepository : JpaRepository<AuctionItem, Long> {
-    @Query("SELECT ai FROM AuctionItem ai WHERE ai.itemId = :itemId")
-    fun findByItemId(
-        @Param("itemId") itemId: Int,
-    ): AuctionItem?
+    fun findByVariantHash(variantHash: String): AuctionItem?
 
-    @Query("SELECT ai FROM AuctionItem ai WHERE ai.itemId IN :itemIds")
-    fun findByItemIds(
-        @Param("itemIds") itemIds: List<Int>,
-    ): List<AuctionItem>
-
-    @Query(
-        """
-        SELECT ai FROM AuctionItem ai 
-        WHERE ai.itemId = :itemId 
-        AND ai.petBreedId = :petBreedId 
-        AND ai.petLevel = :petLevel 
-        AND ai.petQualityId = :petQualityId 
-        AND ai.petSpeciesId = :petSpeciesId 
-        AND ai.context = :context
-        AND ai.bonusLists = :bonusLists
-    """,
-    )
-    fun findByCompositeKey(
-        @Param("itemId") itemId: Int,
-        @Param("petBreedId") petBreedId: Int?,
-        @Param("petLevel") petLevel: Int?,
-        @Param("petQualityId") petQualityId: Int?,
-        @Param("petSpeciesId") petSpeciesId: Int?,
-        @Param("context") context: Int?,
-        @Param("bonusLists") bonusLists: String,
-    ): AuctionItem?
-
-    @Query(
-        """
-        SELECT ai FROM AuctionItem ai 
-        WHERE ai.itemId = :itemId 
-        AND (ai.petBreedId = :petBreedId OR (ai.petBreedId IS NULL AND :petBreedId IS NULL))
-        AND (ai.petLevel = :petLevel OR (ai.petLevel IS NULL AND :petLevel IS NULL))
-        AND (ai.petQualityId = :petQualityId OR (ai.petQualityId IS NULL AND :petQualityId IS NULL))
-        AND (ai.petSpeciesId = :petSpeciesId OR (ai.petSpeciesId IS NULL AND :petSpeciesId IS NULL))
-        AND (ai.context = :context OR (ai.context IS NULL AND :context IS NULL))
-        AND ai.bonusLists = :bonusLists
-    """,
-    )
-    fun findByCompositeKeyWithNullHandlingList(
-        @Param("itemId") itemId: Int,
-        @Param("petBreedId") petBreedId: Int?,
-        @Param("petLevel") petLevel: Int?,
-        @Param("petQualityId") petQualityId: Int?,
-        @Param("petSpeciesId") petSpeciesId: Int?,
-        @Param("context") context: Int?,
-        @Param("bonusLists") bonusLists: String,
+    @Query("SELECT ai FROM AuctionItem ai WHERE ai.variantHash IN :variantHashes")
+    fun findAllByVariantHashes(
+        @Param("variantHashes") variantHashes: Collection<String>,
     ): List<AuctionItem>
 }

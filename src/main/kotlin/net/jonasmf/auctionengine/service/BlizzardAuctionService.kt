@@ -4,50 +4,33 @@ import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.dynamodb.converters.toKotlin
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
-import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.domain.AuctionHouse
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
-import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
 import net.jonasmf.auctionengine.integration.blizzard.DownloadedAuctionPayload
-import net.jonasmf.auctionengine.repository.rds.AuctionItemModifierRepository
-import net.jonasmf.auctionengine.repository.rds.AuctionItemRepository
-import net.jonasmf.auctionengine.repository.rds.AuctionRepository
-import net.jonasmf.auctionengine.utility.AuctionVariantKeyUtility
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.io.path.deleteIfExists
-import kotlin.math.min
-import net.jonasmf.auctionengine.dbo.rds.auction.Auction as AuctionDBO
-import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItem as AuctionItemDBO
-import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItemModifier as AuctionItemModifierDBO
 
 @Service
 class BlizzardAuctionService(
     private val properties: BlizzardApiProperties,
     private val blizzardAuctionApiClient: BlizzardAuctionApiClient,
-    private val authService: AuthService,
     private val amazonS3: AmazonS3Service,
-    private val auctionRepository: AuctionRepository,
-    private val auctionItemRepository: AuctionItemRepository,
     private val hourlyPriceStatisticsService: HourlyPriceStatisticsService,
     private val realmService: ConnectedRealmService,
-    private val auctionItemModifierRepository: AuctionItemModifierRepository,
-    private val updateHistoryService: ConnectedRealmUpdateHistoryService,
+    private val auctionSnapshotPersistenceService: AuctionSnapshotPersistenceService,
     private val auctionHouseService: AuctionHouseService,
     private val runtimeHealthTracker: RuntimeHealthTracker,
 ) {
-    private val auctionBatchSize = 100_000
-    private val logBatchSize = auctionBatchSize
     val logger: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
 
     fun updateAuctionHouses(
@@ -246,6 +229,30 @@ class BlizzardAuctionService(
                     JvmRuntimeDiagnostics.snapshot(),
                 )
                 runtimeHealthTracker.markUpdateBatchProgress(
+                    "persist-current-auctions",
+                    region = region,
+                    connectedRealmId = connectedRealmId,
+                )
+                val snapshotPersistenceStartTime = System.currentTimeMillis()
+                val snapshotSummary =
+                    saveAuctionsToDatabase(
+                        connectedRealm = connectedRealm,
+                        auctionCount = hourlyStatsSummary.processedAuctions,
+                        lastModified = lastModified,
+                        payloadPath = downloadedPayload.path,
+                        connectedRealmId = connectedRealmId,
+                    )
+                logger.info(
+                    "Completed current auction persistence for realm {} region {} auctions={} batches={} softDeleted={} in {}ms {}",
+                    connectedRealmId,
+                    region,
+                    snapshotSummary.processedAuctions,
+                    snapshotSummary.batchCount,
+                    snapshotSummary.softDeletedAuctions,
+                    System.currentTimeMillis() - snapshotPersistenceStartTime,
+                    JvmRuntimeDiagnostics.snapshot(),
+                )
+                runtimeHealthTracker.markUpdateBatchProgress(
                     "update-auction-house-times",
                     region = region,
                     connectedRealmId = connectedRealmId,
@@ -372,413 +379,30 @@ class BlizzardAuctionService(
         }
     }
 
-    /**
-     * Saves auctions to the database in batches, along with associated items and modifiers.
-     * Also updates the latest dump timestamp and marks the update as completed.
-     */
     private fun saveAuctionsToDatabase(
         connectedRealm: ConnectedRealm,
         auctionCount: Int,
         lastModified: ZonedDateTime,
-        data: AuctionData?,
+        payloadPath: java.nio.file.Path,
         connectedRealmId: Int,
-        startTime: Long,
-        url: String,
-    ) {
-        if (data == null || data.auctions.isEmpty()) {
-            logger.warn("No auction data to process for realm $connectedRealmId")
-            return
+    ): AuctionSnapshotPersistenceSummary {
+        if (auctionCount <= 0) {
+            logger.warn("No auction data to process for realm {}", connectedRealmId)
+            return AuctionSnapshotPersistenceSummary(processedAuctions = 0, batchCount = 0, softDeletedAuctions = 0)
         }
-        try {
-            val updateHistory = updateHistoryService.startUpdate(connectedRealm, auctionCount, lastModified)
-            processAuctionsInBatches(data.auctions, connectedRealm, connectedRealmId, updateHistory, startTime)
-            realmService.updateLatestDump(connectedRealmId, lastModified.toInstant())
-            updateHistoryService.setUpdateToCompleted(connectedRealmId, lastModified)
-            logger.info(
-                "Successfully processed $auctionCount auctions for $connectedRealmId in ${System.currentTimeMillis() - startTime}ms",
-            )
-        } catch (e: Exception) {
-            logger.error("Failed to process auction data for realm $connectedRealmId", e)
-            authService.getToken().subscribe { token ->
-                logger.error("Processing failed for URL: $url&access_token=$token", e)
-            }
-        }
+        return auctionSnapshotPersistenceService.saveSnapshot(
+            payloadPath = payloadPath,
+            connectedRealm = connectedRealm,
+            auctionCount = auctionCount,
+            lastModified = lastModified,
+        )
     }
 
-    @Transactional
-    fun processAuctionsInBatches(
-        auctions: List<AuctionDTO>,
-        connectedRealm: ConnectedRealm,
-        connectedRealmId: Int,
-        updateHistory: ConnectedRealmUpdateHistory,
-        startTime: Long,
-    ) {
-        val totalAuctions = auctions.size
-        logger.info("Processing $totalAuctions auctions in batches of $auctionBatchSize for realm $connectedRealmId")
-
-        try {
-            val processedItems = mutableMapOf<String, AuctionItemDBO>()
-            val newItems = mutableListOf<AuctionItemDBO>()
-            var duplicateItemCount = 0
-            val totalAuctions = auctions.size
-
-            auctions.forEachIndexed { index, auctionDTO ->
-                val itemKey = createItemKey(auctionDTO.item)
-
-                if (processedItems.containsKey(itemKey)) {
-                    return@forEachIndexed
-                }
-                val existingItems =
-                    auctionItemRepository.findByCompositeKeyWithNullHandlingList(
-                        auctionDTO.item.id,
-                        auctionDTO.item.pet_breed_id,
-                        auctionDTO.item.pet_level,
-                        auctionDTO.item.pet_quality_id,
-                        auctionDTO.item.pet_species_id,
-                        auctionDTO.item.context,
-                        AuctionVariantKeyUtility.canonicalBonusKey(auctionDTO.item.bonus_lists),
-                    )
-
-                val existingItem =
-                    if (existingItems.isNotEmpty()) {
-                        if (existingItems.size > 1) {
-                            duplicateItemCount++
-                            logger.debug(
-                                "Found ${existingItems.size} duplicate items for itemId=${auctionDTO.item.id}, petBreedId=${auctionDTO.item.pet_breed_id}, petLevel=${auctionDTO.item.pet_level}, petQualityId=${auctionDTO.item.pet_quality_id}, petSpeciesId=${auctionDTO.item.pet_species_id}, context=${auctionDTO.item.context}, bonusLists=${auctionDTO.item.bonus_lists}. Using first match.",
-                            )
-                        }
-                        existingItems.first()
-                    } else {
-                        null
-                    }
-
-                if (existingItem != null) {
-                    processedItems[itemKey] = existingItem
-                    logger.debug("Found existing item for key: $itemKey")
-                } else {
-                    val newItem = auctionDTO.item.toDBO()
-                    newItems.add(newItem)
-                    processedItems[itemKey] = newItem
-                    logger.debug("Created new item for key: $itemKey")
-                }
-
-                // logger progress every 10,000 items processed
-                if ((index + 1) % 10000 == 0) {
-                    val progress = ((index + 1) * 100.0 / totalAuctions).toInt()
-                    logger.info(
-                        "Item processing progress: ${index + 1}/$totalAuctions ($progress%) - $duplicateItemCount duplicate items found so far",
-                    )
-                }
-            }
-
-            logger.info(
-                "Found ${processedItems.size} unique items (${newItems.size} new, ${processedItems.size - newItems.size} existing) for realm $connectedRealmId",
-            )
-            if (duplicateItemCount > 0) {
-                logger.warn(
-                    "Found $duplicateItemCount items with duplicate entries in database - this indicates data quality issues that should be investigated",
-                )
-            }
-
-            if (newItems.isNotEmpty()) {
-                val itemsStartTime = System.currentTimeMillis()
-                saveItemsInBatches(newItems, "items")
-                val itemsElapsed = System.currentTimeMillis() - itemsStartTime
-                logger.info(
-                    "Successfully saved ${newItems.size} new items for realm $connectedRealmId in ${itemsElapsed}ms",
-                )
-            }
-
-            val auctionMappingStartTime = System.currentTimeMillis()
-            val auctionDbos =
-                auctions.map { auctionDTO ->
-                    val itemKey = createItemKey(auctionDTO.item)
-                    val item = processedItems[itemKey]
-                    if (item == null) {
-                        throw IllegalStateException("Item not found for key: $itemKey")
-                    }
-
-                    auctionDTO.toDBO(connectedRealm, updateHistory).copy(item = item)
-                }
-            val auctionMappingElapsed = System.currentTimeMillis() - auctionMappingStartTime
-            logger.info("Mapped ${auctionDbos.size} auctions for realm $connectedRealmId in ${auctionMappingElapsed}ms")
-
-            logger.info("Processing ${auctionDbos.size} auctions for realm $connectedRealmId")
-            saveAuctionsInBatches(auctionDbos, connectedRealm, connectedRealmId, updateHistory, startTime)
-
-            val modifiersExtractionStartTime = System.currentTimeMillis()
-            val modifiers =
-                auctionDbos.flatMap { auction ->
-                    auction.item.modifiers ?: emptyList()
-                }
-            val modifiersExtractionElapsed = System.currentTimeMillis() - modifiersExtractionStartTime
-            logger.info(
-                "Extracted ${modifiers.size} item modifiers for realm $connectedRealmId in ${modifiersExtractionElapsed}ms",
-            )
-
-            if (modifiers.isNotEmpty()) {
-                logger.info("Processing ${modifiers.size} item modifiers for realm $connectedRealmId")
-                saveModifiersInBatches(modifiers, "modifiers")
-            }
-
-            logger.info("Successfully completed processing for realm $connectedRealmId")
-        } catch (e: Exception) {
-            logger.error("Failed to process auctions for realm $connectedRealmId", e)
-            throw e
-        }
-    }
-
-    private fun createItemKey(item: net.jonasmf.auctionengine.dto.auction.AuctionItemDTO): String =
-        buildString {
-            append(item.id)
-            append('_')
-            append(item.pet_breed_id ?: "null")
-            append('_')
-            append(item.pet_level ?: "null")
-            append('_')
-            append(item.pet_quality_id ?: "null")
-            append('_')
-            append(item.pet_species_id ?: "null")
-            append('_')
-            append(item.context ?: "null")
-            append('_')
-            append(item.modifiers?.hashCode() ?: "null")
-            append('_')
-            append(AuctionVariantKeyUtility.canonicalBonusKey(item.bonus_lists))
-        }
-
-    private fun saveItemsInBatches(
-        items: List<AuctionItemDBO>,
-        itemType: String,
-    ) {
-        val batches = items.chunked(auctionBatchSize)
-        val totalStartTime = System.currentTimeMillis()
-        logger.debug("Saving ${items.size} $itemType in ${batches.size} batches")
-
-        batches.forEachIndexed { index, batch ->
-            val batchStartTime = System.currentTimeMillis()
-            try {
-                logger.debug("Saving batch ${index + 1}/${batches.size} with ${batch.size} $itemType")
-                val savedItems = auctionItemRepository.saveAll(batch)
-                val batchElapsed = System.currentTimeMillis() - batchStartTime
-                val batchRate = if (batchElapsed > 0) (savedItems.size * 1000.0 / batchElapsed).toInt() else 0
-                logger.debug(
-                    "Successfully saved batch ${index + 1} with ${savedItems.size} $itemType in ${batchElapsed}ms ($batchRate $itemType/sec)",
-                )
-
-                if ((index + 1) % 10 == 0 || index == batches.size - 1) {
-                    val totalElapsed = System.currentTimeMillis() - totalStartTime
-                    val totalRate =
-                        if (totalElapsed >
-                            0
-                        ) {
-                            ((index + 1) * auctionBatchSize * 1000.0 / totalElapsed).toInt()
-                        } else {
-                            0
-                        }
-                    val progress = min((index + 1) * auctionBatchSize, items.size)
-                    logger.info(
-                        "Saved $progress/${items.size} $itemType in ${totalElapsed}ms ($totalRate $itemType/sec)",
-                    )
-                }
-            } catch (e: Exception) {
-                val batchElapsed = System.currentTimeMillis() - batchStartTime
-                logger.error("Failed to save batch ${index + 1} of $itemType after ${batchElapsed}ms", e)
-                throw e
-            }
-        }
-
-        val totalElapsed = System.currentTimeMillis() - totalStartTime
-        val totalRate = if (totalElapsed > 0) (items.size * 1000.0 / totalElapsed).toInt() else 0
-        logger.info("Completed saving ${items.size} $itemType in ${totalElapsed}ms ($totalRate $itemType/sec)")
-    }
-
-    private fun saveAuctionsInBatches(
-        auctionDbos: List<AuctionDBO>,
-        connectedRealm: ConnectedRealm,
-        connectedRealmId: Int,
-        updateHistory: ConnectedRealmUpdateHistory,
-        startTime: Long,
-    ) {
-        val batches = auctionDbos.chunked(auctionBatchSize)
-        logger.debug("Saving ${auctionDbos.size} auctions in ${batches.size} batches for realm $connectedRealmId")
-
-        batches.forEachIndexed { index, batch ->
-            val batchStartTime = System.currentTimeMillis()
-            try {
-                logger.debug(
-                    "Saving auction batch ${index + 1}/${batches.size} with ${batch.size} auctions for realm $connectedRealmId",
-                )
-
-                // Use batch upsert for maximum performance - process in smaller chunks to avoid memory issues
-                val chunkSize = 1000
-                val chunks = batch.chunked(chunkSize)
-                var totalProcessed = 0
-                var totalDuplicates = 0
-
-                chunks.forEach { chunk ->
-                    val chunkStartTime = System.currentTimeMillis()
-                    var chunkProcessed = 0
-                    var chunkDuplicates = 0
-
-                    chunk.forEach { auction ->
-                        try {
-                            val upsertedCount =
-                                auctionRepository.upsertAuction(
-                                    id = auction.id.id,
-                                    connectedRealmId = auction.id.connectedRealm.id,
-                                    itemId =
-                                        auction.item.id
-                                            ?: throw IllegalStateException(
-                                                "Auction item missing identifier for auction ${auction.id.id}",
-                                            ),
-                                    quantity = auction.quantity,
-                                    bid = auction.bid,
-                                    unitPrice = auction.unitPrice,
-                                    timeLeft = auction.timeLeft.ordinal,
-                                    buyout = auction.buyout,
-                                    firstSeen = auction.firstSeen,
-                                    lastSeen = auction.lastSeen,
-                                    updateHistoryId = updateHistory.id,
-                                )
-
-                            if (upsertedCount > 0) {
-                                chunkProcessed++
-                            } else {
-                                chunkDuplicates++
-                            }
-                        } catch (individualException: Exception) {
-                            logger.warn(
-                                "Failed to upsert auction ${auction.id.id} for realm $connectedRealmId: ${individualException.message}",
-                            )
-                            chunkDuplicates++
-                        }
-                    }
-
-                    val chunkElapsed = System.currentTimeMillis() - chunkStartTime
-                    val chunkRate = if (chunkElapsed > 0) (chunk.size * 1000.0 / chunkElapsed).toInt() else 0
-                    logger.debug(
-                        "Processed chunk with ${chunk.size} auctions: $chunkProcessed saved, $chunkDuplicates duplicates for realm $connectedRealmId in ${chunkElapsed}ms ($chunkRate auctions/sec)",
-                    )
-
-                    totalProcessed += chunkProcessed
-                    totalDuplicates += chunkDuplicates
-                }
-
-                val batchElapsed = System.currentTimeMillis() - batchStartTime
-                val batchRate = if (batchElapsed > 0) (batch.size * 1000.0 / batchElapsed).toInt() else 0
-                logger.debug(
-                    "Successfully processed auction batch ${index + 1} with ${batch.size} auctions: $totalProcessed saved, $totalDuplicates duplicates for realm $connectedRealmId in ${batchElapsed}ms ($batchRate auctions/sec)",
-                )
-
-                val processedCount = (index + 1) * auctionBatchSize
-                val progress = min(processedCount, auctionDbos.size)
-
-                if (progress % logBatchSize == 0 || index == batches.size - 1) {
-                    val elapsed = System.currentTimeMillis() - startTime
-                    val rate = (progress * 1000.0 / elapsed).toInt()
-                    logger.info(
-                        "Realm $connectedRealmId: Processed $progress/${auctionDbos.size} auctions ($rate auctions/sec)",
-                    )
-                }
-            } catch (e: Exception) {
-                val batchElapsed = System.currentTimeMillis() - batchStartTime
-                logger.error(
-                    "Failed to save auction batch ${index + 1} for realm $connectedRealmId after ${batchElapsed}ms",
-                    e,
-                )
-                throw e
-            }
-        }
-    }
-
-    private fun saveModifiersInBatches(
-        modifiers: List<AuctionItemModifierDBO>,
-        itemType: String,
-    ) {
-        if (modifiers.isEmpty()) return
-
-        val batches = modifiers.chunked(auctionBatchSize)
-        val totalStartTime = System.currentTimeMillis()
-        logger.debug("Saving ${modifiers.size} $itemType in ${batches.size} batches")
-
-        batches.forEachIndexed { index, batch ->
-            val batchStartTime = System.currentTimeMillis()
-            try {
-                logger.debug("Saving modifier batch ${index + 1}/${batches.size} with ${batch.size} $itemType")
-                val savedModifiers = auctionItemModifierRepository.saveAll(batch)
-                val batchElapsed = System.currentTimeMillis() - batchStartTime
-                val batchRate = if (batchElapsed > 0) (savedModifiers.size * 1000.0 / batchElapsed).toInt() else 0
-                logger.debug(
-                    "Successfully saved modifier batch ${index + 1} with ${savedModifiers.size} $itemType in ${batchElapsed}ms ($batchRate $itemType/sec)",
-                )
-
-                if ((index + 1) % 10 == 0 || index == batches.size - 1) {
-                    val totalElapsed = System.currentTimeMillis() - totalStartTime
-                    val totalRate =
-                        if (totalElapsed >
-                            0
-                        ) {
-                            ((index + 1) * auctionBatchSize * 1000.0 / totalElapsed).toInt()
-                        } else {
-                            0
-                        }
-                    val progress = min((index + 1) * auctionBatchSize, modifiers.size)
-                    logger.info(
-                        "Saved $progress/${modifiers.size} $itemType in ${totalElapsed}ms ($totalRate $itemType/sec)",
-                    )
-                }
-            } catch (e: Exception) {
-                val batchElapsed = System.currentTimeMillis() - batchStartTime
-                logger.error("Failed to save modifier batch ${index + 1} of $itemType after ${batchElapsed}ms", e)
-                throw e
-            }
-        }
-
-        val totalElapsed = System.currentTimeMillis() - totalStartTime
-        val totalRate = if (totalElapsed > 0) (modifiers.size * 1000.0 / totalElapsed).toInt() else 0
-        logger.info("Completed saving ${modifiers.size} $itemType in ${totalElapsed}ms ($totalRate $itemType/sec)")
-    }
-
-    @Transactional
     fun saveAuction(
         auction: AuctionDTO,
         connectedRealm: ConnectedRealm,
     ) {
-        try {
-            val updateHistory = updateHistoryService.startUpdate(connectedRealm, 1, ZonedDateTime.now())
-            val auctionDbo = auction.toDBO(connectedRealm, updateHistory)
-
-            auctionDbo.item.modifiers?.forEach { modifier ->
-                auctionItemModifierRepository.save(modifier)
-            }
-            val savedItem = auctionItemRepository.save(auctionDbo.item)
-
-            auctionRepository.upsertAuction(
-                id = auctionDbo.id.id,
-                connectedRealmId = connectedRealm.id,
-                itemId =
-                    savedItem.id ?: throw IllegalStateException(
-                        "Failed to persist auction item for ${auction.id}",
-                    ),
-                quantity = auctionDbo.quantity,
-                bid = auctionDbo.bid,
-                unitPrice = auctionDbo.unitPrice,
-                timeLeft = auctionDbo.timeLeft.ordinal,
-                buyout = auctionDbo.buyout,
-                firstSeen = auctionDbo.firstSeen,
-                lastSeen = auctionDbo.lastSeen,
-                updateHistoryId = updateHistory.id,
-            )
-
-            logger.debug("Successfully upserted auction ${auctionDbo.id.id} for item ${savedItem.id}")
-        } catch (e: Exception) {
-            if (e.message?.contains("Duplicate entry") == true) {
-                logger.debug("Skipping duplicate auction ${auction.id} for realm ${connectedRealm.id}")
-                return
-            }
-            logger.error("Failed to save auction: ${auction.id}", e)
-            throw e
-        }
+        auctionSnapshotPersistenceService.saveAuction(auction, connectedRealm)
+        logger.debug("Successfully upserted auction {} for realm {}", auction.id, connectedRealm.id)
     }
 }

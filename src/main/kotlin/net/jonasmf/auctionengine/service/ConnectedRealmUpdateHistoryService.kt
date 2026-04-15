@@ -34,6 +34,7 @@ class ConnectedRealmUpdateHistoryService(
         return existing ?: repository.save(history)
     }
 
+    @Transactional
     fun setUpdateToCompleted(
         connectedRealmId: Int,
         lastModified: ZonedDateTime,
