@@ -52,39 +52,47 @@ class AuctionJDBCRepository(
     fun upsertModifiers(modifiers: Collection<AuctionModifierUpsertRow>): Int {
         if (modifiers.isEmpty()) return 0
         var totalRows = 0
-        modifiers.distinct().chunked(AUCTION_JDBC_CHUNK_SIZE).forEach { chunk ->
-            val sql =
-                """
-                INSERT INTO auction_item_modifier (type, value)
-                VALUES ${chunk.joinToString(",") { "(?, ?)" }}
-                ON DUPLICATE KEY UPDATE
-                    type = VALUES(type)
-                """.trimIndent()
-            val params = chunk.flatMap<AuctionModifierUpsertRow, Any?> { listOf(it.type, it.value) }
-            totalRows += jdbcTemplate.update(sql, *params.toTypedArray())
-        }
+        modifiers
+            .distinct()
+            .sortedWith(compareBy(AuctionModifierUpsertRow::type, AuctionModifierUpsertRow::value))
+            .chunked(AUCTION_JDBC_CHUNK_SIZE)
+            .forEach { chunk ->
+                val sql =
+                    """
+                    INSERT INTO auction_item_modifier (type, value)
+                    VALUES ${chunk.joinToString(",") { "(?, ?)" }}
+                    ON DUPLICATE KEY UPDATE
+                        type = VALUES(type)
+                    """.trimIndent()
+                val params = chunk.flatMap<AuctionModifierUpsertRow, Any?> { listOf(it.type, it.value) }
+                totalRows += jdbcTemplate.update(sql, *params.toTypedArray())
+            }
         return totalRows
     }
 
     fun findModifierIds(modifiers: Collection<AuctionModifierUpsertRow>): Map<AuctionModifierUpsertRow, Long> {
         if (modifiers.isEmpty()) return emptyMap()
         val rows = linkedMapOf<AuctionModifierUpsertRow, Long>()
-        modifiers.distinct().chunked(AUCTION_JDBC_CHUNK_SIZE).forEach { chunk ->
-            val whereClause = chunk.joinToString(" OR ") { "(type = ? AND value = ?)" }
-            val params = chunk.flatMap<AuctionModifierUpsertRow, Any?> { listOf(it.type, it.value) }
-            jdbcTemplate.query(
-                "SELECT id, type, value FROM auction_item_modifier WHERE $whereClause",
-                { rs ->
-                    rows[
-                        AuctionModifierUpsertRow(
-                            type = rs.getString("type"),
-                            value = rs.getInt("value"),
-                        ),
-                    ] = rs.getLong("id")
-                },
-                *params.toTypedArray(),
-            )
-        }
+        modifiers
+            .distinct()
+            .sortedWith(compareBy(AuctionModifierUpsertRow::type, AuctionModifierUpsertRow::value))
+            .chunked(AUCTION_JDBC_CHUNK_SIZE)
+            .forEach { chunk ->
+                val whereClause = chunk.joinToString(" OR ") { "(type = ? AND value = ?)" }
+                val params = chunk.flatMap<AuctionModifierUpsertRow, Any?> { listOf(it.type, it.value) }
+                jdbcTemplate.query(
+                    "SELECT id, type, value FROM auction_item_modifier WHERE $whereClause",
+                    { rs ->
+                        rows[
+                            AuctionModifierUpsertRow(
+                                type = rs.getString("type"),
+                                value = rs.getInt("value"),
+                            ),
+                        ] = rs.getLong("id")
+                    },
+                    *params.toTypedArray(),
+                )
+            }
         return rows
     }
 
@@ -92,50 +100,54 @@ class AuctionJDBCRepository(
     fun upsertAuctionItems(items: Collection<AuctionItemUpsertRow>): Int {
         if (items.isEmpty()) return 0
         var totalRows = 0
-        items.distinctBy(AuctionItemUpsertRow::variantHash).chunked(AUCTION_JDBC_CHUNK_SIZE).forEach { chunk ->
-            val sql =
-                """
-                INSERT INTO auction_item (
-                    variant_hash,
-                    item_id,
-                    bonus_lists,
-                    context,
-                    pet_breed_id,
-                    pet_level,
-                    pet_quality_id,
-                    pet_species_id
-                ) VALUES ${chunk.joinToString(",") { "(?, ?, ?, ?, ?, ?, ?, ?)" }}
-                ON DUPLICATE KEY UPDATE
-                    item_id = VALUES(item_id),
-                    bonus_lists = VALUES(bonus_lists),
-                    context = VALUES(context),
-                    pet_breed_id = VALUES(pet_breed_id),
-                    pet_level = VALUES(pet_level),
-                    pet_quality_id = VALUES(pet_quality_id),
-                    pet_species_id = VALUES(pet_species_id)
-                """.trimIndent()
-            val params =
-                chunk.flatMap<AuctionItemUpsertRow, Any?> {
-                    listOf(
-                        it.variantHash,
-                        it.itemId,
-                        it.bonusLists,
-                        it.context,
-                        it.petBreedId,
-                        it.petLevel,
-                        it.petQualityId,
-                        it.petSpeciesId,
-                    )
-                }
-            totalRows += jdbcTemplate.update(sql, *params.toTypedArray())
-        }
+        items
+            .distinctBy(AuctionItemUpsertRow::variantHash)
+            .sortedBy(AuctionItemUpsertRow::variantHash)
+            .chunked(AUCTION_JDBC_CHUNK_SIZE)
+            .forEach { chunk ->
+                val sql =
+                    """
+                    INSERT INTO auction_item (
+                        variant_hash,
+                        item_id,
+                        bonus_lists,
+                        context,
+                        pet_breed_id,
+                        pet_level,
+                        pet_quality_id,
+                        pet_species_id
+                    ) VALUES ${chunk.joinToString(",") { "(?, ?, ?, ?, ?, ?, ?, ?)" }}
+                    ON DUPLICATE KEY UPDATE
+                        item_id = VALUES(item_id),
+                        bonus_lists = VALUES(bonus_lists),
+                        context = VALUES(context),
+                        pet_breed_id = VALUES(pet_breed_id),
+                        pet_level = VALUES(pet_level),
+                        pet_quality_id = VALUES(pet_quality_id),
+                        pet_species_id = VALUES(pet_species_id)
+                    """.trimIndent()
+                val params =
+                    chunk.flatMap<AuctionItemUpsertRow, Any?> {
+                        listOf(
+                            it.variantHash,
+                            it.itemId,
+                            it.bonusLists,
+                            it.context,
+                            it.petBreedId,
+                            it.petLevel,
+                            it.petQualityId,
+                            it.petSpeciesId,
+                        )
+                    }
+                totalRows += jdbcTemplate.update(sql, *params.toTypedArray())
+            }
         return totalRows
     }
 
     fun findAuctionItemIds(variantHashes: Collection<String>): Map<String, Long> {
         if (variantHashes.isEmpty()) return emptyMap()
         val rows = linkedMapOf<String, Long>()
-        variantHashes.distinct().chunked(AUCTION_JDBC_CHUNK_SIZE).forEach { chunk ->
+        variantHashes.distinct().sorted().chunked(AUCTION_JDBC_CHUNK_SIZE).forEach { chunk ->
             val sql =
                 "SELECT id, variant_hash FROM auction_item WHERE variant_hash IN (${placeholders(chunk.size)})"
             jdbcTemplate.query(
@@ -155,7 +167,13 @@ class AuctionJDBCRepository(
         var totalRows = 0
         links
             .distinctBy { Triple(it.auctionItemId, it.sortOrder, it.modifierId) }
-            .chunked(AUCTION_JDBC_CHUNK_SIZE)
+            .sortedWith(
+                compareBy(
+                    AuctionItemModifierLinkUpsertRow::auctionItemId,
+                    AuctionItemModifierLinkUpsertRow::sortOrder,
+                    AuctionItemModifierLinkUpsertRow::modifierId,
+                ),
+            ).chunked(AUCTION_JDBC_CHUNK_SIZE)
             .forEach { chunk ->
                 val sql =
                     """
@@ -180,54 +198,57 @@ class AuctionJDBCRepository(
     fun upsertAuctions(auctions: Collection<AuctionUpsertRow>): Int {
         if (auctions.isEmpty()) return 0
         var totalRows = 0
-        auctions.chunked(AUCTION_JDBC_CHUNK_SIZE).forEach { chunk ->
-            val sql =
-                """
-                INSERT INTO auction (
-                    id,
-                    connected_realm_id,
-                    item_id,
-                    quantity,
-                    bid,
-                    unit_price,
-                    time_left,
-                    buyout,
-                    first_seen,
-                    last_seen,
-                    deleted_at,
-                    update_history_id
-                ) VALUES ${chunk.joinToString(",") { "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" }}
-                ON DUPLICATE KEY UPDATE
-                    item_id = VALUES(item_id),
-                    quantity = VALUES(quantity),
-                    bid = VALUES(bid),
-                    unit_price = VALUES(unit_price),
-                    time_left = VALUES(time_left),
-                    buyout = VALUES(buyout),
-                    first_seen = COALESCE(first_seen, VALUES(first_seen)),
-                    last_seen = VALUES(last_seen),
-                    deleted_at = NULL,
-                    update_history_id = VALUES(update_history_id)
-                """.trimIndent()
-            val params =
-                ArrayList<Any?>(chunk.size * 12).apply {
-                    chunk.forEach { auction ->
-                        add(auction.id)
-                        add(auction.connectedRealmId)
-                        add(auction.itemId)
-                        add(auction.quantity)
-                        add(auction.bid)
-                        add(auction.unitPrice)
-                        add(auction.timeLeft)
-                        add(auction.buyout)
-                        add(auction.firstSeen.toSqlTimestamp())
-                        add(auction.lastSeen.toSqlTimestamp())
-                        add(null)
-                        add(auction.updateHistoryId)
+        auctions
+            .sortedWith(compareBy(AuctionUpsertRow::connectedRealmId, AuctionUpsertRow::id))
+            .chunked(AUCTION_JDBC_CHUNK_SIZE)
+            .forEach { chunk ->
+                val sql =
+                    """
+                    INSERT INTO auction (
+                        id,
+                        connected_realm_id,
+                        item_id,
+                        quantity,
+                        bid,
+                        unit_price,
+                        time_left,
+                        buyout,
+                        first_seen,
+                        last_seen,
+                        deleted_at,
+                        update_history_id
+                    ) VALUES ${chunk.joinToString(",") { "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" }}
+                    ON DUPLICATE KEY UPDATE
+                        item_id = VALUES(item_id),
+                        quantity = VALUES(quantity),
+                        bid = VALUES(bid),
+                        unit_price = VALUES(unit_price),
+                        time_left = VALUES(time_left),
+                        buyout = VALUES(buyout),
+                        first_seen = COALESCE(first_seen, VALUES(first_seen)),
+                        last_seen = VALUES(last_seen),
+                        deleted_at = NULL,
+                        update_history_id = VALUES(update_history_id)
+                    """.trimIndent()
+                val params =
+                    ArrayList<Any?>(chunk.size * 12).apply {
+                        chunk.forEach { auction ->
+                            add(auction.id)
+                            add(auction.connectedRealmId)
+                            add(auction.itemId)
+                            add(auction.quantity)
+                            add(auction.bid)
+                            add(auction.unitPrice)
+                            add(auction.timeLeft)
+                            add(auction.buyout)
+                            add(auction.firstSeen.toSqlTimestamp())
+                            add(auction.lastSeen.toSqlTimestamp())
+                            add(null)
+                            add(auction.updateHistoryId)
+                        }
                     }
-                }
-            totalRows += jdbcTemplate.update(sql, *params.toTypedArray())
-        }
+                totalRows += jdbcTemplate.update(sql, *params.toTypedArray())
+            }
         return totalRows
     }
 

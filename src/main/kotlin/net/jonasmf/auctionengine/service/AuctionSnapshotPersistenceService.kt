@@ -13,8 +13,11 @@ import net.jonasmf.auctionengine.repository.rds.AuctionJDBCRepository
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.core.NestedRuntimeException
+import org.springframework.dao.DataAccessException
 import org.springframework.stereotype.Service
 import java.nio.file.Path
+import java.sql.SQLException
 import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 
@@ -31,6 +34,8 @@ class AuctionSnapshotPersistenceService(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AuctionSnapshotPersistenceService::class.java)
     private val snapshotBatchSize = 5_000
+    private val deadlockRetryAttempts = 3
+    private val deadlockRetryBaseDelayMs = 100L
 
     fun saveSnapshot(
         payloadPath: Path,
@@ -52,12 +57,14 @@ class AuctionSnapshotPersistenceService(
 
         streamAuctionBatches(payloadPath) { batch ->
             batchCount++
-            persistBatch(
-                auctions = batch,
-                connectedRealmId = connectedRealm.id,
-                updateHistoryId = updateHistory.id,
-                snapshotTime = lastModified.toOffsetDateTime(),
-            )
+            withDeadlockRetry("persist auction snapshot batch", connectedRealm.id) {
+                persistBatch(
+                    auctions = batch,
+                    connectedRealmId = connectedRealm.id,
+                    updateHistoryId = updateHistory.id,
+                    snapshotTime = lastModified.toOffsetDateTime(),
+                )
+            }
             processedAuctions += batch.size
             logger.info(
                 "Persisted auction snapshot batch {}/? for realm {} processed={}/{} {}",
@@ -70,12 +77,16 @@ class AuctionSnapshotPersistenceService(
         }
 
         val softDeletedAuctions =
-            auctionJdbcRepository.markMissingAuctionsDeleted(
-                connectedRealmId = connectedRealm.id,
-                updateHistoryId = updateHistory.id,
-                deletedAt = lastModified.toOffsetDateTime(),
-            )
-        updateHistoryService.setUpdateToCompleted(connectedRealm.id, lastModified)
+            withDeadlockRetry("mark missing auctions deleted", connectedRealm.id) {
+                auctionJdbcRepository.markMissingAuctionsDeleted(
+                    connectedRealmId = connectedRealm.id,
+                    updateHistoryId = updateHistory.id,
+                    deletedAt = lastModified.toOffsetDateTime(),
+                )
+            }
+        withDeadlockRetry("mark update history completed", connectedRealm.id) {
+            updateHistoryService.setUpdateToCompleted(connectedRealm.id, lastModified)
+        }
 
         logger.info(
             "Completed auction snapshot persistence for realm {} in {}ms batches={} processed={} softDeleted={} {}",
@@ -100,13 +111,17 @@ class AuctionSnapshotPersistenceService(
         lastModified: ZonedDateTime = ZonedDateTime.now(),
     ) {
         val updateHistory = updateHistoryService.startUpdate(connectedRealm, 1, lastModified)
-        persistBatch(
-            auctions = listOf(auction.toSnapshotAuction()),
-            connectedRealmId = connectedRealm.id,
-            updateHistoryId = updateHistory.id,
-            snapshotTime = lastModified.toOffsetDateTime(),
-        )
-        updateHistoryService.setUpdateToCompleted(connectedRealm.id, lastModified)
+        withDeadlockRetry("persist single auction snapshot", connectedRealm.id) {
+            persistBatch(
+                auctions = listOf(auction.toSnapshotAuction()),
+                connectedRealmId = connectedRealm.id,
+                updateHistoryId = updateHistory.id,
+                snapshotTime = lastModified.toOffsetDateTime(),
+            )
+        }
+        withDeadlockRetry("mark update history completed", connectedRealm.id) {
+            updateHistoryService.setUpdateToCompleted(connectedRealm.id, lastModified)
+        }
     }
 
     fun deleteSoftDeletedAuctionsOlderThan(cutoff: OffsetDateTime): Int =
@@ -120,7 +135,11 @@ class AuctionSnapshotPersistenceService(
     ) {
         if (auctions.isEmpty()) return
 
-        val itemVariants = auctions.map(SnapshotAuction::itemVariant).distinctBy { it.variantHash }
+        val itemVariants =
+            auctions
+                .map(SnapshotAuction::itemVariant)
+                .distinctBy { it.variantHash }
+                .sortedBy { it.variantHash }
         val modifierRows = itemVariants.flatMap { variant -> variant.modifiers }.distinct().map { it.toUpsertRow() }
         auctionJdbcRepository.upsertModifiers(modifierRows)
         val modifierIds =
@@ -147,7 +166,7 @@ class AuctionSnapshotPersistenceService(
         auctionJdbcRepository.upsertAuctionItemModifierLinks(linkRows)
 
         val auctionRows =
-            auctions.map { auction ->
+            auctions.sortedBy(SnapshotAuction::auctionId).map { auction ->
                 auction.toUpsertRow(
                     connectedRealmId = connectedRealmId,
                     auctionItemId = itemIds.getValue(auction.itemVariant.variantHash),
@@ -156,6 +175,57 @@ class AuctionSnapshotPersistenceService(
                 )
             }
         auctionJdbcRepository.upsertAuctions(auctionRows)
+    }
+
+    private fun <T> withDeadlockRetry(
+        operation: String,
+        connectedRealmId: Int,
+        block: () -> T,
+    ): T {
+        var attempt = 1
+        while (true) {
+            try {
+                return block()
+            } catch (failure: RuntimeException) {
+                if (!isDeadlockFailure(failure) || attempt >= deadlockRetryAttempts) {
+                    throw failure
+                }
+                val delayMs = deadlockRetryBaseDelayMs * attempt
+                logger.warn(
+                    "Deadlock while attempting to {} for realm {}. Retrying attempt {}/{} after {}ms",
+                    operation,
+                    connectedRealmId,
+                    attempt + 1,
+                    deadlockRetryAttempts,
+                    delayMs,
+                )
+                Thread.sleep(delayMs)
+                attempt++
+            }
+        }
+    }
+
+    private fun isDeadlockFailure(failure: RuntimeException): Boolean {
+        val mostSpecificCause =
+            when (failure) {
+                is NestedRuntimeException -> failure.mostSpecificCause
+                else -> failure
+            }
+        return when {
+            mostSpecificCause is SQLException ->
+                mostSpecificCause.sqlState == "40001" ||
+                    mostSpecificCause.errorCode == 1213 ||
+                    mostSpecificCause.message?.contains(
+                        "Deadlock found when trying to get lock",
+                        ignoreCase = true,
+                    ) == true
+            failure is DataAccessException ->
+                failure.message?.contains(
+                    "Deadlock found when trying to get lock",
+                    ignoreCase = true,
+                ) == true
+            else -> false
+        }
     }
 
     private fun streamAuctionBatches(
