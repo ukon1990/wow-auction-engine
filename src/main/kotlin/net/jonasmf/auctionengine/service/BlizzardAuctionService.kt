@@ -235,7 +235,9 @@ class BlizzardAuctionService(
                     "persist-current-auctions",
                     region = region,
                     connectedRealmId = connectedRealmId,
-                )
+                )/* TODO: Check if this helps reduce transfer costs
+                    This part is probably redundant, but it would be nice to know all the latest prices,
+                    but I might have to find a different way to keep track of it. Or just drop it to save money.
                 val snapshotPersistenceStartTime = System.currentTimeMillis()
                 val snapshotSummary =
                     saveAuctionsToDatabase(
@@ -254,7 +256,7 @@ class BlizzardAuctionService(
                     snapshotSummary.softDeletedAuctions,
                     System.currentTimeMillis() - snapshotPersistenceStartTime,
                     JvmRuntimeDiagnostics.snapshot(),
-                )
+                )*/
                 runtimeHealthTracker.markUpdateBatchProgress(
                     "update-auction-house-times",
                     region = region,
@@ -269,19 +271,6 @@ class BlizzardAuctionService(
             } finally {
                 downloadedPayload.path.deleteIfExists()
             }
-            /* Disabled, as we don't really need ALL auctions in the database as it takes up a lot of space
-                And processing is also really slow for "100k-400k" auctions and all it's corresponding data.
-                I might get back to this later and see if I can optimize it more, but for now I'm more interested in trends over time
-                and not having every single auction ever recorded in the database.
-            saveAuctionsToDatabase(
-                connectedRealm,
-                auctionCount,
-                lastModified,
-                data,
-                connectedRealmId,
-                startTime,
-                url,
-            )*/
         } catch (error: Exception) {
             logAuctionUpdateFailure(
                 connectedRealmId = connectedRealmId,
@@ -458,6 +447,9 @@ class BlizzardAuctionService(
         }
     }
 
+    /**
+     * Stores the full auctions in the database
+     */
     private fun saveAuctionsToDatabase(
         connectedRealm: ConnectedRealm,
         auctionCount: Int,
