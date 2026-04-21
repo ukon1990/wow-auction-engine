@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${AUCTION_ENGINE_DB_URL:jdbc:mariadb://194.242.11.14:3306/100680.wow-auction-house-data}
+    url: ${AUCTION_ENGINE_DB_URL:jdbc:mariadb://194.242.11.14:3306/100680.wow-auction-house-data?cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true}
     username: ${AUCTION_ENGINE_DB_USERNAME}
     password: ${AUCTION_ENGINE_DB_PASSWORD}
   cloud:

@@ -65,8 +65,20 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                 """.trimIndent(),
                 Int::class.java,
             )
+        val ahTypeIdColumnCount =
+            jdbcTemplate.queryForObject(
+                """
+                SELECT COUNT(*)
+                FROM information_schema.columns
+                WHERE table_schema = DATABASE()
+                  AND table_name = 'v_auction_house_prices'
+                  AND column_name = 'ah_type_id'
+                """.trimIndent(),
+                Int::class.java,
+            )
 
         assertEquals(1, bonusKeyColumnCount)
+        assertEquals(0, ahTypeIdColumnCount)
     }
 
     @Test
@@ -114,6 +126,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         assertTrue(normalizedCreateTable.contains("max_rows=82300000"))
         assertTrue(normalizedCreateTable.contains("partition by hash (to_days(date))"))
         assertTrue(normalizedCreateTable.contains("partitions 31"))
+        assertTrue(!normalizedCreateTable.contains("ah_type_id"))
     }
 
     @Test
@@ -126,7 +139,6 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                 listOf(
                     HourlyStatsUpsertRow(
                         connectedRealmId = 1084,
-                        ahTypeId = 0,
                         itemId = 19019,
                         date = date,
                         petSpeciesId = null,
@@ -143,7 +155,6 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                 listOf(
                     HourlyStatsUpsertRow(
                         connectedRealmId = 1084,
-                        ahTypeId = 0,
                         itemId = 19019,
                         date = date,
                         petSpeciesId = null,
@@ -184,7 +195,6 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                 listOf(
                     HourlyStatsUpsertRow(
                         connectedRealmId = 2084,
-                        ahTypeId = 0,
                         itemId = 19020,
                         date = date,
                         petSpeciesId = 42,

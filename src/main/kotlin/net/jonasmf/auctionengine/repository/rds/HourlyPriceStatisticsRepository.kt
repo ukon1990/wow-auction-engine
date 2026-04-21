@@ -8,7 +8,6 @@ import java.time.LocalDate
 
 data class HourlyStatsUpsertRow(
     val connectedRealmId: Int,
-    val ahTypeId: Int,
     val itemId: Int,
     val date: LocalDate,
     val petSpeciesId: Int?,
@@ -35,7 +34,7 @@ class HourlyPriceStatisticsRepository(
         val priceColumn = "price%02d".format(hour)
         val quantityColumn = "quantity%02d".format(hour)
         val tableName = "hourly_auction_stats"
-        val numberOfColumns = 9
+        val numberOfColumns = 8
         var total = 0
         val valueTuple = List(numberOfColumns) { "?" }.joinToString(",", "(", ")")
 
@@ -45,7 +44,6 @@ class HourlyPriceStatisticsRepository(
                 """
                 INSERT INTO $tableName (
                     connected_realm_id,
-                    ah_type_id,
                     item_id,
                     date,
                     pet_species_id,
@@ -58,11 +56,9 @@ class HourlyPriceStatisticsRepository(
                     $priceColumn = VALUES($priceColumn),
                     $quantityColumn = VALUES($quantityColumn)
                 """.trimIndent()
-            // What is the 7 here? Bytes?
             val params = ArrayList<Any?>(chunk.size * numberOfColumns)
             for (row in chunk) {
                 params.add(row.connectedRealmId)
-                params.add(row.ahTypeId)
                 params.add(row.itemId)
                 params.add(Date.valueOf(row.date))
                 params.add(row.petSpeciesId ?: -1)

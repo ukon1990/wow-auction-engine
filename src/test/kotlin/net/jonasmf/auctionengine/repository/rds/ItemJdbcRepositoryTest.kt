@@ -3,7 +3,6 @@ package net.jonasmf.auctionengine.repository.rds
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import net.jonasmf.auctionengine.config.IntegrationTestBase
-import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.item.ItemDTO
@@ -78,16 +77,14 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
             """
             INSERT INTO hourly_auction_stats (
                 connected_realm_id,
-                ah_type_id,
                 item_id,
                 date,
                 pet_species_id,
                 modifier_key,
                 bonus_key
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?)
             """.trimIndent(),
             1,
-            GameBuildVersion.RETAIL.ordinal,
             1001,
             today,
             -1,
@@ -98,16 +95,14 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
             """
             INSERT INTO hourly_auction_stats (
                 connected_realm_id,
-                ah_type_id,
                 item_id,
                 date,
                 pet_species_id,
                 modifier_key,
                 bonus_key
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?)
             """.trimIndent(),
             1,
-            GameBuildVersion.RETAIL.ordinal,
             1001,
             today,
             -1,
@@ -118,16 +113,14 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
             """
             INSERT INTO hourly_auction_stats (
                 connected_realm_id,
-                ah_type_id,
                 item_id,
                 date,
                 pet_species_id,
                 modifier_key,
                 bonus_key
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?)
             """.trimIndent(),
             1,
-            GameBuildVersion.RETAIL.ordinal,
             1002,
             yesterday,
             -1,
@@ -138,16 +131,14 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
             """
             INSERT INTO hourly_auction_stats (
                 connected_realm_id,
-                ah_type_id,
                 item_id,
                 date,
                 pet_species_id,
                 modifier_key,
                 bonus_key
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?)
             """.trimIndent(),
             1,
-            GameBuildVersion.RETAIL.ordinal,
             2000,
             today,
             55,

@@ -3,7 +3,6 @@ package net.jonasmf.auctionengine.service
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.repository.rds.HourlyPriceStatisticsRepository
@@ -80,11 +79,7 @@ class HourlyPriceStatisticsService(
             val petSpeciesId = auction.item.pet_species_id
             val modifierKey = AuctionVariantKeyUtility.canonicalModifierKey(auction.item.modifiers)
             val bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auction.item.bonus_lists)
-            val key = "${connectedRealm.id}|${
-                GameBuildVersion.RETAIL.ordinal
-            }|$itemId|$date|${
-                petSpeciesId ?: ""
-            }|$modifierKey|$bonusKey"
+            val key = "${connectedRealm.id}|$itemId|$date|${petSpeciesId ?: ""}|$modifierKey|$bonusKey"
             val price = auction.buyout ?: auction.unit_price ?: 0L
             val quantity = auction.quantity.takeIf { it > 0 } ?: 1L
 
@@ -93,7 +88,6 @@ class HourlyPriceStatisticsService(
                 grouped[key] =
                     HourlyStatsUpsertRow(
                         connectedRealmId = connectedRealm.id,
-                        ahTypeId = GameBuildVersion.RETAIL.ordinal,
                         itemId = itemId,
                         date = date,
                         petSpeciesId = petSpeciesId,
