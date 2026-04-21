@@ -1,6 +1,5 @@
 package net.jonasmf.auctionengine.utility
 
-import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsId
 import net.jonasmf.auctionengine.dbo.rds.auction.DailyAuctionStats
 import net.jonasmf.auctionengine.dbo.rds.auction.HourlyAuctionStats
@@ -75,7 +74,6 @@ class AuctionProcessorUtility(
         val statsId =
             AuctionStatsId(
                 connectedRealmId = connectedRealm.id,
-                gameBuildVersion = GameBuildVersion.RETAIL,
                 itemId = auctionDTO.item.id,
                 date = LocalDate.now(),
                 petSpeciesId = auctionDTO.item.pet_species_id,
@@ -149,7 +147,6 @@ class AuctionProcessorUtility(
         val statsId =
             AuctionStatsId(
                 connectedRealmId = connectedRealm.id,
-                gameBuildVersion = GameBuildVersion.RETAIL,
                 itemId = auctionDTO.item.id,
                 date = LocalDate.now(),
                 petSpeciesId = auctionDTO.item.pet_species_id,
