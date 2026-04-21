@@ -232,7 +232,7 @@ class BlizzardAuctionService(
                     JvmRuntimeDiagnostics.snapshot(),
                 )
                 runtimeHealthTracker.markUpdateBatchProgress(
-                    "persist-current-auctions",
+                    "skip-current-auctions-persistence",
                     region = region,
                     connectedRealmId = connectedRealmId,
                 )

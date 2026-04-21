@@ -17,12 +17,15 @@ import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
 import net.jonasmf.auctionengine.integration.blizzard.DownloadedAuctionPayload
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
+import org.springframework.dao.CannotAcquireLockException
 import reactor.core.publisher.Mono
 import java.nio.file.Files
+import java.sql.SQLException
 import java.time.Duration
 import java.time.ZonedDateTime
 import net.jonasmf.auctionengine.domain.AuctionHouse as AuctionHouseDomain
@@ -280,6 +283,9 @@ class BlizzardAuctionServiceTest {
 
         io.mockk.verify(exactly = 0) { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) }
         io.mockk.verify(exactly = 1) { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) }
+        io.mockk.verify(exactly = 0) {
+            auctionSnapshotPersistenceService.saveSnapshot(eq(data.path), eq(realm), eq(1), any())
+        }
     }
 
     @Test
@@ -424,16 +430,27 @@ class BlizzardAuctionServiceTest {
                 eq(data.path),
                 any(),
             )
-        } returns
-            HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
-        every { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) } returns Unit
+        } throws
+            CannotAcquireLockException(
+                "PreparedStatementCallback; SQL [INSERT INTO hourly_auction_stats (item_id) VALUES (?)]; deadlock",
+                SQLException("Deadlock found when trying to get lock; try restarting transaction", "40001", 1213),
+            )
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
 
         service.updateAuctionHouses(
             Region.Europe,
             listOf(AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe)),
         )
 
-        assertTrue(appender.list.none { it.level == Level.WARN && it.formattedMessage.contains("database deadlock") })
+        val warnEvent =
+            appender.list.single { it.level == Level.WARN && it.formattedMessage.contains("realm 1") }
+        assertTrue(warnEvent.formattedMessage.contains("database deadlock"))
+        assertTrue(warnEvent.formattedMessage.contains("sqlState=40001"))
+        assertTrue(warnEvent.formattedMessage.contains("vendorCode=1213"))
+        assertFalse(warnEvent.formattedMessage.contains("hourly_auction_stats"))
+        assertFalse(warnEvent.formattedMessage.contains("SQL ["))
+        assertFalse(warnEvent.formattedMessage.contains("VALUES (?)"))
+        assertNull(warnEvent.throwableProxy)
         assertTrue(appender.list.none { it.level == Level.ERROR && it.formattedMessage.contains("realm 1") })
         detachAppender(appender)
     }
