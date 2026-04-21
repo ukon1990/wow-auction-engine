@@ -12,7 +12,6 @@ class AuctionItemStat(
     val auction: AuctionDTO,
     val lastModified: Long,
     hour: String,
-    val ahTypeId: Int,
 ) {
     private val prices = mutableMapOf<String, Long?>()
     private val quantities = mutableMapOf<String, Long>()

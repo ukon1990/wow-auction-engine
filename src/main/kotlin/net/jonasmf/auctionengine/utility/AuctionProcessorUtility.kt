@@ -29,7 +29,6 @@ class AuctionProcessorUtility(
         auctions: List<AuctionDTO>,
         lastModified: Long,
         ahId: Int,
-        ahTypeId: Int,
     ) {
         val start = System.currentTimeMillis()
 
@@ -41,20 +40,18 @@ class AuctionProcessorUtility(
             return
         }
 
-        val map = mutableMapOf<String, AuctionItemStat>()
-
         // Process auctions into hourly stats
         val hourlyStats = mutableListOf<HourlyAuctionStats>()
         val connectedRealm = createDummyConnectedRealm(ahId)
         auctions.forEach { auctionDTO ->
-            processHourlyStats(auctionDTO, Date(lastModified), hourlyStats, connectedRealm, ahTypeId)
+            processHourlyStats(auctionDTO, Date(lastModified), hourlyStats, connectedRealm)
         }
         hourlyStatsRepo.saveAll(hourlyStats)
 
         // Process auctions into daily stats
         val dailyStats = mutableListOf<DailyAuctionStats>()
         auctions.forEach { auctionDTO ->
-            processDailyStats(auctionDTO, Date(lastModified), dailyStats, connectedRealm, ahTypeId)
+            processDailyStats(auctionDTO, Date(lastModified), dailyStats, connectedRealm)
         }
         dailyStatsRepo.saveAll(dailyStats)
 
@@ -69,7 +66,6 @@ class AuctionProcessorUtility(
         lastModified: Date,
         hourlyStats: MutableList<HourlyAuctionStats>,
         connectedRealm: ConnectedRealm,
-        ahTypeId: Int,
     ) {
         val statsId =
             AuctionStatsId(
@@ -142,7 +138,6 @@ class AuctionProcessorUtility(
         lastModified: Date,
         dailyStats: MutableList<DailyAuctionStats>,
         connectedRealm: ConnectedRealm,
-        ahTypeId: Int,
     ) {
         val statsId =
             AuctionStatsId(

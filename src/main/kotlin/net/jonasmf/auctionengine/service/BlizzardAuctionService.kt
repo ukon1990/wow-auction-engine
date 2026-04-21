@@ -235,28 +235,8 @@ class BlizzardAuctionService(
                     "persist-current-auctions",
                     region = region,
                     connectedRealmId = connectedRealmId,
-                )/* TODO: Check if this helps reduce transfer costs
-                    This part is probably redundant, but it would be nice to know all the latest prices,
-                    but I might have to find a different way to keep track of it. Or just drop it to save money.
-                val snapshotPersistenceStartTime = System.currentTimeMillis()
-                val snapshotSummary =
-                    saveAuctionsToDatabase(
-                        connectedRealm = connectedRealm,
-                        auctionCount = hourlyStatsSummary.processedAuctions,
-                        lastModified = lastModified,
-                        payloadPath = downloadedPayload.path,
-                        connectedRealmId = connectedRealmId,
-                    )
-                logger.info(
-                    "Completed current auction persistence for realm {} region {} auctions={} batches={} softDeleted={} in {}ms {}",
-                    connectedRealmId,
-                    region,
-                    snapshotSummary.processedAuctions,
-                    snapshotSummary.batchCount,
-                    snapshotSummary.softDeletedAuctions,
-                    System.currentTimeMillis() - snapshotPersistenceStartTime,
-                    JvmRuntimeDiagnostics.snapshot(),
-                )*/
+                )
+                // TODO: Consider whether persisting current auctions should stay disabled to reduce transfer costs.
                 runtimeHealthTracker.markUpdateBatchProgress(
                     "update-auction-house-times",
                     region = region,

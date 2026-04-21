@@ -1,14 +1,38 @@
-ALTER TABLE hourly_auction_stats
-    DROP PRIMARY KEY,
-    DROP COLUMN IF EXISTS ah_type_id,
-    ADD PRIMARY KEY (connected_realm_id, item_id, date, pet_species_id, modifier_key, bonus_key);
+SET @hourly_exists := (
+    SELECT COUNT(*)
+    FROM information_schema.tables
+    WHERE table_schema = DATABASE()
+      AND table_name = 'hourly_auction_stats'
+);
 
-ALTER TABLE daily_auction_stats
-    DROP PRIMARY KEY,
-    DROP COLUMN IF EXISTS ah_type_id,
-    ADD PRIMARY KEY (connected_realm_id, item_id, date, pet_species_id, modifier_key, bonus_key);
+SET @daily_exists := (
+    SELECT COUNT(*)
+    FROM information_schema.tables
+    WHERE table_schema = DATABASE()
+      AND table_name = 'daily_auction_stats'
+);
 
-CREATE OR REPLACE VIEW v_auction_house_prices AS
+SET @sql := IF(
+    @hourly_exists > 0,
+    'ALTER TABLE hourly_auction_stats DROP PRIMARY KEY, DROP COLUMN IF EXISTS ah_type_id, ADD PRIMARY KEY (connected_realm_id, item_id, date, pet_species_id, modifier_key, bonus_key)',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @sql := IF(
+    @daily_exists > 0,
+    'ALTER TABLE daily_auction_stats DROP PRIMARY KEY, DROP COLUMN IF EXISTS ah_type_id, ADD PRIMARY KEY (connected_realm_id, item_id, date, pet_species_id, modifier_key, bonus_key)',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @sql := IF(
+    @hourly_exists > 0,
+    'CREATE OR REPLACE VIEW v_auction_house_prices AS
 SELECT connected_realm_id,
        item_id,
        pet_species_id,
@@ -271,4 +295,9 @@ SELECT connected_realm_id,
        price23 AS price,
        quantity23 AS quantity
 FROM hourly_auction_stats
-WHERE price23 IS NOT NULL OR quantity23 IS NOT NULL;
+WHERE price23 IS NOT NULL OR quantity23 IS NOT NULL',
+    'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;

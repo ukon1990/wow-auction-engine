@@ -17,15 +17,12 @@ import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
 import net.jonasmf.auctionengine.integration.blizzard.DownloadedAuctionPayload
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
-import org.springframework.dao.CannotAcquireLockException
 import reactor.core.publisher.Mono
 import java.nio.file.Files
-import java.sql.SQLException
 import java.time.Duration
 import java.time.ZonedDateTime
 import net.jonasmf.auctionengine.domain.AuctionHouse as AuctionHouseDomain
@@ -123,18 +120,6 @@ class BlizzardAuctionServiceTest {
             events += "stats-2"
             HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
         }
-        every {
-            auctionSnapshotPersistenceService.saveSnapshot(eq(firstData.path), eq(firstRealm), eq(1), any())
-        } answers {
-            events += "db-1"
-            AuctionSnapshotPersistenceSummary(processedAuctions = 1, batchCount = 1, softDeletedAuctions = 0)
-        }
-        every {
-            auctionSnapshotPersistenceService.saveSnapshot(eq(secondData.path), eq(secondRealm), eq(1), any())
-        } answers {
-            events += "db-2"
-            AuctionSnapshotPersistenceSummary(processedAuctions = 1, batchCount = 1, softDeletedAuctions = 0)
-        }
         every { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) } answers {
             events += "update-1"
         }
@@ -157,14 +142,12 @@ class BlizzardAuctionServiceTest {
                 "download-1",
                 "s3-1",
                 "stats-1",
-                "db-1",
                 "update-1",
                 "dump-2",
                 "dump-s3-2",
                 "download-2",
                 "s3-2",
                 "stats-2",
-                "db-2",
                 "update-2",
             ),
             events,
@@ -218,12 +201,6 @@ class BlizzardAuctionServiceTest {
             events += "stats-2"
             HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
         }
-        every {
-            auctionSnapshotPersistenceService.saveSnapshot(eq(secondData.path), eq(secondRealm), eq(1), any())
-        } answers {
-            events += "db-2"
-            AuctionSnapshotPersistenceSummary(processedAuctions = 1, batchCount = 1, softDeletedAuctions = 0)
-        }
         every { auctionHouseService.updateTimes(eq(2), any(), eq(true), any()) } answers {
             events += "update-2"
         }
@@ -236,7 +213,7 @@ class BlizzardAuctionServiceTest {
             ),
         )
 
-        assertEquals(listOf("failure-1", "dump-2", "download-2", "s3-2", "stats-2", "db-2", "update-2"), events)
+        assertEquals(listOf("failure-1", "dump-2", "download-2", "s3-2", "stats-2", "update-2"), events)
     }
 
     @Test
@@ -265,12 +242,6 @@ class BlizzardAuctionServiceTest {
                 events += "stats"
                 HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
             }
-        every {
-            auctionSnapshotPersistenceService.saveSnapshot(eq(data.path), eq(realm), eq(1), any())
-        } answers {
-            events += "db"
-            AuctionSnapshotPersistenceSummary(processedAuctions = 1, batchCount = 1, softDeletedAuctions = 0)
-        }
         every { auctionHouseService.updateTimes(eq(1), any(), eq(true), capture(completionMarker)) } answers {
             events += "complete"
         }
@@ -280,12 +251,12 @@ class BlizzardAuctionServiceTest {
             listOf(AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe)),
         )
 
-        assertEquals(listOf("stats", "db", "complete"), events)
+        assertEquals(listOf("stats", "complete"), events)
         assertEquals("s3://first", completionMarker.captured)
     }
 
     @Test
-    fun `updateAuctionHouses marks update as failed when current auction persistence fails`() {
+    fun `updateAuctionHouses succeeds when hourly stats processing succeeds and snapshot persistence is disabled`() {
         val service = createService()
         val lastModified = ZonedDateTime.now().minusMinutes(5)
         val realm = createRealm(1, lastModified.minusMinutes(1))
@@ -300,18 +271,15 @@ class BlizzardAuctionServiceTest {
         every {
             hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(eq(realm), eq(data.path), any())
         } returns HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
-        every {
-            auctionSnapshotPersistenceService.saveSnapshot(eq(data.path), eq(realm), eq(1), any())
-        } throws IllegalStateException("db failure")
-        every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) } returns Unit
 
         service.updateAuctionHouses(
             Region.Europe,
             listOf(AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe)),
         )
 
-        io.mockk.verify(exactly = 1) { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) }
-        io.mockk.verify(exactly = 0) { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) }
+        io.mockk.verify(exactly = 0) { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) }
+        io.mockk.verify(exactly = 1) { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) }
     }
 
     @Test
@@ -458,28 +426,14 @@ class BlizzardAuctionServiceTest {
             )
         } returns
             HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
-        every {
-            auctionSnapshotPersistenceService.saveSnapshot(eq(data.path), eq(realm), eq(1), any())
-        } throws
-            CannotAcquireLockException(
-                "PreparedStatementCallback; SQL [INSERT INTO auction (id, item_id) VALUES (?, ?)]; deadlock",
-                SQLException("Deadlock found when trying to get lock; try restarting transaction", "40001", 1213),
-            )
-        every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
+        every { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) } returns Unit
 
         service.updateAuctionHouses(
             Region.Europe,
             listOf(AuctionHouseDomain(id = 1, connectedId = 1, region = Region.Europe)),
         )
 
-        val warnEvent =
-            appender.list.single { it.level == Level.WARN && it.formattedMessage.contains("realm 1") }
-        assertTrue(warnEvent.formattedMessage.contains("database deadlock"))
-        assertTrue(warnEvent.formattedMessage.contains("sqlState=40001"))
-        assertTrue(warnEvent.formattedMessage.contains("vendorCode=1213"))
-        assertFalse(warnEvent.formattedMessage.contains("SQL ["))
-        assertFalse(warnEvent.formattedMessage.contains("INSERT INTO auction"))
-        assertNull(warnEvent.throwableProxy)
+        assertTrue(appender.list.none { it.level == Level.WARN && it.formattedMessage.contains("database deadlock") })
         assertTrue(appender.list.none { it.level == Level.ERROR && it.formattedMessage.contains("realm 1") })
         detachAppender(appender)
     }

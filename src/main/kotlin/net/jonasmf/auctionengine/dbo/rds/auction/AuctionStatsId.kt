@@ -20,6 +20,5 @@ data class AuctionStatsId(
     @Column(name = "bonus_key")
     val bonusKey: String = "",
 ) : Serializable {
-    override fun toString(): String =
-        "$connectedRealmId-$itemId-$date-${petSpeciesId ?: ""}-$modifierKey-$bonusKey"
+    override fun toString(): String = "$connectedRealmId-$itemId-$date-${petSpeciesId ?: ""}-$modifierKey-$bonusKey"
 }

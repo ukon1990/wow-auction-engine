@@ -31,7 +31,7 @@ class AuctionProcessorUtilityTest {
 
     @Test
     fun `processAuctions with empty list does not save stats`() {
-        utility.processAuctions(emptyList(), System.currentTimeMillis(), 1, 1)
+        utility.processAuctions(emptyList(), System.currentTimeMillis(), 1)
 
         assertEquals(1, hourlyRepoCapture.calls.size)
         assertEquals(0, hourlyRepoCapture.calls.single().size)
@@ -61,7 +61,7 @@ class AuctionProcessorUtilityTest {
                 time_left = net.jonasmf.auctionengine.constant.AuctionTimeLeft.LONG,
             )
 
-        utility.processAuctions(listOf(auction), System.currentTimeMillis(), 2, 3)
+        utility.processAuctions(listOf(auction), System.currentTimeMillis(), 2)
 
         assertEquals(1, hourlyRepoCapture.calls.size)
         assertEquals(1, hourlyRepoCapture.calls.single().size)
@@ -106,7 +106,7 @@ class AuctionProcessorUtilityTest {
                 )
             }
 
-        utility.processAuctions(auctions, System.currentTimeMillis(), 5, 7)
+        utility.processAuctions(auctions, System.currentTimeMillis(), 5)
 
         assertEquals(1, hourlyRepoCapture.calls.size)
         assertEquals(10, hourlyRepoCapture.calls.single().size)

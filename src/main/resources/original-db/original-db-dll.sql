@@ -1,3 +1,6 @@
+-- Legacy/original schema snapshot kept for reference.
+-- Current Flyway-managed auction stats schema no longer uses ah_type_id.
+
 CREATE TABLE `item_name_locale` (
                                     `id` int(11) NOT NULL,
                                     `en_GB` varchar(100) DEFAULT NULL,
