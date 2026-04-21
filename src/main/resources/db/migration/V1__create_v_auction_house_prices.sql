@@ -1,5 +1,6 @@
 CREATE OR REPLACE VIEW v_auction_house_prices AS
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -10,6 +11,7 @@ FROM hourly_auction_stats
 WHERE price00 IS NOT NULL OR quantity00 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -20,6 +22,7 @@ FROM hourly_auction_stats
 WHERE price01 IS NOT NULL OR quantity01 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -30,6 +33,7 @@ FROM hourly_auction_stats
 WHERE price02 IS NOT NULL OR quantity02 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -40,6 +44,7 @@ FROM hourly_auction_stats
 WHERE price03 IS NOT NULL OR quantity03 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -50,6 +55,7 @@ FROM hourly_auction_stats
 WHERE price04 IS NOT NULL OR quantity04 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -60,6 +66,7 @@ FROM hourly_auction_stats
 WHERE price05 IS NOT NULL OR quantity05 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -70,6 +77,7 @@ FROM hourly_auction_stats
 WHERE price06 IS NOT NULL OR quantity06 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -80,6 +88,7 @@ FROM hourly_auction_stats
 WHERE price07 IS NOT NULL OR quantity07 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -90,6 +99,7 @@ FROM hourly_auction_stats
 WHERE price08 IS NOT NULL OR quantity08 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -100,6 +110,7 @@ FROM hourly_auction_stats
 WHERE price09 IS NOT NULL OR quantity09 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -110,6 +121,7 @@ FROM hourly_auction_stats
 WHERE price10 IS NOT NULL OR quantity10 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -120,6 +132,7 @@ FROM hourly_auction_stats
 WHERE price11 IS NOT NULL OR quantity11 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -130,6 +143,7 @@ FROM hourly_auction_stats
 WHERE price12 IS NOT NULL OR quantity12 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -140,6 +154,7 @@ FROM hourly_auction_stats
 WHERE price13 IS NOT NULL OR quantity13 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -150,6 +165,7 @@ FROM hourly_auction_stats
 WHERE price14 IS NOT NULL OR quantity14 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -160,6 +176,7 @@ FROM hourly_auction_stats
 WHERE price15 IS NOT NULL OR quantity15 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -170,6 +187,7 @@ FROM hourly_auction_stats
 WHERE price16 IS NOT NULL OR quantity16 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -180,6 +198,7 @@ FROM hourly_auction_stats
 WHERE price17 IS NOT NULL OR quantity17 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -190,6 +209,7 @@ FROM hourly_auction_stats
 WHERE price18 IS NOT NULL OR quantity18 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -200,6 +220,7 @@ FROM hourly_auction_stats
 WHERE price19 IS NOT NULL OR quantity19 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -210,6 +231,7 @@ FROM hourly_auction_stats
 WHERE price20 IS NOT NULL OR quantity20 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -220,6 +242,7 @@ FROM hourly_auction_stats
 WHERE price21 IS NOT NULL OR quantity21 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
@@ -230,6 +253,7 @@ FROM hourly_auction_stats
 WHERE price22 IS NOT NULL OR quantity22 IS NOT NULL
 UNION ALL
 SELECT connected_realm_id,
+       ah_type_id,
        item_id,
        pet_species_id,
        modifier_key,
