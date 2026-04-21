@@ -22,9 +22,6 @@ class AuctionHousePrice(
     @Column(name = "auction_timestamp")
     var auctionTimestamp: LocalDateTime? = null,
     @Id
-    @Column(name = "ah_type_id")
-    var ahTypeId: Int = 0,
-    @Id
     @Column(name = "item_id")
     var itemId: Int = 0,
     @Id

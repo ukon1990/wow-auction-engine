@@ -6,7 +6,6 @@ import java.time.LocalDateTime
 data class AuctionHousePriceId(
     var connectedRealmId: Int = 0,
     var auctionTimestamp: LocalDateTime? = null,
-    var ahTypeId: Int = 0,
     var itemId: Int = 0,
     var petSpeciesId: Int = 0,
     var modifierKey: String = "",
