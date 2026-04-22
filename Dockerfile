@@ -13,7 +13,7 @@ ENV JVM_XMX=
 ENV JVM_MAX_METASPACE=192m
 ENV JVM_MAX_DIRECT_MEMORY=32m
 ENV JVM_RESERVED_CODE_CACHE=64m
-ENV JVM_DEFAULT_TOOL_OPTIONS="--enable-native-access=ALL-UNNAMED -Xlog:gc*:stdout:time,level,tags"
+# ENV JVM_DEFAULT_TOOL_OPTIONS="--enable-native-access=ALL-UNNAMED -Xlog:gc*:stdout:time,level,tags"
 
 EXPOSE 8080
 
