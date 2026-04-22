@@ -43,8 +43,11 @@ jobs:
           head_sha="${{ steps.diff.outputs.head_sha }}"
           if [[ -z "$base_sha" || "$base_sha" == "0000000000000000000000000000000000000000" ]]; then
             git ls-tree -r --name-only "$head_sha" > /tmp/changed-files.txt
-          else
+          elif git cat-file -e "$base_sha^{commit}" 2>/dev/null; then
             git diff --name-only "$base_sha" "$head_sha" > /tmp/changed-files.txt
+          else
+            echo "Base commit $base_sha is not available in this checkout; falling back to full repository classification." >&2
+            git ls-tree -r --name-only "$head_sha" > /tmp/changed-files.txt
           fi
           classification="$(python scripts/deploy/classify_changes.py < /tmp/changed-files.txt)"
           echo "backend_verify_required=$(python -c "import json,sys; print(str(json.load(sys.stdin)['backend_verify_required']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
