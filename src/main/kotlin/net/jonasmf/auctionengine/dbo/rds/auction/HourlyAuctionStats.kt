@@ -15,7 +15,7 @@ import jakarta.persistence.Table
  * This was the fastest and cheapest approach I could find as I don't want to spend lots of money on an expensive database.
  */
 @Entity
-@Table(name = "hourly_auction_stats")
+@Table(name = "auction_stats_hourly")
 data class HourlyAuctionStats(
     @EmbeddedId
     val id: AuctionStatsId,

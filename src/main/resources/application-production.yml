@@ -13,3 +13,6 @@ spring:
       s3:
         endpoint: ${WAE_S3_ENDPOINT:}
         bootstrap-enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: validate

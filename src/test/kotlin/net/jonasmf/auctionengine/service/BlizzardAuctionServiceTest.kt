@@ -432,7 +432,7 @@ class BlizzardAuctionServiceTest {
             )
         } throws
             CannotAcquireLockException(
-                "PreparedStatementCallback; SQL [INSERT INTO hourly_auction_stats (item_id) VALUES (?)]; deadlock",
+                "PreparedStatementCallback; SQL [INSERT INTO auction_stats_hourly (item_id) VALUES (?)]; deadlock",
                 SQLException("Deadlock found when trying to get lock; try restarting transaction", "40001", 1213),
             )
         every { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) } returns Unit
@@ -447,7 +447,7 @@ class BlizzardAuctionServiceTest {
         assertTrue(warnEvent.formattedMessage.contains("database deadlock"))
         assertTrue(warnEvent.formattedMessage.contains("sqlState=40001"))
         assertTrue(warnEvent.formattedMessage.contains("vendorCode=1213"))
-        assertFalse(warnEvent.formattedMessage.contains("hourly_auction_stats"))
+        assertFalse(warnEvent.formattedMessage.contains("auction_stats_hourly"))
         assertFalse(warnEvent.formattedMessage.contains("SQL ["))
         assertFalse(warnEvent.formattedMessage.contains("VALUES (?)"))
         assertNull(warnEvent.throwableProxy)

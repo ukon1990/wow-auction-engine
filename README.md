@@ -106,7 +106,7 @@ When the app starts successfully:
 - the HTTP server is available on `http://localhost:8080`
 - the health endpoint is `http://localhost:8080/health`
 - scheduled jobs are enabled
-- Hibernate updates the MariaDB schema automatically on startup
+- Flyway applies schema migrations before the app is fully ready
 
 ## Health Checks
 
@@ -165,6 +165,12 @@ Other local runtime defaults:
 
 - scheduler enabled: `app.scheduling.enabled=true`
 - stalled update threshold for `/health`: `app.health.stuck-update-threshold=PT20M`
+
+Database schema authority:
+
+- Flyway is the only schema-mutation authority.
+- Hibernate runs with `ddl-auto=validate`.
+- The bootstrap baseline is `src/main/resources/db/migration/V1__bootstrap_schema.sql`.
 
 That means a new developer normally does not need to set any database environment variables for local work.
 
@@ -292,6 +298,7 @@ Format Kotlin sources:
 - [Auction snapshot storage and query patterns](docs/auction-snapshot-storage.md)
 - [Production memory footprint and cost action criteria](docs/production-memory-footprint.md)
 - [AWS deployment and regional operations](infra/README.md)
+- [Flyway reset/bootstrap runbook](docs/flyway-reset-bootstrap-runbook.md)
 
 ## AWS Deployment
 

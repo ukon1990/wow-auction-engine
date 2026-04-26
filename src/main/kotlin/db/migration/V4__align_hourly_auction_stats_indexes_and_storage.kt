@@ -325,14 +325,14 @@ class V4__align_hourly_auction_stats_indexes_and_storage : BaseJavaMigration() {
     }
 
     companion object {
-        private const val TABLE_NAME = "hourly_auction_stats"
-        private const val TEMP_TABLE_NAME = "hourly_auction_stats_v4_new"
-        private const val BACKUP_TABLE_NAME = "hourly_auction_stats_v4_old"
+        private const val TABLE_NAME = "auction_stats_hourly"
+        private const val TEMP_TABLE_NAME = "auction_stats_hourly_v4_new"
+        private const val BACKUP_TABLE_NAME = "auction_stats_hourly_v4_old"
         private const val VIEW_NAME = "v_auction_house_prices"
         private const val TARGET_MAX_ROWS = 82300000
         private const val TARGET_PARTITIONS = 31
-        private const val REALM_DATE_INDEX = "idx_hourly_auction_stats_connected_realm_id_date"
-        private const val REALM_ITEM_DATE_INDEX = "idx_hourly_auction_stats_connected_realm_id_item_id_date"
+        private const val REALM_DATE_INDEX = "idx_auction_stats_hourly_connected_realm_id_date"
+        private const val REALM_ITEM_DATE_INDEX = "idx_auction_stats_hourly_connected_realm_id_item_id_date"
         private val REALM_DATE_COLUMNS = listOf("connected_realm_id", "date")
         private val REALM_ITEM_DATE_COLUMNS = listOf("connected_realm_id", "item_id", "date")
     }

@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 @Immutable
 @IdClass(AuctionHousePriceId::class)
 @Subselect("SELECT * FROM v_auction_house_prices")
-@Synchronize("hourly_auction_stats")
+@Synchronize("auction_stats_hourly")
 class AuctionHousePrice(
     @Id
     @Column(name = "connected_realm_id")

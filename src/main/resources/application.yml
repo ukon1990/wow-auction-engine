@@ -18,33 +18,16 @@ spring:
     username: root
     password: root
     driver-class-name: org.mariadb.jdbc.Driver
-  flyway:
-    baseline-on-migrate: true
-    baseline-version: 0
   jpa:
     show-sql: false
     open-in-view: false
     hibernate:
-      ddl-auto: update  # Use 'update' to create/update tables
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: false
-        hbm2ddl:
-          auto:
-            create: false
-            update: true
         jdbc:
           batch_size: 200
-  properties:
-    javax:
-      persistence:
-        schema-generation:
-          scripts:
-            action: create
-            create-target: create.sql
-            drop-target: drop.sql
-          create-source: metadata
-          drop-source: metadata
 
 app:
   scheduling:

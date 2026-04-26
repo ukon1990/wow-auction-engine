@@ -75,7 +75,7 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
 
         jdbcTemplate.update(
             """
-            INSERT INTO hourly_auction_stats (
+            INSERT INTO auction_stats_hourly (
                 connected_realm_id,
                 item_id,
                 date,
@@ -93,7 +93,7 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
         )
         jdbcTemplate.update(
             """
-            INSERT INTO hourly_auction_stats (
+            INSERT INTO auction_stats_hourly (
                 connected_realm_id,
                 item_id,
                 date,
@@ -111,7 +111,7 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
         )
         jdbcTemplate.update(
             """
-            INSERT INTO hourly_auction_stats (
+            INSERT INTO auction_stats_hourly (
                 connected_realm_id,
                 item_id,
                 date,
@@ -129,7 +129,7 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
         )
         jdbcTemplate.update(
             """
-            INSERT INTO hourly_auction_stats (
+            INSERT INTO auction_stats_hourly (
                 connected_realm_id,
                 item_id,
                 date,
