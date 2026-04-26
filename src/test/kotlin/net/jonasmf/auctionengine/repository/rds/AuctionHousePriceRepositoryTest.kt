@@ -90,7 +90,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                     SELECT index_name, GROUP_CONCAT(column_name ORDER BY seq_in_index) AS columns_csv
                     FROM information_schema.statistics
                     WHERE table_schema = DATABASE()
-                      AND table_name = 'hourly_auction_stats'
+                      AND table_name = 'auction_stats_hourly'
                       AND index_name <> 'PRIMARY'
                     GROUP BY index_name
                     """.trimIndent(),
@@ -99,8 +99,8 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
 
         assertEquals(
             mapOf(
-                "idx_hourly_auction_stats_connected_realm_id_date" to "connected_realm_id,date",
-                "idx_hourly_auction_stats_connected_realm_id_item_id_date" to "connected_realm_id,item_id,date",
+                "idx_auction_stats_hourly_connected_realm_id_date" to "connected_realm_id,date",
+                "idx_auction_stats_hourly_connected_realm_id_item_id_date" to "connected_realm_id,item_id,date",
                 "idx_hourly_auction_stats_date_pet_species_item_id" to "date,pet_species_id,item_id",
             ),
             secondaryIndexes,
@@ -108,10 +108,10 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
 
         val createTable =
             jdbcTemplate.queryForObject(
-                "SHOW CREATE TABLE hourly_auction_stats",
+                "SHOW CREATE TABLE auction_stats_hourly",
                 { rs, _ -> rs.getString("Create Table") },
             ) ?: error(
-                "SHOW CREATE TABLE returned no definition for hourly_auction_stats",
+                "SHOW CREATE TABLE returned no definition for auction_stats_hourly",
             )
 
         val normalizedCreateTable =

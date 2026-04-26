@@ -17,12 +17,12 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
         databaseConnection().use { connection ->
             try {
                 execute(connection, "DROP VIEW IF EXISTS v_auction_house_prices")
-                execute(connection, "DROP TABLE IF EXISTS hourly_auction_stats")
+                execute(connection, "DROP TABLE IF EXISTS auction_stats_hourly")
                 execute(connection, oldHourlyAuctionStatsTableSql())
                 execute(
                     connection,
                     """
-                    ALTER TABLE hourly_auction_stats
+                    ALTER TABLE auction_stats_hourly
                         ADD INDEX idx_date_and_house (connected_realm_id, date),
                         ADD INDEX idx_old_realm_item_date (connected_realm_id, item_id, date)
                     """.trimIndent(),
@@ -31,7 +31,7 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
                 execute(
                     connection,
                     """
-                    INSERT INTO hourly_auction_stats (
+                    INSERT INTO auction_stats_hourly (
                         connected_realm_id,
                         ah_type_id,
                         item_id,
@@ -47,7 +47,7 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
 
                 V4__align_hourly_auction_stats_indexes_and_storage().migrate(SimpleContext(connection))
 
-                val createTable = queryString(connection, "SHOW CREATE TABLE hourly_auction_stats", "Create Table")
+                val createTable = queryString(connection, "SHOW CREATE TABLE auction_stats_hourly", "Create Table")
                 val normalizedCreateTable = createTable.lowercase().replace("`", "").replace(Regex("\\s+"), " ")
 
                 assertTrue(normalizedCreateTable.contains("max_rows=82300000"))
@@ -61,7 +61,7 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
                         SELECT index_name, GROUP_CONCAT(column_name ORDER BY seq_in_index) AS columns_csv
                         FROM information_schema.statistics
                         WHERE table_schema = DATABASE()
-                          AND table_name = 'hourly_auction_stats'
+                          AND table_name = 'auction_stats_hourly'
                           AND index_name <> 'PRIMARY'
                         GROUP BY index_name
                         ORDER BY index_name
@@ -70,13 +70,13 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
 
                 assertEquals(
                     mapOf(
-                        "idx_hourly_auction_stats_connected_realm_id_date" to "connected_realm_id,date",
-                        "idx_hourly_auction_stats_connected_realm_id_item_id_date" to "connected_realm_id,item_id,date",
+                        "idx_auction_stats_hourly_connected_realm_id_date" to "connected_realm_id,date",
+                        "idx_auction_stats_hourly_connected_realm_id_item_id_date" to "connected_realm_id,item_id,date",
                     ),
                     secondaryIndexes,
                 )
 
-                val rowCount = queryInt(connection, "SELECT COUNT(*) FROM hourly_auction_stats")
+                val rowCount = queryInt(connection, "SELECT COUNT(*) FROM auction_stats_hourly")
                 assertEquals(1, rowCount)
 
                 val viewRowCount =
@@ -92,9 +92,9 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
                 assertEquals(1, viewRowCount)
             } finally {
                 execute(connection, "DROP VIEW IF EXISTS v_auction_house_prices")
-                execute(connection, "DROP TABLE IF EXISTS hourly_auction_stats")
-                execute(connection, "DROP TABLE IF EXISTS hourly_auction_stats_v4_new")
-                execute(connection, "DROP TABLE IF EXISTS hourly_auction_stats_v4_old")
+                execute(connection, "DROP TABLE IF EXISTS auction_stats_hourly")
+                execute(connection, "DROP TABLE IF EXISTS auction_stats_hourly_v4_new")
+                execute(connection, "DROP TABLE IF EXISTS auction_stats_hourly_v4_old")
             }
         }
     }
@@ -168,7 +168,7 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
 
     private fun oldHourlyAuctionStatsTableSql(): String =
         buildString {
-            appendLine("CREATE TABLE hourly_auction_stats (")
+            appendLine("CREATE TABLE auction_stats_hourly (")
             appendLine("    connected_realm_id INT NOT NULL,")
             appendLine("    ah_type_id INT NOT NULL,")
             appendLine("    item_id INT NOT NULL,")
@@ -207,7 +207,7 @@ class V4AlignHourlyAuctionStatsIndexesAndStorageTest {
                            TIMESTAMP(date, MAKETIME($hour, 0, 0)) AS auction_timestamp,
                            price$paddedHour AS price,
                            quantity$paddedHour AS quantity
-                    FROM hourly_auction_stats
+                    FROM auction_stats_hourly
                     WHERE price$paddedHour IS NOT NULL OR quantity$paddedHour IS NOT NULL
                     """.trimIndent(),
                 )

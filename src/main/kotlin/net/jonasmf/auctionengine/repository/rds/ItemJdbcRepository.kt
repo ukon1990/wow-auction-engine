@@ -54,7 +54,7 @@ class ItemJdbcRepository(
             """
             WITH auction_source AS (
                 SELECT item_id
-                FROM hourly_auction_stats
+                FROM auction_stats_hourly
                 WHERE date = ?
                   AND item_id > 0
                   AND (pet_species_id IS NULL OR pet_species_id IN (-1, 0))

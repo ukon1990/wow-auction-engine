@@ -494,13 +494,13 @@ CREATE TABLE `file_reference` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `hourly_auction_stats`
+-- Table structure for table `auction_stats_hourly`
 --
 
-DROP TABLE IF EXISTS `hourly_auction_stats`;
+DROP TABLE IF EXISTS `auction_stats_hourly`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `hourly_auction_stats` (
+CREATE TABLE `auction_stats_hourly` (
   `bonus_key` varchar(255) NOT NULL,
   `connected_realm_id` int(11) NOT NULL,
   `date` date NOT NULL,
