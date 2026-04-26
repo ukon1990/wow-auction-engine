@@ -72,6 +72,9 @@ jobs:
       - name: Ensure Maven wrapper is executable
         run: chmod +x ./mvnw
 
+      - name: Enforce Flyway schema guardrails
+        run: ./scripts/ci/check-flyway-guardrails.sh
+
       - name: Verify backend
         run: ./mvnw -B -ntp -Dkotlin.compiler.daemon=false verify
 
