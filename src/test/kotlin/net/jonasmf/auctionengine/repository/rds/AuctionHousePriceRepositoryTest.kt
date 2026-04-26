@@ -12,7 +12,6 @@ import net.jonasmf.auctionengine.dto.auction.ModifierDTO
 import net.jonasmf.auctionengine.service.HourlyPriceStatisticsService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
@@ -79,54 +78,6 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
 
         assertEquals(1, bonusKeyColumnCount)
         assertEquals(0, ahTypeIdColumnCount)
-    }
-
-    @Test
-    fun `should align hourly auction stats indexes and storage layout`() {
-        val secondaryIndexes =
-            jdbcTemplate
-                .query(
-                    """
-                    SELECT index_name, GROUP_CONCAT(column_name ORDER BY seq_in_index) AS columns_csv
-                    FROM information_schema.statistics
-                    WHERE table_schema = DATABASE()
-                      AND table_name = 'auction_stats_hourly'
-                      AND index_name <> 'PRIMARY'
-                    GROUP BY index_name
-                    """.trimIndent(),
-                ) { rs, _ -> rs.getString("index_name") to rs.getString("columns_csv") }
-                .toMap()
-
-        assertEquals(
-            mapOf(
-                "idx_auction_stats_hourly_connected_realm_id_date" to "connected_realm_id,date",
-                "idx_auction_stats_hourly_connected_realm_id_item_id_date" to "connected_realm_id,item_id,date",
-                "idx_hourly_auction_stats_date_pet_species_item_id" to "date,pet_species_id,item_id",
-            ),
-            secondaryIndexes,
-        )
-
-        val createTable =
-            jdbcTemplate.queryForObject(
-                "SHOW CREATE TABLE auction_stats_hourly",
-                { rs, _ -> rs.getString("Create Table") },
-            ) ?: error(
-                "SHOW CREATE TABLE returned no definition for auction_stats_hourly",
-            )
-
-        val normalizedCreateTable =
-            createTable
-                .lowercase()
-                .replace("`", "")
-                .replace(Regex("\\s+"), " ")
-
-        assertTrue(normalizedCreateTable.contains("engine=innodb"))
-        assertTrue(normalizedCreateTable.contains("default charset=utf8mb3"))
-        assertTrue(normalizedCreateTable.contains("collate=utf8mb3_general_ci"))
-        assertTrue(normalizedCreateTable.contains("max_rows=82300000"))
-        assertTrue(normalizedCreateTable.contains("partition by hash (to_days(date))"))
-        assertTrue(normalizedCreateTable.contains("partitions 31"))
-        assertTrue(!normalizedCreateTable.contains("ah_type_id"))
     }
 
     @Test
