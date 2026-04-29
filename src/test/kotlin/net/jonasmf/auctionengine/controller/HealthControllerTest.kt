@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine
+package net.jonasmf.auctionengine.controller
 
 import io.mockk.every
 import io.mockk.mockk
