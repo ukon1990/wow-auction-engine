@@ -16,9 +16,9 @@ import jakarta.persistence.Table
  */
 @Entity
 @Table(name = "auction_stats_hourly")
-data class HourlyAuctionStats(
+class AuctionStatsHourly(
     @EmbeddedId
-    val id: AuctionStatsId,
+    var id: AuctionStatsId,
     // Hourly price and quantity data
     var price00: Long?,
     var quantity00: Long?,
