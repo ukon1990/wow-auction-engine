@@ -9,7 +9,7 @@ import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
 import net.jonasmf.auctionengine.dto.auction.ModifierDTO
-import net.jonasmf.auctionengine.service.HourlyPriceStatisticsService
+import net.jonasmf.auctionengine.service.AuctionStatsHourlyService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -170,7 +170,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         val connectedRealm = seedConnectedRealm(3084)
         val lastModified = ZonedDateTime.of(2026, 4, 8, 9, 0, 0, 0, ZonedDateTime.now().zone)
 
-        hourlyPriceStatisticsService.processHourlyPriceStatistics(
+        auctionStatsHourlyService.processHourlyPriceStatistics(
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
@@ -204,7 +204,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         val connectedRealm = seedConnectedRealm(3584)
         val lastModified = ZonedDateTime.of(2026, 4, 8, 11, 0, 0, 0, ZonedDateTime.now().zone)
 
-        hourlyPriceStatisticsService.processHourlyPriceStatistics(
+        auctionStatsHourlyService.processHourlyPriceStatistics(
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
@@ -254,7 +254,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         val connectedRealm = seedConnectedRealm(4084)
         val lastModified = ZonedDateTime.of(2026, 4, 9, 14, 0, 0, 0, ZonedDateTime.now().zone)
 
-        hourlyPriceStatisticsService.processHourlyPriceStatistics(
+        auctionStatsHourlyService.processHourlyPriceStatistics(
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
@@ -282,7 +282,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         val connectedRealm = seedConnectedRealm(4584)
         val lastModified = ZonedDateTime.of(2026, 4, 9, 16, 0, 0, 0, ZonedDateTime.now().zone)
 
-        hourlyPriceStatisticsService.processHourlyPriceStatistics(
+        auctionStatsHourlyService.processHourlyPriceStatistics(
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
@@ -312,7 +312,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         val connectedRealm = seedConnectedRealm(5084)
         val lastModified = ZonedDateTime.of(2026, 4, 10, 6, 0, 0, 0, ZonedDateTime.now().zone)
 
-        hourlyPriceStatisticsService.processHourlyPriceStatistics(
+        auctionStatsHourlyService.processHourlyPriceStatistics(
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
