@@ -33,7 +33,6 @@ class AuctionStatsHourlyRepository(
 
         val priceColumn = "price%02d".format(hour)
         val quantityColumn = "quantity%02d".format(hour)
-        val tableName = "auction_stats_hourly"
         val numberOfColumns = 8
         var total = 0
         val valueTuple = List(numberOfColumns) { "?" }.joinToString(",", "(", ")")
@@ -42,7 +41,7 @@ class AuctionStatsHourlyRepository(
             val placeholders = chunk.joinToString(",") { valueTuple }
             val sql =
                 """
-                INSERT INTO $tableName (
+                INSERT INTO auction_stats_hourly (
                     connected_realm_id,
                     item_id,
                     date,

@@ -8,25 +8,25 @@ import java.time.LocalDateTime
 
 @Repository
 interface AuctionHousePriceRepository : JpaRepository<AuctionHousePrice, AuctionHousePriceId> {
-    fun findAllByConnectedRealmIdAndItemIdOrderByAuctionTimestampAsc(
+    fun findAllByConnectedRealmIdAndItemIdOrderByTimestampAsc(
         connectedRealmId: Int,
         itemId: Int,
     ): List<AuctionHousePrice>
 
-    fun findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(
+    fun findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByTimestampAsc(
         connectedRealmId: Int,
         itemId: Int,
         modifierKey: String,
     ): List<AuctionHousePrice>
 
-    fun findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByAuctionTimestampAsc(
+    fun findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByTimestampAsc(
         connectedRealmId: Int,
         itemId: Int,
         modifierKey: String,
         bonusKey: String,
     ): List<AuctionHousePrice>
 
-    fun findAllByAuctionTimestampBetweenOrderByAuctionTimestampAsc(
+    fun findAllByTimestampBetweenOrderByTimestampAsc(
         from: LocalDateTime,
         to: LocalDateTime,
     ): List<AuctionHousePrice>

@@ -118,12 +118,12 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             hour = 7,
         )
 
-        val prices = repository.findAllByConnectedRealmIdAndItemIdOrderByAuctionTimestampAsc(1084, 19019)
+        val prices = repository.findAllByConnectedRealmIdAndItemIdOrderByTimestampAsc(1084, 19019)
 
         assertEquals(2, prices.size)
 
         val first = prices[0]
-        assertEquals(LocalDateTime.of(2026, 4, 6, 3, 0), first.auctionTimestamp)
+        assertEquals(LocalDateTime.of(2026, 4, 6, 3, 0), first.timestamp)
         assertEquals(123_456L, first.price)
         assertEquals(10L, first.quantity)
         assertEquals(-1, first.petSpeciesId)
@@ -131,7 +131,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         assertEquals("", first.bonusKey)
 
         val second = prices[1]
-        assertEquals(LocalDateTime.of(2026, 4, 6, 7, 0), second.auctionTimestamp)
+        assertEquals(LocalDateTime.of(2026, 4, 6, 7, 0), second.timestamp)
         assertEquals(120_000L, second.price)
         assertEquals(15L, second.quantity)
     }
@@ -158,11 +158,11 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             hour = 11,
         )
 
-        val prices = repository.findAllByConnectedRealmIdAndItemIdOrderByAuctionTimestampAsc(2084, 19020)
+        val prices = repository.findAllByConnectedRealmIdAndItemIdOrderByTimestampAsc(2084, 19020)
 
         assertEquals(1, prices.size)
-        assertEquals(LocalDateTime.of(2026, 4, 7, 11, 0), prices.single().auctionTimestamp)
-        assertNotNull(prices.single().auctionTimestamp)
+        assertEquals(LocalDateTime.of(2026, 4, 7, 11, 0), prices.single().timestamp)
+        assertNotNull(prices.single().timestamp)
     }
 
     @Test
@@ -181,13 +181,13 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         )
 
         val first =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByTimestampAsc(
                 3084,
                 19021,
                 "7,100",
             )
         val second =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByTimestampAsc(
                 3084,
                 19021,
                 "7,101",
@@ -229,14 +229,14 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         )
 
         val first =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByAuctionTimestampAsc(
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByTimestampAsc(
                 3584,
                 19031,
                 "100",
                 "12251,12252",
             )
         val second =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByAuctionTimestampAsc(
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByTimestampAsc(
                 3584,
                 19031,
                 "100",
@@ -265,14 +265,14 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         )
 
         val prices =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByTimestampAsc(
                 4084,
                 19022,
                 "7,100",
             )
 
         assertEquals(1, prices.size)
-        assertEquals(LocalDateTime.of(2026, 4, 9, 14, 0), prices.single().auctionTimestamp)
+        assertEquals(LocalDateTime.of(2026, 4, 9, 14, 0), prices.single().timestamp)
         assertEquals(650L, prices.single().price)
         assertEquals(9L, prices.single().quantity)
     }
@@ -293,7 +293,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         )
 
         val prices =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByAuctionTimestampAsc(
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByTimestampAsc(
                 4584,
                 19032,
                 "",
@@ -301,7 +301,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             )
 
         assertEquals(1, prices.size)
-        assertEquals(LocalDateTime.of(2026, 4, 9, 16, 0), prices.single().auctionTimestamp)
+        assertEquals(LocalDateTime.of(2026, 4, 9, 16, 0), prices.single().timestamp)
         assertEquals(650L, prices.single().price)
         assertEquals(9L, prices.single().quantity)
         assertEquals("12251,12252,12499", prices.single().bonusKey)
@@ -323,7 +323,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         )
 
         val prices =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByAuctionTimestampAsc(
+            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByTimestampAsc(
                 5084,
                 19023,
                 "",

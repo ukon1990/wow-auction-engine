@@ -7,6 +7,7 @@ import jakarta.persistence.IdClass
 import org.hibernate.annotations.Immutable
 import org.hibernate.annotations.Subselect
 import org.hibernate.annotations.Synchronize
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
@@ -19,8 +20,8 @@ class AuctionHousePrice(
     @Column(name = "connected_realm_id")
     var connectedRealmId: Int = 0,
     @Id
-    @Column(name = "auction_timestamp")
-    var auctionTimestamp: LocalDateTime? = null,
+    @Column(name = "date")
+    var date: LocalDate? = null,
     @Id
     @Column(name = "item_id")
     var itemId: Int = 0,
@@ -33,6 +34,11 @@ class AuctionHousePrice(
     @Id
     @Column(name = "bonus_key")
     var bonusKey: String = "",
+    @Id
+    @Column(name = "hour_of_day")
+    var hourOfDay: Int = 0,
+    @Column(name = "timestamp")
+    var timestamp: LocalDateTime? = null,
     @Column(name = "price")
     var price: Long? = null,
     @Column(name = "quantity")
