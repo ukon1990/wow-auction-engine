@@ -421,4 +421,7 @@ class ProfessionRecipeBulkSyncService(
                     metadata.copy(displayOrder = slot.displayOrder)
                 },
         )
+
+    fun shouldPerformInitialSyncForRegion(): Boolean =
+        professionRecipeJdbcRepository.shouldPerformInitialSyncForRegion()
 }

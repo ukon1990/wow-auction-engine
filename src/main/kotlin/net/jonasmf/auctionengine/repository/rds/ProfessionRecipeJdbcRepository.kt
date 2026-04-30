@@ -493,4 +493,12 @@ class ProfessionRecipeJdbcRepository(
             jdbcTemplate.update("DELETE FROM locale WHERE id IN ($placeholders)", *chunk.toTypedArray())
         }
     }
+
+    fun shouldPerformInitialSyncForRegion(): Boolean =
+        jdbcTemplate.queryForObject(
+            """
+            SELECT COUNT(*) FROM profession
+            """.trimIndent(),
+            Long::class.java,
+        ) == 0L
 }

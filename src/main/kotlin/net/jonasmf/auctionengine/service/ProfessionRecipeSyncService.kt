@@ -248,4 +248,6 @@ class ProfessionRecipeSyncService(
             )
         }
     }
+
+    fun shouldInitiallySync(): Boolean = professionRecipeBulkSyncService.shouldPerformInitialSyncForRegion()
 }

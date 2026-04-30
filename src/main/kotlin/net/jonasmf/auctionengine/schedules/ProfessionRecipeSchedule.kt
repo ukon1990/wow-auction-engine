@@ -29,17 +29,20 @@ class ProfessionRecipeSchedule(
         runSync("scheduled")
     }
 
-    /* TODO: Uncomment later, need to find a smart way of dealing with this.
-    The import takes a while and I don't really want to run it every time
-    but for fresh databases only basically.
+    /**
+     * This function is primarily intended to be run upon startup,
+     * in cases where I have wiped the database for professions and recipes.
+     * For the weekly maintenance we got the function above.
+     */
     @Scheduled(
-        initialDelayString = "\${app.scheduling.profession-recipe-sync-startup-delay:PT2M}",
-        fixedDelayString = "\${app.scheduling.profession-recipe-sync-startup-repeat-delay:P3650D}",
+        initialDelayString = "\${app.scheduling.initial-delay}",
+        // fixedDelayString = "\${app.scheduling.profession-recipe-sync-startup-repeat-delay:P3650D}",
     )
     fun syncProfessionRecipesAfterStartup() {
         if (!shouldRunInCurrentDeploymentRegion("startup")) return
+        if (!professionRecipeSyncService.shouldInitiallySync()) return
         runSync("startup")
-    }*/
+    }
 
     fun syncProfessionRecipes() {
         runSync("manual")
