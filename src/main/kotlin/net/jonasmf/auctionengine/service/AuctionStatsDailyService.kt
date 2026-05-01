@@ -44,6 +44,5 @@ class AuctionStatsDailyService(
         petSpeciesId: Int? = null,
         modifierKey: String? = null,
         bonusKey: String? = null,
-
-    ): List<AuctionStatsDaily> {}
+    ): List<AuctionStatsDaily> = emptyList()
 }
