@@ -4,6 +4,9 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.Instant
 import java.util.Optional
@@ -21,4 +24,17 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
         nextUpdate: Instant,
         pageable: Pageable,
     ): List<AuctionHouse>
+
+    @Modifying
+    @Query(
+        """
+        UPDATE AuctionHouse a
+        SET a.lastDailyPriceUpdate = :lastDailyPriceUpdate
+        WHERE a.connectedId = :connectedId
+        """,
+    )
+    fun updateLastDailyPriceUpdate(
+        @Param("connectedId") connectedId: Int,
+        @Param("lastDailyPriceUpdate") lastDailyPriceUpdate: Instant,
+    ): Int
 }
