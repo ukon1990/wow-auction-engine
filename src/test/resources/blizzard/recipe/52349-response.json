@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/recipe/52349?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52349?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 52349,
@@ -21,7 +21,7 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52349?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52349?namespace=static-12.0.5_66741-us"
         },
         "id": 52349
     },
@@ -29,7 +29,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/243060?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/243060?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Luminant Flux",
@@ -54,7 +54,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/386?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/386?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Refulgent Copper Ingot",
@@ -77,7 +77,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Add Embellishment",
@@ -100,7 +100,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Customize Secondary Stats",
@@ -123,7 +123,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/469?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/469?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Empower",
@@ -146,7 +146,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Artisan's Authenticity",

@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2826?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2826?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 2826,
@@ -40,7 +40,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/47906?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47906?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Thousandbite Piranha",
@@ -60,7 +60,7 @@
                 },
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/47909?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47909?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Temporal Dragonhead",
@@ -98,7 +98,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/47907?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47907?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Cerulean Spinefish",
@@ -118,7 +118,7 @@
                 },
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/47908?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47908?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Aileron Seamoth",
@@ -156,7 +156,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/47910?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47910?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Shimmering Treasure",
@@ -194,7 +194,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/47913?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/47913?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Rimefin Tuna",

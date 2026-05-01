@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/item/171374?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/171374?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 171374,
@@ -40,13 +40,13 @@
     "required_level": 52,
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/item/171374?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/item/171374?namespace=static-12.0.5_66741-us"
         },
         "id": 171374
     },
     "item_class": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Armor",
@@ -66,7 +66,7 @@
     },
     "item_subclass": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Plate",
@@ -109,7 +109,7 @@
     "preview_item": {
         "item": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item/171374?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item/171374?namespace=static-12.0.5_66741-us"
             },
             "id": 171374
         },
@@ -150,13 +150,13 @@
         },
         "media": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/media/item/171374?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/media/item/171374?namespace=static-12.0.5_66741-us"
             },
             "id": 171374
         },
         "item_class": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Armor",
@@ -176,7 +176,7 @@
         },
         "item_subclass": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Plate",
@@ -565,24 +565,6 @@
         },
         "modified_crafting_stat": [
             {
-                "id": 32,
-                "type": "CRIT_RATING",
-                "name": {
-                    "en_US": "Critical Strike",
-                    "es_MX": "golpe crítico",
-                    "pt_BR": "Acerto Crítico",
-                    "de_DE": "Kritischer Trefferwert",
-                    "en_GB": "Critical Strike",
-                    "es_ES": "golpe crítico",
-                    "fr_FR": "Score de crit.",
-                    "it_IT": "Indice di critico",
-                    "ru_RU": "к критическому удару",
-                    "ko_KR": "치명타 및 극대화",
-                    "zh_TW": "致命一擊",
-                    "zh_CN": "爆击"
-                }
-            },
-            {
                 "id": 36,
                 "type": "HASTE_RATING",
                 "name": {
@@ -599,6 +581,24 @@
                     "zh_TW": "加速",
                     "zh_CN": "急速"
                 }
+            },
+            {
+                "id": 32,
+                "type": "CRIT_RATING",
+                "name": {
+                    "en_US": "Critical Strike",
+                    "es_MX": "golpe crítico",
+                    "pt_BR": "Acerto Crítico",
+                    "de_DE": "Kritischer Trefferwert",
+                    "en_GB": "Critical Strike",
+                    "es_ES": "golpe crítico",
+                    "fr_FR": "Score de crit.",
+                    "it_IT": "Indice di critico",
+                    "ru_RU": "к критическому удару",
+                    "ko_KR": "치명타 및 극대화",
+                    "zh_TW": "致命一擊",
+                    "zh_CN": "爆击"
+                }
             }
         ]
     },
@@ -606,7 +606,7 @@
     "appearances": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42040?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42040?namespace=static-12.0.5_66741-us"
             },
             "id": 42040
         }

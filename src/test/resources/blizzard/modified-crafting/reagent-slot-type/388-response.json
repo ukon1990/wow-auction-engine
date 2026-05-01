@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 388,
@@ -22,7 +22,7 @@
     "compatible_categories": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/826?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/826?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Apprentice's Scribbles",
@@ -42,7 +42,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/827?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/827?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Global Finishing Reagent 02",
@@ -62,7 +62,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/828?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/828?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Global Finishing Reagent 03",
@@ -82,7 +82,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/829?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/829?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Artisan's Consortium Gold Star",
@@ -102,7 +102,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/835?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/835?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Resourceful Rebar",
@@ -122,7 +122,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/838?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/838?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Ingenuious Identity",

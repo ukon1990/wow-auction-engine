@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/recipe/42389?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42389?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 42389,
@@ -21,13 +21,13 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42389?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42389?namespace=static-12.0.5_66741-us"
         },
         "id": 42389
     },
     "crafted_item": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item/171428?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/171428?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Shadowghast Ingot",
@@ -49,7 +49,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/171829?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/171829?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Solenium Ore",
@@ -72,7 +72,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/171832?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/171832?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Sinvyr Ore",
@@ -95,7 +95,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/171831?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/171831?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Phaedrum Ore",
@@ -118,7 +118,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/171830?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/171830?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Oxxein Ore",
@@ -141,7 +141,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Luminous Flux",

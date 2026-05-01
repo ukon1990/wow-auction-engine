@@ -89,6 +89,8 @@ By default it updates:
 
 The on-disk layout mirrors the normalized Blizzard API path under `src/test/resources/blizzard`. Media links are intentionally excluded, and broken child links discovered during recursion are skipped instead of failing the whole refresh.
 
+The refresh also writes a small set of deterministic supplemental test fixtures that are not fetched from Blizzard, such as client-error payloads and focused index responses used by isolated API client tests.
+
 ### Authentication
 
 Uses the same app environment variables for Blizzard OAuth:

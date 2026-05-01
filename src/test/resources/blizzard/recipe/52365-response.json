@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/recipe/52365?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52365?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 52365,
@@ -21,7 +21,7 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52365?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52365?namespace=static-12.0.5_66741-us"
         },
         "id": 52365
     },
@@ -29,7 +29,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/243060?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/243060?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Luminant Flux",
@@ -54,7 +54,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/466?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/466?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Gloaming Alloy",
@@ -77,7 +77,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/425?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/425?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Silvermoon Weapon Wrap",
@@ -100,7 +100,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/471?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/471?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Competitor's Heraldry",
@@ -123,7 +123,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Add Embellishment",
@@ -146,7 +146,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Customize Secondary Stats",
@@ -169,7 +169,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Artisan's Authenticity",

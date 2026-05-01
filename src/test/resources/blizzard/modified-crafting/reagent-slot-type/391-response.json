@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/391?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/391?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 391,
@@ -22,7 +22,7 @@
     "compatible_categories": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/831?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/831?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Blessed Pango Charm",
@@ -42,7 +42,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/832?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/832?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Primal Spore Binding",
@@ -62,7 +62,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/830?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/830?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Devouring Banding",
@@ -82,7 +82,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/861?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/861?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Stabilizing Gemstone Bandolier",
@@ -102,7 +102,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/769?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/769?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Arcanoweave Lining",
@@ -122,7 +122,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/770?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/770?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Sunfire Lining",
@@ -142,7 +142,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/854?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/854?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Lucky Keychain",

@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/item/171388?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/171388?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 171388,
@@ -40,13 +40,13 @@
     "required_level": 50,
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/item/171388?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/item/171388?namespace=static-12.0.5_66741-us"
         },
         "id": 171388
     },
     "item_class": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Weapon",
@@ -66,7 +66,7 @@
     },
     "item_subclass": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Axe",
@@ -109,7 +109,7 @@
     "preview_item": {
         "item": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item/171388?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item/171388?namespace=static-12.0.5_66741-us"
             },
             "id": 171388
         },
@@ -146,13 +146,13 @@
         },
         "media": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/media/item/171388?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/media/item/171388?namespace=static-12.0.5_66741-us"
             },
             "id": 171388
         },
         "item_class": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Weapon",
@@ -172,7 +172,7 @@
         },
         "item_subclass": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Axe",
@@ -383,38 +383,38 @@
             },
             {
                 "type": {
-                    "type": "CRIT_RATING",
+                    "type": "HASTE_RATING",
                     "name": {
-                        "en_US": "Critical Strike",
-                        "es_MX": "golpe crítico",
-                        "pt_BR": "Acerto Crítico",
-                        "de_DE": "Kritischer Trefferwert",
-                        "en_GB": "Critical Strike",
-                        "es_ES": "golpe crítico",
-                        "fr_FR": "Score de crit.",
-                        "it_IT": "Indice di critico",
-                        "ru_RU": "к критическому удару",
-                        "ko_KR": "치명타 및 극대화",
-                        "zh_TW": "致命一擊",
-                        "zh_CN": "爆击"
+                        "en_US": "Haste",
+                        "es_MX": "celeridad",
+                        "pt_BR": "Aceleração",
+                        "de_DE": "Tempo",
+                        "en_GB": "Haste",
+                        "es_ES": "celeridad",
+                        "fr_FR": "Hâte",
+                        "it_IT": "Indice di celerità",
+                        "ru_RU": "к скорости",
+                        "ko_KR": "가속",
+                        "zh_TW": "加速",
+                        "zh_CN": "急速"
                     }
                 },
                 "value": 3,
                 "is_equip_bonus": true,
                 "display": {
                     "display_string": {
-                        "en_US": "+3 Critical Strike",
-                        "es_MX": "+3 golpe crítico",
-                        "pt_BR": "+3 Acerto Crítico",
-                        "de_DE": "+3 Kritischer Trefferwert",
-                        "en_GB": "+3 Critical Strike",
-                        "es_ES": "+3 golpe crítico",
-                        "fr_FR": "+3 Score de crit.",
-                        "it_IT": "+3 Indice di critico",
-                        "ru_RU": "+3 к критическому удару",
-                        "ko_KR": "치명타 및 극대화 +3",
-                        "zh_TW": "+3致命一擊",
-                        "zh_CN": "+3 爆击"
+                        "en_US": "+3 Haste",
+                        "es_MX": "+3 celeridad",
+                        "pt_BR": "+3 Aceleração",
+                        "de_DE": "+3 Tempo",
+                        "en_GB": "+3 Haste",
+                        "es_ES": "+3 celeridad",
+                        "fr_FR": "+3 Hâte",
+                        "it_IT": "+3 Indice di celerità",
+                        "ru_RU": "+3 к скорости",
+                        "ko_KR": "가속 +3",
+                        "zh_TW": "+3加速",
+                        "zh_CN": "+3 急速"
                     },
                     "color": {
                         "r": 0,
@@ -426,38 +426,38 @@
             },
             {
                 "type": {
-                    "type": "VERSATILITY",
+                    "type": "MASTERY_RATING",
                     "name": {
-                        "en_US": "Versatility",
-                        "es_MX": "versatilidad",
-                        "pt_BR": "Versatilidade",
-                        "de_DE": "Vielseitigkeit",
-                        "en_GB": "Versatility",
-                        "es_ES": "versatilidad",
-                        "fr_FR": "Polyvalence",
-                        "it_IT": "Indice di versatilità",
-                        "ru_RU": "к универсальности",
-                        "ko_KR": "유연성",
-                        "zh_TW": "臨機應變",
-                        "zh_CN": "全能"
+                        "en_US": "Mastery",
+                        "es_MX": "maestría",
+                        "pt_BR": "Maestria",
+                        "de_DE": "Meisterschaft",
+                        "en_GB": "Mastery",
+                        "es_ES": "maestría",
+                        "fr_FR": "Maîtrise",
+                        "it_IT": "Indice di maestria",
+                        "ru_RU": "к искусности",
+                        "ko_KR": "특화",
+                        "zh_TW": "精通",
+                        "zh_CN": "精通"
                     }
                 },
                 "value": 3,
                 "is_equip_bonus": true,
                 "display": {
                     "display_string": {
-                        "en_US": "+3 Versatility",
-                        "es_MX": "+3 versatilidad",
-                        "pt_BR": "+3 Versatilidade",
-                        "de_DE": "+3 Vielseitigkeit",
-                        "en_GB": "+3 Versatility",
-                        "es_ES": "+3 versatilidad",
-                        "fr_FR": "+3 Polyvalence",
-                        "it_IT": "+3 Indice di versatilità",
-                        "ru_RU": "+3 к универсальности",
-                        "ko_KR": "유연성 +3",
-                        "zh_TW": "+3臨機應變",
-                        "zh_CN": "+3 全能"
+                        "en_US": "+3 Mastery",
+                        "es_MX": "+3 maestría",
+                        "pt_BR": "+3 Maestria",
+                        "de_DE": "+3 Meisterschaft",
+                        "en_GB": "+3 Mastery",
+                        "es_ES": "+3 maestría",
+                        "fr_FR": "+3 Maîtrise",
+                        "it_IT": "+3 Indice di maestria",
+                        "ru_RU": "+3 к искусности",
+                        "ko_KR": "특화 +3",
+                        "zh_TW": "+3精通",
+                        "zh_CN": "+3 精通"
                     },
                     "color": {
                         "r": 0,
@@ -584,39 +584,39 @@
         },
         "modified_crafting_stat": [
             {
-                "id": 32,
-                "type": "CRIT_RATING",
+                "id": 36,
+                "type": "HASTE_RATING",
                 "name": {
-                    "en_US": "Critical Strike",
-                    "es_MX": "golpe crítico",
-                    "pt_BR": "Acerto Crítico",
-                    "de_DE": "Kritischer Trefferwert",
-                    "en_GB": "Critical Strike",
-                    "es_ES": "golpe crítico",
-                    "fr_FR": "Score de crit.",
-                    "it_IT": "Indice di critico",
-                    "ru_RU": "к критическому удару",
-                    "ko_KR": "치명타 및 극대화",
-                    "zh_TW": "致命一擊",
-                    "zh_CN": "爆击"
+                    "en_US": "Haste",
+                    "es_MX": "celeridad",
+                    "pt_BR": "Aceleração",
+                    "de_DE": "Tempo",
+                    "en_GB": "Haste",
+                    "es_ES": "celeridad",
+                    "fr_FR": "Hâte",
+                    "it_IT": "Indice di celerità",
+                    "ru_RU": "к скорости",
+                    "ko_KR": "가속",
+                    "zh_TW": "加速",
+                    "zh_CN": "急速"
                 }
             },
             {
-                "id": 40,
-                "type": "VERSATILITY",
+                "id": 49,
+                "type": "MASTERY_RATING",
                 "name": {
-                    "en_US": "Versatility",
-                    "es_MX": "versatilidad",
-                    "pt_BR": "Versatilidade",
-                    "de_DE": "Vielseitigkeit",
-                    "en_GB": "Versatility",
-                    "es_ES": "versatilidad",
-                    "fr_FR": "Polyvalence",
-                    "it_IT": "Indice di versatilità",
-                    "ru_RU": "к универсальности",
-                    "ko_KR": "유연성",
-                    "zh_TW": "臨機應變",
-                    "zh_CN": "全能"
+                    "en_US": "Mastery",
+                    "es_MX": "maestría",
+                    "pt_BR": "Maestria",
+                    "de_DE": "Meisterschaft",
+                    "en_GB": "Mastery",
+                    "es_ES": "maestría",
+                    "fr_FR": "Maîtrise",
+                    "it_IT": "Indice di maestria",
+                    "ru_RU": "к искусности",
+                    "ko_KR": "특화",
+                    "zh_TW": "精通",
+                    "zh_CN": "精通"
                 }
             }
         ]
@@ -625,7 +625,7 @@
     "appearances": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42529?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42529?namespace=static-12.0.5_66741-us"
             },
             "id": 42529
         }

@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2751?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2751?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 2751,
@@ -40,7 +40,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42363?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42363?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Ceremonious Breastplate",
@@ -78,7 +78,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42368?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42368?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Ceremonious Shield",
@@ -116,7 +116,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42381?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42381?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Shadowghast Breastplate",
@@ -154,7 +154,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42389?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42389?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Shadowghast Ingot",
@@ -192,7 +192,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42397?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42397?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Laestrite Skeleton Key",
@@ -230,7 +230,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42406?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42406?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Ceremonious Axe",

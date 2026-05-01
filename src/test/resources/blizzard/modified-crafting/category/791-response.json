@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/791?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/791?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 791,

@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2909?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2909?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 2909,
@@ -40,7 +40,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51521?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51521?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Recraft Equipment",
@@ -78,7 +78,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52935?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52935?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Enchant Chest - Mark of Nalorakk",
@@ -116,7 +116,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52936?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52936?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Enchant Helm - Hex of Leeching",
@@ -154,7 +154,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52938?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52938?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Enchant Boots - Lynx's Dexterity",
@@ -192,7 +192,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52939?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52939?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Enchant Ring - Amani Mastery",
@@ -230,7 +230,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52942?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52942?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Enchant Shoulders - Flight of the Eagle",

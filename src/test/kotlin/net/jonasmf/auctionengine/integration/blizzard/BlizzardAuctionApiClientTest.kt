@@ -116,7 +116,7 @@ class BlizzardAuctionApiClientTest {
             BlizzardAuctionApiClient(
                 createSupport(
                     webClient {
-                        response("""{"auctions":[{"id":1""")
+                        response(malformedAuctionDataBody())
                     },
                 ),
             )
@@ -143,7 +143,7 @@ class BlizzardAuctionApiClientTest {
                     ClientResponse
                         .create(HttpStatus.BAD_GATEWAY)
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .body("""{"error":"upstream"}""")
+                        .body(upstreamErrorBody())
                         .build(),
                 )
             }
@@ -228,6 +228,11 @@ class BlizzardAuctionApiClientTest {
 
     private fun auctionDumpMetadataBody(): String =
         loadFixture(this, "/blizzard/auction/auction-dump-metadata-response.json")
+
+    private fun malformedAuctionDataBody(): String =
+        loadFixture(this, "/blizzard/auction/malformed-auction-data-response.json")
+
+    private fun upstreamErrorBody(): String = loadFixture(this, "/blizzard/auction/upstream-error-response.json")
 
     private fun attachAppender(): ListAppender<ILoggingEvent> {
         val logger = LoggerFactory.getLogger(BlizzardAuctionApiClient::class.java) as Logger

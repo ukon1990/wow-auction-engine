@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/164?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/164?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 164,
@@ -52,14 +52,14 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/profession/164?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/profession/164?namespace=static-12.0.5_66741-us"
         },
         "id": 164
     },
     "skill_tiers": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2751?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2751?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Shadowlands Blacksmithing",
@@ -79,7 +79,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2907?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2907?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Midnight Blacksmithing",

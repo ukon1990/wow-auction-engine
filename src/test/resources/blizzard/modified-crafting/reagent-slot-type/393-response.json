@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 393,
@@ -22,7 +22,7 @@
     "compatible_categories": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/814?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/814?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Thalassian Missive of the Aurora",
@@ -42,7 +42,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/813?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/813?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Thalassian Missive of the Feverflare",
@@ -62,7 +62,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/812?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/812?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Thalassian Missive of the Fireflash",
@@ -82,7 +82,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/811?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/811?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Thalassian Missive of the Harmonious",
@@ -102,7 +102,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/810?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/810?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Thalassian Missive of the Peerless",
@@ -122,7 +122,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/809?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/809?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Thalassian Missive of the Quickblade",

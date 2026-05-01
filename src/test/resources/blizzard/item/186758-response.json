@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/item/186758?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/186758?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 186758,
@@ -40,13 +40,13 @@
     "required_level": 60,
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/item/186758?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/item/186758?namespace=static-12.0.5_66741-us"
         },
         "id": 186758
     },
     "item_class": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Armor",
@@ -66,7 +66,7 @@
     },
     "item_subclass": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/6?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/6?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Shield",
@@ -109,7 +109,7 @@
     "preview_item": {
         "item": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item/186758?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item/186758?namespace=static-12.0.5_66741-us"
             },
             "id": 186758
         },
@@ -146,13 +146,13 @@
         },
         "media": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/media/item/186758?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/media/item/186758?namespace=static-12.0.5_66741-us"
             },
             "id": 186758
         },
         "item_class": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Armor",
@@ -172,7 +172,7 @@
         },
         "item_subclass": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/6?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/6?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Shield",
@@ -608,7 +608,7 @@
     "appearances": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42546?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42546?namespace=static-12.0.5_66741-us"
             },
             "id": 42546
         }

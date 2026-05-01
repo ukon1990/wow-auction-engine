@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 import {
+  applyPlan,
   buildProfessionFixturePlan,
   collectLinkedEndpointPaths,
   endpointPathToFixturePath,
@@ -172,9 +173,28 @@ test('buildProfessionFixturePlan mirrors paths and discovers linked item and slo
 
   await fs.mkdir(path.join(paths.baseResources, 'profession', 'details'), { recursive: true });
   await fs.mkdir(path.join(paths.baseResources, 'recipe', 'details'), { recursive: true });
+  await fs.mkdir(path.join(paths.baseResources, 'modified-crafting', 'category'), { recursive: true });
+  await fs.mkdir(path.join(paths.baseResources, 'modified-crafting', 'reagent-slot-type'), { recursive: true });
   await fs.writeFile(path.join(paths.baseResources, 'profession', 'details', '999-response.json'), '{}\n', 'utf8');
   await fs.writeFile(path.join(paths.baseResources, 'recipe', 'details', '999-response.json'), '{}\n', 'utf8');
-
+  await fs.writeFile(
+    path.join(paths.baseResources, 'modified-crafting', 'category', '776-response.json'),
+    `${JSON.stringify({
+      _links: { self: { href: 'https://us.api.blizzard.com/data/wow/modified-crafting/category/776?namespace=static-us' } },
+      id: 776,
+      name: createLocale('Eversinging Dust'),
+    })}\n`,
+    'utf8',
+  );
+  await fs.writeFile(
+    path.join(paths.baseResources, 'modified-crafting', 'reagent-slot-type', '404-response.json'),
+    `${JSON.stringify({
+      _links: { self: { href: 'https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/404?namespace=static-us' } },
+      id: 404,
+      description: createLocale('Dust Slot'),
+    })}\n`,
+    'utf8',
+  );
   const payloads = new Map([
     [
       'profession/index',
@@ -273,14 +293,28 @@ test('buildProfessionFixturePlan mirrors paths and discovers linked item and slo
   assert.ok(writtenFiles.has(path.join(paths.baseResources, 'item', '9001-response.json')));
   assert.ok(writtenFiles.has(path.join(paths.baseResources, 'item-class', '2-response.json')));
   assert.ok(writtenFiles.has(path.join(paths.baseResources, 'modified-crafting', 'reagent-slot-type', '404-response.json')));
+  assert.ok(writtenFiles.has(path.join(paths.baseResources, 'modified-crafting', 'index-response.json')));
+  assert.ok(writtenFiles.has(path.join(paths.baseResources, 'modified-crafting', 'category', 'index-response.json')));
+  assert.ok(writtenFiles.has(path.join(paths.baseResources, 'modified-crafting', 'reagent-slot-type', 'index-response.json')));
+  assert.ok(writtenFiles.has(path.join(paths.baseResources, 'auction', 'malformed-auction-data-response.json')));
+  assert.ok(writtenFiles.has(path.join(paths.baseResources, 'auction', 'upstream-error-response.json')));
 
   const professionWrite = plan.writes.find((operation) => operation.filePath.endsWith(path.join('profession', '164-response.json')));
   const skillTierWrite = plan.writes.find((operation) => operation.filePath.endsWith(path.join('profession', '164', 'skill-tier', '2907-response.json')));
   const manifestWrite = plan.writes.find((operation) => operation.filePath.endsWith('profession-recipe-sample-manifest.json'));
+  const categoryIndexWrite = plan.writes.find((operation) => operation.filePath.endsWith(path.join('modified-crafting', 'category', 'index-response.json')));
+  const slotTypeIndexWrite = plan.writes.find((operation) => operation.filePath.endsWith(path.join('modified-crafting', 'reagent-slot-type', 'index-response.json')));
+  const malformedAuctionWrite = plan.writes.find((operation) => operation.filePath.endsWith(path.join('auction', 'malformed-auction-data-response.json')));
 
   assert.deepEqual(professionWrite.payload.skill_tiers.map((tier) => tier.id), [2751, 2907]);
   assert.deepEqual(skillTierWrite.payload.categories[0].recipes.map((recipe) => recipe.id), [5001, 5002]);
   assert.equal(manifestWrite.payload.length, 2);
+  assert.deepEqual(categoryIndexWrite.payload.categories.map((category) => category.id), [776]);
+  assert.equal(categoryIndexWrite.payload.categories[0].name.en_US, 'Eversinging Dust');
+  assert.deepEqual(slotTypeIndexWrite.payload.slot_types.map((slotType) => slotType.id), [404]);
+  assert.equal(slotTypeIndexWrite.payload.slot_types[0].name.en_US, 'Dust Slot');
+  assert.equal(malformedAuctionWrite.raw, true);
+  assert.equal(malformedAuctionWrite.payload, '{"auctions":[{"id":1');
   assert.deepEqual(
     plan.deletes.map((operation) => operation.filePath).sort(),
     [
@@ -295,3 +329,26 @@ test('buildProfessionFixturePlan mirrors paths and discovers linked item and slo
   assert.equal(plan.summary.families.item, 2);
   assert.equal(plan.summary.families['modified-crafting'], 1);
 });
+
+test('applyPlan writes raw supplemental fixtures without JSON formatting', async () => {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'fixture-raw-write-'));
+  const filePath = path.join(tempRoot, 'src/test/resources/blizzard/auction/malformed-auction-data-response.json');
+
+  await applyPlan(
+    {
+      deletes: [],
+      writes: [
+        {
+          filePath,
+          kind: 'write',
+          payload: '{"auctions":[{"id":1',
+          raw: true,
+        },
+      ],
+    },
+    { dryRun: false },
+  );
+
+  assert.equal(await fs.readFile(filePath, 'utf8'), '{"auctions":[{"id":1');
+});
+

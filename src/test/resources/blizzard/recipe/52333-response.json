@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/recipe/52333?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52333?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 52333,
@@ -21,7 +21,7 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52333?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52333?namespace=static-12.0.5_66741-us"
         },
         "id": 52333
     },
@@ -29,7 +29,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/238528?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/238528?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Majestic Claw",
@@ -52,7 +52,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/237366?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/237366?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Dazzling Thorium",
@@ -77,7 +77,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/467?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/467?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Sterling Alloy",
@@ -100,7 +100,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/395?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/395?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Customize Crafting Stat",
@@ -123,7 +123,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Artisan's Authenticity",

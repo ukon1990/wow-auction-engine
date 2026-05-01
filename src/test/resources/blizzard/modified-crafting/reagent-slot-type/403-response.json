@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/403?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/403?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 403,
@@ -22,7 +22,7 @@
     "compatible_categories": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/775?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/775?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Radiant Shard",

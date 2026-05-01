@@ -1,0 +1,919 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/index?namespace=static-12.0.5_66741-us"
+        }
+    },
+    "categories": [
+        {
+            "id": 29,
+            "name": {
+                "en_US": "Set Item Level",
+                "es_MX": "Establecer nivel de objeto",
+                "pt_BR": "Definir Nível de item",
+                "de_DE": "Gegenstandsstufe festlegen",
+                "en_GB": "Set Item Level",
+                "es_ES": "Establecer nivel de objeto",
+                "fr_FR": "Changement de niveau d’objet",
+                "it_IT": "Impostazione Livello Oggetto",
+                "ru_RU": "Установить уровень предмета",
+                "ko_KR": "아이템 레벨 설정",
+                "zh_TW": "設定物品等級",
+                "zh_CN": "设置物品等级"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/29?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 45,
+            "name": {
+                "en_US": "Set Item Level",
+                "es_MX": "Establecer nivel de objeto",
+                "pt_BR": "Definir Nível de item",
+                "de_DE": "Gegenstandsstufe festlegen",
+                "en_GB": "Set Item Level",
+                "es_ES": "Establecer nivel de objeto",
+                "fr_FR": "Changement de niveau d’objet",
+                "it_IT": "Impostazione Livello Oggetto",
+                "ru_RU": "Установить уровень предмета",
+                "ko_KR": "아이템 레벨 설정",
+                "zh_TW": "設定物品等級",
+                "zh_CN": "设置物品等级"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/45?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 50,
+            "name": {
+                "en_US": "Set Item Level",
+                "es_MX": "Establecer nivel de objeto",
+                "pt_BR": "Definir Nível de Item",
+                "de_DE": "Gegenstandsstufe festlegen",
+                "en_GB": "Set Item Level",
+                "es_ES": "Establecer nivel de objeto",
+                "fr_FR": "Changement de niveau d’objet",
+                "it_IT": "Impostazione Livello Oggetto",
+                "ru_RU": "Смена уровня предметов",
+                "ko_KR": "아이템 레벨 설정",
+                "zh_TW": "設定物品等級",
+                "zh_CN": "设置物品等级"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/50?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 55,
+            "name": {
+                "en_US": "Set Item Level",
+                "es_MX": "Establecer nivel de objeto",
+                "pt_BR": "Definir Nível de Item",
+                "de_DE": "Gegenstandsstufe festlegen",
+                "en_GB": "Set Item Level",
+                "es_ES": "Establecer nv. objeto",
+                "fr_FR": "Changement de niveau d’objet",
+                "it_IT": "Impostazione Livello Oggetto",
+                "ru_RU": "Смена уровня предметов",
+                "ko_KR": "아이템 레벨 설정",
+                "zh_TW": "設定物品等級",
+                "zh_CN": "设置物品等级"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/55?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 83,
+            "name": {
+                "en_US": "Set Item Level",
+                "es_MX": "Establecer nivel de objeto",
+                "pt_BR": "Definir nível de item",
+                "de_DE": "Gegenstandsstufe festlegen",
+                "en_GB": "Set Item Level",
+                "es_ES": "Establecer nv. objeto",
+                "fr_FR": "Changement de niveau d’objet",
+                "it_IT": "Impostazione Livello Oggetto",
+                "ru_RU": "Смена уровня предметов",
+                "ko_KR": "아이템 레벨 설정",
+                "zh_TW": "設定物品等級",
+                "zh_CN": "设置物品等级"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/83?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 741,
+            "name": {
+                "en_US": "Peacebloom",
+                "es_MX": "Flor de paz",
+                "pt_BR": "Botão-da-paz",
+                "de_DE": "Friedensblume",
+                "en_GB": "Peacebloom",
+                "es_ES": "Flor de paz",
+                "fr_FR": "Pacifique",
+                "it_IT": "Sbocciapace",
+                "ru_RU": "Мироцвет",
+                "ko_KR": "평온초 꽃잎",
+                "zh_TW": "寧神花",
+                "zh_CN": "宁神花"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/741?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 749,
+            "name": {
+                "en_US": "Refulgent Copper Ingot",
+                "es_MX": "Lingote de cobre refulgente",
+                "pt_BR": "Lingote de Cobre Refulgente",
+                "de_DE": "Glänzender Kupferbarren",
+                "en_GB": "Refulgent Copper Ingot",
+                "es_ES": "Lingote de cobre refulgente",
+                "fr_FR": "Lingot de cuivre éclatant",
+                "it_IT": "Lingotto di Rame Rifulgente",
+                "ru_RU": "Слиток сверкающей меди",
+                "ko_KR": "광명구리 주괴",
+                "zh_TW": "輝煌銅合金",
+                "zh_CN": "耀辉铜锭"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/749?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 750,
+            "name": {
+                "en_US": "Gloaming Alloy",
+                "es_MX": "Aleación crepuscular",
+                "pt_BR": "Liga Crepuscular",
+                "de_DE": "Dämmerlichtlegierung",
+                "en_GB": "Gloaming Alloy",
+                "es_ES": "Aleación anochedora",
+                "fr_FR": "Alliage de la tombée du jour",
+                "it_IT": "Lega Crepuscolare",
+                "ru_RU": "Сумрачный сплав",
+                "ko_KR": "해거름 합금",
+                "zh_TW": "薄暮合金",
+                "zh_CN": "薄暮合金"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/750?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 751,
+            "name": {
+                "en_US": "Sterling Alloy",
+                "es_MX": "Aleación de plata fina",
+                "pt_BR": "Liga Excelente",
+                "de_DE": "Sterlinglegierung",
+                "en_GB": "Sterling Alloy",
+                "es_ES": "Aleación plateada",
+                "fr_FR": "Alliage en argent",
+                "it_IT": "Lega Eccellente",
+                "ru_RU": "Сплав высокой пробы",
+                "ko_KR": "순도 높은 합금",
+                "zh_TW": "純銀合金",
+                "zh_CN": "纯银合金"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/751?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 769,
+            "name": {
+                "en_US": "Arcanoweave Lining",
+                "es_MX": "Revestimiento de tejido arcano",
+                "pt_BR": "Forro de Arcanotrama",
+                "de_DE": "Arkanostofffutter",
+                "en_GB": "Arcanoweave Lining",
+                "es_ES": "Forro de tejido Arcano",
+                "fr_FR": "Doublure en tisse-arcane",
+                "it_IT": "Imbottitura di Tramarcana",
+                "ru_RU": "Подкладка из тайной ткани",
+                "ko_KR": "비전매듭 안감",
+                "zh_TW": "奧紋內襯",
+                "zh_CN": "奥纹内衬"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/769?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 770,
+            "name": {
+                "en_US": "Sunfire Lining",
+                "es_MX": "Revestimiento de fuego solar",
+                "pt_BR": "Forro de Fogo Solar",
+                "de_DE": "Sonnenfeuerfutter",
+                "en_GB": "Sunfire Lining",
+                "es_ES": "Forro de fuego solar",
+                "fr_FR": "Doublure du feu solaire",
+                "it_IT": "Imbottitura di Fuoco Solare",
+                "ru_RU": "Подкладка солнечного огня",
+                "ko_KR": "태양불꽃 안감",
+                "zh_TW": "日炎內襯",
+                "zh_CN": "阳炎内衬"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/770?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 775,
+            "name": {
+                "en_US": "Radiant Shard",
+                "es_MX": "Fragmento radiante",
+                "pt_BR": "Estilhaço Radiante",
+                "de_DE": "Strahlender Splitter",
+                "en_GB": "Radiant Shard",
+                "es_ES": "Fragmento radiante",
+                "fr_FR": "Éclat radieux",
+                "it_IT": "Scheggia Radiosa",
+                "ru_RU": "Лучистый осколок",
+                "ko_KR": "찬란한 조각",
+                "zh_TW": "璀璨裂片",
+                "zh_CN": "光耀碎片"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/775?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 776,
+            "name": {
+                "en_US": "Eversinging Dust",
+                "es_MX": "Polvo cantoeterno",
+                "pt_BR": "Pó de Eternelegia",
+                "de_DE": "Ewigsingender Staub",
+                "en_GB": "Eversinging Dust",
+                "es_ES": "Polvo cantoeterno",
+                "fr_FR": "Poussière de chant éternel",
+                "it_IT": "Polvere di Suoneterno",
+                "ru_RU": "Вечнопоющая пыль",
+                "ko_KR": "영원히 노래하는 가루",
+                "zh_TW": "永歌之塵",
+                "zh_CN": "永歌之尘"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/776?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 777,
+            "name": {
+                "en_US": "Dawn Crystal",
+                "es_MX": "Cristal del alba",
+                "pt_BR": "Cristal da Aurora",
+                "de_DE": "Dämmerkristall",
+                "en_GB": "Dawn Crystal",
+                "es_ES": "Cristal del alba",
+                "fr_FR": "Cristal de l’aube",
+                "it_IT": "Cristallo dell'Alba",
+                "ru_RU": "Кристалл зари",
+                "ko_KR": "여명의 수정",
+                "zh_TW": "黎明水晶",
+                "zh_CN": "黎明水晶"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/777?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 791,
+            "name": {
+                "en_US": "Duskshrouded Stone",
+                "es_MX": "Piedra ocasovelada",
+                "pt_BR": "Pedra Crepusculada",
+                "de_DE": "Dämmerschleierstein",
+                "en_GB": "Duskshrouded Stone",
+                "es_ES": "Piedra velocrepúsculo",
+                "fr_FR": "Pierre voile-de-brune",
+                "it_IT": "Pietra Ammantata di Vespro",
+                "ru_RU": "Затененный камень",
+                "ko_KR": "어스름장막 돌",
+                "zh_TW": "暮罩石",
+                "zh_CN": "暮胧石"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/791?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 797,
+            "name": {
+                "en_US": "Silvermoon Weapon Wrap",
+                "es_MX": "Cubierta de arma de Lunargenta",
+                "pt_BR": "Invólucro de Arma de Luaprata",
+                "de_DE": "Silbermondwaffenwickel",
+                "en_GB": "Silvermoon Weapon Wrap",
+                "es_ES": "Cubrearmas de Lunargenta",
+                "fr_FR": "Barde d’arme de Lune-d’Argent",
+                "it_IT": "Fascia per Arma di Lunargenta",
+                "ru_RU": "Луносветская обмотка для оружия",
+                "ko_KR": "실버문 무기 보호대",
+                "zh_TW": "銀月武器裹布",
+                "zh_CN": "银月城武器裹皮"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/797?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 805,
+            "name": {
+                "en_US": "Darkmoon Sigil: Blood",
+                "es_MX": "Sigilo Luna Negra: Sangre",
+                "pt_BR": "Signo de Negraluna: Sangue",
+                "de_DE": "Dunkelmondsiegel: Blut",
+                "en_GB": "Darkmoon Sigil: Blood",
+                "es_ES": "Sigilo de la Luna Negra: Sangre",
+                "fr_FR": "Cachet de Sombrelune : Sang",
+                "it_IT": "Sigillo di Lunacupa: Sangue",
+                "ru_RU": "Символ Новолуния \"Кровь\"",
+                "ko_KR": "다크문 인장: 혈기",
+                "zh_TW": "暗月符印：鮮血",
+                "zh_CN": "暗月徽记：鲜血"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/805?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 806,
+            "name": {
+                "en_US": "Darkmoon Sigil: Hunt",
+                "es_MX": "Sigilo Luna Negra: Caza",
+                "pt_BR": "Signo de Negraluna: Caçada",
+                "de_DE": "Dunkelmondsiegel: Jagd",
+                "en_GB": "Darkmoon Sigil: Hunt",
+                "es_ES": "Sigilo de la Luna Negra: Caza",
+                "fr_FR": "Cachet de Sombrelune : Chasse",
+                "it_IT": "Sigillo di Lunacupa: Caccia",
+                "ru_RU": "Символ Новолуния \"Охота\"",
+                "ko_KR": "다크문 인장: 사냥",
+                "zh_TW": "暗月符印：狩獵",
+                "zh_CN": "暗月徽记：狩猎"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/806?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 807,
+            "name": {
+                "en_US": "Darkmoon Sigil: Rot",
+                "es_MX": "Sigilo Luna Negra: Podredumbre",
+                "pt_BR": "Signo de Negraluna: Podridão",
+                "de_DE": "Dunkelmondsiegel: Fäulnis",
+                "en_GB": "Darkmoon Sigil: Rot",
+                "es_ES": "Sigilo de la Luna Negra: Podredumbre",
+                "fr_FR": "Cachet de Sombrelune : Putréfaction",
+                "it_IT": "Sigillo di Lunacupa: Marciume",
+                "ru_RU": "Символ Новолуния \"Гниль\"",
+                "ko_KR": "다크문 인장: 부식",
+                "zh_TW": "暗月符印：腐爛",
+                "zh_CN": "暗月徽记：腐烂"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/807?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 808,
+            "name": {
+                "en_US": "Darkmoon Sigil: Void",
+                "es_MX": "Sigilo Luna Negra: Vacío",
+                "pt_BR": "Signo de Negraluna: Caos",
+                "de_DE": "Dunkelmondsiegel: Leere",
+                "en_GB": "Darkmoon Sigil: Void",
+                "es_ES": "Sigilo de la Luna Negra: Vacío",
+                "fr_FR": "Cachet de Sombrelune : Vide",
+                "it_IT": "Sigillo di Lunacupa: Vuoto",
+                "ru_RU": "Символ Новолуния \"Бездна\"",
+                "ko_KR": "다크문 인장: 공허",
+                "zh_TW": "暗月符印：虛無",
+                "zh_CN": "暗月徽记：虚空"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/808?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 809,
+            "name": {
+                "en_US": "Thalassian Missive of the Quickblade",
+                "es_MX": "Misiva thalassiana de la hoja rauda",
+                "pt_BR": "Missiva Talassiana do Gumepresto",
+                "de_DE": "Thalassisches Schreiben der Schnellklinge",
+                "en_GB": "Thalassian Missive of the Quickblade",
+                "es_ES": "Misiva thalassiana de la navaja",
+                "fr_FR": "Missive thalassienne de la prestelame",
+                "it_IT": "Missiva della Lama Veloce Thalassiana",
+                "ru_RU": "Талассийское послание быстрого клинка",
+                "ko_KR": "쾌검의 탈라시안 서신",
+                "zh_TW": "薩拉斯速刃書狀",
+                "zh_CN": "快刀之萨拉斯公函"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/809?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 810,
+            "name": {
+                "en_US": "Thalassian Missive of the Peerless",
+                "es_MX": "Misiva thalassiana del incomparable",
+                "pt_BR": "Missiva Talassiana do Inigualável",
+                "de_DE": "Thalassisches Schreiben der Unvergleichlichkeit",
+                "en_GB": "Thalassian Missive of the Peerless",
+                "es_ES": "Misiva thalassiana del incomparable",
+                "fr_FR": "Missive thalassienne des Incomparables",
+                "it_IT": "Missiva dell'Impareggiabile Thalassiana",
+                "ru_RU": "Талассийское послание бесподобия",
+                "ko_KR": "무쌍의 탈라시안 서신",
+                "zh_TW": "薩拉斯無雙書狀",
+                "zh_CN": "无双之萨拉斯公函"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/810?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 811,
+            "name": {
+                "en_US": "Thalassian Missive of the Harmonious",
+                "es_MX": "Misiva thalassiana del armónico",
+                "pt_BR": "Missiva Talassiana do Harmonioso",
+                "de_DE": "Thalassisches Schreiben der Harmonischen",
+                "en_GB": "Thalassian Missive of the Harmonious",
+                "es_ES": "Misiva thalassiana del armonioso",
+                "fr_FR": "Missive thalassienne de l’harmonie",
+                "it_IT": "Missiva dell'Armonia Thalassiana",
+                "ru_RU": "Талассийское послание безмятежности",
+                "ko_KR": "조화의 탈라시안 서신",
+                "zh_TW": "薩拉斯和諧書狀",
+                "zh_CN": "谐律之萨拉斯公函"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/811?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 812,
+            "name": {
+                "en_US": "Thalassian Missive of the Fireflash",
+                "es_MX": "Misiva thalassiana del fuego rápido",
+                "pt_BR": "Missiva Talassiana do Clarão de Fogo",
+                "de_DE": "Thalassisches Schreiben des Feuersturms",
+                "en_GB": "Thalassian Missive of the Fireflash",
+                "es_ES": "Misiva thalassiana del fuegolátigo",
+                "fr_FR": "Missive thalassienne des Éclats-de-feu",
+                "it_IT": "Missiva della Folgore Thalassiana",
+                "ru_RU": "Талассийское послание огненной вспышки",
+                "ko_KR": "불꽃섬광의 탈라시안 서신",
+                "zh_TW": "薩拉斯炎光書狀",
+                "zh_CN": "燎火之萨拉斯公函"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/812?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 813,
+            "name": {
+                "en_US": "Thalassian Missive of the Feverflare",
+                "es_MX": "Misiva thalassiana de la llama febril",
+                "pt_BR": "Missiva Talassiana da Febre Ardente",
+                "de_DE": "Thalassisches Schreiben des Hitzeschocks",
+                "en_GB": "Thalassian Missive of the Feverflare",
+                "es_ES": "Misiva thalassiana de la llama febril",
+                "fr_FR": "Missive thalassienne de la poussée de fièvre",
+                "it_IT": "Missiva della Bramosia Thalassiana",
+                "ru_RU": "Талассийское послание лихорадочного света",
+                "ko_KR": "열꽃의 탈라시안 서신",
+                "zh_TW": "薩拉斯閃焰書狀",
+                "zh_CN": "灼光之萨拉斯公函"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/813?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 814,
+            "name": {
+                "en_US": "Thalassian Missive of the Aurora",
+                "es_MX": "Misiva thalassiana de la aurora",
+                "pt_BR": "Missiva Talassiana da Aurora",
+                "de_DE": "Thalassisches Schreiben der Aurora",
+                "en_GB": "Thalassian Missive of the Aurora",
+                "es_ES": "Misiva thalassiana de la aurora",
+                "fr_FR": "Missive thalassienne de l’aurore",
+                "it_IT": "Missiva dell'Aurora Thalassiana",
+                "ru_RU": "Талассийское послание рассвета",
+                "ko_KR": "서광의 탈라시안 서신",
+                "zh_TW": "薩拉斯極光書狀",
+                "zh_CN": "曙光之萨拉斯公函"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/814?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 818,
+            "name": {
+                "en_US": "Thalassian Missive of Crafting Speed",
+                "es_MX": "Misiva thalassiana de velocidad de fabricación",
+                "pt_BR": "Missiva Talassiana da Velocidade de Criação",
+                "de_DE": "Thalassisches Schreiben der Herstellungsgeschwindigkeit",
+                "en_GB": "Thalassian Missive of Crafting Speed",
+                "es_ES": "Misiva thalassiana de velocidad de fabricación",
+                "fr_FR": "Missive thalassienne de vitesse d’artisanat",
+                "it_IT": "Missiva della Velocità di Creazione Thalassiana",
+                "ru_RU": "Талассийское послание скорости изготовления",
+                "ko_KR": "제작 속도의 탈라시안 서신",
+                "zh_TW": "薩拉斯製作速度書狀",
+                "zh_CN": "制作速度之萨拉斯公函"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/818?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 819,
+            "name": {
+                "en_US": "Thalassian Missive of Multicraft",
+                "es_MX": "Misiva thalassiana de fabricación múltiple",
+                "pt_BR": "Missiva Talassiana da Multicriação",
+                "de_DE": "Thalassisches Schreiben der Mehrfachherstellung",
+                "en_GB": "Thalassian Missive of Multicraft",
+                "es_ES": "Misiva thalassiana de multifabricación",
+                "fr_FR": "Missive thalassienne de fabrication multiple",
+                "it_IT": "Missiva della Creazione Multipla Thalassiana",
+                "ru_RU": "Талассийское послание перепроизводства",
+                "ko_KR": "복수 제작의 탈라시안 서신",
+                "zh_TW": "薩拉斯複數製造書狀",
+                "zh_CN": "产能之萨拉斯公函"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/819?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 820,
+            "name": {
+                "en_US": "Thalassian Missive of Resourcefulness",
+                "es_MX": "Misiva thalassiana de inventiva",
+                "pt_BR": "Missiva Talassiana da Desenvoltura",
+                "de_DE": "Thalassisches Schreiben des Einfallsreichtums",
+                "en_GB": "Thalassian Missive of Resourcefulness",
+                "es_ES": "Misiva thalassiana de ingenio",
+                "fr_FR": "Missive thalassienne d’ingéniosité",
+                "it_IT": "Missiva della Parsimonia Thalassiana",
+                "ru_RU": "Талассийское послание находчивости",
+                "ko_KR": "지혜의 탈라시안 서신",
+                "zh_TW": "薩拉斯精明書狀",
+                "zh_CN": "充裕之萨拉斯公函"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/820?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 821,
+            "name": {
+                "en_US": "Thalassian Missive of Ingenuity",
+                "es_MX": "Misiva thalassiana de ingenio",
+                "pt_BR": "Missiva Talassiana da Engenhosidade",
+                "de_DE": "Thalassisches Schreiben der Genialität",
+                "en_GB": "Thalassian Missive of Ingenuity",
+                "es_ES": "Misiva thalassiana de inventiva",
+                "fr_FR": "Missive thalassienne d’inventivité",
+                "it_IT": "Missiva dell'Ingegno Thalassiana",
+                "ru_RU": "Талассийское послание изобретательности",
+                "ko_KR": "독창성의 탈라시안 서신",
+                "zh_TW": "薩拉斯精妙書狀",
+                "zh_CN": "奇思之萨拉斯公函"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/821?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 826,
+            "name": {
+                "en_US": "Apprentice's Scribbles",
+                "es_MX": "Garabatos de aprendiz",
+                "pt_BR": "Rascunhos do Aprendiz",
+                "de_DE": "Lehrlingsgekritzel",
+                "en_GB": "Apprentice's Scribbles",
+                "es_ES": "Garabatos de aprendiz",
+                "fr_FR": "Gribouillage de novice",
+                "it_IT": "Scarabocchi dell'Apprendista",
+                "ru_RU": "Каракули ученика",
+                "ko_KR": "수습생이 휘갈겨 쓴 글귀",
+                "zh_TW": "學徒速記",
+                "zh_CN": "学徒的涂鸦"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/826?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 827,
+            "name": {
+                "en_US": "Global Finishing Reagent 02",
+                "es_MX": "Componente de retoque global 02",
+                "pt_BR": "Reagente de Finalização Global 02",
+                "de_DE": "Globales Fertigungsreagenz 02",
+                "en_GB": "Global Finishing Reagent 02",
+                "es_ES": "Componente de finalización global 02",
+                "fr_FR": "Composant de finition global 02",
+                "it_IT": "Reagente di Finitura Globale 02",
+                "ru_RU": "Общий завершающий реагент 02",
+                "ko_KR": "전역 마무리 재료 02",
+                "zh_TW": "通用最後加工材料02",
+                "zh_CN": "全局成品材料02"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/827?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 828,
+            "name": {
+                "en_US": "Global Finishing Reagent 03",
+                "es_MX": "Componente de retoque global 03",
+                "pt_BR": "Reagente de Finalização Global 03",
+                "de_DE": "Globales Fertigungsreagenz 03",
+                "en_GB": "Global Finishing Reagent 03",
+                "es_ES": "Componente de finalización global 03",
+                "fr_FR": "Composant de finition global 03",
+                "it_IT": "Reagente di Finitura Globale 03",
+                "ru_RU": "Общий завершающий реагент 03",
+                "ko_KR": "전역 마무리 재료 03",
+                "zh_TW": "通用最後加工材料03",
+                "zh_CN": "全局成品材料03"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/828?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 829,
+            "name": {
+                "en_US": "Artisan's Consortium Gold Star",
+                "es_MX": "Estrella de oro de la Sociedad de Artesanos",
+                "pt_BR": "Estrela de Ouro do Consórcio do Artífice",
+                "de_DE": "Goldstern des Handwerkerkonsortiums",
+                "en_GB": "Artisan's Consortium Gold Star",
+                "es_ES": "Estrella dorada del Consorcio de Artesanía",
+                "fr_FR": "Étoile dorée du Consortium d’artisanat",
+                "it_IT": "Stella Dorata del Consorzio degli Artigiani",
+                "ru_RU": "Золотая звезда консорциума ремесленников",
+                "ko_KR": "장인 무역연합 금빛 별",
+                "zh_TW": "工匠聯盟黃金星星",
+                "zh_CN": "工匠商盟金星奖章"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/829?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 830,
+            "name": {
+                "en_US": "Devouring Banding",
+                "es_MX": "Banda devoradora",
+                "pt_BR": "Elo Devorador",
+                "de_DE": "Verschlingende Bänder",
+                "en_GB": "Devouring Banding",
+                "es_ES": "Banda de la Devoración",
+                "fr_FR": "Bande dévorante",
+                "it_IT": "Legatura Divorante",
+                "ru_RU": "Пожирающая окантовка",
+                "ko_KR": "포식의 결속끈",
+                "zh_TW": "吞噬飾環",
+                "zh_CN": "吞噬绑带"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/830?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 831,
+            "name": {
+                "en_US": "Blessed Pango Charm",
+                "es_MX": "Amuleto de pango bendecido",
+                "pt_BR": "Amuleto Pango Abençoado",
+                "de_DE": "Gesegnetes Schuppentieramulett",
+                "en_GB": "Blessed Pango Charm",
+                "es_ES": "Talismán de pangolín bendito",
+                "fr_FR": "Amulette de pango bénie",
+                "it_IT": "Talismano di Pango Benedetto",
+                "ru_RU": "Благословенный талисман панго",
+                "ko_KR": "축복받은 천산갑 부적",
+                "zh_TW": "受祝福的穿山甲符咒",
+                "zh_CN": "圣佑穿山甲护符"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/831?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 832,
+            "name": {
+                "en_US": "Primal Spore Binding",
+                "es_MX": "Lazo de esporas primigenias",
+                "pt_BR": "Vínculo de Esporos Primevo",
+                "de_DE": "Ursporenbindung",
+                "en_GB": "Primal Spore Binding",
+                "es_ES": "Atadura de esporas primigenia",
+                "fr_FR": "Lien de spore primordial",
+                "it_IT": "Vincolo di Spore Primordiali",
+                "ru_RU": "Изначальные споровые узы",
+                "ko_KR": "원시 포자 결속끈",
+                "zh_TW": "原始孢子之縛",
+                "zh_CN": "原始孢子缚带"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/832?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 833,
+            "name": {
+                "en_US": "Multicraft Matrix",
+                "es_MX": "Matriz de fabricación múltiple",
+                "pt_BR": "Matriz de Multicriação",
+                "de_DE": "Mehrfachherstellungsmatrix",
+                "en_GB": "Multicraft Matrix",
+                "es_ES": "Matriz de multifabricación",
+                "fr_FR": "Matrice de fabrication multiple",
+                "it_IT": "Matrice della Creazione Multipla",
+                "ru_RU": "Матрица перепроизводства",
+                "ko_KR": "복수 제작 매트릭스",
+                "zh_TW": "複數製造矩陣",
+                "zh_CN": "产能矩阵"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/833?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 835,
+            "name": {
+                "en_US": "Resourceful Rebar",
+                "es_MX": "Barra inventiva",
+                "pt_BR": "Vergalhão Desenvolto",
+                "de_DE": "Einfallsreicher Betonstahl",
+                "en_GB": "Resourceful Rebar",
+                "es_ES": "Ferralla ingeniosa",
+                "fr_FR": "Barre d’armature ingénieuse",
+                "it_IT": "Tondino Parsimonioso",
+                "ru_RU": "Набойка находчивости",
+                "ko_KR": "지혜로운 보강봉",
+                "zh_TW": "精明鋼筋",
+                "zh_CN": "充裕钢筋"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/835?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 838,
+            "name": {
+                "en_US": "Ingenuious Identity",
+                "es_MX": "Identidad ingeniosa",
+                "pt_BR": "Identidade Engenhosa",
+                "de_DE": "Geniale Identität",
+                "en_GB": "Ingenuious Identity",
+                "es_ES": "Identidad ingeniosa",
+                "fr_FR": "Identité inventive",
+                "it_IT": "Identità Ingegnosa",
+                "ru_RU": "Индикатор изобретательности",
+                "ko_KR": "독창적인 정체성",
+                "zh_TW": "精妙身分",
+                "zh_CN": "奇思标识"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/838?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 854,
+            "name": {
+                "en_US": "Lucky Keychain",
+                "es_MX": "Llavero de la suerte",
+                "pt_BR": "Chaveiro da Sorte",
+                "de_DE": "Glücksanhänger",
+                "en_GB": "Lucky Keychain",
+                "es_ES": "Llavero de la suerte",
+                "fr_FR": "Porte-clés porte-bonheur",
+                "it_IT": "Portachiavi Fortunato",
+                "ru_RU": "Счастливая связка ключей",
+                "ko_KR": "행운의 열쇠고리",
+                "zh_TW": "幸運鑰匙圈",
+                "zh_CN": "幸运钥匙串"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/854?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 861,
+            "name": {
+                "en_US": "Stabilizing Gemstone Bandolier",
+                "es_MX": "Bandolera de gemas de estabilización",
+                "pt_BR": "Bandoleira de Gemas Estabilizadora",
+                "de_DE": "Stabilisierender Juwelenschultergürtel",
+                "en_GB": "Stabilizing Gemstone Bandolier",
+                "es_ES": "Bandolera de gemas estabilizadora",
+                "fr_FR": "Cartouchière de gemmes de stabilisation",
+                "it_IT": "Bandoliera di Gemme Stabilizzante",
+                "ru_RU": "Стабилизирующее крепление для самоцветов",
+                "ko_KR": "안정화 보석 사선 주머니",
+                "zh_TW": "穩定寶石彈藥包",
+                "zh_CN": "稳定式宝石弹药带"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/861?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 878,
+            "name": {
+                "en_US": "Galactic Combatant's Heraldry",
+                "es_MX": "Heráldica de Combatiente galáctico",
+                "pt_BR": "Heráldica do Combatente Galáctico",
+                "de_DE": "Wappenbuch des galaktischen Kämpfers",
+                "en_GB": "Galactic Combatant's Heraldry",
+                "es_ES": "Heráldica de Combatiente galáctico",
+                "fr_FR": "Blason du combattant galactique",
+                "it_IT": "Stemma del Combattente Galattico",
+                "ru_RU": "Геральдика галактического бойца",
+                "ko_KR": "우주를 호령하는 전투원의 표상",
+                "zh_TW": "銀河戰鬥者徽章",
+                "zh_CN": "星河争斗者的饰章"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/878?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 879,
+            "name": {
+                "en_US": "Galactic Aspirant's Heraldry",
+                "es_MX": "Heráldica de Aspirante galáctico",
+                "pt_BR": "Heráldica do Aspirante Galáctico",
+                "de_DE": "Wappenbuch des galaktischen Aspiranten",
+                "en_GB": "Galactic Aspirant's Heraldry",
+                "es_ES": "Heráldica de aspirante galáctico",
+                "fr_FR": "Blason d’aspirant galactique",
+                "it_IT": "Stemma del Pretendente Galattico",
+                "ru_RU": "Геральдика галактического претендента",
+                "ko_KR": "우주를 호령하는 지원자의 표상",
+                "zh_TW": "銀河志士徽章",
+                "zh_CN": "星河候选者的饰章"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/879?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 880,
+            "name": {
+                "en_US": "Galactic Gladiator's Heraldry",
+                "es_MX": "Heráldica de Gladiador galáctico",
+                "pt_BR": "Heráldica do Gladiador Galáctico",
+                "de_DE": "Wappenbuch des galaktischen Gladiators",
+                "en_GB": "Galactic Gladiator's Heraldry",
+                "es_ES": "Heráldica de Gladiador galáctico",
+                "fr_FR": "Blason du gladiateur galactique",
+                "it_IT": "Stemma del Gladiatore Galattico",
+                "ru_RU": "Геральдика галактического гладиатора",
+                "ko_KR": "우주를 호령하는 검투사의 표상",
+                "zh_TW": "銀河鬥士徽章",
+                "zh_CN": "星河角斗士的饰章"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/880?namespace=static-12.0.5_66741-us"
+            }
+        },
+        {
+            "id": 902,
+            "name": {
+                "en_US": "12.0 Optional Reagent - Outdoor Upgrade Dungeon - All",
+                "en_GB": "12.0 Optional Reagent - Outdoor Upgrade Dungeon - All"
+            },
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/902?namespace=static-12.0.5_66741-us"
+            }
+        }
+    ]
+}

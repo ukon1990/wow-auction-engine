@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/item-appearance/42763?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-appearance/42763?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 42763,
@@ -24,7 +24,7 @@
     },
     "item_class": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Armor",
@@ -44,7 +44,7 @@
     },
     "item_subclass": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Plate",
@@ -66,7 +66,7 @@
     "items": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item/186312?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item/186312?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Cuirass of the Lonely Citadel",
@@ -86,7 +86,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item/186347?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item/186347?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Ancient Colossus Chassis",
@@ -107,7 +107,7 @@
     ],
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/item/3555131?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/item/3555131?namespace=static-12.0.5_66741-us"
         },
         "id": 3555131
     }

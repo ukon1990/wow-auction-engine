@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/0?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/0?namespace=static-12.0.5_66741-us"
         }
     },
     "class_id": 0,

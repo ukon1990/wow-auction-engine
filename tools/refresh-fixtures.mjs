@@ -25,6 +25,20 @@ const RESOURCE_DEFINITIONS = {
   profession: createProfessionResourceDefinition(),
 };
 
+const SUPPLEMENTAL_TEST_FIXTURES = [
+  {
+    endpointPath: 'auction/malformed-auction-data',
+    payload: '{"auctions":[{"id":1',
+    raw: true,
+  },
+  {
+    endpointPath: 'auction/upstream-error',
+    payload: {
+      error: 'upstream',
+    },
+  },
+];
+
 export function parseArgs(argv) {
   const args = {
     dryRun: false,
@@ -351,13 +365,131 @@ export async function planManagedFilePrunes({ managedRoots, desiredFiles, enable
     .map((filePath) => ({ filePath, kind: 'delete' }));
 }
 
-function describeWriteOperation(filePath, payload) {
-  return { filePath, kind: 'write', payload };
+function describeWriteOperation(filePath, payload, { raw = false } = {}) {
+  return { filePath, kind: 'write', payload, raw };
 }
 
-function addManagedWrite(writesByFile, desiredFiles, filePath, payload) {
-  writesByFile.set(filePath, describeWriteOperation(filePath, payload));
+function addManagedWrite(writesByFile, desiredFiles, filePath, payload, options = {}) {
+  writesByFile.set(filePath, describeWriteOperation(filePath, payload, options));
   desiredFiles.add(filePath);
+}
+
+function addSupplementalTestFixtureWrites(writesByFile, desiredFiles, baseResources) {
+  for (const fixture of SUPPLEMENTAL_TEST_FIXTURES) {
+    addManagedWrite(
+      writesByFile,
+      desiredFiles,
+      endpointPathToFixturePath(fixture.endpointPath, baseResources),
+      fixture.payload,
+      { raw: fixture.raw ?? false },
+    );
+  }
+}
+
+async function readJsonFixture(filePath) {
+  return JSON.parse(await fs.readFile(filePath, 'utf8'));
+}
+
+function selfHref(payload) {
+  return payload?._links?.self?.href;
+}
+
+function deriveIndexHrefFromDetail(payload, endpointPath) {
+  const href = selfHref(payload);
+  if (!href) {
+    throw new Error(`Cannot derive ${endpointPath} index href from fixture without _links.self.href`);
+  }
+
+  const url = new URL(href);
+  url.pathname = `/data/wow/${endpointPath}`;
+  return url.toString();
+}
+
+async function readDetailPayloads(detailDir) {
+  const entries = await fs.readdir(detailDir, { withFileTypes: true });
+  const fixtures = await Promise.all(
+    entries
+      .filter((entry) => entry.isFile() && entry.name.endsWith('-response.json') && entry.name !== 'index-response.json')
+      .map(async (entry) => {
+        const filePath = path.join(detailDir, entry.name);
+        return {
+          filePath,
+          payload: await readJsonFixture(filePath),
+        };
+      }),
+  );
+
+  return fixtures
+    .filter(({ payload }) => Number.isFinite(payload.id) && selfHref(payload))
+    .sort((left, right) => left.payload.id - right.payload.id);
+}
+
+function referenceFromDetailPayload(payload, { nameField = 'name' } = {}) {
+  return {
+    id: payload.id,
+    name: payload[nameField] ?? payload.name ?? {},
+    key: {
+      href: selfHref(payload),
+    },
+  };
+}
+
+async function addModifiedCraftingIndexWrites(writesByFile, desiredFiles, baseResources) {
+  const categoryFixtures = await readDetailPayloads(path.join(baseResources, 'modified-crafting', 'category'));
+  const slotTypeFixtures = await readDetailPayloads(path.join(baseResources, 'modified-crafting', 'reagent-slot-type'));
+  if (categoryFixtures.length === 0 || slotTypeFixtures.length === 0) {
+    throw new Error('Cannot derive modified-crafting indexes without existing category and reagent slot type fixtures.');
+  }
+  for (const fixture of categoryFixtures.concat(slotTypeFixtures)) {
+    desiredFiles.add(fixture.filePath);
+  }
+  const categoryPayloads = categoryFixtures.map((fixture) => fixture.payload);
+  const slotTypePayloads = slotTypeFixtures.map((fixture) => fixture.payload);
+
+  addManagedWrite(
+    writesByFile,
+    desiredFiles,
+    endpointPathToFixturePath('modified-crafting/index', baseResources),
+    {
+      _links: {
+        self: {
+          href: deriveIndexHrefFromDetail(categoryPayloads[0], 'modified-crafting/index'),
+        },
+      },
+    },
+  );
+
+  addManagedWrite(
+    writesByFile,
+    desiredFiles,
+    endpointPathToFixturePath('modified-crafting/category/index', baseResources),
+    {
+      _links: {
+        self: {
+          href: deriveIndexHrefFromDetail(categoryPayloads[0], 'modified-crafting/category/index'),
+        },
+      },
+      categories: categoryPayloads.map((payload) => referenceFromDetailPayload(payload)),
+    },
+  );
+
+  addManagedWrite(
+    writesByFile,
+    desiredFiles,
+    endpointPathToFixturePath('modified-crafting/reagent-slot-type/index', baseResources),
+    {
+      _links: {
+        self: {
+          href: deriveIndexHrefFromDetail(slotTypePayloads[0], 'modified-crafting/reagent-slot-type/index'),
+        },
+      },
+      slot_types: slotTypePayloads.map((payload) => referenceFromDetailPayload(payload, { nameField: 'description' })),
+    },
+  );
+}
+
+async function addDerivedLocalFixtureWrites(writesByFile, desiredFiles, baseResources) {
+  await addModifiedCraftingIndexWrites(writesByFile, desiredFiles, baseResources);
 }
 
 function addPayloadToTraversal(traversalState, endpointPath, payload) {
@@ -515,6 +647,8 @@ export async function buildProfessionFixturePlan({
     writesByFile,
   });
 
+  await addDerivedLocalFixtureWrites(writesByFile, desiredFiles, paths.baseResources);
+  addSupplementalTestFixtureWrites(writesByFile, desiredFiles, paths.baseResources);
   addManagedWrite(writesByFile, desiredFiles, paths.manifestFile, sampleManifest);
 
   const fullSelection = !args.professionIds;
@@ -581,8 +715,8 @@ async function ensureDir(dirPath, dryRun) {
   await fs.mkdir(dirPath, { recursive: true });
 }
 
-async function writeJson(filePath, payload, dryRun) {
-  const body = `${JSON.stringify(payload, null, 4)}\n`;
+async function writeFixture(filePath, payload, dryRun, { raw = false } = {}) {
+  const body = raw ? payload : `${JSON.stringify(payload, null, 4)}\n`;
   if (dryRun) {
     console.log(`[dry-run] write ${filePath}`);
     return;
@@ -608,7 +742,7 @@ export async function applyPlan(plan, { dryRun }) {
   }
 
   for (const operation of plan.writes) {
-    await writeJson(operation.filePath, operation.payload, dryRun);
+    await writeFixture(operation.filePath, operation.payload, dryRun, { raw: operation.raw });
   }
 
   for (const operation of plan.deletes) {

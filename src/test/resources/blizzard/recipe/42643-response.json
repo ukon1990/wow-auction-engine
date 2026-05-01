@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/recipe/42643?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42643?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 42643,
@@ -35,7 +35,7 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42643?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42643?namespace=static-12.0.5_66741-us"
         },
         "id": 42643
     },
@@ -43,7 +43,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/172230?namespace=static-12.0.1_65617-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/172230?namespace=static-12.0.5_66741-us"
                 },
                 "name": {
                     "en_US": "Soul Dust",

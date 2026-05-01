@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/item/241145?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/241145?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 241145,
@@ -40,13 +40,13 @@
     "required_level": 80,
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/item/241145?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/item/241145?namespace=static-12.0.5_66741-us"
         },
         "id": 241145
     },
     "item_class": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Consumable",
@@ -66,7 +66,7 @@
     },
     "item_subclass": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Other",
@@ -109,7 +109,7 @@
     "preview_item": {
         "item": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item/241145?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item/241145?namespace=static-12.0.5_66741-us"
             },
             "id": 241145
         },
@@ -146,13 +146,13 @@
         },
         "media": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/media/item/241145?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/media/item/241145?namespace=static-12.0.5_66741-us"
             },
             "id": 241145
         },
         "item_class": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Consumable",
@@ -172,7 +172,7 @@
         },
         "item_subclass": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Other",
@@ -211,7 +211,7 @@
             {
                 "spell": {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/spell/1237964?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/spell/1237964?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Lucky Loa Lure",

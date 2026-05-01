@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/item/171441?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/171441?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 171441,
@@ -40,13 +40,13 @@
     "required_level": 51,
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/item/171441?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/item/171441?namespace=static-12.0.5_66741-us"
         },
         "id": 171441
     },
     "item_class": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Consumable",
@@ -66,7 +66,7 @@
     },
     "item_subclass": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.5_66741-us"
         },
         "name": {
             "en_US": "Other",
@@ -109,7 +109,7 @@
     "preview_item": {
         "item": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item/171441?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item/171441?namespace=static-12.0.5_66741-us"
             },
             "id": 171441
         },
@@ -146,13 +146,13 @@
         },
         "media": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/media/item/171441?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/media/item/171441?namespace=static-12.0.5_66741-us"
             },
             "id": 171441
         },
         "item_class": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Consumable",
@@ -172,7 +172,7 @@
         },
         "item_subclass": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/0/item-subclass/8?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Other",
@@ -211,7 +211,7 @@
             {
                 "spell": {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/spell/346245?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/spell/346245?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Laestrite Skeleton Key",
@@ -327,7 +327,7 @@
             "skill": {
                 "profession": {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/profession/2751?namespace=static-12.0.1_65617-us"
+                        "href": "https://us.api.blizzard.com/data/wow/profession/2751?namespace=static-12.0.5_66741-us"
                     },
                     "name": {
                         "en_US": "Shadowlands Blacksmithing",

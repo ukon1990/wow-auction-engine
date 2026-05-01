@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/333?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/333?namespace=static-12.0.5_66741-us"
         }
     },
     "id": 333,
@@ -52,14 +52,14 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/profession/333?namespace=static-12.0.1_65617-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/profession/333?namespace=static-12.0.5_66741-us"
         },
         "id": 333
     },
     "skill_tiers": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2753?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2753?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Shadowlands Enchanting",
@@ -79,7 +79,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2909?namespace=static-12.0.1_65617-us"
+                "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2909?namespace=static-12.0.5_66741-us"
             },
             "name": {
                 "en_US": "Midnight Enchanting",
