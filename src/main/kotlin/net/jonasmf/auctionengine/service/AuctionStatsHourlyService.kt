@@ -5,10 +5,11 @@ import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
-import net.jonasmf.auctionengine.repository.rds.AuctionStatsHourlyRepository
+import net.jonasmf.auctionengine.repository.rds.AuctionStatsHourlyJDBCRepository
 import net.jonasmf.auctionengine.repository.rds.HourlyStatsUpsertRow
 import net.jonasmf.auctionengine.utility.AuctionVariantKeyUtility
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
+import net.jonasmf.auctionengine.utility.resolveZone
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -22,10 +23,10 @@ data class HourlyPriceStatisticsSummary(
 )
 
 @Service
-class HourlyPriceStatisticsService(
-    val auctionStatsHourlyRepository: AuctionStatsHourlyRepository,
+class AuctionStatsHourlyService(
+    val auctionStatsHourlyJDBCRepository: AuctionStatsHourlyJDBCRepository,
 ) {
-    private val logger: Logger = LoggerFactory.getLogger(HourlyPriceStatisticsService::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(AuctionStatsHourlyService::class.java)
     private val progressLogInterval = 100_000
 
     fun processHourlyPriceStatistics(
@@ -61,16 +62,19 @@ class HourlyPriceStatisticsService(
         iterateAuctions: (((AuctionDTO) -> Unit) -> Unit),
     ): HourlyPriceStatisticsSummary {
         val startTime = System.currentTimeMillis()
-        val hour = lastModified.hour
-        val date = lastModified.toLocalDate()
+        val zone = connectedRealm.resolveZone(defaultZone = lastModified.zone)
+        val localLastModified = lastModified.withZoneSameInstant(zone)
+        val hour = localLastModified.hour
+        val date = localLastModified.toLocalDate()
         val grouped = linkedMapOf<String, HourlyStatsUpsertRow>()
         var processedAuctions = 0
 
         logger.info(
-            "Starting hourly stats aggregation for realm {} with {} auctions at hour {} and {}",
+            "Starting hourly stats aggregation for realm {} with {} auctions at local time {} in zone {} and {}",
             connectedRealm.id,
             expectedAuctionCount ?: "streamed",
-            hour,
+            localLastModified,
+            zone,
             JvmRuntimeDiagnostics.snapshot(),
         )
 
@@ -119,13 +123,15 @@ class HourlyPriceStatisticsService(
 
         val groupedRows = ArrayList(grouped.values)
         logger.info(
-            "Starting hourly stats upsert for realm {} with groupedRows={} at hour {} {}",
+            "Starting hourly stats upsert for realm {} with groupedRows={} at local date {} hour {} zone {} {}",
             connectedRealm.id,
             groupedRows.size,
+            date,
             hour,
+            zone,
             JvmRuntimeDiagnostics.snapshot(),
         )
-        val insertedRows = auctionStatsHourlyRepository.upsertHour(groupedRows, hour)
+        val insertedRows = auctionStatsHourlyJDBCRepository.upsertHour(groupedRows, hour)
         grouped.clear()
         logger.info(
             "Processed hourly auctions for realm {} with insertedRows={} groupedRows={} in {} ms {}",

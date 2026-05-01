@@ -1,12 +1,12 @@
 package net.jonasmf.auctionengine.utility
 
-import net.jonasmf.auctionengine.dbo.rds.auction.DailyAuctionStats
-import net.jonasmf.auctionengine.dbo.rds.auction.HourlyAuctionStats
+import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsDaily
+import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsHourly
 import java.lang.reflect.Field
 
 private object HourAccessors {
     private fun field(name: String): Field =
-        HourlyAuctionStats::class.java.getDeclaredField(name).apply {
+        AuctionStatsHourly::class.java.getDeclaredField(name).apply {
             isAccessible = true
         }
 
@@ -19,7 +19,7 @@ private object HourAccessors {
 
 private object DayOfMonthAccessors {
     private fun field(name: String): Field =
-        DailyAuctionStats::class.java.getDeclaredField(name).apply {
+        AuctionStatsDaily::class.java.getDeclaredField(name).apply {
             isAccessible = true
         }
 
@@ -33,7 +33,7 @@ private object DayOfMonthAccessors {
         (1..31).associateWith { dayOfMonth -> field("avgQuantity%02d".format(dayOfMonth)) }
 }
 
-fun HourlyAuctionStats.setHourValues(
+fun AuctionStatsHourly.setHourValues(
     hour: Int,
     price: Long?,
     quantity: Long?,
@@ -43,7 +43,7 @@ fun HourlyAuctionStats.setHourValues(
     HourAccessors.quantityByHour.getValue(hour).set(this, quantity)
 }
 
-fun DailyAuctionStats.setDayOfMonthValues(
+fun AuctionStatsDaily.setDayOfMonthValues(
     dayOfMonth: Int,
     price: Long?,
     quantity: Long?,

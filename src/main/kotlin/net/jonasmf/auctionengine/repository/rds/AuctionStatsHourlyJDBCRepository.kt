@@ -18,7 +18,7 @@ data class HourlyStatsUpsertRow(
 )
 
 @Repository
-class AuctionStatsHourlyRepository(
+class AuctionStatsHourlyJDBCRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) {
     private val chunkSize = 5_000

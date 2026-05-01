@@ -5,6 +5,7 @@ import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.repository.AuctionHouseRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionHouseFileLogRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import kotlin.math.min
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
@@ -100,6 +101,16 @@ class AuctionHouseService(
     }
 
     fun findAllByRegion(region: Region) = repository.findAllByRegion(region)
+
+    @Transactional
+    fun updateLastDailyPriceUpdate(
+        connectedRealmId: Int,
+        lastDailyPriceUpdate: Instant,
+    ): Int =
+        auctionHouseEntityRepository.updateLastDailyPriceUpdate(
+            connectedRealmId,
+            lastDailyPriceUpdate.toJavaInstant(),
+        )
 
     fun getReadyForUpdate(region: Region) = repository.findReadyForUpdateByRegion(region)
 }

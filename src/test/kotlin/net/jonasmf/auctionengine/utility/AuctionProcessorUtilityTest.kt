@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.utility
 
-import net.jonasmf.auctionengine.dbo.rds.auction.DailyAuctionStats
-import net.jonasmf.auctionengine.dbo.rds.auction.HourlyAuctionStats
+import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsDaily
+import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsHourly
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
 import net.jonasmf.auctionengine.repository.rds.DailyAuctionStatsRepository
@@ -12,8 +12,8 @@ import java.lang.reflect.Proxy
 import kotlin.test.assertEquals
 
 class AuctionProcessorUtilityTest {
-    private lateinit var dailyRepoCapture: SaveAllCapture<DailyAuctionStats>
-    private lateinit var hourlyRepoCapture: SaveAllCapture<HourlyAuctionStats>
+    private lateinit var dailyRepoCapture: SaveAllCapture<AuctionStatsDaily>
+    private lateinit var hourlyRepoCapture: SaveAllCapture<AuctionStatsHourly>
     private lateinit var utility: AuctionProcessorUtility
 
     @BeforeEach
@@ -23,9 +23,9 @@ class AuctionProcessorUtilityTest {
         utility =
             AuctionProcessorUtility(
                 dailyStatsRepo =
-                    createRepositoryProxy<DailyAuctionStatsRepository, DailyAuctionStats>(dailyRepoCapture),
+                    createRepositoryProxy<DailyAuctionStatsRepository, AuctionStatsDaily>(dailyRepoCapture),
                 hourlyStatsRepo =
-                    createRepositoryProxy<HourlyAuctionStatsRepository, HourlyAuctionStats>(hourlyRepoCapture),
+                    createRepositoryProxy<HourlyAuctionStatsRepository, AuctionStatsHourly>(hourlyRepoCapture),
             )
     }
 

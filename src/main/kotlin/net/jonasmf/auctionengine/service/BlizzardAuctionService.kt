@@ -28,7 +28,7 @@ class BlizzardAuctionService(
     private val properties: BlizzardApiProperties,
     private val blizzardAuctionApiClient: BlizzardAuctionApiClient,
     private val amazonS3: AmazonS3Service,
-    private val hourlyPriceStatisticsService: HourlyPriceStatisticsService,
+    private val auctionStatsHourlyService: AuctionStatsHourlyService,
     private val realmService: ConnectedRealmService,
     private val auctionSnapshotPersistenceService: AuctionSnapshotPersistenceService,
     private val auctionHouseService: AuctionHouseService,
@@ -211,7 +211,7 @@ class BlizzardAuctionService(
                 )
                 val hourlyStatsStartTime = System.currentTimeMillis()
                 val hourlyStatsSummary =
-                    hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(
+                    auctionStatsHourlyService.processHourlyPriceStatisticsFromFile(
                         connectedRealm = connectedRealm,
                         payloadPath = downloadedPayload.path,
                         lastModified = lastModified,

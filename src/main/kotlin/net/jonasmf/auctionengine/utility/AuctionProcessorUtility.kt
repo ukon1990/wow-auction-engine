@@ -1,8 +1,8 @@
 package net.jonasmf.auctionengine.utility
 
+import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsDaily
+import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsHourly
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsId
-import net.jonasmf.auctionengine.dbo.rds.auction.DailyAuctionStats
-import net.jonasmf.auctionengine.dbo.rds.auction.HourlyAuctionStats
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
@@ -41,7 +41,7 @@ class AuctionProcessorUtility(
         }
 
         // Process auctions into hourly stats
-        val hourlyStats = mutableListOf<HourlyAuctionStats>()
+        val hourlyStats = mutableListOf<AuctionStatsHourly>()
         val connectedRealm = createDummyConnectedRealm(ahId)
         auctions.forEach { auctionDTO ->
             processHourlyStats(auctionDTO, Date(lastModified), hourlyStats, connectedRealm)
@@ -49,7 +49,7 @@ class AuctionProcessorUtility(
         hourlyStatsRepo.saveAll(hourlyStats)
 
         // Process auctions into daily stats
-        val dailyStats = mutableListOf<DailyAuctionStats>()
+        val dailyStats = mutableListOf<AuctionStatsDaily>()
         auctions.forEach { auctionDTO ->
             processDailyStats(auctionDTO, Date(lastModified), dailyStats, connectedRealm)
         }
@@ -64,7 +64,7 @@ class AuctionProcessorUtility(
     private fun processHourlyStats(
         auctionDTO: AuctionDTO,
         lastModified: Date,
-        hourlyStats: MutableList<HourlyAuctionStats>,
+        hourlyStats: MutableList<AuctionStatsHourly>,
         connectedRealm: ConnectedRealm,
     ) {
         val statsId =
@@ -76,7 +76,7 @@ class AuctionProcessorUtility(
                 bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auctionDTO.item.bonus_lists),
             )
         val hourlyStat =
-            HourlyAuctionStats(
+            AuctionStatsHourly(
                 id = statsId,
                 price00 = auctionDTO.unit_price,
                 quantity00 = auctionDTO.quantity,
@@ -136,7 +136,7 @@ class AuctionProcessorUtility(
     private fun processDailyStats(
         auctionDTO: AuctionDTO,
         lastModified: Date,
-        dailyStats: MutableList<DailyAuctionStats>,
+        dailyStats: MutableList<AuctionStatsDaily>,
         connectedRealm: ConnectedRealm,
     ) {
         val statsId =
@@ -148,7 +148,7 @@ class AuctionProcessorUtility(
                 bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auctionDTO.item.bonus_lists),
             )
         val dailyStat =
-            DailyAuctionStats(
+            AuctionStatsDaily(
                 id = statsId,
             )
         dailyStats.add(dailyStat)

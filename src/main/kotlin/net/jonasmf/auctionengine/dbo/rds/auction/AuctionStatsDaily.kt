@@ -2,11 +2,13 @@ package net.jonasmf.auctionengine.dbo.rds.auction
 
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import jakarta.persistence.Table
 
 @Entity
-data class DailyAuctionStats(
+@Table(name = "auction_stats_daily")
+class AuctionStatsDaily(
     @EmbeddedId
-    val id: AuctionStatsId,
+    var id: AuctionStatsId,
     // Fields for each day of the month
     var minHour01: Short? = null,
     var min01: Long? = null,

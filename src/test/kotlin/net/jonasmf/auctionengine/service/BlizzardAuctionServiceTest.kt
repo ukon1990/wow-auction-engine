@@ -42,7 +42,7 @@ class BlizzardAuctionServiceTest {
 
     private val blizzardAuctionApiClient = mockk<BlizzardAuctionApiClient>()
     private val amazonS3 = mockk<AmazonS3Service>()
-    private val hourlyPriceStatisticsService = mockk<HourlyPriceStatisticsService>()
+    private val auctionStatsHourlyService = mockk<AuctionStatsHourlyService>()
     private val realmService = mockk<ConnectedRealmService>()
     private val auctionSnapshotPersistenceService = mockk<AuctionSnapshotPersistenceService>(relaxed = true)
     private val auctionHouseService = mockk<AuctionHouseService>()
@@ -53,7 +53,7 @@ class BlizzardAuctionServiceTest {
             properties = properties,
             blizzardAuctionApiClient = blizzardAuctionApiClient,
             amazonS3 = amazonS3,
-            hourlyPriceStatisticsService = hourlyPriceStatisticsService,
+            auctionStatsHourlyService = auctionStatsHourlyService,
             realmService = realmService,
             auctionSnapshotPersistenceService = auctionSnapshotPersistenceService,
             auctionHouseService = auctionHouseService,
@@ -108,13 +108,13 @@ class BlizzardAuctionServiceTest {
             "s3://$path"
         }
         every {
-            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(eq(firstRealm), eq(firstData.path), any())
+            auctionStatsHourlyService.processHourlyPriceStatisticsFromFile(eq(firstRealm), eq(firstData.path), any())
         } answers {
             events += "stats-1"
             HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
         }
         every {
-            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(
+            auctionStatsHourlyService.processHourlyPriceStatisticsFromFile(
                 eq(secondRealm),
                 eq(secondData.path),
                 any(),
@@ -195,7 +195,7 @@ class BlizzardAuctionServiceTest {
             "s3://second"
         }
         every {
-            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(
+            auctionStatsHourlyService.processHourlyPriceStatisticsFromFile(
                 eq(secondRealm),
                 eq(secondData.path),
                 any(),
@@ -235,7 +235,7 @@ class BlizzardAuctionServiceTest {
         every { blizzardAuctionApiClient.downloadAuctionData("url-1") } returns Mono.just(data)
         every { amazonS3.uploadCompressedFile(eq(Region.Europe), any(), any()) } returns "s3://first"
         every {
-            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(
+            auctionStatsHourlyService.processHourlyPriceStatisticsFromFile(
                 eq(realm),
                 eq(data.path),
                 any(),
@@ -272,7 +272,7 @@ class BlizzardAuctionServiceTest {
         every { blizzardAuctionApiClient.downloadAuctionData("url-1") } returns Mono.just(data)
         every { amazonS3.uploadCompressedFile(eq(Region.Europe), any(), any()) } returns "s3://first"
         every {
-            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(eq(realm), eq(data.path), any())
+            auctionStatsHourlyService.processHourlyPriceStatisticsFromFile(eq(realm), eq(data.path), any())
         } returns HourlyPriceStatisticsSummary(insertedRows = 1, groupedRows = 1, processedAuctions = 1)
         every { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) } returns Unit
 
@@ -309,7 +309,7 @@ class BlizzardAuctionServiceTest {
         )
 
         io.mockk.verify(exactly = 0) {
-            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(any(), any(), any())
+            auctionStatsHourlyService.processHourlyPriceStatisticsFromFile(any(), any(), any())
         }
         io.mockk.verify(exactly = 1) { auctionHouseService.updateTimes(eq(1), any(), eq(false), any()) }
         io.mockk.verify(exactly = 0) { auctionHouseService.updateTimes(eq(1), any(), eq(true), any()) }
@@ -425,7 +425,7 @@ class BlizzardAuctionServiceTest {
         every { blizzardAuctionApiClient.downloadAuctionData("url-1") } returns Mono.just(data)
         every { amazonS3.uploadCompressedFile(eq(Region.Europe), any(), data.path) } returns "s3://payload"
         every {
-            hourlyPriceStatisticsService.processHourlyPriceStatisticsFromFile(
+            auctionStatsHourlyService.processHourlyPriceStatisticsFromFile(
                 eq(realm),
                 eq(data.path),
                 any(),
