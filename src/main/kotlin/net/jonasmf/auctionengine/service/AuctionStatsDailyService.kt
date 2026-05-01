@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.service
 
+import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsDaily
 import net.jonasmf.auctionengine.repository.rds.AuctionStatsDailyJDBCRepository
 import net.jonasmf.auctionengine.utility.datesBetween
 import org.slf4j.LoggerFactory
@@ -36,4 +37,13 @@ class AuctionStatsDailyService(
             )
         }
     }
+
+    fun getStatsForConnectedRealm(
+        connectedRealmId: Int,
+        itemId: Int,
+        petSpeciesId: Int? = null,
+        modifierKey: String? = null,
+        bonusKey: String? = null,
+
+    ): List<AuctionStatsDaily> {}
 }
