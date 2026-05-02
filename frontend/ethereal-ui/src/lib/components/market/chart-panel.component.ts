@@ -3,9 +3,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  ElementRef,
   input,
   signal,
   TemplateRef,
+  viewChild,
 } from '@angular/core';
 
 import {
@@ -21,7 +23,6 @@ import {
   linePolylinePoints,
   svgContentWidthPx,
   valuesAtCategoryIndex,
-  xBandCenterLeftPercent,
   xBandHitRects,
   YDomain,
 } from '../../helpers/chart';
@@ -39,7 +40,10 @@ export type {
   selector: 'ee-chart-panel',
   imports: [NgTemplateOutlet, SymbolIconComponent],
   template: `
-    <section class="ee-glass w-full min-w-0 rounded-lg p-inner-padding">
+    <section
+      #panelRoot
+      class="ee-glass relative w-full min-w-0 overflow-visible rounded-lg p-inner-padding"
+    >
       <div class="mb-6 flex items-center justify-between gap-4">
         <h2 class="ee-section-heading flex items-center gap-2 text-on-surface">
           <ee-symbol-icon class="text-outline" name="show_chart" />
@@ -117,23 +121,27 @@ export type {
                 [attr.width]="band.width"
                 [attr.x]="band.x"
                 [attr.y]="band.y"
-                (pointerenter)="onBandEnter($index)"
+                (pointerenter)="onBandPointerEnter($event, $index)"
+                (pointermove)="onBandPointerMove($event)"
               />
             }
           </svg>
-          @if (tooltipBind(); as bind) {
-            <div
-              class="pointer-events-none absolute top-1 z-30 max-w-[min(18rem,85vw)] -translate-x-1/2"
-              [style.left.%]="hoverCenterPercent()"
-            >
-              <ng-container
-                [ngTemplateOutlet]="bind.tpl"
-                [ngTemplateOutletContext]="{ $implicit: bind.ctx }"
-              />
-            </div>
-          }
         </div>
       </div>
+      @if (tooltipBind(); as bind) {
+        @if (tooltipPointerReady()) {
+          <div
+            class="pointer-events-none absolute z-[300] max-w-[min(18rem,85vw)]"
+            [style.left.px]="tooltipLeftPx()"
+            [style.top.px]="tooltipTopPx()"
+          >
+            <ng-container
+              [ngTemplateOutlet]="bind.tpl"
+              [ngTemplateOutletContext]="{ $implicit: bind.ctx }"
+            />
+          </div>
+        }
+      }
     </section>
   `,
   host: {
@@ -142,6 +150,12 @@ export type {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartPanelComponent {
+  /** Gap between cursor and tooltip (CSS px in panel coordinates). */
+  private static readonly TOOLTIP_OFFSET_X = 14;
+  private static readonly TOOLTIP_OFFSET_Y = 14;
+
+  private readonly panelRoot = viewChild.required<ElementRef<HTMLElement>>('panelRoot');
+
   readonly title = input.required<string>();
   readonly rangeLabel = input('14 days');
   /** When non-empty, drives the chart. */
@@ -162,6 +176,13 @@ export class ChartPanelComponent {
   protected readonly colorVar = etherealColorVar;
 
   protected readonly hoveredCategoryIndex = signal<number | null>(null);
+  /**
+   * Tooltip position in the glass panel’s coordinate space (`absolute` under `backdrop-filter`,
+   * not viewport — avoids mismatch with `clientX` / `clientY`).
+   */
+  protected readonly tooltipLeftPx = signal(0);
+  protected readonly tooltipTopPx = signal(0);
+  protected readonly tooltipPointerReady = signal(false);
 
   protected readonly effectiveSeries = computed(() => {
     const s = this.series();
@@ -225,15 +246,6 @@ export class ChartPanelComponent {
     return { tpl, ctx };
   });
 
-  protected readonly hoverCenterPercent = computed(() => {
-    const idx = this.hoveredCategoryIndex();
-    const n = this.xDomain().length;
-    if (idx === null || n === 0) {
-      return 0;
-    }
-    return xBandCenterLeftPercent(idx, n);
-  });
-
   protected readonly gridHorizontalYs = computed(() => {
     const { innerTop, innerBottom } = DEFAULT_PLOT_MARGINS;
     const h = innerBottom - innerTop;
@@ -292,11 +304,25 @@ export class ChartPanelComponent {
     () => `${this.title()} chart, scroll horizontally for full history`,
   );
 
-  protected onBandEnter(index: number): void {
+  protected onBandPointerEnter(event: PointerEvent, index: number): void {
     this.hoveredCategoryIndex.set(index);
+    this.applyPointerForTooltip(event);
+  }
+
+  protected onBandPointerMove(event: PointerEvent): void {
+    this.applyPointerForTooltip(event);
+  }
+
+  private applyPointerForTooltip(event: PointerEvent): void {
+    const root = this.panelRoot().nativeElement;
+    const r = root.getBoundingClientRect();
+    this.tooltipLeftPx.set(event.clientX - r.left + ChartPanelComponent.TOOLTIP_OFFSET_X);
+    this.tooltipTopPx.set(event.clientY - r.top + ChartPanelComponent.TOOLTIP_OFFSET_Y);
+    this.tooltipPointerReady.set(true);
   }
 
   protected onPlotPointerLeave(): void {
     this.hoveredCategoryIndex.set(null);
+    this.tooltipPointerReady.set(false);
   }
 }
