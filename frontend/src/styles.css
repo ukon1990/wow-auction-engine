@@ -1,3 +1,135 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+@theme {
+  --color-background: #17130a;
+  --color-surface: #17130a;
+  --color-surface-dim: #17130a;
+  --color-surface-bright: #3e392d;
+  --color-surface-container-lowest: #120e05;
+  --color-surface-container-low: #1f1b11;
+  --color-surface-container: #241f15;
+  --color-surface-container-high: #2e291f;
+  --color-surface-container-highest: #393429;
+  --color-on-surface: #ebe1d1;
+  --color-on-surface-variant: #d2c5ac;
+  --color-outline: #9b9079;
+  --color-outline-variant: #4e4633;
+  --color-primary: #ffd773;
+  --color-on-primary: #3e2e00;
+  --color-primary-container: #ecb913;
+  --color-secondary: #e0b6ff;
+  --color-secondary-container: #6d11ad;
+  --color-tertiary: #b3e2ff;
+  --color-tertiary-container: #63cbff;
+  --color-error: #ffb4ab;
+
+  --font-cinzel: Cinzel, Georgia, serif;
+  --font-inter: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-space-mono: 'Space Mono', ui-monospace, monospace;
+
+  --radius-arcane: 0.5rem;
+  --spacing-container-padding: 1.5rem;
+  --spacing-element-gap: 1rem;
+  --spacing-section-margin: 1.5rem;
+  --spacing-inner-padding: 1rem;
+  --spacing-row-padding: 0.75rem;
+}
+
+@layer base {
+  @font-face {
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: local('Cinzel');
+  }
+
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: local('Inter');
+  }
+
+  @font-face {
+    font-family: 'Space Mono';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: local('Space Mono');
+  }
+
+  html,
+  body {
+    min-height: 100%;
+    background: #17130a;
+  }
+
+  body {
+    margin: 0;
+    color: #ebe1d1;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  :focus-visible {
+    outline: 2px solid #ffd773;
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .ee-glass {
+    border: 1px solid rgb(255 255 255 / 0.1);
+    background: rgb(36 31 21 / 0.72);
+    backdrop-filter: blur(16px);
+  }
+
+  .ee-arcane-glow {
+    box-shadow: 0 0 15px rgb(236 185 19 / 0.35);
+  }
+
+  .ee-data {
+    font-family: 'Space Mono', ui-monospace, monospace;
+    font-size: 0.8125rem;
+    line-height: 1;
+  }
+
+  .ee-label {
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .ee-section-heading {
+    font-family: Cinzel, Georgia, serif;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .ee-coin {
+    display: inline-block;
+    border-radius: 9999px;
+    border: 1px solid rgb(0 0 0 / 0.35);
+    box-shadow: 0 0 5px rgb(234 179 8 / 0.45);
+  }
+
+  .ee-coin-gold {
+    background: linear-gradient(135deg, #fde68a, #ca8a04);
+  }
+
+  .ee-coin-silver {
+    background: linear-gradient(135deg, #f8fafc, #94a3b8);
+  }
+
+  .ee-coin-copper {
+    background: linear-gradient(135deg, #fb923c, #9a3412);
+  }
+}

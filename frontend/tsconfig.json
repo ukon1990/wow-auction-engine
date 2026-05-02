@@ -3,6 +3,9 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "@ui": ["./ethereal-ui/src/public-api.ts"]
+    },
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -28,6 +31,12 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./ethereal-ui/tsconfig.lib.json"
+    },
+    {
+      "path": "./ethereal-ui/tsconfig.spec.json"
     }
   ]
 }
