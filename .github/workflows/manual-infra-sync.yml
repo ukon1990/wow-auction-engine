@@ -60,9 +60,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          app_name="$(python -c "import json; print(json.load(open('infra/regions.json'))['app_name'])")"
-          environment="$(python -c "import json; print(json.load(open('infra/regions.json'))['environment'])")"
-          project_tag="$(python -c "import json; print(json.load(open('infra/regions.json'))['project_tag'])")"
+          app_name="$(python3 -c "import json; print(json.load(open('infra/regions.json'))['app_name'])")"
+          environment="$(python3 -c "import json; print(json.load(open('infra/regions.json'))['environment'])")"
+          project_tag="$(python3 -c "import json; print(json.load(open('infra/regions.json'))['project_tag'])")"
           echo "app_name=$app_name" >> "$GITHUB_OUTPUT"
           echo "environment=$environment" >> "$GITHUB_OUTPUT"
           echo "project_tag=$project_tag" >> "$GITHUB_OUTPUT"
@@ -72,11 +72,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          matrix_json="$(python scripts/deploy/render_regions_matrix.py)"
+          matrix_json="$(python3 scripts/deploy/render_regions_matrix.py)"
           if [[ "${TARGET_REGION}" == "all" ]]; then
             echo "matrix=$matrix_json" >> "$GITHUB_OUTPUT"
           else
-            filtered="$(python -c "import json,sys; data=json.loads(sys.stdin.read()); data['include']=[item for item in data['include'] if item['aws_region']=='${TARGET_REGION}']; print(json.dumps(data))" <<< "$matrix_json")"
+            filtered="$(python3 -c "import json,sys; data=json.loads(sys.stdin.read()); data['include']=[item for item in data['include'] if item['aws_region']=='${TARGET_REGION}']; print(json.dumps(data))" <<< "$matrix_json")"
             echo "matrix=$filtered" >> "$GITHUB_OUTPUT"
           fi
         env:

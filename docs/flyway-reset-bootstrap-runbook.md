@@ -2,8 +2,8 @@
 
 This runbook resets an environment and rebuilds schema from the new bootstrap migration:
 
-- `src/main/resources/db/migration/V1__bootstrap_schema.sql`
-- `src/main/resources/db/migration/R__create_v_auction_house_prices.sql`
+- `backend/src/main/resources/db/migration/V1__bootstrap_schema.sql`
+- `backend/src/main/resources/db/migration/R__create_v_auction_house_prices.sql`
 
 ## Preconditions
 
@@ -59,7 +59,7 @@ DB_HOST=<prod-host> DB_NAME=<prod-db> DB_USER=<user> DB_PASSWORD=<password> ALLO
 Start the application once the schema is empty:
 
 ```bash
-BLIZZARD_CLIENT_ID=<id> BLIZZARD_CLIENT_SECRET=<secret> WAE_BLIZZARD_REGIONS=Europe ./mvnw spring-boot:run
+cd backend && BLIZZARD_CLIENT_ID=<id> BLIZZARD_CLIENT_SECRET=<secret> WAE_BLIZZARD_REGIONS=Europe ./mvnw spring-boot:run
 ```
 
 Flyway creates `flyway_schema_history`, applies `V1__bootstrap_schema.sql`, then applies repeatable objects.

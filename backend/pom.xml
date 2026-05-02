@@ -281,7 +281,7 @@
                 <configuration>
                     <workingDirectory>${project.basedir}</workingDirectory>
                     <executable>${node.executable}</executable>
-                    <commandlineArgs>${project.basedir}/tools/refresh-fixtures.mjs ${refresh.fixtures.args}</commandlineArgs>
+                    <commandlineArgs>${project.basedir}/../tools/refresh-fixtures.mjs ${refresh.fixtures.args}</commandlineArgs>
                 </configuration>
                 <executions>
                     <execution>

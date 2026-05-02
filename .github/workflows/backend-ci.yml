@@ -49,8 +49,8 @@ jobs:
             echo "Base commit $base_sha is not available in this checkout; falling back to full repository classification." >&2
             git ls-tree -r --name-only "$head_sha" > /tmp/changed-files.txt
           fi
-          classification="$(python scripts/deploy/classify_changes.py < /tmp/changed-files.txt)"
-          echo "backend_verify_required=$(python -c "import json,sys; print(str(json.load(sys.stdin)['backend_verify_required']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
+          classification="$(python3 scripts/deploy/classify_changes.py < /tmp/changed-files.txt)"
+          echo "backend_verify_required=$(python3 -c "import json,sys; print(str(json.load(sys.stdin)['backend_verify_required']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
 
   backend-build-and-test:
     name: Backend Style, Build, and Test
@@ -68,21 +68,23 @@ jobs:
           distribution: temurin
           java-version: "25"
           cache: maven
+          cache-dependency-path: backend/pom.xml
 
       - name: Ensure Maven wrapper is executable
-        run: chmod +x ./mvnw
+        run: chmod +x backend/mvnw
 
       - name: Enforce Flyway schema guardrails
         run: ./scripts/ci/check-flyway-guardrails.sh
 
       - name: Verify backend
+        working-directory: backend
         run: ./mvnw -B -ntp -Dkotlin.compiler.daemon=false verify
 
       - name: Print backend coverage summary
         shell: bash
         run: |
           set -euo pipefail
-          report="target/site/jacoco/jacoco.xml"
+          report="backend/target/site/jacoco/jacoco.xml"
           if [[ ! -f "$report" ]]; then
             echo "Coverage report not found at $report"
             exit 1
@@ -90,7 +92,7 @@ jobs:
 
           python3 - <<'PY'
           import xml.etree.ElementTree as ET
-          report = ET.parse("target/site/jacoco/jacoco.xml")
+          report = ET.parse("backend/target/site/jacoco/jacoco.xml")
           root = report.getroot()
           line = next((c for c in root.findall("counter") if c.get("type") == "LINE"), None)
           if line is None:
@@ -107,13 +109,13 @@ jobs:
         with:
           name: backend-coverage-report
           path: |
-            target/site/jacoco/jacoco.xml
-            target/site/jacoco
+            backend/target/site/jacoco/jacoco.xml
+            backend/target/site/jacoco
           if-no-files-found: error
 
       - name: Upload deployable WAR artifact
         uses: actions/upload-artifact@v7
         with:
           name: backend-war
-          path: target/*.war
+          path: backend/target/*.war
           if-no-files-found: error

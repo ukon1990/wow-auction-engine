@@ -33,4 +33,4 @@ mysql -h "${DB_HOST}" -P "${DB_PORT}" -u "${DB_USER}" -p"${DB_PASSWORD}" -e "DRO
 
 echo "Database reset complete. Start application to apply Flyway bootstrap migration."
 echo "Example:"
-echo "  BLIZZARD_CLIENT_ID=... BLIZZARD_CLIENT_SECRET=... WAE_BLIZZARD_REGIONS=Europe ./mvnw spring-boot:run"
+echo "  cd backend && BLIZZARD_CLIENT_ID=... BLIZZARD_CLIENT_SECRET=... WAE_BLIZZARD_REGIONS=Europe ./mvnw spring-boot:run"

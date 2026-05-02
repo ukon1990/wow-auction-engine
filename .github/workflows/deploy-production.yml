@@ -57,10 +57,10 @@ jobs:
           else
             git diff --name-only "$parent_sha" HEAD > /tmp/changed-files.txt
           fi
-          classification="$(python scripts/deploy/classify_changes.py < /tmp/changed-files.txt)"
-          echo "app_rollout_required=$(python -c "import json,sys; print(str(json.load(sys.stdin)['app_rollout_required']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
-          echo "infra_apply_required=$(python -c "import json,sys; print(str(json.load(sys.stdin)['infra_apply_required']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
-          echo "relevant_changed=$(python -c "import json,sys; print(str(json.load(sys.stdin)['relevant_changed']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
+          classification="$(python3 scripts/deploy/classify_changes.py < /tmp/changed-files.txt)"
+          echo "app_rollout_required=$(python3 -c "import json,sys; print(str(json.load(sys.stdin)['app_rollout_required']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
+          echo "infra_apply_required=$(python3 -c "import json,sys; print(str(json.load(sys.stdin)['infra_apply_required']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
+          echo "relevant_changed=$(python3 -c "import json,sys; print(str(json.load(sys.stdin)['relevant_changed']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
 
   load-regions:
     needs: classify-changes
@@ -83,9 +83,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          app_name="$(python -c "import json; print(json.load(open('infra/regions.json'))['app_name'])")"
-          environment="$(python -c "import json; print(json.load(open('infra/regions.json'))['environment'])")"
-          project_tag="$(python -c "import json; print(json.load(open('infra/regions.json'))['project_tag'])")"
+          app_name="$(python3 -c "import json; print(json.load(open('infra/regions.json'))['app_name'])")"
+          environment="$(python3 -c "import json; print(json.load(open('infra/regions.json'))['environment'])")"
+          project_tag="$(python3 -c "import json; print(json.load(open('infra/regions.json'))['project_tag'])")"
           echo "app_name=$app_name" >> "$GITHUB_OUTPUT"
           echo "environment=$environment" >> "$GITHUB_OUTPUT"
           echo "project_tag=$project_tag" >> "$GITHUB_OUTPUT"
@@ -95,7 +95,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          matrix_json="$(python scripts/deploy/render_regions_matrix.py)"
+          matrix_json="$(python3 scripts/deploy/render_regions_matrix.py)"
           echo "matrix=$matrix_json" >> "$GITHUB_OUTPUT"
 
   build-image:

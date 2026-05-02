@@ -70,15 +70,16 @@ The shared classifier lives in `scripts/deploy/classify_changes.py`.
 It conservatively enables work when files could affect:
 
 - backend verification:
-  - `src/**`
-  - `pom.xml`
-  - `mvnw`
-  - `.mvn/**`
-  - `Dockerfile`
+  - `backend/src/**`
+  - `backend/pom.xml`
+  - `backend/mvnw`
+  - `backend/mvnw.cmd`
+  - `backend/.mvn/**`
+  - `backend/Dockerfile`
   - backend CI workflow inputs such as `.github/actions/**`
 - app rollout:
   - runtime/build-affecting code and resources
-  - `Dockerfile`
+  - `backend/Dockerfile`
   - deploy workflows
   - `.github/actions/**`
   - `scripts/deploy/**`

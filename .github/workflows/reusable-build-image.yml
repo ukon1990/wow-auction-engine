@@ -52,6 +52,7 @@ jobs:
           distribution: temurin
           java-version: "25"
           cache: maven
+          cache-dependency-path: backend/pom.xml
 
       - name: Prepare image metadata
         id: meta
@@ -80,7 +81,7 @@ jobs:
             --platform linux/arm64 \
             --tag "localbuild:${IMAGE_TAG}" \
             --load \
-            .
+            backend
         env:
           IMAGE_TAG: ${{ inputs.image_tag }}
 
@@ -103,4 +104,4 @@ jobs:
       - name: Remove transient WAR file
         if: always()
         shell: bash
-        run: rm -f ./app.war
+        run: rm -f backend/app.war

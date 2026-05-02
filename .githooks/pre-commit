@@ -9,16 +9,18 @@ fi
 repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$repo_root"
 
-if [ -f "./mvnw" ]; then
+backend_dir="backend"
+
+if [ -f "${backend_dir}/mvnw" ]; then
   run_maven() {
-    sh "./mvnw" "$@"
+    (cd "$backend_dir" && sh "./mvnw" "$@")
   }
-elif [ -f "./mvnw.cmd" ]; then
+elif [ -f "${backend_dir}/mvnw.cmd" ]; then
   run_maven() {
-    cmd.exe //c mvnw.cmd "$@"
+    (cd "$backend_dir" && cmd.exe //c mvnw.cmd "$@")
   }
 else
-  echo "pre-commit: Maven wrapper not found. Expected ./mvnw or ./mvnw.cmd" >&2
+  echo "pre-commit: Maven wrapper not found. Expected ${backend_dir}/mvnw or ${backend_dir}/mvnw.cmd" >&2
   exit 1
 fi
 
@@ -26,13 +28,13 @@ has_kotlin_files=0
 staged_kotlin_files=()
 
 while IFS= read -r -d '' file; do
-  if [[ "$file" == src/main/kotlin/* && "$file" == *.kt ]]; then
+  if [[ "$file" == "${backend_dir}/src/main/kotlin/"* && "$file" == *.kt ]]; then
     staged_kotlin_files+=("$file")
     has_kotlin_files=1
-  elif [[ "$file" == src/test/kotlin/* && "$file" == *.kt ]]; then
+  elif [[ "$file" == "${backend_dir}/src/test/kotlin/"* && "$file" == *.kt ]]; then
     staged_kotlin_files+=("$file")
     has_kotlin_files=1
-  elif [[ "$file" == *.kts ]]; then
+  elif [[ "$file" == "${backend_dir}/"* && "$file" == *.kts ]]; then
     staged_kotlin_files+=("$file")
     has_kotlin_files=1
   fi

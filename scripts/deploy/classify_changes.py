@@ -12,23 +12,25 @@ def main() -> int:
     changed_files = [line.strip().replace("\\", "/") for line in sys.stdin if line.strip()]
 
     backend_patterns = [
-        "src/**",
-        "pom.xml",
-        "mvnw",
-        ".mvn/**",
-        "Dockerfile",
-        "src/main/resources/**",
-        "src/test/**",
+        "backend/src/**",
+        "backend/pom.xml",
+        "backend/mvnw",
+        "backend/mvnw.cmd",
+        "backend/.mvn/**",
+        "backend/Dockerfile",
+        "backend/src/main/resources/**",
+        "backend/src/test/**",
         ".github/workflows/backend-ci.yml",
         ".github/actions/**",
     ]
     runtime_patterns = [
-        "src/main/**",
-        "src/main/resources/**",
-        "pom.xml",
-        "mvnw",
-        ".mvn/**",
-        "Dockerfile",
+        "backend/src/main/**",
+        "backend/src/main/resources/**",
+        "backend/pom.xml",
+        "backend/mvnw",
+        "backend/mvnw.cmd",
+        "backend/.mvn/**",
+        "backend/Dockerfile",
     ]
     deploy_patterns = [
         ".github/workflows/deploy-production.yml",

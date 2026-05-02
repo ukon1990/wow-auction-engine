@@ -336,7 +336,7 @@ jobs:
           set -euo pipefail
           script_b64="$(base64 -w 0 scripts/deploy/restart-container.sh)"
           export SCRIPT_B64="$script_b64"
-          python - <<'PY' > /tmp/ssm-commands.json
+          python3 - <<'PY' > /tmp/ssm-commands.json
           import json
           import os
 
@@ -442,7 +442,7 @@ jobs:
           if [[ -n "${INSTANCE_ID:-}" && "$INSTANCE_ID" != "None" ]]; then
             script_b64="$(base64 -w 0 scripts/deploy/inspect-container-state.sh)"
             export SCRIPT_B64="$script_b64"
-            python - <<'PY' > /tmp/container-probe-commands.json
+            python3 - <<'PY' > /tmp/container-probe-commands.json
           import json
           import os
 

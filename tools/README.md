@@ -79,15 +79,15 @@ The refresher is config-driven internally and discovers dependent resources recu
 
 By default it updates:
 
-- `src/test/resources/blizzard/profession/index-response.json`
-- `src/test/resources/blizzard/profession/<professionId>-response.json`
-- `src/test/resources/blizzard/profession/<professionId>/skill-tier/<skillTierId>-response.json`
-- `src/test/resources/blizzard/recipe/<recipeId>-response.json`
-- `src/test/resources/blizzard/item/<itemId>-response.json`
-- `src/test/resources/blizzard/modified-crafting/reagent-slot-type/<slotTypeId>-response.json`
-- `src/test/resources/blizzard/profession-recipe-sample-manifest.json`
+- `backend/src/test/resources/blizzard/profession/index-response.json`
+- `backend/src/test/resources/blizzard/profession/<professionId>-response.json`
+- `backend/src/test/resources/blizzard/profession/<professionId>/skill-tier/<skillTierId>-response.json`
+- `backend/src/test/resources/blizzard/recipe/<recipeId>-response.json`
+- `backend/src/test/resources/blizzard/item/<itemId>-response.json`
+- `backend/src/test/resources/blizzard/modified-crafting/reagent-slot-type/<slotTypeId>-response.json`
+- `backend/src/test/resources/blizzard/profession-recipe-sample-manifest.json`
 
-The on-disk layout mirrors the normalized Blizzard API path under `src/test/resources/blizzard`. Media links are intentionally excluded, and broken child links discovered during recursion are skipped instead of failing the whole refresh.
+The on-disk layout mirrors the normalized Blizzard API path under `backend/src/test/resources/blizzard`. Media links are intentionally excluded, and broken child links discovered during recursion are skipped instead of failing the whole refresh.
 
 The refresh also writes a small set of deterministic supplemental test fixtures that are not fetched from Blizzard, such as client-error payloads and focused index responses used by isolated API client tests.
 
@@ -117,7 +117,7 @@ node .\tools\refresh-fixtures.mjs
 Project-root Maven entry point:
 
 ```powershell
-.\mvnw exec:exec@refresh-fixtures
+cd backend; .\mvnw exec:exec@refresh-fixtures
 ```
 
 Dry run:
@@ -129,7 +129,7 @@ node .\tools\refresh-fixtures.mjs --dry-run
 Dry run through Maven:
 
 ```powershell
-.\mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--dry-run'
+cd backend; .\mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--dry-run'
 ```
 
 Refresh only selected professions:
@@ -141,9 +141,8 @@ node .\tools\refresh-fixtures.mjs --profession-id 333,164 --sample-size 8
 Refresh only selected professions through Maven:
 
 ```powershell
-.\mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--profession-id 333,164 --sample-size 8'
+cd backend; .\mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--profession-id 333,164 --sample-size 8'
 ```
 
 The Maven entry point still requires a local `node` executable on `PATH`. Override it with `-Dnode.executable=<path-to-node>` if needed.
-
 

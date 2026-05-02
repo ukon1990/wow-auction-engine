@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -180,9 +181,13 @@ async function getJson(endpointPath, token, { fetchImpl = fetch } = {}) {
 }
 
 function buildPaths(repoRoot) {
+  const baseResources = existsSync(path.join(repoRoot, 'backend', 'pom.xml'))
+    ? path.join(repoRoot, 'backend', 'src/test/resources/blizzard')
+    : path.join(repoRoot, 'src/test/resources/blizzard');
+
   return {
-    baseResources: path.join(repoRoot, 'src/test/resources/blizzard'),
-    manifestFile: path.join(repoRoot, 'src/test/resources/blizzard/profession-recipe-sample-manifest.json'),
+    baseResources,
+    manifestFile: path.join(baseResources, 'profession-recipe-sample-manifest.json'),
   };
 }
 
