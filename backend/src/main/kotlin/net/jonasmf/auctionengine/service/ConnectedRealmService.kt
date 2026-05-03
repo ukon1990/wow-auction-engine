@@ -78,16 +78,8 @@ class ConnectedRealmService(
         }
     }
 
-    private fun communityIdForRegion(region: Region): Int =
-        when (region) {
-            Region.NorthAmerica -> -1
-            Region.Europe -> -2
-            Region.Korea -> -3
-            Region.Taiwan -> -4
-        }
-
     private fun buildCommunityRealmForRegion(region: Region): ConnectedRealm? {
-        val communityId = communityIdForRegion(region)
+        val communityId = CommunityRealms.idFor(region)
         val regionDbo = regionRepository.findById(communityId * -1).orElse(null)
         if (regionDbo == null) {
             log.error(
