@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
+import { FormField, email, form, required } from '@angular/forms/signals';
 
 import { AdminEditableCellComponent } from '../market/admin-editable-cell.component';
 import { CheckboxInputComponent } from './checkbox-input.component';
@@ -27,7 +28,7 @@ import { TextInputComponent } from './text-input.component';
     <ee-pill-toggle
       label="Scope"
       [options]="scopeOptions"
-      activeId="realm"
+      [value]="'realm'"
       [formControl]="scopeControl"
     />
     <ee-admin-editable-cell label="Yield" [formControl]="numberControl" />
@@ -60,10 +61,26 @@ class ReactiveFormControlHostComponent {
 })
 class ErrorStateHostComponent {}
 
+@Component({
+  imports: [FormField, TextInputComponent],
+  template: `<ee-text-input label="Email" [formField]="loginForm.email" />`,
+})
+class SignalFormTextHostComponent {
+  readonly loginModel = signal({ email: '' });
+  readonly loginForm = form(this.loginModel, (p) => {
+    required(p.email, { message: 'Email is required' });
+    email(p.email, { message: 'Enter a valid email' });
+  });
+}
+
 describe('form controls', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ErrorStateHostComponent, ReactiveFormControlHostComponent],
+      imports: [
+        ErrorStateHostComponent,
+        ReactiveFormControlHostComponent,
+        SignalFormTextHostComponent,
+      ],
     }).compileComponents();
   });
 
@@ -115,5 +132,30 @@ describe('form controls', () => {
     expect(input?.required).toBe(true);
     expect(input?.getAttribute('aria-invalid')).toBe('true');
     expect(element.textContent).toContain('Email is required.');
+  });
+
+  it('binds signal form field validation into text input', () => {
+    const fixture = TestBed.createComponent(SignalFormTextHostComponent);
+    fixture.detectChanges();
+
+    const host = fixture.componentInstance;
+    const input = (fixture.nativeElement as HTMLElement).querySelector('input') as HTMLInputElement;
+
+    expect(host.loginForm.email().invalid()).toBe(true);
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+
+    input.value = 'not-an-email';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(host.loginModel().email).toBe('not-an-email');
+    expect(host.loginForm.email().invalid()).toBe(true);
+
+    input.value = 'a@b.co';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(host.loginForm.email().invalid()).toBe(false);
+    expect(input.getAttribute('aria-invalid')).toBe('false');
   });
 });

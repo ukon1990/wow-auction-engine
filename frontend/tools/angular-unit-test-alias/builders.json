@@ -1,0 +1,9 @@
+{
+  "builders": {
+    "unit-test": {
+      "implementation": "./unit-test.cjs",
+      "schema": "./schema.json",
+      "description": "Angular unit-test builder with --config alias compatibility for IDEs."
+    }
+  }
+}

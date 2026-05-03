@@ -172,12 +172,8 @@ export class SymbolIconGridStoryHostComponent {
   template: `
     <div class="flex w-[560px] flex-col gap-6">
       <ee-quality-badge quality="epic" />
-      <ee-search-input
-        label="Search market"
-        placeholder="Search items, reagents, or recipes..."
-        value=""
-      />
-      <ee-pill-toggle label="Market scope" [options]="scopeOptions" activeId="realm" />
+      <ee-search-input label="Search market" placeholder="Search items, reagents, or recipes..." />
+      <ee-pill-toggle label="Market scope" [options]="scopeOptions" [value]="'realm'" />
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -200,11 +196,7 @@ export class QualityBadgeStoryHostComponent {}
   imports: [SearchInputComponent],
   template: `
     <div class="w-[520px]">
-      <ee-search-input
-        label="Search market"
-        placeholder="Search items, reagents, or recipes..."
-        value=""
-      />
+      <ee-search-input label="Search market" placeholder="Search items, reagents, or recipes..." />
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -213,7 +205,7 @@ export class SearchInputStoryHostComponent {}
 
 @Component({
   imports: [PillToggleComponent],
-  template: `<ee-pill-toggle label="Market scope" [options]="options" activeId="realm" />`,
+  template: `<ee-pill-toggle label="Market scope" [options]="options" [value]="'realm'" />`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PillToggleStoryHostComponent {
@@ -382,7 +374,7 @@ export class AdminEditableCellStoryHostComponent {}
       <ee-pill-toggle
         label="Market scope"
         [options]="scopeOptions"
-        activeId="realm"
+        [value]="'realm'"
         formControlName="scope"
       />
       <div class="w-40">

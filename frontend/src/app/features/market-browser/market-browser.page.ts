@@ -6,7 +6,6 @@ import {
   PageFrameComponent,
   SearchInputComponent,
   SideNavComponent,
-  TopNavComponent,
 } from '@ui';
 
 import { MarketBrowserService } from '../../core/services/market-browser.service';
@@ -19,42 +18,31 @@ import { MarketBrowserService } from '../../core/services/market-browser.service
     PageFrameComponent,
     SearchInputComponent,
     SideNavComponent,
-    TopNavComponent,
   ],
   template: `
-    <div class="flex h-screen flex-col overflow-hidden bg-background text-on-surface">
-      <ee-top-nav
-        [items]="viewModel().primaryNavItems"
-        [activeId]="viewModel().activePrimaryNavId"
+    <div class="flex min-h-0 flex-1">
+      <ee-side-nav
+        [items]="viewModel().professionNavItems"
+        [activeId]="viewModel().activeProfessionId"
         [character]="viewModel().character"
-        [mobileDrawerOpen]="mobileNavOpen()"
-        (toggleMobileDrawer)="toggleMobileNav()"
-        (navSelected)="onPrimaryNavSelected($event)"
+        [primaryNavItems]="viewModel().primaryNavItems"
+        [activePrimaryId]="viewModel().activePrimaryNavId"
+        [mobileOpen]="mobileNavOpen()"
+        (mobileOpenChange)="mobileNavOpen.set($event)"
+        (primarySelected)="onPrimaryNavSelected($event)"
+        (selected)="onProfessionSelected($event)"
       />
-      <div class="flex min-h-0 flex-1">
-        <ee-side-nav
-          [items]="viewModel().professionNavItems"
-          [activeId]="viewModel().activeProfessionId"
-          [character]="viewModel().character"
-          [primaryNavItems]="viewModel().primaryNavItems"
-          [activePrimaryId]="viewModel().activePrimaryNavId"
-          [mobileOpen]="mobileNavOpen()"
-          (mobileOpenChange)="mobileNavOpen.set($event)"
-          (primarySelected)="onPrimaryNavSelected($event)"
-          (selected)="onProfessionSelected($event)"
-        />
-        <ee-page-frame title="Market Browser" eyebrow="Exchange Intelligence">
-          <ee-search-input />
-          <div class="flex min-h-0 flex-1 gap-element-gap overflow-hidden">
-            <ee-filter-panel [sections]="viewModel().filterSections" />
-            <ee-market-table
-              [columns]="viewModel().tableColumns"
-              [rows]="viewModel().rows"
-              [summary]="viewModel().paginationSummary"
-            />
-          </div>
-        </ee-page-frame>
-      </div>
+      <ee-page-frame title="Market Browser" eyebrow="Exchange Intelligence">
+        <ee-search-input />
+        <div class="flex min-h-0 flex-1 gap-element-gap overflow-hidden">
+          <ee-filter-panel [sections]="viewModel().filterSections" />
+          <ee-market-table
+            [columns]="viewModel().tableColumns"
+            [rows]="viewModel().rows"
+            [summary]="viewModel().paginationSummary"
+          />
+        </div>
+      </ee-page-frame>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

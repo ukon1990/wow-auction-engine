@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "./frontend",
   "projects": {
-    "The-Ethereal-Exchange": {
+    "EE": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -23,6 +23,7 @@
               "entry": "src/server.ts"
             },
             "outputMode": "server",
+            "outputPath": "dist/The-Ethereal-Exchange",
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -62,18 +63,24 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
-              "buildTarget": "The-Ethereal-Exchange:build:production"
+              "buildTarget": "EE:build:production"
             },
             "development": {
-              "buildTarget": "The-Ethereal-Exchange:build:development"
+              "buildTarget": "EE:build:development"
             }
           },
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@ethereal/angular-unit-test-alias:unit-test",
+          "options": {
+            "include": ["**/*.spec.ts", "../ethereal-ui/src/**/*.spec.ts"]
+          }
         }
       }
     },
@@ -96,7 +103,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular/build:unit-test",
+          "builder": "@ethereal/angular-unit-test-alias:unit-test",
           "options": {
             "tsConfig": "ethereal-ui/tsconfig.spec.json"
           }

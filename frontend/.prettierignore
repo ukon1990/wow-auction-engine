@@ -1,2 +1,5 @@
+# Angular build cache (generated)
+.angular
+
 # OpenAPI Generator output (machine-written; keep generator formatting)
 src/app/api/generated

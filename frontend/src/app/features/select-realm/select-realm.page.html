@@ -1,0 +1,55 @@
+<section class="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-12 sm:py-20">
+  <header class="text-center">
+    <p class="ee-data uppercase text-outline">The Ethereal Exchange</p>
+    <h1
+      class="font-cinzel text-3xl font-bold text-primary-container drop-shadow-[0_0_8px_rgba(236,185,19,0.4)] sm:text-4xl"
+    >
+      Welcome, traveler
+    </h1>
+    <p class="mt-3 text-on-surface/80">Choose a realm to begin browsing its auction house.</p>
+  </header>
+
+  <ee-search-input
+    label="Search realms"
+    placeholder="Search by realm name, slug, or region"
+    [value]="query()"
+    (valueChanged)="onQueryChanged($event)"
+  />
+
+  @if (loading()) {
+    <p class="text-center text-outline" role="status">Loading realms…</p>
+  } @else if (error()) {
+    <p class="text-center text-error" role="alert">{{ error() }}</p>
+  } @else {
+    <div class="flex items-baseline justify-between">
+      <h2 class="ee-section-heading text-on-surface">Realms</h2>
+      <span class="ee-data text-outline">{{ resultsLabel() }}</span>
+    </div>
+
+    @if (filtered().length === 0) {
+      <p class="text-center text-outline">No realms match your search.</p>
+    } @else {
+      <ul class="flex flex-col gap-2" role="listbox" aria-label="Available realms">
+        @for (realm of filtered(); track trackByKey($index, realm)) {
+          <li>
+            <button
+              type="button"
+              class="flex w-full items-center justify-between rounded-lg border border-white/10 bg-surface-container-highest px-4 py-3 text-left transition hover:border-primary/40 hover:bg-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary"
+              role="option"
+              [attr.aria-label]="realm.name + ' on ' + realm.region.toUpperCase()"
+              (click)="select(realm)"
+            >
+              <span class="flex flex-col">
+                <span class="font-cinzel text-base text-on-surface">{{ realm.name }}</span>
+                <span class="ee-data text-outline"
+                  >{{ realm.category }} · {{ realm.timezone }}</span
+                >
+              </span>
+              <span class="ee-data text-primary-container">{{ realm.region.toUpperCase() }}</span>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>

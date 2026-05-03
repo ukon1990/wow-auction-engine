@@ -1,0 +1,18 @@
+type: object
+required: [region, name, category, slug, locale, timezone]
+properties:
+  region:
+    type: string
+    enum: [us, eu, kr, tw]
+  name:
+    type: string
+  category:
+    type: string
+  slug:
+    type: string
+    description: Unique within a region; combined with `region` forms the natural key.
+  locale:
+    type: string
+    description: Blizzard locale, e.g. en_US
+  timezone:
+    type: string

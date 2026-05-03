@@ -1,0 +1,18 @@
+type: object
+required: [connectedRealmId]
+properties:
+  connectedRealmId:
+    type: integer
+    format: int32
+  lastDailyPriceUpdate:
+    type: string
+    format: date-time
+    nullable: true
+  lastModified:
+    type: string
+    format: date-time
+    nullable: true
+  nextUpdate:
+    type: string
+    format: date-time
+    nullable: true

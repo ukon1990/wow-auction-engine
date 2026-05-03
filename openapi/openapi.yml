@@ -8,6 +8,12 @@ servers:
 tags:
   - name: Health
     description: Runtime health endpoints.
+  - name: Realm
+    description: Realm catalog and per-realm auction house status.
 paths:
   /health:
     $ref: ./paths/health.yml
+  /realms:
+    $ref: ./paths/realm.yml
+  /realms/{region}/{slug}:
+    $ref: ./paths/realm-detail.yml

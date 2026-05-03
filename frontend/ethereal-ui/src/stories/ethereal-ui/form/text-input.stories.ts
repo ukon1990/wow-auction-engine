@@ -11,7 +11,7 @@ const meta: Meta<TextInputComponent> = {
     docs: {
       description: {
         component:
-          'Single-line text input. Supports standard input/output binding and Angular reactive forms through ControlValueAccessor.',
+          'Single-line text input. Supports `ControlValueAccessor` (reactive forms), `FormValueControl` (`[formField]` / signal forms), and two-way `value` model binding.',
       },
     },
   },

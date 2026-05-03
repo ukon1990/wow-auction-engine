@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/vitest",
+    "target": "es2022",
+    "types": ["vitest/globals", "node"]
+  },
+  "files": ["tools/vitest.setup.ts"],
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.spec.ts",
+    "ethereal-ui/src/**/*.d.ts",
+    "ethereal-ui/src/**/*.spec.ts"
+  ]
+}

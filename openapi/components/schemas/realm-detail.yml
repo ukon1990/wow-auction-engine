@@ -1,0 +1,9 @@
+type: object
+required: [realm, auctionHouse, community]
+properties:
+  realm:
+    $ref: ./realm.yml
+  auctionHouse:
+    $ref: ./auction-house-status.yml
+  community:
+    $ref: ./auction-house-status.yml

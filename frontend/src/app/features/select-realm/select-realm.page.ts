@@ -1,0 +1,80 @@
+import { isPlatformBrowser } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
+import { Router } from '@angular/router';
+import { SearchInputComponent } from '@ui';
+
+import { Realm } from '../../api/generated';
+import { RealmSelectionService } from '@core/services/realm-selection.service';
+
+@Component({
+  selector: 'app-select-realm-page',
+  imports: [SearchInputComponent],
+  templateUrl: './select-realm.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class SelectRealmPage {
+  private readonly selection = inject(RealmSelectionService);
+  private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
+
+  protected readonly query = signal('');
+  protected readonly loading = signal(true);
+  protected readonly error = signal<string | null>(null);
+
+  protected readonly realms = this.selection.realms;
+  protected readonly filtered = computed<readonly Realm[]>(() => {
+    const needle = this.query().trim().toLowerCase();
+    const list = this.realms();
+    if (!needle) return list.slice(0, 50);
+    return list
+      .filter(
+        (realm) =>
+          realm.name.toLowerCase().includes(needle) ||
+          realm.slug.toLowerCase().includes(needle) ||
+          realm.region.toLowerCase().includes(needle),
+      )
+      .slice(0, 50);
+  });
+
+  protected readonly resultsLabel = computed(() => {
+    const total = this.realms().length;
+    const shown = this.filtered().length;
+    if (total === 0) return '';
+    return shown < total ? `Showing ${shown} of ${total} realms` : `${total} realms`;
+  });
+
+  constructor() {
+    if (!isPlatformBrowser(this.platformId)) {
+      this.loading.set(false);
+      return;
+    }
+    this.selection
+      .ensureCatalogLoaded()
+      .then(() => this.loading.set(false))
+      .catch((err: unknown) => {
+        console.error('Failed to load realms', err);
+        this.error.set('Could not load realm list. Please try again later.');
+        this.loading.set(false);
+      });
+  }
+
+  protected onQueryChanged(value: string): void {
+    this.query.set(value);
+  }
+
+  protected select(realm: Realm): void {
+    this.selection.select(realm);
+    void this.router.navigate(['/', realm.region, realm.slug]);
+  }
+
+  protected trackByKey(_: number, realm: Realm): string {
+    return `${realm.region}:${realm.slug}`;
+  }
+}

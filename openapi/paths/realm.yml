@@ -1,0 +1,15 @@
+get:
+  tags:
+    - Realm
+  operationId: listRealms
+  summary: List all known realms across configured regions
+  description: Returns a flat list with one entry per individual realm.
+  responses:
+    "200":
+      description: Flat list of realms (one entry per individual realm).
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: ../components/schemas/realm.yml

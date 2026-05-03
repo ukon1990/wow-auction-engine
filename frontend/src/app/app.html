@@ -1,1 +1,11 @@
-<router-outlet />
+<div class="flex h-screen flex-col overflow-hidden bg-background text-on-surface">
+  <ee-top-nav
+    [items]="menu.links()"
+    [activeId]="'dashboard'"
+    [character]="character()"
+    [mobileDrawerOpen]="mobileNavOpen()"
+    (toggleMobileDrawer)="toggleMobileNav()"
+    (navSelected)="onPrimaryNavSelected($event)"
+  />
+  <router-outlet />
+</div>

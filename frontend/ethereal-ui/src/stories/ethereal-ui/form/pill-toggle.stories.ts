@@ -11,14 +11,14 @@ const meta: Meta<PillToggleComponent> = {
     docs: {
       description: {
         component:
-          'Segmented pill control for choosing one value from a small option set. Supports Angular reactive forms through ControlValueAccessor.',
+          'Segmented pill control for one value from a small set. Supports reactive forms (CVA) and signal forms (`FormValueControl`, `[formField]`). Initial selection uses the `value` model.',
       },
     },
   },
   argTypes: {
-    activeId: {
+    value: {
       control: 'select',
-      options: ['realm', 'region'],
+      options: ['realm', 'region', ''],
     },
     disabled: { control: 'boolean' },
     required: { control: 'boolean' },
@@ -33,7 +33,7 @@ export default meta;
 export const PillToggle: StoryObj<PillToggleComponent> = {
   args: {
     label: 'Market scope',
-    activeId: 'realm',
+    value: 'realm',
     disabled: false,
     required: false,
     invalid: false,
@@ -48,7 +48,7 @@ export const PillToggle: StoryObj<PillToggleComponent> = {
 export const PillToggleErrorState: StoryObj<PillToggleComponent> = {
   args: {
     label: 'Market scope',
-    activeId: '',
+    value: '',
     disabled: false,
     required: true,
     invalid: true,
