@@ -4,7 +4,9 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "@ui": ["./ethereal-ui/src/public-api.ts"]
+      "@ui": ["./ethereal-ui/src/public-api.ts"],
+      "@core/*": ["./src/app/core/*"],
+      "@features/*": ["./src/app/features/*"]
     },
     "strict": true,
     "noImplicitOverride": true,
