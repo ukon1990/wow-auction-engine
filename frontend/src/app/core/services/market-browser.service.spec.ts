@@ -1,14 +1,22 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 
 import { MarketBrowserService } from './market-browser.service';
 
 describe('MarketBrowserService', () => {
-  it('returns the dummy Market Browser view model', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideRouter([])],
+    });
+  });
+
+  it('starts with an empty API-backed Market Browser view model', () => {
     const service = TestBed.inject(MarketBrowserService);
     const viewModel = service.viewModel();
 
     expect(viewModel.activePrimaryNavId).toBe('market-browser');
-    expect(viewModel.rows.length).toBeGreaterThan(0);
-    expect(viewModel.rows.some((row) => row.selected)).toBe(true);
+    expect(viewModel.rows.length).toBe(0);
+    expect(viewModel.paginationSummary).toBe('Loading market items...');
   });
 });
