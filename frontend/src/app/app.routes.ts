@@ -2,6 +2,7 @@ import { Route } from '@angular/router';
 
 export type TitledRoutes = (Route & {
   icon: string;
+  children?: TitledRoutes;
 })[];
 
 export const routes: TitledRoutes = [

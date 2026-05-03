@@ -14,7 +14,7 @@ export interface NavItem {
   readonly icon: string;
   /** When set, the entry renders as a router link instead of a button. */
   readonly routerLink?: string | readonly (string | number)[];
-  readonly children: NavItem[];
+  readonly children?: readonly NavItem[];
 }
 
 export interface CharacterSummary {

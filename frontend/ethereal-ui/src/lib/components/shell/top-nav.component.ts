@@ -71,7 +71,7 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopNavComponent {
-  readonly items = input.required<NavItem[]>();
+  readonly items = input.required<readonly NavItem[]>();
   readonly activeId = input.required<string>();
   readonly character = input.required<CharacterSummary>();
   readonly mobileDrawerOpen = input(false);
