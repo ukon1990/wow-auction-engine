@@ -1,0 +1,14 @@
+type: object
+required:
+  - items
+  - page
+  - sort
+properties:
+  items:
+    type: array
+    items:
+      $ref: ./auction-market-search-row.yml
+  page:
+    $ref: ./page-metadata.yml
+  sort:
+    $ref: ./auction-market-sort.yml

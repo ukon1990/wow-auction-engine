@@ -10,6 +10,8 @@ tags:
     description: Runtime health endpoints.
   - name: Realm
     description: Realm catalog and per-realm auction house status.
+  - name: AuctionMarket
+    description: Auction market search and filter metadata.
 paths:
   /health:
     $ref: ./paths/health.yml
@@ -17,3 +19,7 @@ paths:
     $ref: ./paths/realm.yml
   /realms/{region}/{slug}:
     $ref: ./paths/realm-detail.yml
+  /auctions/market-search:
+    $ref: ./paths/auction-market-search.yml
+  /auctions/market-search/filters:
+    $ref: ./paths/auction-market-search-filters.yml

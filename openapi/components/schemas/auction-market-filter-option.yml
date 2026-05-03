@@ -1,0 +1,12 @@
+type: object
+required:
+  - id
+  - label
+properties:
+  id:
+    type: string
+  label:
+    type: string
+  parentId:
+    type: string
+    nullable: true

@@ -1,0 +1,25 @@
+type: object
+required:
+  - connectedRealmId
+properties:
+  connectedRealmId:
+    type: integer
+  timestamp:
+    type: string
+    format: date-time
+    nullable: true
+  date:
+    type: string
+    format: date
+    nullable: true
+  hourOfDay:
+    type: integer
+    nullable: true
+  price:
+    type: integer
+    format: int64
+    nullable: true
+  quantity:
+    type: integer
+    format: int64
+    nullable: true

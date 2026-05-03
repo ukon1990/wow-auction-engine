@@ -1,0 +1,8 @@
+type: object
+required:
+  - filters
+properties:
+  filters:
+    type: array
+    items:
+      $ref: ./auction-market-filter.yml
