@@ -40,17 +40,81 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
             )
 
         assertEquals(1, result.page.totalItems)
-        assertEquals("Healing Potion", result.items.single().item.name)
-        assertEquals("https://media.example/item.png", result.items.single().item.mediaUrl)
-        assertEquals(2, result.items.single().item.itemClass?.id)
-        assertEquals(7, result.items.single().item.itemSubclass?.id)
-        assertEquals(7001, result.items.single().item.recipe?.id)
-        assertEquals(1084, result.items.single().selectedRealm?.connectedRealmId)
-        assertEquals(11, result.items.single().selectedRealm?.hourOfDay)
-        assertEquals(1_000L, result.items.single().selectedRealm?.price)
-        assertEquals(-2, result.items.single().community?.connectedRealmId)
-        assertEquals(10, result.items.single().community?.hourOfDay)
-        assertEquals(900L, result.items.single().community?.price)
+        assertEquals(
+            "Healing Potion",
+            result.items
+                .single()
+                .item.name,
+        )
+        assertEquals(
+            "https://media.example/item.png",
+            result.items
+                .single()
+                .item.mediaUrl,
+        )
+        assertEquals(
+            2,
+            result.items
+                .single()
+                .item.itemClass
+                ?.id,
+        )
+        assertEquals(
+            7,
+            result.items
+                .single()
+                .item.itemSubclass
+                ?.id,
+        )
+        assertEquals(
+            7001,
+            result.items
+                .single()
+                .item.recipe
+                ?.id,
+        )
+        assertEquals(
+            1084,
+            result.items
+                .single()
+                .selectedRealm
+                ?.connectedRealmId,
+        )
+        assertEquals(
+            11,
+            result.items
+                .single()
+                .selectedRealm
+                ?.hourOfDay,
+        )
+        assertEquals(
+            1_000L,
+            result.items
+                .single()
+                .selectedRealm
+                ?.price,
+        )
+        assertEquals(
+            -2,
+            result.items
+                .single()
+                .community
+                ?.connectedRealmId,
+        )
+        assertEquals(
+            10,
+            result.items
+                .single()
+                .community
+                ?.hourOfDay,
+        )
+        assertEquals(
+            900L,
+            result.items
+                .single()
+                .community
+                ?.price,
+        )
     }
 
     @Test
@@ -78,7 +142,12 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
             )
 
         assertEquals(1, result.page.totalItems)
-        assertEquals("Heiltrank", result.items.single().item.name)
+        assertEquals(
+            "Heiltrank",
+            result.items
+                .single()
+                .item.name,
+        )
         assertEquals(1, result.page.totalPages)
     }
 

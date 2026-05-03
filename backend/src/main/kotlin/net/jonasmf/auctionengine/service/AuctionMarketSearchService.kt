@@ -22,7 +22,6 @@ import net.jonasmf.auctionengine.utility.resolveZone
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
-import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -115,9 +114,28 @@ class AuctionMarketSearchService(
                                 id = row.itemId,
                                 name = row.itemName,
                                 mediaUrl = row.itemMediaUrl,
-                                quality = row.qualityId?.let { AuctionMarketNamedId(it, row.qualityName.orEmpty(), row.qualityType) },
-                                itemClass = row.itemClassId?.let { AuctionMarketNamedId(it, row.itemClassName.orEmpty()) },
-                                itemSubclass = row.itemSubclassId?.let { AuctionMarketNamedId(it, row.itemSubclassName.orEmpty()) },
+                                quality =
+                                    row.qualityId?.let {
+                                        AuctionMarketNamedId(
+                                            it,
+                                            row.qualityName.orEmpty(),
+                                            row.qualityType,
+                                        )
+                                    },
+                                itemClass =
+                                    row.itemClassId?.let {
+                                        AuctionMarketNamedId(
+                                            it,
+                                            row.itemClassName.orEmpty(),
+                                        )
+                                    },
+                                itemSubclass =
+                                    row.itemSubclassId?.let {
+                                        AuctionMarketNamedId(
+                                            it,
+                                            row.itemSubclassName.orEmpty(),
+                                        )
+                                    },
                                 recipe =
                                     row.recipeId?.let {
                                         AuctionMarketRecipe(
@@ -252,7 +270,12 @@ class AuctionMarketSearchService(
         val communityConnectedRealm =
             connectedRealmRepository
                 .findById(CommunityRealms.idFor(region))
-                .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Community realm not found for $regionCode") }
+                .orElseThrow {
+                    ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Community realm not found for $regionCode",
+                    )
+                }
         val locale = localeOverride?.takeIf { it.isNotBlank() }?.parseLocale() ?: selectedRealm.locale
 
         return MarketContext(
@@ -296,7 +319,10 @@ class AuctionMarketSearchService(
         max: Long?,
     ) {
         if (min != null && max != null && min > max) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid $label range: min must be less than or equal to max")
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Invalid $label range: min must be less than or equal to max",
+            )
         }
     }
 

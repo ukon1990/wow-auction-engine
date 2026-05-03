@@ -106,11 +106,13 @@ class AuctionMarketSearchRepository(
                 """
                 SELECT
                     d.item_id,
-                    COALESCE(d.item_name_${request.localeColumnSuffix}, d.item_name_en_gb, d.item_name_en_us) AS item_name,
+                    COALESCE(d.item_name_${request.localeColumnSuffix},
+                    d.item_name_en_gb, d.item_name_en_us) AS item_name,
                     d.item_media_url,
                     d.quality_id,
                     d.quality_type,
-                    COALESCE(d.quality_name_${request.localeColumnSuffix}, d.quality_name_en_gb, d.quality_name_en_us) AS quality_name,
+                    COALESCE(d.quality_name_${request.localeColumnSuffix},
+                    d.quality_name_en_gb, d.quality_name_en_us) AS quality_name,
                     d.item_class_id,
                     COALESCE(d.item_class_name_${request.localeColumnSuffix}, d.item_class_name_en_gb, d.item_class_name_en_us) AS item_class_name,
                     d.item_subclass_id,
@@ -248,7 +250,7 @@ class AuctionMarketSearchRepository(
                            AND hour_of_day = ?
                          GROUP BY item_id
                      ) c ON c.item_id = d.item_id
-        """.trimIndent()
+            """.trimIndent()
     }
 
     private fun buildWhereSql(
@@ -256,8 +258,10 @@ class AuctionMarketSearchRepository(
         params: MutableList<Any?>,
     ): String {
         val predicates = mutableListOf<String>()
-        val itemNameColumn = "COALESCE(d.item_name_${request.localeColumnSuffix}, d.item_name_en_gb, d.item_name_en_us)"
-        val recipeNameColumn = "COALESCE(d.recipe_name_${request.localeColumnSuffix}, d.recipe_name_en_gb, d.recipe_name_en_us)"
+        val itemNameColumn =
+            "COALESCE(d.item_name_${request.localeColumnSuffix}, d.item_name_en_gb, d.item_name_en_us)"
+        val recipeNameColumn =
+            "COALESCE(d.recipe_name_${request.localeColumnSuffix}, d.recipe_name_en_gb, d.recipe_name_en_us)"
 
         request.query?.trim()?.takeIf { it.isNotEmpty() }?.let {
             predicates.add("($itemNameColumn LIKE ? ESCAPE '!' OR $recipeNameColumn LIKE ? ESCAPE '!')")
