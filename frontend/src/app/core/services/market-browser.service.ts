@@ -8,10 +8,7 @@ import { MarketBrowserViewModel } from '../models/market-browser.models';
 export class MarketBrowserService {
   private readonly marketBrowser = signal<MarketBrowserViewModel>({
     primaryNavItems: [
-      { id: 'scrying-pool', label: 'Scrying Pool', icon: 'query_stats' },
-      { id: 'market-browser', label: 'Market Browser', icon: 'travel_explore' },
-      { id: 'crafting-matrix', label: 'Crafting Matrix', icon: 'schema' },
-      { id: 'archive', label: 'Archive', icon: 'inventory_2' },
+      // TODO: remove
     ],
     activePrimaryNavId: 'market-browser',
     professionNavItems: [

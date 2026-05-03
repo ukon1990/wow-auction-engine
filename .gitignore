@@ -42,3 +42,5 @@ build/
 *.log
 
 docker/dynamodb/shared-local-instance.db
+
+.DS_Store

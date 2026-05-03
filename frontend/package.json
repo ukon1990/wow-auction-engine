@@ -8,6 +8,7 @@
     "prebuild": "bun run generate:api",
     "build": "ng build",
     "format:check": "prettier --check .",
+    "format:check:write": "prettier --check . -write",
     "lint": "eslint .",
     "storybook": "ng run ethereal-ui:storybook",
     "build-storybook": "ng run ethereal-ui:build-storybook",
