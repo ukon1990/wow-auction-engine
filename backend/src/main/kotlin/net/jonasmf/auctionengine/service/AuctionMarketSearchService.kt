@@ -164,6 +164,7 @@ class AuctionMarketSearchService(
                                             )
                                         },
                                 ),
+                            preferredScope = preferredScopeFor(row.selectedPrice, row.selectedQuantity, row.commodityPrice, row.commodityQuantity),
                             listingKey =
                                 AuctionListingKey(
                                     bonusKey = row.selectedBonusKey,
@@ -392,6 +393,17 @@ class AuctionMarketSearchService(
     private fun elapsedMs(startNanos: Long): Long = (System.nanoTime() - startNanos) / 1_000_000
 
     private fun requestId(): String = MDC.get("requestId") ?: "-"
+
+    private fun preferredScopeFor(
+        selectedPrice: Long?,
+        selectedQuantity: Long?,
+        commodityPrice: Long?,
+        commodityQuantity: Long?,
+    ): String {
+        val hasSelected = selectedPrice != null || selectedQuantity != null
+        val hasCommodity = commodityPrice != null || commodityQuantity != null
+        return if (!hasSelected && hasCommodity) "commodity" else "realm"
+    }
 
     private fun buildFiltersCacheKey(
         regionCode: String,

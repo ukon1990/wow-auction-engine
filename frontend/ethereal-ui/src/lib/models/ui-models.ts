@@ -60,6 +60,7 @@ export interface MarketListingKey {
 export interface MarketItemRow {
   readonly id: string;
   readonly name: string;
+  readonly preferredScope?: 'realm' | 'commodity';
   readonly listingKey?: MarketListingKey;
   readonly itemClassName?: string;
   readonly itemSubclassName?: string;

@@ -556,9 +556,11 @@ function toMarketRow(row: AuctionMarketSearchRow): MarketItemRow {
   const listingPriceCopper = row.selectedRealm?.price ?? row.commodity?.price;
   const listingQuantity = row.selectedRealm?.quantity ?? row.commodity?.quantity;
   const mergedCurrency = copperToCurrencyAmount(listingPriceCopper);
+  const preferredScope = readPreferredScope(row);
   return {
     id: String(row.item.id),
     name: row.item.name,
+    preferredScope,
     listingKey: row.listingKey
       ? {
           bonusKey: row.listingKey.bonusKey,
@@ -576,6 +578,11 @@ function toMarketRow(row: AuctionMarketSearchRow): MarketItemRow {
     saleRate: 0,
     selectedQuantity: listingQuantity ?? undefined,
   };
+}
+
+function readPreferredScope(row: AuctionMarketSearchRow): 'realm' | 'commodity' | undefined {
+  const raw = row.preferredScope;
+  return raw === 'commodity' || raw === 'realm' ? raw : undefined;
 }
 
 function toQuality(value: string | undefined): ItemQuality {

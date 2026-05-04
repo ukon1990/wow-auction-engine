@@ -1,9 +1,13 @@
 type: object
 required:
   - item
+  - preferredScope
 properties:
   item:
     $ref: ./auction-market-item.yml
+  preferredScope:
+    type: string
+    description: Preferred detail scope for this row (`realm` or `commodity`).
   listingKey:
     $ref: ./auction-listing-key.yml
     description: Bucket that supplied selectedRealm price (lowest unit price at snapshot hour).

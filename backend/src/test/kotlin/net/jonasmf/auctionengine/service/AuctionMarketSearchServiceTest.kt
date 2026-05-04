@@ -116,6 +116,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
                 .commodity
                 ?.price,
         )
+        assertEquals("realm", result.items.single().preferredScope)
     }
 
     @Test
@@ -148,6 +149,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
         assertNull(row.selectedRealm?.quantity)
         assertEquals(555L, row.commodity?.price)
         assertEquals(99L, row.commodity?.quantity)
+        assertEquals("commodity", row.preferredScope)
     }
 
     @Test

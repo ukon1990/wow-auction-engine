@@ -441,12 +441,14 @@ export class MarketItemDetailPage {
           realmSlug: realmPm.get('realm'),
           itemId: Number(itemPm.get('itemId')),
           variant: variantFromQuery(q),
+          initialScope: scopeFromQuery(q),
         })),
         distinctUntilChanged(
           (a, b) =>
             a.region === b.region &&
             a.realmSlug === b.realmSlug &&
             a.itemId === b.itemId &&
+            a.initialScope === b.initialScope &&
             variantEqual(a.variant, b.variant),
         ),
         switchMap((ctx) => {
@@ -466,9 +468,9 @@ export class MarketItemDetailPage {
           this.loading.set(true);
           this.error.set(false);
           this.commodityLoaded.set(false);
-          this.chartScope.set('realm');
+          this.chartScope.set(ctx.initialScope);
           return this.detailService
-            .loadItemDetail(ctx.region, ctx.realmSlug, ctx.itemId, ctx.variant, 'realm')
+            .loadItemDetail(ctx.region, ctx.realmSlug, ctx.itemId, ctx.variant, ctx.initialScope)
             .pipe(
               finalize(() => this.loading.set(false)),
               catchError(() => {
@@ -483,6 +485,10 @@ export class MarketItemDetailPage {
       .subscribe((res) => {
         if (res) {
           this.detail.set(res);
+          if (shouldFallbackToCommodityFetch(res)) {
+            this.onScopeSelected('commodity');
+            return;
+          }
           if (shouldUseCommodityScopeByDefault(res)) {
             this.chartScope.set('commodity');
           } else {
@@ -707,6 +713,10 @@ function variantEqual(a: ItemDetailVariantParams, b: ItemDetailVariantParams): b
   );
 }
 
+function scopeFromQuery(q: ParamMap): ItemDetailScope {
+  return q.get('scope') === 'commodity' ? 'commodity' : 'realm';
+}
+
 function isRegion(value: string | null | undefined): value is RegionCode {
   return value === 'us' || value === 'eu' || value === 'kr' || value === 'tw';
 }
@@ -724,12 +734,29 @@ function shouldUseCommodityScopeByDefault(d: AuctionMarketItemDetailResponse): b
   return d.regionalMetricsRedundant || !hasRealmScopeMetrics(d.summary);
 }
 
+function shouldFallbackToCommodityFetch(d: AuctionMarketItemDetailResponse): boolean {
+  return (
+    !d.regionalMetricsRedundant &&
+    !hasRealmScopeMetrics(d.summary) &&
+    !hasCommodityScopeMetrics(d.summary)
+  );
+}
+
 function hasRealmScopeMetrics(summary: AuctionMarketItemDetailSummary): boolean {
   const realmPrice = summary.selectedRealmPrice;
   const realmQty = summary.selectedRealmQuantity;
   return (
     (realmPrice != null && Number.isFinite(realmPrice)) ||
     (realmQty != null && Number.isFinite(realmQty))
+  );
+}
+
+function hasCommodityScopeMetrics(summary: AuctionMarketItemDetailSummary): boolean {
+  const commodityPrice = summary.commodityPrice;
+  const commodityQty = summary.commodityQuantity;
+  return (
+    (commodityPrice != null && Number.isFinite(commodityPrice)) ||
+    (commodityQty != null && Number.isFinite(commodityQty))
   );
 }
 

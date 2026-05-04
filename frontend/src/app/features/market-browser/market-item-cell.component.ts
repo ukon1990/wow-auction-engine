@@ -58,12 +58,19 @@ export class MarketItemCellComponent {
   }
 
   protected variantQueryParams(): Record<string, string | number> | undefined {
-    const lk = this.row().listingKey;
-    if (!lk) return undefined;
+    const row = this.row();
+    const lk = row.listingKey;
+    const scope = row.preferredScope;
+    if (!lk && !scope) return undefined;
     return {
-      bonusKey: lk.bonusKey,
-      modifierKey: lk.modifierKey,
-      petSpeciesId: lk.petSpeciesId,
+      ...(lk
+        ? {
+            bonusKey: lk.bonusKey,
+            modifierKey: lk.modifierKey,
+            petSpeciesId: lk.petSpeciesId,
+          }
+        : {}),
+      ...(scope ? { scope } : {}),
     };
   }
 
