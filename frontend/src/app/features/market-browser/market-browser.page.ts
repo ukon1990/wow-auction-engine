@@ -14,6 +14,7 @@ import {
   FilterPanelComponent,
   PageFrameComponent,
   SearchInputComponent,
+  SymbolIconComponent,
   TableComponent,
 } from '@ui';
 import type { MarketItemRow, SortingState } from '@ui';
@@ -39,6 +40,7 @@ import {
     PageFrameComponent,
     SearchInputComponent,
     // SideNavComponent,
+    SymbolIconComponent,
     TableComponent,
   ],
   template: `
@@ -56,18 +58,21 @@ import {
         (selected)="onProfessionSelected($event)"
       />*/}}-->
       <ee-page-frame title="Market Browser" eyebrow="Search the auction house">
-        <ee-search-input
-          [value]="viewModel().searchQuery"
-          (valueChanged)="onSearchChanged($event)"
-        />
-        <div class="flex lg:hidden">
+        <div class="flex items-center gap-2">
+          <ee-search-input
+            class="min-w-0 flex-1"
+            [value]="viewModel().searchQuery"
+            (valueChanged)="onSearchChanged($event)"
+          />
           <button
             type="button"
-            class="inline-flex items-center gap-2 rounded border border-white/10 bg-surface-container-high px-4 py-2 ee-label text-on-surface transition hover:bg-surface-container-highest"
+            class="inline-flex shrink-0 items-center gap-2 rounded border border-white/10 bg-surface-container-high px-4 py-2 ee-label text-on-surface transition hover:bg-surface-container-highest lg:hidden"
+            aria-label="Open filters"
             aria-haspopup="dialog"
             [attr.aria-expanded]="mobileFiltersOpen()"
             (click)="openMobileFilters()"
           >
+            <ee-symbol-icon class="text-base" name="filter_alt" aria-hidden="true" />
             Filters
           </button>
         </div>
@@ -103,41 +108,49 @@ import {
             (nextPage)="onNextPage()"
           />
         </div>
-        @if (mobileFiltersOpen()) {
+        <div
+          class="fixed inset-0 z-50 flex transition-opacity duration-300 lg:hidden"
+          [class.pointer-events-none]="!mobileFiltersOpen()"
+          [class.opacity-0]="!mobileFiltersOpen()"
+          [class.opacity-100]="mobileFiltersOpen()"
+          [attr.inert]="mobileFiltersOpen() ? null : ''"
+          [attr.aria-hidden]="!mobileFiltersOpen()"
+          [attr.role]="mobileFiltersOpen() ? 'dialog' : null"
+          [attr.aria-modal]="mobileFiltersOpen() ? 'true' : null"
+          [attr.aria-label]="mobileFiltersOpen() ? 'Filter options' : null"
+        >
+          <button
+            type="button"
+            class="flex-1 bg-black/60 transition-opacity duration-300"
+            aria-label="Close filters"
+            (click)="closeMobileFilters()"
+          ></button>
           <div
-            class="fixed inset-0 z-50 flex lg:hidden"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Filter options"
+            class="flex h-full min-h-0 w-[min(22rem,90vw)] flex-col overflow-hidden border-l border-white/10 bg-surface p-4 transition-transform duration-300 ease-out"
+            [class.translate-x-full]="!mobileFiltersOpen()"
+            [class.translate-x-0]="mobileFiltersOpen()"
           >
-            <button
-              type="button"
-              class="flex-1 bg-black/60"
-              aria-label="Close filters"
-              (click)="closeMobileFilters()"
-            ></button>
-            <div class="flex h-full w-[min(22rem,90vw)] flex-col border-l border-white/10 bg-surface p-4">
-              <div class="mb-3 flex items-center justify-between gap-2">
-                <h2 class="ee-section-heading text-primary">Filters</h2>
-                <button
-                  type="button"
-                  class="rounded border border-white/10 bg-surface-container-high px-3 py-1.5 ee-label text-on-surface transition hover:bg-surface-container-highest"
-                  (click)="closeMobileFilters()"
-                >
-                  Close
-                </button>
-              </div>
-              <ee-filter-panel
-                panelClass="ee-glass flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-lg"
-                [sections]="viewModel().filterSections"
-                (optionToggled)="onMobileFilterToggled($event)"
-                (optionSelected)="onMobileFilterSelected($event)"
-                (rangeChanged)="onMobileRangeChanged($event)"
-                (reset)="onMobileFiltersReset()"
-              />
+            <div class="mb-3 flex items-center justify-between gap-2">
+              <h2 class="ee-section-heading text-primary">Filters</h2>
+              <button
+                type="button"
+                class="rounded border border-white/10 bg-surface-container-high px-3 py-1.5 ee-label text-on-surface transition hover:bg-surface-container-highest"
+                (click)="closeMobileFilters()"
+              >
+                Close
+              </button>
             </div>
+            <ee-filter-panel
+              class="flex min-h-0 flex-1"
+              panelClass="ee-glass flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-lg"
+              [sections]="viewModel().filterSections"
+              (optionToggled)="onMobileFilterToggled($event)"
+              (optionSelected)="onMobileFilterSelected($event)"
+              (rangeChanged)="onMobileRangeChanged($event)"
+              (reset)="onMobileFiltersReset()"
+            />
           </div>
-        }
+        </div>
       </ee-page-frame>
     </div>
   `,

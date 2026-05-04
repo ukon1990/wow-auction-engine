@@ -15,7 +15,7 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
           Deep Filters
         </h2>
       </div>
-      <div class="flex flex-col gap-6 overflow-y-auto p-inner-padding">
+      <div class="min-h-0 flex-1 flex flex-col gap-6 overflow-y-auto p-inner-padding">
         @for (section of sections(); track section.id) {
           <section>
             <h3 class="mb-3 ee-label text-on-surface-variant">{{ section.label }}</h3>
