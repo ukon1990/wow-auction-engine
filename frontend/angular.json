@@ -34,7 +34,7 @@
             ],
             "styles": ["src/styles.css"],
             "security": {
-              "allowedHosts": []
+              "allowedHosts": ["localhost", "127.0.0.1"]
             }
           },
           "configurations": {

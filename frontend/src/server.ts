@@ -6,9 +6,21 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import { resolveBackendOrigin } from './backend-origin';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
-const backendOrigin = process.env['BACKEND_ORIGIN'] || 'http://localhost:8080';
+const backendOrigin = resolveBackendOrigin();
+const hopByHopHeaders = new Set([
+  'connection',
+  'keep-alive',
+  'proxy-authenticate',
+  'proxy-authorization',
+  'te',
+  'trailer',
+  'transfer-encoding',
+  'upgrade',
+  'content-length',
+]);
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
@@ -57,6 +69,9 @@ app.use('/api', async (req, res, next) => {
 
     res.status(response.status);
     response.headers.forEach((value, key) => {
+      if (hopByHopHeaders.has(key.toLowerCase())) {
+        return;
+      }
       res.setHeader(key, value);
     });
 
