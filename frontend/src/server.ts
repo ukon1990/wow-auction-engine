@@ -201,6 +201,62 @@ function logApiProxyFailureSafe(context: {
   }
 }
 
+function logSsrRequestStartSafe(context: {
+  requestId: string;
+  method: string;
+  path: string;
+  host: string | undefined;
+}): void {
+  try {
+    console.info(
+      `SSR request started ` +
+        `(requestId=${context.requestId} method=${context.method} path=${context.path} ` +
+        `host=${context.host ?? 'unknown'})`,
+    );
+  } catch (logError) {
+    console.error(`SSR request start log failed ${formatErrorForLogSafe(logError)}`);
+  }
+}
+
+function logSsrCompletionSafe(context: {
+  ssrStartMs: number;
+  requestId: string;
+  method: string;
+  path: string;
+  status: number;
+}): void {
+  try {
+    console.info(
+      `SSR request completed in ${elapsedMs(context.ssrStartMs)}ms ` +
+        `(requestId=${context.requestId} method=${context.method} path=${context.path} ` +
+        `status=${context.status})`,
+    );
+  } catch (logError) {
+    console.error(`SSR request completion log failed ${formatErrorForLogSafe(logError)}`);
+  }
+}
+
+function logSsrFailureSafe(context: {
+  ssrStartMs: number;
+  requestId: string;
+  method: string;
+  path: string;
+  error: unknown;
+}): void {
+  try {
+    console.error(
+      `SSR request failed in ${elapsedMs(context.ssrStartMs)}ms ` +
+        `(requestId=${context.requestId} method=${context.method} path=${context.path} ` +
+        `error=${formatErrorForLogSafe(context.error)})`,
+    );
+  } catch (logError) {
+    console.error(
+      `SSR request failed (logging error: ${formatErrorForLogSafe(logError)}) ` +
+        `requestId=${context.requestId}`,
+    );
+  }
+}
+
 function sendBadGatewayResponse(res: express.Response, requestId: string): void {
   const payload = { error: 'Bad Gateway', requestId };
   if (res.headersSent) {
@@ -346,10 +402,38 @@ app.use(
  * Handle all other requests by rendering the Angular application.
  */
 app.use((req, res, next) => {
+  const ssrStart = performance.now();
+  const requestId = readRequestId(req) ?? randomUUID();
+  res.setHeader('X-Request-Id', requestId);
+  res.once('finish', () => {
+    logSsrCompletionSafe({
+      ssrStartMs: ssrStart,
+      requestId,
+      method: req.method,
+      path: req.originalUrl,
+      status: res.statusCode,
+    });
+  });
+  logSsrRequestStartSafe({
+    requestId,
+    method: req.method,
+    path: req.originalUrl,
+    host: req.headers.host,
+  });
+
   angularApp
     .handle(req)
     .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
-    .catch(next);
+    .catch((error: unknown) => {
+      logSsrFailureSafe({
+        ssrStartMs: ssrStart,
+        requestId,
+        method: req.method,
+        path: req.originalUrl,
+        error,
+      });
+      next(error);
+    });
 });
 
 /**

@@ -385,7 +385,7 @@ Resources:
           [Service]
           Type=oneshot
           RemainAfterExit=yes
-          ExecStart=/bin/bash -lc 'APP_NAME=${AppName}-frontend AWS_REGION=${AWS::Region} IMAGE_URI=${FrontendRepository.RepositoryUri}:master CONTAINER_PORT=${FrontendContainerPort} HOST_PORT=${FrontendHostPort} NETWORK_NAME=${AppName}-network BACKEND_ORIGIN=http://${AppName}-backend:${ContainerPort} LOG_GROUP=/aws/ec2/${AppName}/${Environment}/${RegionCode} /opt/${AppName}/bin/restart-container.sh'
+          ExecStart=/bin/bash -lc 'APP_NAME=${AppName}-frontend AWS_REGION=${AWS::Region} IMAGE_URI=${FrontendRepository.RepositoryUri}:master CONTAINER_PORT=${FrontendContainerPort} HOST_PORT=${FrontendHostPort} NETWORK_NAME=${AppName}-network BACKEND_ORIGIN=http://${AppName}-backend:${ContainerPort} NG_ALLOWED_HOSTS=${AppElasticIp} LOG_GROUP=/aws/ec2/${AppName}/${Environment}/${RegionCode} /opt/${AppName}/bin/restart-container.sh'
           Restart=on-failure
           RestartSec=30
 
@@ -416,7 +416,6 @@ Resources:
     Condition: CreateInstance
     Properties:
       Domain: vpc
-      InstanceId: !Ref AppInstance
       Tags:
         - Key: Name
           Value: !Sub "${AppName}-${Environment}-${RegionCode}-eip"
@@ -428,6 +427,13 @@ Resources:
           Value: !Ref Environment
         - Key: Region
           Value: !Ref RegionCode
+
+  AppElasticIpAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Condition: CreateInstance
+    Properties:
+      AllocationId: !GetAtt AppElasticIp.AllocationId
+      InstanceId: !Ref AppInstance
 
 Outputs:
   AppInstanceId:
