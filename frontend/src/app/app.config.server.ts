@@ -5,6 +5,8 @@ import { appConfig } from './app.config';
 import { serverRoutes } from './app.routes.server';
 import { resolveBackendOrigin } from '../backend-origin';
 
+const backendOrigin = process.env['BACKEND_ORIGIN'] || 'http://localhost:8080';
+
 const serverConfig: ApplicationConfig = {
   providers: [
     provideServerRendering(withRoutes(serverRoutes)),
