@@ -55,13 +55,25 @@ import {
         (primarySelected)="onPrimaryNavSelected($event)"
         (selected)="onProfessionSelected($event)"
       />*/}}-->
-      <ee-page-frame title="Market Browser" eyebrow="Exchange Intelligence">
+      <ee-page-frame title="Market Browser" eyebrow="Search the auction house">
         <ee-search-input
           [value]="viewModel().searchQuery"
           (valueChanged)="onSearchChanged($event)"
         />
+        <div class="flex lg:hidden">
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded border border-white/10 bg-surface-container-high px-4 py-2 ee-label text-on-surface transition hover:bg-surface-container-highest"
+            aria-haspopup="dialog"
+            [attr.aria-expanded]="mobileFiltersOpen()"
+            (click)="openMobileFilters()"
+          >
+            Filters
+          </button>
+        </div>
         <div class="flex min-h-0 min-w-0 flex-1 gap-element-gap overflow-hidden">
           <ee-filter-panel
+            class="hidden lg:flex"
             [sections]="viewModel().filterSections"
             (optionToggled)="onFilterToggled($event)"
             (optionSelected)="onFilterSelected($event)"
@@ -91,6 +103,41 @@ import {
             (nextPage)="onNextPage()"
           />
         </div>
+        @if (mobileFiltersOpen()) {
+          <div
+            class="fixed inset-0 z-50 flex lg:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Filter options"
+          >
+            <button
+              type="button"
+              class="flex-1 bg-black/60"
+              aria-label="Close filters"
+              (click)="closeMobileFilters()"
+            ></button>
+            <div class="flex h-full w-[min(22rem,90vw)] flex-col border-l border-white/10 bg-surface p-4">
+              <div class="mb-3 flex items-center justify-between gap-2">
+                <h2 class="ee-section-heading text-primary">Filters</h2>
+                <button
+                  type="button"
+                  class="rounded border border-white/10 bg-surface-container-high px-3 py-1.5 ee-label text-on-surface transition hover:bg-surface-container-highest"
+                  (click)="closeMobileFilters()"
+                >
+                  Close
+                </button>
+              </div>
+              <ee-filter-panel
+                panelClass="ee-glass flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-lg"
+                [sections]="viewModel().filterSections"
+                (optionToggled)="onMobileFilterToggled($event)"
+                (optionSelected)="onMobileFilterSelected($event)"
+                (rangeChanged)="onMobileRangeChanged($event)"
+                (reset)="onMobileFiltersReset()"
+              />
+            </div>
+          </div>
+        }
       </ee-page-frame>
     </div>
   `,
@@ -102,6 +149,7 @@ export class MarketBrowserPage {
   private readonly destroyRef = inject(DestroyRef);
   protected readonly viewModel = this.marketBrowserService.viewModel;
   protected readonly mobileNavOpen = signal(false);
+  protected readonly mobileFiltersOpen = signal(false);
   private readonly searchChanged = new Subject<string>();
 
   protected readonly marketColumns = createMarketBrowserTableColumns();
@@ -167,6 +215,35 @@ export class MarketBrowserPage {
 
   protected onFiltersReset(): void {
     this.marketBrowserService.resetFilters();
+  }
+
+  protected openMobileFilters(): void {
+    this.mobileFiltersOpen.set(true);
+  }
+
+  protected closeMobileFilters(): void {
+    this.mobileFiltersOpen.set(false);
+  }
+
+  protected onMobileFilterToggled(optionId: string): void {
+    this.onFilterToggled(optionId);
+  }
+
+  protected onMobileFilterSelected(change: { sectionId: string; optionId: string | null }): void {
+    this.onFilterSelected(change);
+  }
+
+  protected onMobileRangeChanged(change: {
+    id: string;
+    bound: 'min' | 'max';
+    value: number | null;
+  }): void {
+    this.onRangeChanged(change);
+  }
+
+  protected onMobileFiltersReset(): void {
+    this.onFiltersReset();
+    this.closeMobileFilters();
   }
 
   protected onPreviousPage(): void {
