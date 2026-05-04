@@ -137,7 +137,7 @@ class AuctionMarketSearchRepository(
                 NULL AS parent_id
             FROM item_quality iq
                 LEFT JOIN locale l ON l.id = iq.name_id
-            ORDER BY label ASC
+            ORDER BY label
             """.trimIndent(),
             filterOptionRowMapper,
         )
@@ -151,7 +151,7 @@ class AuctionMarketSearchRepository(
                 NULL AS parent_id
             FROM item_class ic
                 LEFT JOIN locale l ON l.id = ic.name_id
-            ORDER BY label ASC
+            ORDER BY label
             """.trimIndent(),
             filterOptionRowMapper,
         )

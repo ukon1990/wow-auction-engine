@@ -31,10 +31,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
 private data class MarketContext(
@@ -507,7 +507,10 @@ class AuctionMarketSearchService(
             communityHour = context.communitySnapshot.hour,
         )
 
-    private suspend fun <T> withAuctionMdc(mdc: Map<String, String>?, block: () -> T): T =
+    private suspend fun <T> withAuctionMdc(
+        mdc: Map<String, String>?,
+        block: () -> T,
+    ): T =
         withContext(Dispatchers.IO) {
             val previous = MDC.getCopyOfContextMap()
             try {
