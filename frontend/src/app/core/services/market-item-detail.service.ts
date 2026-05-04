@@ -11,7 +11,7 @@ export interface ItemDetailVariantParams {
   readonly modifierKey: string;
   readonly petSpeciesId: number;
 }
-export type ItemDetailScope = 'realm' | 'community';
+export type ItemDetailScope = 'realm' | 'commodity';
 
 @Injectable({
   providedIn: 'root',

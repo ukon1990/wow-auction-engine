@@ -59,15 +59,15 @@ class ConnectedRealmService(
     private fun doUpdateRealms() {
         regionService.ensureRegionsExist()
         val configuredRegions = properties.configuredRegions
-        val communityRealms =
+        val commodityRealms =
             connectedRealmBulkSyncService.sync(
-                configuredRegions.mapNotNull(::buildCommunityRealmForRegion),
+                configuredRegions.mapNotNull(::buildCommodityRealmForRegion),
             )
 
         log.info("Checking for updates for configured regions: {}", configuredRegions)
         val connectedRealms =
             listOf(
-                communityRealms,
+                commodityRealms,
                 configuredRegions.flatMap { region ->
                     getAndUpdate(region).block() ?: emptyList<ConnectedRealm>()
                 },
@@ -78,36 +78,36 @@ class ConnectedRealmService(
         }
     }
 
-    private fun buildCommunityRealmForRegion(region: Region): ConnectedRealm? {
-        val communityId = CommunityRealms.idFor(region)
-        val regionDbo = regionRepository.findById(communityId * -1).orElse(null)
+    private fun buildCommodityRealmForRegion(region: Region): ConnectedRealm? {
+        val commodityId = CommodityRealms.idFor(region)
+        val regionDbo = regionRepository.findById(commodityId * -1).orElse(null)
         if (regionDbo == null) {
             log.error(
-                "Region with id {} not found. Cannot create or repair ConnectedRealm for community id {}",
-                communityId * -1,
-                communityId,
+                "Region with id {} not found. Cannot create or repair ConnectedRealm for commodity id {}",
+                commodityId * -1,
+                commodityId,
             )
             return null
         }
 
         return ConnectedRealm(
-            id = communityId,
+            id = commodityId,
             realms =
                 mutableListOf(
                     Realm(
-                        id = communityId,
-                        name = "Community",
-                        slug = "community",
+                        id = commodityId,
+                        name = "Commodity",
+                        slug = "commodity",
                         locale = Locale.EN_GB,
                         region = regionDbo,
                         timezone = "UTC",
-                        category = "Community",
+                        category = "Commodity",
                         gameBuild = GameBuildVersion.RETAIL,
                     ),
                 ),
             auctionHouse =
                 AuctionHouse(
-                    connectedId = communityId,
+                    connectedId = commodityId,
                     region = regionDbo.type,
                     lastModified = seededAt,
                     lastRequested = null,

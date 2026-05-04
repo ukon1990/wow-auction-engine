@@ -43,9 +43,9 @@ private data class FiltersCacheKey(
     val selectedConnectedRealmId: Int,
     val selectedDate: LocalDate,
     val selectedHour: Int,
-    val communityConnectedRealmId: Int,
-    val communityDate: LocalDate,
-    val communityHour: Int,
+    val commodityConnectedRealmId: Int,
+    val commodityDate: LocalDate,
+    val commodityHour: Int,
 )
 
 private data class CachedFiltersResponse(
@@ -94,9 +94,9 @@ class AuctionMarketSearchService(
                 selectedConnectedRealmId = context.selectedSnapshot.connectedRealmId,
                 selectedDate = context.selectedSnapshot.date,
                 selectedHour = context.selectedSnapshot.hour,
-                communityConnectedRealmId = context.communitySnapshot.connectedRealmId,
-                communityDate = context.communitySnapshot.date,
-                communityHour = context.communitySnapshot.hour,
+                commodityConnectedRealmId = context.commoditySnapshot.connectedRealmId,
+                commodityDate = context.commoditySnapshot.date,
+                commodityHour = context.commoditySnapshot.hour,
                 localeColumnSuffix = context.localeColumnSuffix,
                 page = normalizedPage,
                 pageSize = normalizedPageSize,
@@ -175,10 +175,10 @@ class AuctionMarketSearchService(
                                     price = row.selectedPrice,
                                     quantity = row.selectedQuantity,
                                 ),
-                            community =
-                                context.communitySnapshot.toMetrics(
-                                    price = row.communityPrice,
-                                    quantity = row.communityQuantity,
+                            commodity =
+                                context.commoditySnapshot.toMetrics(
+                                    price = row.commodityPrice,
+                                    quantity = row.commodityQuantity,
                                 ),
                         )
                     },
@@ -241,9 +241,9 @@ class AuctionMarketSearchService(
                 selectedConnectedRealmId = context.selectedSnapshot.connectedRealmId,
                 selectedDate = context.selectedSnapshot.date,
                 selectedHour = context.selectedSnapshot.hour,
-                communityConnectedRealmId = context.communitySnapshot.connectedRealmId,
-                communityDate = context.communitySnapshot.date,
-                communityHour = context.communitySnapshot.hour,
+                commodityConnectedRealmId = context.commoditySnapshot.connectedRealmId,
+                commodityDate = context.commoditySnapshot.date,
+                commodityHour = context.commoditySnapshot.hour,
                 localeColumnSuffix = context.localeColumnSuffix,
                 page = 0,
                 pageSize = 1,
@@ -405,9 +405,9 @@ class AuctionMarketSearchService(
             selectedConnectedRealmId = context.selectedSnapshot.connectedRealmId,
             selectedDate = context.selectedSnapshot.date,
             selectedHour = context.selectedSnapshot.hour,
-            communityConnectedRealmId = context.communitySnapshot.connectedRealmId,
-            communityDate = context.communitySnapshot.date,
-            communityHour = context.communitySnapshot.hour,
+            commodityConnectedRealmId = context.commoditySnapshot.connectedRealmId,
+            commodityDate = context.commoditySnapshot.date,
+            commodityHour = context.commoditySnapshot.hour,
         )
 
     private suspend fun <T> withAuctionMdc(
@@ -441,9 +441,9 @@ class AuctionMarketSearchService(
                 "itemClass",
                 "itemSubclass",
                 "selectedPrice",
-                "communityPrice",
+                "commodityPrice",
                 "selectedQuantity",
-                "communityQuantity",
+                "commodityQuantity",
             )
     }
 

@@ -8,7 +8,7 @@ import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm
 import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
-import net.jonasmf.auctionengine.service.CommunityRealms
+import net.jonasmf.auctionengine.service.CommodityRealms
 import net.jonasmf.auctionengine.service.ConnectedRealmBulkSyncService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -38,7 +38,7 @@ class RealmCatalogJdbcRepositoryTest : IntegrationTestBase() {
     lateinit var jdbcTemplate: JdbcTemplate
 
     @Test
-    fun `findRealmCatalogRows excludes community realms and caches the first result`() {
+    fun `findRealmCatalogRows excludes commodity realms and caches the first result`() {
         regionRepository.saveAll(
             listOf(
                 RegionDBO(id = 1, name = "US", type = Region.NorthAmerica),
@@ -69,12 +69,12 @@ class RealmCatalogJdbcRepositoryTest : IntegrationTestBase() {
         )
         connectedRealmRepository.save(
             connectedRealm(
-                connectedRealmId = CommunityRealms.idFor(Region.Europe),
+                connectedRealmId = CommodityRealms.idFor(Region.Europe),
                 region = eu,
                 realmId = -2,
-                name = "Community",
-                slug = "community",
-                category = "Community",
+                name = "Commodity",
+                slug = "commodity",
+                category = "Commodity",
             ),
         )
         connectedRealmRepository.flush()

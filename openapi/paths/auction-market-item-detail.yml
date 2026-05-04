@@ -49,7 +49,7 @@ get:
           required: false
           schema:
               type: string
-              enum: [realm, community]
+              enum: [realm, commodity]
               default: realm
         - name: locale
           in: query

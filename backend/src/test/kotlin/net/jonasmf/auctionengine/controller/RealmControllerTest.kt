@@ -63,7 +63,7 @@ class RealmControllerTest {
                         lastModified = null,
                         nextUpdate = null,
                     ),
-                community =
+                commodity =
                     AuctionHouseStatus(
                         connectedRealmId = -2,
                         lastDailyPriceUpdate = null,

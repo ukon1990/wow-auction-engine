@@ -24,9 +24,9 @@ data class MarketContext(
     val localeColumnSuffix: String,
     val selectedRealmTimezone: String,
     val selectedSnapshot: MarketSnapshot,
-    val communitySnapshot: MarketSnapshot,
+    val commoditySnapshot: MarketSnapshot,
     val selectedAuctionHouseLastModified: Instant,
-    val communityAuctionHouseLastModified: Instant,
+    val commodityAuctionHouseLastModified: Instant,
 )
 
 @Service
@@ -59,11 +59,11 @@ class AuctionMarketContextService(
                     HttpStatus.NOT_FOUND,
                     "Auction house for connected realm ${detail.connectedRealmId} has no last modified timestamp",
                 )
-        val communityLastModified =
-            detail.communityLastModified
+        val commodityLastModified =
+            detail.commodityLastModified
                 ?: throw ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "Community auction house for $regionCode has no last modified timestamp",
+                    "Commodity auction house for $regionCode has no last modified timestamp",
                 )
 
         return MarketContext(
@@ -76,14 +76,14 @@ class AuctionMarketContextService(
                     connectedRealmId = detail.connectedRealmId,
                     preferredTimezone = detail.timezone,
                 ),
-            communitySnapshot =
+            commoditySnapshot =
                 snapshotFrom(
-                    lastModified = communityLastModified,
-                    connectedRealmId = detail.communityConnectedRealmId,
+                    lastModified = commodityLastModified,
+                    connectedRealmId = detail.commodityConnectedRealmId,
                     preferredTimezone = null,
                 ),
             selectedAuctionHouseLastModified = selectedLastModified,
-            communityAuctionHouseLastModified = communityLastModified,
+            commodityAuctionHouseLastModified = commodityLastModified,
         )
     }
 

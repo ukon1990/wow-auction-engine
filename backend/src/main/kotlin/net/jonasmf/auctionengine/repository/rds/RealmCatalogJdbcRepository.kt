@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.repository.rds
 
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.service.CommunityRealms
+import net.jonasmf.auctionengine.service.CommodityRealms
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -31,10 +31,10 @@ data class RealmDetailRow(
     val lastDailyPriceUpdate: Instant?,
     val lastModified: Instant?,
     val nextUpdate: Instant?,
-    val communityConnectedRealmId: Int,
-    val communityLastDailyPriceUpdate: Instant?,
-    val communityLastModified: Instant?,
-    val communityNextUpdate: Instant?,
+    val commodityConnectedRealmId: Int,
+    val commodityLastDailyPriceUpdate: Instant?,
+    val commodityLastModified: Instant?,
+    val commodityNextUpdate: Instant?,
 )
 
 @Repository
@@ -65,7 +65,7 @@ class RealmCatalogJdbcRepository(
         region: Region,
         slug: String,
     ): RealmDetailRow? {
-        val communityId = CommunityRealms.idFor(region)
+        val commodityId = CommodityRealms.idFor(region)
         return jdbcTemplate
             .query(
                 """
@@ -80,22 +80,22 @@ class RealmCatalogJdbcRepository(
                     ah.last_daily_price_update AS lastDailyPriceUpdate,
                     ah.last_modified AS lastModified,
                     ah.next_update AS nextUpdate,
-                    community_cr.id AS communityConnectedRealmId,
-                    community_ah.last_daily_price_update AS communityLastDailyPriceUpdate,
-                    community_ah.last_modified AS communityLastModified,
-                    community_ah.next_update AS communityNextUpdate
+                    commodity_cr.id AS commodityConnectedRealmId,
+                    commodity_ah.last_daily_price_update AS commodityLastDailyPriceUpdate,
+                    commodity_ah.last_modified AS commodityLastModified,
+                    commodity_ah.next_update AS commodityNextUpdate
                 FROM realm r
                 JOIN connected_realm_realms crr ON crr.realms_id = r.id
                 JOIN connected_realm cr ON cr.id = crr.connected_realm_id
                 JOIN auction_house ah ON ah.id = cr.auction_house_id
-                JOIN connected_realm community_cr ON community_cr.id = ?
-                JOIN auction_house community_ah ON community_ah.id = community_cr.auction_house_id
+                JOIN connected_realm commodity_cr ON commodity_cr.id = ?
+                JOIN auction_house commodity_ah ON commodity_ah.id = commodity_cr.auction_house_id
                 WHERE r.region_id = ?
                   AND r.slug = ?
                 LIMIT 1
                 """.trimIndent(),
                 { rs, _ -> rs.toRealmDetailRow() },
-                communityId,
+                commodityId,
                 region.toDbId(),
                 slug.lowercase(),
             ).firstOrNull()
@@ -126,10 +126,10 @@ class RealmCatalogJdbcRepository(
             lastDailyPriceUpdate = getInstant("lastDailyPriceUpdate"),
             lastModified = getInstant("lastModified"),
             nextUpdate = getInstant("nextUpdate"),
-            communityConnectedRealmId = getInt("communityConnectedRealmId"),
-            communityLastDailyPriceUpdate = getInstant("communityLastDailyPriceUpdate"),
-            communityLastModified = getInstant("communityLastModified"),
-            communityNextUpdate = getInstant("communityNextUpdate"),
+            commodityConnectedRealmId = getInt("commodityConnectedRealmId"),
+            commodityLastDailyPriceUpdate = getInstant("commodityLastDailyPriceUpdate"),
+            commodityLastModified = getInstant("commodityLastModified"),
+            commodityNextUpdate = getInstant("commodityNextUpdate"),
         )
 
     /**

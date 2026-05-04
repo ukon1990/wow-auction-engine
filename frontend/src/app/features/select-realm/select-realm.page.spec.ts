@@ -50,7 +50,7 @@ describe('SelectRealmPage', () => {
         of({
           realm: realmsFixture[0],
           auctionHouse: { connectedRealmId: 1 },
-          community: { connectedRealmId: -2 },
+          commodity: { connectedRealmId: -2 },
         }),
       ),
     };

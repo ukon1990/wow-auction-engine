@@ -9,11 +9,11 @@ properties:
         type: integer
         format: int64
         nullable: true
-    communityPrice:
+    commodityPrice:
         type: integer
         format: int64
         nullable: true
-    communityQuantity:
+    commodityQuantity:
         type: integer
         format: int64
         nullable: true
@@ -22,12 +22,12 @@ properties:
         format: double
         nullable: true
         description: vs previous day aggregate (null if not computable).
-    communityPriceChangePercent:
+    commodityPriceChangePercent:
         type: number
         format: double
         nullable: true
-    realmVsCommunityPricePercent:
+    realmVsCommodityPricePercent:
         type: number
         format: double
         nullable: true
-        description: Positive if realm price above community.
+        description: Positive if realm price above commodity.

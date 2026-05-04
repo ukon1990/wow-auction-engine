@@ -19,9 +19,9 @@ export interface MarketBrowserViewModel {
     | 'itemClass'
     | 'itemSubclass'
     | 'selectedPrice'
-    | 'communityPrice'
+    | 'commodityPrice'
     | 'selectedQuantity'
-    | 'communityQuantity';
+    | 'commodityQuantity';
   readonly sortDirection: 'asc' | 'desc';
   readonly loading: boolean;
 }

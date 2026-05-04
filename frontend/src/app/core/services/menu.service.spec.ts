@@ -32,7 +32,7 @@ describe('MenuService', () => {
               of({
                 realm: realmFixture,
                 auctionHouse: { connectedRealmId: 1 },
-                community: { connectedRealmId: -2 },
+                commodity: { connectedRealmId: -2 },
               }),
           },
         },

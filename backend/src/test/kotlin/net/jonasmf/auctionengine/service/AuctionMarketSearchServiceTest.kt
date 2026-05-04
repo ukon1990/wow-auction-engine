@@ -99,21 +99,21 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
             -2,
             result.items
                 .single()
-                .community
+                .commodity
                 ?.connectedRealmId,
         )
         assertEquals(
             10,
             result.items
                 .single()
-                .community
+                .commodity
                 ?.hourOfDay,
         )
         assertEquals(
             900L,
             result.items
                 .single()
-                .community
+                .commodity
                 ?.price,
         )
     }
@@ -146,8 +146,8 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
         val row = result.items.single { it.item.id == 19020 }
         assertNull(row.selectedRealm?.price)
         assertNull(row.selectedRealm?.quantity)
-        assertEquals(555L, row.community?.price)
-        assertEquals(99L, row.community?.quantity)
+        assertEquals(555L, row.commodity?.price)
+        assertEquals(99L, row.commodity?.quantity)
     }
 
     @Test

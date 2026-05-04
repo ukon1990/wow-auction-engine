@@ -80,7 +80,7 @@ class RealmQueryService(
         return RealmDetail(
             realm = row.toRealmDto(),
             auctionHouse = row.toAuctionHouseStatus(),
-            community = row.toCommunityAuctionHouseStatus(),
+            commodity = row.toCommodityAuctionHouseStatus(),
         )
     }
 
@@ -112,12 +112,12 @@ class RealmQueryService(
             nextUpdate = nextUpdate.toOffsetDateTime(),
         )
 
-    private fun RealmDetailRow.toCommunityAuctionHouseStatus(): AuctionHouseStatus =
+    private fun RealmDetailRow.toCommodityAuctionHouseStatus(): AuctionHouseStatus =
         AuctionHouseStatus(
-            connectedRealmId = communityConnectedRealmId,
-            lastDailyPriceUpdate = communityLastDailyPriceUpdate.toOffsetDateTime(),
-            lastModified = communityLastModified.toOffsetDateTime(),
-            nextUpdate = communityNextUpdate.toOffsetDateTime(),
+            connectedRealmId = commodityConnectedRealmId,
+            lastDailyPriceUpdate = commodityLastDailyPriceUpdate.toOffsetDateTime(),
+            lastModified = commodityLastModified.toOffsetDateTime(),
+            nextUpdate = commodityNextUpdate.toOffsetDateTime(),
         )
 
     private fun Region.toDtoEnum(): RealmDto.Region =

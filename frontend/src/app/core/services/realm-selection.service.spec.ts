@@ -33,7 +33,7 @@ const ahStub = {
 const detailFixture = {
   realm: realmFixture,
   auctionHouse: ahStub,
-  community: { ...ahStub, connectedRealmId: -2 },
+  commodity: { ...ahStub, connectedRealmId: -2 },
 };
 
 type RealmApiTestStub = {

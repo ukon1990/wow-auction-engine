@@ -58,17 +58,17 @@ class RealmQueryServiceTest {
                 lastDailyPriceUpdate = Instant.parse("2026-05-01T05:00:00Z"),
                 lastModified = Instant.parse("2026-05-01T10:00:00Z"),
                 nextUpdate = Instant.parse("2026-05-01T11:00:00Z"),
-                communityConnectedRealmId = -2,
-                communityLastDailyPriceUpdate = null,
-                communityLastModified = Instant.parse("2026-05-01T09:00:00Z"),
-                communityNextUpdate = null,
+                commodityConnectedRealmId = -2,
+                commodityLastDailyPriceUpdate = null,
+                commodityLastModified = Instant.parse("2026-05-01T09:00:00Z"),
+                commodityNextUpdate = null,
             )
 
         val detail = service.getRealmDetail("eu", "stormrage")
 
         assertEquals("stormrage", detail?.realm?.slug)
         assertEquals(1234, detail?.auctionHouse?.connectedRealmId)
-        assertEquals(-2, detail?.community?.connectedRealmId)
+        assertEquals(-2, detail?.commodity?.connectedRealmId)
     }
 
     @Test

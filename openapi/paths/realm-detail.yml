@@ -2,7 +2,7 @@ get:
   tags:
     - Realm
   operationId: getRealm
-  summary: Get a single realm with its connected-realm and community auction-house status
+  summary: Get a single realm with its connected-realm and commodity auction-house status
   parameters:
     - name: region
       in: path
@@ -17,10 +17,10 @@ get:
         type: string
   responses:
     "200":
-      description: Realm detail including the parent connected realm's auction house status and the regional community auction house status.
+      description: Realm detail including the parent connected realm's auction house status and the regional commodity auction house status.
       content:
         application/json:
           schema:
             $ref: ../components/schemas/realm-detail.yml
     "404":
-      description: No realm exists for the given region and slug, or the regional community placeholder has not been seeded yet.
+      description: No realm exists for the given region and slug, or the regional commodity placeholder has not been seeded yet.

@@ -27,7 +27,7 @@ class AuctionMarketContextServiceTest : IntegrationTestBase() {
         assertEquals(1084, context.selectedSnapshot.connectedRealmId)
         assertEquals(LocalDate.parse("2026-05-01"), context.selectedSnapshot.date)
         assertEquals(11, context.selectedSnapshot.hour)
-        assertEquals(-2, context.communitySnapshot.connectedRealmId)
-        assertEquals(10, context.communitySnapshot.hour)
+        assertEquals(-2, context.commoditySnapshot.connectedRealmId)
+        assertEquals(10, context.commoditySnapshot.hour)
     }
 }

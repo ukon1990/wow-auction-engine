@@ -49,9 +49,9 @@ get:
           - itemClass
           - itemSubclass
           - selectedPrice
-          - communityPrice
+          - commodityPrice
           - selectedQuantity
-          - communityQuantity
+          - commodityQuantity
     - name: sortDirection
       in: query
       required: false

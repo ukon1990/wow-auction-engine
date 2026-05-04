@@ -37,9 +37,9 @@ interface MarketBrowserQueryState {
     | 'itemClass'
     | 'itemSubclass'
     | 'selectedPrice'
-    | 'communityPrice'
+    | 'commodityPrice'
     | 'selectedQuantity'
-    | 'communityQuantity';
+    | 'commodityQuantity';
   readonly sortDirection: 'asc' | 'desc';
 }
 
@@ -416,13 +416,13 @@ function readSortBy(value: string | null): MarketBrowserQueryState['sortBy'] {
     'itemClass',
     'itemSubclass',
     'selectedPrice',
-    'communityPrice',
+    'commodityPrice',
     'selectedQuantity',
-    'communityQuantity',
+    'commodityQuantity',
   ] as const;
   const raw = allowed.find((candidate) => candidate === value) ?? 'itemName';
-  if (raw === 'communityPrice') return 'selectedPrice';
-  if (raw === 'communityQuantity') return 'selectedQuantity';
+  if (raw === 'commodityPrice') return 'selectedPrice';
+  if (raw === 'commodityQuantity') return 'selectedQuantity';
   return raw;
 }
 
@@ -553,8 +553,8 @@ function nonemptyName(value: string | null | undefined): string | undefined {
 }
 
 function toMarketRow(row: AuctionMarketSearchRow): MarketItemRow {
-  const listingPriceCopper = row.selectedRealm?.price ?? row.community?.price;
-  const listingQuantity = row.selectedRealm?.quantity ?? row.community?.quantity;
+  const listingPriceCopper = row.selectedRealm?.price ?? row.commodity?.price;
+  const listingQuantity = row.selectedRealm?.quantity ?? row.commodity?.quantity;
   const mergedCurrency = copperToCurrencyAmount(listingPriceCopper);
   return {
     id: String(row.item.id),

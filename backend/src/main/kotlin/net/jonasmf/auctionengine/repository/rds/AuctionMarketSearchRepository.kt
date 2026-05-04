@@ -12,9 +12,9 @@ data class AuctionMarketSearchRequest(
     val selectedConnectedRealmId: Int,
     val selectedDate: LocalDate,
     val selectedHour: Int,
-    val communityConnectedRealmId: Int,
-    val communityDate: LocalDate,
-    val communityHour: Int,
+    val commodityConnectedRealmId: Int,
+    val commodityDate: LocalDate,
+    val commodityHour: Int,
     val localeColumnSuffix: String,
     val page: Int,
     val pageSize: Int,
@@ -55,8 +55,8 @@ data class AuctionMarketRow(
     val selectedPetSpeciesId: Int,
     val selectedPrice: Long?,
     val selectedQuantity: Long?,
-    val communityPrice: Long?,
-    val communityQuantity: Long?,
+    val commodityPrice: Long?,
+    val commodityQuantity: Long?,
 )
 
 data class AuctionMarketFilterOptionRow(
@@ -78,9 +78,9 @@ class AuctionMarketSearchRepository(
             "itemClass" to "item_class_name",
             "itemSubclass" to "item_subclass_name",
             "selectedPrice" to "selected_price",
-            "communityPrice" to "community_price",
+            "commodityPrice" to "commodity_price",
             "selectedQuantity" to "selected_quantity",
-            "communityQuantity" to "community_quantity",
+            "commodityQuantity" to "commodity_quantity",
         )
 
     fun search(request: AuctionMarketSearchRequest): AuctionMarketSearchResult {
@@ -105,16 +105,16 @@ class AuctionMarketSearchRepository(
         val rows = pairs.map { it.first }
 
         logger.info(
-            "Auction market search repository completed in {}ms (requestId={} query={}ms selectedRealm={} selectedDate={} selectedHour={} communityRealm={} communityDate={} communityHour={} totalItems={} returnedRows={})",
+            "Auction market search repository completed in {}ms (requestId={} query={}ms selectedRealm={} selectedDate={} selectedHour={} commodityRealm={} commodityDate={} commodityHour={} totalItems={} returnedRows={})",
             elapsedMs(totalStartNanos),
             requestId(),
             queryMs,
             request.selectedConnectedRealmId,
             request.selectedDate,
             request.selectedHour,
-            request.communityConnectedRealmId,
-            request.communityDate,
-            request.communityHour,
+            request.commodityConnectedRealmId,
+            request.commodityDate,
+            request.commodityHour,
             totalItems,
             rows.size,
         )
@@ -191,8 +191,8 @@ class AuctionMarketSearchRepository(
             wrapped.selected_pet_species_id,
             wrapped.selected_price,
             wrapped.selected_quantity,
-            wrapped.community_price,
-            wrapped.community_quantity,
+            wrapped.commodity_price,
+            wrapped.commodity_quantity,
             wrapped.total_items
         FROM (
             SELECT
@@ -216,8 +216,8 @@ class AuctionMarketSearchRepository(
                 COALESCE(s.pet_species_id, c.pet_species_id) AS selected_pet_species_id,
                 s.price AS selected_price,
                 s.quantity AS selected_quantity,
-                c.price AS community_price,
-                c.quantity AS community_quantity,
+                c.price AS commodity_price,
+                c.quantity AS commodity_quantity,
                 COUNT(*) OVER () AS total_items
             $fromSql
             $whereSql
@@ -228,16 +228,16 @@ class AuctionMarketSearchRepository(
 
     /**
      * Single listing price/quantity for sort: realm and commodity are mutually exclusive in the UI,
-     * so `selectedPrice` / `communityPrice` (and quantity counterparts) share the same ORDER BY.
+     * so `selectedPrice` / `commodityPrice` (and quantity counterparts) share the same ORDER BY.
      */
     private fun buildOrderBySql(request: AuctionMarketSearchRequest): String {
         val dir = if (request.sortDirection.equals("desc", ignoreCase = true)) "DESC" else "ASC"
         val primary =
             when (request.sortBy) {
-                "selectedPrice", "communityPrice" ->
-                    "COALESCE(wrapped.selected_price, wrapped.community_price) $dir NULLS LAST"
-                "selectedQuantity", "communityQuantity" ->
-                    "COALESCE(wrapped.selected_quantity, wrapped.community_quantity) $dir NULLS LAST"
+                "selectedPrice", "commodityPrice" ->
+                    "COALESCE(wrapped.selected_price, wrapped.commodity_price) $dir NULLS LAST"
+                "selectedQuantity", "commodityQuantity" ->
+                    "COALESCE(wrapped.selected_quantity, wrapped.commodity_quantity) $dir NULLS LAST"
                 else -> {
                     val col = sortColumns[request.sortBy] ?: sortColumns.getValue("itemName")
                     "wrapped.$col $dir"
@@ -255,7 +255,7 @@ class AuctionMarketSearchRepository(
         params: MutableList<Any?>,
     ): Pair<String, String> {
         val selectedDate = java.sql.Date.valueOf(request.selectedDate)
-        val communityDate = java.sql.Date.valueOf(request.communityDate)
+        val commodityDate = java.sql.Date.valueOf(request.commodityDate)
         val selCtes =
             buildHourlyAggregateCtes(
                 "sel",
@@ -268,9 +268,9 @@ class AuctionMarketSearchRepository(
         val comCtes =
             buildHourlyAggregateCtes(
                 "com",
-                request.communityHour,
-                request.communityConnectedRealmId,
-                communityDate,
+                request.commodityHour,
+                request.commodityConnectedRealmId,
+                commodityDate,
                 request,
                 params,
             )
@@ -485,8 +485,8 @@ class AuctionMarketSearchRepository(
                 selectedPetSpeciesId = rs.getInt("selected_pet_species_id"),
                 selectedPrice = rs.getNullableLong("selected_price"),
                 selectedQuantity = rs.getNullableLong("selected_quantity"),
-                communityPrice = rs.getNullableLong("community_price"),
-                communityQuantity = rs.getNullableLong("community_quantity"),
+                commodityPrice = rs.getNullableLong("commodity_price"),
+                commodityQuantity = rs.getNullableLong("commodity_quantity"),
             )
         }
 

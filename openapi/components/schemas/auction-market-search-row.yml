@@ -9,5 +9,5 @@ properties:
     description: Bucket that supplied selectedRealm price (lowest unit price at snapshot hour).
   selectedRealm:
     $ref: ./auction-market-metrics.yml
-  community:
+  commodity:
     $ref: ./auction-market-metrics.yml

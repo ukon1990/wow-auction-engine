@@ -137,7 +137,7 @@ interface TooltipRow {
                 [class.bg-primary]="chartScope() === 'realm'"
                 [class.text-on-primary]="chartScope() === 'realm'"
                 [attr.aria-pressed]="chartScope() === 'realm'"
-                [disabled]="communityLoading()"
+                [disabled]="commodityLoading()"
                 (click)="onScopeSelected('realm')"
               >
                 Realm
@@ -145,11 +145,11 @@ interface TooltipRow {
               <button
                 type="button"
                 class="rounded px-3 py-1.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-                [class.bg-primary]="chartScope() === 'community'"
-                [class.text-on-primary]="chartScope() === 'community'"
-                [attr.aria-pressed]="chartScope() === 'community'"
-                [disabled]="communityLoading()"
-                (click)="onScopeSelected('community')"
+                [class.bg-primary]="chartScope() === 'commodity'"
+                [class.text-on-primary]="chartScope() === 'commodity'"
+                [attr.aria-pressed]="chartScope() === 'commodity'"
+                [disabled]="commodityLoading()"
+                (click)="onScopeSelected('commodity')"
               >
                 Region
               </button>
@@ -218,10 +218,10 @@ interface TooltipRow {
         <p class="ee-data text-on-surface-variant select-text">
           Snapshot: realm {{ d.selectedRealm.date ?? '—' }}, hour
           {{ d.selectedRealm.hourOfDay ?? '—' }}
-          @if (showCommunitySnapshotLine(d) && chartScope() === 'community') {
+          @if (showCommoditySnapshotLine(d) && chartScope() === 'commodity') {
             <span>
-              · community {{ d.community.date ?? '—' }}, hour
-              {{ d.community.hourOfDay ?? '—' }}</span
+              · commodity {{ d.commodity.date ?? '—' }}, hour
+              {{ d.commodity.hourOfDay ?? '—' }}</span
             >
           }
         </p>
@@ -355,11 +355,11 @@ export class MarketItemDetailPage {
   private readonly decimalPipe = new DecimalPipe('en-US');
 
   protected readonly loading = signal(true);
-  protected readonly communityLoading = signal(false);
+  protected readonly commodityLoading = signal(false);
   protected readonly error = signal(false);
   protected readonly detail = signal<AuctionMarketItemDetailResponse | null>(null);
-  protected readonly communityLoaded = signal(false);
-  protected readonly chartScope = signal<'realm' | 'community'>('realm');
+  protected readonly commodityLoaded = signal(false);
+  protected readonly chartScope = signal<'realm' | 'commodity'>('realm');
   protected readonly skeletonCards = [0, 1, 2, 3] as const;
   protected readonly skeletonCharts = [0, 1] as const;
   protected readonly skeletonBars = [
@@ -409,7 +409,7 @@ export class MarketItemDetailPage {
     const pts =
       d.regionalMetricsRedundant || this.chartScope() === 'realm'
         ? d.dailySeriesRealm
-        : d.dailySeriesCommunity;
+        : d.dailySeriesCommodity;
     return dailyPointsToChartSeries(pts);
   });
 
@@ -419,7 +419,7 @@ export class MarketItemDetailPage {
     const pts =
       d.regionalMetricsRedundant || this.chartScope() === 'realm'
         ? d.hourlySeriesRealm
-        : d.hourlySeriesCommunity;
+        : d.hourlySeriesCommodity;
     return hourlyPointsToChartSeries(pts);
   });
 
@@ -465,7 +465,7 @@ export class MarketItemDetailPage {
           });
           this.loading.set(true);
           this.error.set(false);
-          this.communityLoaded.set(false);
+          this.commodityLoaded.set(false);
           this.chartScope.set('realm');
           return this.detailService
             .loadItemDetail(ctx.region, ctx.realmSlug, ctx.itemId, ctx.variant, 'realm')
@@ -483,8 +483,8 @@ export class MarketItemDetailPage {
       .subscribe((res) => {
         if (res) {
           this.detail.set(res);
-          if (res.regionalMetricsRedundant) {
-            this.chartScope.set('community');
+          if (shouldUseCommodityScopeByDefault(res)) {
+            this.chartScope.set('commodity');
           } else {
             this.chartScope.set('realm');
           }
@@ -501,24 +501,24 @@ export class MarketItemDetailPage {
       this.chartScope.set('realm');
       return;
     }
-    if (this.communityLoaded()) {
-      this.chartScope.set('community');
+    if (this.commodityLoaded()) {
+      this.chartScope.set('commodity');
       return;
     }
     const ctx = this.routeCtx();
     if (!ctx) return;
-    this.communityLoading.set(true);
+    this.commodityLoading.set(true);
     this.detailService
-      .loadItemDetail(ctx.region, ctx.realmSlug, ctx.itemId, ctx.variant, 'community')
+      .loadItemDetail(ctx.region, ctx.realmSlug, ctx.itemId, ctx.variant, 'commodity')
       .pipe(
-        finalize(() => this.communityLoading.set(false)),
+        finalize(() => this.commodityLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: (communityRes) => {
-          this.detail.update((existing) => mergeCommunityScope(existing, communityRes));
-          this.communityLoaded.set(true);
-          this.chartScope.set('community');
+        next: (commodityRes) => {
+          this.detail.update((existing) => mergeCommodityScope(existing, commodityRes));
+          this.commodityLoaded.set(true);
+          this.chartScope.set('commodity');
         },
         error: () => {
           this.error.set(true);
@@ -594,19 +594,19 @@ export class MarketItemDetailPage {
     return `${sign}${this.formatDecimal(pct, '1.1-1')}% vs prior day`;
   }
 
-  protected realmVsCommunityCaption(pct: number | null | undefined): string {
+  protected realmVsCommodityCaption(pct: number | null | undefined): string {
     if (pct == null || !Number.isFinite(pct)) return '';
     const sign = pct > 0 ? '+' : '';
-    return `${sign}${this.formatDecimal(pct, '1.1-1')}% vs community`;
+    return `${sign}${this.formatDecimal(pct, '1.1-1')}% vs commodity`;
   }
 
-  protected summaryHasCommunityPrice(s: AuctionMarketItemDetailSummary): boolean {
-    const p = s.communityPrice;
+  protected summaryHasCommodityPrice(s: AuctionMarketItemDetailSummary): boolean {
+    const p = s.commodityPrice;
     return p != null && Number.isFinite(p);
   }
 
-  protected summaryHasCommunityQuantity(s: AuctionMarketItemDetailSummary): boolean {
-    const q = s.communityQuantity;
+  protected summaryHasCommodityQuantity(s: AuctionMarketItemDetailSummary): boolean {
+    const q = s.commodityQuantity;
     return q != null && Number.isFinite(q);
   }
 
@@ -614,27 +614,27 @@ export class MarketItemDetailPage {
     return showChartScopeToggleFn(d);
   }
 
-  protected showCommunitySnapshotLine(d: AuctionMarketItemDetailResponse): boolean {
+  protected showCommoditySnapshotLine(d: AuctionMarketItemDetailResponse): boolean {
     return showChartScopeToggleFn(d);
   }
 
   protected activeScopeLabel(): string {
-    return this.chartScope() === 'community' || this.detail()?.regionalMetricsRedundant
+    return this.chartScope() === 'commodity' || this.detail()?.regionalMetricsRedundant
       ? 'Region'
       : 'Realm';
   }
 
   protected activeScopePrice(s: AuctionMarketItemDetailSummary): number | null | undefined {
-    return this.chartScope() === 'community' ? s.communityPrice : s.selectedRealmPrice;
+    return this.chartScope() === 'commodity' ? s.commodityPrice : s.selectedRealmPrice;
   }
 
   protected activeScopeQuantity(s: AuctionMarketItemDetailSummary): number | null | undefined {
-    return this.chartScope() === 'community' ? s.communityQuantity : s.selectedRealmQuantity;
+    return this.chartScope() === 'commodity' ? s.commodityQuantity : s.selectedRealmQuantity;
   }
 
   protected activeScopePriceCaption(s: AuctionMarketItemDetailSummary): string {
-    return this.chartScope() === 'community'
-      ? priceChangeCaptionStatic(s.communityPriceChangePercent)
+    return this.chartScope() === 'commodity'
+      ? priceChangeCaptionStatic(s.commodityPriceChangePercent)
       : priceChangeCaptionStatic(s.selectedRealmPriceChangePercent);
   }
 
@@ -645,7 +645,7 @@ export class MarketItemDetailPage {
     const points =
       d.regionalMetricsRedundant || this.chartScope() === 'realm'
         ? d.dailySeriesRealm
-        : d.dailySeriesCommunity;
+        : d.dailySeriesCommodity;
     return points[Math.round(x)];
   }
 
@@ -656,7 +656,7 @@ export class MarketItemDetailPage {
     const points =
       d.regionalMetricsRedundant || this.chartScope() === 'realm'
         ? d.hourlySeriesRealm
-        : d.hourlySeriesCommunity;
+        : d.hourlySeriesCommodity;
     if (points.length === 0) return undefined;
     const i = Math.max(0, Math.min(points.length - 1, Math.round(x)));
     return points[i];
@@ -717,7 +717,20 @@ function formatRealmLabel(slug: string): string {
 }
 
 function showChartScopeToggleFn(d: AuctionMarketItemDetailResponse): boolean {
-  return !d.regionalMetricsRedundant;
+  return !d.regionalMetricsRedundant && hasRealmScopeMetrics(d.summary);
+}
+
+function shouldUseCommodityScopeByDefault(d: AuctionMarketItemDetailResponse): boolean {
+  return d.regionalMetricsRedundant || !hasRealmScopeMetrics(d.summary);
+}
+
+function hasRealmScopeMetrics(summary: AuctionMarketItemDetailSummary): boolean {
+  const realmPrice = summary.selectedRealmPrice;
+  const realmQty = summary.selectedRealmQuantity;
+  return (
+    (realmPrice != null && Number.isFinite(realmPrice)) ||
+    (realmQty != null && Number.isFinite(realmQty))
+  );
 }
 
 function priceChangeCaptionStatic(pct: number | null | undefined): string {
@@ -726,27 +739,29 @@ function priceChangeCaptionStatic(pct: number | null | undefined): string {
   return `${sign}${pct.toFixed(1)}% vs prior day`;
 }
 
-function mergeCommunityScope(
+function mergeCommodityScope(
   existing: AuctionMarketItemDetailResponse | null,
-  community: AuctionMarketItemDetailResponse,
+  commodity: AuctionMarketItemDetailResponse,
 ): AuctionMarketItemDetailResponse {
-  if (!existing) return community;
+  if (!existing) return commodity;
   return {
     ...existing,
-    regionalMetricsRedundant: community.regionalMetricsRedundant,
-    community: community.community,
+    regionalMetricsRedundant: commodity.regionalMetricsRedundant,
+    commodity: commodity.commodity,
     summary: {
       ...existing.summary,
-      communityPrice: community.summary.communityPrice,
-      communityQuantity: community.summary.communityQuantity,
-      communityPriceChangePercent: community.summary.communityPriceChangePercent,
-      realmVsCommunityPricePercent: community.summary.realmVsCommunityPricePercent,
+      commodityPrice: commodity.summary.commodityPrice,
+      commodityQuantity: commodity.summary.commodityQuantity,
+      commodityPriceChangePercent: commodity.summary.commodityPriceChangePercent,
+      realmVsCommodityPricePercent: commodity.summary.realmVsCommodityPricePercent,
     },
-    dailySeriesCommunity: community.dailySeriesCommunity,
-    hourlySeriesCommunity: community.hourlySeriesCommunity,
-    quantityPieCommunity: community.quantityPieCommunity,
+    dailySeriesCommodity: commodity.dailySeriesCommodity,
+    hourlySeriesCommodity: commodity.hourlySeriesCommodity,
+    quantityPieCommodity: commodity.quantityPieCommodity,
     marketDataSources:
-      community.marketDataSources.length > 0 ? community.marketDataSources : existing.marketDataSources,
+      commodity.marketDataSources.length > 0
+        ? commodity.marketDataSources
+        : existing.marketDataSources,
   };
 }
 

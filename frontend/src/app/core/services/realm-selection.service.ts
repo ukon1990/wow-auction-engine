@@ -19,8 +19,8 @@ interface PersistedSelection {
 
 function composeMarketDataVersion(detail: RealmDetail): string {
   const ah = detail.auctionHouse?.lastModified ?? '';
-  const community = detail.community?.lastModified ?? '';
-  return `ah=${ah}|community=${community}`;
+  const commodity = detail.commodity?.lastModified ?? '';
+  return `ah=${ah}|commodity=${commodity}`;
 }
 
 function toRegionEnum(region: string): Realm.RegionEnum | null {
@@ -38,7 +38,7 @@ export class RealmSelectionService {
 
   private readonly realmsSignal = signal<readonly Realm[]>([]);
   private readonly selectedSignal = signal<Realm | null>(null);
-  /** Composed from selected-realm and community `lastModified`; null until `getRealm` succeeds in the browser. */
+  /** Composed from selected-realm and commodity `lastModified`; null until `getRealm` succeeds in the browser. */
   private readonly marketDataVersionSignal = signal<string | null>(null);
   private catalogPromise: Promise<readonly Realm[]> | null = null;
   private inflightHydrate: Promise<boolean> | null = null;

@@ -6,14 +6,14 @@ required:
     - regionalMetricsRedundant
     - marketDataSources
     - selectedRealm
-    - community
+    - commodity
     - summary
     - dailySeriesRealm
-    - dailySeriesCommunity
+    - dailySeriesCommodity
     - hourlySeriesRealm
-    - hourlySeriesCommunity
+    - hourlySeriesCommodity
     - quantityPieRealm
-    - quantityPieCommunity
+    - quantityPieCommodity
 properties:
     item:
         $ref: ./auction-market-item.yml
@@ -31,7 +31,7 @@ properties:
             $ref: ./market-data-source.yml
     selectedRealm:
         $ref: ./auction-market-metrics.yml
-    community:
+    commodity:
         $ref: ./auction-market-metrics.yml
     summary:
         $ref: ./auction-market-item-detail-summary.yml
@@ -39,7 +39,7 @@ properties:
         type: array
         items:
             $ref: ./auction-market-item-detail-point.yml
-    dailySeriesCommunity:
+    dailySeriesCommodity:
         type: array
         items:
             $ref: ./auction-market-item-detail-point.yml
@@ -47,7 +47,7 @@ properties:
         type: array
         items:
             $ref: ./auction-market-item-hourly-point.yml
-    hourlySeriesCommunity:
+    hourlySeriesCommodity:
         type: array
         items:
             $ref: ./auction-market-item-hourly-point.yml
@@ -55,7 +55,7 @@ properties:
         type: array
         items:
             $ref: ./auction-market-quantity-pie-slice.yml
-    quantityPieCommunity:
+    quantityPieCommodity:
         type: array
         items:
             $ref: ./auction-market-quantity-pie-slice.yml

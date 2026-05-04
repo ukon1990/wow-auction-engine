@@ -69,7 +69,7 @@ export interface MarketItemRow {
   readonly regionalAverage: CurrencyAmount;
   readonly saleRate: number;
   readonly selectedQuantity?: number;
-  readonly communityQuantity?: number;
+  readonly commodityQuantity?: number;
   readonly iconUrl?: string;
   readonly selected?: boolean;
 }
