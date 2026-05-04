@@ -92,62 +92,29 @@ class AuctionMarketSearchRepository(
         val params = ArrayList<Any?>()
         val fromSql = buildFromSql(request, params)
         val whereSql = buildWhereSql(request, params)
-        val countParams = ArrayList(params)
-        val countStartNanos = System.nanoTime()
-        val totalItems =
-            jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) $fromSql $whereSql",
-                Long::class.java,
-                *countParams.toTypedArray(),
-            ) ?: 0L
-        val countMs = elapsedMs(countStartNanos)
-
         val sortColumn = sortColumns[request.sortBy] ?: sortColumns.getValue("itemName")
         val sortDirection = if (request.sortDirection.equals("desc", ignoreCase = true)) "DESC" else "ASC"
         val offset = request.page * request.pageSize
         params.add(request.pageSize)
         params.add(offset)
 
-        val rowsStartNanos = System.nanoTime()
-        val rows =
+        val sql = buildSearchPagedSql(request, fromSql, whereSql, sortColumn, sortDirection)
+        val queryStartNanos = System.nanoTime()
+        val pairs =
             jdbcTemplate.query(
-                """
-                SELECT
-                    d.item_id,
-                    COALESCE(d.item_name_${request.localeColumnSuffix},
-                    d.item_name_en_gb, d.item_name_en_us) AS item_name,
-                    d.item_media_url,
-                    d.quality_id,
-                    d.quality_type,
-                    COALESCE(d.quality_name_${request.localeColumnSuffix},
-                    d.quality_name_en_gb, d.quality_name_en_us) AS quality_name,
-                    d.item_class_id,
-                    COALESCE(d.item_class_name_${request.localeColumnSuffix}, d.item_class_name_en_gb, d.item_class_name_en_us) AS item_class_name,
-                    d.item_subclass_id,
-                    COALESCE(d.item_subclass_name_${request.localeColumnSuffix}, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
-                    d.recipe_id,
-                    COALESCE(d.recipe_name_${request.localeColumnSuffix}, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
-                    d.recipe_media_url,
-                    s.price AS selected_price,
-                    s.quantity AS selected_quantity,
-                    c.price AS community_price,
-                    c.quantity AS community_quantity
-                $fromSql
-                $whereSql
-                ORDER BY $sortColumn $sortDirection, item_name ASC, d.item_id ASC
-                LIMIT ? OFFSET ?
-                """.trimIndent(),
-                rowMapper,
+                sql,
+                rowMapperWithTotal,
                 *params.toTypedArray(),
             )
-        val rowsMs = elapsedMs(rowsStartNanos)
+        val queryMs = elapsedMs(queryStartNanos)
+        val totalItems = pairs.firstOrNull()?.second ?: 0L
+        val rows = pairs.map { it.first }
 
         logger.info(
-            "Auction market search repository completed in {}ms (requestId={} count={}ms rows={}ms selectedRealm={} selectedDate={} selectedHour={} communityRealm={} communityDate={} communityHour={} totalItems={} returnedRows={})",
+            "Auction market search repository completed in {}ms (requestId={} query={}ms selectedRealm={} selectedDate={} selectedHour={} communityRealm={} communityDate={} communityHour={} totalItems={} returnedRows={})",
             elapsedMs(totalStartNanos),
             requestId(),
-            countMs,
-            rowsMs,
+            queryMs,
             request.selectedConnectedRealmId,
             request.selectedDate,
             request.selectedHour,
@@ -245,6 +212,62 @@ class AuctionMarketSearchRepository(
             *params.toTypedArray(),
         )
     }
+
+    private fun buildSearchPagedSql(
+        request: AuctionMarketSearchRequest,
+        fromSql: String,
+        whereSql: String,
+        sortColumn: String,
+        sortDirection: String,
+    ): String =
+        """
+        SELECT
+            wrapped.item_id,
+            wrapped.item_name,
+            wrapped.item_media_url,
+            wrapped.quality_id,
+            wrapped.quality_type,
+            wrapped.quality_name,
+            wrapped.item_class_id,
+            wrapped.item_class_name,
+            wrapped.item_subclass_id,
+            wrapped.item_subclass_name,
+            wrapped.recipe_id,
+            wrapped.recipe_name,
+            wrapped.recipe_media_url,
+            wrapped.selected_price,
+            wrapped.selected_quantity,
+            wrapped.community_price,
+            wrapped.community_quantity,
+            wrapped.total_items
+        FROM (
+            SELECT
+                d.item_id,
+                COALESCE(d.item_name_${request.localeColumnSuffix},
+                d.item_name_en_gb, d.item_name_en_us) AS item_name,
+                d.item_media_url,
+                d.quality_id,
+                d.quality_type,
+                COALESCE(d.quality_name_${request.localeColumnSuffix},
+                d.quality_name_en_gb, d.quality_name_en_us) AS quality_name,
+                d.item_class_id,
+                COALESCE(d.item_class_name_${request.localeColumnSuffix}, d.item_class_name_en_gb, d.item_class_name_en_us) AS item_class_name,
+                d.item_subclass_id,
+                COALESCE(d.item_subclass_name_${request.localeColumnSuffix}, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
+                d.recipe_id,
+                COALESCE(d.recipe_name_${request.localeColumnSuffix}, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
+                d.recipe_media_url,
+                s.price AS selected_price,
+                s.quantity AS selected_quantity,
+                c.price AS community_price,
+                c.quantity AS community_quantity,
+                COUNT(*) OVER () AS total_items
+            $fromSql
+            $whereSql
+        ) wrapped
+        ORDER BY wrapped.$sortColumn $sortDirection, wrapped.item_name ASC, wrapped.item_id ASC
+        LIMIT ? OFFSET ?
+        """.trimIndent()
 
     private fun buildFromSql(
         request: AuctionMarketSearchRequest,
@@ -365,6 +388,13 @@ class AuctionMarketSearchRepository(
             )
         }
 
+    private val rowMapperWithTotal =
+        RowMapper { rs: ResultSet, rowNum: Int ->
+            val totalItems = rs.getLong("total_items")
+            val row = requireNotNull(rowMapper.mapRow(rs, rowNum)) { "market search row expected" }
+            row to totalItems
+        }
+
     private fun ResultSet.getNullableInt(column: String): Int? {
         val value = getInt(column)
         return if (wasNull()) null else value
@@ -376,4 +406,32 @@ class AuctionMarketSearchRepository(
     }
 
     private fun requestId(): String = MDC.get("requestId") ?: "-"
+
+    /** For integration tests: `EXPLAIN` / `EXPLAIN ANALYZE` against real MariaDB. */
+    internal fun buildMarketSearchPagedSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> {
+        val params = ArrayList<Any?>()
+        val fromSql = buildFromSql(request, params)
+        val whereSql = buildWhereSql(request, params)
+        val sortColumn = sortColumns[request.sortBy] ?: sortColumns.getValue("itemName")
+        val sortDirection = if (request.sortDirection.equals("desc", ignoreCase = true)) "DESC" else "ASC"
+        val offset = request.page * request.pageSize
+        params.add(request.pageSize)
+        params.add(offset)
+        return Pair(buildSearchPagedSql(request, fromSql, whereSql, sortColumn, sortDirection), params.toTypedArray())
+    }
+
+    internal fun buildPriceAndQuantityRangeSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> {
+        val params = ArrayList<Any?>()
+        val fromSql = buildFromSql(request, params)
+        val sql =
+            """
+            SELECT
+                MIN(s.price) AS min_price,
+                MAX(s.price) AS max_price,
+                MIN(s.quantity) AS min_quantity,
+                MAX(s.quantity) AS max_quantity
+            $fromSql
+            """.trimIndent()
+        return Pair(sql, params.toTypedArray())
+    }
 }

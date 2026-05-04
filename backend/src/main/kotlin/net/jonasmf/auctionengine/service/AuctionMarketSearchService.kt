@@ -1,5 +1,10 @@
 package net.jonasmf.auctionengine.service
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
@@ -15,6 +20,7 @@ import net.jonasmf.auctionengine.generated.model.AuctionMarketSearchPage
 import net.jonasmf.auctionengine.generated.model.AuctionMarketSearchRow
 import net.jonasmf.auctionengine.generated.model.AuctionMarketSort
 import net.jonasmf.auctionengine.generated.model.PageMetadata
+import net.jonasmf.auctionengine.repository.rds.AuctionMarketRange
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketSearchRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketSearchRequest
 import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
@@ -43,6 +49,13 @@ private data class MarketSnapshot(
     val date: LocalDate,
     val hour: Int,
     val timestamp: OffsetDateTime,
+)
+
+private data class FiltersRepositoryRows(
+    val range: AuctionMarketRange,
+    val qualityOptions: List<AuctionMarketFilterOption>,
+    val itemClassOptions: List<AuctionMarketFilterOption>,
+    val itemSubclassOptions: List<AuctionMarketFilterOption>,
 )
 
 @Service
@@ -231,21 +244,48 @@ class AuctionMarketSearchService(
                 minQuantity = null,
                 maxQuantity = null,
             )
-        val rangeStartNanos = System.nanoTime()
-        val range = auctionMarketSearchRepository.priceAndQuantityRange(request)
-        val rangeMs = elapsedMs(rangeStartNanos)
-
-        val qualityOptionsStartNanos = System.nanoTime()
-        val qualityOptions = auctionMarketSearchRepository.qualityOptions(request).toDtoOptions()
-        val qualityOptionsMs = elapsedMs(qualityOptionsStartNanos)
-
-        val itemClassOptionsStartNanos = System.nanoTime()
-        val itemClassOptions = auctionMarketSearchRepository.itemClassOptions(request).toDtoOptions()
-        val itemClassOptionsMs = elapsedMs(itemClassOptionsStartNanos)
-
-        val itemSubclassOptionsStartNanos = System.nanoTime()
-        val itemSubclassOptions = auctionMarketSearchRepository.itemSubclassOptions(request).toDtoOptions()
-        val itemSubclassOptionsMs = elapsedMs(itemSubclassOptionsStartNanos)
+        val mdcSnapshot = MDC.getCopyOfContextMap()
+        val parallelStartNanos = System.nanoTime()
+        val filterRows =
+            runBlocking {
+                coroutineScope {
+                    val rangeDef =
+                        async {
+                            withAuctionMdc(mdcSnapshot) {
+                                auctionMarketSearchRepository.priceAndQuantityRange(request)
+                            }
+                        }
+                    val qualityDef =
+                        async {
+                            withAuctionMdc(mdcSnapshot) {
+                                auctionMarketSearchRepository.qualityOptions(request).toDtoOptions()
+                            }
+                        }
+                    val itemClassDef =
+                        async {
+                            withAuctionMdc(mdcSnapshot) {
+                                auctionMarketSearchRepository.itemClassOptions(request).toDtoOptions()
+                            }
+                        }
+                    val itemSubclassDef =
+                        async {
+                            withAuctionMdc(mdcSnapshot) {
+                                auctionMarketSearchRepository.itemSubclassOptions(request).toDtoOptions()
+                            }
+                        }
+                    FiltersRepositoryRows(
+                        range = rangeDef.await(),
+                        qualityOptions = qualityDef.await(),
+                        itemClassOptions = itemClassDef.await(),
+                        itemSubclassOptions = itemSubclassDef.await(),
+                    )
+                }
+            }
+        val range = filterRows.range
+        val qualityOptions = filterRows.qualityOptions
+        val itemClassOptions = filterRows.itemClassOptions
+        val itemSubclassOptions = filterRows.itemSubclassOptions
+        val parallelFiltersMs = elapsedMs(parallelStartNanos)
 
         val response =
             AuctionMarketFilterResponse(
@@ -296,14 +336,11 @@ class AuctionMarketSearchService(
                     ),
             )
         log.info(
-            "Auction market filters service completed in {}ms (requestId={} resolveContext={}ms range={}ms qualityOptions={}ms itemClassOptions={}ms itemSubclassOptions={}ms region={} realmSlug={} qualityOptionsCount={} itemClassOptionsCount={} itemSubclassOptionsCount={})",
+            "Auction market filters service completed in {}ms (requestId={} resolveContext={}ms parallelFilters={}ms region={} realmSlug={} qualityOptionsCount={} itemClassOptionsCount={} itemSubclassOptionsCount={})",
             elapsedMs(totalStartNanos),
             requestId(),
             resolveContextMs,
-            rangeMs,
-            qualityOptionsMs,
-            itemClassOptionsMs,
-            itemSubclassOptionsMs,
+            parallelFiltersMs,
             regionCode,
             realmSlug,
             qualityOptions.size,
@@ -417,6 +454,25 @@ class AuctionMarketSearchService(
     private fun elapsedMs(startNanos: Long): Long = (System.nanoTime() - startNanos) / 1_000_000
 
     private fun requestId(): String = MDC.get("requestId") ?: "-"
+
+    private suspend fun <T> withAuctionMdc(mdc: Map<String, String>?, block: () -> T): T =
+        withContext(Dispatchers.IO) {
+            val previous = MDC.getCopyOfContextMap()
+            try {
+                if (mdc != null) {
+                    MDC.setContextMap(mdc)
+                } else {
+                    MDC.clear()
+                }
+                block()
+            } finally {
+                if (previous != null) {
+                    MDC.setContextMap(previous)
+                } else {
+                    MDC.clear()
+                }
+            }
+        }
 
     companion object {
         private val allowedSorts =
