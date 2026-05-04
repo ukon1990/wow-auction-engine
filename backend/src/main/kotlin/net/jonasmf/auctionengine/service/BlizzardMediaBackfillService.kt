@@ -2,9 +2,13 @@ package net.jonasmf.auctionengine.service
 
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.repository.rds.BlizzardMediaFetchEntityKind
+import net.jonasmf.auctionengine.repository.rds.BlizzardMediaFetchFailureRepository
 import net.jonasmf.auctionengine.repository.rds.ItemFetchFailureState
 import net.jonasmf.auctionengine.repository.rds.ItemJdbcRepository
+import net.jonasmf.auctionengine.repository.rds.MediaFetchFailureState
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -15,10 +19,12 @@ import java.time.Duration
 import java.time.OffsetDateTime
 
 private const val MEDIA_BACKFILL_CHUNK_SIZE = 500
-private const val MEDIA_BACKFILL_CONCURRENCY = 10
 private const val MEDIA_BACKFILL_DISABLE_FAILURE_COUNT = 10
 private val MEDIA_BACKFILL_BASE_BACKOFF: Duration = Duration.ofHours(1)
 private val MEDIA_BACKFILL_MAX_BACKOFF: Duration = Duration.ofDays(7)
+
+private const val NEEDS_MEDIA_BACKFILL_SQL =
+    "(media_url IS NULL OR media_url = '' OR media_url LIKE '%/data/wow/media/%')"
 
 private data class MediaBackfillRow(
     val id: Int,
@@ -43,9 +49,15 @@ class BlizzardMediaBackfillService(
     private val jdbcTemplate: JdbcTemplate,
     private val blizzardMediaService: BlizzardMediaService,
     private val itemJdbcRepository: ItemJdbcRepository,
+    private val blizzardMediaFetchFailureRepository: BlizzardMediaFetchFailureRepository,
     private val clock: Clock = Clock.systemDefaultZone(),
+    @Value("\${app.media-backfill.concurrency:3}")
+    private val mediaBackfillConcurrency: Int,
+    @Value("\${app.media-backfill.start-delay-ms:50}")
+    private val mediaBackfillStartDelayMs: Long,
 ) {
     private val log = LoggerFactory.getLogger(BlizzardMediaBackfillService::class.java)
+    private val effectiveConcurrency: Int = mediaBackfillConcurrency.coerceIn(1, 32)
 
     fun backfillConfiguredStaticDataRegion(): BlizzardMediaBackfillResult = backfillRegion(properties.staticDataRegion)
 
@@ -73,30 +85,54 @@ class BlizzardMediaBackfillService(
         tableName: String,
         type: BlizzardMediaType,
     ): Int {
-        var offset = 0
+        val mediaFetchKind = BlizzardMediaFetchEntityKind.forTable(tableName)
+        var afterId = 0
         var updates = 0
         while (true) {
-            val rows = readRows(tableName, offset)
+            val rows = readCandidateRows(tableName, afterId)
             if (rows.isEmpty()) break
             val now = OffsetDateTime.now(clock)
-            val retryableRows =
+            val (retryableRows, eligibilityLog) =
                 if (tableName == "item") {
                     val eligibility = itemJdbcRepository.classifyItemRetryEligibility(rows.map(MediaBackfillRow::id), now)
                     val retryableIds = eligibility.retryableIds.toSet()
-                    log.info(
-                        "Media backfill eligibility table={} chunkOffset={} chunkSize={} retryable={} cooldownSkipped={} manualDisabledSkipped={}",
-                        tableName,
-                        offset,
-                        rows.size,
-                        retryableIds.size,
-                        eligibility.cooldownSkippedIds.size,
-                        eligibility.manualDisabledIds.size,
-                    )
-                    rows.filter { retryableIds.contains(it.id) }
+                    rows.filter { retryableIds.contains(it.id) } to
+                        ChunkEligibility(
+                            retryable = retryableIds.size,
+                            cooldown = eligibility.cooldownSkippedIds.size,
+                            manualDisabled = eligibility.manualDisabledIds.size,
+                        )
                 } else {
-                    rows
+                    val kind =
+                        requireNotNull(mediaFetchKind) {
+                            "Unsupported media backfill table $tableName"
+                        }
+                    val eligibility =
+                        blizzardMediaFetchFailureRepository.classifyRetryEligibility(
+                            kind,
+                            rows.map(MediaBackfillRow::id),
+                            now,
+                        )
+                    val retryableIds = eligibility.retryableIds.toSet()
+                    rows.filter { retryableIds.contains(it.id) } to
+                        ChunkEligibility(
+                            retryable = retryableIds.size,
+                            cooldown = eligibility.cooldownSkippedIds.size,
+                            manualDisabled = eligibility.manualDisabledIds.size,
+                        )
                 }
-            val existingFailureStates =
+
+            log.info(
+                "Media backfill eligibility table={} afterId={} chunkSize={} retryable={} cooldownSkipped={} manualDisabledSkipped={}",
+                tableName,
+                afterId,
+                rows.size,
+                eligibilityLog.retryable,
+                eligibilityLog.cooldown,
+                eligibilityLog.manualDisabled,
+            )
+
+            val existingItemFailureStates =
                 if (tableName == "item") {
                     itemJdbcRepository
                         .findItemFetchFailureStates(retryableRows.map(MediaBackfillRow::id))
@@ -104,34 +140,81 @@ class BlizzardMediaBackfillService(
                 } else {
                     mutableMapOf()
                 }
+            val existingMediaFetchFailures =
+                if (mediaFetchKind != null) {
+                    blizzardMediaFetchFailureRepository
+                        .findFailureStates(mediaFetchKind, retryableRows.map(MediaBackfillRow::id))
+                        .toMutableMap()
+                } else {
+                    mutableMapOf()
+                }
+
             updates +=
-                Flux
-                    .fromIterable(retryableRows)
-                    .flatMap({ row ->
-                        Mono
-                            .fromCallable {
-                                resolveAndUpdate(
-                                    region = region,
-                                    tableName = tableName,
-                                    type = type,
-                                    row = row,
-                                    existingFailureStates = existingFailureStates,
-                                )
-                            }
-                            .subscribeOn(Schedulers.boundedElastic())
-                    }, MEDIA_BACKFILL_CONCURRENCY)
-                    .collectList()
-                    .block()
-                    .orEmpty()
-                    .count { it }
-            offset += rows.size
+                runChunk(
+                    region = region,
+                    tableName = tableName,
+                    type = type,
+                    retryableRows = retryableRows,
+                    mediaFetchKind = mediaFetchKind,
+                    existingItemFailureStates = existingItemFailureStates,
+                    existingMediaFetchFailures = existingMediaFetchFailures,
+                )
+
+            afterId = rows.maxOf { it.id }
         }
         return updates
     }
 
-    private fun readRows(
+    private data class ChunkEligibility(
+        val retryable: Int,
+        val cooldown: Int,
+        val manualDisabled: Int,
+    )
+
+    private fun runChunk(
+        region: Region,
         tableName: String,
-        offset: Int,
+        type: BlizzardMediaType,
+        retryableRows: List<MediaBackfillRow>,
+        mediaFetchKind: BlizzardMediaFetchEntityKind?,
+        existingItemFailureStates: MutableMap<Int, ItemFetchFailureState>,
+        existingMediaFetchFailures: MutableMap<Int, MediaFetchFailureState>,
+    ): Int {
+        if (retryableRows.isEmpty()) return 0
+        val baseFlux = Flux.fromIterable(retryableRows)
+        val paced =
+            if (mediaBackfillStartDelayMs > 0) {
+                baseFlux.delayElements(Duration.ofMillis(mediaBackfillStartDelayMs))
+            } else {
+                baseFlux
+            }
+        return paced
+            .flatMap(
+                { row ->
+                    Mono
+                        .fromCallable {
+                            resolveAndUpdate(
+                                region = region,
+                                tableName = tableName,
+                                type = type,
+                                row = row,
+                                mediaFetchKind = mediaFetchKind,
+                                existingItemFailureStates = existingItemFailureStates,
+                                existingMediaFetchFailures = existingMediaFetchFailures,
+                            )
+                        }.subscribeOn(Schedulers.boundedElastic())
+                },
+                effectiveConcurrency,
+            ).collectList()
+            .block()
+            .orEmpty()
+            .count { it }
+            .toInt()
+    }
+
+    private fun readCandidateRows(
+        tableName: String,
+        afterId: Int,
     ): List<MediaBackfillRow> {
         val mediaLookupExpression =
             if (tableName == "item_appearance") {
@@ -143,8 +226,10 @@ class BlizzardMediaBackfillService(
             """
             SELECT id, $mediaLookupExpression AS media_lookup_id, media_url, media_source_url
             FROM `$tableName`
+            WHERE $NEEDS_MEDIA_BACKFILL_SQL
+              AND id > ?
             ORDER BY id
-            LIMIT ? OFFSET ?
+            LIMIT ?
             """.trimIndent(),
             { rs, _ ->
                 MediaBackfillRow(
@@ -154,8 +239,8 @@ class BlizzardMediaBackfillService(
                     mediaSourceUrl = rs.getString("media_source_url"),
                 )
             },
+            afterId,
             MEDIA_BACKFILL_CHUNK_SIZE,
-            offset,
         )
     }
 
@@ -164,7 +249,9 @@ class BlizzardMediaBackfillService(
         tableName: String,
         type: BlizzardMediaType,
         row: MediaBackfillRow,
-        existingFailureStates: MutableMap<Int, ItemFetchFailureState>,
+        mediaFetchKind: BlizzardMediaFetchEntityKind?,
+        existingItemFailureStates: MutableMap<Int, ItemFetchFailureState>,
+        existingMediaFetchFailures: MutableMap<Int, MediaFetchFailureState>,
     ): Boolean {
         val sourceHref = sourceHref(row)
         val resolved = blizzardMediaService.resolve(region, type, row.mediaLookupId, sourceHref, row.id)
@@ -181,23 +268,46 @@ class BlizzardMediaBackfillService(
             )
             if (tableName == "item") {
                 itemJdbcRepository.clearItemFetchFailureStates(listOf(row.id))
+            } else if (mediaFetchKind != null) {
+                blizzardMediaFetchFailureRepository.clearFailureStates(mediaFetchKind, listOf(row.id))
             }
             return true
         }
 
         if (tableName == "item") {
-            val failedAt = OffsetDateTime.now(clock)
-            val previousFailureCount = existingFailureStates[row.id]?.failureCount ?: 0
-            val currentFailureCount = previousFailureCount + 1
-            val manualDisabled = currentFailureCount >= MEDIA_BACKFILL_DISABLE_FAILURE_COUNT
-            val nextRetryAt =
-                if (manualDisabled) {
-                    null
-                } else {
-                    failedAt.plus(backoffForFailureCount(currentFailureCount))
-                }
-            itemJdbcRepository.upsertItemFetchFailureState(
-                itemId = row.id,
+            recordItemFailure(row.id, existingItemFailureStates)
+        } else if (mediaFetchKind != null) {
+            recordMediaFetchFailure(row.id, mediaFetchKind, existingMediaFetchFailures)
+        }
+        return false
+    }
+
+    private fun recordItemFailure(
+        itemId: Int,
+        existingFailureStates: MutableMap<Int, ItemFetchFailureState>,
+    ) {
+        val failedAt = OffsetDateTime.now(clock)
+        val previousFailureCount = existingFailureStates[itemId]?.failureCount ?: 0
+        val currentFailureCount = previousFailureCount + 1
+        val manualDisabled = currentFailureCount >= MEDIA_BACKFILL_DISABLE_FAILURE_COUNT
+        val nextRetryAt =
+            if (manualDisabled) {
+                null
+            } else {
+                failedAt.plus(backoffForFailureCount(currentFailureCount))
+            }
+        itemJdbcRepository.upsertItemFetchFailureState(
+            itemId = itemId,
+            failureCount = currentFailureCount,
+            lastErrorStatus = null,
+            lastErrorMessage = "media resolution returned null",
+            lastFailedAt = failedAt,
+            nextRetryAt = nextRetryAt,
+            manualDisabled = manualDisabled,
+        )
+        existingFailureStates[itemId] =
+            ItemFetchFailureState(
+                itemId = itemId,
                 failureCount = currentFailureCount,
                 lastErrorStatus = null,
                 lastErrorMessage = "media resolution returned null",
@@ -205,18 +315,44 @@ class BlizzardMediaBackfillService(
                 nextRetryAt = nextRetryAt,
                 manualDisabled = manualDisabled,
             )
-            existingFailureStates[row.id] =
-                ItemFetchFailureState(
-                    itemId = row.id,
-                    failureCount = currentFailureCount,
-                    lastErrorStatus = null,
-                    lastErrorMessage = "media resolution returned null",
-                    lastFailedAt = failedAt,
-                    nextRetryAt = nextRetryAt,
-                    manualDisabled = manualDisabled,
-                )
-        }
-        return false
+    }
+
+    private fun recordMediaFetchFailure(
+        entityId: Int,
+        kind: BlizzardMediaFetchEntityKind,
+        existing: MutableMap<Int, MediaFetchFailureState>,
+    ) {
+        val failedAt = OffsetDateTime.now(clock)
+        val previousFailureCount = existing[entityId]?.failureCount ?: 0
+        val currentFailureCount = previousFailureCount + 1
+        val manualDisabled = currentFailureCount >= MEDIA_BACKFILL_DISABLE_FAILURE_COUNT
+        val nextRetryAt =
+            if (manualDisabled) {
+                null
+            } else {
+                failedAt.plus(backoffForFailureCount(currentFailureCount))
+            }
+        blizzardMediaFetchFailureRepository.upsertFailureState(
+            entityKind = kind,
+            entityId = entityId,
+            failureCount = currentFailureCount,
+            lastErrorStatus = null,
+            lastErrorMessage = "media resolution returned null",
+            lastFailedAt = failedAt,
+            nextRetryAt = nextRetryAt,
+            manualDisabled = manualDisabled,
+        )
+        existing[entityId] =
+            MediaFetchFailureState(
+                entityKind = kind,
+                entityId = entityId,
+                failureCount = currentFailureCount,
+                lastErrorStatus = null,
+                lastErrorMessage = "media resolution returned null",
+                lastFailedAt = failedAt,
+                nextRetryAt = nextRetryAt,
+                manualDisabled = manualDisabled,
+            )
     }
 
     private fun backoffForFailureCount(failureCount: Int): Duration {
