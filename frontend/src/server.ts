@@ -41,7 +41,7 @@ function readRequestBody(req: express.Request): Promise<Buffer> {
   });
 }
 
-app.use('/api', async (req, res, next) => {
+app.use('/api', async (req, res) => {
   const proxyStart = performance.now();
   const requestId = readRequestId(req) ?? randomUUID();
   let backendHeadersMs = 0;
@@ -97,7 +97,7 @@ app.use('/api', async (req, res, next) => {
       bodyReadMs = elapsedMs(bodyReadStart);
       const responseSendStart = performance.now();
       res.once('finish', () => {
-        logApiProxyTiming({
+        logApiProxyTimingSafe({
           requestId,
           method: req.method,
           path: targetUrl.pathname,
@@ -112,7 +112,7 @@ app.use('/api', async (req, res, next) => {
     } else {
       const responseSendStart = performance.now();
       res.once('finish', () => {
-        logApiProxyTiming({
+        logApiProxyTimingSafe({
           requestId,
           method: req.method,
           path: targetUrl.pathname,
@@ -126,16 +126,19 @@ app.use('/api', async (req, res, next) => {
       res.end();
     }
   } catch (error) {
-    console.error(
-      `API proxy failed in ${elapsedMs(proxyStart)}ms ` +
-        `(requestId=${requestId} method=${req.method} path=${req.path} ` +
-        `error=${formatErrorForLog(error)})`,
-    );
+    logApiProxyFailureSafe({
+      proxyStartMs: proxyStart,
+      requestId,
+      method: req.method,
+      path: req.path,
+      error,
+    });
     if (res.headersSent) {
-      next(error);
+      // Response already committed; avoid next(error) so Express error handlers
+      // cannot attempt another write and crash the process.
       return;
     }
-    res.status(502).json({ error: 'Bad Gateway', requestId });
+    sendBadGatewayResponse(res, requestId);
   }
 });
 
@@ -167,6 +170,83 @@ function logApiProxyTiming(timing: {
       `status=${timing.status} backendHeaders=${timing.backendHeadersMs}ms ` +
       `bodyRead=${timing.bodyReadMs}ms responseSend=${timing.responseSendMs}ms)`,
   );
+}
+
+function logApiProxyTimingSafe(timing: Parameters<typeof logApiProxyTiming>[0]): void {
+  try {
+    logApiProxyTiming(timing);
+  } catch (logError) {
+    console.error(`API proxy timing log failed ${formatErrorForLogSafe(logError)}`);
+  }
+}
+
+function logApiProxyFailureSafe(context: {
+  proxyStartMs: number;
+  requestId: string;
+  method: string;
+  path: string;
+  error: unknown;
+}): void {
+  try {
+    console.error(
+      `API proxy failed in ${elapsedMs(context.proxyStartMs)}ms ` +
+        `(requestId=${context.requestId} method=${context.method} path=${context.path} ` +
+        `error=${formatErrorForLogSafe(context.error)})`,
+    );
+  } catch (logError) {
+    console.error(
+      `API proxy failed (logging error: ${formatErrorForLogSafe(logError)}) ` +
+        `requestId=${context.requestId}`,
+    );
+  }
+}
+
+function sendBadGatewayResponse(res: express.Response, requestId: string): void {
+  const payload = { error: 'Bad Gateway', requestId };
+  if (res.headersSent) {
+    return;
+  }
+  try {
+    res.status(502).json(payload);
+    return;
+  } catch {
+    /* fall through */
+  }
+  if (res.headersSent) {
+    return;
+  }
+  try {
+    res.status(502).type('json').send(JSON.stringify(payload));
+    return;
+  } catch {
+    /* fall through */
+  }
+  if (res.headersSent) {
+    return;
+  }
+  try {
+    res.status(502).type('text/plain; charset=utf-8').send('Bad Gateway');
+    return;
+  } catch {
+    /* fall through */
+  }
+  if (res.headersSent) {
+    return;
+  }
+  try {
+    res.statusCode = 502;
+    res.end();
+  } catch {
+    /* exhausted fallbacks */
+  }
+}
+
+function formatErrorForLogSafe(error: unknown): string {
+  try {
+    return formatErrorForLog(error);
+  } catch {
+    return 'unknown error';
+  }
 }
 
 function registerCompactProcessErrorLogging(): void {
