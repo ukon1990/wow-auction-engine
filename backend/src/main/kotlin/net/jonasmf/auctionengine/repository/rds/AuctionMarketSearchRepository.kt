@@ -234,10 +234,15 @@ class AuctionMarketSearchRepository(
         val dir = if (request.sortDirection.equals("desc", ignoreCase = true)) "DESC" else "ASC"
         val primary =
             when (request.sortBy) {
-                "selectedPrice", "commodityPrice" ->
-                    "COALESCE(wrapped.selected_price, wrapped.commodity_price) $dir NULLS LAST"
-                "selectedQuantity", "commodityQuantity" ->
-                    "COALESCE(wrapped.selected_quantity, wrapped.commodity_quantity) $dir NULLS LAST"
+                "selectedPrice", "commodityPrice" -> {
+                    val expr = "COALESCE(wrapped.selected_price, wrapped.commodity_price)"
+                    // MariaDB does not support NULLS LAST; put nulls last via IS NULL sort key.
+                    "(($expr) IS NULL) ASC, $expr $dir"
+                }
+                "selectedQuantity", "commodityQuantity" -> {
+                    val expr = "COALESCE(wrapped.selected_quantity, wrapped.commodity_quantity)"
+                    "(($expr) IS NULL) ASC, $expr $dir"
+                }
                 else -> {
                     val col = sortColumns[request.sortBy] ?: sortColumns.getValue("itemName")
                     "wrapped.$col $dir"

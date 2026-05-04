@@ -117,6 +117,90 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
                 ?.price,
         )
         assertEquals("realm", result.items.single().preferredScope)
+        assertEquals(1_000L, result.items.single().listingPrice)
+        assertEquals(4L, result.items.single().listingQuantity)
+        assertEquals(false, result.items.single().isCommodity)
+    }
+
+    @Test
+    fun `search includes commodity-only items in unfiltered results with default itemName sort`() {
+        seedMarketSearchData()
+        MarketSearchTestFixtures.seedCommodityOnlyItem(jdbcTemplate)
+
+        val result =
+            service.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = null,
+                qualityIds = null,
+                itemClassIds = null,
+                itemSubclassIds = null,
+                recipeOnly = null,
+                minPrice = null,
+                maxPrice = null,
+                minQuantity = null,
+                maxQuantity = null,
+            )
+
+        assertEquals(2, result.page.totalItems)
+        val commodityRow = result.items.single { it.item.id == 19020 }
+        assertEquals("commodity", commodityRow.preferredScope)
+        assertEquals(555L, commodityRow.listingPrice)
+        assertEquals(true, commodityRow.isCommodity)
+    }
+
+    @Test
+    fun `search sorts by selectedPrice using unified listing copper`() {
+        seedMarketSearchData()
+        MarketSearchTestFixtures.seedCommodityOnlyItem(jdbcTemplate)
+
+        val asc =
+            service.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "selectedPrice",
+                sortDirection = "asc",
+                query = null,
+                qualityIds = null,
+                itemClassIds = null,
+                itemSubclassIds = null,
+                recipeOnly = null,
+                minPrice = null,
+                maxPrice = null,
+                minQuantity = null,
+                maxQuantity = null,
+            )
+        assertEquals(2, asc.page.totalItems)
+        assertEquals(listOf(19020, 19019), asc.items.map { it.item.id })
+
+        val desc =
+            service.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "selectedPrice",
+                sortDirection = "desc",
+                query = null,
+                qualityIds = null,
+                itemClassIds = null,
+                itemSubclassIds = null,
+                recipeOnly = null,
+                minPrice = null,
+                maxPrice = null,
+                minQuantity = null,
+                maxQuantity = null,
+            )
+        assertEquals(listOf(19019, 19020), desc.items.map { it.item.id })
     }
 
     @Test
@@ -150,6 +234,9 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
         assertEquals(555L, row.commodity?.price)
         assertEquals(99L, row.commodity?.quantity)
         assertEquals("commodity", row.preferredScope)
+        assertEquals(555L, row.listingPrice)
+        assertEquals(99L, row.listingQuantity)
+        assertEquals(true, row.isCommodity)
     }
 
     @Test

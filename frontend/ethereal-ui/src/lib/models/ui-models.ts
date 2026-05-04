@@ -61,10 +61,14 @@ export interface MarketItemRow {
   readonly id: string;
   readonly name: string;
   readonly preferredScope?: 'realm' | 'commodity';
+  /** True when listing price/quantity come from regional commodity only (same as API `isCommodity`). */
+  readonly isCommodity?: boolean;
   readonly listingKey?: MarketListingKey;
   readonly itemClassName?: string;
   readonly itemSubclassName?: string;
   readonly quality: ItemQuality;
+  /** Raw copper for server-aligned sort; mirrors unified listing price. */
+  readonly listingPriceCopper?: number;
   readonly minBuyout: CurrencyAmount;
   readonly marketValue: CurrencyAmount;
   readonly regionalAverage: CurrencyAmount;

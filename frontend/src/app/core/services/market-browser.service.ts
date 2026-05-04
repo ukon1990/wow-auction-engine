@@ -215,6 +215,7 @@ export class MarketBrowserService {
           this.queryState.maxQuantity ?? undefined,
           'body',
           false,
+          { transferCache: false },
         )
         .subscribe({
           next: (response) => {
@@ -552,15 +553,38 @@ function nonemptyName(value: string | null | undefined): string | undefined {
   return t && t.length > 0 ? t : undefined;
 }
 
+/** Normalizes OpenAPI int64 (number or occasional string) for copper/qty math. */
+function toOptionalFiniteNumber(value: unknown): number | undefined {
+  if (value == null) return undefined;
+  if (typeof value === 'number') return Number.isFinite(value) ? value : undefined;
+  if (typeof value === 'string') {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : undefined;
+  }
+  return undefined;
+}
+
 function toMarketRow(row: AuctionMarketSearchRow): MarketItemRow {
-  const listingPriceCopper = row.selectedRealm?.price ?? row.commodity?.price;
-  const listingQuantity = row.selectedRealm?.quantity ?? row.commodity?.quantity;
+  const listingPriceCopper =
+    toOptionalFiniteNumber(row.listingPrice) ??
+    toOptionalFiniteNumber(row.selectedRealm?.price) ??
+    toOptionalFiniteNumber(row.commodity?.price);
+  const listingQuantity =
+    toOptionalFiniteNumber(row.listingQuantity) ??
+    toOptionalFiniteNumber(row.selectedRealm?.quantity) ??
+    toOptionalFiniteNumber(row.commodity?.quantity);
   const mergedCurrency = copperToCurrencyAmount(listingPriceCopper);
   const preferredScope = readPreferredScope(row);
+  const isCommodity = row.isCommodity ?? preferredScope === 'commodity';
   return {
     id: String(row.item.id),
     name: row.item.name,
     preferredScope,
+    isCommodity,
+    listingPriceCopper:
+      listingPriceCopper !== null && listingPriceCopper !== undefined
+        ? Number(listingPriceCopper)
+        : undefined,
     listingKey: row.listingKey
       ? {
           bonusKey: row.listingKey.bonusKey,

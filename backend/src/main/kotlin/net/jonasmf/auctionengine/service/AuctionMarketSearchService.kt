@@ -127,6 +127,13 @@ class AuctionMarketSearchService(
             AuctionMarketSearchPage(
                 items =
                     result.rows.map { row ->
+                        val preferredScope =
+                            preferredScopeFor(
+                                row.selectedPrice,
+                                row.selectedQuantity,
+                                row.commodityPrice,
+                                row.commodityQuantity,
+                            )
                         AuctionMarketSearchRow(
                             item =
                                 AuctionMarketItem(
@@ -164,7 +171,10 @@ class AuctionMarketSearchService(
                                             )
                                         },
                                 ),
-                            preferredScope = preferredScopeFor(row.selectedPrice, row.selectedQuantity, row.commodityPrice, row.commodityQuantity),
+                            preferredScope = preferredScope,
+                            listingPrice = row.selectedPrice ?: row.commodityPrice,
+                            listingQuantity = row.selectedQuantity ?: row.commodityQuantity,
+                            isCommodity = preferredScope == "commodity",
                             listingKey =
                                 AuctionListingKey(
                                     bonusKey = row.selectedBonusKey,

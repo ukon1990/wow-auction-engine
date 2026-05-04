@@ -8,7 +8,7 @@ import {
   getCoreRowModel,
   type RowData,
 } from '@tanstack/angular-table';
-import type { Header, SortingState, Table } from '@tanstack/table-core';
+import type { Column, Header, SortingState, Table } from '@tanstack/table-core';
 
 import { SymbolIconComponent } from '../primitives/symbol-icon.component';
 
@@ -253,7 +253,7 @@ export class TableComponent<TData extends RowData> {
   protected skeletonColumnMetas(): ReadonlyArray<{ align?: 'left' | 'right' } | undefined> {
     return this.table
       .getVisibleLeafColumns()
-      .map((c) => c.columnDef.meta as { align?: 'left' | 'right' });
+      .map((c: Column<TData, unknown>) => c.columnDef.meta as { align?: 'left' | 'right' });
   }
 
   protected skeletonBarWidthClass(index: number): string {

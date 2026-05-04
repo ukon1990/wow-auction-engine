@@ -85,7 +85,7 @@ export function createMarketBrowserTableColumns(): ColumnDef<MarketItemRow, unkn
     },
     {
       id: 'selectedPrice',
-      accessorKey: 'minBuyout',
+      accessorKey: 'listingPriceCopper',
       header: 'Price',
       meta: { align: 'right', gridTrack: 'minmax(6rem, max-content)' } satisfies MarketColumnMeta,
       cell: () => flexRenderComponent(MarketMetricCellComponent),

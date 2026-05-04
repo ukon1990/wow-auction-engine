@@ -8,6 +8,17 @@ properties:
   preferredScope:
     type: string
     description: Preferred detail scope for this row (`realm` or `commodity`).
+  listingPrice:
+    type: integer
+    format: int64
+    description: Unified listing unit price in copper (realm snapshot if present, else commodity).
+  listingQuantity:
+    type: integer
+    format: int64
+    description: Total quantity for the unified listing price bucket.
+  isCommodity:
+    type: boolean
+    description: True when the unified listing values come from commodity only (no realm snapshot row).
   listingKey:
     $ref: ./auction-listing-key.yml
     description: Bucket that supplied selectedRealm price (lowest unit price at snapshot hour).
