@@ -14,11 +14,12 @@ type MarketColumnMeta = {
 };
 
 const GRID_HEADER =
-  'grid w-full gap-4 border-b border-white/10 bg-surface-container-high px-6 py-4 ee-label text-outline';
+  'grid w-full gap-4 border-b border-white/10 bg-surface-container-high px-container-padding py-4 ee-label text-outline';
 
-const GRID_ROW = 'grid w-full items-center gap-4 px-6 py-3 text-left transition hover:bg-white/5';
+const GRID_ROW =
+  'grid w-full items-center gap-4 px-container-padding py-3 text-left transition hover:bg-white/5';
 
-const GRID_ROW_SKELETON = 'grid w-full items-center gap-4 px-6 py-3 text-left';
+const GRID_ROW_SKELETON = 'grid w-full items-center gap-4 px-container-padding py-3 text-left';
 
 const SELECTED_ROW =
   'border-l-2 border-primary bg-primary/10 shadow-[inset_0_0_20px_rgba(236,185,19,0.05)]';

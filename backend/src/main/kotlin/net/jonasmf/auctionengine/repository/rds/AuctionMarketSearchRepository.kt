@@ -129,38 +129,51 @@ class AuctionMarketSearchRepository(
     }
 
     fun qualityOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
-        optionQuery(
-            request = request,
-            idExpression = "d.quality_id",
-            labelExpression =
-                "COALESCE(d.quality_name_${request.localeColumnSuffix}, d.quality_name_en_gb, d.quality_name_en_us)",
-            parentExpression = null,
-            predicate = "d.quality_id IS NOT NULL",
+        jdbcTemplate.query(
+            """
+            SELECT
+                CAST(iq.internal_id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, iq.type, CAST(iq.internal_id AS CHAR)) AS label,
+                NULL AS parent_id
+            FROM item_quality iq
+                LEFT JOIN locale l ON l.id = iq.name_id
+            ORDER BY label ASC
+            """.trimIndent(),
+            filterOptionRowMapper,
         )
 
     fun itemClassOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
-        optionQuery(
-            request = request,
-            idExpression = "d.item_class_id",
-            labelExpression =
-                "COALESCE(d.item_class_name_${request.localeColumnSuffix}, d.item_class_name_en_gb, d.item_class_name_en_us)",
-            parentExpression = null,
-            predicate = "d.item_class_id IS NOT NULL",
+        jdbcTemplate.query(
+            """
+            SELECT
+                CAST(ic.id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, CAST(ic.id AS CHAR)) AS label,
+                NULL AS parent_id
+            FROM item_class ic
+                LEFT JOIN locale l ON l.id = ic.name_id
+            ORDER BY label ASC
+            """.trimIndent(),
+            filterOptionRowMapper,
         )
 
     fun itemSubclassOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
-        optionQuery(
-            request = request,
-            idExpression = "d.item_subclass_id",
-            labelExpression =
-                "COALESCE(d.item_subclass_name_${request.localeColumnSuffix}, d.item_subclass_name_en_gb, d.item_subclass_name_en_us)",
-            parentExpression = "d.item_class_id",
-            predicate = "d.item_subclass_id IS NOT NULL",
+        jdbcTemplate.query(
+            """
+            SELECT
+                CAST(isc.subclass_id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, CAST(isc.subclass_id AS CHAR)) AS label,
+                CAST(isc.class_id AS CHAR) AS parent_id
+            FROM item_subclass isc
+                LEFT JOIN locale l ON l.id = isc.display_name_id
+            ORDER BY label ASC
+            """.trimIndent(),
+            filterOptionRowMapper,
         )
 
     fun priceAndQuantityRange(request: AuctionMarketSearchRequest): AuctionMarketRange {
-        val params = ArrayList<Any?>()
-        val fromSql = buildFromSql(request, params)
+        val params = mutableListOf<Any?>()
+        params.add(request.selectedConnectedRealmId)
+        params.add(java.sql.Date.valueOf(request.selectedDate))
         return jdbcTemplate.queryForObject(
             """
             SELECT
@@ -168,7 +181,7 @@ class AuctionMarketSearchRepository(
                 MAX(s.price) AS max_price,
                 MIN(s.quantity) AS min_quantity,
                 MAX(s.quantity) AS max_quantity
-            $fromSql
+            FROM (${buildHourlyAggregateSql(request.selectedHour)}) s
             """.trimIndent(),
             { rs, _ ->
                 AuctionMarketRange(
@@ -180,37 +193,6 @@ class AuctionMarketSearchRepository(
             },
             *params.toTypedArray(),
         ) ?: AuctionMarketRange(null, null, null, null)
-    }
-
-    private fun optionQuery(
-        request: AuctionMarketSearchRequest,
-        idExpression: String,
-        labelExpression: String,
-        parentExpression: String?,
-        predicate: String,
-    ): List<AuctionMarketFilterOptionRow> {
-        val params = ArrayList<Any?>()
-        val fromSql = buildFromSql(request, params)
-        val parentSelect = parentExpression?.let { ", CAST($it AS CHAR) AS parent_id" } ?: ", NULL AS parent_id"
-        val parentGroup = parentExpression?.let { ", $it" } ?: ""
-
-        return jdbcTemplate.query(
-            """
-            SELECT CAST($idExpression AS CHAR) AS id, $labelExpression AS label $parentSelect
-            $fromSql
-            WHERE $predicate
-            GROUP BY $idExpression, $labelExpression $parentGroup
-            ORDER BY label ASC
-            """.trimIndent(),
-            { rs, _ ->
-                AuctionMarketFilterOptionRow(
-                    id = rs.getString("id"),
-                    label = rs.getString("label") ?: rs.getString("id"),
-                    parentId = rs.getString("parent_id"),
-                )
-            },
-            *params.toTypedArray(),
-        )
     }
 
     private fun buildSearchPagedSql(
@@ -395,6 +377,15 @@ class AuctionMarketSearchRepository(
             row to totalItems
         }
 
+    private val filterOptionRowMapper =
+        RowMapper { rs: ResultSet, _: Int ->
+            AuctionMarketFilterOptionRow(
+                id = rs.getString("id"),
+                label = rs.getString("label") ?: rs.getString("id"),
+                parentId = rs.getString("parent_id"),
+            )
+        }
+
     private fun ResultSet.getNullableInt(column: String): Int? {
         val value = getInt(column)
         return if (wasNull()) null else value
@@ -421,8 +412,9 @@ class AuctionMarketSearchRepository(
     }
 
     internal fun buildPriceAndQuantityRangeSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> {
-        val params = ArrayList<Any?>()
-        val fromSql = buildFromSql(request, params)
+        val params = mutableListOf<Any?>()
+        params.add(request.selectedConnectedRealmId)
+        params.add(java.sql.Date.valueOf(request.selectedDate))
         val sql =
             """
             SELECT
@@ -430,8 +422,50 @@ class AuctionMarketSearchRepository(
                 MAX(s.price) AS max_price,
                 MIN(s.quantity) AS min_quantity,
                 MAX(s.quantity) AS max_quantity
-            $fromSql
+            FROM (${buildHourlyAggregateSql(request.selectedHour)}) s
             """.trimIndent()
         return Pair(sql, params.toTypedArray())
     }
+
+    internal fun buildQualityOptionsSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> =
+        Pair(
+            """
+            SELECT
+                CAST(iq.internal_id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, iq.type, CAST(iq.internal_id AS CHAR)) AS label,
+                NULL AS parent_id
+            FROM item_quality iq
+                LEFT JOIN locale l ON l.id = iq.name_id
+            ORDER BY label ASC
+            """.trimIndent(),
+            emptyArray(),
+        )
+
+    internal fun buildItemClassOptionsSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> =
+        Pair(
+            """
+            SELECT
+                CAST(ic.id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, CAST(ic.id AS CHAR)) AS label,
+                NULL AS parent_id
+            FROM item_class ic
+                LEFT JOIN locale l ON l.id = ic.name_id
+            ORDER BY label ASC
+            """.trimIndent(),
+            emptyArray(),
+        )
+
+    internal fun buildItemSubclassOptionsSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> =
+        Pair(
+            """
+            SELECT
+                CAST(isc.subclass_id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, CAST(isc.subclass_id AS CHAR)) AS label,
+                CAST(isc.class_id AS CHAR) AS parent_id
+            FROM item_subclass isc
+                LEFT JOIN locale l ON l.id = isc.display_name_id
+            ORDER BY label ASC
+            """.trimIndent(),
+            emptyArray(),
+        )
 }

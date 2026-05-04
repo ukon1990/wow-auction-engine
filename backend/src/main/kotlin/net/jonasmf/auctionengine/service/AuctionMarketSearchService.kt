@@ -30,9 +30,12 @@ import org.slf4j.MDC
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import java.time.Duration
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.Instant
+import java.util.concurrent.ConcurrentHashMap
 
 private data class MarketContext(
     val selectedConnectedRealm: ConnectedRealm,
@@ -56,6 +59,23 @@ private data class FiltersRepositoryRows(
     val qualityOptions: List<AuctionMarketFilterOption>,
     val itemClassOptions: List<AuctionMarketFilterOption>,
     val itemSubclassOptions: List<AuctionMarketFilterOption>,
+)
+
+private data class FiltersCacheKey(
+    val regionCode: String,
+    val realmSlug: String,
+    val locale: Locale,
+    val selectedConnectedRealmId: Int,
+    val selectedDate: LocalDate,
+    val selectedHour: Int,
+    val communityConnectedRealmId: Int,
+    val communityDate: LocalDate,
+    val communityHour: Int,
+)
+
+private data class CachedFiltersResponse(
+    val response: AuctionMarketFilterResponse,
+    val expiresAt: Instant,
 )
 
 @Service
@@ -221,6 +241,20 @@ class AuctionMarketSearchService(
         val resolveContextStartNanos = System.nanoTime()
         val context = resolveContext(regionCode, realmSlug, localeOverride)
         val resolveContextMs = elapsedMs(resolveContextStartNanos)
+        val cacheKey = buildFiltersCacheKey(regionCode, realmSlug, context)
+        val now = Instant.now()
+        filtersCache[cacheKey]?.takeIf { now.isBefore(it.expiresAt) }?.let { cached ->
+            log.info(
+                "Auction market filters service cache hit in {}ms (requestId={} region={} realmSlug={} locale={})",
+                elapsedMs(totalStartNanos),
+                requestId(),
+                regionCode,
+                realmSlug,
+                context.locale.value,
+            )
+            return cached.response
+        }
+        filtersCache.entries.removeIf { now.isAfter(it.value.expiresAt) }
         val request =
             AuctionMarketSearchRequest(
                 selectedConnectedRealmId = context.selectedSnapshot.connectedRealmId,
@@ -347,6 +381,7 @@ class AuctionMarketSearchService(
             itemClassOptions.size,
             itemSubclassOptions.size,
         )
+        filtersCache[cacheKey] = CachedFiltersResponse(response, now.plus(filtersCacheTtl))
         return response
     }
 
@@ -455,6 +490,23 @@ class AuctionMarketSearchService(
 
     private fun requestId(): String = MDC.get("requestId") ?: "-"
 
+    private fun buildFiltersCacheKey(
+        regionCode: String,
+        realmSlug: String,
+        context: MarketContext,
+    ): FiltersCacheKey =
+        FiltersCacheKey(
+            regionCode = regionCode.lowercase(),
+            realmSlug = realmSlug.lowercase(),
+            locale = context.locale,
+            selectedConnectedRealmId = context.selectedSnapshot.connectedRealmId,
+            selectedDate = context.selectedSnapshot.date,
+            selectedHour = context.selectedSnapshot.hour,
+            communityConnectedRealmId = context.communitySnapshot.connectedRealmId,
+            communityDate = context.communitySnapshot.date,
+            communityHour = context.communitySnapshot.hour,
+        )
+
     private suspend fun <T> withAuctionMdc(mdc: Map<String, String>?, block: () -> T): T =
         withContext(Dispatchers.IO) {
             val previous = MDC.getCopyOfContextMap()
@@ -475,6 +527,7 @@ class AuctionMarketSearchService(
         }
 
     companion object {
+        private val filtersCacheTtl: Duration = Duration.ofSeconds(30)
         private val allowedSorts =
             setOf(
                 "itemName",
@@ -487,4 +540,6 @@ class AuctionMarketSearchService(
                 "communityQuantity",
             )
     }
+
+    private val filtersCache: MutableMap<FiltersCacheKey, CachedFiltersResponse> = ConcurrentHashMap()
 }

@@ -165,7 +165,58 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
         assertNotNull(result.filters.single { it.id == "price" }.min)
     }
 
+    @Test
+    fun `filters include lookup values not present in current market result set`() {
+        seedMarketSearchData()
+        val extraQualityName = insertLocale(20, "Epic", "Episch", "ITEM_QUALITY", "EPIC", "name")
+        val extraClassName = insertLocale(21, "Armor", "Ruestung", "ITEM_CLASS", "4", "name")
+        val extraSubclassName = insertLocale(22, "Mail", "Kette", "ITEM_SUBCLASS", "4:3", "displayName")
+        jdbcTemplate.update("INSERT INTO item_quality (internal_id, type, name_id) VALUES (4, 'EPIC', ?)", extraQualityName)
+        jdbcTemplate.update("INSERT INTO item_class (id, name_id) VALUES (4, ?)", extraClassName)
+        jdbcTemplate.update(
+            """
+            INSERT INTO item_subclass (
+                internal_id, class_id, hide_subclass_in_tooltips, subclass_id, display_name_id, item_class_owner_id
+            ) VALUES (610, 4, 0, 3, ?, 4)
+            """.trimIndent(),
+            extraSubclassName,
+        )
+
+        val result = service.filters("eu", "argent-dawn", "de_DE")
+
+        val quality = result.filters.single { it.id == "qualityIds" }
+        assertTrue(quality.options.orEmpty().any { it.id == "4" && it.label == "Episch" })
+        val itemClass = result.filters.single { it.id == "itemClassIds" }
+        assertTrue(itemClass.options.orEmpty().any { it.id == "4" && it.label == "Ruestung" })
+        val itemSubclass = result.filters.single { it.id == "itemSubclassIds" }
+        assertTrue(itemSubclass.options.orEmpty().any { it.id == "3" && it.label == "Kette" && it.parentId == "4" })
+    }
+
     private fun seedMarketSearchData() {
         MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+    }
+
+    private fun insertLocale(
+        id: Long,
+        enGb: String,
+        deDe: String,
+        sourceType: String,
+        sourceKey: String,
+        sourceField: String,
+    ): Long {
+        jdbcTemplate.update(
+            """
+            INSERT INTO locale (id, en_gb, en_us, de_de, source_type, source_key, source_field)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """.trimIndent(),
+            id,
+            enGb,
+            enGb,
+            deDe,
+            sourceType,
+            sourceKey,
+            sourceField,
+        )
+        return id
     }
 }

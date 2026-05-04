@@ -8,17 +8,14 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
   selector: 'ee-filter-panel',
   imports: [QualityBadgeComponent, SymbolIconComponent],
   template: `
-    <aside
-      class="ee-glass hidden w-72 shrink-0 overflow-hidden rounded-lg lg:flex lg:flex-col"
-      aria-label="Market filters"
-    >
+    <aside [class]="panelClass()" aria-label="Market filters">
       <div class="border-b border-white/10 bg-surface-container-high p-inner-padding">
         <h2 class="ee-section-heading flex items-center gap-2 text-primary">
           <ee-symbol-icon class="text-lg" name="filter_alt" />
           Deep Filters
         </h2>
       </div>
-      <div class="flex flex-col gap-6 overflow-y-auto p-inner-padding">
+      <div class="min-h-0 flex-1 flex flex-col gap-6 overflow-y-auto p-inner-padding">
         @for (section of sections(); track section.id) {
           <section>
             <h3 class="mb-3 ee-label text-on-surface-variant">{{ section.label }}</h3>
@@ -102,6 +99,7 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
 })
 export class FilterPanelComponent {
   readonly sections = input.required<readonly FilterSection[]>();
+  readonly panelClass = input('ee-glass flex w-72 shrink-0 flex-col overflow-hidden rounded-lg');
   readonly optionToggled = output<string>();
   readonly optionSelected = output<{ sectionId: string; optionId: string | null }>();
   readonly rangeChanged = output<{ id: string; bound: 'min' | 'max'; value: number | null }>();

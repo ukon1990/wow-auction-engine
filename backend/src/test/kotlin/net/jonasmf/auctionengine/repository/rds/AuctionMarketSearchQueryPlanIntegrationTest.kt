@@ -33,6 +33,23 @@ class AuctionMarketSearchQueryPlanIntegrationTest : IntegrationTestBase() {
         assertTrue(rows.isNotEmpty(), "EXPLAIN should return at least one plan row")
     }
 
+    @Test
+    fun `filter option sql explains successfully`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        val request = sampleRequest()
+        val (qualitySql, qualityArgs) = repository.buildQualityOptionsSqlForExplain(request)
+        val (itemClassSql, itemClassArgs) = repository.buildItemClassOptionsSqlForExplain(request)
+        val (itemSubclassSql, itemSubclassArgs) = repository.buildItemSubclassOptionsSqlForExplain(request)
+
+        val qualityRows = jdbcTemplate.queryForList("EXPLAIN $qualitySql", *qualityArgs)
+        val itemClassRows = jdbcTemplate.queryForList("EXPLAIN $itemClassSql", *itemClassArgs)
+        val itemSubclassRows = jdbcTemplate.queryForList("EXPLAIN $itemSubclassSql", *itemSubclassArgs)
+
+        assertTrue(qualityRows.isNotEmpty(), "EXPLAIN should return a plan for quality options")
+        assertTrue(itemClassRows.isNotEmpty(), "EXPLAIN should return a plan for item class options")
+        assertTrue(itemSubclassRows.isNotEmpty(), "EXPLAIN should return a plan for item subclass options")
+    }
+
     private fun sampleRequest(): AuctionMarketSearchRequest =
         AuctionMarketSearchRequest(
             selectedConnectedRealmId = 1084,

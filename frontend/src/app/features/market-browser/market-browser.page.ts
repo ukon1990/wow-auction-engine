@@ -1,19 +1,30 @@
+import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   computed,
   inject,
+  PLATFORM_ID,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { Subject, combineLatest, debounceTime, distinctUntilChanged } from 'rxjs';
+import {
+  Subject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  fromEvent,
+  map,
+  startWith,
+} from 'rxjs';
 
 import {
   FilterPanelComponent,
   PageFrameComponent,
   SearchInputComponent,
+  SymbolIconComponent,
   TableComponent,
 } from '@ui';
 import type { MarketItemRow, SortingState } from '@ui';
@@ -22,12 +33,16 @@ import { MarketBrowserService } from '@core/services/market-browser.service';
 
 import {
   createMarketBrowserTableColumns,
-  marketBrowserContentMinWidthClass,
   marketBrowserHeaderRowClass,
   marketBrowserRowClass,
   marketBrowserRowGridTemplateColumns,
   marketBrowserSkeletonRowClass,
 } from './market-browser-table.columns';
+
+const DEFAULT_VIEWPORT_WIDTH = 1280;
+const CLASS_MIN_WIDTH = 860;
+const SUBCLASS_MIN_WIDTH = 1040;
+const QUALITY_MIN_WIDTH = 1200;
 
 @Component({
   selector: 'app-market-browser-page',
@@ -39,6 +54,7 @@ import {
     PageFrameComponent,
     SearchInputComponent,
     // SideNavComponent,
+    SymbolIconComponent,
     TableComponent,
   ],
   template: `
@@ -55,13 +71,28 @@ import {
         (primarySelected)="onPrimaryNavSelected($event)"
         (selected)="onProfessionSelected($event)"
       />*/}}-->
-      <ee-page-frame title="Market Browser" eyebrow="Exchange Intelligence">
-        <ee-search-input
-          [value]="viewModel().searchQuery"
-          (valueChanged)="onSearchChanged($event)"
-        />
+      <ee-page-frame [title]="'Market Browser'" [eyebrow]="'Search the auction house'">
+        <div class="flex items-center gap-2">
+          <ee-search-input
+            class="min-w-0 flex-1"
+            [value]="viewModel().searchQuery"
+            (valueChanged)="onSearchChanged($event)"
+          />
+          <button
+            type="button"
+            class="inline-flex shrink-0 items-center gap-2 rounded border border-white/10 bg-surface-container-high px-4 py-2 ee-label text-on-surface transition hover:bg-surface-container-highest lg:hidden"
+            aria-label="Open filters"
+            aria-haspopup="dialog"
+            [attr.aria-expanded]="mobileFiltersOpen()"
+            (click)="openMobileFilters()"
+          >
+            <ee-symbol-icon class="text-base" name="filter_alt" aria-hidden="true" />
+            Filters
+          </button>
+        </div>
         <div class="flex min-h-0 min-w-0 flex-1 gap-element-gap overflow-hidden">
           <ee-filter-panel
+            class="hidden lg:flex"
             [sections]="viewModel().filterSections"
             (optionToggled)="onFilterToggled($event)"
             (optionSelected)="onFilterSelected($event)"
@@ -70,7 +101,7 @@ import {
           />
           <ee-table
             [data]="viewModel().rows"
-            [columns]="marketColumns"
+            [columns]="activeMarketColumns()"
             [getRowId]="marketRowId"
             [manualSorting]="true"
             [sorting]="marketTableSorting()"
@@ -78,7 +109,7 @@ import {
             [loading]="viewModel().loading"
             [skeletonRowCount]="viewModel().pageSize"
             [skeletonRowClass]="marketSkeletonRowClass"
-            [rowGridTemplateColumns]="marketRowGridTemplate"
+            [rowGridTemplateColumns]="marketRowGridTemplate()"
             sectionAriaLabel="Market items"
             emptyMessage="No market items available."
             [contentMinWidthClass]="marketTableMinWidth"
@@ -91,6 +122,49 @@ import {
             (nextPage)="onNextPage()"
           />
         </div>
+        <div
+          class="fixed inset-0 z-50 flex transition-opacity duration-300 lg:hidden"
+          [class.pointer-events-none]="!mobileFiltersOpen()"
+          [class.opacity-0]="!mobileFiltersOpen()"
+          [class.opacity-100]="mobileFiltersOpen()"
+          [attr.inert]="mobileFiltersOpen() ? null : ''"
+          [attr.aria-hidden]="!mobileFiltersOpen()"
+          [attr.role]="mobileFiltersOpen() ? 'dialog' : null"
+          [attr.aria-modal]="mobileFiltersOpen() ? 'true' : null"
+          [attr.aria-label]="mobileFiltersOpen() ? 'Filter options' : null"
+        >
+          <button
+            type="button"
+            class="flex-1 bg-black/60 transition-opacity duration-300"
+            aria-label="Close filters"
+            (click)="closeMobileFilters()"
+          ></button>
+          <div
+            class="flex h-full min-h-0 w-[min(22rem,90vw)] flex-col overflow-hidden border-l border-white/10 bg-surface p-4 transition-transform duration-300 ease-out"
+            [class.translate-x-full]="!mobileFiltersOpen()"
+            [class.translate-x-0]="mobileFiltersOpen()"
+          >
+            <div class="mb-3 flex items-center justify-between gap-2">
+              <h2 class="ee-section-heading text-primary">Filters</h2>
+              <button
+                type="button"
+                class="rounded border border-white/10 bg-surface-container-high px-3 py-1.5 ee-label text-on-surface transition hover:bg-surface-container-highest"
+                (click)="closeMobileFilters()"
+              >
+                Close
+              </button>
+            </div>
+            <ee-filter-panel
+              class="flex min-h-0 flex-1"
+              panelClass="ee-glass flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-lg"
+              [sections]="viewModel().filterSections"
+              (optionToggled)="onMobileFilterToggled($event)"
+              (optionSelected)="onMobileFilterSelected($event)"
+              (rangeChanged)="onMobileRangeChanged($event)"
+              (reset)="onMobileFiltersReset()"
+            />
+          </div>
+        </div>
       </ee-page-frame>
     </div>
   `,
@@ -100,17 +174,25 @@ export class MarketBrowserPage {
   private readonly marketBrowserService = inject(MarketBrowserService);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly platformId = inject(PLATFORM_ID);
   protected readonly viewModel = this.marketBrowserService.viewModel;
   protected readonly mobileNavOpen = signal(false);
+  protected readonly mobileFiltersOpen = signal(false);
+  protected readonly viewportWidth = signal(DEFAULT_VIEWPORT_WIDTH);
   private readonly searchChanged = new Subject<string>();
 
   protected readonly marketColumns = createMarketBrowserTableColumns();
-  protected readonly marketRowGridTemplate = marketBrowserRowGridTemplateColumns(
-    this.marketColumns,
+  protected readonly activeMarketColumns = computed(() =>
+    this.marketColumns.filter((column) =>
+      activeColumnIdsForViewport(this.viewportWidth()).has(String(column.id ?? '')),
+    ),
+  );
+  protected readonly marketRowGridTemplate = computed(() =>
+    marketBrowserRowGridTemplateColumns(this.activeMarketColumns()),
   );
   protected readonly marketRowClass = marketBrowserRowClass;
   protected readonly marketRowId = (row: MarketItemRow) => row.id;
-  protected readonly marketTableMinWidth = marketBrowserContentMinWidthClass();
+  protected readonly marketTableMinWidth = 'min-w-0 w-full';
   protected readonly marketTableHeaderRow = marketBrowserHeaderRowClass();
   protected readonly marketSkeletonRowClass = marketBrowserSkeletonRowClass();
   protected readonly marketTableSorting = computed<SortingState>(() => {
@@ -119,6 +201,19 @@ export class MarketBrowserPage {
   });
 
   constructor() {
+    if (isPlatformBrowser(this.platformId)) {
+      fromEvent(window, 'resize')
+        .pipe(
+          startWith(null),
+          map(() => window.innerWidth),
+          distinctUntilChanged(),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe((width) => {
+          this.viewportWidth.set(width);
+        });
+    }
+
     this.marketBrowserService.bindRoute(this.route);
     combineLatest([this.route.parent?.paramMap ?? this.route.paramMap, this.route.queryParamMap])
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -169,6 +264,35 @@ export class MarketBrowserPage {
     this.marketBrowserService.resetFilters();
   }
 
+  protected openMobileFilters(): void {
+    this.mobileFiltersOpen.set(true);
+  }
+
+  protected closeMobileFilters(): void {
+    this.mobileFiltersOpen.set(false);
+  }
+
+  protected onMobileFilterToggled(optionId: string): void {
+    this.onFilterToggled(optionId);
+  }
+
+  protected onMobileFilterSelected(change: { sectionId: string; optionId: string | null }): void {
+    this.onFilterSelected(change);
+  }
+
+  protected onMobileRangeChanged(change: {
+    id: string;
+    bound: 'min' | 'max';
+    value: number | null;
+  }): void {
+    this.onRangeChanged(change);
+  }
+
+  protected onMobileFiltersReset(): void {
+    this.onFiltersReset();
+    this.closeMobileFilters();
+  }
+
   protected onPreviousPage(): void {
     this.marketBrowserService.goToPreviousPage();
   }
@@ -180,4 +304,12 @@ export class MarketBrowserPage {
   protected onTableSortingChange(sorting: SortingState): void {
     this.marketBrowserService.applyTableSort(sorting);
   }
+}
+
+function activeColumnIdsForViewport(width: number): Set<string> {
+  const active = new Set<string>(['itemName', 'selectedPrice', 'selectedQuantity']);
+  if (width >= CLASS_MIN_WIDTH) active.add('itemClass');
+  if (width >= SUBCLASS_MIN_WIDTH) active.add('itemSubclass');
+  if (width >= QUALITY_MIN_WIDTH) active.add('quality');
+  return active;
 }

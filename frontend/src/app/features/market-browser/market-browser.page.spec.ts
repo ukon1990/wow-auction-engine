@@ -77,6 +77,11 @@ describe('MarketBrowserPage', () => {
   });
 
   it('renders the market browser shell with service data from the API-backed service', () => {
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      writable: true,
+      value: 1400,
+    });
     const fixture = TestBed.createComponent(MarketBrowserPage);
     fixture.detectChanges();
 
