@@ -1,0 +1,23 @@
+type: object
+required:
+    - statDate
+properties:
+    statDate:
+        type: string
+        format: date
+    profit:
+        type: integer
+        format: int64
+        nullable: true
+    roiPercent:
+        type: number
+        format: double
+        nullable: true
+    reagentCost:
+        type: integer
+        format: int64
+        nullable: true
+    outputUnitPrice:
+        type: integer
+        format: int64
+        nullable: true

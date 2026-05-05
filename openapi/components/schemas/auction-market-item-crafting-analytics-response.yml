@@ -1,0 +1,13 @@
+type: object
+required:
+    - dailySeries
+    - heatmap
+properties:
+    dailySeries:
+        type: array
+        items:
+            $ref: ./auction-market-item-crafting-analytics-point.yml
+    heatmap:
+        type: array
+        items:
+            $ref: ./auction-market-item-crafting-heatmap-cell.yml

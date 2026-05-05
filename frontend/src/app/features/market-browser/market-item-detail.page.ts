@@ -489,8 +489,10 @@ export class MarketItemDetailPage {
           this.error.set(false);
           this.commodityLoaded.set(false);
           this.chartScope.set(ctx.initialScope);
+          const preferredRecipeId =
+            ctx.listSegment === 'crafting' && ctx.recipeId ? Number(ctx.recipeId) : undefined;
           return this.detailService
-            .loadItemDetail(ctx.region, ctx.realmSlug, ctx.itemId, ctx.variant, ctx.initialScope)
+            .loadItemDetail(ctx.region, ctx.realmSlug, ctx.itemId, ctx.variant, ctx.initialScope, undefined, preferredRecipeId)
             .pipe(
               finalize(() => this.loading.set(false)),
               catchError(() => {
@@ -535,7 +537,15 @@ export class MarketItemDetailPage {
     if (!ctx) return;
     this.commodityLoading.set(true);
     this.detailService
-      .loadItemDetail(ctx.region, ctx.realmSlug, ctx.itemId, ctx.variant, 'commodity')
+      .loadItemDetail(
+        ctx.region,
+        ctx.realmSlug,
+        ctx.itemId,
+        ctx.variant,
+        'commodity',
+        undefined,
+        ctx.recipeId ? Number(ctx.recipeId) : undefined,
+      )
       .pipe(
         finalize(() => this.commodityLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),

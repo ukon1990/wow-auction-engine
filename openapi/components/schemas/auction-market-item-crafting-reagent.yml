@@ -1,0 +1,28 @@
+type: object
+required:
+    - itemId
+    - name
+    - quantity
+    - priced
+properties:
+    itemId:
+        type: integer
+        format: int32
+    name:
+        type: string
+    mediaUrl:
+        type: string
+        nullable: true
+    quantity:
+        type: integer
+        format: int32
+    unitPrice:
+        type: integer
+        format: int64
+        nullable: true
+    lineTotal:
+        type: integer
+        format: int64
+        nullable: true
+    priced:
+        type: boolean

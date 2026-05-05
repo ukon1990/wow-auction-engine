@@ -1,0 +1,28 @@
+type: object
+required:
+    - dayOfWeek
+    - hourOfDay
+    - sampleCount
+properties:
+    dayOfWeek:
+        type: integer
+        format: int32
+        minimum: 0
+        maximum: 6
+        description: ISO day index, Monday=0.
+    hourOfDay:
+        type: integer
+        format: int32
+        minimum: 0
+        maximum: 23
+    profit:
+        type: number
+        format: double
+        nullable: true
+    roiPercent:
+        type: number
+        format: double
+        nullable: true
+    sampleCount:
+        type: integer
+        format: int32

@@ -1,0 +1,46 @@
+type: object
+required:
+    - recipeId
+    - recipeName
+    - craftedQuantity
+    - reagents
+    - reagentsFullyPriced
+properties:
+    recipeId:
+        type: integer
+        format: int32
+    recipeName:
+        type: string
+    recipeMediaUrl:
+        type: string
+        nullable: true
+    craftedQuantity:
+        type: integer
+        format: int32
+    reagents:
+        type: array
+        items:
+            $ref: ./auction-market-item-crafting-reagent.yml
+    reagentCost:
+        type: integer
+        format: int64
+        nullable: true
+    reagentsFullyPriced:
+        type: boolean
+    outputUnitPrice:
+        type: integer
+        format: int64
+        nullable: true
+    buyout:
+        type: integer
+        format: int64
+        nullable: true
+        description: Deprecated alias of outputUnitPrice.
+    profit:
+        type: integer
+        format: int64
+        nullable: true
+    roiPercent:
+        type: number
+        format: double
+        nullable: true

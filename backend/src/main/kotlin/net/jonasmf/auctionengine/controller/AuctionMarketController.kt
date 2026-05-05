@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.controller
 
 import net.jonasmf.auctionengine.generated.api.AuctionMarketApi
 import net.jonasmf.auctionengine.generated.model.AuctionMarketFilterResponse
+import net.jonasmf.auctionengine.generated.model.AuctionMarketItemCraftingAnalyticsResponse
 import net.jonasmf.auctionengine.generated.model.AuctionMarketItemDetailResponse
 import net.jonasmf.auctionengine.generated.model.AuctionMarketSearchPage
 import net.jonasmf.auctionengine.generated.model.CraftingMarketFilterResponse
@@ -138,6 +139,7 @@ class AuctionMarketController(
         modifierKey: String,
         petSpeciesId: Int,
         scope: String,
+        preferredRecipeId: Int?,
         locale: String?,
     ): ResponseEntity<AuctionMarketItemDetailResponse> =
         ResponseEntity.ok(
@@ -149,6 +151,30 @@ class AuctionMarketController(
                 modifierKey = modifierKey,
                 petSpeciesId = petSpeciesId,
                 scope = scope.ifBlank { "realm" },
+                localeOverride = locale,
+                preferredRecipeId = preferredRecipeId,
+            ),
+        )
+
+    override fun getAuctionMarketItemCraftingAnalytics(
+        region: String,
+        realmSlug: String,
+        itemId: Int,
+        recipeId: Int,
+        bonusKey: String,
+        modifierKey: String,
+        petSpeciesId: Int,
+        locale: String?,
+    ): ResponseEntity<AuctionMarketItemCraftingAnalyticsResponse> =
+        ResponseEntity.ok(
+            auctionMarketItemDetailService.craftingAnalytics(
+                regionCode = region,
+                realmSlug = realmSlug,
+                itemId = itemId,
+                recipeId = recipeId,
+                bonusKey = bonusKey,
+                modifierKey = modifierKey,
+                petSpeciesId = petSpeciesId,
                 localeOverride = locale,
             ),
         )

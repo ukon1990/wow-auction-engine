@@ -14,6 +14,7 @@ required:
     - hourlySeriesCommodity
     - quantityPieRealm
     - quantityPieCommodity
+    - craftings
 properties:
     item:
         $ref: ./auction-market-item.yml
@@ -62,3 +63,8 @@ properties:
     crafting:
         $ref: ./auction-market-item-crafting.yml
         nullable: true
+        deprecated: true
+    craftings:
+        type: array
+        items:
+            $ref: ./auction-market-item-crafting-detail.yml

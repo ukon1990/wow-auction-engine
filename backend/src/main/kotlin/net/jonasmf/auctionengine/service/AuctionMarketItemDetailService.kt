@@ -3,6 +3,11 @@ package net.jonasmf.auctionengine.service
 import net.jonasmf.auctionengine.generated.model.AuctionListingKey
 import net.jonasmf.auctionengine.generated.model.AuctionMarketItem
 import net.jonasmf.auctionengine.generated.model.AuctionMarketItemCrafting
+import net.jonasmf.auctionengine.generated.model.AuctionMarketItemCraftingAnalyticsPoint
+import net.jonasmf.auctionengine.generated.model.AuctionMarketItemCraftingAnalyticsResponse
+import net.jonasmf.auctionengine.generated.model.AuctionMarketItemCraftingDetail
+import net.jonasmf.auctionengine.generated.model.AuctionMarketItemCraftingHeatmapCell
+import net.jonasmf.auctionengine.generated.model.AuctionMarketItemCraftingReagent
 import net.jonasmf.auctionengine.generated.model.AuctionMarketItemDetailPoint
 import net.jonasmf.auctionengine.generated.model.AuctionMarketItemDetailResponse
 import net.jonasmf.auctionengine.generated.model.AuctionMarketItemDetailSummary
@@ -16,6 +21,9 @@ import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemDetailDailyRow
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemDetailHourlyRow
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemDetailPieRow
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemDetailRepository
+import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemCraftingAnalyticsDailyRow
+import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemCraftingHeatmapRow
+import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemCraftingReagentRow
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemCraftingRow
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemHeaderRow
 import org.springframework.http.HttpStatus
@@ -38,6 +46,7 @@ class AuctionMarketItemDetailService(
         petSpeciesId: Int,
         scope: String,
         localeOverride: String?,
+        preferredRecipeId: Int? = null,
     ): AuctionMarketItemDetailResponse {
         val context = auctionMarketContextService.resolve(regionCode, realmSlug, localeOverride)
         val rollupListing = bonusKey.isEmpty() && modifierKey.isEmpty() && petSpeciesId == 0
@@ -221,8 +230,8 @@ class AuctionMarketItemDetailService(
                 regionalMetricsRedundant = redundant,
             )
 
-        val craftingRow =
-            detailRepository.loadBestCrafting(
+        val craftingRows =
+            detailRepository.loadCraftings(
                 context.selectedSnapshot.connectedRealmId,
                 itemId,
                 context.selectedSnapshot.date,
@@ -231,9 +240,20 @@ class AuctionMarketItemDetailService(
                 bonusKey,
                 modifierKey,
                 petSpeciesId,
+                preferredRecipeId,
                 localeSuffix,
             )
-        val craftingDto = craftingRow?.toCraftingDto()
+        val reagentRows =
+            detailRepository
+                .loadCraftingReagents(
+                    context.selectedSnapshot.connectedRealmId,
+                    craftingRows.map { it.recipeId },
+                    context.selectedSnapshot.date,
+                    context.selectedSnapshot.hour,
+                    localeSuffix,
+                ).groupBy { it.recipeId }
+        val craftingDtos = craftingRows.map { it.toCraftingDetailDto(reagentRows[it.recipeId].orEmpty()) }
+        val craftingDto = craftingRows.firstOrNull()?.toCraftingDto()
 
         return AuctionMarketItemDetailResponse(
             item = header.toAuctionMarketItem(),
@@ -251,6 +271,7 @@ class AuctionMarketItemDetailService(
             quantityPieRealm = pieRealm,
             quantityPieCommodity = pieCommodity,
             crafting = craftingDto,
+            craftings = craftingDtos,
         )
     }
 
@@ -392,15 +413,103 @@ class AuctionMarketItemDetailService(
             quantity = quantity,
         )
 
-    private fun AuctionMarketItemCraftingRow.toCraftingDto(): AuctionMarketItemCrafting? {
-        if (reagentCost == null || buyout == null) return null
-        return AuctionMarketItemCrafting(
+    fun craftingAnalytics(
+        regionCode: String,
+        realmSlug: String,
+        itemId: Int,
+        recipeId: Int,
+        bonusKey: String,
+        modifierKey: String,
+        petSpeciesId: Int,
+        localeOverride: String?,
+    ): AuctionMarketItemCraftingAnalyticsResponse {
+        val context = auctionMarketContextService.resolve(regionCode, realmSlug, localeOverride)
+        val rollupListing = bonusKey.isEmpty() && modifierKey.isEmpty() && petSpeciesId == 0
+        val variant = !rollupListing
+        val from = context.selectedSnapshot.date.minusDays(13)
+        val to = context.selectedSnapshot.date
+        val daily =
+            detailRepository.loadCraftingAnalyticsDaily(
+                context.selectedSnapshot.connectedRealmId,
+                itemId,
+                recipeId,
+                from,
+                to,
+                context.selectedSnapshot.hour,
+                variant,
+                bonusKey,
+                modifierKey,
+                petSpeciesId,
+            )
+        val heatmap =
+            detailRepository.loadCraftingAnalyticsHeatmap(
+                context.selectedSnapshot.connectedRealmId,
+                itemId,
+                recipeId,
+                from,
+                to,
+                variant,
+                bonusKey,
+                modifierKey,
+                petSpeciesId,
+            )
+        return AuctionMarketItemCraftingAnalyticsResponse(
+            dailySeries = daily.map { it.toAnalyticsPoint() },
+            heatmap = heatmap.map { it.toHeatmapCell() },
+        )
+    }
+
+    private fun AuctionMarketItemCraftingRow.toCraftingDto(): AuctionMarketItemCrafting =
+        AuctionMarketItemCrafting(
             recipeId = recipeId,
             recipeName = recipeName,
             reagentCost = reagentCost,
-            buyout = buyout,
+            buyout = outputUnitPrice,
             profit = profit,
             roiPercent = roiPercent,
         )
-    }
+
+    private fun AuctionMarketItemCraftingRow.toCraftingDetailDto(reagents: List<AuctionMarketItemCraftingReagentRow>): AuctionMarketItemCraftingDetail =
+        AuctionMarketItemCraftingDetail(
+            recipeId = recipeId,
+            recipeName = recipeName,
+            recipeMediaUrl = recipeMediaUrl,
+            craftedQuantity = craftedQuantity,
+            reagents = reagents.map { it.toReagentDto() },
+            reagentCost = reagentCost,
+            reagentsFullyPriced = reagentsFullyPriced,
+            outputUnitPrice = outputUnitPrice,
+            buyout = outputUnitPrice,
+            profit = profit,
+            roiPercent = roiPercent,
+        )
+
+    private fun AuctionMarketItemCraftingReagentRow.toReagentDto(): AuctionMarketItemCraftingReagent =
+        AuctionMarketItemCraftingReagent(
+            itemId = itemId,
+            name = name,
+            mediaUrl = mediaUrl,
+            quantity = quantity,
+            unitPrice = unitPrice,
+            lineTotal = lineTotal,
+            priced = unitPrice != null,
+        )
+
+    private fun AuctionMarketItemCraftingAnalyticsDailyRow.toAnalyticsPoint(): AuctionMarketItemCraftingAnalyticsPoint =
+        AuctionMarketItemCraftingAnalyticsPoint(
+            statDate = statDate,
+            profit = profit,
+            roiPercent = roiPercent,
+            reagentCost = reagentCost,
+            outputUnitPrice = outputUnitPrice,
+        )
+
+    private fun AuctionMarketItemCraftingHeatmapRow.toHeatmapCell(): AuctionMarketItemCraftingHeatmapCell =
+        AuctionMarketItemCraftingHeatmapCell(
+            dayOfWeek = dayOfWeek,
+            hourOfDay = hourOfDay,
+            profit = profit,
+            roiPercent = roiPercent,
+            sampleCount = sampleCount,
+        )
 }

@@ -1,12 +1,8 @@
 get:
     tags:
         - AuctionMarket
-    operationId: getAuctionMarketItemDetail
-    summary: Item Codex detail for one market listing bucket
-    description: >
-        Returns charts, summary metrics, and optional crafting economics for one item.
-        Snapshot date/hour match market search. Variant query params scope stats to one
-        auction_stats_hourly row; omit them for item-wide rollup.
+    operationId: getAuctionMarketItemCraftingAnalytics
+    summary: 14-day crafting economics for one item recipe
     parameters:
         - name: region
           in: query
@@ -20,6 +16,12 @@ get:
           schema:
               type: string
         - name: itemId
+          in: query
+          required: true
+          schema:
+              type: integer
+              format: int32
+        - name: recipeId
           in: query
           required: true
           schema:
@@ -44,19 +46,6 @@ get:
               type: integer
               format: int32
               default: 0
-        - name: scope
-          in: query
-          required: false
-          schema:
-              type: string
-              enum: [realm, commodity]
-              default: realm
-        - name: preferredRecipeId
-          in: query
-          required: false
-          schema:
-              type: integer
-              format: int32
         - name: locale
           in: query
           required: false
@@ -64,12 +53,12 @@ get:
               type: string
     responses:
         "200":
-            description: Item detail payload.
+            description: Crafting analytics payload.
             content:
                 application/json:
                     schema:
-                        $ref: ../components/schemas/auction-market-item-detail-response.yml
+                        $ref: ../components/schemas/auction-market-item-crafting-analytics-response.yml
         "400":
             description: Invalid request.
         "404":
-            description: Realm or item context not found.
+            description: Realm, item, or recipe context not found.

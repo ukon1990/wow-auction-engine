@@ -1,7 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable, of, tap } from 'rxjs';
 
-import { AuctionMarketApiService, AuctionMarketItemDetailResponse } from '@api/generated';
+import {
+  AuctionMarketApiService,
+  AuctionMarketItemCraftingAnalyticsResponse,
+  AuctionMarketItemDetailResponse,
+} from '@api/generated';
 
 import { MarketBrowserCache } from './market-browser.cache';
 import { RealmSelectionService } from './realm-selection.service';
@@ -28,11 +32,13 @@ export class MarketItemDetailService {
     variant: ItemDetailVariantParams,
     scope: ItemDetailScope,
     locale?: string,
+    preferredRecipeId?: number,
   ): Observable<AuctionMarketItemDetailResponse> {
     const routeKey = `${region}:${realmSlug.toLowerCase()}`;
     const variantKey = `${variant.bonusKey}|${variant.modifierKey}|${variant.petSpeciesId}`;
     const localeKey = locale?.trim() ? `:${locale.trim()}` : '';
-    const detailKey = `${routeKey}:item:${itemId}:v:${variantKey}:scope:${scope}${localeKey}`;
+    const recipeKey = preferredRecipeId ? `:recipe:${preferredRecipeId}` : '';
+    const detailKey = `${routeKey}:item:${itemId}:v:${variantKey}:scope:${scope}${localeKey}${recipeKey}`;
     const version = this.realmSelection.marketDataVersion();
 
     const cached = version ? this.marketBrowserCache.getItemDetail(detailKey, version) : undefined;
@@ -49,6 +55,7 @@ export class MarketItemDetailService {
         variant.modifierKey,
         variant.petSpeciesId,
         scope,
+        preferredRecipeId,
         locale,
         'body',
         false,
@@ -61,5 +68,28 @@ export class MarketItemDetailService {
           }
         }),
       );
+  }
+
+  loadCraftingAnalytics(
+    region: 'us' | 'eu' | 'kr' | 'tw',
+    realmSlug: string,
+    itemId: number,
+    recipeId: number,
+    variant: ItemDetailVariantParams,
+    locale?: string,
+  ): Observable<AuctionMarketItemCraftingAnalyticsResponse> {
+    return this.auctionMarketApi.getAuctionMarketItemCraftingAnalytics(
+      region,
+      realmSlug,
+      itemId,
+      recipeId,
+      variant.bonusKey,
+      variant.modifierKey,
+      variant.petSpeciesId,
+      locale,
+      'body',
+      false,
+      { transferCache: false },
+    );
   }
 }
