@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 
-import { copperToCurrencyAmount, FilterSection, type SortingState } from '@ui';
+import { FilterSection, type SortingState } from '@ui';
 import {
   AuctionMarketApiService,
   AuctionMarketFilter,
@@ -93,20 +93,22 @@ export class CraftingBrowserService {
       paginationSummary: 'Loading...',
     }));
 
-    this.auctionMarketApi.getCraftingMarketFilters(region, realmSlug, undefined, 'body', false).subscribe({
-      next: (response) => {
-        if (filterReqId !== this.filterRequestId) return;
-        const filters = response.filters ?? [];
-        this.vm.update((v) => ({
-          ...v,
-          filterSections: toFilterSections(filters, this.queryState),
-        }));
-      },
-      error: () => {
-        if (filterReqId !== this.filterRequestId) return;
-        this.vm.update((v) => ({ ...v, filterSections: [] }));
-      },
-    });
+    this.auctionMarketApi
+      .getCraftingMarketFilters(region, realmSlug, undefined, 'body', false)
+      .subscribe({
+        next: (response) => {
+          if (filterReqId !== this.filterRequestId) return;
+          const filters = response.filters ?? [];
+          this.vm.update((v) => ({
+            ...v,
+            filterSections: toFilterSections(filters, this.queryState),
+          }));
+        },
+        error: () => {
+          if (filterReqId !== this.filterRequestId) return;
+          this.vm.update((v) => ({ ...v, filterSections: [] }));
+        },
+      });
 
     this.auctionMarketApi
       .searchCraftingMarket(
@@ -180,13 +182,14 @@ export class CraftingBrowserService {
   selectFilter(): void {}
 
   setRangeFilter(id: string, bound: 'min' | 'max', value: number | null): void {
-    const map: Record<string, [keyof CraftingBrowserQueryState, keyof CraftingBrowserQueryState]> = {
-      profit: ['minProfit', 'maxProfit'],
-      roiPercent: ['minRoiPercent', 'maxRoiPercent'],
-      reagentCost: ['minReagentCost', 'maxReagentCost'],
-      outputPrice: ['minOutputPrice', 'maxOutputPrice'],
-      outputPriceChangePercent: ['minOutputPriceChangePercent', 'maxOutputPriceChangePercent'],
-    };
+    const map: Record<string, [keyof CraftingBrowserQueryState, keyof CraftingBrowserQueryState]> =
+      {
+        profit: ['minProfit', 'maxProfit'],
+        roiPercent: ['minRoiPercent', 'maxRoiPercent'],
+        reagentCost: ['minReagentCost', 'maxReagentCost'],
+        outputPrice: ['minOutputPrice', 'maxOutputPrice'],
+        outputPriceChangePercent: ['minOutputPriceChangePercent', 'maxOutputPriceChangePercent'],
+      };
     const keys = map[id];
     if (!keys) return;
     const key = bound === 'min' ? keys[0] : keys[1];
@@ -209,9 +212,12 @@ export class CraftingBrowserService {
 
   applyTableSort(sorting: SortingState): void {
     const first = sorting[0];
-    const sortBy = (first ? readSortBy(String(first.id)) : defaultQueryState.sortBy) as CraftingSortBy;
+    const sortBy = (
+      first ? readSortBy(String(first.id)) : defaultQueryState.sortBy
+    ) as CraftingSortBy;
     const sortDirection: 'asc' | 'desc' = first?.desc ? 'desc' : 'asc';
-    if (this.queryState.sortBy === sortBy && this.queryState.sortDirection === sortDirection) return;
+    if (this.queryState.sortBy === sortBy && this.queryState.sortDirection === sortDirection)
+      return;
     this.navigateWithState({ ...this.queryState, sortBy, sortDirection, page: 0 });
   }
 
@@ -347,7 +353,8 @@ function toFilterSections(
         ],
       };
     }
-    const selectedIds = filter.id === 'professionIds' ? new Set(state.professionIds.map(String)) : new Set();
+    const selectedIds =
+      filter.id === 'professionIds' ? new Set(state.professionIds.map(String)) : new Set();
     return {
       id: filter.id,
       label: filter.label,
@@ -371,7 +378,8 @@ function selectedRangeValue(
   bound: 'min' | 'max',
   state: CraftingBrowserQueryState,
 ): number | undefined {
-  if (filterId === 'profit') return (bound === 'min' ? state.minProfit : state.maxProfit) ?? undefined;
+  if (filterId === 'profit')
+    return (bound === 'min' ? state.minProfit : state.maxProfit) ?? undefined;
   if (filterId === 'roiPercent')
     return (bound === 'min' ? state.minRoiPercent : state.maxRoiPercent) ?? undefined;
   if (filterId === 'reagentCost')
@@ -380,7 +388,8 @@ function selectedRangeValue(
     return (bound === 'min' ? state.minOutputPrice : state.maxOutputPrice) ?? undefined;
   if (filterId === 'outputPriceChangePercent')
     return (
-      (bound === 'min' ? state.minOutputPriceChangePercent : state.maxOutputPriceChangePercent) ?? undefined
+      (bound === 'min' ? state.minOutputPriceChangePercent : state.maxOutputPriceChangePercent) ??
+      undefined
     );
   return undefined;
 }
@@ -420,7 +429,11 @@ function toCraftingRow(row: CraftingMarketSearchRow): CraftingTableRow {
   };
 }
 
-function variantSummary(lk: { bonusKey: string; modifierKey: string; petSpeciesId: number }): string {
+function variantSummary(lk: {
+  bonusKey: string;
+  modifierKey: string;
+  petSpeciesId: number;
+}): string {
   const parts: string[] = [];
   if (lk.bonusKey?.trim()) parts.push(`B:${truncate(lk.bonusKey, 24)}`);
   if (lk.modifierKey?.trim()) parts.push(`M:${truncate(lk.modifierKey, 12)}`);

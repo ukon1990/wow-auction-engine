@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { injectFlexRenderContext } from '@tanstack/angular-table';
 import type { CellContext } from '@tanstack/table-core';
 

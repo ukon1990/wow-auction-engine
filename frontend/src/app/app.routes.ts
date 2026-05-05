@@ -60,7 +60,9 @@ export const routes: TitledRoutes = [
           {
             path: '',
             loadComponent: () =>
-              import('./features/crafting/crafting-browser.page').then((m) => m.CraftingBrowserPage),
+              import('./features/crafting/crafting-browser.page').then(
+                (m) => m.CraftingBrowserPage,
+              ),
           },
           {
             path: ':recipeId/:itemId',

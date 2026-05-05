@@ -37,7 +37,9 @@ export interface HeatmapTooltipContext {
             <div class="ee-label text-center text-outline" role="columnheader">{{ label }}</div>
           }
           @for (row of gridRows(); track row.index) {
-            <div class="ee-label flex items-center text-outline" role="rowheader">{{ row.label }}</div>
+            <div class="ee-label flex items-center text-outline" role="rowheader">
+              {{ row.label }}
+            </div>
             @for (cell of row.cells; track cell.col) {
               <div
                 class="group relative h-8 rounded border border-white/10 transition focus-within:ring-2 focus-within:ring-primary/60"
@@ -46,17 +48,25 @@ export interface HeatmapTooltipContext {
                 [attr.aria-label]="cellAriaLabel(row.label, columnLabels()[cell.col], cell)"
                 tabindex="0"
               >
-                <span class="sr-only">{{ cellAriaLabel(row.label, columnLabels()[cell.col], cell) }}</span>
+                <span class="sr-only">{{
+                  cellAriaLabel(row.label, columnLabels()[cell.col], cell)
+                }}</span>
                 <div
                   class="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 hidden min-w-44 -translate-x-1/2 rounded border border-white/15 bg-surface-container/95 px-2 py-1.5 text-xs text-on-surface shadow-lg backdrop-blur group-hover:block group-focus-within:block"
                 >
                   @if (tooltipTemplate()) {
                     <ng-container
                       [ngTemplateOutlet]="tooltipTemplate()"
-                      [ngTemplateOutletContext]="{ cell: cell, rowLabel: row.label, columnLabel: columnLabels()[cell.col] }"
+                      [ngTemplateOutletContext]="{
+                        cell: cell,
+                        rowLabel: row.label,
+                        columnLabel: columnLabels()[cell.col],
+                      }"
                     />
                   } @else {
-                    <div class="ee-label text-outline">{{ row.label }} · {{ columnLabels()[cell.col] }}</div>
+                    <div class="ee-label text-outline">
+                      {{ row.label }} · {{ columnLabels()[cell.col] }}
+                    </div>
                     <div class="font-space-mono">{{ cell.label ?? valueLabel(cell.value) }}</div>
                   }
                 </div>
@@ -83,19 +93,26 @@ export class HeatmapGridComponent {
   readonly max = input<number | null>(null);
   readonly tooltipTemplate = input<TemplateRef<HeatmapTooltipContext> | null>(null);
 
-  protected readonly gridTemplateColumns = computed(() => `minmax(4rem, 7rem) repeat(${this.columnLabels().length}, minmax(1.4rem, 1fr))`);
+  protected readonly gridTemplateColumns = computed(
+    () => `minmax(4rem, 7rem) repeat(${this.columnLabels().length}, minmax(1.4rem, 1fr))`,
+  );
 
   protected readonly gridRows = computed(() => {
     const byKey = new Map(this.cells().map((cell) => [`${cell.row}:${cell.col}`, cell]));
     return this.rowLabels().map((label, rowIndex) => ({
       index: rowIndex,
       label,
-      cells: this.columnLabels().map((_, colIndex) => byKey.get(`${rowIndex}:${colIndex}`) ?? { row: rowIndex, col: colIndex, value: null }),
+      cells: this.columnLabels().map(
+        (_, colIndex) =>
+          byKey.get(`${rowIndex}:${colIndex}`) ?? { row: rowIndex, col: colIndex, value: null },
+      ),
     }));
   });
 
   private readonly domain = computed(() => {
-    const values = this.cells().map((cell) => cell.value).filter((v): v is number => v != null && Number.isFinite(v));
+    const values = this.cells()
+      .map((cell) => cell.value)
+      .filter((v): v is number => v != null && Number.isFinite(v));
     const min = this.min() ?? Math.min(0, ...values);
     const max = this.max() ?? Math.max(0, ...values);
     return { min, max: max === min ? min + 1 : max };
@@ -115,7 +132,9 @@ export class HeatmapGridComponent {
   }
 
   protected valueLabel(value: number | null | undefined): string {
-    return value == null || !Number.isFinite(value) ? 'No samples' : value.toLocaleString('en-US', { maximumFractionDigits: 1 });
+    return value == null || !Number.isFinite(value)
+      ? 'No samples'
+      : value.toLocaleString('en-US', { maximumFractionDigits: 1 });
   }
 
   protected cellAriaLabel(rowLabel: string, columnLabel: string, cell: HeatmapCell): string {

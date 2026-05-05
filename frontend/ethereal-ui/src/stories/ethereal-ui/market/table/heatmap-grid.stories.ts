@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 
-import { HeatmapGridComponent, type HeatmapCell } from '../../../../lib/components/market/heatmap-grid.component';
+import {
+  HeatmapGridComponent,
+  type HeatmapCell,
+} from '../../../../lib/components/market/heatmap-grid.component';
 
 const cells: HeatmapCell[] = Array.from({ length: 7 }, (_, row) =>
   Array.from({ length: 24 }, (_, col) => ({

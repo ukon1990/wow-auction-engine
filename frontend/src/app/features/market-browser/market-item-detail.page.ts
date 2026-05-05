@@ -107,7 +107,12 @@ interface TooltipRow {
           >
           <span aria-hidden="true">/</span>
           <a
-            [routerLink]="['/', regionRealm().region, regionRealm().realm, regionRealm().marketListSegment]"
+            [routerLink]="[
+              '/',
+              regionRealm().region,
+              regionRealm().realm,
+              regionRealm().marketListSegment,
+            ]"
             class="rounded-sm hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
             >{{ regionRealm().marketListLabel }}</a
           >
@@ -349,16 +354,26 @@ interface TooltipRow {
                               }
                               <span>{{ reagent.name }}</span>
                               @if (!reagent.priced) {
-                                <span class="rounded bg-error/15 px-2 py-0.5 ee-label text-error">missing price</span>
+                                <span class="rounded bg-error/15 px-2 py-0.5 ee-label text-error"
+                                  >missing price</span
+                                >
                               }
                             </div>
                           </td>
-                          <td class="py-3 pr-4 text-right tabular-nums select-text">{{ reagent.quantity }}</td>
                           <td class="py-3 pr-4 text-right tabular-nums select-text">
-                            <ee-currency-amount class="inline-flex justify-end" [amount]="reagent.unitPrice | copperToCurrency" />
+                            {{ reagent.quantity }}
+                          </td>
+                          <td class="py-3 pr-4 text-right tabular-nums select-text">
+                            <ee-currency-amount
+                              class="inline-flex justify-end"
+                              [amount]="reagent.unitPrice | copperToCurrency"
+                            />
                           </td>
                           <td class="py-3 text-right tabular-nums select-text">
-                            <ee-currency-amount class="inline-flex justify-end" [amount]="reagent.lineTotal | copperToCurrency" />
+                            <ee-currency-amount
+                              class="inline-flex justify-end"
+                              [amount]="reagent.lineTotal | copperToCurrency"
+                            />
                           </td>
                         </tr>
                       }
@@ -369,14 +384,29 @@ interface TooltipRow {
                 <div class="rounded border border-white/10 bg-surface-container-high/60 p-4">
                   <div class="ee-label mb-3 text-outline">{{ crafting.recipeName }}</div>
                   <div class="space-y-2 ee-data text-on-surface">
-                    <div class="flex justify-between gap-4"><span>Crafted qty</span><span>{{ crafting.craftedQuantity }}</span></div>
-                    <div class="flex justify-between gap-4"><span>Reagent cost</span><ee-currency-amount [amount]="crafting.reagentCost | copperToCurrency" /></div>
-                    <div class="flex justify-between gap-4"><span>Output unit</span><ee-currency-amount [amount]="crafting.outputUnitPrice | copperToCurrency" /></div>
-                    <div class="flex justify-between gap-4"><span>Profit</span><ee-currency-amount [amount]="crafting.profit | copperToCurrency" /></div>
-                    <div class="flex justify-between gap-4"><span>ROI</span><span>{{ formatRoi(crafting.roiPercent) }}</span></div>
+                    <div class="flex justify-between gap-4">
+                      <span>Crafted qty</span><span>{{ crafting.craftedQuantity }}</span>
+                    </div>
+                    <div class="flex justify-between gap-4">
+                      <span>Reagent cost</span
+                      ><ee-currency-amount [amount]="crafting.reagentCost | copperToCurrency" />
+                    </div>
+                    <div class="flex justify-between gap-4">
+                      <span>Output unit</span
+                      ><ee-currency-amount [amount]="crafting.outputUnitPrice | copperToCurrency" />
+                    </div>
+                    <div class="flex justify-between gap-4">
+                      <span>Profit</span
+                      ><ee-currency-amount [amount]="crafting.profit | copperToCurrency" />
+                    </div>
+                    <div class="flex justify-between gap-4">
+                      <span>ROI</span><span>{{ formatRoi(crafting.roiPercent) }}</span>
+                    </div>
                   </div>
                   @if (!crafting.reagentsFullyPriced) {
-                    <p class="ee-label mt-3 text-error">Profit hidden until all reagents have prices.</p>
+                    <p class="ee-label mt-3 text-error">
+                      Profit hidden until all reagents have prices.
+                    </p>
                   }
                 </div>
               </div>
@@ -390,7 +420,12 @@ interface TooltipRow {
               [series]="craftingAnalyticsSeries()"
               description="Daily profit and ROI for selected recipe. Missing points mean incomplete pricing."
             />
-            <ng-template #heatmapTip let-cell="cell" let-rowLabel="rowLabel" let-columnLabel="columnLabel">
+            <ng-template
+              #heatmapTip
+              let-cell="cell"
+              let-rowLabel="rowLabel"
+              let-columnLabel="columnLabel"
+            >
               <div class="ee-label text-outline">{{ rowLabel }} · {{ columnLabel }}:00</div>
               <div class="font-space-mono">{{ cell.label }}</div>
             </ng-template>
@@ -430,11 +465,15 @@ export class MarketItemDetailPage {
   protected readonly commodityLoaded = signal(false);
   protected readonly chartScope = signal<'realm' | 'commodity'>('realm');
   protected readonly selectedRecipeId = signal<number | null>(null);
-  protected readonly craftingAnalytics = signal<AuctionMarketItemCraftingAnalyticsResponse | null>(null);
+  protected readonly craftingAnalytics = signal<AuctionMarketItemCraftingAnalyticsResponse | null>(
+    null,
+  );
   protected readonly analyticsLoading = signal(false);
   protected readonly analyticsError = signal(false);
   protected readonly heatmapRowLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
-  protected readonly heatmapColumnLabels = Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0'));
+  protected readonly heatmapColumnLabels = Array.from({ length: 24 }, (_, h) =>
+    String(h).padStart(2, '0'),
+  );
   protected readonly skeletonCards = [0, 1, 2, 3] as const;
   protected readonly skeletonCharts = [0, 1] as const;
   protected readonly skeletonBars = [
@@ -542,7 +581,12 @@ export class MarketItemDetailPage {
 
     const realmRoute = realmAncestorRoute(this.route);
 
-    combineLatest([realmRoute.paramMap, this.route.paramMap, this.route.data, this.route.queryParamMap])
+    combineLatest([
+      realmRoute.paramMap,
+      this.route.paramMap,
+      this.route.data,
+      this.route.queryParamMap,
+    ])
       .pipe(
         map(([realmPm, itemPm, data, q]) => ({
           region: realmPm.get('region'),
@@ -591,7 +635,15 @@ export class MarketItemDetailPage {
           const preferredRecipeId =
             ctx.listSegment === 'crafting' && ctx.recipeId ? Number(ctx.recipeId) : undefined;
           return this.detailService
-            .loadItemDetail(ctx.region, ctx.realmSlug, ctx.itemId, ctx.variant, ctx.initialScope, undefined, preferredRecipeId)
+            .loadItemDetail(
+              ctx.region,
+              ctx.realmSlug,
+              ctx.itemId,
+              ctx.variant,
+              ctx.initialScope,
+              undefined,
+              preferredRecipeId,
+            )
             .pipe(
               finalize(() => this.loading.set(false)),
               catchError(() => {
@@ -1032,16 +1084,26 @@ function dailyPointsToChartSeries(rows: readonly AuctionMarketItemDetailPoint[])
   return series;
 }
 
-function craftingAnalyticsToChartSeries(analytics: AuctionMarketItemCraftingAnalyticsResponse): ChartSeries[] {
+function craftingAnalyticsToChartSeries(
+  analytics: AuctionMarketItemCraftingAnalyticsResponse,
+): ChartSeries[] {
   const profitPts: ChartPoint[] = [];
   const roiPts: ChartPoint[] = [];
   analytics.dailySeries.forEach((point, index) => {
-    if (point.profit != null && Number.isFinite(point.profit)) profitPts.push({ x: index, y: point.profit });
-    if (point.roiPercent != null && Number.isFinite(point.roiPercent)) roiPts.push({ x: index, y: point.roiPercent });
+    if (point.profit != null && Number.isFinite(point.profit))
+      profitPts.push({ x: index, y: point.profit });
+    if (point.roiPercent != null && Number.isFinite(point.roiPercent))
+      roiPts.push({ x: index, y: point.roiPercent });
   });
   const series: ChartSeries[] = [];
   if (profitPts.length) {
-    series.push({ id: 'profit', kind: 'column', yScaleKey: 'profit', color: 'primary-container', points: profitPts });
+    series.push({
+      id: 'profit',
+      kind: 'column',
+      yScaleKey: 'profit',
+      color: 'primary-container',
+      points: profitPts,
+    });
   }
   if (roiPts.length) {
     series.push({ id: 'roi', kind: 'line', yScaleKey: 'roi', color: 'secondary', points: roiPts });
