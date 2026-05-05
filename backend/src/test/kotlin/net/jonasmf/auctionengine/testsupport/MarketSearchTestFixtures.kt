@@ -215,6 +215,46 @@ object MarketSearchTestFixtures {
         )
     }
 
+    /**
+     * Adds recipe 7004 with `crafted_quantity = 0` to exercise the COALESCE/NULLIF normalization
+     * in [CraftingMarketSearchRepository]. The crafted output is listed; reagents reuse 19050 from
+     * [augmentMarketSearchDataForCrafting]. With normalization, this should be treated as `1` and
+     * produce a sensible profit (1000 - 100 = 900), not 0 - 100 = -100.
+     */
+    fun addRecipeWithZeroCraftedQuantity(jdbcTemplate: JdbcTemplate) {
+        val itemName = insertLocale(jdbcTemplate, 109, "Mana Potion", "Manatrank", "ITEM", "19101", "name")
+        val recipeName = insertLocale(jdbcTemplate, 110, "Recipe: Mana Potion", "Rezept: Manatrank", "RECIPE", "7004", "name")
+        jdbcTemplate.update(
+            """
+            INSERT INTO item (
+                id, is_equippable, is_stackable, level, max_count, media_url, purchase_price, purchase_quantity,
+                required_level, sell_price, item_class_id, item_subclass_id, name_id, quality_id
+            ) VALUES (19101, 0, 1, 1, 0, 'https://media.example/mana.png', 0, 1, 1, 0, 2, 501, ?, 3)
+            """.trimIndent(),
+            itemName,
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO recipe (id, crafted_item_id, crafted_quantity, media_url, name_id, profession_category_id)
+            VALUES (7004, 19101, 0, 'https://media.example/recipe7004.png', ?, 9001)
+            """.trimIndent(),
+            recipeName,
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO recipe_reagent (item_id, quantity, recipe_id)
+            VALUES (19050, 2, 7004)
+            """.trimIndent(),
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO auction_stats_hourly (
+                connected_realm_id, item_id, date, pet_species_id, modifier_key, bonus_key, price11, quantity11
+            ) VALUES (1084, 19101, '2026-05-01', -1, '', '', 1000, 5)
+            """.trimIndent(),
+        )
+    }
+
     /** Item present only on regional commodity (`connected_realm_id` negative), not on the selected realm. */
     fun seedCommodityOnlyItem(jdbcTemplate: JdbcTemplate) {
         val itemName = insertLocale(jdbcTemplate, 6, "Copper Dust", "Kupferstaub", "ITEM", "19020", "name")

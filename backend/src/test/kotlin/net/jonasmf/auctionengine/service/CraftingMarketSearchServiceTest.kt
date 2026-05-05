@@ -143,6 +143,44 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `crafting search treats crafted_quantity zero as one for profit computation`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
+        MarketSearchTestFixtures.addRecipeWithZeroCraftedQuantity(jdbcTemplate)
+
+        val result =
+            craftingMarketSearchService.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = null,
+                professionIds = null,
+                minProfit = null,
+                maxProfit = null,
+                minRoiPercent = null,
+                maxRoiPercent = null,
+                minReagentCost = null,
+                maxReagentCost = null,
+                minOutputPrice = null,
+                maxOutputPrice = null,
+                minOutputPriceChangePercent = null,
+                maxOutputPriceChangePercent = null,
+                requireCompleteReagentPricing = false,
+            )
+
+        val zeroQtyRow = result.items.single { it.recipeId == 7004 }
+        assertEquals(1_000L, zeroQtyRow.outputPriceCopper)
+        assertEquals(100L, zeroQtyRow.reagentCostCopper)
+        assertEquals(900L, zeroQtyRow.profitCopper)
+        assertNotNull(zeroQtyRow.roiPercent)
+        assertTrue(zeroQtyRow.roiPercent!! > 800.0)
+    }
+
+    @Test
     fun `crafting filters rejects inverted profit range`() {
         MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
         MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)

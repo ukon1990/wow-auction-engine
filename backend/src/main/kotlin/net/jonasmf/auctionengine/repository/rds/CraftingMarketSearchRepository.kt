@@ -260,7 +260,7 @@ class CraftingMarketSearchRepository(
                 SELECT
                     r.id AS recipe_id,
                     r.crafted_item_id,
-                    COALESCE(r.crafted_quantity, 1) AS crafted_qty,
+                    COALESCE(NULLIF(r.crafted_quantity, 0), 1) AS crafted_qty,
                     ash.bonus_key,
                     ash.modifier_key,
                     ash.pet_species_id,
@@ -278,7 +278,7 @@ class CraftingMarketSearchRepository(
                 SELECT
                     r.id AS recipe_id,
                     r.crafted_item_id,
-                    COALESCE(r.crafted_quantity, 1) AS crafted_qty,
+                    COALESCE(NULLIF(r.crafted_quantity, 0), 1) AS crafted_qty,
                     ash.bonus_key,
                     ash.modifier_key,
                     ash.pet_species_id,
@@ -313,7 +313,7 @@ class CraftingMarketSearchRepository(
                 SELECT
                     r.id AS recipe_id,
                     r.crafted_item_id,
-                    COALESCE(r.crafted_quantity, 1) AS crafted_qty,
+                    COALESCE(NULLIF(r.crafted_quantity, 0), 1) AS crafted_qty,
                     '' AS bonus_key,
                     '' AS modifier_key,
                     0 AS pet_species_id,
@@ -375,7 +375,7 @@ class CraftingMarketSearchRepository(
                 SELECT
                     reci.id AS recipe_id,
                     reci.crafted_item_id,
-                    COALESCE(reci.crafted_quantity, 1) AS crafted_quantity,
+                    COALESCE(NULLIF(reci.crafted_quantity, 0), 1) AS crafted_quantity,
                     reci.media_url AS recipe_media_url,
                     COALESCE(reci_l.$loc, reci_l.en_gb, reci_l.en_us) AS recipe_name,
                     p.id AS profession_id,
