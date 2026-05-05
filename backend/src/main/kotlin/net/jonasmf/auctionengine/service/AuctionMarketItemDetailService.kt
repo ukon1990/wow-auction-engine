@@ -233,9 +233,12 @@ class AuctionMarketItemDetailService(
         val craftingRows =
             detailRepository.loadCraftings(
                 context.selectedSnapshot.connectedRealmId,
+                context.commoditySnapshot.connectedRealmId,
                 itemId,
                 context.selectedSnapshot.date,
+                context.commoditySnapshot.date,
                 context.selectedSnapshot.hour,
+                context.commoditySnapshot.hour,
                 variant,
                 bonusKey,
                 modifierKey,
@@ -247,9 +250,12 @@ class AuctionMarketItemDetailService(
             detailRepository
                 .loadCraftingReagents(
                     context.selectedSnapshot.connectedRealmId,
+                    context.commoditySnapshot.connectedRealmId,
                     craftingRows.map { it.recipeId },
                     context.selectedSnapshot.date,
+                    context.commoditySnapshot.date,
                     context.selectedSnapshot.hour,
+                    context.commoditySnapshot.hour,
                     localeSuffix,
                 ).groupBy { it.recipeId }
         val craftingDtos = craftingRows.map { it.toCraftingDetailDto(reagentRows[it.recipeId].orEmpty()) }

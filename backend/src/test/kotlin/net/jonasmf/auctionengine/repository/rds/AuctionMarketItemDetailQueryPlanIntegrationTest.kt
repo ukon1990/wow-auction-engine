@@ -67,13 +67,17 @@ class AuctionMarketItemDetailQueryPlanIntegrationTest : IntegrationTestBase() {
         val (craft, craftArgs) =
             repository.buildCraftingSqlAndArgs(
                 connectedRealmId = 1084,
+                commodityConnectedRealmId = -2,
                 itemId = 19019,
                 statDate = to,
+                commodityStatDate = to,
                 hourOfDay = 11,
+                commodityHourOfDay = 10,
                 variant = false,
                 bonusKey = "",
                 modifierKey = "",
                 petSpeciesId = 0,
+                preferredRecipeId = null,
                 localeColumnSuffix = "en_gb",
             )
 

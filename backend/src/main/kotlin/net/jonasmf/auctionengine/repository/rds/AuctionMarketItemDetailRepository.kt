@@ -251,9 +251,12 @@ class AuctionMarketItemDetailRepository(
 
     fun loadCraftings(
         connectedRealmId: Int,
+        commodityConnectedRealmId: Int,
         itemId: Int,
         statDate: LocalDate,
+        commodityStatDate: LocalDate,
         hourOfDay: Int,
+        commodityHourOfDay: Int,
         variant: Boolean,
         bonusKey: String,
         modifierKey: String,
@@ -264,9 +267,12 @@ class AuctionMarketItemDetailRepository(
         val (sql, params) =
             buildCraftingSqlAndArgs(
                 connectedRealmId,
+                commodityConnectedRealmId,
                 itemId,
                 statDate,
+                commodityStatDate,
                 hourOfDay,
+                commodityHourOfDay,
                 variant,
                 bonusKey,
                 modifierKey,
@@ -279,17 +285,21 @@ class AuctionMarketItemDetailRepository(
 
     fun loadCraftingReagents(
         connectedRealmId: Int,
+        commodityConnectedRealmId: Int,
         recipeIds: List<Int>,
         statDate: LocalDate,
+        commodityStatDate: LocalDate,
         hourOfDay: Int,
+        commodityHourOfDay: Int,
         localeColumnSuffix: String,
     ): List<AuctionMarketItemCraftingReagentRow> {
         if (recipeIds.isEmpty()) return emptyList()
         val placeholders = recipeIds.joinToString(",") { "?" }
         val hourSuffix = hourColumnSuffix(hourOfDay)
+        val commodityHourSuffix = hourColumnSuffix(commodityHourOfDay)
         val sql =
             """
-            WITH reagent_price_base AS (
+            WITH reagent_sel_base AS (
                 SELECT ash.item_id, ash.price$hourSuffix AS price, ash.bonus_key, ash.modifier_key, ash.pet_species_id
                 FROM auction_stats_hourly ash
                 WHERE ash.connected_realm_id = ?
@@ -297,13 +307,35 @@ class AuctionMarketItemDetailRepository(
                   AND ash.price$hourSuffix IS NOT NULL
                   AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr WHERE rr.recipe_id IN ($placeholders))
             ),
-            reagent_price_ranked AS (
+            reagent_sel_ranked AS (
                 SELECT item_id, price,
                        ROW_NUMBER() OVER (PARTITION BY item_id ORDER BY price ASC, bonus_key, modifier_key, pet_species_id) AS rn
-                FROM reagent_price_base
+                FROM reagent_sel_base
+            ),
+            reagent_sel AS (
+                SELECT item_id, price FROM reagent_sel_ranked WHERE rn = 1
+            ),
+            reagent_com_base AS (
+                SELECT ash.item_id, ash.price$commodityHourSuffix AS price, ash.bonus_key, ash.modifier_key, ash.pet_species_id
+                FROM auction_stats_hourly ash
+                WHERE ash.connected_realm_id = ?
+                  AND ash.date = ?
+                  AND ash.price$commodityHourSuffix IS NOT NULL
+                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr WHERE rr.recipe_id IN ($placeholders))
+            ),
+            reagent_com_ranked AS (
+                SELECT item_id, price,
+                       ROW_NUMBER() OVER (PARTITION BY item_id ORDER BY price ASC, bonus_key, modifier_key, pet_species_id) AS rn
+                FROM reagent_com_base
+            ),
+            reagent_com AS (
+                SELECT item_id, price FROM reagent_com_ranked WHERE rn = 1
             ),
             reagent_price AS (
-                SELECT item_id, price FROM reagent_price_ranked WHERE rn = 1
+                SELECT items.item_id, COALESCE(rs.price, rc.price) AS price
+                FROM (SELECT DISTINCT item_id FROM recipe_reagent WHERE recipe_id IN ($placeholders)) items
+                LEFT JOIN reagent_sel rs ON rs.item_id = items.item_id
+                LEFT JOIN reagent_com rc ON rc.item_id = items.item_id
             )
             SELECT
                 rr.recipe_id,
@@ -319,7 +351,17 @@ class AuctionMarketItemDetailRepository(
             WHERE rr.recipe_id IN ($placeholders)
             ORDER BY rr.recipe_id, name, rr.item_id
             """.trimIndent()
-        val params = arrayOf<Any?>(connectedRealmId, java.sql.Date.valueOf(statDate), *recipeIds.toTypedArray(), *recipeIds.toTypedArray())
+        val params =
+            arrayOf<Any?>(
+                connectedRealmId,
+                java.sql.Date.valueOf(statDate),
+                *recipeIds.toTypedArray(),
+                commodityConnectedRealmId,
+                java.sql.Date.valueOf(commodityStatDate),
+                *recipeIds.toTypedArray(),
+                *recipeIds.toTypedArray(),
+                *recipeIds.toTypedArray(),
+            )
         return jdbcTemplate.query(sql, craftingReagentRowMapper, *params)
     }
 
@@ -799,9 +841,12 @@ class AuctionMarketItemDetailRepository(
 
     internal fun buildCraftingSqlAndArgs(
         connectedRealmId: Int,
+        commodityConnectedRealmId: Int,
         itemId: Int,
         statDate: LocalDate,
+        commodityStatDate: LocalDate,
         hourOfDay: Int,
+        commodityHourOfDay: Int,
         variant: Boolean,
         bonusKey: String,
         modifierKey: String,
@@ -810,6 +855,7 @@ class AuctionMarketItemDetailRepository(
         localeColumnSuffix: String,
     ): Pair<String, Array<Any?>> {
         val hourSuffix = hourColumnSuffix(hourOfDay)
+        val commodityHourSuffix = hourColumnSuffix(commodityHourOfDay)
         val outputWhere =
             if (variant) {
                 "AND ash.bonus_key <=> ? AND ash.modifier_key <=> ? AND ash.pet_species_id = ?"
@@ -819,7 +865,7 @@ class AuctionMarketItemDetailRepository(
         val sql =
             """
             WITH
-            reagent_price_base AS (
+            reagent_sel_base AS (
                 SELECT ash.item_id, ash.price$hourSuffix AS price, ash.bonus_key, ash.modifier_key, ash.pet_species_id
                 FROM auction_stats_hourly ash
                 WHERE ash.connected_realm_id = ?
@@ -827,13 +873,35 @@ class AuctionMarketItemDetailRepository(
                   AND ash.price$hourSuffix IS NOT NULL
                   AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr)
             ),
-            reagent_price_ranked AS (
+            reagent_sel_ranked AS (
                 SELECT item_id, price,
                        ROW_NUMBER() OVER (PARTITION BY item_id ORDER BY price ASC, bonus_key, modifier_key, pet_species_id) AS rn
-                FROM reagent_price_base
+                FROM reagent_sel_base
+            ),
+            reagent_sel AS (
+                SELECT item_id, price FROM reagent_sel_ranked WHERE rn = 1
+            ),
+            reagent_com_base AS (
+                SELECT ash.item_id, ash.price$commodityHourSuffix AS price, ash.bonus_key, ash.modifier_key, ash.pet_species_id
+                FROM auction_stats_hourly ash
+                WHERE ash.connected_realm_id = ?
+                  AND ash.date = ?
+                  AND ash.price$commodityHourSuffix IS NOT NULL
+                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr)
+            ),
+            reagent_com_ranked AS (
+                SELECT item_id, price,
+                       ROW_NUMBER() OVER (PARTITION BY item_id ORDER BY price ASC, bonus_key, modifier_key, pet_species_id) AS rn
+                FROM reagent_com_base
+            ),
+            reagent_com AS (
+                SELECT item_id, price FROM reagent_com_ranked WHERE rn = 1
             ),
             reagent_price AS (
-                SELECT item_id, price FROM reagent_price_ranked WHERE rn = 1
+                SELECT items.item_id, COALESCE(rs.price, rc.price) AS price
+                FROM (SELECT DISTINCT item_id FROM recipe_reagent) items
+                LEFT JOIN reagent_sel rs ON rs.item_id = items.item_id
+                LEFT JOIN reagent_com rc ON rc.item_id = items.item_id
             ),
             recipe_reagent_agg AS (
                 SELECT
@@ -904,6 +972,8 @@ class AuctionMarketItemDetailRepository(
         return sql to arrayOf(
             connectedRealmId,
             java.sql.Date.valueOf(statDate),
+            commodityConnectedRealmId,
+            java.sql.Date.valueOf(commodityStatDate),
             itemId,
             *outputParams,
             itemId,

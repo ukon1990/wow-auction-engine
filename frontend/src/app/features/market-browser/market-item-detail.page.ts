@@ -15,6 +15,8 @@ import {
   CopperToCurrencyPipe,
   CurrencyAmountComponent,
   formatCopperCurrency,
+  HeatmapGridComponent,
+  type HeatmapCell,
   ItemStatCardComponent,
   PageFrameComponent,
   SymbolIconComponent,
@@ -22,6 +24,8 @@ import {
   type ChartSeries,
 } from '@ui';
 import {
+  AuctionMarketItemCraftingAnalyticsResponse,
+  AuctionMarketItemCraftingDetail,
   AuctionMarketItemDetailPoint,
   AuctionMarketItemDetailResponse,
   AuctionMarketItemDetailSummary,
@@ -66,6 +70,7 @@ interface TooltipRow {
     PageFrameComponent,
     ChartPanelComponent,
     CopperToCurrencyPipe,
+    HeatmapGridComponent,
     CurrencyAmountComponent,
     ItemStatCardComponent,
     SymbolIconComponent,
@@ -291,54 +296,118 @@ interface TooltipRow {
           description="Listed quantity per hour over 14 days as bars; buyout spread and average as lines."
         />
 
-        @if (d.crafting) {
+        @if (d.craftings.length) {
           <section class="ee-glass rounded-lg p-inner-padding">
-            <h2 class="ee-section-heading mb-4 flex items-center gap-2 text-on-surface">
-              <ee-symbol-icon class="text-outline" name="handyman" />
-              Crafting
-            </h2>
-            <div class="overflow-x-auto">
-              <table class="w-full border-collapse ee-data text-left text-on-surface">
-                <thead>
-                  <tr class="border-b border-white/10 ee-label text-outline">
-                    <th class="py-2 pr-4">Recipe</th>
-                    <th class="py-2 pr-4 text-right">Reagent cost</th>
-                    <th class="py-2 pr-4 text-right">Buyout</th>
-                    <th class="py-2 pr-4 text-right">Profit</th>
-                    <th class="py-2 text-right">ROI</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="border-b border-white/5">
-                    <td class="py-3 pr-4 select-text">
-                      {{ d.crafting.recipeName ?? d.crafting.recipeId }}
-                    </td>
-                    <td class="py-3 pr-4 text-right tabular-nums select-text">
-                      <ee-currency-amount
-                        class="inline-flex justify-end"
-                        [amount]="d.crafting.reagentCost | copperToCurrency"
-                      />
-                    </td>
-                    <td class="py-3 pr-4 text-right tabular-nums select-text">
-                      <ee-currency-amount
-                        class="inline-flex justify-end"
-                        [amount]="d.crafting.buyout | copperToCurrency"
-                      />
-                    </td>
-                    <td class="py-3 pr-4 text-right tabular-nums select-text">
-                      <ee-currency-amount
-                        class="inline-flex justify-end"
-                        [amount]="d.crafting.profit | copperToCurrency"
-                      />
-                    </td>
-                    <td class="py-3 text-right tabular-nums select-text">
-                      {{ formatRoi(d.crafting.roiPercent) }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <h2 class="ee-section-heading flex items-center gap-2 text-on-surface">
+                <ee-symbol-icon class="text-outline" name="handyman" />
+                Crafting
+              </h2>
+              @if (analyticsLoading()) {
+                <span class="ee-label text-outline">Loading recipe analytics…</span>
+              }
             </div>
+
+            @if (d.craftings.length > 1) {
+              <div class="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Recipes">
+                @for (recipe of d.craftings; track recipe.recipeId) {
+                  <button
+                    type="button"
+                    class="rounded border border-white/10 px-3 py-1.5 ee-label transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                    [class.bg-primary]="recipe.recipeId === selectedRecipeId()"
+                    [class.text-on-primary]="recipe.recipeId === selectedRecipeId()"
+                    [class.bg-surface-container-high]="recipe.recipeId !== selectedRecipeId()"
+                    [attr.aria-selected]="recipe.recipeId === selectedRecipeId()"
+                    role="tab"
+                    (click)="selectRecipe(recipe.recipeId)"
+                  >
+                    {{ recipe.recipeName }}
+                  </button>
+                }
+              </div>
+            }
+
+            @if (selectedCrafting(); as crafting) {
+              <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)]">
+                <div class="overflow-x-auto">
+                  <table class="w-full border-collapse ee-data text-left text-on-surface">
+                    <thead>
+                      <tr class="border-b border-white/10 ee-label text-outline">
+                        <th class="py-2 pr-4">Reagent</th>
+                        <th class="py-2 pr-4 text-right">Qty</th>
+                        <th class="py-2 pr-4 text-right">Unit price</th>
+                        <th class="py-2 text-right">Line total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (reagent of crafting.reagents; track reagent.itemId) {
+                        <tr class="border-b border-white/5">
+                          <td class="py-3 pr-4 select-text">
+                            <div class="flex items-center gap-2">
+                              @if (reagent.mediaUrl) {
+                                <img class="h-6 w-6 rounded" [src]="reagent.mediaUrl" alt="" />
+                              }
+                              <span>{{ reagent.name }}</span>
+                              @if (!reagent.priced) {
+                                <span class="rounded bg-error/15 px-2 py-0.5 ee-label text-error">missing price</span>
+                              }
+                            </div>
+                          </td>
+                          <td class="py-3 pr-4 text-right tabular-nums select-text">{{ reagent.quantity }}</td>
+                          <td class="py-3 pr-4 text-right tabular-nums select-text">
+                            <ee-currency-amount class="inline-flex justify-end" [amount]="reagent.unitPrice | copperToCurrency" />
+                          </td>
+                          <td class="py-3 text-right tabular-nums select-text">
+                            <ee-currency-amount class="inline-flex justify-end" [amount]="reagent.lineTotal | copperToCurrency" />
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="rounded border border-white/10 bg-surface-container-high/60 p-4">
+                  <div class="ee-label mb-3 text-outline">{{ crafting.recipeName }}</div>
+                  <div class="space-y-2 ee-data text-on-surface">
+                    <div class="flex justify-between gap-4"><span>Crafted qty</span><span>{{ crafting.craftedQuantity }}</span></div>
+                    <div class="flex justify-between gap-4"><span>Reagent cost</span><ee-currency-amount [amount]="crafting.reagentCost | copperToCurrency" /></div>
+                    <div class="flex justify-between gap-4"><span>Output unit</span><ee-currency-amount [amount]="crafting.outputUnitPrice | copperToCurrency" /></div>
+                    <div class="flex justify-between gap-4"><span>Profit</span><ee-currency-amount [amount]="crafting.profit | copperToCurrency" /></div>
+                    <div class="flex justify-between gap-4"><span>ROI</span><span>{{ formatRoi(crafting.roiPercent) }}</span></div>
+                  </div>
+                  @if (!crafting.reagentsFullyPriced) {
+                    <p class="ee-label mt-3 text-error">Profit hidden until all reagents have prices.</p>
+                  }
+                </div>
+              </div>
+            }
           </section>
+
+          @if (craftingAnalytics(); as analytics) {
+            <ee-chart-panel
+              title="Crafting profit / ROI"
+              rangeLabel="14 days"
+              [series]="craftingAnalyticsSeries()"
+              description="Daily profit and ROI for selected recipe. Missing points mean incomplete pricing."
+            />
+            <ng-template #heatmapTip let-cell="cell" let-rowLabel="rowLabel" let-columnLabel="columnLabel">
+              <div class="ee-label text-outline">{{ rowLabel }} · {{ columnLabel }}:00</div>
+              <div class="font-space-mono">{{ cell.label }}</div>
+            </ng-template>
+            <ee-heatmap-grid
+              title="Crafting profit heatmap"
+              rangeLabel="14 days"
+              description="Average profit by day and hour for selected recipe."
+              [rowLabels]="heatmapRowLabels"
+              [columnLabels]="heatmapColumnLabels"
+              [cells]="heatmapCells()"
+              [tooltipTemplate]="heatmapTip"
+            />
+          } @else if (analyticsError()) {
+            <div class="ee-glass rounded-lg border border-error/40 p-inner-padding text-error">
+              Could not load crafting analytics.
+            </div>
+          }
         }
       }
     </ee-page-frame>
@@ -360,6 +429,12 @@ export class MarketItemDetailPage {
   protected readonly detail = signal<AuctionMarketItemDetailResponse | null>(null);
   protected readonly commodityLoaded = signal(false);
   protected readonly chartScope = signal<'realm' | 'commodity'>('realm');
+  protected readonly selectedRecipeId = signal<number | null>(null);
+  protected readonly craftingAnalytics = signal<AuctionMarketItemCraftingAnalyticsResponse | null>(null);
+  protected readonly analyticsLoading = signal(false);
+  protected readonly analyticsError = signal(false);
+  protected readonly heatmapRowLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
+  protected readonly heatmapColumnLabels = Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0'));
   protected readonly skeletonCards = [0, 1, 2, 3] as const;
   protected readonly skeletonCharts = [0, 1] as const;
   protected readonly skeletonBars = [
@@ -435,6 +510,27 @@ export class MarketItemDetailPage {
     return hourlyPointsToChartSeries(pts);
   });
 
+  protected readonly selectedCrafting = computed<AuctionMarketItemCraftingDetail | null>(() => {
+    const craftings = this.detail()?.craftings ?? [];
+    if (!craftings.length) return null;
+    return craftings.find((c) => c.recipeId === this.selectedRecipeId()) ?? craftings[0];
+  });
+
+  protected readonly craftingAnalyticsSeries = computed(() => {
+    const analytics = this.craftingAnalytics();
+    if (!analytics) return [];
+    return craftingAnalyticsToChartSeries(analytics);
+  });
+
+  protected readonly heatmapCells = computed<HeatmapCell[]>(() =>
+    (this.craftingAnalytics()?.heatmap ?? []).map((cell) => ({
+      row: cell.dayOfWeek,
+      col: cell.hourOfDay,
+      value: cell.profit,
+      label: `${formatCopperCurrency(cell.profit)} · ROI ${this.formatRoi(cell.roiPercent)} · n=${cell.sampleCount}`,
+    })),
+  );
+
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       const raw = window.history.state as Record<string, unknown> | null;
@@ -488,6 +584,9 @@ export class MarketItemDetailPage {
           this.loading.set(true);
           this.error.set(false);
           this.commodityLoaded.set(false);
+          this.craftingAnalytics.set(null);
+          this.analyticsError.set(false);
+          this.selectedRecipeId.set(null);
           this.chartScope.set(ctx.initialScope);
           const preferredRecipeId =
             ctx.listSegment === 'crafting' && ctx.recipeId ? Number(ctx.recipeId) : undefined;
@@ -507,6 +606,8 @@ export class MarketItemDetailPage {
       .subscribe((res) => {
         if (res) {
           this.detail.set(res);
+          this.selectedRecipeId.set(res.craftings[0]?.recipeId ?? null);
+          this.loadSelectedRecipeAnalytics();
           if (shouldFallbackToCommodityFetch(res)) {
             this.onScopeSelected('commodity');
             return;
@@ -522,6 +623,31 @@ export class MarketItemDetailPage {
 
   protected backLabel(): string {
     return this.backState().returnLabel ?? 'Back to market';
+  }
+
+  protected selectRecipe(recipeId: number): void {
+    if (this.selectedRecipeId() === recipeId) return;
+    this.selectedRecipeId.set(recipeId);
+    this.loadSelectedRecipeAnalytics();
+  }
+
+  private loadSelectedRecipeAnalytics(): void {
+    const ctx = this.routeCtx();
+    const recipeId = this.selectedRecipeId();
+    if (!ctx || recipeId == null) return;
+    this.analyticsLoading.set(true);
+    this.analyticsError.set(false);
+    this.craftingAnalytics.set(null);
+    this.detailService
+      .loadCraftingAnalytics(ctx.region, ctx.realmSlug, ctx.itemId, recipeId, ctx.variant)
+      .pipe(
+        finalize(() => this.analyticsLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (analytics) => this.craftingAnalytics.set(analytics),
+        error: () => this.analyticsError.set(true),
+      });
   }
 
   protected onScopeSelected(scope: ItemDetailScope): void {
@@ -902,6 +1028,23 @@ function dailyPointsToChartSeries(rows: readonly AuctionMarketItemDetailPoint[])
   }
   if (upperPts.length > 0) {
     series.push({ id: 'high', kind: 'line', yScaleKey: 'price', color: 'error', points: upperPts });
+  }
+  return series;
+}
+
+function craftingAnalyticsToChartSeries(analytics: AuctionMarketItemCraftingAnalyticsResponse): ChartSeries[] {
+  const profitPts: ChartPoint[] = [];
+  const roiPts: ChartPoint[] = [];
+  analytics.dailySeries.forEach((point, index) => {
+    if (point.profit != null && Number.isFinite(point.profit)) profitPts.push({ x: index, y: point.profit });
+    if (point.roiPercent != null && Number.isFinite(point.roiPercent)) roiPts.push({ x: index, y: point.roiPercent });
+  });
+  const series: ChartSeries[] = [];
+  if (profitPts.length) {
+    series.push({ id: 'profit', kind: 'column', yScaleKey: 'profit', color: 'primary-container', points: profitPts });
+  }
+  if (roiPts.length) {
+    series.push({ id: 'roi', kind: 'line', yScaleKey: 'roi', color: 'secondary', points: roiPts });
   }
   return series;
 }
