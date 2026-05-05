@@ -89,6 +89,7 @@ data class AuctionMarketItemCraftingHeatmapRow(
     val dayOfWeek: Int,
     val hourOfDay: Int,
     val profit: Double?,
+    val outputUnitPrice: Double?,
     val roiPercent: Double?,
     val sampleCount: Int,
 )
@@ -1360,6 +1361,7 @@ class AuctionMarketItemDetailRepository(
             cells AS (
                 SELECT WEEKDAY(ds.stat_date) AS day_of_week,
                        h.hour_of_day,
+                       op.output_unit_price,
                        CASE WHEN rc.missing_reagents = 0 AND rc.partial_cost IS NOT NULL AND op.output_unit_price IS NOT NULL
                             THEN op.output_unit_price * rd.crafted_quantity - rc.partial_cost ELSE NULL END AS profit,
                        CASE WHEN rc.missing_reagents = 0 AND rc.partial_cost IS NOT NULL AND rc.partial_cost > 0 AND op.output_unit_price IS NOT NULL
@@ -1373,6 +1375,7 @@ class AuctionMarketItemDetailRepository(
             SELECT day_of_week,
                    hour_of_day,
                    AVG(profit) AS profit,
+                   AVG(output_unit_price) AS output_unit_price,
                    AVG(roi_percent) AS roi_percent,
                    COUNT(profit) AS sample_count
             FROM cells
@@ -1429,6 +1432,7 @@ class AuctionMarketItemDetailRepository(
                 dayOfWeek = rs.getInt("day_of_week"),
                 hourOfDay = rs.getInt("hour_of_day"),
                 profit = rs.getNullableDouble("profit"),
+                outputUnitPrice = rs.getNullableDouble("output_unit_price"),
                 roiPercent = rs.getNullableDouble("roi_percent"),
                 sampleCount = rs.getInt("sample_count"),
             )

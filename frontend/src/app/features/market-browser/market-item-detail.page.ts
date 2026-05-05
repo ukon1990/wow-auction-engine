@@ -286,6 +286,16 @@ interface TooltipRow {
           </div>
         </ng-template>
 
+        <ng-template
+          #priceHeatmapTip
+          let-cell="cell"
+          let-rowLabel="rowLabel"
+          let-columnLabel="columnLabel"
+        >
+          <div class="ee-label text-outline">{{ rowLabel }} · {{ columnLabel }}:00</div>
+          <div class="font-space-mono">{{ cell.label }}</div>
+        </ng-template>
+
         <ee-chart-panel
           title="Daily market"
           rangeLabel="14 days"
@@ -300,6 +310,16 @@ interface TooltipRow {
           [series]="hourlyChartSeries()"
           [tooltipTemplate]="hourlyChartTip"
           description="Listed quantity per hour over 14 days as bars; buyout spread and average as lines."
+        />
+
+        <ee-heatmap-grid
+          title="Hourly price heatmap"
+          rangeLabel="14 days"
+          description="Average market unit price by day and hour."
+          [rowLabels]="heatmapRowLabels"
+          [columnLabels]="heatmapColumnLabels"
+          [cells]="hourlyPriceHeatmapCells()"
+          [tooltipTemplate]="priceHeatmapTip"
         />
 
         @if (d.craftings.length) {
@@ -421,7 +441,48 @@ interface TooltipRow {
             }
           </section>
 
-          @if (craftingAnalytics(); as analytics) {
+          @if (analyticsLoading()) {
+            <section class="ee-glass rounded-lg p-inner-padding" aria-hidden="true">
+              <div class="mb-6 flex items-center justify-between gap-4">
+                <div class="h-5 w-44 rounded bg-white/10 animate-pulse"></div>
+                <div class="h-3 w-16 rounded bg-white/10 animate-pulse"></div>
+              </div>
+              <div class="relative h-64 overflow-hidden border-b border-l border-white/10">
+                <div class="absolute inset-x-5 top-1/4 h-px bg-white/10"></div>
+                <div class="absolute inset-x-5 top-1/2 h-px bg-white/10"></div>
+                <div class="absolute inset-x-5 top-3/4 h-px bg-white/10"></div>
+                <div class="absolute inset-x-6 bottom-4 flex h-36 items-end gap-2">
+                  @for (bar of skeletonBars; track bar.index) {
+                    <div
+                      class="w-full rounded-t bg-white/10 animate-pulse"
+                      [style.height.%]="bar.height"
+                    ></div>
+                  }
+                </div>
+              </div>
+            </section>
+            <section class="ee-glass rounded-lg p-inner-padding" aria-hidden="true">
+              <div class="mb-4 flex items-center justify-between gap-4">
+                <div class="h-5 w-44 rounded bg-white/10 animate-pulse"></div>
+                <div class="h-3 w-16 rounded bg-white/10 animate-pulse"></div>
+              </div>
+              <div
+                class="grid gap-1.5"
+                style="grid-template-columns: auto repeat(24, minmax(0, 1fr));"
+              >
+                <div class="h-5"></div>
+                @for (h of heatmapSkeletonCols; track h) {
+                  <div class="h-5 rounded bg-white/10 animate-pulse"></div>
+                }
+                @for (r of heatmapSkeletonRows; track r) {
+                  <div class="h-7 rounded bg-white/10 animate-pulse"></div>
+                  @for (h of heatmapSkeletonCols; track h) {
+                    <div class="h-7 rounded bg-white/10 animate-pulse"></div>
+                  }
+                }
+              </div>
+            </section>
+          } @else if (craftingAnalytics(); as analytics) {
             <ee-chart-panel
               title="Crafting profit / ROI"
               rangeLabel="14 days"
@@ -443,7 +504,7 @@ interface TooltipRow {
               description="Average profit by day and hour for selected recipe."
               [rowLabels]="heatmapRowLabels"
               [columnLabels]="heatmapColumnLabels"
-              [cells]="heatmapCells()"
+              [cells]="craftingHeatmapCells()"
               [tooltipTemplate]="heatmapTip"
             />
           } @else if (analyticsError()) {
@@ -499,6 +560,8 @@ export class MarketItemDetailPage {
     { index: 10, height: 46 },
     { index: 11, height: 66 },
   ] as const;
+  protected readonly heatmapSkeletonRows = Array.from({ length: 7 }, (_, i) => i);
+  protected readonly heatmapSkeletonCols = Array.from({ length: 24 }, (_, i) => i);
 
   private readonly backState = signal<ItemDetailBackState>({});
 
@@ -549,12 +612,7 @@ export class MarketItemDetailPage {
   });
 
   protected readonly hourlyChartSeries = computed(() => {
-    const d = this.detail();
-    if (!d) return [];
-    const pts =
-      d.regionalMetricsRedundant || this.chartScope() === 'realm'
-        ? d.hourlySeriesRealm
-        : d.hourlySeriesCommodity;
+    const pts = this.hourlyPointsForActiveScope();
     return hourlyPointsToChartSeries(pts);
   });
 
@@ -570,14 +628,24 @@ export class MarketItemDetailPage {
     return craftingAnalyticsToChartSeries(analytics);
   });
 
-  protected readonly heatmapCells = computed<HeatmapCell[]>(() =>
+  protected readonly craftingHeatmapCells = computed<HeatmapCell[]>(() =>
     (this.craftingAnalytics()?.heatmap ?? []).map((cell) => ({
       row: cell.dayOfWeek,
       col: cell.hourOfDay,
       value: cell.profit,
-      label: `${formatCopperCurrency(cell.profit)} · ROI ${this.formatRoi(cell.roiPercent)} · n=${cell.sampleCount}`,
+      label: [
+        `profit ${formatCopperCurrency(cell.profit)}`,
+        `price ${formatCopperCurrency(cell.outputUnitPrice)}`,
+        `ROI ${this.formatRoi(cell.roiPercent)}`,
+        `n=${cell.sampleCount}`,
+      ].join(' · '),
     })),
   );
+
+  protected readonly hourlyPriceHeatmapCells = computed<HeatmapCell[]>(() => {
+    const points = this.hourlyPointsForActiveScope();
+    return hourlyPriceHeatmapCellsFromPoints(points);
+  });
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
@@ -934,16 +1002,23 @@ export class MarketItemDetailPage {
   }
 
   private hourlyTooltipPoint(
-    d: AuctionMarketItemDetailResponse,
+    _d: AuctionMarketItemDetailResponse,
     x: number,
   ): AuctionMarketItemHourlyPoint | undefined {
+    const points = this.hourlyPointsForActiveScope();
+    if (points.length === 0) return undefined;
+    const i = Math.max(0, Math.min(points.length - 1, Math.round(x)));
+    return points[i];
+  }
+
+  private hourlyPointsForActiveScope(): AuctionMarketItemHourlyPoint[] {
+    const d = this.detail();
+    if (!d) return [];
     const points =
       d.regionalMetricsRedundant || this.chartScope() === 'realm'
         ? d.hourlySeriesRealm
         : d.hourlySeriesCommodity;
-    if (points.length === 0) return undefined;
-    const i = Math.max(0, Math.min(points.length - 1, Math.round(x)));
-    return points[i];
+    return sortHourlyPoints(points);
   }
 
   private numberDisplay(value: number | null | undefined): string {
@@ -1183,15 +1258,7 @@ function craftingAnalyticsToChartSeries(
 
 function hourlyPointsToChartSeries(rows: readonly AuctionMarketItemHourlyPoint[]): ChartSeries[] {
   if (rows.length === 0) return [];
-
-  const sorted = [...rows].sort((a, b) => {
-    const ta = Date.parse(a.timestamp ?? '');
-    const tb = Date.parse(b.timestamp ?? '');
-    if (Number.isFinite(ta) && Number.isFinite(tb)) return ta - tb;
-    if (Number.isFinite(ta)) return -1;
-    if (Number.isFinite(tb)) return 1;
-    return a.hourOfDay - b.hourOfDay;
-  });
+  const sorted = sortHourlyPoints(rows);
   const qtyPts: ChartPoint[] = [];
   const lowerPts: ChartPoint[] = [];
   const midPts: ChartPoint[] = [];
@@ -1267,4 +1334,59 @@ function hourlyPointsToChartSeries(rows: readonly AuctionMarketItemHourlyPoint[]
     series.push({ id: 'high', kind: 'line', yScaleKey: 'price', color: 'error', points: upperPts });
   }
   return series;
+}
+
+function sortHourlyPoints(
+  rows: readonly AuctionMarketItemHourlyPoint[],
+): AuctionMarketItemHourlyPoint[] {
+  return [...rows].sort((a, b) => {
+    const ta = Date.parse(a.timestamp ?? '');
+    const tb = Date.parse(b.timestamp ?? '');
+    if (Number.isFinite(ta) && Number.isFinite(tb)) return ta - tb;
+    if (Number.isFinite(ta)) return -1;
+    if (Number.isFinite(tb)) return 1;
+    return a.hourOfDay - b.hourOfDay;
+  });
+}
+
+function hourlyPriceHeatmapCellsFromPoints(
+  points: readonly AuctionMarketItemHourlyPoint[],
+): HeatmapCell[] {
+  type Bucket = { sum: number; count: number };
+  const buckets = new Map<string, Bucket>();
+  for (const p of points) {
+    if (p.avgPrice == null || !Number.isFinite(p.avgPrice)) continue;
+    const dayOfWeek = dayOfWeekFromTimestamp(p.timestamp);
+    if (dayOfWeek == null) continue;
+    const hour = p.hourOfDay;
+    if (!Number.isFinite(hour) || hour < 0 || hour > 23) continue;
+    const key = `${dayOfWeek}-${hour}`;
+    const current = buckets.get(key) ?? { sum: 0, count: 0 };
+    current.sum += p.avgPrice;
+    current.count += 1;
+    buckets.set(key, current);
+  }
+  const cells: HeatmapCell[] = [];
+  for (const [key, bucket] of buckets.entries()) {
+    const [rowRaw, colRaw] = key.split('-');
+    const row = Number(rowRaw);
+    const col = Number(colRaw);
+    if (!Number.isFinite(row) || !Number.isFinite(col) || bucket.count <= 0) continue;
+    const avgPrice = bucket.sum / bucket.count;
+    cells.push({
+      row,
+      col,
+      value: avgPrice,
+      label: `avg price ${formatCopperCurrency(avgPrice)} · n=${bucket.count}`,
+    });
+  }
+  return cells;
+}
+
+function dayOfWeekFromTimestamp(timestamp: string | null | undefined): number | null {
+  if (!timestamp) return null;
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return null;
+  // JS day: Sun=0..Sat=6 -> Mon=0..Sun=6
+  return (date.getUTCDay() + 6) % 7;
 }

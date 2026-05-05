@@ -19,6 +19,10 @@ properties:
         type: number
         format: double
         nullable: true
+    outputUnitPrice:
+        type: number
+        format: double
+        nullable: true
     roiPercent:
         type: number
         format: double

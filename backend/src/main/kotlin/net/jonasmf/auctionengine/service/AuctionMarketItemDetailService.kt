@@ -533,6 +533,7 @@ class AuctionMarketItemDetailService(
             dayOfWeek = dayOfWeek,
             hourOfDay = hourOfDay,
             profit = profit,
+            outputUnitPrice = outputUnitPrice,
             roiPercent = roiPercent,
             sampleCount = sampleCount,
         )
