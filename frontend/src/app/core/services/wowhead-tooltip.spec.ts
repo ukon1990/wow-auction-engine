@@ -1,8 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Realm } from '@api/generated';
 import { RealmSelectionService } from './realm-selection.service';
@@ -115,23 +116,27 @@ describe('WowheadTooltipService', () => {
     expect(service.active()).toBeNull();
   });
 
-  it('clears the overlay automatically after 10 seconds', fakeAsync(() => {
-    const promise = service.show({
-      wowheadType: 'item',
-      id: 1,
-      isClassic: false,
-      event: new MouseEvent('mouseenter', { clientX: 10, clientY: 20 }),
-      describedById: 'tip-1',
-    });
+  it('clears the overlay automatically after 10 seconds', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const promise = service.show({
+        wowheadType: 'item',
+        id: 1,
+        isClassic: false,
+        event: new MouseEvent('mouseenter', { clientX: 10, clientY: 20 }),
+        describedById: 'tip-1',
+      });
 
-    const req = httpMock.expectOne((r) => r.url.includes('/tooltip/item/1'));
-    req.flush({ tooltip: '<b>Hello</b>' });
+      const req = httpMock.expectOne((r) => r.url.includes('/tooltip/item/1'));
+      req.flush({ tooltip: '<b>Hello</b>' });
+      await promise;
 
-    tick();
-    void promise;
-    expect(service.active()).not.toBeNull();
+      expect(service.active()).not.toBeNull();
 
-    tick(10_000);
-    expect(service.active()).toBeNull();
-  }));
+      vi.advanceTimersByTime(10_000);
+      expect(service.active()).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
