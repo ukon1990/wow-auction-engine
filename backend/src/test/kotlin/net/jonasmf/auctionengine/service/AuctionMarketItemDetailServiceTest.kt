@@ -120,6 +120,11 @@ class AuctionMarketItemDetailServiceTest : IntegrationTestBase() {
         assertFalse(incomplete.reagents.single().priced)
         assertNull(incomplete.reagents.single().unitPrice)
         assertNull(incomplete.reagents.single().lineTotal)
+
+        assertNull(
+            detail.crafting,
+            "deprecated single-recipe crafting field must be null when the chosen recipe lacks reagent pricing",
+        )
     }
 
     @Test

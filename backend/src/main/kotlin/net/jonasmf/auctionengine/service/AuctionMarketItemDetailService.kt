@@ -474,8 +474,16 @@ class AuctionMarketItemDetailService(
         )
     }
 
-    private fun AuctionMarketItemCraftingRow.toCraftingDto(): AuctionMarketItemCrafting =
-        AuctionMarketItemCrafting(
+    /**
+     * Builds the deprecated single-recipe `crafting` summary that legacy clients still consume.
+     * Mirrors the pre-recipe-search behavior of returning `null` when the row lacks the basic
+     * economics (no reagent cost or no listed output), so that clients which keep `crafting`
+     * around for a release window do not see a populated-but-incomplete object where they
+     * previously saw `null`.
+     */
+    private fun AuctionMarketItemCraftingRow.toCraftingDto(): AuctionMarketItemCrafting? {
+        if (reagentCost == null || outputUnitPrice == null) return null
+        return AuctionMarketItemCrafting(
             recipeId = recipeId,
             recipeName = recipeName,
             reagentCost = reagentCost,
@@ -483,6 +491,7 @@ class AuctionMarketItemDetailService(
             profit = profit,
             roiPercent = roiPercent,
         )
+    }
 
     private fun AuctionMarketItemCraftingRow.toCraftingDetailDto(reagents: List<AuctionMarketItemCraftingReagentRow>): AuctionMarketItemCraftingDetail =
         AuctionMarketItemCraftingDetail(

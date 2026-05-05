@@ -216,14 +216,17 @@ object MarketSearchTestFixtures {
     }
 
     /**
-     * Adds recipe 7005 with `crafted_quantity = 0` to exercise the COALESCE/NULLIF normalization
+     * Adds recipe 7777 with `crafted_quantity = 0` to exercise the COALESCE/NULLIF normalization
      * in [CraftingMarketSearchRepository]. The crafted output is listed; reagents reuse 19050 from
      * [augmentMarketSearchDataForCrafting]. With normalization, this should be treated as `1` and
      * produce a sensible profit (1000 - 100 = 900), not 0 - 100 = -100.
+     *
+     * Recipe id is intentionally 7777 to avoid collisions with the per-test fixtures in
+     * AuctionMarketItemDetailServiceTest that already use ids in the 7001..7100 range.
      */
     fun addRecipeWithZeroCraftedQuantity(jdbcTemplate: JdbcTemplate) {
         val itemName = insertLocale(jdbcTemplate, 109, "Mana Potion", "Manatrank", "ITEM", "19101", "name")
-        val recipeName = insertLocale(jdbcTemplate, 110, "Recipe: Mana Potion", "Rezept: Manatrank", "RECIPE", "7005", "name")
+        val recipeName = insertLocale(jdbcTemplate, 110, "Recipe: Mana Potion", "Rezept: Manatrank", "RECIPE", "7777", "name")
         jdbcTemplate.update(
             """
             INSERT INTO item (
@@ -236,14 +239,14 @@ object MarketSearchTestFixtures {
         jdbcTemplate.update(
             """
             INSERT INTO recipe (id, crafted_item_id, crafted_quantity, media_url, name_id, profession_category_id)
-            VALUES (7005, 19101, 0, 'https://media.example/recipe7005.png', ?, 9001)
+            VALUES (7777, 19101, 0, 'https://media.example/recipe7777.png', ?, 9001)
             """.trimIndent(),
             recipeName,
         )
         jdbcTemplate.update(
             """
             INSERT INTO recipe_reagent (item_id, quantity, recipe_id)
-            VALUES (19050, 2, 7005)
+            VALUES (19050, 2, 7777)
             """.trimIndent(),
         )
         jdbcTemplate.update(

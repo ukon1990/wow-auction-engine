@@ -172,7 +172,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 requireCompleteReagentPricing = false,
             )
 
-        val zeroQtyRow = result.items.single { it.recipeId == 7005 }
+        val zeroQtyRow = result.items.single { it.recipeId == 7777 }
         assertEquals(1_000L, zeroQtyRow.outputPriceCopper)
         assertEquals(100L, zeroQtyRow.reagentCostCopper)
         assertEquals(900L, zeroQtyRow.profitCopper)
