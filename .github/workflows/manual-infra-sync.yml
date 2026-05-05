@@ -41,6 +41,11 @@ jobs:
       app_name: ${{ steps.config.outputs.app_name }}
       environment: ${{ steps.config.outputs.environment }}
       project_tag: ${{ steps.config.outputs.project_tag }}
+      auth_region: ${{ steps.config.outputs.auth_region }}
+      auth_stack_name: ${{ steps.config.outputs.auth_stack_name }}
+      auth_domain_prefix: ${{ steps.config.outputs.auth_domain_prefix }}
+      root_domain_name: ${{ steps.config.outputs.root_domain_name }}
+      hosted_zone_id: ${{ steps.config.outputs.hosted_zone_id }}
 
     steps:
       - name: Check out repository
@@ -63,9 +68,19 @@ jobs:
           app_name="$(python3 -c "import json; print(json.load(open('infra/regions.json'))['app_name'])")"
           environment="$(python3 -c "import json; print(json.load(open('infra/regions.json'))['environment'])")"
           project_tag="$(python3 -c "import json; print(json.load(open('infra/regions.json'))['project_tag'])")"
+          auth_region="$(python3 -c "import json; print(json.load(open('infra/regions.json')).get('auth_region', 'eu-north-1'))")"
+          auth_stack_name="$(python3 -c "import json; print(json.load(open('infra/regions.json')).get('auth_stack_name', ''))")"
+          auth_domain_prefix="$(python3 -c "import json; print(json.load(open('infra/regions.json')).get('auth_domain_prefix', ''))")"
+          root_domain_name="$(python3 -c "import json; print(json.load(open('infra/regions.json')).get('root_domain_name', ''))")"
+          hosted_zone_id="$(python3 -c "import json; print(json.load(open('infra/regions.json')).get('hosted_zone_id', ''))")"
           echo "app_name=$app_name" >> "$GITHUB_OUTPUT"
           echo "environment=$environment" >> "$GITHUB_OUTPUT"
           echo "project_tag=$project_tag" >> "$GITHUB_OUTPUT"
+          echo "auth_region=$auth_region" >> "$GITHUB_OUTPUT"
+          echo "auth_stack_name=$auth_stack_name" >> "$GITHUB_OUTPUT"
+          echo "auth_domain_prefix=$auth_domain_prefix" >> "$GITHUB_OUTPUT"
+          echo "root_domain_name=$root_domain_name" >> "$GITHUB_OUTPUT"
+          echo "hosted_zone_id=$hosted_zone_id" >> "$GITHUB_OUTPUT"
 
       - name: Render region matrix
         id: matrix
@@ -102,11 +117,123 @@ jobs:
       image_tag: ${{ needs.load-regions.outputs.git_ref }}
       service: frontend
 
+  deploy-auth:
+    needs: load-regions
+    runs-on: ubuntu-latest
+    environment: production
+    outputs:
+      cognito_issuer_uri: ${{ steps.outputs.outputs.cognito_issuer_uri }}
+      cognito_client_id: ${{ steps.outputs.outputs.cognito_client_id }}
+      cognito_hosted_ui_base_url: ${{ steps.outputs.outputs.cognito_hosted_ui_base_url }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.load-regions.outputs.git_ref }}
+
+      - name: Bootstrap AWS auth session
+        uses: ./.github/actions/aws-bootstrap
+        with:
+          aws-role-arn: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ needs.load-regions.outputs.auth_region }}
+
+      - name: Deploy Cognito auth stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${AUTH_REGION}" != "eu-north-1" ]]; then
+            echo "Cognito auth stack must deploy in eu-north-1; got ${AUTH_REGION}" >&2
+            exit 1
+          fi
+          if [[ -z "${AUTH_STACK_NAME}" || -z "${AUTH_DOMAIN_PREFIX}" || -z "${ROOT_DOMAIN_NAME}" || -z "${HOSTED_ZONE_ID}" ]]; then
+            echo "auth_stack_name, auth_domain_prefix, root_domain_name, and hosted_zone_id must be set in infra/regions.json" >&2
+            exit 1
+          fi
+          callback_urls="$(python3 - <<'PY'
+          import json
+          data = json.load(open("infra/regions.json", encoding="utf-8"))
+          root = data["root_domain_name"].strip(".")
+          urls = [
+              "http://localhost:4000/auth/callback",
+              "http://127.0.0.1:4000/auth/callback",
+          ]
+          urls.extend(
+              "https://{subdomain}.{root}/auth/callback".format(
+                  subdomain=region["regional_subdomain"].strip("."),
+                  root=root,
+              )
+              for region in data["regions"]
+              if region.get("enabled", False)
+          )
+          print(",".join(urls))
+          PY
+          )"
+          logout_urls="$(python3 - <<'PY'
+          import json
+          data = json.load(open("infra/regions.json", encoding="utf-8"))
+          root = data["root_domain_name"].strip(".")
+          urls = [
+              "http://localhost:4000/",
+              "http://127.0.0.1:4000/",
+          ]
+          urls.extend(
+              "https://{subdomain}.{root}/".format(
+                  subdomain=region["regional_subdomain"].strip("."),
+                  root=root,
+              )
+              for region in data["regions"]
+              if region.get("enabled", False)
+          )
+          print(",".join(urls))
+          PY
+          )"
+          aws cloudformation deploy \
+            --region "${AUTH_REGION}" \
+            --stack-name "${AUTH_STACK_NAME}" \
+            --template-file infra/cloudformation/auth.yaml \
+            --parameter-overrides \
+              AppName="${APP_NAME}" \
+              Environment="${ENVIRONMENT}" \
+              ProjectTag="${PROJECT_TAG}" \
+              AuthDomainPrefix="${AUTH_DOMAIN_PREFIX}" \
+              CallbackUrls="${callback_urls}" \
+              LogoutUrls="${logout_urls}" \
+            --tags Project="${PROJECT_TAG}" Application="${APP_NAME}" Environment="${ENVIRONMENT}" Region="${AUTH_REGION}"
+        env:
+          APP_NAME: ${{ needs.load-regions.outputs.app_name }}
+          ENVIRONMENT: ${{ needs.load-regions.outputs.environment }}
+          PROJECT_TAG: ${{ needs.load-regions.outputs.project_tag }}
+          AUTH_REGION: ${{ needs.load-regions.outputs.auth_region }}
+          AUTH_STACK_NAME: ${{ needs.load-regions.outputs.auth_stack_name }}
+          AUTH_DOMAIN_PREFIX: ${{ needs.load-regions.outputs.auth_domain_prefix }}
+          ROOT_DOMAIN_NAME: ${{ needs.load-regions.outputs.root_domain_name }}
+          HOSTED_ZONE_ID: ${{ needs.load-regions.outputs.hosted_zone_id }}
+
+      - name: Read auth stack outputs
+        id: outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          output_value() {
+            aws cloudformation describe-stacks \
+              --region "${AUTH_REGION}" \
+              --stack-name "${AUTH_STACK_NAME}" \
+              --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" \
+              --output text
+          }
+          echo "cognito_issuer_uri=$(output_value IssuerUri)" >> "$GITHUB_OUTPUT"
+          echo "cognito_client_id=$(output_value UserPoolClientId)" >> "$GITHUB_OUTPUT"
+          echo "cognito_hosted_ui_base_url=$(output_value HostedUiBaseUrl)" >> "$GITHUB_OUTPUT"
+        env:
+          AUTH_REGION: ${{ needs.load-regions.outputs.auth_region }}
+          AUTH_STACK_NAME: ${{ needs.load-regions.outputs.auth_stack_name }}
+
   deploy-region:
     needs:
       - load-regions
       - build-backend-image
       - build-frontend-image
+      - deploy-auth
     if: ${{ always() && (inputs.run_app_rollout == false || (needs.build-backend-image.result == 'success' && needs.build-frontend-image.result == 'success')) }}
     strategy:
       fail-fast: true
@@ -130,6 +257,12 @@ jobs:
       health_check_path: ${{ matrix.health_check_path }}
       instance_enabled: ${{ matrix.instance_enabled }}
       stack_name: ${{ matrix.stack_name }}
+      root_domain_name: ${{ needs.load-regions.outputs.root_domain_name }}
+      hosted_zone_id: ${{ needs.load-regions.outputs.hosted_zone_id }}
+      regional_subdomain: ${{ matrix.regional_subdomain }}
+      cognito_issuer_uri: ${{ needs.deploy-auth.outputs.cognito_issuer_uri }}
+      cognito_client_id: ${{ needs.deploy-auth.outputs.cognito_client_id }}
+      cognito_hosted_ui_base_url: ${{ needs.deploy-auth.outputs.cognito_hosted_ui_base_url }}
       run_infra_phase: true
       run_backend_rollout: ${{ inputs.run_app_rollout }}
       run_frontend_rollout: ${{ inputs.run_app_rollout }}

@@ -44,6 +44,18 @@ Parameters:
     Type: String
   SubnetId:
     Type: String
+  LoadBalancerSubnetIds:
+    Type: CommaDelimitedList
+    Default: ""
+  RootDomainName:
+    Type: String
+    Default: ""
+  HostedZoneId:
+    Type: String
+    Default: ""
+  RegionalSubdomain:
+    Type: String
+    Default: ""
   KeyPairName:
     Type: String
     Default: ""
@@ -51,6 +63,14 @@ Parameters:
 Conditions:
   CreateInstance: !Equals [!Ref InstanceEnabled, "true"]
   HasKeyPair: !Not [!Equals [!Ref KeyPairName, ""]]
+  HasRegionalDomain: !And
+    - !Not [!Equals [!Ref RootDomainName, ""]]
+    - !Not [!Equals [!Ref HostedZoneId, ""]]
+    - !Not [!Equals [!Ref RegionalSubdomain, ""]]
+  HasHttpsEndpoint: !And
+    - !Condition CreateInstance
+    - !Condition HasRegionalDomain
+  UseDirectFrontendIngress: !Not [!Condition HasHttpsEndpoint]
 
 Resources:
   AppLogGroup:
@@ -107,11 +127,6 @@ Resources:
     Properties:
       VpcId: !Ref VpcId
       GroupDescription: !Sub "${AppName} ${Environment} ingress"
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: !Ref FrontendHostPort
-          ToPort: !Ref FrontendHostPort
-          CidrIp: !Ref AllowedIngressCidr
       SecurityGroupEgress:
         - IpProtocol: -1
           CidrIp: 0.0.0.0/0
@@ -126,6 +141,56 @@ Resources:
           Value: !Ref Environment
         - Key: Region
           Value: !Ref RegionCode
+
+  DirectFrontendIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Condition: UseDirectFrontendIngress
+    Properties:
+      GroupId: !Ref AppSecurityGroup
+      IpProtocol: tcp
+      FromPort: !Ref FrontendHostPort
+      ToPort: !Ref FrontendHostPort
+      CidrIp: !Ref AllowedIngressCidr
+
+  LoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Condition: HasHttpsEndpoint
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: !Sub "${AppName} ${Environment} public HTTPS ingress"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref AllowedIngressCidr
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: !Ref AllowedIngressCidr
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub "${AppName}-${Environment}-${RegionCode}-alb-sg"
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Application
+          Value: !Ref AppName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref RegionCode
+
+  LoadBalancerToFrontendIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Condition: HasHttpsEndpoint
+    Properties:
+      GroupId: !Ref AppSecurityGroup
+      IpProtocol: tcp
+      FromPort: !Ref FrontendHostPort
+      ToPort: !Ref FrontendHostPort
+      SourceSecurityGroupId: !Ref LoadBalancerSecurityGroup
 
   AppInstanceRole:
     Type: AWS::IAM::Role
@@ -269,6 +334,10 @@ Resources:
           write_line "AWS_SECRET_KEY" "$(fetch_param AWS_SECRET_KEY true)"
           write_line "WAE_DYNAMODB_ENDPOINT" "$(fetch_param WAE_DYNAMODB_ENDPOINT false)"
           write_line "WAE_S3_ENDPOINT" "$(fetch_param WAE_S3_ENDPOINT false)"
+          write_line "WAE_COGNITO_ISSUER_URI" "$(fetch_param WAE_COGNITO_ISSUER_URI false)"
+          write_line "WAE_COGNITO_CLIENT_ID" "$(fetch_param WAE_COGNITO_CLIENT_ID false)"
+          write_line "WAE_COGNITO_HOSTED_UI_BASE_URL" "$(fetch_param WAE_COGNITO_HOSTED_UI_BASE_URL false)"
+          write_line "WAE_AUTH_SESSION_SECRET" "$(fetch_param WAE_AUTH_SESSION_SECRET true)"
           write_line "JAVA_TOOL_OPTIONS" "$(fetch_param JAVA_TOOL_OPTIONS false)"
           write_line "JVM_MAX_RAM_PERCENTAGE" "$(fetch_param JVM_MAX_RAM_PERCENTAGE false)"
           mv "$TMP_FILE" "$OUTPUT_FILE"
@@ -455,6 +524,112 @@ Resources:
       AllocationId: !GetAtt AppElasticIp.AllocationId
       InstanceId: !Ref AppInstance
 
+  RegionalCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Condition: HasHttpsEndpoint
+    Properties:
+      DomainName: !Sub "${RegionalSubdomain}.${RootDomainName}"
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Sub "${RegionalSubdomain}.${RootDomainName}"
+          HostedZoneId: !Ref HostedZoneId
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Application
+          Value: !Ref AppName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref RegionCode
+
+  AppLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Condition: HasHttpsEndpoint
+    Properties:
+      Type: application
+      Scheme: internet-facing
+      IpAddressType: ipv4
+      SecurityGroups: [!Ref LoadBalancerSecurityGroup]
+      Subnets: !Ref LoadBalancerSubnetIds
+      Tags:
+        - Key: Name
+          Value: !Sub "${AppName}-${Environment}-${RegionCode}-alb"
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Application
+          Value: !Ref AppName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref RegionCode
+
+  FrontendTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Condition: HasHttpsEndpoint
+    Properties:
+      VpcId: !Ref VpcId
+      Protocol: HTTP
+      Port: !Ref FrontendHostPort
+      TargetType: instance
+      Targets:
+        - Id: !Ref AppInstance
+          Port: !Ref FrontendHostPort
+      HealthCheckEnabled: true
+      HealthCheckPath: /
+      Matcher:
+        HttpCode: "200-399"
+      Tags:
+        - Key: Name
+          Value: !Sub "${AppName}-${Environment}-${RegionCode}-frontend-tg"
+        - Key: Project
+          Value: !Ref ProjectTag
+        - Key: Application
+          Value: !Ref AppName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Region
+          Value: !Ref RegionCode
+
+  HttpListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Condition: HasHttpsEndpoint
+    Properties:
+      LoadBalancerArn: !Ref AppLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: "443"
+            StatusCode: HTTP_301
+
+  HttpsListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Condition: HasHttpsEndpoint
+    Properties:
+      LoadBalancerArn: !Ref AppLoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      Certificates:
+        - CertificateArn: !Ref RegionalCertificate
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref FrontendTargetGroup
+
+  RegionalDnsRecord:
+    Type: AWS::Route53::RecordSet
+    Condition: HasHttpsEndpoint
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Sub "${RegionalSubdomain}.${RootDomainName}."
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt AppLoadBalancer.DNSName
+        HostedZoneId: !GetAtt AppLoadBalancer.CanonicalHostedZoneID
+
 Outputs:
   AppInstanceId:
     Condition: CreateInstance
@@ -465,6 +640,12 @@ Outputs:
   AppBaseUrl:
     Condition: CreateInstance
     Value: !Sub "http://${AppElasticIp}"
+  AppHttpsUrl:
+    Condition: HasHttpsEndpoint
+    Value: !Sub "https://${RegionalSubdomain}.${RootDomainName}"
+  LoadBalancerDnsName:
+    Condition: HasHttpsEndpoint
+    Value: !GetAtt AppLoadBalancer.DNSName
   AppRepositoryUri:
     Value: !GetAtt AppRepository.RepositoryUri
   FrontendRepositoryUri:
