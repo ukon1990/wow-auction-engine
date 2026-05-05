@@ -21,7 +21,27 @@ const config: StorybookConfig = {
   async viteFinal(userConfig: UserConfig) {
     return mergeConfig(userConfig, {
       resolve: {
+        dedupe: [
+          '@angular/animations',
+          '@angular/cdk',
+          '@angular/common',
+          '@angular/core',
+          '@angular/forms',
+          '@angular/platform-browser',
+          '@angular/router',
+        ],
         tsconfigPaths: true,
+      },
+      optimizeDeps: {
+        exclude: [
+          '@angular/animations',
+          '@angular/cdk',
+          '@angular/common',
+          '@angular/core',
+          '@angular/forms',
+          '@angular/platform-browser',
+          '@angular/router',
+        ],
       },
     });
   },

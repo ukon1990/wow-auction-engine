@@ -12,7 +12,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {
   type DisabledReason,
   type FormValueControl,
-  ValidationError,
+  type ValidationError,
   type WithOptionalFieldTree,
 } from '@angular/forms/signals';
 

@@ -10,6 +10,7 @@ import {
   effect,
   ElementRef,
   inject,
+  Injector,
   input,
   output,
   PLATFORM_ID,
@@ -237,6 +238,7 @@ export class SideNavComponent {
   private readonly document = inject(DOCUMENT);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
 
   readonly items = input.required<readonly NavItem[]>();
   readonly activeId = input.required<string>();
@@ -295,7 +297,9 @@ export class SideNavComponent {
       const desktop = this.isDesktop();
       untracked(() => {
         if (open && !desktop) {
-          afterNextRender(() => this.drawerCloseBtn()?.nativeElement.focus());
+          afterNextRender(() => this.drawerCloseBtn()?.nativeElement.focus(), {
+            injector: this.injector,
+          });
         }
       });
     });
