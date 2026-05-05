@@ -57,7 +57,7 @@ export class WowheadTooltipService {
       this.autoDismissTimer = null;
     }
     const tip = this.active();
-    if (tip?.describedById) {
+    if (tip?.describedById && typeof document !== 'undefined') {
       document
         .querySelector(`[aria-describedby="${tip.describedById}"]`)
         ?.removeAttribute('aria-describedby');
