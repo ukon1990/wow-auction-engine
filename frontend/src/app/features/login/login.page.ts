@@ -24,8 +24,6 @@ export class LoginPage {
   private readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   protected readonly mode = signal<LoginMode>('login');
-  protected readonly email = signal('');
-  protected readonly password = signal('');
   protected readonly confirmPassword = signal('');
   protected readonly confirmationCode = signal('');
   protected readonly emailTouched = signal(false);
@@ -35,6 +33,19 @@ export class LoginPage {
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly notice = signal<string | null>(null);
+  protected readonly loginModel = signal<{
+    email: string;
+    password: string;
+  }>({ // TODO: https://angular.dev/essentials/signal-forms
+    email: '',
+    password: '',
+  });
+  protected readonly loginForm = form<{
+    email: string;
+    password: string;
+  }>(loginModel, (schemaPath) => {
+    required(schemaPath.email, {});
+  });
 
   protected readonly emailError = computed(() =>
     this.emailTouched() ? validateEmail(this.email()) : null,

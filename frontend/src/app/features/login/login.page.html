@@ -69,7 +69,9 @@
           [ngModel]="password()"
           (ngModelChange)="password.set($event)"
           (blur)="passwordTouched.set(true)"
-        />
+
+          email: this.email,
+          password: this.password,   />
         @if (passwordError()) {
           <span class="text-sm text-error">{{ passwordError() }}</span>
         }
