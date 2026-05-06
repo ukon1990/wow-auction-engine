@@ -45,6 +45,7 @@ export type TextInputType = 'text' | 'email' | 'password' | 'number' | 'search' 
           [attr.aria-invalid]="ariaInvalid()"
           [attr.placeholder]="placeholder()"
           [attr.name]="name() || null"
+          [attr.autocomplete]="autocomplete() || null"
           [disabled]="isDisabled()"
           [readonly]="readonly()"
           [required]="required()"
@@ -89,6 +90,7 @@ export class TextInputComponent implements ControlValueAccessor, FormValueContro
   readonly touched = model(false);
   readonly dirty = input(false);
   readonly name = input('');
+  readonly autocomplete = input('');
   readonly required = input(false);
   readonly min = input<number | undefined>(undefined);
   readonly max = input<number | undefined>(undefined);

@@ -2,6 +2,7 @@
   id="page-main"
   tabindex="-1"
   class="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col justify-center gap-8 px-4 py-12 outline-none focus:outline-none scroll-mt-20"
+  xmlns:password="http://www.w3.org/1999/xhtml"
 >
   <header class="text-center">
     <p class="ee-data uppercase text-outline">The Ethereal Exchange</p>
@@ -38,82 +39,32 @@
     </button>
   </div>
 
-  <form class="grid gap-4" (submit)="$event.preventDefault(); submit()">
-    <label class="grid gap-2">
-      <span class="ee-data uppercase text-outline">Email</span>
-      <input
-        class="h-12 rounded-md border border-white/10 bg-surface-container-highest px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
-        type="email"
-        name="email"
-        autocomplete="email"
-        required
-        [ngModel]="email()"
-        (ngModelChange)="email.set($event)"
-        (blur)="emailTouched.set(true)"
-      />
-      @if (emailError()) {
-        <span class="text-sm text-error">{{ emailError() }}</span>
-      }
-    </label>
+  <form class="grid gap-4" novalidate (submit)="submit($event)">
+    <ee-text-input label="Email" type="email" autocomplete="email" [formField]="loginForm.email" />
 
     @if (mode() !== 'confirm') {
-      <label class="grid gap-2">
-        <span class="ee-data uppercase text-outline">Password</span>
-        <input
-          class="h-12 rounded-md border border-white/10 bg-surface-container-highest px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
-          type="password"
-          name="password"
-          [autocomplete]="mode() === 'signup' ? 'new-password' : 'current-password'"
-          required
-          minlength="8"
-          [ngModel]="password()"
-          (ngModelChange)="password.set($event)"
-          (blur)="passwordTouched.set(true)"
-
-          email: this.email,
-          password: this.password,   />
-        @if (passwordError()) {
-          <span class="text-sm text-error">{{ passwordError() }}</span>
-        }
-      </label>
+      <ee-text-input
+        label="Password"
+        type="password"
+        [autocomplete]="mode() === 'signup' ? 'new-password' : 'current-password'"
+        [formField]="loginForm.password"
+      />
 
       @if (mode() === 'signup') {
-        <label class="grid gap-2">
-          <span class="ee-data uppercase text-outline">Confirm password</span>
-          <input
-            class="h-12 rounded-md border border-white/10 bg-surface-container-highest px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
-            type="password"
-            name="confirmPassword"
-            autocomplete="new-password"
-            required
-            minlength="8"
-            [ngModel]="confirmPassword()"
-            (ngModelChange)="confirmPassword.set($event)"
-            (blur)="confirmPasswordTouched.set(true)"
-          />
-          @if (confirmPasswordError()) {
-            <span class="text-sm text-error">{{ confirmPasswordError() }}</span>
-          }
-        </label>
+        <ee-text-input
+          label="Confirm password"
+          type="password"
+          autocomplete="new-password"
+          [formField]="loginForm.confirmPassword"
+        />
       }
     } @else {
-      <label class="grid gap-2">
-        <span class="ee-data uppercase text-outline">Confirmation code</span>
-        <input
-          class="h-12 rounded-md border border-white/10 bg-surface-container-highest px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
-          type="text"
-          name="confirmationCode"
-          inputmode="numeric"
-          autocomplete="one-time-code"
-          required
-          [ngModel]="confirmationCode()"
-          (ngModelChange)="confirmationCode.set($event)"
-          (blur)="confirmationCodeTouched.set(true)"
-        />
-        @if (confirmationCodeError()) {
-          <span class="text-sm text-error">{{ confirmationCodeError() }}</span>
-        }
-      </label>
+      <ee-text-input
+        label="Confirmation code"
+        type="text"
+        autocomplete="one-time-code"
+        [formField]="loginForm.confirmationCode"
+      />
     }
 
     @if (notice()) {
@@ -121,12 +72,6 @@
         class="rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-sm text-primary-container"
       >
         {{ notice() }}
-      </p>
-    }
-
-    @if (error()) {
-      <p class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error">
-        {{ error() }}
       </p>
     }
 

@@ -1,19 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { email, form, FormField, required } from '@angular/forms/signals';
+import { ActivatedRoute, Router } from '@angular/router';
 
+import { TextInputComponent } from '@ui';
 import { AuthService } from '@core/services/auth.service';
-import {
-  validateEmail,
-  validatePasswordMatch,
-  validatePasswordRules,
-} from '@core/utils/auth-validation';
-
-type LoginMode = 'login' | 'signup' | 'confirm';
+import { LoginAndRegistrationModel, LoginMode } from '@features/login/login.model';
+import { catchError, finalize, tap } from 'rxjs';
 
 @Component({
   selector: 'app-login-page',
-  imports: [FormsModule],
+  imports: [FormsModule, FormField, TextInputComponent],
   templateUrl: './login.page.html',
   host: {
     class: 'flex min-h-0 flex-1 flex-col',
@@ -21,68 +18,49 @@ type LoginMode = 'login' | 'signup' | 'confirm';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginPage {
-  private readonly auth = inject(AuthService);
-  private readonly route = inject(ActivatedRoute);
+  private readonly authService = inject(AuthService);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   protected readonly mode = signal<LoginMode>('login');
-  protected readonly confirmPassword = signal('');
-  protected readonly confirmationCode = signal('');
-  protected readonly emailTouched = signal(false);
-  protected readonly passwordTouched = signal(false);
-  protected readonly confirmPasswordTouched = signal(false);
-  protected readonly confirmationCodeTouched = signal(false);
   protected readonly loading = signal(false);
-  protected readonly error = signal<string | null>(null);
   protected readonly notice = signal<string | null>(null);
-  protected readonly loginModel = signal<{
-    email: string;
-    password: string;
-  }>({ // TODO: https://angular.dev/essentials/signal-forms
+
+  private getMessage(message: string) {
+    return { message };
+  }
+  private readonly registerModel = signal<LoginAndRegistrationModel>({
     email: '',
     password: '',
+    confirmPassword: '',
+    confirmationCode: '',
   });
-  protected readonly loginForm = form<{
-    email: string;
-    password: string;
-  }>(loginModel, (schemaPath) => {
-    required(schemaPath.email, {});
-  });
+  readonly loginForm = form<LoginAndRegistrationModel>(this.registerModel, (schemaPath) => {
+    email(schemaPath.email, this.getMessage('Email is required'));
+    required(schemaPath.password, this.getMessage('Password is required'));
 
-  protected readonly emailError = computed(() =>
-    this.emailTouched() ? validateEmail(this.email()) : null,
-  );
-  protected readonly passwordError = computed(() =>
-    this.passwordTouched() && this.mode() !== 'confirm'
-      ? validatePasswordRules(this.password())
-      : null,
-  );
-  protected readonly confirmPasswordError = computed(() =>
-    this.confirmPasswordTouched() && this.mode() === 'signup'
-      ? validatePasswordMatch(this.password(), this.confirmPassword())
-      : null,
-  );
-  protected readonly confirmationCodeError = computed(() =>
-    this.confirmationCodeTouched() && this.mode() === 'confirm' && !this.confirmationCode().trim()
-      ? 'Confirmation code is required'
-      : null,
-  );
+    required(schemaPath.confirmPassword, {
+      message: 'The passwords must match',
+      when: ({ value, valueOf }) =>
+        this.mode() === 'signup' && valueOf(schemaPath.password) !== value(),
+    });
+
+    required(schemaPath.confirmationCode, {
+      message: 'Confirmation Code is required',
+      when: () => this.mode() === 'confirm',
+    });
+  });
 
   protected setMode(mode: LoginMode): void {
     this.mode.set(mode);
-    this.error.set(null);
     this.notice.set(null);
-    this.passwordTouched.set(false);
-    this.confirmPasswordTouched.set(false);
-    this.confirmationCodeTouched.set(false);
   }
 
-  protected async submit(): Promise<void> {
-    this.error.set(null);
+  protected async submit(event: SubmitEvent): Promise<void> {
+    event.preventDefault();
+
     this.notice.set(null);
-    const validationError = this.validateInput();
-    if (validationError) {
-      this.error.set(validationError);
-      return;
-    }
+    if (this.loginForm().invalid()) return;
+
     this.loading.set(true);
     try {
       if (this.mode() === 'signup') {
@@ -93,78 +71,57 @@ export class LoginPage {
         await this.login();
       }
     } catch (error) {
-      this.error.set(error instanceof Error ? error.message : 'Authentication failed');
+      console.error(error);
     } finally {
       this.loading.set(false);
     }
   }
 
   private async login(): Promise<void> {
-    await requestAuth('/auth/login', {
-      email: this.email(),
-      password: this.password(),
-    });
-    await this.auth.refresh();
-    window.location.assign(this.returnTo());
+    if (this.mode() === 'login' && !this.loginForm().valid()) return;
+
+    const { email, password } = this.loginForm().value() as LoginAndRegistrationModel;
+    this.authService.login(email, password).pipe(
+      tap(() => {
+        this.router.navigateByUrl(this.returnTo());
+      }),
+      catchError((error) => {
+        // TODO: Check the response type. If I can infer used email etc
+        console.log('login error', error);
+        return error;
+      }),
+      finalize(() => this.loading.set(false)),
+    );
   }
 
   private async signup(): Promise<void> {
-    const response = await requestAuth<{ confirmed: boolean }>('/auth/signup', {
-      email: this.email(),
-      password: this.password(),
-    });
-    if (response.confirmed) {
-      this.notice.set('Account created. You can sign in now.');
-      this.mode.set('login');
-      return;
-    }
-    this.notice.set('Enter the confirmation code sent to your email.');
-    this.mode.set('confirm');
+    const { email, password } = this.loginForm().value() as LoginAndRegistrationModel;
+    this.authService.requestVerificationCode(email, password).pipe(
+      tap((response) => {
+        if (response.confirmed) {
+          this.login();
+          return;
+        }
+        this.notice.set('Enter the confirmation code sent to your email.');
+        this.mode.set('confirm');
+      }),
+      catchError((error) => {
+        console.log('Invalid code error', error);
+        return error;
+      }),
+    );
   }
 
   private async confirm(): Promise<void> {
-    await requestAuth('/auth/confirm', {
-      email: this.email(),
-      code: this.confirmationCode(),
-    });
-    this.notice.set('Email confirmed. You can sign in now.');
-    this.mode.set('login');
+    const { email, confirmationCode: code } = this.loginForm().value() as LoginAndRegistrationModel;
+    this.authService.confirmEmailCode(email, code).pipe(tap(() => this.login()));
   }
 
   private returnTo(): string {
-    const value = this.route.snapshot.queryParamMap.get('returnTo');
+    const value = this.activatedRoute.snapshot.queryParamMap.get('returnTo');
     if (!value || !value.startsWith('/') || value.startsWith('//') || value.startsWith('/auth/')) {
       return '/';
     }
     return value;
   }
-
-  private validateInput(): string | null {
-    const emailError = validateEmail(this.email());
-    if (emailError) return emailError;
-    if (this.mode() === 'confirm') {
-      return this.confirmationCode().trim() ? null : 'Confirmation code is required';
-    }
-    const passwordError = validatePasswordRules(this.password());
-    if (passwordError) return passwordError;
-    if (this.mode() === 'signup') {
-      return validatePasswordMatch(this.password(), this.confirmPassword());
-    }
-    return null;
-  }
-}
-
-async function requestAuth<T = unknown>(url: string, body: unknown): Promise<T> {
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  });
-  const payload = (await response.json().catch(() => ({}))) as { error?: string } & T;
-  if (!response.ok) {
-    throw new Error(payload.error ?? 'Authentication failed');
-  }
-  return payload;
 }
