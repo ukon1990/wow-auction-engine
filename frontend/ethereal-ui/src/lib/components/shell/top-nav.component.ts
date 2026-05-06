@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Params, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { CharacterSummary, NavItem } from '../../models/ui-models';
 import { IconButtonComponent } from '../primitives/icon-button.component';
@@ -52,19 +52,18 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
         </nav>
       </div>
       <div class="flex shrink-0 items-center gap-1 sm:gap-3">
-        <span class="hidden sm:inline-flex">
-          <ee-icon-button icon="account_circle" label="Account" />
-        </span>
         <ee-icon-button icon="settings" label="Settings" />
         <span class="hidden md:inline-flex">
           <ee-icon-button icon="query_stats" label="Analytics" />
         </span>
-        <div
-          class="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-surface-container text-primary sm:flex"
-          [attr.aria-label]="characterLabel()"
+        <a
+          class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-surface-container text-primary transition hover:bg-white/5 hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container"
+          [routerLink]="accountRouterLink()"
+          [queryParams]="accountQueryParams()"
+          [attr.aria-label]="accountLabel()"
         >
           <ee-symbol-icon class="text-[18px]" name="person" />
-        </div>
+        </a>
       </div>
     </header>
   `,
@@ -74,6 +73,9 @@ export class TopNavComponent {
   readonly items = input.required<readonly NavItem[]>();
   readonly activeId = input.required<string>();
   readonly character = input.required<CharacterSummary>();
+  readonly accountRouterLink = input<string | readonly unknown[]>('/login');
+  readonly accountQueryParams = input<Params | null>(null);
+  readonly accountLabel = input('Account');
   readonly mobileDrawerOpen = input(false);
   readonly navSelected = output<string>();
   readonly toggleMobileDrawer = output<void>();
@@ -88,11 +90,6 @@ export class TopNavComponent {
 
   protected navLinkClass(): string {
     return 'rounded px-1 py-2 font-cinzel text-sm font-bold uppercase tracking-wide transition hover:bg-white/5 text-slate-400 hover:text-on-surface';
-  }
-
-  protected characterLabel(): string {
-    const character = this.character();
-    return `${character.name}, level ${character.level}, ${character.realm}`;
   }
 
   protected onPrimaryButton(id: string): void {

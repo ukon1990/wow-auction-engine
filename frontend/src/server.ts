@@ -11,6 +11,7 @@ import {
   buildLoginUrl,
   buildLogoutUrl,
   callbackUri,
+  changePassword,
   clearOAuthStateCookie,
   clearSessionCookie,
   confirmSignUp,
@@ -18,6 +19,7 @@ import {
   createPkcePair,
   authenticateWithPassword,
   exchangeCodeForTokens,
+  getUserFromAccessToken,
   getRequestOrigin,
   readAuthConfig,
   readOAuthState,
@@ -230,7 +232,42 @@ app.get('/auth/me', async (req, res) => {
     res.status(401).json({ authenticated: false });
     return;
   }
-  res.json({ authenticated: true });
+  try {
+    const user = await getUserFromAccessToken({
+      config: authConfig!,
+      accessToken: session.accessToken,
+    });
+    res.json({ authenticated: true, email: user.email });
+  } catch (error) {
+    console.error(`Get current user failed ${formatErrorForLogSafe(error)}`);
+    res.status(502).json({ error: 'Unable to read current user' });
+  }
+});
+
+app.post('/auth/change-password', async (req, res) => {
+  const session = await resolveValidSession(req, res, authConfig);
+  if (!session) {
+    res.status(401).json({ error: 'Sign in to change your password' });
+    return;
+  }
+  const passwords = readPasswordChange(req.body);
+  if (!passwords) {
+    res.status(400).json({ error: 'Current password and new password are required' });
+    return;
+  }
+
+  try {
+    await changePassword({
+      config: authConfig!,
+      accessToken: session.accessToken,
+      previousPassword: passwords.currentPassword,
+      proposedPassword: passwords.newPassword,
+    });
+    res.json({ changed: true });
+  } catch (error) {
+    console.error(`Password change failed ${formatErrorForLogSafe(error)}`);
+    res.status(400).json({ error: passwordChangeError(error) });
+  }
 });
 
 app.use('/api', async (req, res) => {
@@ -395,6 +432,20 @@ function readCredentials(value: unknown): { email: string; password: string } | 
   return { email, password };
 }
 
+function readPasswordChange(
+  value: unknown,
+): { currentPassword: string; newPassword: string } | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+  const currentPassword = readBodyString(value, 'currentPassword');
+  const newPassword = readBodyString(value, 'newPassword');
+  if (!currentPassword || !newPassword) {
+    return null;
+  }
+  return { currentPassword, newPassword };
+}
+
 function readBodyString(value: unknown, key: string): string | null {
   if (!isRecord(value)) {
     return null;
@@ -408,6 +459,13 @@ function userSafeAuthError(error: unknown): string {
     return error.message;
   }
   return 'Authentication request failed';
+}
+
+function passwordChangeError(error: unknown): string {
+  if (error instanceof Error && /notauthorized|incorrect|previouspassword/i.test(error.message)) {
+    return 'Current password is incorrect';
+  }
+  return userSafeAuthError(error);
 }
 
 function readRequestId(req: express.Request): string | null {

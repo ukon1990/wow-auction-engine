@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -11,6 +12,7 @@ import { RouterLink } from '@angular/router';
 import { SearchInputComponent } from '@ui';
 
 import { Realm } from '@api/generated';
+import { AuthService } from '@core/services/auth.service';
 import { RealmSelectionService } from '@core/services/realm-selection.service';
 
 @Component({
@@ -23,6 +25,7 @@ import { RealmSelectionService } from '@core/services/realm-selection.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectRealmPage {
+  private readonly auth = inject(AuthService);
   private readonly selection = inject(RealmSelectionService);
   private readonly platformId = inject(PLATFORM_ID);
 
@@ -31,6 +34,7 @@ export class SelectRealmPage {
   protected readonly error = signal<string | null>(null);
 
   protected readonly realms = this.selection.realms;
+  protected readonly showSignIn = computed(() => this.auth.loaded() && !this.auth.user());
   protected readonly filtered = computed<readonly Realm[]>(() => {
     const needle = this.query().trim().toLowerCase();
     const list = this.realms();
@@ -53,6 +57,12 @@ export class SelectRealmPage {
   });
 
   constructor() {
+    afterNextRender(() => {
+      if (!this.auth.loaded()) {
+        void this.auth.refresh();
+      }
+    });
+
     if (!isPlatformBrowser(this.platformId)) {
       this.loading.set(false);
       return;

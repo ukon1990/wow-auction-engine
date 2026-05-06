@@ -1,5 +1,13 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+
+import { AuthService } from '@core/services/auth.service';
+import {
+  validateEmail,
+  validatePasswordMatch,
+  validatePasswordRules,
+} from '@core/utils/auth-validation';
 
 type LoginMode = 'login' | 'signup' | 'confirm';
 
@@ -13,23 +21,57 @@ type LoginMode = 'login' | 'signup' | 'confirm';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginPage {
+  private readonly auth = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
   protected readonly mode = signal<LoginMode>('login');
   protected readonly email = signal('');
   protected readonly password = signal('');
+  protected readonly confirmPassword = signal('');
   protected readonly confirmationCode = signal('');
+  protected readonly emailTouched = signal(false);
+  protected readonly passwordTouched = signal(false);
+  protected readonly confirmPasswordTouched = signal(false);
+  protected readonly confirmationCodeTouched = signal(false);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly notice = signal<string | null>(null);
+
+  protected readonly emailError = computed(() =>
+    this.emailTouched() ? validateEmail(this.email()) : null,
+  );
+  protected readonly passwordError = computed(() =>
+    this.passwordTouched() && this.mode() !== 'confirm'
+      ? validatePasswordRules(this.password())
+      : null,
+  );
+  protected readonly confirmPasswordError = computed(() =>
+    this.confirmPasswordTouched() && this.mode() === 'signup'
+      ? validatePasswordMatch(this.password(), this.confirmPassword())
+      : null,
+  );
+  protected readonly confirmationCodeError = computed(() =>
+    this.confirmationCodeTouched() && this.mode() === 'confirm' && !this.confirmationCode().trim()
+      ? 'Confirmation code is required'
+      : null,
+  );
 
   protected setMode(mode: LoginMode): void {
     this.mode.set(mode);
     this.error.set(null);
     this.notice.set(null);
+    this.passwordTouched.set(false);
+    this.confirmPasswordTouched.set(false);
+    this.confirmationCodeTouched.set(false);
   }
 
   protected async submit(): Promise<void> {
     this.error.set(null);
     this.notice.set(null);
+    const validationError = this.validateInput();
+    if (validationError) {
+      this.error.set(validationError);
+      return;
+    }
     this.loading.set(true);
     try {
       if (this.mode() === 'signup') {
@@ -51,7 +93,8 @@ export class LoginPage {
       email: this.email(),
       password: this.password(),
     });
-    window.location.assign('/');
+    await this.auth.refresh();
+    window.location.assign(this.returnTo());
   }
 
   private async signup(): Promise<void> {
@@ -75,6 +118,28 @@ export class LoginPage {
     });
     this.notice.set('Email confirmed. You can sign in now.');
     this.mode.set('login');
+  }
+
+  private returnTo(): string {
+    const value = this.route.snapshot.queryParamMap.get('returnTo');
+    if (!value || !value.startsWith('/') || value.startsWith('//') || value.startsWith('/auth/')) {
+      return '/';
+    }
+    return value;
+  }
+
+  private validateInput(): string | null {
+    const emailError = validateEmail(this.email());
+    if (emailError) return emailError;
+    if (this.mode() === 'confirm') {
+      return this.confirmationCode().trim() ? null : 'Confirmation code is required';
+    }
+    const passwordError = validatePasswordRules(this.password());
+    if (passwordError) return passwordError;
+    if (this.mode() === 'signup') {
+      return validatePasswordMatch(this.password(), this.confirmPassword());
+    }
+    return null;
   }
 }
 

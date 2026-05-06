@@ -49,7 +49,11 @@
         required
         [ngModel]="email()"
         (ngModelChange)="email.set($event)"
+        (blur)="emailTouched.set(true)"
       />
+      @if (emailError()) {
+        <span class="text-sm text-error">{{ emailError() }}</span>
+      }
     </label>
 
     @if (mode() !== 'confirm') {
@@ -59,13 +63,37 @@
           class="h-12 rounded-md border border-white/10 bg-surface-container-highest px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
           type="password"
           name="password"
-          autocomplete="current-password"
+          [autocomplete]="mode() === 'signup' ? 'new-password' : 'current-password'"
           required
           minlength="8"
           [ngModel]="password()"
           (ngModelChange)="password.set($event)"
+          (blur)="passwordTouched.set(true)"
         />
+        @if (passwordError()) {
+          <span class="text-sm text-error">{{ passwordError() }}</span>
+        }
       </label>
+
+      @if (mode() === 'signup') {
+        <label class="grid gap-2">
+          <span class="ee-data uppercase text-outline">Confirm password</span>
+          <input
+            class="h-12 rounded-md border border-white/10 bg-surface-container-highest px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
+            type="password"
+            name="confirmPassword"
+            autocomplete="new-password"
+            required
+            minlength="8"
+            [ngModel]="confirmPassword()"
+            (ngModelChange)="confirmPassword.set($event)"
+            (blur)="confirmPasswordTouched.set(true)"
+          />
+          @if (confirmPasswordError()) {
+            <span class="text-sm text-error">{{ confirmPasswordError() }}</span>
+          }
+        </label>
+      }
     } @else {
       <label class="grid gap-2">
         <span class="ee-data uppercase text-outline">Confirmation code</span>
@@ -78,7 +106,11 @@
           required
           [ngModel]="confirmationCode()"
           (ngModelChange)="confirmationCode.set($event)"
+          (blur)="confirmationCodeTouched.set(true)"
         />
+        @if (confirmationCodeError()) {
+          <span class="text-sm text-error">{{ confirmationCodeError() }}</span>
+        }
       </label>
     }
 

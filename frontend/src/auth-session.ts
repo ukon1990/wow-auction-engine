@@ -265,6 +265,32 @@ export async function authenticateWithPassword(input: {
   };
 }
 
+export async function getUserFromAccessToken(input: {
+  config: AuthConfig;
+  accessToken: string;
+}): Promise<{ email: string | null }> {
+  const response = await cognitoJson(input.config, 'AWSCognitoIdentityProviderService.GetUser', {
+    AccessToken: input.accessToken,
+  });
+  const attributes = Array.isArray(response['UserAttributes']) ? response['UserAttributes'] : [];
+  return {
+    email: readCognitoAttribute(attributes, 'email'),
+  };
+}
+
+export async function changePassword(input: {
+  config: AuthConfig;
+  accessToken: string;
+  previousPassword: string;
+  proposedPassword: string;
+}): Promise<void> {
+  await cognitoJson(input.config, 'AWSCognitoIdentityProviderService.ChangePassword', {
+    AccessToken: input.accessToken,
+    PreviousPassword: input.previousPassword,
+    ProposedPassword: input.proposedPassword,
+  });
+}
+
 export async function refreshSession(
   config: AuthConfig,
   session: SessionPayload,
@@ -459,6 +485,18 @@ function shouldUseSecureCookie(req: express.Request): boolean {
 function readString(record: Record<string, unknown>, key: string): string | null {
   const value = record[key];
   return typeof value === 'string' ? value : null;
+}
+
+function readCognitoAttribute(attributes: unknown[], name: string): string | null {
+  for (const attribute of attributes) {
+    if (!isRecord(attribute)) {
+      continue;
+    }
+    if (readString(attribute, 'Name') === name) {
+      return readString(attribute, 'Value');
+    }
+  }
+  return null;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
