@@ -1,0 +1,111 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Single-region Cognito authentication stack for the WoW Auction Engine service.
+
+Parameters:
+  AppName:
+    Type: String
+    Default: wow-auction-engine
+  Environment:
+    Type: String
+    Default: prod
+  ProjectTag:
+    Type: String
+    Default: WAH
+  AuthDomainPrefix:
+    Type: String
+    Description: Globally unique Cognito hosted UI domain prefix.
+  CallbackUrls:
+    Type: CommaDelimitedList
+    Description: Allowed Hosted UI callback URLs.
+  LogoutUrls:
+    Type: CommaDelimitedList
+    Description: Allowed Hosted UI logout URLs.
+
+Conditions:
+  IsEuNorthOne: !Equals [!Ref "AWS::Region", eu-north-1]
+
+Resources:
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Condition: IsEuNorthOne
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      UserPoolName: !Sub "${AppName}-${Environment}-users"
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      DeletionProtection: ACTIVE
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireUppercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+      UserPoolTags:
+        Project: !Ref ProjectTag
+        Application: !Ref AppName
+        Environment: !Ref Environment
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Condition: IsEuNorthOne
+    Properties:
+      Domain: !Ref AuthDomainPrefix
+      UserPoolId: !Ref UserPool
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Condition: IsEuNorthOne
+    Properties:
+      UserPoolId: !Ref UserPool
+      ClientName: !Sub "${AppName}-${Environment}-web"
+      GenerateSecret: false
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthScopes:
+        - openid
+        - email
+        - profile
+      CallbackURLs: !Ref CallbackUrls
+      LogoutURLs: !Ref LogoutUrls
+      SupportedIdentityProviders:
+        - COGNITO
+      ExplicitAuthFlows:
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      RefreshTokenValidity: 30
+      TokenValidityUnits:
+        AccessToken: hours
+        IdToken: hours
+        RefreshToken: days
+      EnableTokenRevocation: true
+      PreventUserExistenceErrors: ENABLED
+
+Outputs:
+  UserPoolId:
+    Condition: IsEuNorthOne
+    Value: !Ref UserPool
+  UserPoolClientId:
+    Condition: IsEuNorthOne
+    Value: !Ref UserPoolClient
+  IssuerUri:
+    Condition: IsEuNorthOne
+    Value: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
+  HostedUiBaseUrl:
+    Condition: IsEuNorthOne
+    Value: !Sub "https://${AuthDomainPrefix}.auth.${AWS::Region}.amazoncognito.com"

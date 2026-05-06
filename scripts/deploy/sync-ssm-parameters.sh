@@ -44,6 +44,16 @@ put_secure_string() {
     --overwrite >/dev/null
 }
 
+get_secure_string() {
+  local name="$1"
+  aws ssm get-parameter \
+    --region "$AWS_REGION" \
+    --name "${parameter_prefix}/${name}" \
+    --with-decryption \
+    --query 'Parameter.Value' \
+    --output text 2>/dev/null || true
+}
+
 put_optional_string() {
   local name="$1"
   local value="${2:-}"
@@ -74,6 +84,9 @@ put_string "JVM_MAX_RAM_PERCENTAGE" "${JVM_MAX_RAM_PERCENTAGE:-65.0}"
 put_optional_string "JAVA_TOOL_OPTIONS" "${JAVA_TOOL_OPTIONS:-}"
 put_optional_string "WAE_DYNAMODB_ENDPOINT" "${WAE_DYNAMODB_ENDPOINT:-}"
 put_optional_string "WAE_S3_ENDPOINT" "${WAE_S3_ENDPOINT:-}"
+put_optional_string "WAE_COGNITO_ISSUER_URI" "${WAE_COGNITO_ISSUER_URI:-}"
+put_optional_string "WAE_COGNITO_CLIENT_ID" "${WAE_COGNITO_CLIENT_ID:-}"
+put_optional_string "WAE_COGNITO_HOSTED_UI_BASE_URL" "${WAE_COGNITO_HOSTED_UI_BASE_URL:-}"
 
 put_secure_string "BLIZZARD_CLIENT_ID" "$BLIZZARD_CLIENT_ID"
 put_secure_string "BLIZZARD_CLIENT_SECRET" "$BLIZZARD_CLIENT_SECRET"
@@ -81,5 +94,14 @@ put_secure_string "AUCTION_ENGINE_DB_USERNAME" "$AUCTION_ENGINE_DB_USERNAME"
 put_secure_string "AUCTION_ENGINE_DB_PASSWORD" "$AUCTION_ENGINE_DB_PASSWORD"
 put_optional_secure_string "AWS_ACCESS_KEY" "${AWS_ACCESS_KEY:-}"
 put_optional_secure_string "AWS_SECRET_KEY" "${AWS_SECRET_KEY:-}"
+
+auth_session_secret="${WAE_AUTH_SESSION_SECRET:-}"
+if [[ -z "$auth_session_secret" ]]; then
+  auth_session_secret="$(get_secure_string WAE_AUTH_SESSION_SECRET)"
+fi
+if [[ -z "$auth_session_secret" || "$auth_session_secret" == "None" ]]; then
+  auth_session_secret="$(openssl rand -base64 48)"
+fi
+put_secure_string "WAE_AUTH_SESSION_SECRET" "$auth_session_secret"
 
 echo "Synchronized runtime parameters under ${parameter_prefix}"

@@ -30,8 +30,10 @@
     "@angular/platform-server": "^21.2.0",
     "@angular/router": "^21.2.0",
     "@angular/ssr": "^21.2.9",
+    "@aws-sdk/client-cognito-identity-provider": "^3.1043.0",
     "@tanstack/angular-table": "^8.21.4",
     "@tanstack/table-core": "8.21.3",
+    "cookie": "^1.1.1",
     "express": "^5.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

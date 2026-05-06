@@ -2,10 +2,16 @@
   "app_name": "wow-auction-engine",
   "environment": "prod",
   "project_tag": "WAH",
+  "auth_region": "eu-north-1",
+  "auth_stack_name": "wah-wow-auction-engine-prod-auth-eu-north-1",
+  "auth_domain_prefix": "wah-wow-auction-engine-prod",
+  "root_domain_name": "",
+  "hosted_zone_id": "",
   "regions": [
     {
         "enabled": true,
         "aws_region": "eu-north-1",
+        "regional_subdomain": "eu",
         "blizzard_regions": ["Europe"],
         "instance_type": "t4g.small",
         "allowed_ingress_cidr": "0.0.0.0/0",
@@ -18,6 +24,7 @@
     {
       "enabled": true,
       "aws_region": "us-west-1",
+      "regional_subdomain": "us",
       "blizzard_regions": ["NorthAmerica"],
       "instance_type": "t4g.small",
       "allowed_ingress_cidr": "0.0.0.0/0",
@@ -30,6 +37,7 @@
     {
       "enabled": true,
       "aws_region": "ap-northeast-2",
+      "regional_subdomain": "kr",
       "blizzard_regions": ["Korea", "Taiwan"],
       "instance_type": "t4g.micro",
       "allowed_ingress_cidr": "0.0.0.0/0",

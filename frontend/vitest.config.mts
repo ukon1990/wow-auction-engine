@@ -11,6 +11,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@ui': new URL('./ethereal-ui/src/public-api.ts', import.meta.url).pathname,
+      '@api': new URL('./src/app/api', import.meta.url).pathname,
+      '@core': new URL('./src/app/core', import.meta.url).pathname,
+      '@features': new URL('./src/app/features', import.meta.url).pathname,
     },
   },
   optimizeDeps: {

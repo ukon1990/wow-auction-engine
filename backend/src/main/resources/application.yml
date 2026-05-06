@@ -28,6 +28,11 @@ spring:
         format_sql: false
         jdbc:
           batch_size: 200
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${WAE_COGNITO_ISSUER_URI:}
 
 server:
   servlet:

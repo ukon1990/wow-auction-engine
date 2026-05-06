@@ -1,8 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { Params, Router, RouterOutlet } from '@angular/router';
 import { CharacterSummary, TopNavComponent } from '@ui';
 
 import { WowheadTooltipLayer } from '@core/components/wowhead-tooltip-layer/wowhead-tooltip-layer';
+import { AuthService } from '@core/services/auth.service';
 import { MenuService } from '@core/services/menu.service';
 import { RealmSelectionService } from '@core/services/realm-selection.service';
 
@@ -30,6 +38,9 @@ const FALLBACK_CHARACTER: CharacterSummary = {
         [items]="menu.links()"
         [activeId]="'dashboard'"
         [character]="character()"
+        [accountRouterLink]="accountRouterLink()"
+        [accountQueryParams]="accountQueryParams()"
+        [accountLabel]="accountLabel()"
         [mobileDrawerOpen]="mobileNavOpen()"
         (toggleMobileDrawer)="toggleMobileNav()"
         (navSelected)="onPrimaryNavSelected($event)"
@@ -43,8 +54,16 @@ const FALLBACK_CHARACTER: CharacterSummary = {
 })
 export class App {
   readonly menu = inject(MenuService);
+  private readonly auth = inject(AuthService);
   private readonly realmSelection = inject(RealmSelectionService);
+  private readonly router = inject(Router);
   protected readonly mobileNavOpen = signal(false);
+
+  constructor() {
+    afterNextRender(() => {
+      void this.auth.refresh();
+    });
+  }
 
   protected readonly character = computed<CharacterSummary>(() => {
     const realm = this.realmSelection.selected();
@@ -55,11 +74,28 @@ export class App {
     };
   });
 
+  protected readonly accountRouterLink = computed(() => (this.auth.user() ? '/profile' : '/login'));
+
+  protected readonly accountQueryParams = computed<Params | null>(() =>
+    this.auth.user()
+      ? null
+      : {
+          returnTo: this.returnToUrl(),
+        },
+  );
+
+  protected readonly accountLabel = computed(() => (this.auth.user() ? 'Open profile' : 'Sign in'));
+
   protected toggleMobileNav(): void {
     this.mobileNavOpen.update((open) => !open);
   }
 
   protected onPrimaryNavSelected(id: string): void {
     console.log(id);
+  }
+
+  private returnToUrl(): string {
+    const url = this.router.url || '/';
+    return url.startsWith('/login') ? '/' : url;
   }
 }

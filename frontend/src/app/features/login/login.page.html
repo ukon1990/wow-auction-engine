@@ -1,0 +1,126 @@
+<main
+  id="page-main"
+  tabindex="-1"
+  class="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col justify-center gap-8 px-4 py-12 outline-none focus:outline-none scroll-mt-20"
+  xmlns:password="http://www.w3.org/1999/xhtml"
+>
+  <header class="text-center">
+    <p class="ee-data uppercase text-outline">The Ethereal Exchange</p>
+    <h1
+      class="font-cinzel text-3xl font-bold text-primary-container drop-shadow-[0_0_8px_rgba(236,185,19,0.4)] sm:text-4xl"
+    >
+      Account access
+    </h1>
+    <p class="mt-3 text-on-surface/80">
+      Sign in or create an account to unlock protected auction tools.
+    </p>
+  </header>
+
+  <div class="grid grid-cols-2 rounded-lg border border-white/10 bg-surface-container-highest p-1">
+    <button
+      type="button"
+      class="h-10 rounded-md text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-primary-container"
+      [class.bg-primary]="mode() === 'login' || mode() === 'forgot' || mode() === 'reset'"
+      [class.text-on-primary]="mode() === 'login' || mode() === 'forgot' || mode() === 'reset'"
+      [class.text-outline]="mode() === 'signup' || mode() === 'confirm'"
+      (click)="setMode('login')"
+    >
+      Sign in
+    </button>
+    <button
+      type="button"
+      class="h-10 rounded-md text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-primary-container"
+      [class.bg-primary]="mode() === 'signup' || mode() === 'confirm'"
+      [class.text-on-primary]="mode() === 'signup' || mode() === 'confirm'"
+      [class.text-outline]="mode() === 'login' || mode() === 'forgot' || mode() === 'reset'"
+      (click)="setMode('signup')"
+    >
+      Create account
+    </button>
+  </div>
+
+  <form class="grid gap-4" novalidate (submit)="submit($event)">
+    <ee-text-input label="Email" type="email" autocomplete="email" [formField]="loginForm.email" />
+
+    @if (mode() !== 'confirm' && mode() !== 'forgot') {
+      <ee-text-input
+        [label]="mode() === 'reset' ? 'New password' : 'Password'"
+        type="password"
+        [autocomplete]="
+          mode() === 'signup' || mode() === 'reset' ? 'new-password' : 'current-password'
+        "
+        [formField]="loginForm.password"
+      />
+
+      @if (mode() === 'signup' || mode() === 'reset') {
+        <ee-text-input
+          [label]="mode() === 'reset' ? 'Confirm new password' : 'Confirm password'"
+          type="password"
+          autocomplete="new-password"
+          [formField]="loginForm.confirmPassword"
+        />
+      }
+    }
+
+    @if (mode() === 'confirm' || mode() === 'reset') {
+      <ee-text-input
+        label="Confirmation code"
+        type="text"
+        autocomplete="one-time-code"
+        [formField]="loginForm.confirmationCode"
+      />
+    }
+
+    @if (notice()) {
+      <p
+        class="rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-sm text-primary-container"
+      >
+        {{ notice() }}
+      </p>
+    }
+
+    <button
+      type="submit"
+      class="h-12 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+      [disabled]="loading()"
+    >
+      @if (mode() === 'signup') {
+        Create account
+      } @else if (mode() === 'confirm') {
+        Confirm email
+      } @else if (mode() === 'forgot') {
+        Send reset code
+      } @else if (mode() === 'reset') {
+        Reset password
+      } @else {
+        Sign in
+      }
+    </button>
+
+    @if (mode() === 'login') {
+      <button
+        type="button"
+        class="justify-self-center text-sm font-semibold text-primary-container transition hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary-container"
+        (click)="setMode('forgot')"
+      >
+        Forgot password?
+      </button>
+    } @else if (mode() === 'forgot') {
+      <button
+        type="button"
+        class="justify-self-center text-sm font-semibold text-primary-container transition hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary-container"
+        (click)="setMode('reset')"
+      >
+        I have a reset code
+      </button>
+    } @else if (mode() === 'reset') {
+      <button
+        type="button"
+        class="justify-self-center text-sm font-semibold text-primary-container transition hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary-container"
+        (click)="setMode('login')"
+      >
+        Back to sign in
+      </button>
+    }
+  </form>
+</main>
