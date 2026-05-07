@@ -16,12 +16,17 @@ export type PageFrameBodyLayout = 'scroll' | 'fill';
             <div class="h-3 w-24 rounded bg-white/10 animate-pulse"></div>
             <div class="h-10 w-64 max-w-full rounded bg-white/10 animate-pulse"></div>
           } @else {
-            <p class="ee-label text-outline" [attr.id]="titleId() ? titleId() + '-eyebrow' : null">
+            <p
+              class="ee-label text-outline"
+              [attr.id]="titleId() ? titleId() + '-eyebrow' : null"
+              i18n="@@pageFrame.eyebrow"
+            >
               {{ eyebrow() }}
             </p>
             <h1
               class="font-cinzel text-3xl font-bold text-primary sm:text-4xl"
               [attr.id]="titleId()"
+              i18n="@@pageFrame.title"
             >
               {{ title() }}
             </h1>

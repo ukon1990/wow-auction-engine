@@ -9,6 +9,7 @@ import {
 
 import { MarketBrowserCache } from './market-browser.cache';
 import { RealmSelectionService } from './realm-selection.service';
+import { LocaleService } from './locale.service';
 
 export interface ItemDetailVariantParams {
   readonly bonusKey: string;
@@ -24,6 +25,7 @@ export class MarketItemDetailService {
   private readonly auctionMarketApi = inject(AuctionMarketApiService);
   private readonly marketBrowserCache = inject(MarketBrowserCache);
   private readonly realmSelection = inject(RealmSelectionService);
+  private readonly locale = inject(LocaleService);
 
   loadItemDetail(
     region: 'us' | 'eu' | 'kr' | 'tw',
@@ -34,9 +36,11 @@ export class MarketItemDetailService {
     locale?: string,
     preferredRecipeId?: number,
   ): Observable<AuctionMarketItemDetailResponse> {
+    const effectiveLocale = locale ?? this.locale.apiLocaleOverride();
+    const localeCacheKey = locale ?? this.locale.dataLocaleCacheKey();
     const routeKey = `${region}:${realmSlug.toLowerCase()}`;
     const variantKey = `${variant.bonusKey}|${variant.modifierKey}|${variant.petSpeciesId}`;
-    const localeKey = locale?.trim() ? `:${locale.trim()}` : '';
+    const localeKey = localeCacheKey.trim() ? `:${localeCacheKey.trim()}` : '';
     const recipeKey = preferredRecipeId ? `:recipe:${preferredRecipeId}` : '';
     const detailKey = `${routeKey}:item:${itemId}:v:${variantKey}:scope:${scope}${localeKey}${recipeKey}`;
     const version = this.realmSelection.marketDataVersion();
@@ -56,7 +60,7 @@ export class MarketItemDetailService {
         variant.petSpeciesId,
         scope,
         preferredRecipeId,
-        locale,
+        effectiveLocale,
         'body',
         false,
         { transferCache: false },
@@ -78,9 +82,11 @@ export class MarketItemDetailService {
     variant: ItemDetailVariantParams,
     locale?: string,
   ): Observable<AuctionMarketItemCraftingAnalyticsResponse> {
+    const effectiveLocale = locale ?? this.locale.apiLocaleOverride();
+    const localeCacheKey = locale ?? this.locale.dataLocaleCacheKey();
     const routeKey = `${region}:${realmSlug.toLowerCase()}`;
     const variantKey = `${variant.bonusKey}|${variant.modifierKey}|${variant.petSpeciesId}`;
-    const localeKey = locale?.trim() ? `:${locale.trim()}` : '';
+    const localeKey = localeCacheKey.trim() ? `:${localeCacheKey.trim()}` : '';
     const analyticsKey = `${routeKey}:item:${itemId}:recipe:${recipeId}:v:${variantKey}${localeKey}`;
     const version = this.realmSelection.marketDataVersion();
 
@@ -100,7 +106,7 @@ export class MarketItemDetailService {
         variant.bonusKey,
         variant.modifierKey,
         variant.petSpeciesId,
-        locale,
+        effectiveLocale,
         'body',
         false,
         { transferCache: false },

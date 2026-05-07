@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { injectFlexRenderContext } from '@tanstack/angular-table';
 import type { CellContext } from '@tanstack/table-core';
 
-import { RealmSelectionService } from '@core/services/realm-selection.service';
+import { LocaleService } from '@core/services/locale.service';
 import { CurrencyAmountComponent, MarketItemRow } from '@ui';
 
 @Component({
@@ -33,7 +33,7 @@ import { CurrencyAmountComponent, MarketItemRow } from '@ui';
 })
 export class MarketMetricCellComponent {
   protected readonly ctx = injectFlexRenderContext<CellContext<MarketItemRow, unknown>>();
-  private readonly realmSelection = inject(RealmSelectionService);
+  private readonly locale = inject(LocaleService);
 
   protected row(): MarketItemRow {
     return this.ctx.row.original;
@@ -44,6 +44,6 @@ export class MarketMetricCellComponent {
   }
 
   protected selectedLocaleForNumberPipe(): string | undefined {
-    return this.realmSelection.selected()?.locale?.replace('_', '-');
+    return this.locale.formatLocale();
   }
 }

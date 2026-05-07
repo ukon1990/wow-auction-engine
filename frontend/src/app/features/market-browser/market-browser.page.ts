@@ -71,11 +71,7 @@ const QUALITY_MIN_WIDTH = 1200;
         (primarySelected)="onPrimaryNavSelected($event)"
         (selected)="onProfessionSelected($event)"
       />*/}}-->
-      <ee-page-frame
-        [title]="'Market Browser'"
-        [eyebrow]="'Search the auction house'"
-        bodyLayout="fill"
-      >
+      <ee-page-frame [title]="pageTitle()" [eyebrow]="pageEyebrow()" bodyLayout="fill">
         <div class="flex items-center gap-2">
           <ee-search-input
             class="min-w-0 flex-1"
@@ -86,12 +82,13 @@ const QUALITY_MIN_WIDTH = 1200;
             type="button"
             class="inline-flex shrink-0 items-center gap-2 rounded border border-white/10 bg-surface-container-high px-4 py-2 ee-label text-on-surface transition hover:bg-surface-container-highest lg:hidden"
             aria-label="Open filters"
+            i18n-aria-label="@@filters.open"
             aria-haspopup="dialog"
             [attr.aria-expanded]="mobileFiltersOpen()"
             (click)="openMobileFilters()"
           >
             <ee-symbol-icon class="text-base" name="filter_alt" aria-hidden="true" />
-            Filters
+            <ng-container i18n="@@filters.titleShort">Filters</ng-container>
           </button>
         </div>
         <div class="flex min-h-0 min-w-0 flex-1 gap-element-gap overflow-hidden">
@@ -115,7 +112,9 @@ const QUALITY_MIN_WIDTH = 1200;
             [skeletonRowCount]="viewModel().pageSize"
             [skeletonRowClass]="marketSkeletonRowClass"
             [rowGridTemplateColumns]="marketRowGridTemplate()"
+            i18n-sectionAriaLabel="@@market.table.aria"
             sectionAriaLabel="Market items"
+            i18n-emptyMessage="@@market.pagination.empty"
             emptyMessage="No market items available."
             [contentMinWidthClass]="marketTableMinWidth"
             [headerRowClass]="marketTableHeaderRow"
@@ -136,12 +135,13 @@ const QUALITY_MIN_WIDTH = 1200;
           [attr.aria-hidden]="!mobileFiltersOpen()"
           [attr.role]="mobileFiltersOpen() ? 'dialog' : null"
           [attr.aria-modal]="mobileFiltersOpen() ? 'true' : null"
-          [attr.aria-label]="mobileFiltersOpen() ? 'Filter options' : null"
+          [attr.aria-label]="mobileFiltersOpen() ? filterOptionsLabel() : null"
         >
           <button
             type="button"
             class="flex-1 bg-black/60 transition-opacity duration-300"
             aria-label="Close filters"
+            i18n-aria-label="@@filters.close"
             (click)="closeMobileFilters()"
           ></button>
           <div
@@ -150,13 +150,13 @@ const QUALITY_MIN_WIDTH = 1200;
             [class.translate-x-0]="mobileFiltersOpen()"
           >
             <div class="mb-3 flex items-center justify-between gap-2">
-              <h2 class="ee-section-heading text-primary">Filters</h2>
+              <h2 class="ee-section-heading text-primary" i18n="@@filters.titleShort">Filters</h2>
               <button
                 type="button"
                 class="rounded border border-white/10 bg-surface-container-high px-3 py-1.5 ee-label text-on-surface transition hover:bg-surface-container-highest"
                 (click)="closeMobileFilters()"
               >
-                Close
+                <ng-container i18n="@@common.close">Close</ng-container>
               </button>
             </div>
             <ee-filter-panel
@@ -204,6 +204,18 @@ export class MarketBrowserPage {
     const vm = this.viewModel();
     return [{ id: vm.sortBy, desc: vm.sortDirection === 'desc' }];
   });
+
+  protected pageTitle(): string {
+    return $localize`:@@market.title:Market Browser`;
+  }
+
+  protected pageEyebrow(): string {
+    return $localize`:@@market.eyebrow:Search the auction house`;
+  }
+
+  protected filterOptionsLabel(): string {
+    return $localize`:@@filters.options:Filter options`;
+  }
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {

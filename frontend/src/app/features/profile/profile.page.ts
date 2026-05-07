@@ -43,21 +43,30 @@ export class ProfilePage {
   protected readonly notice = signal<string | null>(null);
   protected readonly currentPasswordError = computed(() =>
     this.currentPasswordTouched()
-      ? validateRequiredPassword(this.currentPassword(), 'Current password')
+      ? validateRequiredPassword(
+          this.currentPassword(),
+          $localize`:@@profile.currentPassword:Current password`,
+        )
       : null,
   );
   protected readonly newPasswordError = computed(() =>
-    this.newPasswordTouched() ? validatePasswordRules(this.newPassword(), 'New password') : null,
+    this.newPasswordTouched()
+      ? validatePasswordRules(this.newPassword(), $localize`:@@login.newPassword:New password`)
+      : null,
   );
   protected readonly confirmPasswordError = computed(() =>
     this.confirmPasswordTouched()
       ? validatePasswordMatch(
           this.newPassword(),
           this.confirmPassword(),
-          'New passwords do not match',
+          $localize`:@@profile.validation.newPasswordsMatch:New passwords do not match`,
         )
       : null,
   );
+
+  protected unknownLabel(): string {
+    return $localize`:@@profile.unknown:Unknown`;
+  }
 
   constructor() {
     afterNextRender(() => {
@@ -83,9 +92,13 @@ export class ProfilePage {
       this.currentPassword.set('');
       this.newPassword.set('');
       this.confirmPassword.set('');
-      this.notice.set('Password updated.');
+      this.notice.set($localize`:@@profile.notice.passwordUpdated:Password updated.`);
     } catch (error) {
-      this.error.set(error instanceof Error ? error.message : 'Unable to change password');
+      this.error.set(
+        error instanceof Error
+          ? error.message
+          : $localize`:@@profile.error.changePassword:Unable to change password`,
+      );
     } finally {
       this.changingPassword.set(false);
     }
@@ -110,12 +123,15 @@ export class ProfilePage {
 
   private validatePasswordChange(): string | null {
     return (
-      validateRequiredPassword(this.currentPassword(), 'Current password') ??
-      validatePasswordRules(this.newPassword(), 'New password') ??
+      validateRequiredPassword(
+        this.currentPassword(),
+        $localize`:@@profile.currentPassword:Current password`,
+      ) ??
+      validatePasswordRules(this.newPassword(), $localize`:@@login.newPassword:New password`) ??
       validatePasswordMatch(
         this.newPassword(),
         this.confirmPassword(),
-        'New passwords do not match',
+        $localize`:@@profile.validation.newPasswordsMatch:New passwords do not match`,
       )
     );
   }
@@ -131,7 +147,9 @@ async function requestAuth<T = unknown>(url: string, body: unknown): Promise<T> 
   });
   const payload = (await response.json().catch(() => ({}))) as { error?: string } & T;
   if (!response.ok) {
-    throw new Error(payload.error ?? 'Authentication request failed');
+    throw new Error(
+      payload.error ?? $localize`:@@profile.error.authRequest:Authentication request failed`,
+    );
   }
   return payload;
 }

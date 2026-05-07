@@ -75,7 +75,7 @@ export class MarketItemCellComponent {
   }
 
   protected backNavState(): { returnUrl: string; returnLabel: string } {
-    return { returnUrl: this.router.url, returnLabel: 'Market' };
+    return { returnUrl: this.router.url, returnLabel: $localize`:@@market.backLabel:Market` };
   }
 
   protected iconClass(): string {

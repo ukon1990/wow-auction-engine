@@ -13,10 +13,12 @@ import { WowheadTooltipLayer } from '@core/components/wowhead-tooltip-layer/wowh
 import { AuthService } from '@core/services/auth.service';
 import { MenuService } from '@core/services/menu.service';
 import { RealmSelectionService } from '@core/services/realm-selection.service';
+import { LocaleService } from '@core/services/locale.service';
+import { AppLocale, isAppLocale } from '@core/services/locale-support';
 
 const FALLBACK_CHARACTER: CharacterSummary = {
-  name: 'Adventurer',
-  realm: 'No realm selected',
+  name: $localize`:@@app.fallbackCharacter.name:Adventurer`,
+  realm: $localize`:@@app.fallbackCharacter.realm:No realm selected`,
   level: 0,
   profession: '',
   skill: '',
@@ -32,7 +34,7 @@ const FALLBACK_CHARACTER: CharacterSummary = {
         href="#page-main"
         class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-[200] focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:font-medium focus:text-on-primary focus:shadow-lg"
       >
-        Skip to main content
+        <ng-container i18n="@@app.skipToMain">Skip to main content</ng-container>
       </a>
       <ee-top-nav
         [items]="menu.links()"
@@ -41,9 +43,12 @@ const FALLBACK_CHARACTER: CharacterSummary = {
         [accountRouterLink]="accountRouterLink()"
         [accountQueryParams]="accountQueryParams()"
         [accountLabel]="accountLabel()"
+        [localeOptions]="locale.localeOptions"
+        [activeLocale]="locale.activeLocale()"
         [mobileDrawerOpen]="mobileNavOpen()"
         (toggleMobileDrawer)="toggleMobileNav()"
         (navSelected)="onPrimaryNavSelected($event)"
+        (localeSelected)="onLocaleSelected($event)"
       />
       <div class="flex min-h-0 min-w-0 flex-1 flex-col">
         <router-outlet />
@@ -57,6 +62,7 @@ export class App {
   private readonly auth = inject(AuthService);
   private readonly realmSelection = inject(RealmSelectionService);
   private readonly router = inject(Router);
+  protected readonly locale = inject(LocaleService);
   protected readonly mobileNavOpen = signal(false);
 
   constructor() {
@@ -84,7 +90,11 @@ export class App {
         },
   );
 
-  protected readonly accountLabel = computed(() => (this.auth.user() ? 'Open profile' : 'Sign in'));
+  protected readonly accountLabel = computed(() =>
+    this.auth.user()
+      ? $localize`:@@app.account.openProfile:Open profile`
+      : $localize`:@@app.account.signIn:Sign in`,
+  );
 
   protected toggleMobileNav(): void {
     this.mobileNavOpen.update((open) => !open);
@@ -92,6 +102,12 @@ export class App {
 
   protected onPrimaryNavSelected(id: string): void {
     console.log(id);
+  }
+
+  protected onLocaleSelected(locale: string): void {
+    if (isAppLocale(locale)) {
+      this.locale.switchLocale(locale as AppLocale);
+    }
   }
 
   private returnToUrl(): string {

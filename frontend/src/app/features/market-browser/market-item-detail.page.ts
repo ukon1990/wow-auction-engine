@@ -44,7 +44,7 @@ import {
   ItemDetailVariantParams,
   MarketItemDetailService,
 } from '@core/services/market-item-detail.service';
-import { RealmSelectionService } from '@core/services/realm-selection.service';
+import { LocaleService } from '@core/services/locale.service';
 import {
   craftingAnalyticsToChartSeries,
   dailyPointsToChartSeries,
@@ -99,9 +99,9 @@ export class MarketItemDetailPage {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly detailService = inject(MarketItemDetailService);
-  private readonly realmSelection = inject(RealmSelectionService);
+  private readonly locale = inject(LocaleService);
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly decimalPipe = new DecimalPipe('en-US');
+  private readonly decimalPipe = new DecimalPipe(this.locale.formatLocale());
 
   protected readonly loading = signal(true);
   protected readonly commodityLoading = signal(false);
@@ -137,6 +137,10 @@ export class MarketItemDetailPage {
     { index: 11, height: 66 },
   ] as const;
   protected readonly heatmapSkeletonRows = Array.from({ length: 7 }, (_, i) => i);
+
+  protected pageEyebrow(): string {
+    return $localize`:@@itemDetail.eyebrow:Item Codex`;
+  }
   protected readonly heatmapSkeletonCols = Array.from({ length: 24 }, (_, i) => i);
 
   private readonly backState = signal<ItemDetailBackState>({});
@@ -160,7 +164,7 @@ export class MarketItemDetailPage {
         realmLabel: '',
         regionLabel: '',
         marketListSegment: 'auctions',
-        marketListLabel: 'Auctions',
+        marketListLabel: $localize`:@@route.auctions:Auctions`,
       };
     }
     return {
@@ -210,9 +214,9 @@ export class MarketItemDetailPage {
       col: cell.hourOfDay,
       value: cell.profit,
       label: [
-        `profit ${formatCopperCurrency(cell.profit)}`,
-        `price ${formatCopperCurrency(cell.outputUnitPrice)}`,
-        `ROI ${this.formatRoi(cell.roiPercent)}`,
+        $localize`:@@itemDetail.heatmapProfit:profit ${formatCopperCurrency(cell.profit)}`,
+        $localize`:@@itemDetail.heatmapPrice:price ${formatCopperCurrency(cell.outputUnitPrice)}`,
+        $localize`:@@itemDetail.heatmapRoi:ROI ${this.formatRoi(cell.roiPercent)}`,
         `n=${cell.sampleCount}`,
       ].join(' · '),
     })),
@@ -247,7 +251,9 @@ export class MarketItemDetailPage {
           itemId: Number(itemPm.get('itemId')),
           recipeId: itemPm.get('recipeId'),
           listSegment: (data['marketListSegment'] as string | undefined) ?? 'auctions',
-          listLabel: (data['marketListLabel'] as string | undefined) ?? 'Auctions',
+          listLabel:
+            (data['marketListLabel'] as string | undefined) ??
+            $localize`:@@route.auctions:Auctions`,
           variant: variantFromQuery(q),
           initialScope: scopeFromQuery(q),
         })),
@@ -327,7 +333,7 @@ export class MarketItemDetailPage {
   }
 
   protected backLabel(): string {
-    return this.backState().returnLabel ?? 'Back to market';
+    return this.backState().returnLabel ?? $localize`:@@itemDetail.backToMarket:Back to market`;
   }
 
   protected selectRecipe(recipeId: number): void {
@@ -475,22 +481,33 @@ export class MarketItemDetailPage {
 
   protected dailyTooltipTitle(d: AuctionMarketItemDetailResponse, x: number): string {
     const point = this.dailyTooltipPoint(d, x);
-    return point?.statDate ? point.statDate : `Day ${Math.round(x) + 1}`;
+    return point?.statDate
+      ? point.statDate
+      : $localize`:@@itemDetail.dayLabel:Day ${Math.round(x) + 1}`;
   }
 
   protected dailyTooltipRows(d: AuctionMarketItemDetailResponse, x: number): TooltipRow[] {
     const point = this.dailyTooltipPoint(d, x);
     if (!point) return [];
     return [
-      { label: 'date', value: point.statDate ?? '—' },
-      { label: 'avg quantity', value: this.numberDisplay(point.avgQuantity) },
-      { label: 'min quantity', value: this.numberDisplay(point.minQuantity) },
-      { label: 'max quantity', value: this.numberDisplay(point.maxQuantity) },
-      { label: 'min price', copperValue: point.minPrice },
-      { label: 'p25 price', copperValue: point.p25Price },
-      { label: 'avg price', copperValue: point.avgPrice },
-      { label: 'p75 price', copperValue: point.p75Price },
-      { label: 'max price', copperValue: point.maxPrice },
+      { label: $localize`:@@itemDetail.tooltip.date:date`, value: point.statDate ?? '—' },
+      {
+        label: $localize`:@@itemDetail.tooltip.avgQuantity:avg quantity`,
+        value: this.numberDisplay(point.avgQuantity),
+      },
+      {
+        label: $localize`:@@itemDetail.tooltip.minQuantity:min quantity`,
+        value: this.numberDisplay(point.minQuantity),
+      },
+      {
+        label: $localize`:@@itemDetail.tooltip.maxQuantity:max quantity`,
+        value: this.numberDisplay(point.maxQuantity),
+      },
+      { label: $localize`:@@itemDetail.tooltip.minPrice:min price`, copperValue: point.minPrice },
+      { label: $localize`:@@itemDetail.tooltip.p25Price:p25 price`, copperValue: point.p25Price },
+      { label: $localize`:@@itemDetail.tooltip.avgPrice:avg price`, copperValue: point.avgPrice },
+      { label: $localize`:@@itemDetail.tooltip.p75Price:p75 price`, copperValue: point.p75Price },
+      { label: $localize`:@@itemDetail.tooltip.maxPrice:max price`, copperValue: point.maxPrice },
     ];
   }
 
@@ -505,25 +522,34 @@ export class MarketItemDetailPage {
     const point = this.hourlyTooltipPoint(d, x);
     if (!point) return [];
     return [
-      { label: 'hour', value: `${String(point.hourOfDay).padStart(2, '0')}:00` },
-      { label: 'timestamp', value: point.timestamp ?? '—' },
-      { label: 'quantity / hour', value: this.numberDisplay(point.totalQuantity) },
-      { label: 'min price', copperValue: point.minPrice },
-      { label: 'avg price', copperValue: point.avgPrice },
-      { label: 'max price', copperValue: point.maxPrice },
+      {
+        label: $localize`:@@itemDetail.tooltip.hour:hour`,
+        value: `${String(point.hourOfDay).padStart(2, '0')}:00`,
+      },
+      {
+        label: $localize`:@@itemDetail.tooltip.timestamp:timestamp`,
+        value: point.timestamp ?? '—',
+      },
+      {
+        label: $localize`:@@itemDetail.tooltip.quantityPerHour:quantity / hour`,
+        value: this.numberDisplay(point.totalQuantity),
+      },
+      { label: $localize`:@@itemDetail.tooltip.minPrice:min price`, copperValue: point.minPrice },
+      { label: $localize`:@@itemDetail.tooltip.avgPrice:avg price`, copperValue: point.avgPrice },
+      { label: $localize`:@@itemDetail.tooltip.maxPrice:max price`, copperValue: point.maxPrice },
     ];
   }
 
   protected priceChangeCaption(pct: number | null | undefined): string {
     if (pct == null || !Number.isFinite(pct)) return '';
     const sign = pct > 0 ? '+' : '';
-    return `${sign}${this.formatDecimal(pct, '1.1-1')}% vs prior day`;
+    return $localize`:@@itemDetail.vsPriorDay:${sign}${this.formatDecimal(pct, '1.1-1')}% vs prior day`;
   }
 
   protected realmVsCommodityCaption(pct: number | null | undefined): string {
     if (pct == null || !Number.isFinite(pct)) return '';
     const sign = pct > 0 ? '+' : '';
-    return `${sign}${this.formatDecimal(pct, '1.1-1')}% vs commodity`;
+    return $localize`:@@itemDetail.vsCommodity:${sign}${this.formatDecimal(pct, '1.1-1')}% vs commodity`;
   }
 
   protected summaryHasCommodityPrice(s: AuctionMarketItemDetailSummary): boolean {
@@ -546,8 +572,18 @@ export class MarketItemDetailPage {
 
   protected activeScopeLabel(): string {
     return this.chartScope() === 'commodity' || this.detail()?.regionalMetricsRedundant
-      ? 'Region'
-      : 'Realm';
+      ? $localize`:@@itemDetail.regionScope:Region`
+      : $localize`:@@itemDetail.realmScope:Realm`;
+  }
+
+  protected activeScopePriceLabel(): string {
+    const scope = this.activeScopeLabel();
+    return $localize`:@@itemDetail.scopePrice:${scope} price`;
+  }
+
+  protected activeScopeQuantityLabel(): string {
+    const scope = this.activeScopeLabel();
+    return $localize`:@@itemDetail.scopeQuantity:${scope} quantity`;
   }
 
   protected activeScopePrice(s: AuctionMarketItemDetailSummary): number | null | undefined {
@@ -602,12 +638,7 @@ export class MarketItemDetailPage {
 
   private formatDecimal(value: number, digitsInfo: string): string {
     return (
-      this.decimalPipe.transform(value, digitsInfo, this.selectedLocaleForNumberPipe()) ??
-      String(value)
+      this.decimalPipe.transform(value, digitsInfo, this.locale.formatLocale()) ?? String(value)
     );
-  }
-
-  private selectedLocaleForNumberPipe(): string | undefined {
-    return this.realmSelection.selected()?.locale?.replace('_', '-');
   }
 }

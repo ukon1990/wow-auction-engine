@@ -92,7 +92,7 @@ export function hasCommodityScopeMetrics(summary: AuctionMarketItemDetailSummary
 export function priceChangeCaptionStatic(pct: number | null | undefined): string {
   if (pct == null || !Number.isFinite(pct)) return '';
   const sign = pct > 0 ? '+' : '';
-  return `${sign}${pct.toFixed(1)}% vs prior day`;
+  return $localize`:@@itemDetail.vsPriorDay:${sign}${pct.toFixed(1)}% vs prior day`;
 }
 
 export function mergeCommodityScope(
@@ -330,7 +330,7 @@ export function hourlyPriceHeatmapCellsFromPoints(
       row,
       col,
       value: avgPrice,
-      label: `avg price ${formatCopperCurrency(avgPrice)} · n=${bucket.count}`,
+      label: $localize`:@@itemDetail.heatmapAvgPrice:avg price ${formatCopperCurrency(avgPrice)} · n=${bucket.count}`,
     });
   }
   return cells;

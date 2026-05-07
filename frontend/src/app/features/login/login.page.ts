@@ -36,6 +36,18 @@ export class LoginPage {
   protected readonly loading = signal(false);
   protected readonly notice = signal<string | null>(null);
 
+  protected passwordLabel(): string {
+    return this.mode() === 'reset'
+      ? $localize`:@@login.newPassword:New password`
+      : $localize`:@@login.password:Password`;
+  }
+
+  protected confirmPasswordLabel(): string {
+    return this.mode() === 'reset'
+      ? $localize`:@@login.confirmNewPassword:Confirm new password`
+      : $localize`:@@login.confirmPassword:Confirm password`;
+  }
+
   private getMessage(message: string) {
     return { message };
   }
@@ -46,9 +58,12 @@ export class LoginPage {
     confirmationCode: '',
   });
   readonly loginForm = form<LoginAndRegistrationModel>(this.registerModel, (schemaPath) => {
-    email(schemaPath.email, this.getMessage('Email is required'));
+    email(
+      schemaPath.email,
+      this.getMessage($localize`:@@login.validation.email:Email is required`),
+    );
     required(schemaPath.password, {
-      message: 'Password is required',
+      message: $localize`:@@login.validation.password:Password is required`,
       when: () => this.mode() !== 'confirm' && this.mode() !== 'forgot',
     });
     validate(schemaPath.password, ({ value }) => {
@@ -58,19 +73,19 @@ export class LoginPage {
       if (!value()) {
         return undefined;
       }
-      const message = validatePasswordRules(value(), 'New password');
+      const message = validatePasswordRules(value(), $localize`:@@login.newPassword:New password`);
       return message ? { kind: 'password_rules', message } : undefined;
     });
 
     required(schemaPath.confirmPassword, {
-      message: 'The passwords must match',
+      message: $localize`:@@login.validation.passwordsMatch:The passwords must match`,
       when: ({ value, valueOf }) =>
         (this.mode() === 'signup' || this.mode() === 'reset') &&
         valueOf(schemaPath.password) !== value(),
     });
 
     required(schemaPath.confirmationCode, {
-      message: 'Confirmation Code is required',
+      message: $localize`:@@login.validation.confirmationCode:Confirmation Code is required`,
       when: () => this.mode() === 'confirm' || this.mode() === 'reset',
     });
   });
@@ -126,7 +141,9 @@ export class LoginPage {
       return;
     }
 
-    this.notice.set('Enter the confirmation code sent to your email.');
+    this.notice.set(
+      $localize`:@@login.notice.enterConfirmation:Enter the confirmation code sent to your email.`,
+    );
     this.mode.set('confirm');
   }
 
@@ -139,7 +156,9 @@ export class LoginPage {
   private async requestPasswordReset(): Promise<void> {
     const { email } = this.loginForm().value() as LoginAndRegistrationModel;
     await firstValueFrom(this.authService.requestPasswordReset(email));
-    this.notice.set('If an account exists for this email, a password reset code has been sent.');
+    this.notice.set(
+      $localize`:@@login.notice.resetSent:If an account exists for this email, a password reset code has been sent.`,
+    );
     this.mode.set('reset');
   }
 
@@ -157,12 +176,16 @@ export class LoginPage {
       confirmationCode: '',
     }));
     this.mode.set('login');
-    this.notice.set('Password reset. Sign in with your new password.');
+    this.notice.set(
+      $localize`:@@login.notice.passwordReset:Password reset. Sign in with your new password.`,
+    );
   }
 
   private toAuthValidationErrors(error: unknown): ValidationError.WithOptionalFieldTree[] {
     const authError = this.getAuthErrorResponse(error);
-    const message = authError?.error ?? 'Unable to complete the request. Please try again.';
+    const message =
+      authError?.error ??
+      $localize`:@@login.error.generic:Unable to complete the request. Please try again.`;
 
     if (!authError) {
       this.notice.set(message);
@@ -178,7 +201,9 @@ export class LoginPage {
       case 'user_exists':
       case 'user_not_confirmed':
         if (authError.code === 'user_not_confirmed') {
-          this.notice.set('Enter the confirmation code sent to your email.');
+          this.notice.set(
+            $localize`:@@login.notice.enterConfirmation:Enter the confirmation code sent to your email.`,
+          );
           this.mode.set('confirm');
         }
         return [{ kind: authError.code, message, fieldTree: this.loginForm.email }];

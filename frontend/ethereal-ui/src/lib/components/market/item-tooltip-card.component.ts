@@ -22,7 +22,7 @@ import { CurrencyAmountComponent } from '../primitives/currency-amount.component
         <p class="mt-5 text-sm italic text-primary">{{ flavor() }}</p>
       }
       <div class="mt-5 flex items-center justify-between border-t border-white/5 pt-3">
-        <span class="ee-label text-outline">Sell Price</span>
+        <span class="ee-label text-outline" i18n="@@itemTooltip.sellPrice">Sell Price</span>
         <ee-currency-amount [amount]="sellPrice()" />
       </div>
     </article>

@@ -53,7 +53,9 @@ export class SelectRealmPage {
     const total = this.realms().length;
     const shown = this.filtered().length;
     if (total === 0) return '';
-    return shown < total ? `Showing ${shown} of ${total} realms` : `${total} realms`;
+    return shown < total
+      ? $localize`:@@realmPicker.resultsPartial:Showing ${shown} of ${total} realms`
+      : $localize`:@@realmPicker.resultsTotal:${total} realms`;
   });
 
   constructor() {
@@ -72,7 +74,9 @@ export class SelectRealmPage {
       .then(() => this.loading.set(false))
       .catch((err: unknown) => {
         console.error('Failed to load realms', err);
-        this.error.set('Could not load realm list. Please try again later.');
+        this.error.set(
+          $localize`:@@realmPicker.loadError:Could not load realm list. Please try again later.`,
+        );
         this.loading.set(false);
       });
   }

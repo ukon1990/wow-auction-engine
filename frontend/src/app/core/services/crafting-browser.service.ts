@@ -9,7 +9,7 @@ import {
   CraftingMarketSearchPage,
   CraftingMarketSearchRow,
 } from '@api/generated';
-import { RealmSelectionService } from './realm-selection.service';
+import { LocaleService } from './locale.service';
 import type {
   CraftingBrowserQueryState,
   CraftingBrowserViewModel,
@@ -43,8 +43,8 @@ const defaultQueryState: CraftingBrowserQueryState = {
 export class CraftingBrowserService {
   private readonly auctionMarketApi = inject(AuctionMarketApiService);
   private readonly router = inject(Router);
-  private readonly realmSelection = inject(RealmSelectionService);
-  private readonly decimalPipe = new DecimalPipe('en-US');
+  private readonly locale = inject(LocaleService);
+  private readonly decimalPipe = new DecimalPipe(this.locale.formatLocale());
   private route: ActivatedRoute | null = null;
   private filterRequestId = 0;
   private searchRequestId = 0;
@@ -55,7 +55,7 @@ export class CraftingBrowserService {
   private readonly vm = signal<CraftingBrowserViewModel>({
     filterSections: [],
     rows: [],
-    paginationSummary: 'Loading recipes...',
+    paginationSummary: $localize`:@@crafting.loadingRecipes:Loading recipes...`,
     searchQuery: '',
     page: 0,
     totalPages: 0,
@@ -90,11 +90,13 @@ export class CraftingBrowserService {
       sortBy: this.queryState.sortBy,
       sortDirection: this.queryState.sortDirection,
       loading: true,
-      paginationSummary: 'Loading...',
+      paginationSummary: $localize`:@@common.loading:Loading...`,
     }));
 
+    const apiLocale = this.locale.apiLocaleOverride();
+
     this.auctionMarketApi
-      .getCraftingMarketFilters(region, realmSlug, undefined, 'body', false)
+      .getCraftingMarketFilters(region, realmSlug, apiLocale, 'body', false)
       .subscribe({
         next: (response) => {
           if (filterReqId !== this.filterRequestId) return;
@@ -114,7 +116,7 @@ export class CraftingBrowserService {
       .searchCraftingMarket(
         region,
         realmSlug,
-        undefined,
+        apiLocale,
         this.queryState.page,
         this.queryState.pageSize,
         this.queryState.sortBy,
@@ -147,7 +149,7 @@ export class CraftingBrowserService {
             ...v,
             loading: false,
             rows: [],
-            paginationSummary: 'No recipes available.',
+            paginationSummary: $localize`:@@crafting.pagination.empty:No recipes available.`,
           }));
         },
       });
@@ -227,7 +229,7 @@ export class CraftingBrowserService {
     const pageSize = response.page?.pageSize ?? this.queryState.pageSize;
     const start = totalItems === 0 ? 0 : page * pageSize + 1;
     const end = Math.min((page + 1) * pageSize, totalItems);
-    const locale = this.realmSelection.selected()?.locale?.replace('_', '-');
+    const locale = this.locale.formatLocale();
     const startLabel = this.formatInteger(start, locale);
     const endLabel = this.formatInteger(end, locale);
     const totalLabel = this.formatInteger(totalItems, locale);
@@ -242,8 +244,8 @@ export class CraftingBrowserService {
       sortDirection: this.queryState.sortDirection,
       paginationSummary:
         totalItems === 0
-          ? 'No recipes available.'
-          : `Showing ${startLabel}-${endLabel} of ${totalLabel} rows`,
+          ? $localize`:@@crafting.pagination.empty:No recipes available.`
+          : $localize`:@@crafting.pagination.summary:Showing ${startLabel}-${endLabel} of ${totalLabel} rows`,
     }));
   }
 

@@ -13,6 +13,19 @@
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
+      "i18n": {
+        "sourceLocale": "en",
+        "locales": {
+          "de": "src/locale/messages.de.xlf",
+          "es": "src/locale/messages.es.xlf",
+          "fr": "src/locale/messages.fr.xlf",
+          "it": "src/locale/messages.it.xlf",
+          "ko": "src/locale/messages.ko.xlf",
+          "pt": "src/locale/messages.pt.xlf",
+          "ru": "src/locale/messages.ru.xlf",
+          "zh": "src/locale/messages.zh.xlf"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular/build:application",
@@ -35,7 +48,9 @@
             "styles": ["src/styles.css"],
             "security": {
               "allowedHosts": ["localhost", "127.0.0.1"]
-            }
+            },
+            "polyfills": ["@angular/localize/init"],
+            "i18nMissingTranslation": "error"
           },
           "configurations": {
             "production": {
@@ -51,12 +66,38 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "localize": true
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "localize": ["en"]
+            },
+            "de": {
+              "localize": ["de"]
+            },
+            "es": {
+              "localize": ["es"]
+            },
+            "fr": {
+              "localize": ["fr"]
+            },
+            "it": {
+              "localize": ["it"]
+            },
+            "ko": {
+              "localize": ["ko"]
+            },
+            "pt": {
+              "localize": ["pt"]
+            },
+            "ru": {
+              "localize": ["ru"]
+            },
+            "zh": {
+              "localize": ["zh"]
             }
           },
           "defaultConfiguration": "production"
@@ -71,7 +112,40 @@
               "buildTarget": "EE:build:production"
             },
             "development": {
-              "buildTarget": "EE:build:development"
+              "buildTarget": "EE:build:development",
+              "servePath": "/en"
+            },
+            "de": {
+              "buildTarget": "EE:build:development,de",
+              "servePath": "/de"
+            },
+            "es": {
+              "buildTarget": "EE:build:development,es",
+              "servePath": "/es"
+            },
+            "fr": {
+              "buildTarget": "EE:build:development,fr",
+              "servePath": "/fr"
+            },
+            "it": {
+              "buildTarget": "EE:build:development,it",
+              "servePath": "/it"
+            },
+            "ko": {
+              "buildTarget": "EE:build:development,ko",
+              "servePath": "/ko"
+            },
+            "pt": {
+              "buildTarget": "EE:build:development,pt",
+              "servePath": "/pt"
+            },
+            "ru": {
+              "buildTarget": "EE:build:development,ru",
+              "servePath": "/ru"
+            },
+            "zh": {
+              "buildTarget": "EE:build:development,zh",
+              "servePath": "/zh"
             }
           },
           "defaultConfiguration": "development"

@@ -17,6 +17,11 @@ export interface NavItem {
   readonly children?: readonly NavItem[];
 }
 
+export interface LocaleOption {
+  readonly id: string;
+  readonly label: string;
+}
+
 export interface CharacterSummary {
   readonly name: string;
   readonly realm: string;

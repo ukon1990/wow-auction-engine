@@ -96,6 +96,18 @@ export class CraftingBrowserPage implements AfterViewInit {
     return [{ id: vm.sortBy, desc: vm.sortDirection === 'desc' }];
   });
 
+  protected pageTitle(): string {
+    return $localize`:@@route.crafting:Crafting`;
+  }
+
+  protected pageEyebrow(): string {
+    return $localize`:@@crafting.eyebrow:Recipe economics`;
+  }
+
+  protected filterOptionsLabel(): string {
+    return $localize`:@@filters.options:Filter options`;
+  }
+
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       fromEvent(window, 'resize')

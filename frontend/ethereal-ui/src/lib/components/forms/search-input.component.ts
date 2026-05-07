@@ -68,8 +68,10 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
 })
 export class SearchInputComponent implements ControlValueAccessor, FormValueControl<string> {
   readonly value = model('');
-  readonly label = input('Search');
-  readonly placeholder = input('Search items, reagents, or recipes...');
+  readonly label = input($localize`:@@search.label:Search`);
+  readonly placeholder = input(
+    $localize`:@@search.placeholder:Search items, reagents, or recipes...`,
+  );
   readonly error = input('');
   readonly valueChanged = output<string>();
 

@@ -121,7 +121,7 @@ export class HeatmapGridComponent {
   });
 
   protected ariaLabel(): string {
-    return `${this.title()} grid`;
+    return $localize`:@@heatmap.gridAria:${this.title()} grid`;
   }
 
   protected cellBackground(value: number | null | undefined): string {
@@ -135,8 +135,8 @@ export class HeatmapGridComponent {
 
   protected valueLabel(value: number | null | undefined): string {
     return value == null || !Number.isFinite(value)
-      ? 'No samples'
-      : value.toLocaleString('en-US', { maximumFractionDigits: 1 });
+      ? $localize`:@@heatmap.noSamples:No samples`
+      : value.toLocaleString(undefined, { maximumFractionDigits: 1 });
   }
 
   protected cellAriaLabel(rowLabel: string, columnLabel: string, cell: HeatmapCell): string {

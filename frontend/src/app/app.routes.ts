@@ -16,12 +16,12 @@ export const routes: TitledRoutes = [
   },
   {
     path: 'login',
-    title: 'Login',
+    title: $localize`:@@route.login:Login`,
     loadComponent: () => import('./features/login/login.page').then((module) => module.LoginPage),
   },
   {
     path: 'profile',
-    title: 'Profile',
+    title: $localize`:@@route.profile:Profile`,
     loadComponent: () =>
       import('./features/profile/profile.page').then((module) => module.ProfilePage),
   },
@@ -36,7 +36,7 @@ export const routes: TitledRoutes = [
       },
       {
         path: 'auctions',
-        title: 'Auctions',
+        title: $localize`:@@route.auctions:Auctions`,
         icon: 'travel_explore',
         loadComponent: () =>
           import('./features/auctions/auctions-shell.page').then((m) => m.AuctionsShellPage),
@@ -52,7 +52,7 @@ export const routes: TitledRoutes = [
             path: 'item/:itemId',
             data: {
               marketListSegment: 'auctions',
-              marketListLabel: 'Auctions',
+              marketListLabel: $localize`:@@route.auctions:Auctions`,
             },
             loadComponent: () =>
               import('./features/market-browser/market-item-detail.page').then(
@@ -63,7 +63,7 @@ export const routes: TitledRoutes = [
       },
       {
         path: 'crafting',
-        title: 'Crafting',
+        title: $localize`:@@route.crafting:Crafting`,
         icon: 'handyman',
         loadComponent: () =>
           import('./features/crafting/crafting-shell.page').then((m) => m.CraftingShellPage),
@@ -79,7 +79,7 @@ export const routes: TitledRoutes = [
             path: ':recipeId/:itemId',
             data: {
               marketListSegment: 'crafting',
-              marketListLabel: 'Crafting',
+              marketListLabel: $localize`:@@route.crafting:Crafting`,
             },
             loadComponent: () =>
               import('./features/market-browser/market-item-detail.page').then(

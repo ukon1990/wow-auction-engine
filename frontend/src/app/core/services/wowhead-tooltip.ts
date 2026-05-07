@@ -5,6 +5,7 @@ import { NavigationStart, Router } from '@angular/router';
 import { filter, firstValueFrom } from 'rxjs';
 
 import { RealmSelectionService } from '@core/services/realm-selection.service';
+import { LocaleService } from '@core/services/locale.service';
 import {
   getWowheadTooltipUrl,
   wowheadLocaleFromBlizzardLocale,
@@ -34,6 +35,7 @@ export class WowheadTooltipService {
   private readonly http = inject(HttpClient);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly realmSelection = inject(RealmSelectionService);
+  private readonly localeService = inject(LocaleService);
   private readonly router = inject(Router);
 
   private readonly cache = new Map<string, string>();
@@ -80,7 +82,9 @@ export class WowheadTooltipService {
   }): Promise<void> {
     const myOverlayId = ++this.latestOverlayId;
 
-    const locale = wowheadLocaleFromBlizzardLocale(this.realmSelection.selected()?.locale);
+    const locale = wowheadLocaleFromBlizzardLocale(
+      this.localeService.apiLocaleOverride() ?? this.realmSelection.selected()?.locale,
+    );
     let url = getWowheadTooltipUrl(options.isClassic, options.id, options.wowheadType, locale);
     const bonus = options.bonusIds?.filter((b) => b > 0) ?? [];
     if (bonus.length) {
@@ -143,7 +147,7 @@ function appendCurrentBuyout(
 }
 
 function renderCurrentBuyout(amount: CurrencyAmount): string {
-  return `<table class="whtt-app-market"><tbody><tr><td><div class="whtt-current-buyout">Current Buyout: ${renderMoney(amount)}</div></td></tr></tbody></table>`;
+  return `<table class="whtt-app-market"><tbody><tr><td><div class="whtt-current-buyout">${$localize`:@@tooltip.currentBuyout:Current Buyout:`} ${renderMoney(amount)}</div></td></tr></tbody></table>`;
 }
 
 function renderMoney(amount: CurrencyAmount): string {

@@ -6,12 +6,15 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { randomUUID } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { appLocaleFromPath, stripLocalePrefix } from './app/core/services/locale-support';
 import { createAuthRouter } from './server/auth/auth.controller';
 import { resolveValidSession } from './server/auth/auth-session-resolver';
 import { readAuthConfig } from './server/auth/auth-session';
 import { formatErrorForLogSafe, registerCompactProcessErrorLogging } from './server/server-log';
 import { resolveBackendOrigin } from './backend-origin';
+import { resolveLocaleRedirect } from './server/locale-redirect';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 const backendOrigin = resolveBackendOrigin();
@@ -148,6 +151,20 @@ app.use('/api', async (req, res) => {
       return;
     }
     sendBadGatewayResponse(res, requestId);
+  }
+});
+
+app.use(async (req, res, next) => {
+  try {
+    const redirect = await resolveLocaleRedirect(req, backendOrigin);
+    if (!redirect) {
+      next();
+      return;
+    }
+    res.redirect(redirect.status, redirect.location);
+  } catch (error) {
+    console.error(`Locale redirect failed ${formatErrorForLogSafe(error)}`);
+    next();
   }
 });
 
@@ -323,6 +340,9 @@ app.use(
 app.use((req, res, next) => {
   const ssrStart = performance.now();
   const requestId = readRequestId(req) ?? randomUUID();
+  const requestedLocale = appLocaleFromOriginalUrl(req.originalUrl);
+  const localizedDevRewrite = rewriteLocalePrefixForSingleLocaleDev(req);
+  const responseLocale = localizedDevRewrite.locale ?? requestedLocale;
   res.setHeader('X-Request-Id', requestId);
   res.once('finish', () => {
     logSsrCompletionSafe({
@@ -342,7 +362,13 @@ app.use((req, res, next) => {
 
   angularApp
     .handle(req)
-    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
+    .then(async (response) => {
+      if (!response) {
+        next();
+        return;
+      }
+      writeResponseToNodeResponse(await withLocalizedBaseHref(response, responseLocale), res);
+    })
     .catch((error: unknown) => {
       logSsrFailureSafe({
         ssrStartMs: ssrStart,
@@ -352,8 +378,88 @@ app.use((req, res, next) => {
         error,
       });
       next(error);
-    });
+    })
+    .finally(localizedDevRewrite.restore);
 });
+
+interface LocalizedDevRewrite {
+  readonly locale: string | null;
+  readonly restore: () => void;
+}
+
+function rewriteLocalePrefixForSingleLocaleDev(req: express.Request): LocalizedDevRewrite {
+  const originalUrl = req.originalUrl;
+  const url = req.url;
+  const pathname = new URL(originalUrl || url || '/', 'http://localhost').pathname || '/';
+  const locale = appLocaleFromPath(pathname);
+  if (
+    !locale ||
+    (!isNgServeRuntime() && existsSync(join(import.meta.dirname, locale, 'main.server.mjs')))
+  ) {
+    return { locale: null, restore: () => undefined };
+  }
+
+  const strippedPath = stripLocalePrefix(pathname) || '/';
+  const suffix = originalUrl.slice(pathname.length);
+  req.url = `${strippedPath}${suffix}`;
+  req.originalUrl = req.url;
+  return {
+    locale,
+    restore: () => {
+      req.url = url;
+      req.originalUrl = originalUrl;
+    },
+  };
+}
+
+function isNgServeRuntime(): boolean {
+  return process.argv.includes('serve') || process.title.includes('ng serve');
+}
+
+function appLocaleFromOriginalUrl(originalUrl: string): string | null {
+  const pathname = new URL(originalUrl || '/', 'http://localhost').pathname || '/';
+  return appLocaleFromPath(pathname);
+}
+
+async function withLocalizedBaseHref(response: Response, locale: string | null): Promise<Response> {
+  if (!locale || !response.headers.get('content-type')?.includes('text/html')) {
+    return response;
+  }
+
+  const html = await response.text();
+  const servedDevLocale = appLocaleFromViteClientPath(html);
+  const headers = new Headers(response.headers);
+  headers.delete('content-length');
+  const localizedHtml = rewriteDevAssetUrls(
+    html.replace(/<base href="\/"\s*\/?>/, `<base href="/${locale}/">`),
+    locale,
+    servedDevLocale,
+  );
+  return new Response(localizedHtml, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+function appLocaleFromViteClientPath(html: string): string | null {
+  const match = html.match(/src="\/([a-z]{2})\/@vite\/client"/);
+  return match?.[1] ?? null;
+}
+
+function rewriteDevAssetUrls(
+  html: string,
+  requestedLocale: string,
+  servedLocale: string | null,
+): string {
+  if (!servedLocale || servedLocale === requestedLocale) {
+    return html;
+  }
+  return html.replace(
+    /\b(src|href)="(?!\/|[a-z][a-z0-9+.-]*:|#)([^"]+)"/gi,
+    (_match: string, attr: string, value: string) => `${attr}="/${servedLocale}/${value}"`,
+  );
+}
 
 /**
  * Start the server if this module is the main entry point, or it is ran via PM2.

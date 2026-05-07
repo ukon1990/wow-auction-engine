@@ -1,5 +1,5 @@
 <div class="flex min-h-0 flex-1 overflow-hidden">
-  <ee-page-frame [title]="'Crafting'" [eyebrow]="'Recipe economics'" bodyLayout="fill">
+  <ee-page-frame [title]="pageTitle()" [eyebrow]="pageEyebrow()" bodyLayout="fill">
     <div class="flex items-center gap-2">
       <ee-search-input
         class="min-w-0 flex-1"
@@ -11,12 +11,13 @@
         type="button"
         class="inline-flex shrink-0 items-center gap-2 rounded border border-white/10 bg-surface-container-high px-4 py-2 ee-label text-on-surface transition hover:bg-surface-container-highest lg:hidden"
         aria-label="Open filters"
+        i18n-aria-label="@@filters.open"
         aria-haspopup="dialog"
         [attr.aria-expanded]="mobileFiltersOpen()"
         (click)="openMobileFilters()"
       >
         <ee-symbol-icon class="text-base" name="filter_alt" aria-hidden="true" />
-        Filters
+        <ng-container i18n="@@filters.titleShort">Filters</ng-container>
       </button>
     </div>
     <div class="flex min-h-0 min-w-0 flex-1 gap-element-gap overflow-hidden">
@@ -40,7 +41,9 @@
         [skeletonRowCount]="viewModel().pageSize"
         [skeletonRowClass]="skeletonRowClass"
         [rowGridTemplateColumns]="rowGridTemplate()"
+        i18n-sectionAriaLabel="@@crafting.table.aria"
         sectionAriaLabel="Crafting recipes"
+        i18n-emptyMessage="@@crafting.pagination.empty"
         emptyMessage="No recipes available."
         [contentMinWidthClass]="tableMinWidth"
         [headerRowClass]="headerRowClass"
@@ -61,13 +64,14 @@
       [attr.aria-hidden]="!mobileFiltersOpen()"
       [attr.role]="mobileFiltersOpen() ? 'dialog' : null"
       [attr.aria-modal]="mobileFiltersOpen() ? 'true' : null"
-      [attr.aria-label]="mobileFiltersOpen() ? 'Filter options' : null"
+      [attr.aria-label]="mobileFiltersOpen() ? filterOptionsLabel() : null"
       (keydown.escape)="closeMobileFilters()"
     >
       <button
         type="button"
         class="flex-1 bg-black/60 transition-opacity duration-300"
         aria-label="Close filters"
+        i18n-aria-label="@@filters.close"
         (click)="closeMobileFilters()"
       ></button>
       <div
@@ -78,14 +82,14 @@
         [cdkTrapFocusAutoCapture]="mobileFiltersOpen()"
       >
         <div class="mb-3 flex items-center justify-between gap-2">
-          <h2 class="ee-section-heading text-primary">Filters</h2>
+          <h2 class="ee-section-heading text-primary" i18n="@@filters.titleShort">Filters</h2>
           <button
             #mobileFiltersClose
             type="button"
             class="rounded border border-white/10 bg-surface-container-high px-3 py-1.5 ee-label text-on-surface transition hover:bg-surface-container-highest"
             (click)="closeMobileFilters()"
           >
-            Close
+            <ng-container i18n="@@common.close">Close</ng-container>
           </button>
         </div>
         <ee-filter-panel

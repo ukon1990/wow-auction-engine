@@ -16,6 +16,7 @@ import {
   AuctionMarketSearchRow,
 } from '@api/generated';
 import { MarketBrowserViewModel } from '../models/market-browser.models';
+import { LocaleService } from './locale.service';
 import { MarketBrowserCache } from './market-browser.cache';
 import { RealmSelectionService } from './realm-selection.service';
 
@@ -66,8 +67,9 @@ export class MarketBrowserService {
   private readonly auctionMarketApi = inject(AuctionMarketApiService);
   private readonly router = inject(Router);
   private readonly realmSelection = inject(RealmSelectionService);
+  private readonly locale = inject(LocaleService);
   private readonly marketBrowserCache = inject(MarketBrowserCache);
-  private readonly decimalPipe = new DecimalPipe('en-US');
+  private readonly decimalPipe = new DecimalPipe(this.locale.formatLocale());
   private route: ActivatedRoute | null = null;
   private filterRequestId = 0;
   private searchRequestId = 0;
@@ -81,23 +83,39 @@ export class MarketBrowserService {
     ],
     activePrimaryNavId: 'market-browser',
     professionNavItems: [
-      { id: 'alchemy', label: 'Alchemy', icon: 'water_medium' },
-      { id: 'blacksmithing', label: 'Blacksmithing', icon: 'swords' },
-      { id: 'enchanting', label: 'Enchanting', icon: 'magic_button' },
-      { id: 'jewelcrafting', label: 'Jewelcrafting', icon: 'diamond' },
-      { id: 'inscription', label: 'Inscription', icon: 'auto_stories' },
+      { id: 'alchemy', label: $localize`:@@profession.alchemy:Alchemy`, icon: 'water_medium' },
+      {
+        id: 'blacksmithing',
+        label: $localize`:@@profession.blacksmithing:Blacksmithing`,
+        icon: 'swords',
+      },
+      {
+        id: 'enchanting',
+        label: $localize`:@@profession.enchanting:Enchanting`,
+        icon: 'magic_button',
+      },
+      {
+        id: 'jewelcrafting',
+        label: $localize`:@@profession.jewelcrafting:Jewelcrafting`,
+        icon: 'diamond',
+      },
+      {
+        id: 'inscription',
+        label: $localize`:@@profession.inscription:Inscription`,
+        icon: 'auto_stories',
+      },
     ],
     activeProfessionId: 'blacksmithing',
     character: {
       name: 'GoblinKing99',
       realm: 'Illidan-US',
       level: 70,
-      profession: 'Blacksmithing',
-      skill: 'Skill Level 300/300',
+      profession: $localize`:@@profession.blacksmithing:Blacksmithing`,
+      skill: $localize`:@@market.character.skill:Skill Level 300/300`,
     },
     filterSections: [],
     rows: [],
-    paginationSummary: 'Loading market items...',
+    paginationSummary: $localize`:@@market.loadingItems:Loading market items...`,
     searchQuery: '',
     page: 0,
     totalPages: 0,
@@ -124,7 +142,9 @@ export class MarketBrowserService {
     const filterReqId = ++this.filterRequestId;
     const searchReqId = ++this.searchRequestId;
 
-    const routeKey = `${region}:${realmSlug.toLowerCase()}`;
+    const apiLocale = this.locale.apiLocaleOverride();
+    const localeKey = this.locale.dataLocaleCacheKey();
+    const routeKey = `${region}:${realmSlug.toLowerCase()}:locale:${localeKey}`;
     const queryString = stableQueryStringFromState(this.queryState);
     const searchKey = `${routeKey}:${queryString}`;
     const version = this.realmSelection.marketDataVersion();
@@ -143,7 +163,7 @@ export class MarketBrowserService {
         sortBy: this.queryState.sortBy,
         sortDirection: this.queryState.sortDirection,
         loading: true,
-        paginationSummary: 'Loading...',
+        paginationSummary: $localize`:@@common.loading:Loading...`,
         filterSections: toFilterSections(filters, this.queryState),
       }));
     } else {
@@ -155,11 +175,11 @@ export class MarketBrowserService {
         sortBy: this.queryState.sortBy,
         sortDirection: this.queryState.sortDirection,
         loading: true,
-        paginationSummary: 'Loading...',
+        paginationSummary: $localize`:@@common.loading:Loading...`,
         filterSections: [],
       }));
       this.auctionMarketApi
-        .getAuctionMarketFilters(region, realmSlug, undefined, 'body', false)
+        .getAuctionMarketFilters(region, realmSlug, apiLocale, 'body', false)
         .subscribe({
           next: (response) => {
             if (filterReqId !== this.filterRequestId) return;
@@ -199,7 +219,7 @@ export class MarketBrowserService {
         .searchAuctionMarket(
           region,
           realmSlug,
-          undefined,
+          apiLocale,
           this.queryState.page,
           this.queryState.pageSize,
           this.queryState.sortBy,
@@ -234,7 +254,7 @@ export class MarketBrowserService {
               pageSize: this.queryState.pageSize,
               sortBy: this.queryState.sortBy,
               sortDirection: this.queryState.sortDirection,
-              paginationSummary: 'No market items available.',
+              paginationSummary: $localize`:@@market.pagination.empty:No market items available.`,
             }));
           },
         });
@@ -342,7 +362,7 @@ export class MarketBrowserService {
     const pageSize = response.page.pageSize ?? this.queryState.pageSize;
     const start = totalItems === 0 ? 0 : page * pageSize + 1;
     const end = Math.min((page + 1) * pageSize, totalItems);
-    const locale = normalizeLocaleForNumberPipe(this.realmSelection.selected()?.locale);
+    const locale = this.locale.formatLocale();
     const startLabel = this.formatInteger(start, locale);
     const endLabel = this.formatInteger(end, locale);
     const totalItemsLabel = this.formatInteger(totalItems, locale);
@@ -357,8 +377,8 @@ export class MarketBrowserService {
       sortDirection: this.queryState.sortDirection,
       paginationSummary:
         totalItems === 0
-          ? 'No market items available.'
-          : `Showing ${startLabel}-${endLabel} of ${totalItemsLabel} items`,
+          ? $localize`:@@market.pagination.empty:No market items available.`
+          : $localize`:@@market.pagination.summary:Showing ${startLabel}-${endLabel} of ${totalItemsLabel} items`,
     }));
   }
 
@@ -474,19 +494,18 @@ function toFilterSections(
 ): readonly FilterSection[] {
   return filters.map((filter) => {
     const selectedIds = selectedSet(filter.id, state);
+    const label = filterLabel(filter);
     if (filter.type === AuctionMarketFilter.TypeEnum.Boolean) {
       return {
         id: filter.id,
-        label: filter.label,
+        label,
         type: filter.type,
-        options: [
-          { id: `${filter.id}:true`, label: filter.label, selected: state.recipeOnly === true },
-        ],
+        options: [{ id: `${filter.id}:true`, label, selected: state.recipeOnly === true }],
       };
     }
     return {
       id: filter.id,
-      label: filter.label,
+      label,
       type: filterType(filter),
       min: filter.min ?? undefined,
       max: filter.max ?? undefined,
@@ -494,13 +513,52 @@ function toFilterSections(
       selectedMax: selectedRangeValue(filter.id, 'max', state),
       options: filterOptions(filter, state).map((option) => ({
         id: filterOptionId(filter.id, option),
-        label: option.label,
+        label: filterOptionLabel(filter.id, option.label),
         selected: selectedIds.has(option.id),
         parentId: option.parentId ?? undefined,
         quality: filter.id === 'qualityIds' ? toQuality(option.label) : undefined,
       })),
     };
   });
+}
+
+function filterLabel(filter: AuctionMarketFilter): string {
+  switch (filter.id) {
+    case 'price':
+      return $localize`:@@market.column.price:Price`;
+    case 'quantity':
+      return $localize`:@@market.column.quantity:Quantity`;
+    case 'qualityIds':
+      return $localize`:@@market.column.quality:Quality`;
+    case 'itemClassIds':
+      return $localize`:@@market.column.class:Class`;
+    case 'itemSubclassIds':
+      return $localize`:@@market.column.subclass:Subclass`;
+    case 'recipeOnly':
+      return $localize`:@@filters.hasRecipe:Has Recipe`;
+    default:
+      return filter.label;
+  }
+}
+
+function filterOptionLabel(filterId: string, label: string): string {
+  if (filterId !== 'qualityIds') return label;
+  return qualityLabel(toQuality(label));
+}
+
+function qualityLabel(quality: ItemQuality): string {
+  switch (quality) {
+    case 'common':
+      return $localize`:@@quality.common:Common`;
+    case 'uncommon':
+      return $localize`:@@quality.uncommon:Uncommon`;
+    case 'rare':
+      return $localize`:@@quality.rare:Rare`;
+    case 'epic':
+      return $localize`:@@quality.epic:Epic`;
+    case 'legendary':
+      return $localize`:@@quality.legendary:Legendary`;
+  }
 }
 
 function filterType(filter: AuctionMarketFilter): FilterSection['type'] {
@@ -627,8 +685,4 @@ function toggleNumber(values: readonly number[], value: number): readonly number
   return values.includes(value)
     ? values.filter((candidate) => candidate !== value)
     : [...values, value];
-}
-
-function normalizeLocaleForNumberPipe(locale: string | undefined): string | undefined {
-  return locale?.replace('_', '-');
 }

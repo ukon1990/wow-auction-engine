@@ -141,7 +141,9 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
                   </div>
                 }
               } @empty {
-                <div class="p-8 text-center text-on-surface-variant">{{ emptyMessage() }}</div>
+                <div class="p-8 text-center text-on-surface-variant" i18n="@@table.empty">
+                  {{ emptyMessage() }}
+                </div>
               }
             }
           </div>

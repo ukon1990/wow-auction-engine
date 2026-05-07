@@ -13,5 +13,16 @@ export function qualityToneClasses(quality: ItemQuality): string {
 }
 
 export function formatQuality(quality: ItemQuality): string {
-  return quality[0].toUpperCase() + quality.slice(1);
+  switch (quality) {
+    case 'common':
+      return $localize`:@@quality.common:Common`;
+    case 'uncommon':
+      return $localize`:@@quality.uncommon:Uncommon`;
+    case 'rare':
+      return $localize`:@@quality.rare:Rare`;
+    case 'epic':
+      return $localize`:@@quality.epic:Epic`;
+    case 'legendary':
+      return $localize`:@@quality.legendary:Legendary`;
+  }
 }

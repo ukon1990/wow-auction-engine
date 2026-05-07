@@ -8,11 +8,11 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
   selector: 'ee-filter-panel',
   imports: [QualityBadgeComponent, SymbolIconComponent],
   template: `
-    <aside [class]="panelClass()" aria-label="Market filters">
+    <aside [class]="panelClass()" aria-label="Market filters" i18n-aria-label="@@filters.aria">
       <div class="border-b border-white/10 bg-surface-container-high p-inner-padding">
         <h2 class="ee-section-heading flex items-center gap-2 text-primary">
           <ee-symbol-icon class="text-lg" name="filter_alt" />
-          Deep Filters
+          <ng-container i18n="@@filters.title">Deep Filters</ng-container>
         </h2>
       </div>
       <div class="min-h-0 flex-1 flex flex-col gap-6 overflow-y-auto p-inner-padding">
@@ -25,6 +25,7 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
                   type="number"
                   class="min-w-0 rounded border border-white/10 bg-surface px-2 py-2 text-sm text-on-surface"
                   placeholder="Min"
+                  i18n-placeholder="@@filters.min"
                   [value]="section.selectedMin ?? ''"
                   [attr.min]="section.min ?? null"
                   [attr.max]="section.max ?? null"
@@ -36,6 +37,7 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
                   type="number"
                   class="min-w-0 rounded border border-white/10 bg-surface px-2 py-2 text-sm text-on-surface"
                   placeholder="Max"
+                  i18n-placeholder="@@filters.max"
                   [value]="section.selectedMax ?? ''"
                   [attr.min]="section.min ?? null"
                   [attr.max]="section.max ?? null"
@@ -54,7 +56,7 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
                     optionSelected.emit({ sectionId: section.id, optionId: selectedValue($event) })
                   "
                 >
-                  <option value="">All {{ section.label }}</option>
+                  <option value="" i18n="@@filters.allOption">All {{ section.label }}</option>
                   @for (option of section.options; track option.id) {
                     <option [value]="option.id">{{ option.label }}</option>
                   }
@@ -90,7 +92,7 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
           class="w-full rounded border border-white/10 bg-surface py-2 ee-label text-outline transition hover:bg-surface-container-high hover:text-on-surface"
           (click)="reset.emit()"
         >
-          Reset Filters
+          <ng-container i18n="@@filters.reset">Reset Filters</ng-container>
         </button>
       </div>
     </aside>

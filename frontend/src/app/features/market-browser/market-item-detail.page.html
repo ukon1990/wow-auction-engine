@@ -1,6 +1,6 @@
 <ee-page-frame
   [title]="pageTitle()"
-  [eyebrow]="'Item Codex'"
+  [eyebrow]="pageEyebrow()"
   [loading]="loading()"
   titleId="item-codex-title"
 >
@@ -15,6 +15,7 @@
     <nav
       class="ee-label flex flex-wrap items-center gap-x-1 gap-y-1 text-outline select-text"
       aria-label="Breadcrumb"
+      i18n-aria-label="@@itemDetail.breadcrumb"
     >
       <a
         [routerLink]="['/', regionRealm().region, regionRealm().realm]"
@@ -62,6 +63,7 @@
           class="inline-flex w-fit max-w-full rounded border border-white/10 bg-surface-container-high p-0.5 ee-label"
           role="group"
           aria-label="Chart data scope"
+          i18n-aria-label="@@itemDetail.chartDataScope"
         >
           <button
             type="button"
@@ -72,7 +74,7 @@
             [disabled]="commodityLoading()"
             (click)="onScopeSelected('realm')"
           >
-            Realm
+            <ng-container i18n="@@itemDetail.realmScope">Realm</ng-container>
           </button>
           <button
             type="button"
@@ -83,7 +85,7 @@
             [disabled]="commodityLoading()"
             (click)="onScopeSelected('commodity')"
           >
-            Region
+            <ng-container i18n="@@itemDetail.regionScope">Region</ng-container>
           </button>
         </div>
       }
@@ -128,19 +130,21 @@
     </div>
   } @else if (error()) {
     <div class="ee-glass rounded-lg border border-error/40 p-inner-padding text-error">
-      Could not load this item. Try again from the market browser.
+      <ng-container i18n="@@itemDetail.loadError">
+        Could not load this item. Try again from the market browser.
+      </ng-container>
     </div>
   } @else if (detail(); as d) {
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <ee-item-stat-card
-        [label]="activeScopeLabel() + ' price'"
+        [label]="activeScopePriceLabel()"
         icon="payments"
         [currency]="activeScopePrice(d.summary) | copperToCurrency"
         [caption]="activeScopePriceCaption(d.summary)"
         tone="primary"
       />
       <ee-item-stat-card
-        [label]="activeScopeLabel() + ' quantity'"
+        [label]="activeScopeQuantityLabel()"
         icon="inventory_2"
         [value]="quantityLabel(activeScopeQuantity(d.summary))"
         [caption]="''"
@@ -148,18 +152,22 @@
     </div>
 
     <p class="ee-data text-on-surface-variant select-text">
-      Snapshot: realm {{ d.selectedRealm.date ?? '—' }}, hour
+      <ng-container i18n="@@itemDetail.snapshotRealm">
+        Snapshot: realm {{ d.selectedRealm.date ?? '—' }}, hour
+      </ng-container>
       {{ d.selectedRealm.hourOfDay ?? '—' }}
       @if (showCommoditySnapshotLine(d) && chartScope() === 'commodity') {
         <span>
-          · commodity {{ d.commodity.date ?? '—' }}, hour {{ d.commodity.hourOfDay ?? '—' }}</span
+          <ng-container i18n="@@itemDetail.snapshotCommodity">
+            · commodity {{ d.commodity.date ?? '—' }}, hour {{ d.commodity.hourOfDay ?? '—' }}
+          </ng-container></span
         >
       }
     </p>
 
     @if (d.marketDataSources.length) {
       <p class="ee-label text-outline select-text">
-        Data version:
+        <ng-container i18n="@@itemDetail.dataVersion">Data version:</ng-container>
         @for (s of d.marketDataSources; track s.connectedRealmId) {
           <span class="ml-2 font-mono text-[0.7rem]">{{ s.auctionHouseLastModified ?? '—' }}</span>
         }
@@ -184,7 +192,7 @@
             </div>
           }
           @if (!rows.length) {
-            <div class="text-outline">No values for this day</div>
+            <div class="text-outline" i18n="@@itemDetail.noDayValues">No values for this day</div>
           }
         </div>
       </div>
@@ -207,7 +215,7 @@
             </div>
           }
           @if (!hourlyTooltipRows(d, ctx.x).length) {
-            <div class="text-outline">No values for this hour</div>
+            <div class="text-outline" i18n="@@itemDetail.noHourValues">No values for this hour</div>
           }
         </div>
       </div>
@@ -226,28 +234,37 @@
     <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
       <div class="min-w-0 max-w-full">
         <ee-chart-panel
+          i18n-title="@@itemDetail.dailyMarket"
           title="Daily market"
+          i18n-rangeLabel="@@itemDetail.range14Days"
           rangeLabel="14 days"
           [series]="dailyChartSeries()"
           [tooltipTemplate]="dailyChartTip"
+          i18n-description="@@itemDetail.dailyMarketDescription"
           description="Average quantity per hour as bars; buyout spread and average as lines."
         />
       </div>
 
       <div class="min-w-0 max-w-full">
         <ee-chart-panel
+          i18n-title="@@itemDetail.hourlyMarket"
           title="Hourly market"
+          i18n-rangeLabel="@@itemDetail.range14Days"
           rangeLabel="14 days"
           [series]="hourlyChartSeries()"
           [tooltipTemplate]="hourlyChartTip"
+          i18n-description="@@itemDetail.hourlyMarketDescription"
           description="Listed quantity per hour over 14 days as bars; buyout spread and average as lines."
         />
       </div>
 
       <div class="min-w-0 max-w-full">
         <ee-heatmap-grid
+          i18n-title="@@itemDetail.hourlyPriceHeatmap"
           title="Hourly price heatmap"
+          i18n-rangeLabel="@@itemDetail.range14Days"
           rangeLabel="14 days"
+          i18n-description="@@itemDetail.hourlyPriceHeatmapDescription"
           description="Average market unit price by day and hour."
           [rowLabels]="heatmapRowLabels"
           [columnLabels]="heatmapColumnLabels"
@@ -262,10 +279,12 @@
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 class="ee-section-heading flex items-center gap-2 text-on-surface">
             <ee-symbol-icon class="text-outline" name="handyman" />
-            Crafting
+            <ng-container i18n="@@route.crafting">Crafting</ng-container>
           </h2>
           @if (analyticsLoading()) {
-            <span class="ee-label text-outline">Loading recipe analytics…</span>
+            <span class="ee-label text-outline" i18n="@@itemDetail.loadingRecipeAnalytics">
+              Loading recipe analytics...
+            </span>
           }
         </div>
 
@@ -274,6 +293,7 @@
             class="mb-4 flex flex-wrap gap-2"
             role="radiogroup"
             aria-label="Recipes"
+            i18n-aria-label="@@itemDetail.recipes"
             (keydown)="onRecipeRadioKeydown($event, d.craftings)"
           >
             @for (recipe of d.craftings; track recipe.recipeId; let i = $index) {
@@ -301,10 +321,10 @@
               <table class="w-full border-collapse ee-data text-left text-on-surface">
                 <thead>
                   <tr class="border-b border-white/10 ee-label text-outline">
-                    <th class="py-2 pr-4">Reagent</th>
-                    <th class="py-2 pr-4 text-right">Qty</th>
-                    <th class="py-2 pr-4 text-right">Unit price</th>
-                    <th class="py-2 text-right">Line total</th>
+                    <th class="py-2 pr-4" i18n="@@itemDetail.reagent">Reagent</th>
+                    <th class="py-2 pr-4 text-right" i18n="@@itemDetail.quantityShort">Qty</th>
+                    <th class="py-2 pr-4 text-right" i18n="@@itemDetail.unitPrice">Unit price</th>
+                    <th class="py-2 text-right" i18n="@@itemDetail.lineTotal">Line total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -318,7 +338,9 @@
                           <span>{{ reagent.name }}</span>
                           @if (!reagent.priced) {
                             <span class="rounded bg-error/15 px-2 py-0.5 ee-label text-error"
-                              >missing price</span
+                              ><ng-container i18n="@@itemDetail.missingPrice"
+                                >missing price</ng-container
+                              ></span
                             >
                           }
                         </div>
@@ -348,27 +370,31 @@
               <div class="ee-label mb-3 text-outline">{{ crafting.recipeName }}</div>
               <div class="space-y-2 ee-data text-on-surface">
                 <div class="flex justify-between gap-4">
-                  <span>Crafted qty</span><span>{{ crafting.craftedQuantity }}</span>
+                  <span i18n="@@itemDetail.craftedQty">Crafted qty</span
+                  ><span>{{ crafting.craftedQuantity }}</span>
                 </div>
                 <div class="flex justify-between gap-4">
-                  <span>Reagent cost</span
+                  <span i18n="@@itemDetail.reagentCost">Reagent cost</span
                   ><ee-currency-amount [amount]="crafting.reagentCost | copperToCurrency" />
                 </div>
                 <div class="flex justify-between gap-4">
-                  <span>Output unit</span
+                  <span i18n="@@itemDetail.outputUnit">Output unit</span
                   ><ee-currency-amount [amount]="crafting.outputUnitPrice | copperToCurrency" />
                 </div>
                 <div class="flex justify-between gap-4">
-                  <span>Profit</span
+                  <span i18n="@@crafting.column.profit">Profit</span
                   ><ee-currency-amount [amount]="crafting.profit | copperToCurrency" />
                 </div>
                 <div class="flex justify-between gap-4">
-                  <span>ROI</span><span>{{ formatRoi(crafting.roiPercent) }}</span>
+                  <span i18n="@@crafting.column.roi">ROI</span
+                  ><span>{{ formatRoi(crafting.roiPercent) }}</span>
                 </div>
               </div>
               @if (!crafting.reagentsFullyPriced) {
                 <p class="ee-label mt-3 text-error">
-                  Profit hidden until all reagents have prices.
+                  <ng-container i18n="@@itemDetail.profitHidden">
+                    Profit hidden until all reagents have prices.
+                  </ng-container>
                 </p>
               }
             </div>
@@ -427,16 +453,22 @@
         <div class="grid gap-4 xl:grid-cols-2">
           <div class="min-w-0 max-w-full">
             <ee-chart-panel
+              i18n-title="@@itemDetail.craftingProfitRoi"
               title="Crafting profit / ROI"
+              i18n-rangeLabel="@@itemDetail.range14Days"
               rangeLabel="14 days"
               [series]="craftingAnalyticsSeries()"
+              i18n-description="@@itemDetail.craftingProfitDescription"
               description="Daily profit and ROI for selected recipe. Missing points mean incomplete pricing."
             />
           </div>
           <div class="min-w-0 max-w-full">
             <ee-heatmap-grid
+              i18n-title="@@itemDetail.craftingProfitHeatmap"
               title="Crafting profit heatmap"
+              i18n-rangeLabel="@@itemDetail.range14Days"
               rangeLabel="14 days"
+              i18n-description="@@itemDetail.craftingProfitHeatmapDescription"
               description="Average profit by day and hour for selected recipe."
               [rowLabels]="heatmapRowLabels"
               [columnLabels]="heatmapColumnLabels"
@@ -447,7 +479,9 @@
         </div>
       } @else if (analyticsError()) {
         <div class="ee-glass rounded-lg border border-error/40 p-inner-padding text-error">
-          Could not load crafting analytics.
+          <ng-container i18n="@@itemDetail.craftingAnalyticsError">
+            Could not load crafting analytics.
+          </ng-container>
         </div>
       }
     }

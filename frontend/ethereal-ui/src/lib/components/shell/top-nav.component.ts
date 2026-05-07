@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { Params, RouterLink, RouterLinkActive } from '@angular/router';
 
-import { CharacterSummary, NavItem } from '../../models/ui-models';
+import { CharacterSummary, LocaleOption, NavItem } from '../../models/ui-models';
 import { IconButtonComponent } from '../primitives/icon-button.component';
 import { SymbolIconComponent } from '../primitives/symbol-icon.component';
 
@@ -19,6 +19,7 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
           [attr.aria-expanded]="mobileDrawerOpen()"
           aria-controls="ee-side-nav-drawer"
           aria-label="Open navigation menu"
+          i18n-aria-label="@@topNav.openNavigation"
           (click)="toggleMobileDrawer.emit()"
         >
           <ee-symbol-icon class="text-[22px]" name="menu" />
@@ -26,11 +27,12 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
         <div
           class="min-w-0 truncate font-cinzel text-lg font-bold tracking-[0.05em] text-primary-container drop-shadow-[0_0_8px_rgba(236,185,19,0.4)] sm:text-xl md:text-2xl"
         >
-          The Ethereal Exchange
+          <ng-container i18n="@@brand.name">The Ethereal Exchange</ng-container>
         </div>
         <nav
           class="hidden min-w-0 items-center gap-4 lg:gap-6 md:flex"
           aria-label="Primary navigation"
+          i18n-aria-label="@@topNav.primaryNavigation"
         >
           @for (item of items(); track item.id) {
             @if (item.routerLink) {
@@ -52,9 +54,24 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
         </nav>
       </div>
       <div class="flex shrink-0 items-center gap-1 sm:gap-3">
-        <ee-icon-button icon="settings" label="Settings" />
+        <label class="sr-only" for="ee-locale-select" i18n="@@topNav.language">Language</label>
+        <select
+          id="ee-locale-select"
+          class="h-8 rounded border border-white/10 bg-surface-container px-2 ee-label text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
+          [value]="activeLocale()"
+          aria-label="Language"
+          i18n-aria-label="@@topNav.language"
+          (change)="onLocaleChange($event)"
+        >
+          @for (locale of localeOptions(); track locale.id) {
+            <option [value]="locale.id" [selected]="locale.id === activeLocale()">
+              {{ locale.label }}
+            </option>
+          }
+        </select>
+        <ee-icon-button icon="settings" i18n-label="@@topNav.settings" label="Settings" />
         <span class="hidden md:inline-flex">
-          <ee-icon-button icon="query_stats" label="Analytics" />
+          <ee-icon-button icon="query_stats" i18n-label="@@topNav.analytics" label="Analytics" />
         </span>
         <a
           class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-surface-container text-primary transition hover:bg-white/5 hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container"
@@ -76,8 +93,11 @@ export class TopNavComponent {
   readonly accountRouterLink = input<string | readonly unknown[]>('/login');
   readonly accountQueryParams = input<Params | null>(null);
   readonly accountLabel = input('Account');
+  readonly localeOptions = input<readonly LocaleOption[]>([]);
+  readonly activeLocale = input('en');
   readonly mobileDrawerOpen = input(false);
   readonly navSelected = output<string>();
+  readonly localeSelected = output<string>();
   readonly toggleMobileDrawer = output<void>();
 
   protected navClass(id: string): string {
@@ -94,5 +114,12 @@ export class TopNavComponent {
 
   protected onPrimaryButton(id: string): void {
     this.navSelected.emit(id);
+  }
+
+  protected onLocaleChange(event: Event): void {
+    const select = event.target as HTMLSelectElement | null;
+    if (select?.value) {
+      this.localeSelected.emit(select.value);
+    }
   }
 }

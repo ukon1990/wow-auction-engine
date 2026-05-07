@@ -59,7 +59,7 @@ describe('WowheadTooltipService', () => {
     const req = httpMock.expectOne(
       (r) =>
         r.url.startsWith('https://nether.wowhead.com/tooltip/item/1') &&
-        r.url.includes('locale=de'),
+        r.url.includes('locale=en'),
     );
     req.flush({ tooltip: '<b>Hello</b>' });
 

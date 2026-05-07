@@ -24,6 +24,7 @@ describe('MarketItemDetailService caching', () => {
   } as unknown as MarketBrowserCache;
 
   const realmSelection = {
+    selected: vi.fn(() => ({ locale: 'en_US' })),
     marketDataVersion: vi.fn(() => 'ah=1|commodity=2'),
   } as unknown as RealmSelectionService;
 
