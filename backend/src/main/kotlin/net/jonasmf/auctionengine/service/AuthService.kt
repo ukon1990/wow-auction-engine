@@ -25,7 +25,7 @@ class AuthService(
 
     @EventListener(ApplicationReadyEvent::class)
     fun refreshTokenAfterStartup() {
-        refreshToken().subscribe()
+        refreshTokenAsync("startup")
     }
 
     @Scheduled(
@@ -33,7 +33,14 @@ class AuthService(
         initialDelayString = "\${app.scheduling.initial-delay:PT30S}",
     )
     fun scheduledTokenRefresh() {
-        refreshToken().subscribe()
+        refreshTokenAsync("scheduled")
+    }
+
+    private fun refreshTokenAsync(source: String) {
+        refreshToken().subscribe(
+            { },
+            { error -> LOG.warn("Ignoring failed $source token refresh: ${error.localizedMessage}") },
+        )
     }
 
     private fun refreshToken(): Mono<String> {

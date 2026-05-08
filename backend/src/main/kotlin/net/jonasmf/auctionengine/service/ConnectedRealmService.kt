@@ -51,6 +51,8 @@ class ConnectedRealmService(
 
         try {
             doUpdateRealms()
+        } catch (error: Exception) {
+            log.warn("Connected realm update failed: ${error.localizedMessage}")
         } finally {
             syncInProgress.set(false)
         }

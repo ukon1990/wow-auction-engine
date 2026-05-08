@@ -20,10 +20,9 @@ class ConnectedRealmStartupSync(
         runCatching {
             authService.ensureToken().block()
             connectedRealmService.updateRealms()
-        }.onFailure {
-            log.error(
-                "Connected realm startup synchronization failed. Continuing application startup.",
-                it,
+        }.onFailure { error ->
+            log.warn(
+                "Connected realm startup synchronization failed. Continuing application startup: ${error.localizedMessage}",
             )
         }
     }
