@@ -119,7 +119,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
         assertEquals("realm", result.items.single().preferredScope)
         assertEquals(1_000L, result.items.single().listingPrice)
         assertEquals(4L, result.items.single().listingQuantity)
-        assertEquals(false, result.items.single().isCommodity)
+        assertEquals(false, result.items.single().commodityOnly)
     }
 
     @Test
@@ -151,7 +151,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
         val commodityRow = result.items.single { it.item.id == 19020 }
         assertEquals("commodity", commodityRow.preferredScope)
         assertEquals(555L, commodityRow.listingPrice)
-        assertEquals(true, commodityRow.isCommodity)
+        assertEquals(true, commodityRow.commodityOnly)
     }
 
     @Test
@@ -236,7 +236,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
         assertEquals("commodity", row.preferredScope)
         assertEquals(555L, row.listingPrice)
         assertEquals(99L, row.listingQuantity)
-        assertEquals(true, row.isCommodity)
+        assertEquals(true, row.commodityOnly)
     }
 
     @Test

@@ -38,5 +38,5 @@ data class ItemDTO(
     val previewItem: ItemPreviewDTO? = null,
     @JsonProperty("purchase_quantity")
     val purchaseQuantity: Int = 0,
-    val appearances: List<ItemAppearanceReferenceDTO> = emptyList(),
+    val appearances: List<ItemAppearanceReferenceDTO>? = emptyList(),
 )

@@ -224,7 +224,7 @@ class ConnectedRealmJdbcRepository(
                     """.trimIndent(),
                     String::class.java,
                     tableName,
-                )
+                ).filterNotNull()
 
             val connectedRealmIdColumn =
                 columns.firstOrNull { it.contains("connected_realm") }

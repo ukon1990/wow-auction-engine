@@ -321,7 +321,7 @@ class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
         )
     }
 
-    private fun Map<String, Any>.longValue(column: String): Long = (getValue(column) as Number).toLong()
+    private fun Map<String, Any?>.longValue(column: String): Long = (getValue(column) as Number).toLong()
 
     private data class HourlyValue(
         val hourOfDay: Int,

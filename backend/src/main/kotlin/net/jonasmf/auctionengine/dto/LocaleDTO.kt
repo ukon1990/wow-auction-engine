@@ -3,19 +3,19 @@ package net.jonasmf.auctionengine.dto
 import net.jonasmf.auctionengine.constant.Locale
 
 data class LocaleDTO(
-    val en_US: String = "",
-    val es_MX: String = "",
-    val pt_BR: String = "",
+    val en_US: String? = "",
+    val es_MX: String? = "",
+    val pt_BR: String? = "",
     val pt_PT: String? = null,
-    val de_DE: String = "",
-    val en_GB: String = "",
-    val es_ES: String = "",
-    val fr_FR: String = "",
-    val it_IT: String = "",
-    val ru_RU: String = "",
-    val ko_KR: String = "",
-    val zh_TW: String = "",
-    val zh_CN: String = "",
+    val de_DE: String? = "",
+    val en_GB: String? = "",
+    val es_ES: String? = "",
+    val fr_FR: String? = "",
+    val it_IT: String? = "",
+    val ru_RU: String? = "",
+    val ko_KR: String? = "",
+    val zh_TW: String? = "",
+    val zh_CN: String? = "",
 ) {
     fun toMap(): Map<Locale, String?> =
         mapOf(

@@ -46,7 +46,7 @@ class DynamoDBConfig {
     fun dynamoDbTableNameResolver(): DynamoDbTableNameResolver {
         val defaultResolver = DefaultDynamoDbTableNameResolver()
         return object : DynamoDbTableNameResolver {
-            override fun <T : Any?> resolve(clazz: Class<T>): String =
+            override fun <T : Any> resolve(clazz: Class<T>): String =
                 when (clazz) {
                     AuctionHouseUpdateLogDynamo::class.java -> AUCTION_HOUSE_UPDATE_LOG_TABLE_NAME
                     AuctionHouseDynamo::class.java -> AUCTION_HOUSE_TABLE_NAME

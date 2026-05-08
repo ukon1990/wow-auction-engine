@@ -10,7 +10,7 @@ data class ItemPreviewDTO(
     val item: ItemPreviewItemDTO? = null,
     val context: Int? = null,
     @JsonProperty("bonus_list")
-    val bonusList: List<Int> = emptyList(),
+    val bonusList: List<Int>? = emptyList(),
     val quality: ItemQualityDTO? = null,
     val name: LocaleDTO? = null,
     val media: MediaDTO? = null,

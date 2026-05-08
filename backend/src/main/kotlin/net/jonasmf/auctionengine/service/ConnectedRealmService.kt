@@ -39,24 +39,7 @@ class ConnectedRealmService(
     private val seededAt: Instant = Instant.EPOCH
     private val syncInProgress = AtomicBoolean(false)
 
-    @Scheduled(
-        fixedDelayString = "PT1H",
-        initialDelayString = "\${app.scheduling.initial-delay:PT30S}",
-    )
     fun updateRealms() {
-        if (!syncInProgress.compareAndSet(false, true)) {
-            log.info("Skipping connected realm update because a previous sync is still running.")
-            return
-        }
-
-        try {
-            doUpdateRealms()
-        } finally {
-            syncInProgress.set(false)
-        }
-    }
-
-    private fun doUpdateRealms() {
         regionService.ensureRegionsExist()
         val configuredRegions = properties.configuredRegions
         val commodityRealms =

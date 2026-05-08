@@ -8,7 +8,10 @@ import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
+import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
+import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
@@ -22,6 +25,10 @@ import org.springframework.test.web.servlet.get
         AdminController::class,
         HealthController::class,
     ],
+)
+@ImportAutoConfiguration(
+    ServletWebSecurityAutoConfiguration::class,
+    SecurityFilterAutoConfiguration::class,
 )
 @Import(SecurityConfig::class)
 @TestPropertySource(

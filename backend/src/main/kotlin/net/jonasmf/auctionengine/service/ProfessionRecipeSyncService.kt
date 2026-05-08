@@ -108,7 +108,7 @@ class ProfessionRecipeSyncService(
                 professions.size,
                 region,
                 profession.id,
-                profession.name.en_GB.ifBlank { profession.name.en_US },
+                profession.name.en_GB.orEmpty().ifBlank { profession.name.en_US.orEmpty() },
                 profession.skillTiers.size,
             )
             profession.skillTiers.forEachIndexed { skillTierIndex, skillTier ->
@@ -126,7 +126,7 @@ class ProfessionRecipeSyncService(
                     profession.skillTiers.size,
                     profession.id,
                     skillTier.id,
-                    skillTier.name.en_GB.ifBlank { skillTier.name.en_US },
+                    skillTier.name.en_GB.orEmpty().ifBlank { skillTier.name.en_US.orEmpty() },
                     recipeIds.size,
                     skillTier.categories.size,
                 )

@@ -4,7 +4,7 @@ import reactor.core.publisher.Mono
 import reactor.util.retry.Retry
 import java.time.Duration
 
-internal fun <T> Mono<T>.retryTransientBlizzardFailures(
+internal fun <T : Any> Mono<T>.retryTransientBlizzardFailures(
     maxRetries: Long,
     backoff: Duration,
 ): Mono<T> =

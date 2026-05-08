@@ -105,7 +105,7 @@ fun ItemDTO.toDomain() =
         isEquippable = isEquippable,
         isStackable = isStackable,
         purchaseQuantity = purchaseQuantity,
-        appearances = appearances.map { it.toDomain() },
+        appearances = appearances.orEmpty().map { it.toDomain() },
     )
 
 fun ItemClassDTO.toDomain() =
