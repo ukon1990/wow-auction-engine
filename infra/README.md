@@ -116,6 +116,15 @@ Repository or environment secrets:
 - `PROD_AUCTION_ENGINE_DB_USERNAME`
 - `PROD_AUCTION_ENGINE_DB_PASSWORD`
 
+### Optional GitHub Variables
+
+Set these as repository variables, or commit the values in `infra/regions.json`, after you have a Route53-managed production domain:
+
+- `PROD_ROOT_DOMAIN_NAME`: the Route53 root domain, for example `example.com`
+- `PROD_HOSTED_ZONE_ID`: the Route53 hosted zone ID for that root domain
+
+If both values are blank, deployment uses direct regional public IPs and the Cognito Hosted UI is configured only for localhost callback URLs.
+
 Optional secrets:
 
 - `PROD_AWS_ACCESS_KEY`

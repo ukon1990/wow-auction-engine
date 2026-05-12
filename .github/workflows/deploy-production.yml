@@ -140,6 +140,12 @@ jobs:
           auth_domain_prefix="$(python3 -c "import json; print(json.load(open('infra/regions.json')).get('auth_domain_prefix', ''))")"
           root_domain_name="$(python3 -c "import json; print(json.load(open('infra/regions.json')).get('root_domain_name', ''))")"
           hosted_zone_id="$(python3 -c "import json; print(json.load(open('infra/regions.json')).get('hosted_zone_id', ''))")"
+          if [[ -z "$root_domain_name" && -n "${ROOT_DOMAIN_NAME_OVERRIDE:-}" ]]; then
+            root_domain_name="$ROOT_DOMAIN_NAME_OVERRIDE"
+          fi
+          if [[ -z "$hosted_zone_id" && -n "${HOSTED_ZONE_ID_OVERRIDE:-}" ]]; then
+            hosted_zone_id="$HOSTED_ZONE_ID_OVERRIDE"
+          fi
           echo "app_name=$app_name" >> "$GITHUB_OUTPUT"
           echo "environment=$environment" >> "$GITHUB_OUTPUT"
           echo "project_tag=$project_tag" >> "$GITHUB_OUTPUT"
@@ -148,6 +154,9 @@ jobs:
           echo "auth_domain_prefix=$auth_domain_prefix" >> "$GITHUB_OUTPUT"
           echo "root_domain_name=$root_domain_name" >> "$GITHUB_OUTPUT"
           echo "hosted_zone_id=$hosted_zone_id" >> "$GITHUB_OUTPUT"
+        env:
+          ROOT_DOMAIN_NAME_OVERRIDE: ${{ vars.PROD_ROOT_DOMAIN_NAME }}
+          HOSTED_ZONE_ID_OVERRIDE: ${{ vars.PROD_HOSTED_ZONE_ID }}
 
       - name: Render enabled region matrix
         id: matrix
@@ -216,42 +225,45 @@ jobs:
             echo "auth_stack_name and auth_domain_prefix must be set in infra/regions.json" >&2
             exit 1
           fi
-          if [[ -z "${ROOT_DOMAIN_NAME}" || -z "${HOSTED_ZONE_ID}" ]]; then
-            echo "root_domain_name and hosted_zone_id must be set in infra/regions.json before Cognito Hosted UI can be deployed." >&2
+          if [[ -n "${ROOT_DOMAIN_NAME}" && -z "${HOSTED_ZONE_ID}" ]] || [[ -z "${ROOT_DOMAIN_NAME}" && -n "${HOSTED_ZONE_ID}" ]]; then
+            echo "root_domain_name and hosted_zone_id must both be set to enable regional HTTPS, or both be blank to deploy without a custom domain." >&2
             exit 1
           fi
-
           callback_urls="$(python3 - <<'PY'
           import json
+          import os
           data = json.load(open("infra/regions.json", encoding="utf-8"))
-          root = data["root_domain_name"].strip(".")
+          root = os.environ["ROOT_DOMAIN_NAME"].strip(".")
           urls = [
               "http://localhost:4000/auth/callback",
               "http://127.0.0.1:4000/auth/callback",
           ]
-          for region in data["regions"]:
-              if region.get("enabled", False):
-                  subdomain = region.get("regional_subdomain", "").strip(".")
-                  if not subdomain:
-                      raise SystemExit("Every enabled region needs regional_subdomain")
-                  urls.append(f"https://{subdomain}.{root}/auth/callback")
+          if root:
+              for region in data["regions"]:
+                  if region.get("enabled", False):
+                      subdomain = region.get("regional_subdomain", "").strip(".")
+                      if not subdomain:
+                          raise SystemExit("Every enabled region needs regional_subdomain")
+                      urls.append(f"https://{subdomain}.{root}/auth/callback")
           print(",".join(urls))
           PY
           )"
           logout_urls="$(python3 - <<'PY'
           import json
+          import os
           data = json.load(open("infra/regions.json", encoding="utf-8"))
-          root = data["root_domain_name"].strip(".")
+          root = os.environ["ROOT_DOMAIN_NAME"].strip(".")
           urls = [
               "http://localhost:4000/",
               "http://127.0.0.1:4000/",
           ]
-          for region in data["regions"]:
-              if region.get("enabled", False):
-                  subdomain = region.get("regional_subdomain", "").strip(".")
-                  if not subdomain:
-                      raise SystemExit("Every enabled region needs regional_subdomain")
-                  urls.append(f"https://{subdomain}.{root}/")
+          if root:
+              for region in data["regions"]:
+                  if region.get("enabled", False):
+                      subdomain = region.get("regional_subdomain", "").strip(".")
+                      if not subdomain:
+                          raise SystemExit("Every enabled region needs regional_subdomain")
+                      urls.append(f"https://{subdomain}.{root}/")
           print(",".join(urls))
           PY
           )"
