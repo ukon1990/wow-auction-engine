@@ -172,10 +172,10 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
 
             auctionHouseService.createIfMissing(connectedRealm)
 
-            val saved = repository.findById(999).orElseThrow()
-            assertEquals(999, saved.connectedId)
-            assertNotNull(saved.nextUpdate)
-            assertEquals(0L, saved.nextUpdate!!.epochSeconds)
+            val saved = repository.findById(999)
+            assertEquals(999, saved?.connectedId ?: 0)
+            assertNotNull(saved?.nextUpdate)
+            assertEquals(0L, saved?.nextUpdate!!.epochSeconds)
             assertEquals(1, auctionHouseService.getReadyForUpdate(Region.Europe).count { it.id == 999 })
         }
 
@@ -214,10 +214,10 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
 
             auctionHouseService.createIfMissing(connectedRealmRepository.findById(1000).orElseThrow())
 
-            val saved = repository.findById(1000).orElseThrow()
-            assertEquals(1000, saved.connectedId)
-            assertEquals(Region.Europe, saved.region)
-            assertEquals(0L, saved.lastModified!!.epochSeconds)
+            val saved = repository.findById(1000)
+            assertEquals(1000, saved?.connectedId)
+            assertEquals(Region.Europe, saved?.region)
+            assertEquals(0L, saved?.lastModified!!.epochSeconds)
             assertEquals(0L, saved.nextUpdate!!.epochSeconds)
             assertEquals(60L, saved.avgDelay)
             assertEquals(0L, saved.lowestDelay)
@@ -231,15 +231,15 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
         @Test
         fun `should set next update time and calculate rounded delay summary on update`() {
             val connectedRealmId = 5
-            var house = repository.findById(connectedRealmId).get()
-            var lastModified = requireNotNull(house.lastModified)
+            var house = repository.findById(connectedRealmId)
+            var lastModified = requireNotNull(house?.lastModified)
 
             auctionHouseService.updateTimes(
                 connectedRealmId,
                 lastModified.plus(35.minutes),
                 true,
             )
-            lastModified = requireNotNull(repository.findById(connectedRealmId).get().lastModified)
+            lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
 
             auctionHouseService.updateTimes(
                 connectedRealmId,
@@ -247,11 +247,11 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
                 true,
             )
 
-            house = repository.findById(connectedRealmId).get()
-            assertEquals(35, house.lowestDelay)
-            assertEquals(42, house.avgDelay)
-            assertEquals(48, house.highestDelay)
-            assertTrue(house.nextUpdate!!.toEpochMilliseconds() > house.lastModified!!.toEpochMilliseconds())
+            house = repository.findById(connectedRealmId)
+            assertEquals(35, house?.lowestDelay)
+            assertEquals(42, house?.avgDelay)
+            assertEquals(48, house?.highestDelay)
+            assertTrue(house?.nextUpdate!!.toEpochMilliseconds() > house.lastModified!!.toEpochMilliseconds())
             assertEquals(35, house.nextUpdate!!.minus(house.lastModified!!).inWholeMinutes)
         }
 
@@ -278,11 +278,11 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
                 true,
             )
 
-            val result = repository.findById(connectedRealmId).get()
-            assertEquals(45, result.lowestDelay)
-            assertEquals(45, result.avgDelay)
-            assertEquals(45, result.highestDelay)
-            assertEquals(45, result.nextUpdate!!.minus(result.lastModified!!).inWholeMinutes)
+            val result = repository.findById(connectedRealmId)
+            assertEquals(45, result?.lowestDelay)
+            assertEquals(45, result?.avgDelay)
+            assertEquals(45, result?.highestDelay)
+            assertEquals(45, result?.nextUpdate!!.minus(result.lastModified!!).inWholeMinutes)
         }
 
         @Test
@@ -300,13 +300,13 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
                 ),
             )
 
-            var lastModified = requireNotNull(repository.findById(connectedRealmId).get().lastModified)
+            var lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
             auctionHouseService.updateTimes(
                 connectedRealmId,
                 lastModified.plus(20.minutes),
                 true,
             )
-            lastModified = requireNotNull(repository.findById(connectedRealmId).get().lastModified)
+            lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
 
             auctionHouseService.updateTimes(
                 connectedRealmId,
@@ -314,11 +314,11 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
                 true,
             )
 
-            val result = repository.findById(connectedRealmId).get()
-            assertEquals(70, result.lowestDelay)
-            assertEquals(70, result.avgDelay)
-            assertEquals(70, result.highestDelay)
-            assertEquals(70, result.nextUpdate!!.minus(result.lastModified!!).inWholeMinutes)
+            val result = repository.findById(connectedRealmId)
+            assertEquals(70, result?.lowestDelay)
+            assertEquals(70, result?.avgDelay)
+            assertEquals(70, result?.highestDelay)
+            assertEquals(70, result?.nextUpdate!!.minus(result.lastModified!!).inWholeMinutes)
         }
 
         @Test
@@ -336,13 +336,13 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
                 ),
             )
 
-            var lastModified = requireNotNull(repository.findById(connectedRealmId).get().lastModified)
+            var lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
             auctionHouseService.updateTimes(
                 connectedRealmId,
                 lastModified.plus(20.minutes),
                 true,
             )
-            lastModified = requireNotNull(repository.findById(connectedRealmId).get().lastModified)
+            lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
 
             auctionHouseService.updateTimes(
                 connectedRealmId,
@@ -350,22 +350,22 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
                 true,
             )
 
-            val result = repository.findById(connectedRealmId).get()
-            assertEquals(30, result.lowestDelay)
-            assertEquals(75, result.avgDelay)
-            assertEquals(120, result.highestDelay)
-            assertEquals(30, result.nextUpdate!!.minus(result.lastModified!!).inWholeMinutes)
+            val result = repository.findById(connectedRealmId)
+            assertEquals(30, result?.lowestDelay)
+            assertEquals(75, result?.avgDelay)
+            assertEquals(120, result?.highestDelay)
+            assertEquals(30, result?.nextUpdate!!.minus(result.lastModified!!).inWholeMinutes)
         }
 
         @Test
         fun `should update the next update time, and add a new log entry for successful updates`() {
-            val originalState = repository.findById(1).get()
-            val newLastModified = originalState.lastModified?.plus(60.minutes)
+            val originalState = repository.findById(1)
+            val newLastModified = originalState?.lastModified?.plus(60.minutes)
             auctionHouseService.updateTimes(1, newLastModified, true)
 
-            val result = repository.findById(1).get()
-            assertEquals(newLastModified, result.lastModified)
-            assertTrue(result.lastModified!! < result.nextUpdate!!)
+            val result = repository.findById(1)
+            assertEquals(newLastModified, result?.lastModified)
+            assertTrue(result?.lastModified!! < result.nextUpdate!!)
             assertEquals(60, result.lowestDelay)
             assertEquals(60, result.avgDelay)
             assertEquals(60, result.highestDelay)
@@ -376,12 +376,12 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
 
         @Test
         fun `should add a delay based on the number of failed attempts`() {
-            val originalState = repository.findById(1).get()
+            val originalState = repository.findById(1)
             auctionHouseService.updateTimes(1, null, false)
 
-            val result = repository.findById(1).get()
-            assertEquals(originalState.lastModified, result.lastModified)
-            assertTrue(result.nextUpdate!!.toEpochMilliseconds() > originalState.nextUpdate!!.toEpochMilliseconds())
+            val result = repository.findById(1)
+            assertEquals(originalState?.lastModified, result?.lastModified)
+            assertTrue(result?.nextUpdate!!.toEpochMilliseconds() > originalState?.nextUpdate!!.toEpochMilliseconds())
         }
     }
 
