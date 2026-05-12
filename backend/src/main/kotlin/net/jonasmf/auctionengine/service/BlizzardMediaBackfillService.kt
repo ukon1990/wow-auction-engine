@@ -94,7 +94,11 @@ class BlizzardMediaBackfillService(
             val now = OffsetDateTime.now(clock)
             val (retryableRows, eligibilityLog) =
                 if (tableName == "item") {
-                    val eligibility = itemJdbcRepository.classifyItemRetryEligibility(rows.map(MediaBackfillRow::id), now)
+                    val eligibility =
+                        itemJdbcRepository.classifyItemRetryEligibility(
+                            rows.map(MediaBackfillRow::id),
+                            now,
+                        )
                     val retryableIds = eligibility.retryableIds.toSet()
                     rows.filter { retryableIds.contains(it.id) } to
                         ChunkEligibility(
@@ -209,7 +213,6 @@ class BlizzardMediaBackfillService(
             .block()
             .orEmpty()
             .count { it }
-            .toInt()
     }
 
     private fun readCandidateRows(
