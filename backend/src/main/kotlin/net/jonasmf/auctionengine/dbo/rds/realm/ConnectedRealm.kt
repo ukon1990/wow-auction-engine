@@ -88,13 +88,13 @@ class RegionDBO(
 @Entity
 class Realm(
     @Id
-    val id: Int,
+    var id: Int,
     @ManyToOne(cascade = [CascadeType.REFRESH])
-    val region: RegionDBO,
-    val name: String,
-    val category: String,
-    val locale: Locale,
-    val timezone: String,
-    val gameBuild: GameBuildVersion,
-    val slug: String,
+    var region: RegionDBO,
+    var name: String,
+    var category: String,
+    var locale: Locale,
+    var timezone: String,
+    var gameBuild: GameBuildVersion,
+    var slug: String,
 )

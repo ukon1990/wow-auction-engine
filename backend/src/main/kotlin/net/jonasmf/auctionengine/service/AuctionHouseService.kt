@@ -58,7 +58,7 @@ class AuctionHouseService(
         newLastModified: Instant?,
         isSuccess: Boolean,
     ) {
-        val auctionHouse = repository.findById(id).orElse(null) ?: return
+        val auctionHouse = repository.findById(id) ?: return
 
         if (isSuccess && newLastModified != null) {
             auctionHouse.lastModified = newLastModified

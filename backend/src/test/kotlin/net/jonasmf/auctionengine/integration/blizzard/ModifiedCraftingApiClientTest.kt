@@ -68,16 +68,29 @@ class ModifiedCraftingApiClientTest {
     private fun handleRequest(request: ClientRequest): Mono<ClientResponse> {
         val path = request.url().path
         return when {
-            path.endsWith("/modified-crafting/index") -> okJson(modifiedCraftingIndexBody())
-            path.endsWith("/modified-crafting/category/index") -> okJson(categoryIndexBody())
-            path.endsWith("/modified-crafting/reagent-slot-type/index") -> okJson(slotTypeIndexBody())
+            path.endsWith("/modified-crafting/index") -> {
+                okJson(modifiedCraftingIndexBody())
+            }
+
+            path.endsWith("/modified-crafting/category/index") -> {
+                okJson(categoryIndexBody())
+            }
+
+            path.endsWith("/modified-crafting/reagent-slot-type/index") -> {
+                okJson(slotTypeIndexBody())
+            }
+
             path.matches(Regex(".*/modified-crafting/category/\\d+$")) -> {
                 okJson(categoryById(path.substringAfterLast('/').toInt()))
             }
+
             path.matches(Regex(".*/modified-crafting/reagent-slot-type/\\d+$")) -> {
                 okJson(slotTypeById(path.substringAfterLast('/').toInt()))
             }
-            else -> error("Unexpected request: ${request.method()} ${request.url()}")
+
+            else -> {
+                error("Unexpected request: ${request.method()} ${request.url()}")
+            }
         }
     }
 

@@ -1,9 +1,12 @@
 package net.jonasmf.auctionengine.mapper.realm
 
-import net.jonasmf.auctionengine.domain.realm.AuctionHouse as AuctionHouseDomain
-import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as AuctionHouseDbo
+import net.jonasmf.auctionengine.dbo.rds.realm.AuctionUpdateHistory
+import net.jonasmf.auctionengine.domain.AuctionHouseUpdateLog
 import kotlin.time.toJavaInstant
 import kotlin.time.toKotlinInstant
+import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as AuctionHouseDbo
+import net.jonasmf.auctionengine.domain.realm.AuctionHouse as AuctionHouseDomain
+import net.jonasmf.auctionengine.domain.realm.Realm as RealmDomain
 
 fun AuctionHouseDbo.toDomain() =
     AuctionHouseDomain(
@@ -22,6 +25,33 @@ fun AuctionHouseDbo.toDomain() =
         lowestDelay = lowestDelay ?: 0L,
         nextUpdate = nextUpdate?.toKotlinInstant(),
         updateAttempts = updateAttempts ?: 0,
+    )
+
+fun AuctionHouseDbo.toDomain(realms: List<RealmDomain>): AuctionHouseDomain =
+    AuctionHouseDomain(
+        id = connectedId,
+        region = region,
+        autoUpdate = autoUpdate,
+        avgDelay = avgDelay,
+        connectedId = connectedId,
+        gameBuild = gameBuild,
+        highestDelay = highestDelay,
+        lastDailyPriceUpdate = lastDailyPriceUpdate?.toKotlinInstant(),
+        lastHistoryDeleteEvent = lastHistoryDeleteEvent?.toKotlinInstant(),
+        lastHistoryDeleteEventDaily = lastHistoryDeleteEventDaily?.toKotlinInstant(),
+        lastModified = lastModified?.toKotlinInstant(),
+        lastRequested = lastRequested?.toKotlinInstant(),
+        lowestDelay = lowestDelay ?: 0L,
+        nextUpdate = nextUpdate?.toKotlinInstant(),
+        realms = realms,
+        updateAttempts = updateAttempts ?: 0,
+    )
+
+fun AuctionUpdateHistory.toDomain(): AuctionHouseUpdateLog =
+    AuctionHouseUpdateLog(
+        id = auctionHouse?.connectedId ?: 0,
+        lastModified = requireNotNull(lastModified).toKotlinInstant(),
+        timeSincePreviousDump = timeSincePreviousDump,
     )
 
 fun AuctionHouseDomain.toDbo() =

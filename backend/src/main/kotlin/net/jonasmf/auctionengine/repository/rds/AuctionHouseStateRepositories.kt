@@ -4,6 +4,7 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionUpdateHistory
 import net.jonasmf.auctionengine.domain.AuctionHouseUpdateLog
+import net.jonasmf.auctionengine.mapper.realm.toDomain
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
 import java.util.Optional
@@ -21,20 +22,18 @@ class AuctionHouseStateRepositoryImpl(
     private val connectedRealmRepository: ConnectedRealmRepository,
     private val auctionHouseUpdateLogRepository: AuctionHouseLogRepository,
 ) : AuctionHouseStateRepository {
-    override fun findById(id: Int?): Optional<AuctionHouseDomain> {
-        if (id == null) {
-            return Optional.empty()
-        }
+    override fun findById(id: Int?): AuctionHouseDomain? {
+        if (id == null) return null
 
         val entity =
             auctionHouseRepository.findByConnectedId(id).orElse(null)
                 ?: connectedRealmRepository.findById(id).orElse(null)?.auctionHouse
-                ?: return Optional.empty()
-        return Optional.of(entity.toDomain(resolveRealms(id)))
+                ?: return null
+        return entity.toDomain()
     }
 
     override fun findAllByRegion(region: Region): List<AuctionHouseDomain> =
-        auctionHouseRepository.findAllByRegion(region).map { it.toDomain(resolveRealms(it.connectedId)) }
+        auctionHouseRepository.findAllByRegion(region).map { it.toDomain() }
 
     override fun findReadyForUpdateByRegion(region: Region): List<AuctionHouseDomain> =
         auctionHouseRepository
@@ -42,7 +41,7 @@ class AuctionHouseStateRepositoryImpl(
                 region,
                 java.time.Instant.now(),
                 PageRequest.of(0, 50),
-            ).map { it.toDomain(resolveRealms(it.connectedId)) }
+            ).map { it.toDomain() }
 
     override fun save(auctionHouse: AuctionHouseDomain): AuctionHouseDomain {
         requireNotNull(auctionHouse.id) { "AuctionHouse.id must not be null when saving to MariaDB" }
@@ -52,13 +51,11 @@ class AuctionHouseStateRepositoryImpl(
         val connectedRealm = connectedRealmRepository.findById(connectedId).orElse(null)
         val existing = auctionHouseRepository.findByConnectedId(connectedId).orElse(null)
         val entity =
-            if (existing != null) {
-                existing.applyDomain(auctionHouse)
-            } else if (connectedRealm != null) {
-                connectedRealm.auctionHouse.applyDomain(auctionHouse)
-            } else {
-                AuctionHouse().applyDomain(auctionHouse)
-            }
+            existing?.applyDomain(auctionHouse)
+                ?: (
+                    connectedRealm?.auctionHouse?.applyDomain(auctionHouse)
+                        ?: AuctionHouse().applyDomain(auctionHouse)
+                )
 
         val saved =
             if (connectedRealm != null && connectedRealm.auctionHouse.id != entity.id) {
@@ -69,20 +66,12 @@ class AuctionHouseStateRepositoryImpl(
             }
 
         auctionHouseUpdateLogRepository.save(connectedId, auctionHouse.lastModified!!)
-        return saved.toDomain(resolveRealms(connectedId))
+        return saved.toDomain()
     }
 
     private fun resolveRealms(connectedId: Int): List<RealmDomain> {
         val connectedRealm = connectedRealmRepository.findById(connectedId).orElse(null) ?: return emptyList()
-        return connectedRealm.realms.map {
-            RealmDomain(
-                id = it.id.toLong(),
-                locale = it.locale.name,
-                name = it.name,
-                slug = it.slug,
-                timezone = it.timezone,
-            )
-        }
+        return connectedRealm.realms.map { it -> it.toDomain() }
     }
 }
 
@@ -120,9 +109,7 @@ class AuctionHouseUpdateLogRepositoryImpl(
                 lastModifiedInstant,
             )
 
-        if (existingLog != null) {
-            return existingLog.toDomain()
-        }
+        if (existingLog != null) return existingLog.toDomain()
 
         val previousLogEntry =
             auctionHouseFileLogRepository
@@ -170,30 +157,3 @@ private fun AuctionHouse.applyDomain(domain: AuctionHouseDomain): AuctionHouse {
         updateAttempts = domain.updateAttempts
     }
 }
-
-private fun AuctionHouse.toDomain(realms: List<RealmDomain>): AuctionHouseDomain =
-    AuctionHouseDomain(
-        id = connectedId,
-        region = region,
-        autoUpdate = autoUpdate,
-        avgDelay = avgDelay,
-        connectedId = connectedId,
-        gameBuild = gameBuild,
-        highestDelay = highestDelay,
-        lastDailyPriceUpdate = lastDailyPriceUpdate?.toKotlinInstant(),
-        lastHistoryDeleteEvent = lastHistoryDeleteEvent?.toKotlinInstant(),
-        lastHistoryDeleteEventDaily = lastHistoryDeleteEventDaily?.toKotlinInstant(),
-        lastModified = lastModified?.toKotlinInstant(),
-        lastRequested = lastRequested?.toKotlinInstant(),
-        lowestDelay = lowestDelay ?: 0L,
-        nextUpdate = nextUpdate?.toKotlinInstant(),
-        realms = realms,
-        updateAttempts = updateAttempts ?: 0,
-    )
-
-private fun AuctionUpdateHistory.toDomain(): AuctionHouseUpdateLog =
-    AuctionHouseUpdateLog(
-        id = auctionHouse?.connectedId ?: 0,
-        lastModified = requireNotNull(lastModified).toKotlinInstant(),
-        timeSincePreviousDump = timeSincePreviousDump,
-    )
