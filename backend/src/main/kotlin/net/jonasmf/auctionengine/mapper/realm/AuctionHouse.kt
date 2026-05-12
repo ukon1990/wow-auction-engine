@@ -16,15 +16,15 @@ fun AuctionHouseDbo.toDomain() =
         autoUpdate = autoUpdate,
         avgDelay = avgDelay ?: 0L,
         gameBuild = gameBuild ?: 0,
-        highestDelay = highestDelay ?: 0L,
+        highestDelay = highestDelay,
         lastDailyPriceUpdate = lastDailyPriceUpdate?.toKotlinInstant(),
         lastHistoryDeleteEvent = lastHistoryDeleteEvent?.toKotlinInstant(),
         lastHistoryDeleteEventDaily = lastHistoryDeleteEventDaily?.toKotlinInstant(),
         lastModified = lastModified?.toKotlinInstant(),
         lastRequested = lastRequested?.toKotlinInstant(),
-        lowestDelay = lowestDelay ?: 0L,
+        lowestDelay = lowestDelay,
         nextUpdate = nextUpdate?.toKotlinInstant(),
-        updateAttempts = updateAttempts ?: 0,
+        updateAttempts = updateAttempts,
     )
 
 fun AuctionHouseDbo.toDomain(realms: List<RealmDomain>): AuctionHouseDomain =
@@ -41,10 +41,10 @@ fun AuctionHouseDbo.toDomain(realms: List<RealmDomain>): AuctionHouseDomain =
         lastHistoryDeleteEventDaily = lastHistoryDeleteEventDaily?.toKotlinInstant(),
         lastModified = lastModified?.toKotlinInstant(),
         lastRequested = lastRequested?.toKotlinInstant(),
-        lowestDelay = lowestDelay ?: 0L,
+        lowestDelay = lowestDelay,
         nextUpdate = nextUpdate?.toKotlinInstant(),
         realms = realms,
-        updateAttempts = updateAttempts ?: 0,
+        updateAttempts = updateAttempts,
     )
 
 fun AuctionUpdateHistory.toDomain(): AuctionHouseUpdateLog =

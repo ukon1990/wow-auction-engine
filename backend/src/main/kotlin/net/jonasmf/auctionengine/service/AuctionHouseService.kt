@@ -42,10 +42,10 @@ class AuctionHouseService(
         auctionHouse.region = region
         auctionHouse.lastModified = auctionHouse.lastModified ?: seededAt
         auctionHouse.nextUpdate = auctionHouse.nextUpdate ?: seededAt
-        auctionHouse.lowestDelay = auctionHouse.lowestDelay ?: 0L
-        auctionHouse.avgDelay = auctionHouse.avgDelay ?: 60L
-        auctionHouse.highestDelay = auctionHouse.highestDelay ?: 0L
-        auctionHouse.updateAttempts = auctionHouse.updateAttempts ?: 0
+        auctionHouse.lowestDelay = auctionHouse.lowestDelay
+        auctionHouse.avgDelay = auctionHouse.avgDelay
+        auctionHouse.highestDelay = auctionHouse.highestDelay
+        auctionHouse.updateAttempts = auctionHouse.updateAttempts
 
         val savedAuctionHouse = auctionHouseEntityRepository.save(auctionHouse)
         if (connectedRealm.auctionHouse.id != savedAuctionHouse.id) {

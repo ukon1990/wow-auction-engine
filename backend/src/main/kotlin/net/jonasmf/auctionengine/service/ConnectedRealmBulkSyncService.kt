@@ -123,10 +123,10 @@ class ConnectedRealmBulkSyncService(
             region = resolvedRegion
             lastModified = lastModified ?: Instant.EPOCH
             nextUpdate = nextUpdate ?: Instant.EPOCH
-            lowestDelay = lowestDelay ?: 0L
-            avgDelay = avgDelay ?: 60L
-            highestDelay = highestDelay ?: 0L
-            updateAttempts = updateAttempts ?: 0
+            lowestDelay = lowestDelay
+            avgDelay = avgDelay
+            highestDelay = highestDelay
+            updateAttempts = updateAttempts
         }
     }
 }
