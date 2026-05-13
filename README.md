@@ -1,10 +1,10 @@
-# WoW Auction Engine
+# The Ethereal Exchange
 
 Backend service for ingesting, processing, and serving World of Warcraft auction-house data.
 
 ## What This Project Does
 
-`auction-engine` is a Kotlin + Spring Boot application that:
+`The Ethereal Exchange` is a Kotlin + Spring Boot and Angular application that:
 
 - retrieves auction and realm data from Blizzard APIs
 - processes and aggregates auction statistics
@@ -12,12 +12,13 @@ Backend service for ingesting, processing, and serving World of Warcraft auction
 - uses DynamoDB for additional local and AWS-backed storage flows
 - exposes API endpoints under `/api`, including health at `GET /api/health`
 - runs scheduled background sync jobs on startup
+- gives the users an overview over the current item prices and crafting cost for various recipes form the game.
 
 ## Stack
 
 - Java 25
 - Kotlin 2.3
-- Spring Boot 3.5
+- Spring Boot 4
 - Maven Wrapper (`backend/mvnw`)
 - Angular SSR frontend in `frontend/`
 - Bun 1.3 for frontend package management
