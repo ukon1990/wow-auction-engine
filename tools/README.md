@@ -55,6 +55,12 @@ node .\tools\map-auction-json.mjs --sample-size all
 node --test .\tools\map-auction-json.test.mjs
 ```
 
+Refresh-fixtures tests:
+
+```powershell
+node --test .\tools\refresh-fixtures.test.mjs
+```
+
 Field analysis for `item.bonus_lists` on authenticated Blizzard API endpoints:
 
 ```powershell
@@ -75,7 +81,28 @@ node --test .\tools\analyze-auction-field.test.mjs
 
 Fetches and refreshes profession/skill-tier/recipe fixture data for test resources using Blizzard Game Data APIs.
 
+[`refresh-fixtures.mjs`](refresh-fixtures.mjs) is a thin entrypoint; implementation lives under [`refresh-fixtures/`](refresh-fixtures/):
+
+| Area | Module |
+|------|--------|
+| CLI / help | `refresh-fixtures/cli.mjs` |
+| Env defaults, default profession list | `refresh-fixtures/config.mjs` |
+| Fixture paths | `refresh-fixtures/paths.mjs` |
+| Blizzard HTTP client | `refresh-fixtures/api/blizzard-client.mjs` |
+| Link discovery / recursion | `refresh-fixtures/discovery/` |
+| Tier & recipe sampling | `refresh-fixtures/sampling/` |
+| Plan writes, prune, apply | `refresh-fixtures/plan/` |
+| Resource batches | `refresh-fixtures/resources/` |
+
 The refresher is config-driven internally and discovers dependent resources recursively from Blizzard `key.href` links. Today it manages filtered profession roots, sampled skill tiers, sampled recipes, and any non-media linked resources they reference, such as items, item classes, item appearances, and modified crafting metadata.
+
+### Adding a resource batch
+
+1. Add selection defaults (if any) under `ROOT_SELECTIONS` in [`refresh-fixtures/config.mjs`](refresh-fixtures/config.mjs).
+2. Implement `buildPlan` in e.g. `refresh-fixtures/resources/<name>/plan.mjs` (see [`resources/profession/`](refresh-fixtures/resources/profession/)).
+3. Register the resource in [`refresh-fixtures/resources/registry.mjs`](refresh-fixtures/resources/registry.mjs).
+4. Extend [`refresh-fixtures/cli.mjs`](refresh-fixtures/cli.mjs) with flags such as `--<name>-id` when needed.
+5. Re-export any symbols tests need from [`refresh-fixtures/index.mjs`](refresh-fixtures/index.mjs) and the shim [`refresh-fixtures.mjs`](refresh-fixtures.mjs).
 
 By default it updates:
 
@@ -137,6 +164,8 @@ Refresh only selected professions:
 ```powershell
 node .\tools\refresh-fixtures.mjs --profession-id 333,164 --sample-size 8
 ```
+
+With `--profession-id`, the default is the same sampling as the built-in profession list: the two highest skill tiers and up to `--sample-size` recipes per tier (default 6). Use `--skill-tier-id` to pick tiers, `--full` to download every tier and recipe (e.g. Jewelcrafting `755` is 1400+ recipes and can take many minutes), or `--quiet` to hide progress on stderr.
 
 Refresh only selected professions through Maven:
 

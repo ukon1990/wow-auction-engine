@@ -11,7 +11,8 @@
         "format": "bun run format:frontend && bun run format:backend",
         "format:frontend": "cd frontend && bun run format",
         "format:backend": "cd backend && ./mvnw ktlint:format",
-        "mvn": "cd backend && ./mvnw"
+        "mvn": "cd backend && ./mvnw",
+        "refresh:fixtures": "bun tools/refresh-fixtures.mjs"
     },
     "packageManager": "bun@1.3.3"
 }
