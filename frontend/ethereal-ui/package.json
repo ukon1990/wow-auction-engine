@@ -8,6 +8,8 @@
     "@angular/router": "^21.0.0"
   },
   "dependencies": {
+    "highcharts": "^12.6.0",
+    "highcharts-angular": "^5.4.0",
     "tslib": "^2.3.0"
   },
   "sideEffects": false

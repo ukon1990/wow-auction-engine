@@ -24,6 +24,8 @@
         "@tanstack/table-core": "8.21.3",
         "cookie": "^1.1.1",
         "express": "^5.1.0",
+        "highcharts": "^12.6.0",
+        "highcharts-angular": "^5.4.0",
         "rxjs": "~7.8.0",
         "tslib": "^2.3.0",
       },
@@ -1614,6 +1616,10 @@
     "hasown": ["hasown@2.0.3", "", { "dependencies": { "function-bind": "^1.1.2" } }, "sha512-ej4AhfhfL2Q2zpMmLo7U1Uv9+PyhIZpgQLGT1F9miIGmiCJIoCgSmczFdrc97mWT4kVY72KA+WnnhJ5pghSvSg=="],
 
     "he": ["he@1.2.0", "", { "bin": { "he": "bin/he" } }, "sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw=="],
+
+    "highcharts": ["highcharts@12.6.0", "", { "peerDependencies": { "jspdf": "^4.1.0", "svg2pdf.js": "^2.7.0" }, "optionalPeers": ["jspdf", "svg2pdf.js"] }, "sha512-zWwoXECOakJT2huBMqIZOjDNLLgyZFCcfZqTj2g6cvYOGxjF3nvooC+rIaF5aKiharluyGKNflfRNrzOAIjdRg=="],
+
+    "highcharts-angular": ["highcharts-angular@5.4.0", "", { "dependencies": { "tslib": "^2.0.0" }, "peerDependencies": { "@angular/common": ">=19.0.0", "@angular/core": ">=19.0.0", "highcharts": ">=12.2.0" } }, "sha512-5iHDs1PfJZRD8IdlWHt4FC9Pc94YDN0U7yoHJJUnsqxmWZFl1oCaoeGobdPtmN2Zu7iv4j7I09lvcbq5reCSRA=="],
 
     "hono": ["hono@4.12.16", "", {}, "sha512-jN0ZewiNAWSe5khM3EyCmBb250+b40wWbwNILNfEvq84VREWwOIkuUsFONk/3i3nqkz7Oe1PcpM2mwQEK2L9Kg=="],
 

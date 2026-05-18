@@ -13,6 +13,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   ChartPanelComponent,
   CopperToCurrencyPipe,
+  copperToCurrencyAmount,
   CurrencyAmountComponent,
   formatCopperCurrency,
   HeatmapGridComponent,
@@ -20,6 +21,8 @@ import {
   ItemStatCardComponent,
   PageFrameComponent,
   SymbolIconComponent,
+  TooltipCardComponent,
+  type TooltipRow,
 } from '@ui';
 import {
   AuctionMarketItemCraftingAnalyticsResponse,
@@ -70,12 +73,6 @@ interface ItemDetailBackState {
   readonly returnLabel?: string;
 }
 
-interface TooltipRow {
-  readonly label: string;
-  readonly value?: string;
-  readonly copperValue?: number | null;
-}
-
 @Component({
   selector: 'app-market-item-detail-page',
   host: {
@@ -90,6 +87,7 @@ interface TooltipRow {
     CurrencyAmountComponent,
     ItemStatCardComponent,
     SymbolIconComponent,
+    TooltipCardComponent,
   ],
   templateUrl: './market-item-detail.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -503,11 +501,26 @@ export class MarketItemDetailPage {
         label: $localize`:@@itemDetail.tooltip.maxQuantity:max quantity`,
         value: this.numberDisplay(point.maxQuantity),
       },
-      { label: $localize`:@@itemDetail.tooltip.minPrice:min price`, copperValue: point.minPrice },
-      { label: $localize`:@@itemDetail.tooltip.p25Price:p25 price`, copperValue: point.p25Price },
-      { label: $localize`:@@itemDetail.tooltip.avgPrice:avg price`, copperValue: point.avgPrice },
-      { label: $localize`:@@itemDetail.tooltip.p75Price:p75 price`, copperValue: point.p75Price },
-      { label: $localize`:@@itemDetail.tooltip.maxPrice:max price`, copperValue: point.maxPrice },
+      {
+        label: $localize`:@@itemDetail.tooltip.minPrice:min price`,
+        amount: copperToCurrencyAmount(point.minPrice),
+      },
+      {
+        label: $localize`:@@itemDetail.tooltip.p25Price:p25 price`,
+        amount: copperToCurrencyAmount(point.p25Price),
+      },
+      {
+        label: $localize`:@@itemDetail.tooltip.avgPrice:avg price`,
+        amount: copperToCurrencyAmount(point.avgPrice),
+      },
+      {
+        label: $localize`:@@itemDetail.tooltip.p75Price:p75 price`,
+        amount: copperToCurrencyAmount(point.p75Price),
+      },
+      {
+        label: $localize`:@@itemDetail.tooltip.maxPrice:max price`,
+        amount: copperToCurrencyAmount(point.maxPrice),
+      },
     ];
   }
 
@@ -534,9 +547,18 @@ export class MarketItemDetailPage {
         label: $localize`:@@itemDetail.tooltip.quantityPerHour:quantity / hour`,
         value: this.numberDisplay(point.totalQuantity),
       },
-      { label: $localize`:@@itemDetail.tooltip.minPrice:min price`, copperValue: point.minPrice },
-      { label: $localize`:@@itemDetail.tooltip.avgPrice:avg price`, copperValue: point.avgPrice },
-      { label: $localize`:@@itemDetail.tooltip.maxPrice:max price`, copperValue: point.maxPrice },
+      {
+        label: $localize`:@@itemDetail.tooltip.minPrice:min price`,
+        amount: copperToCurrencyAmount(point.minPrice),
+      },
+      {
+        label: $localize`:@@itemDetail.tooltip.avgPrice:avg price`,
+        amount: copperToCurrencyAmount(point.avgPrice),
+      },
+      {
+        label: $localize`:@@itemDetail.tooltip.maxPrice:max price`,
+        amount: copperToCurrencyAmount(point.maxPrice),
+      },
     ];
   }
 

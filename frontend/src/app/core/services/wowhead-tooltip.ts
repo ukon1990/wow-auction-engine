@@ -11,7 +11,12 @@ import {
   wowheadLocaleFromBlizzardLocale,
   type WowheadTooltipType,
 } from '@core/utils/wowhead-tooltip-url';
-import { formatCurrencyPart, hasCurrencyValue, type CurrencyAmount } from '@ui';
+import {
+  formatCurrencyPart,
+  hasCurrencyValue,
+  pointerOffsetFromEvent,
+  type CurrencyAmount,
+} from '@ui';
 
 export interface WowheadTooltipOverlay {
   readonly safeHtml: SafeHtml;
@@ -91,7 +96,7 @@ export class WowheadTooltipService {
       url += `&bonus=${bonus.join(':')}`;
     }
 
-    const { leftPx, topPx } = pointerOffset(options.event);
+    const { leftPx, topPx } = pointerOffsetFromEvent(options.event);
     const composeTooltipHtml = (html: string): SafeHtml =>
       this.sanitizer.bypassSecurityTrustHtml(appendCurrentBuyout(html, options.currentBuyout));
 
@@ -156,16 +161,4 @@ function renderMoney(amount: CurrencyAmount): string {
     amount.silver ? `<span class="moneysilver">${formatCurrencyPart(amount.silver)}</span>` : '',
     amount.copper ? `<span class="moneycopper">${formatCurrencyPart(amount.copper)}</span>` : '',
   ].join('');
-}
-
-function pointerOffset(event: MouseEvent | FocusEvent): { leftPx: number; topPx: number } {
-  if (event instanceof MouseEvent) {
-    return { leftPx: event.clientX + 30, topPx: event.clientY };
-  }
-  const el = event.target;
-  if (el instanceof HTMLElement) {
-    const r = el.getBoundingClientRect();
-    return { leftPx: r.left + r.width + 12, topPx: r.top };
-  }
-  return { leftPx: 0, topPx: 0 };
 }
