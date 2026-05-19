@@ -20,7 +20,6 @@ import {
   type ChartSeries,
   type EtherealColorToken,
 } from './chart.component';
-import { svgContentWidthPx } from '../../helpers/chart';
 import { TooltipOverlayService } from '../../services/tooltip-overlay.service';
 import { TooltipCardComponent, type TooltipRow } from '../primitives/tooltip-card.component';
 import { SymbolIconComponent } from '../primitives/symbol-icon.component';
@@ -51,11 +50,8 @@ export type {
         <span class="ee-label text-outline">{{ rangeLabel() }}</span>
       </div>
 
-      <div
-        class="relative w-full min-w-0 overflow-x-auto overflow-y-hidden touch-pan-x"
-        [attr.aria-label]="chartAriaLabel()"
-      >
-        <div class="h-64 min-h-64" [style.min-width.px]="chartWidthPx()">
+      <div class="relative w-full min-w-0 overflow-visible" [attr.aria-label]="chartAriaLabel()">
+        <div class="h-64 min-h-64 w-full min-w-0">
           <ee-chart
             [series]="effectiveSeries()"
             [options]="options()"
@@ -71,7 +67,7 @@ export type {
       @if (overlay.active(); as position) {
         @if (hoverContext(); as ctx) {
           <div
-            class="pointer-events-none absolute z-[300] max-w-[min(18rem,85vw)]"
+            class="pointer-events-none absolute z-[1000] max-w-[min(18rem,85vw)]"
             [style.left.px]="position.leftPx"
             [style.top.px]="position.topPx"
           >
@@ -94,7 +90,8 @@ export type {
     </section>
   `,
   host: {
-    class: 'block',
+    class: 'relative block',
+    '[style.z-index]': 'overlay.active() ? 1000 : 0',
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -150,14 +147,6 @@ export class ChartPanelComponent {
     }
     return `${this.title()}: chart with ${n} series`;
   });
-
-  protected readonly chartWidthPx = computed(() =>
-    svgContentWidthPx(
-      new Set(this.effectiveSeries().flatMap((s) => s.points.map((p) => p.x))).size,
-      this.minPixelsPerCategory(),
-      this.minChartWidthPx(),
-    ),
-  );
 
   protected onCategoryHover(ctx: ChartCategoryHoverContext): void {
     this.hoverContext.set(ctx);
