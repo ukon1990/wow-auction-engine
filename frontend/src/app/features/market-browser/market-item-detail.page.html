@@ -213,6 +213,7 @@
           i18n-rangeLabel="@@itemDetail.range14Days"
           rangeLabel="14 days"
           [series]="dailyChartSeries()"
+          [options]="dailyChartOptions()"
           [tooltipTemplate]="dailyChartTip"
           i18n-description="@@itemDetail.dailyMarketDescription"
           description="Average quantity per hour as bars; buyout spread and average as lines."
@@ -226,6 +227,7 @@
           i18n-rangeLabel="@@itemDetail.range14Days"
           rangeLabel="14 days"
           [series]="hourlyChartSeries()"
+          [options]="hourlyChartOptions()"
           [tooltipTemplate]="hourlyChartTip"
           i18n-description="@@itemDetail.hourlyMarketDescription"
           description="Listed quantity per hour over 14 days as bars; buyout spread and average as lines."
@@ -432,6 +434,7 @@
               i18n-rangeLabel="@@itemDetail.range14Days"
               rangeLabel="14 days"
               [series]="craftingAnalyticsSeries()"
+              [options]="craftingAnalyticsChartOptions()"
               i18n-description="@@itemDetail.craftingProfitDescription"
               description="Daily profit and ROI for selected recipe. Missing points mean incomplete pricing."
             />
