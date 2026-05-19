@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import type { Meta, StoryObj } from '@storybook/angular';
+import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import type Highcharts from 'highcharts/esm/highcharts';
 
 import {
@@ -14,15 +14,26 @@ import { ChartPanelStoryHostComponent } from '../../support/story-hosts';
 const meta: Meta = {
   title: 'Ethereal UI/Charts',
   parameters: { layout: 'centered' },
+  decorators: [
+    moduleMetadata({
+      imports: [ChartComponent, ChartPanelComponent, TooltipCardComponent],
+    }),
+  ],
 };
 
 export default meta;
 
 export const ChartSeriesPanel: StoryObj<ChartPanelStoryHostComponent> = {
-  render: () => ({ component: ChartPanelStoryHostComponent }),
+  render: () => ({
+    template: '<story-chart-panel-host />',
+    moduleMetadata: {
+      imports: [ChartPanelStoryHostComponent],
+    },
+  }),
 };
 
 @Component({
+  selector: 'story-chart-panel-dashboard',
   imports: [ChartPanelComponent],
   template: `
     <div class="grid w-[980px] max-w-full gap-4 lg:grid-cols-2">
@@ -75,10 +86,16 @@ class ChartPanelDashboardStoryComponent {
 }
 
 export const DashboardVisuals: StoryObj<ChartPanelDashboardStoryComponent> = {
-  render: () => ({ component: ChartPanelDashboardStoryComponent }),
+  render: () => ({
+    template: '<story-chart-panel-dashboard />',
+    moduleMetadata: {
+      imports: [ChartPanelDashboardStoryComponent],
+    },
+  }),
 };
 
 @Component({
+  selector: 'story-chart-panel-options',
   imports: [ChartPanelComponent],
   template: `
     <div class="w-[760px] max-w-full">
@@ -138,10 +155,16 @@ class ChartPanelOptionsStoryComponent {
 }
 
 export const WithHighchartsOptions: StoryObj<ChartPanelOptionsStoryComponent> = {
-  render: () => ({ component: ChartPanelOptionsStoryComponent }),
+  render: () => ({
+    template: '<story-chart-panel-options />',
+    moduleMetadata: {
+      imports: [ChartPanelOptionsStoryComponent],
+    },
+  }),
 };
 
 @Component({
+  selector: 'story-chart-panel-custom-tooltip',
   imports: [ChartPanelComponent, TooltipCardComponent],
   template: `
     <ng-template #tip let-ctx>
@@ -188,10 +211,16 @@ class ChartPanelCustomTooltipStoryComponent {
 }
 
 export const CustomTooltipTemplate: StoryObj<ChartPanelCustomTooltipStoryComponent> = {
-  render: () => ({ component: ChartPanelCustomTooltipStoryComponent }),
+  render: () => ({
+    template: '<story-chart-panel-custom-tooltip />',
+    moduleMetadata: {
+      imports: [ChartPanelCustomTooltipStoryComponent],
+    },
+  }),
 };
 
 @Component({
+  selector: 'story-raw-highcharts-panel',
   imports: [ChartPanelComponent],
   template: `
     <div class="w-[760px] max-w-full">
@@ -247,10 +276,16 @@ class RawHighchartsPanelStoryComponent {
 }
 
 export const RawHighchartsOptionsPanel: StoryObj<RawHighchartsPanelStoryComponent> = {
-  render: () => ({ component: RawHighchartsPanelStoryComponent }),
+  render: () => ({
+    template: '<story-raw-highcharts-panel />',
+    moduleMetadata: {
+      imports: [RawHighchartsPanelStoryComponent],
+    },
+  }),
 };
 
 @Component({
+  selector: 'story-raw-chart',
   imports: [ChartComponent],
   template: `
     <div class="ee-glass w-[720px] max-w-full rounded-lg p-inner-padding">
@@ -299,7 +334,12 @@ class RawChartStoryComponent {
 }
 
 export const RawChartComponent: StoryObj<RawChartStoryComponent> = {
-  render: () => ({ component: RawChartStoryComponent }),
+  render: () => ({
+    template: '<story-raw-chart />',
+    moduleMetadata: {
+      imports: [RawChartStoryComponent],
+    },
+  }),
 };
 
 function marketSeries(count: number): readonly ChartSeries[] {

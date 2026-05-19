@@ -8,6 +8,7 @@
         "deploy:production:frontend": "bash scripts/deploy/local-production-frontend.sh",
         "start:backend": "cd backend && ./mvnw spring-boot:run",
         "start:frontend": "cd frontend && bun run start",
+        "start:storybook": "cd frontend && bun run storybook",
         "format": "bun run format:frontend && bun run format:backend",
         "format:frontend": "cd frontend && bun run format",
         "format:backend": "cd backend && ./mvnw ktlint:format",

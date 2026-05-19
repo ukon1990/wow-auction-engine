@@ -325,6 +325,7 @@ export class ItemTooltipCardStoryHostComponent {
 }
 
 @Component({
+  selector: 'story-chart-panel-host',
   imports: [ChartPanelComponent, TooltipCardComponent],
   template: `
     <ng-template #chartTip let-ctx>
