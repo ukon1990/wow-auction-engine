@@ -6,6 +6,7 @@ export function provideHighchartsTheme(): EnvironmentProviders {
   return provideHighcharts({
     instance: async () => {
       const highcharts = await import('highcharts/esm/highcharts');
+      await import('highcharts/esm/modules/heatmap');
       return ('default' in highcharts
         ? highcharts.default
         : highcharts) as unknown as typeof Highcharts;
