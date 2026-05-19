@@ -1,3 +1,4 @@
+import '@angular/localize/init';
 import { applicationConfig } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
 import type { Preview } from '@storybook/angular';
