@@ -95,6 +95,30 @@ export function priceChangeCaptionStatic(pct: number | null | undefined): string
   return $localize`:@@itemDetail.vsPriorDay:${sign}${pct.toFixed(1)}% vs prior day`;
 }
 
+export function dayOfMonthLabel(value: string | null | undefined): string {
+  if (!value) return '';
+  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  if (dateOnly?.[3]) {
+    return String(Number(dateOnly[3]));
+  }
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '' : String(date.getUTCDate());
+}
+
+export function hourOfDayLabel(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value)) return '';
+  return `${String(Math.max(0, Math.min(23, Math.round(value)))).padStart(2, '0')}:00`;
+}
+
+export function quantityAxisLabel(value: number | null | undefined, locale = 'en-US'): string {
+  if (value == null || !Number.isFinite(value)) return '—';
+  const notation = Math.abs(value) >= 10_000 ? 'compact' : 'standard';
+  return new Intl.NumberFormat(locale, {
+    maximumFractionDigits: notation === 'compact' || !Number.isInteger(value) ? 1 : 0,
+    notation,
+  }).format(value);
+}
+
 export function mergeCommodityScope(
   existing: AuctionMarketItemDetailResponse | null,
   commodity: AuctionMarketItemDetailResponse,
