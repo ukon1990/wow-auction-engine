@@ -17,6 +17,7 @@ import {
   CurrencyAmountComponent,
   formatCopperCurrency,
   HeatmapGridComponent,
+  type ChartSeries,
   type HeatmapCell,
   ItemStatCardComponent,
   PageFrameComponent,
@@ -41,6 +42,7 @@ import {
   of,
   switchMap,
 } from 'rxjs';
+import type Highcharts from 'highcharts/esm/highcharts';
 
 import {
   ItemDetailScope,
@@ -183,18 +185,26 @@ export class MarketItemDetailPage {
   protected readonly pageTitle = computed(() => this.detail()?.item.name ?? 'Item');
 
   protected readonly dailyChartSeries = computed(() => {
-    const d = this.detail();
-    if (!d) return [];
-    const pts =
-      d.regionalMetricsRedundant || this.chartScope() === 'realm'
-        ? d.dailySeriesRealm
-        : d.dailySeriesCommodity;
-    return dailyPointsToChartSeries(pts);
+    return dailyPointsToChartSeries(this.dailyPointsForActiveScope());
   });
 
   protected readonly hourlyChartSeries = computed(() => {
     const pts = this.hourlyPointsForActiveScope();
     return hourlyPointsToChartSeries(pts);
+  });
+
+  protected readonly dailyChartOptions = computed<Highcharts.Options>(() => {
+    const points = this.dailyPointsForActiveScope();
+    return this.chartOptionsForSeries(this.dailyChartSeries(), {
+      xLabelAt: (index) => dayOfMonthLabel(points[index]?.statDate),
+    });
+  });
+
+  protected readonly hourlyChartOptions = computed<Highcharts.Options>(() => {
+    const points = this.hourlyPointsForActiveScope();
+    return this.chartOptionsForSeries(this.hourlyChartSeries(), {
+      xLabelAt: (index) => hourOfDayLabel(points[index]?.hourOfDay),
+    });
   });
 
   protected readonly selectedCrafting = computed<AuctionMarketItemCraftingDetail | null>(() => {
@@ -208,6 +218,10 @@ export class MarketItemDetailPage {
     if (!analytics) return [];
     return craftingAnalyticsToChartSeries(analytics);
   });
+
+  protected readonly craftingAnalyticsChartOptions = computed<Highcharts.Options>(() =>
+    this.chartOptionsForSeries(this.craftingAnalyticsSeries()),
+  );
 
   protected readonly craftingHeatmapCells = computed<HeatmapCell[]>(() =>
     (this.craftingAnalytics()?.heatmap ?? []).map((cell) => ({
@@ -625,15 +639,62 @@ export class MarketItemDetailPage {
       : priceChangeCaptionStatic(s.selectedRealmPriceChangePercent);
   }
 
+  private chartOptionsForSeries(
+    series: readonly ChartSeries[],
+    labels: { readonly xLabelAt?: (index: number) => string } = {},
+  ): Highcharts.Options {
+    const yScaleKeys = [...new Set(series.map((s) => s.yScaleKey))];
+    return {
+      xAxis: labels.xLabelAt
+        ? {
+            labels: {
+              formatter: (ctx) => labels.xLabelAt?.(this.axisIndex(ctx.value)) || ctx.text || '',
+            },
+          }
+        : undefined,
+      yAxis: yScaleKeys.map((key) => ({
+        min: key === 'quantity' ? 0 : undefined,
+        labels: {
+          formatter: (ctx) => this.yAxisLabel(key, ctx.value, ctx.text),
+        },
+      })),
+    };
+  }
+
+  private yAxisLabel(key: string, value: number | string, fallback: string | undefined): string {
+    if (key === 'price' || key === 'profit') {
+      return this.copperAxisLabel(value);
+    }
+    if (key === 'quantity') {
+      return this.quantityAxisLabel(value);
+    }
+    if (key === 'roi') {
+      return `${this.axisNumber(value).toLocaleString(this.locale.formatLocale())}%`;
+    }
+    return fallback ?? String(value);
+  }
+
+  private copperAxisLabel(value: number | string): string {
+    return formatCopperCurrency(this.axisNumber(value));
+  }
+
+  private quantityAxisLabel(value: number | string): string {
+    return quantityAxisLabel(this.axisNumber(value), this.locale.formatLocale());
+  }
+
+  private axisNumber(value: number | string): number {
+    return typeof value === 'number' ? value : Number(value);
+  }
+
+  private axisIndex(value: number | string): number {
+    return Math.round(this.axisNumber(value));
+  }
+
   private dailyTooltipPoint(
     d: AuctionMarketItemDetailResponse,
     x: number,
   ): AuctionMarketItemDetailPoint | undefined {
-    const points =
-      d.regionalMetricsRedundant || this.chartScope() === 'realm'
-        ? d.dailySeriesRealm
-        : d.dailySeriesCommodity;
-    return points[Math.round(x)];
+    return this.dailyPointsForActiveScope(d)[Math.round(x)];
   }
 
   private hourlyTooltipPoint(
@@ -654,6 +715,15 @@ export class MarketItemDetailPage {
         ? d.hourlySeriesRealm
         : d.hourlySeriesCommodity;
     return sortHourlyPoints(points);
+  }
+
+  private dailyPointsForActiveScope(
+    detail: AuctionMarketItemDetailResponse | null = this.detail(),
+  ): readonly AuctionMarketItemDetailPoint[] {
+    if (!detail) return [];
+    return detail.regionalMetricsRedundant || this.chartScope() === 'realm'
+      ? detail.dailySeriesRealm
+      : detail.dailySeriesCommodity;
   }
 
   private numberDisplay(value: number | null | undefined): string {
