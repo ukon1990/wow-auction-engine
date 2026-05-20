@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { JsonPipe, KeyValuePipe } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import type { ColumnDef } from '@tanstack/angular-table';
 
@@ -28,6 +28,7 @@ import {
   SymbolIconComponent,
   TableComponent,
   TextInputComponent,
+  TooltipCardComponent,
   TopNavComponent,
 } from '../../public-api';
 
@@ -324,21 +325,16 @@ export class ItemTooltipCardStoryHostComponent {
 }
 
 @Component({
-  imports: [ChartPanelComponent, KeyValuePipe],
+  selector: 'story-chart-panel-host',
+  imports: [ChartPanelComponent, TooltipCardComponent],
   template: `
     <ng-template #chartTip let-ctx>
-      <div
-        class="ee-glass rounded-md border border-white/15 bg-surface-container/95 px-3 py-2 text-left text-xs text-on-surface shadow-lg backdrop-blur-md"
-      >
-        <div class="ee-label text-outline mb-1.5">Bucket {{ ctx.categoryIndex }}</div>
-        <div class="font-space-mono text-[11px] text-on-surface-variant">x = {{ ctx.x }}</div>
-        @for (kv of ctx.valuesBySeriesId | keyvalue; track kv.key) {
-          <div class="mt-1 flex justify-between gap-4 font-space-mono text-[11px]">
-            <span class="text-outline">{{ kv.key }}</span>
-            <span class="text-on-surface">{{ kv.value ?? '—' }}</span>
-          </div>
-        }
-      </div>
+      <ee-tooltip-card
+        [title]="'Bucket ' + ctx.categoryIndex"
+        [subtitle]="'x = ' + ctx.x"
+        [rows]="tooltipRows(ctx.valuesBySeriesId)"
+        [compact]="true"
+      />
     </ng-template>
     <div class="w-full max-w-3xl min-w-0">
       <ee-chart-panel
@@ -354,6 +350,10 @@ export class ItemTooltipCardStoryHostComponent {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartPanelStoryHostComponent {
+  protected tooltipRows(valuesBySeriesId: Readonly<Record<string, number | undefined>>) {
+    return Object.entries(valuesBySeriesId).map(([label, value]) => ({ label, value }));
+  }
+
   readonly chartSeries: readonly ChartSeries[] = (() => {
     const xs = Array.from({ length: 30 }, (_, i) => i);
     return [

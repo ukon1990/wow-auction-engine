@@ -42,26 +42,16 @@ export interface YDomain {
   readonly max: number;
 }
 
-export interface ColumnRect {
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
-  readonly height: number;
-}
-
-export interface XBandHitRect {
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
-  readonly height: number;
-}
-
 /** Passed to `tooltipTemplate` as `$implicit` when hovering an x category. */
-export interface ChartXBandHoverContext {
+export interface ChartCategoryHoverContext {
   readonly categoryIndex: number;
   readonly x: number;
   readonly valuesBySeriesId: Readonly<Record<string, number | undefined>>;
+  readonly event?: PointerEvent;
 }
+
+/** @deprecated Use `ChartCategoryHoverContext`. */
+export type ChartXBandHoverContext = ChartCategoryHoverContext;
 
 const DEFAULT_PADDING = 0.05;
 
@@ -112,65 +102,6 @@ export function buildYDomainsByKey(
   return out;
 }
 
-export interface PlotMargins {
-  readonly innerLeft: number;
-  readonly innerRight: number;
-  readonly innerTop: number;
-  readonly innerBottom: number;
-}
-
-export const DEFAULT_PLOT_MARGINS: PlotMargins = {
-  innerLeft: 4,
-  innerRight: 96,
-  innerTop: 5,
-  innerBottom: 95,
-};
-
-export function xToSvg(
-  x: number,
-  xDomain: readonly number[],
-  margins: PlotMargins = DEFAULT_PLOT_MARGINS,
-): number {
-  if (xDomain.length === 0) {
-    return margins.innerLeft;
-  }
-  const exactIndex = indexInXDomain(x, xDomain);
-  const categoryIndex = exactIndex >= 0 ? exactIndex : 0;
-  const innerWidth = margins.innerRight - margins.innerLeft;
-  const step = innerWidth / xDomain.length;
-  return margins.innerLeft + (categoryIndex + 0.5) * step;
-}
-
-/** Higher data `y` maps toward smaller SVG `y` (top of chart). */
-export function yToSvg(
-  y: number,
-  domain: YDomain,
-  margins: PlotMargins = DEFAULT_PLOT_MARGINS,
-): number {
-  const spread = domain.max - domain.min || 1;
-  const t = (y - domain.min) / spread;
-  return margins.innerBottom - t * (margins.innerBottom - margins.innerTop);
-}
-
-export function linePolylinePoints(
-  points: readonly ChartPoint[],
-  xDomain: readonly number[],
-  yDomain: YDomain,
-  margins: PlotMargins = DEFAULT_PLOT_MARGINS,
-): string {
-  if (points.length === 0 || xDomain.length === 0) {
-    return '';
-  }
-  const sorted = [...points].sort((a, b) => a.x - b.x);
-  return sorted
-    .map((p) => {
-      const sx = xToSvg(p.x, xDomain, margins);
-      const sy = yToSvg(p.y, yDomain, margins);
-      return `${sx},${sy}`;
-    })
-    .join(' ');
-}
-
 export function indexInXDomain(x: number, xDomain: readonly number[]): number {
   const exact = xDomain.indexOf(x);
   if (exact >= 0) {
@@ -191,71 +122,6 @@ export function valuesAtCategoryIndex(
     out[s.id] = j >= 0 ? s.points[j]!.y : undefined;
   }
   return out;
-}
-
-export function columnRectsForSeries(
-  points: readonly ChartPoint[],
-  xDomain: readonly number[],
-  yDomain: YDomain,
-  bandWidthFraction: number,
-  margins: PlotMargins = DEFAULT_PLOT_MARGINS,
-): readonly ColumnRect[] {
-  if (xDomain.length === 0) {
-    return [];
-  }
-  const n = xDomain.length;
-  const innerWidth = margins.innerRight - margins.innerLeft;
-  const step = innerWidth / n;
-  const barW = step * bandWidthFraction;
-  const rects: ColumnRect[] = [];
-  for (const p of points) {
-    const xi = indexInXDomain(p.x, xDomain);
-    if (xi < 0) {
-      continue;
-    }
-    const center = margins.innerLeft + (xi + 0.5) * step;
-    const x = center - barW / 2;
-    const topY = yToSvg(p.y, yDomain, margins);
-    const baseY = margins.innerBottom;
-    const h = Math.max(0, baseY - topY);
-    rects.push({ x, y: topY, width: barW, height: h });
-  }
-  return rects;
-}
-
-/** Full-height bands for x categories (pointer hit targets + highlight geometry). */
-export function xBandHitRects(
-  xDomain: readonly number[],
-  margins: PlotMargins = DEFAULT_PLOT_MARGINS,
-): readonly XBandHitRect[] {
-  if (xDomain.length === 0) {
-    return [];
-  }
-  const n = xDomain.length;
-  const innerWidth = margins.innerRight - margins.innerLeft;
-  const step = innerWidth / n;
-  const h = margins.innerBottom - margins.innerTop;
-  return xDomain.map((_, i) => ({
-    x: margins.innerLeft + i * step,
-    y: margins.innerTop,
-    width: step,
-    height: h,
-  }));
-}
-
-/** Horizontal center of band `categoryIndex` as % of SVG width (viewBox width 100). */
-export function xBandCenterLeftPercent(
-  categoryIndex: number,
-  xDomainLength: number,
-  margins: PlotMargins = DEFAULT_PLOT_MARGINS,
-): number {
-  if (xDomainLength <= 0 || categoryIndex < 0 || categoryIndex >= xDomainLength) {
-    return 0;
-  }
-  const innerWidth = margins.innerRight - margins.innerLeft;
-  const step = innerWidth / xDomainLength;
-  const cx = margins.innerLeft + (categoryIndex + 0.5) * step;
-  return cx;
 }
 
 export function svgContentWidthPx(

@@ -1,7 +1,10 @@
 import {
   dailyPointsToChartSeries,
+  dayOfMonthLabel,
   dayOfWeekFromTimestamp,
+  hourOfDayLabel,
   hourlyPriceHeatmapCellsFromPoints,
+  quantityAxisLabel,
   shouldFallbackToCommodityFetch,
 } from './market-item-detail.helpers';
 
@@ -49,5 +52,18 @@ describe('market-item-detail helpers', () => {
 
   it('maps UTC sunday to row 6', () => {
     expect(dayOfWeekFromTimestamp('2026-05-10T00:00:00Z')).toBe(6);
+  });
+
+  it('formats chart axis date and hour labels', () => {
+    expect(dayOfMonthLabel('2026-05-19')).toBe('19');
+    expect(dayOfMonthLabel('2026-05-09T22:00:00Z')).toBe('9');
+    expect(hourOfDayLabel(7)).toBe('07:00');
+    expect(hourOfDayLabel(23)).toBe('23:00');
+  });
+
+  it('formats quantity axis labels as readable counts', () => {
+    expect(quantityAxisLabel(1234)).toBe('1,234');
+    expect(quantityAxisLabel(0.5)).toBe('0.5');
+    expect(quantityAxisLabel(12500)).toBe('12.5K');
   });
 });

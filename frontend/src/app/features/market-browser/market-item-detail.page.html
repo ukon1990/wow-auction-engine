@@ -176,49 +176,23 @@
 
     <ng-template #dailyChartTip let-ctx>
       @let rows = dailyTooltipRows(d, ctx.x);
-      <div
-        class="ee-glass min-w-64 rounded-md border border-white/15 bg-surface-container/95 px-3 py-2 text-left text-xs text-on-surface shadow-lg backdrop-blur-md"
-      >
-        <div class="ee-label text-outline mb-1.5">{{ dailyTooltipTitle(d, ctx.x) }}</div>
-        <div class="space-y-1 font-space-mono text-[11px]">
-          @for (row of rows; track row.label) {
-            <div class="flex justify-between gap-4">
-              <span class="text-outline">{{ row.label }}</span>
-              @if (row.copperValue !== undefined) {
-                <ee-currency-amount [amount]="row.copperValue | copperToCurrency" />
-              } @else {
-                <span class="text-on-surface">{{ row.value }}</span>
-              }
-            </div>
-          }
-          @if (!rows.length) {
-            <div class="text-outline" i18n="@@itemDetail.noDayValues">No values for this day</div>
-          }
-        </div>
-      </div>
+      <ee-tooltip-card
+        [title]="dailyTooltipTitle(d, ctx.x)"
+        [rows]="rows"
+        i18n-emptyMessage="@@itemDetail.noDayValues"
+        emptyMessage="No values for this day"
+        [compact]="true"
+      />
     </ng-template>
 
     <ng-template #hourlyChartTip let-ctx>
-      <div
-        class="ee-glass min-w-64 rounded-md border border-white/15 bg-surface-container/95 px-3 py-2 text-left text-xs text-on-surface shadow-lg backdrop-blur-md"
-      >
-        <div class="ee-label text-outline mb-1.5">{{ hourlyTooltipTitle(d, ctx.x) }}</div>
-        <div class="space-y-1 font-space-mono text-[11px]">
-          @for (row of hourlyTooltipRows(d, ctx.x); track row.label) {
-            <div class="flex justify-between gap-4">
-              <span class="text-outline">{{ row.label }}</span>
-              @if (row.copperValue !== undefined) {
-                <ee-currency-amount [amount]="row.copperValue | copperToCurrency" />
-              } @else {
-                <span class="text-on-surface">{{ row.value }}</span>
-              }
-            </div>
-          }
-          @if (!hourlyTooltipRows(d, ctx.x).length) {
-            <div class="text-outline" i18n="@@itemDetail.noHourValues">No values for this hour</div>
-          }
-        </div>
-      </div>
+      <ee-tooltip-card
+        [title]="hourlyTooltipTitle(d, ctx.x)"
+        [rows]="hourlyTooltipRows(d, ctx.x)"
+        i18n-emptyMessage="@@itemDetail.noHourValues"
+        emptyMessage="No values for this hour"
+        [compact]="true"
+      />
     </ng-template>
 
     <ng-template
@@ -239,6 +213,7 @@
           i18n-rangeLabel="@@itemDetail.range14Days"
           rangeLabel="14 days"
           [series]="dailyChartSeries()"
+          [options]="dailyChartOptions()"
           [tooltipTemplate]="dailyChartTip"
           i18n-description="@@itemDetail.dailyMarketDescription"
           description="Average quantity per hour as bars; buyout spread and average as lines."
@@ -252,6 +227,7 @@
           i18n-rangeLabel="@@itemDetail.range14Days"
           rangeLabel="14 days"
           [series]="hourlyChartSeries()"
+          [options]="hourlyChartOptions()"
           [tooltipTemplate]="hourlyChartTip"
           i18n-description="@@itemDetail.hourlyMarketDescription"
           description="Listed quantity per hour over 14 days as bars; buyout spread and average as lines."
@@ -458,6 +434,7 @@
               i18n-rangeLabel="@@itemDetail.range14Days"
               rangeLabel="14 days"
               [series]="craftingAnalyticsSeries()"
+              [options]="craftingAnalyticsChartOptions()"
               i18n-description="@@itemDetail.craftingProfitDescription"
               description="Daily profit and ROI for selected recipe. Missing points mean incomplete pricing."
             />

@@ -1,13 +1,15 @@
+import '@angular/localize/init';
 import { applicationConfig } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
 import type { Preview } from '@storybook/angular';
+import { provideHighchartsTheme } from '@ui';
 
 import { storybookRoutes } from './story-router';
 
 const preview: Preview = {
   decorators: [
     applicationConfig({
-      providers: [provideRouter(storybookRoutes)],
+      providers: [provideRouter(storybookRoutes), provideHighchartsTheme()],
     }),
   ],
   parameters: {
