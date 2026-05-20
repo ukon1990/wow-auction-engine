@@ -25,7 +25,7 @@ class AuctionMarketSearchRequestCorrelationIntegrationTest : IntegrationTestBase
 
         mockMvc
             .perform(
-                get("/api/auctions/market-search")
+                get("/api/auctions/search")
                     .contextPath("/api")
                     .param("region", "eu")
                     .param("realmSlug", "argent-dawn")
@@ -42,7 +42,7 @@ class AuctionMarketSearchRequestCorrelationIntegrationTest : IntegrationTestBase
 
         mockMvc
             .perform(
-                get("/api/auctions/market-search/filters")
+                get("/api/auctions/search/filters")
                     .contextPath("/api")
                     .param("region", "eu")
                     .param("realmSlug", "argent-dawn")

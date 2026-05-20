@@ -15,7 +15,7 @@ class MarketSearchTimingFilter : OncePerRequestFilter() {
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path = request.requestURI.removePrefix(request.contextPath)
-        return path != "/auctions/market-search" && path != "/auctions/market-search/filters"
+        return path != "/auctions/search" && path != "/auctions/search/filters"
     }
 
     override fun doFilterInternal(
