@@ -104,18 +104,22 @@ jobs:
         run: |
           set -euo pipefail
           if [[ "$SERVICE" == "backend" ]]; then
-            build_context="backend"
+            docker buildx build \
+              --platform linux/arm64 \
+              --tag "localbuild:${SERVICE}-${IMAGE_TAG}" \
+              --load \
+              backend
           elif [[ "$SERVICE" == "frontend" ]]; then
-            build_context="frontend"
+            docker buildx build \
+              --platform linux/arm64 \
+              --file frontend/Dockerfile \
+              --tag "localbuild:${SERVICE}-${IMAGE_TAG}" \
+              --load \
+              .
           else
             echo "Unsupported service: $SERVICE" >&2
             exit 1
           fi
-          docker buildx build \
-            --platform linux/arm64 \
-            --tag "localbuild:${SERVICE}-${IMAGE_TAG}" \
-            --load \
-            "$build_context"
         env:
           IMAGE_TAG: ${{ inputs.image_tag }}
           SERVICE: ${{ inputs.service }}

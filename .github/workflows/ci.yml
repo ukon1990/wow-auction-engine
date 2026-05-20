@@ -210,7 +210,9 @@ jobs:
           set -euo pipefail
           tmp="$(mktemp -d)"
           trap 'rm -rf "$tmp"' EXIT
-          cp frontend/package.json frontend/bun.lock "$tmp/"
+          cp package.json bun.lock "$tmp/"
+          mkdir -p "$tmp/frontend"
+          cp frontend/package.json "$tmp/frontend/"
           (cd "$tmp" && bun install --frozen-lockfile --production)
 
       - name: Install frontend dependencies

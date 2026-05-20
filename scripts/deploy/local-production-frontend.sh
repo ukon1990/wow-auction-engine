@@ -133,9 +133,10 @@ echo "Building frontend artifact with pipeline-equivalent steps"
 echo "Building ARM64 frontend Docker image"
 docker buildx build \
   --platform linux/arm64 \
+  --file frontend/Dockerfile \
   --tag "localbuild:frontend-${IMAGE_TAG}" \
   --load \
-  frontend
+  .
 
 regions_json="$(python3 -c "import json; data=json.load(open('${REGIONS_FILE}', encoding='utf-8')); print(json.dumps([r for r in data['regions'] if r.get('enabled', False)]))")"
 region_count="$(python3 -c "import json; print(len(json.loads('''${regions_json}''')))")"

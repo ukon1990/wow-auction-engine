@@ -1,0 +1,8 @@
+# Frontend image: docker buildx build -f frontend/Dockerfile .
+**
+!package.json
+!bun.lock
+!frontend/
+frontend/**
+!frontend/package.json
+!frontend/app-dist.tar.gz
