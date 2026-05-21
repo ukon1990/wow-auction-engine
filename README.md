@@ -1,10 +1,10 @@
 # The Ethereal Exchange
-
-Backend service for ingesting, processing, and serving World of Warcraft auction-house data.
+The Ethereal Exchange is the successor to Wow Auction Helper.
+It is currently **work in progress**.
 
 ## What This Project Does
 
-`The Ethereal Exchange` is a Kotlin + Spring Boot and Angular application that:
+The Ethereal Exchange is a Kotlin + Spring Boot and Angular application that:
 
 - retrieves auction and realm data from Blizzard APIs
 - processes and aggregates auction statistics
@@ -12,7 +12,7 @@ Backend service for ingesting, processing, and serving World of Warcraft auction
 - uses DynamoDB for additional local and AWS-backed storage flows
 - exposes API endpoints under `/api`, including health at `GET /api/health`
 - runs scheduled background sync jobs on startup
-- gives the users an overview over the current item prices and crafting cost for various recipes form the game.
+- gives users an overview of current item prices and crafting costs for recipes from the game.
 
 ## Stack
 
@@ -156,7 +156,7 @@ docker compose -f docker-compose-db.yml down
 
 ### Production-only overrides
 
-These are only needed for the `production` Spring profile because [`backend/src/main/resources/application.production.yml`](backend/src/main/resources/application.production.yml) overrides the datasource credentials:
+These are only needed for the `production` Spring profile because [`backend/src/main/resources/application-production.yml`](backend/src/main/resources/application-production.yml) overrides the datasource credentials:
 
 - `AUCTION_ENGINE_DB_USERNAME`
 - `AUCTION_ENGINE_DB_PASSWORD`
@@ -198,7 +198,7 @@ The app deployment region and the S3 bucket region are related but not identical
 
 Current production layout:
 
-- Europe deployment: `eu-north-1`, auction/realm updates `Europe`, static data defaults to `Europe`, writes to `wah-data-eu` in `eu-north-1`
+- Europe deployment: `eu-north-1`, auction/realm updates `Europe`, static data defaults to `Europe`, writes to `wah-data-eu`, whose configured bucket region is `eu-west-1`
 - North America deployment: `us-west-1`, auction/realm updates `NorthAmerica`, static data can still point to `Europe`, writes to `wah-data-us` in `us-west-1`
 - Asia deployment: `ap-northeast-2`, auction/realm updates `Korea,Taiwan`, static data can still point to `Europe`, writes to `wah-data-as` in `ap-northeast-2`
 
@@ -213,7 +213,7 @@ cd backend && ./mvnw test
 Useful detail for onboarding:
 
 - tests run with the `test` Spring profile
-- Blizzard credentials are stubbed in [`backend/src/main/resources/application.test.yml`](backend/src/main/resources/application.test.yml)
+- Blizzard credentials are stubbed in [`backend/src/main/resources/application-test.yml`](backend/src/main/resources/application-test.yml)
 - MariaDB runs through Testcontainers
 - DynamoDB and S3 are provided through Floci-backed Testcontainers in integration tests
 - Docker Desktop or another working Docker daemon must be running for tests to pass
@@ -345,8 +345,8 @@ Main application code lives under [`backend/src/main/kotlin/net/jonasmf/auctione
 Resources:
 
 - [`backend/src/main/resources/application.yml`](backend/src/main/resources/application.yml)
-- [`backend/src/main/resources/application.test.yml`](backend/src/main/resources/application.test.yml)
-- [`backend/src/main/resources/application.production.yml`](backend/src/main/resources/application.production.yml)
+- [`backend/src/main/resources/application-test.yml`](backend/src/main/resources/application-test.yml)
+- [`backend/src/main/resources/application-production.yml`](backend/src/main/resources/application-production.yml)
 
 ## Troubleshooting
 
