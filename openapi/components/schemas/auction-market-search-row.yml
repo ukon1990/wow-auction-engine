@@ -4,7 +4,7 @@ required:
   - preferredScope
 properties:
   item:
-    $ref: ./auction-market-item.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionMarketItem"
   preferredScope:
     type: string
     description: Preferred detail scope for this row (`realm` or `commodity`).
@@ -20,9 +20,9 @@ properties:
     type: boolean
     description: True when the unified listing values come from commodity only (no realm snapshot row).
   listingKey:
-    $ref: ./auction-listing-key.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionListingKey"
     description: Bucket that supplied selectedRealm price (lowest unit price at snapshot hour).
   selectedRealm:
-    $ref: ./auction-market-metrics.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionMarketMetrics"
   commodity:
-    $ref: ./auction-market-metrics.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionMarketMetrics"

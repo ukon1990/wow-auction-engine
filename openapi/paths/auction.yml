@@ -131,7 +131,7 @@ search:
         content:
           application/json:
             schema:
-              $ref: ../components/schemas/auction-market-search-page.yml
+              $ref: "../openapi.yml#/components/schemas/AuctionMarketSearchPage"
       "400":
         description: Invalid search request.
       "404":
@@ -168,7 +168,7 @@ filters:
         content:
           application/json:
             schema:
-              $ref: ../components/schemas/auction-market-filter-response.yml
+              $ref: "../openapi.yml#/components/schemas/AuctionMarketFilterResponse"
       "400":
         description: Invalid filter request.
       "404":
@@ -245,7 +245,7 @@ getAuctionItemDetail:
         content:
           application/json:
             schema:
-              $ref: ../components/schemas/auction-market-item-detail-response.yml
+              $ref: "../openapi.yml#/components/schemas/AuctionMarketItemDetailResponse"
       "400":
         description: Invalid request.
       "404":
@@ -311,7 +311,7 @@ getAuctionItemCraftingAnalytics:
         content:
           application/json:
             schema:
-              $ref: ../components/schemas/auction-market-item-crafting-analytics-response.yml
+              $ref: "../openapi.yml#/components/schemas/AuctionMarketItemCraftingAnalyticsResponse"
       "400":
         description: Invalid request.
       "404":

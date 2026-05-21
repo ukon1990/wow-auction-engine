@@ -11,10 +11,10 @@ properties:
     type: string
     nullable: true
   quality:
-    $ref: ./auction-market-named-id.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionMarketNamedId"
   itemClass:
-    $ref: ./auction-market-named-id.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionMarketNamedId"
   itemSubclass:
-    $ref: ./auction-market-named-id.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionMarketNamedId"
   recipe:
-    $ref: ./auction-market-recipe.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionMarketRecipe"

@@ -14,11 +14,11 @@ properties:
     type: integer
     format: int32
   recipe:
-    $ref: ./auction-market-recipe.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionMarketRecipe"
   item:
-    $ref: ./auction-market-item.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionMarketItem"
   listingKey:
-    $ref: ./auction-listing-key.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionListingKey"
   professionId:
     type: integer
     format: int32
