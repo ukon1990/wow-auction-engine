@@ -37,6 +37,15 @@ export function chartSeriesToOptions(
     chart: {
       height: adapterOptions.minHeightPx ?? 256,
       spacing: [8, 8, 12, 8],
+      zooming: {
+        type: 'x',
+        mouseWheel: true,
+        key: 'shift',
+      },
+      panning: {
+        enabled: true,
+      },
+      panKey: 'alt',
     },
     xAxis: {
       categories: xDomain.map((x) => String(x)),
