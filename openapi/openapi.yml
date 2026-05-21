@@ -11,6 +11,8 @@ servers:
 tags:
   - name: Health
     description: Runtime health endpoints.
+  - name: Admin
+    description: Endpoints for administrating users and data.
   - name: Realm
     description: Realm catalog and per-realm auction house status.
   - name: AuctionMarket
@@ -20,6 +22,8 @@ tags:
 paths:
   /health:
     $ref: ./paths/health.yml#/health
+  /admin/users:
+    $ref: ./paths/admin.yml#/getUsers
   /realms:
     $ref: ./paths/realm.yml#/listRealms
   /realms/{region}/{slug}:

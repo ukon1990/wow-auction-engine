@@ -1,0 +1,17 @@
+getUsers:
+    get:
+        tags:
+            - Admin
+            - Users
+        operationId: listUsers
+        summary: Lists all registered users and their current status
+        description: Allows an administrator to review the current users
+        responses:
+            "200":
+                description: A list of users
+                content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                $ref: "../openapi.yml#/components/schemas/AdminUser"
