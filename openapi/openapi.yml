@@ -4,7 +4,10 @@ info:
   version: 0.0.1
   description: Public API for WoW Auction Engine.
 servers:
+  - url: http://localhost:8080/api
+    description: Local backend
   - url: /api
+    description: Same origin
 tags:
   - name: Health
     description: Runtime health endpoints.
@@ -16,20 +19,20 @@ tags:
     description: Crafting market search and filter metadata.
 paths:
   /health:
-    $ref: ./paths/health.yml
+    $ref: ./paths/health.yml#/health
   /realms:
-    $ref: ./paths/realm.yml
+    $ref: ./paths/realm.yml#/listRealms
   /realms/{region}/{slug}:
-    $ref: ./paths/realm-detail.yml
+    $ref: ./paths/realm.yml#/getRealm
   /auctions/search:
-    $ref: ./paths/auction-market-search.yml
+    $ref: ./paths/auction.yml#/search
   /auctions/search/filters:
-    $ref: ./paths/auction-market-search-filters.yml
+    $ref: ./paths/auction.yml#/filters
   /auctions/items/detail:
-    $ref: ./paths/auction-market-item-detail.yml
+    $ref: ./paths/auction.yml#/getAuctionItemDetail
   /crafting/items/analytics:
-    $ref: ./paths/auction-market-item-crafting-analytics.yml
+    $ref: ./paths/auction.yml#/getAuctionItemCraftingAnalytics
   /crafting/search:
-    $ref: ./paths/crafting-market-search.yml
+    $ref: ./paths/crafting.yml#/search
   /crafting/filters:
-    $ref: ./paths/crafting-market-search-filters.yml
+    $ref: ./paths/crafting.yml#/filters

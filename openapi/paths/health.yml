@@ -1,11 +1,12 @@
-get:
-  tags:
-    - Health
-  operationId: health
-  summary: Check runtime health
-  description: Returns no content when the service is healthy, or a bare 503 when runtime health checks fail.
-  responses:
-    "204":
-      description: The application is healthy.
-    "503":
-      description: The application is running but unhealthy.
+health:
+  get:
+    tags:
+      - Health
+    operationId: health
+    summary: Check runtime health
+    description: Returns no content when the service is healthy, or a bare 503 when runtime health checks fail.
+    responses:
+      "204":
+        description: The application is healthy.
+      "503":
+        description: The application is running but unhealthy.

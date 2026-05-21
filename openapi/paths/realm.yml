@@ -1,15 +1,44 @@
-get:
-  tags:
-    - Realm
-  operationId: listRealms
-  summary: List all known realms across configured regions
-  description: Returns a flat list with one entry per individual realm.
-  responses:
-    "200":
-      description: Flat list of realms (one entry per individual realm).
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: ../components/schemas/realm.yml
+listRealms:
+  get:
+    tags:
+      - Realm
+    operationId: listRealms
+    summary: List all known realms across configured regions
+    description: Returns a flat list with one entry per individual realm.
+    responses:
+      "200":
+        description: Flat list of realms (one entry per individual realm).
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: ../components/schemas/realm.yml
+
+getRealm:
+  get:
+    tags:
+      - Realm
+    operationId: getRealm
+    summary: Get a single realm with its connected-realm and commodity auction-house status
+    parameters:
+      - name: region
+        in: path
+        required: true
+        schema:
+          type: string
+          enum: [us, eu, kr, tw]
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: Realm detail including the parent connected realm's auction house status and the regional commodity auction house status.
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/realm-detail.yml
+      "404":
+        description: No realm exists for the given region and slug, or the regional commodity placeholder has not been seeded yet.
