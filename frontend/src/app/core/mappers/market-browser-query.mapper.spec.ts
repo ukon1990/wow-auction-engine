@@ -78,4 +78,9 @@ describe('market-browser-query.mapper', () => {
       pageSize: null,
     });
   });
+
+  it('defaults to backend first page', () => {
+    expect(defaultMarketBrowserQueryState.page).toBe(0);
+    expect(readMarketBrowserQueryState(convertToParamMap({})).page).toBe(0);
+  });
 });

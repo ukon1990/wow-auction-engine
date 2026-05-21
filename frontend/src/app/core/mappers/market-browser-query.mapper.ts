@@ -25,7 +25,7 @@ export const defaultMarketBrowserQueryState: MarketBrowserQueryState = {
   maxPrice: null,
   minQuantity: null,
   maxQuantity: null,
-  page: 1,
+  page: 0,
   pageSize: 25,
   sortBy: 'itemName',
   sortDirection: 'asc',

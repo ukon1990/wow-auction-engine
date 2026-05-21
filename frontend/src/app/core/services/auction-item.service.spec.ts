@@ -7,12 +7,15 @@ import { AuctionMarketApiService } from '@api/generated';
 import { QueryService } from '@core/services/query.service';
 import { RealmSelectionService } from '@core/services/realm-selection.service';
 import { LocaleService } from '@core/services/locale.service';
+import { defaultMarketBrowserQueryState } from '@core/mappers/market-browser-query.mapper';
 
 describe('AuctionItemService', () => {
   let service: AuctionItemService;
+  let api: { filters: ReturnType<typeof vitest.fn>; search: ReturnType<typeof vitest.fn> };
 
   beforeEach(() => {
     const queryParams = signal({
+      ...defaultMarketBrowserQueryState,
       query: '',
       qualityIds: [],
       itemClassIds: [],
@@ -22,21 +25,22 @@ describe('AuctionItemService', () => {
       maxPrice: null,
       minQuantity: null,
       maxQuantity: null,
-      page: 1,
+      page: 0,
       pageSize: 25,
       sortBy: 'itemName',
       sortDirection: 'asc',
     });
+    api = {
+      filters: vitest.fn(() => of({ filters: [] })),
+      search: vitest.fn(() => of({ items: [] })),
+    };
 
     TestBed.configureTestingModule({
       providers: [
         AuctionItemService,
         {
           provide: AuctionMarketApiService,
-          useValue: {
-            getAuctionMarketFilters: vitest.fn(() => of({ filters: [] })),
-            searchAuctionMarket: vitest.fn(() => of({ items: [] })),
-          },
+          useValue: api,
         },
         {
           provide: QueryService,
@@ -68,5 +72,31 @@ describe('AuctionItemService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('requests the first backend page for the default market query', () => {
+    service.getPageByQuery('en_GB', 'eu', 'argent-dawn', defaultMarketBrowserQueryState);
+
+    expect(api.search).toHaveBeenCalledWith(
+      'eu',
+      'argent-dawn',
+      'en_GB',
+      0,
+      25,
+      'itemName',
+      'asc',
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      'body',
+      false,
+      { transferCache: false },
+    );
   });
 });

@@ -45,21 +45,21 @@ export class AuctionItemService extends BaseSearchService<
   toggleFilter(optionId: string): void {
     this.navigateQueryState({
       ...applyMarketFilterToggle(this.currentQueryState(), optionId),
-      page: 1,
+      page: defaultMarketBrowserQueryState.page,
     });
   }
 
   selectFilter(sectionId: string, optionId: string | null): void {
     this.navigateQueryState({
       ...applyMarketFilterSelect(this.currentQueryState(), sectionId, optionId),
-      page: 1,
+      page: defaultMarketBrowserQueryState.page,
     });
   }
 
   setRangeFilter(sectionId: string, bound: 'min' | 'max', value: number | null): void {
     this.navigateQueryState({
       ...applyMarketRangeFilter(this.currentQueryState(), sectionId, bound, value),
-      page: 1,
+      page: defaultMarketBrowserQueryState.page,
     });
   }
 
