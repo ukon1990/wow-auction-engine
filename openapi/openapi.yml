@@ -42,8 +42,8 @@ paths:
     $ref: ./paths/crafting.yml#/filters
 components:
   schemas:
-    AdminUser:
-      $ref: ./components/schemas/admin/users.yml
+    User:
+      $ref: ./components/schemas/admin/user.yml
     AuctionHouseStatus:
       $ref: ./components/schemas/auction-house-status.yml
     AuctionListingKey:
