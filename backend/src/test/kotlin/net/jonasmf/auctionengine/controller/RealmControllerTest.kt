@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.controller
 
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.generated.model.AuctionHouseStatus
 import net.jonasmf.auctionengine.generated.model.Realm
 import net.jonasmf.auctionengine.generated.model.RealmDetail
@@ -33,10 +34,10 @@ class RealmControllerTest {
                     ),
                 queryDuration = 3.milliseconds,
                 mapSortDuration = 2.milliseconds,
-            )
+        )
         every { realmQueryService.listAllRealms() } returns catalog
 
-        val response = controller.listRealms()
+        val response = runBlocking { controller.listRealms() }
 
         assertEquals(200, response.statusCode.value())
         assertEquals(listOf("Stormrage"), response.body?.map { it.name })
@@ -70,10 +71,10 @@ class RealmControllerTest {
                         lastModified = null,
                         nextUpdate = null,
                     ),
-            )
+        )
         every { realmQueryService.getRealmDetail("eu", "stormrage") } returns detail
 
-        val response = controller.getRealm("eu", "stormrage")
+        val response = runBlocking { controller.getRealm("eu", "stormrage") }
 
         assertEquals(200, response.statusCode.value())
         assertEquals("stormrage", response.body?.realm?.slug)
