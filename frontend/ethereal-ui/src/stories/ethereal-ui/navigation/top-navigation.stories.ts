@@ -1,5 +1,5 @@
 import { provideRouter } from '@angular/router';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 
 import {
   TopNavigationChildRoutesStoryHostComponent,
@@ -8,15 +8,25 @@ import {
 
 const meta: Meta<TopNavigationStoryHostComponent> = {
   title: 'Ethereal UI/Navigation',
-  component: TopNavigationStoryHostComponent,
   parameters: { layout: 'fullscreen' },
-  decorators: [applicationConfig({ providers: [provideRouter([])] })],
+  decorators: [
+    applicationConfig({ providers: [provideRouter([])] }),
+    moduleMetadata({
+      imports: [TopNavigationChildRoutesStoryHostComponent, TopNavigationStoryHostComponent],
+    }),
+  ],
 };
 
 export default meta;
 
-export const TopNavigation: StoryObj<TopNavigationStoryHostComponent> = {};
+export const TopNavigation: StoryObj<TopNavigationStoryHostComponent> = {
+  render: () => ({
+    template: '<story-top-navigation-host />',
+  }),
+};
 
 export const TopNavigationWithChildRoutes: StoryObj<TopNavigationChildRoutesStoryHostComponent> = {
-  component: TopNavigationChildRoutesStoryHostComponent,
+  render: () => ({
+    template: '<story-top-navigation-child-routes-host />',
+  }),
 };

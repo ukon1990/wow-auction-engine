@@ -63,6 +63,18 @@ export const topNavigationChildRouteItems: readonly NavItem[] = [
         icon: 'manage_accounts',
         routerLink: '/admin/users',
       },
+      {
+        id: 'admin/audit-log',
+        label: 'Audit Log',
+        icon: 'query_stats',
+        routerLink: '/admin/audit-log',
+      },
+      {
+        id: 'admin/settings',
+        label: 'Settings',
+        icon: 'settings',
+        routerLink: '/admin/settings',
+      },
     ],
   },
 ];
@@ -500,6 +512,7 @@ export class ReactiveFormStoryHostComponent {
 }
 
 @Component({
+  selector: 'story-top-navigation-host',
   imports: [TopNavComponent],
   template: `
     <ee-top-nav
@@ -523,6 +536,7 @@ export class TopNavigationStoryHostComponent {
 }
 
 @Component({
+  selector: 'story-top-navigation-child-routes-host',
   imports: [TopNavComponent],
   template: `
     <ee-top-nav
