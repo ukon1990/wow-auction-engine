@@ -14,6 +14,8 @@ const realmFixture: Realm = {
   timezone: 'Europe/Paris',
 };
 
+const loadComponent = () => Promise.resolve(class TestRouteComponent {});
+
 describe('MenuService', () => {
   let service: MenuService;
   let routeSnapshot: ActivatedRouteSnapshot;
@@ -51,8 +53,8 @@ describe('MenuService', () => {
     it('returns nav items for routes with a title and icon, exposing absolute routerLinks', async () => {
       const links = await service.getActiveRouteLinks(
         [
-          { title: 'First page', path: '', icon: 'home' },
-          { title: 'Second page', path: 'second', icon: 'pageview' },
+          { title: 'First page', path: '', icon: 'home', loadComponent },
+          { title: 'Second page', path: 'second', icon: 'pageview', loadComponent },
         ],
         routeSnapshot,
         routerState,
@@ -107,7 +109,9 @@ describe('MenuService', () => {
         [
           {
             path: ':region/:realm',
-            children: [{ path: 'auctions', title: 'Auctions', icon: 'travel_explore' }],
+            children: [
+              { path: 'auctions', title: 'Auctions', icon: 'travel_explore', loadComponent },
+            ],
           },
         ],
         routeSnapshot,
@@ -124,7 +128,9 @@ describe('MenuService', () => {
         [
           {
             path: ':region/:realm',
-            children: [{ path: 'auctions', title: 'Auctions', icon: 'travel_explore' }],
+            children: [
+              { path: 'auctions', title: 'Auctions', icon: 'travel_explore', loadComponent },
+            ],
           },
         ],
         routeSnapshot,
@@ -144,11 +150,11 @@ describe('MenuService', () => {
           {
             path: ':region/:realm',
             children: [
-              { path: 'auctions', title: 'Auctions', icon: 'travel_explore' },
-              { path: 'crafting', title: 'Crafting', icon: 'schema' },
+              { path: 'auctions', title: 'Auctions', icon: 'travel_explore', loadComponent },
+              { path: 'crafting', title: 'Crafting', icon: 'schema', loadComponent },
             ],
           },
-          { path: 'settings', title: 'Settings', icon: 'settings' },
+          { path: 'settings', title: 'Settings', icon: 'settings', loadComponent },
         ],
         routeSnapshot,
         routerState,
@@ -169,9 +175,11 @@ describe('MenuService', () => {
         [
           {
             path: ':region/:realm',
-            children: [{ path: 'auctions', title: 'Auctions', icon: 'travel_explore' }],
+            children: [
+              { path: 'auctions', title: 'Auctions', icon: 'travel_explore', loadComponent },
+            ],
           },
-          { path: 'settings', title: 'Settings', icon: 'settings' },
+          { path: 'settings', title: 'Settings', icon: 'settings', loadComponent },
         ],
         routeSnapshot,
         routerState,
@@ -182,6 +190,41 @@ describe('MenuService', () => {
       expect(links.length).toBe(1);
       expect(links[0].label).toBe('Settings');
       expect(links[0].routerLink).toBe('/settings');
+    });
+
+    it('keeps titled parents without loadComponent as non-links while exposing linked children', async () => {
+      const links = await service.getActiveRouteLinks(
+        [
+          {
+            path: 'admin',
+            title: 'Admin',
+            icon: 'admin_panel_settings',
+            children: [
+              {
+                path: 'users',
+                title: 'Users',
+                icon: 'manage_accounts',
+                loadComponent,
+              },
+            ],
+          },
+        ],
+        routeSnapshot,
+        routerState,
+      );
+
+      expect(links.length).toBe(1);
+      expect(links[0].label).toBe('Admin');
+      expect(links[0].routerLink).toBeUndefined();
+      expect(links[0].children).toEqual([
+        {
+          id: 'admin/users',
+          label: 'Users',
+          icon: 'manage_accounts',
+          routerLink: '/admin/users',
+          children: [],
+        },
+      ]);
     });
   });
 });
