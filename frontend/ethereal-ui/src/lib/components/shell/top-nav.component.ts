@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { Params, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { CharacterSummary, LocaleOption, NavItem } from '../../models/ui-models';
@@ -35,7 +44,62 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
           i18n-aria-label="@@topNav.primaryNavigation"
         >
           @for (item of items(); track item.id) {
-            @if (item.routerLink) {
+            @if (hasChildren(item)) {
+              <div
+                class="relative"
+                routerLinkActive="border-b-2 border-primary-container text-primary-container"
+                [routerLinkActiveOptions]="{ exact: true }"
+                #childLinksActive="routerLinkActive"
+              >
+                <button
+                  type="button"
+                  [class]="navClass(item, childLinksActive.isActive)"
+                  [attr.aria-expanded]="isDropdownOpen(item.id)"
+                  aria-haspopup="menu"
+                  (click)="toggleDropdown(item.id)"
+                >
+                  <ee-symbol-icon class="text-[18px]" [name]="item.icon" />
+                  <span>{{ item.label }}</span>
+                  <ee-symbol-icon
+                    class="text-[18px]"
+                    [name]="isDropdownOpen(item.id) ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+                  />
+                </button>
+                <div
+                  class="absolute left-0 top-full z-[70] mt-2 min-w-52 overflow-hidden rounded border border-white/10 bg-slate-950/95 py-1 shadow-[0_12px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+                  [class.hidden]="!isDropdownOpen(item.id)"
+                  [attr.aria-hidden]="!isDropdownOpen(item.id)"
+                  role="menu"
+                >
+                  @for (child of item.children ?? []; track child.id) {
+                    @if (child.routerLink) {
+                      <a
+                        [routerLink]="child.routerLink"
+                        routerLinkActive="bg-yellow-500/10 text-primary-container"
+                        [routerLinkActiveOptions]="{ exact: true }"
+                        class="flex items-center gap-3 px-4 py-3 font-cinzel text-sm font-bold uppercase tracking-wide text-slate-300 transition hover:bg-white/5 hover:text-on-surface"
+                        role="menuitem"
+                        [attr.aria-current]="child.id === activeId() ? 'page' : null"
+                        (click)="closeDropdown()"
+                      >
+                        <ee-symbol-icon class="text-[18px]" [name]="child.icon" />
+                        <span class="whitespace-nowrap">{{ child.label }}</span>
+                      </a>
+                    } @else {
+                      <button
+                        type="button"
+                        class="flex w-full items-center gap-3 px-4 py-3 text-left font-cinzel text-sm font-bold uppercase tracking-wide text-slate-300 transition hover:bg-white/5 hover:text-on-surface"
+                        role="menuitem"
+                        (click)="onDropdownButton(child.id)"
+                      >
+                        <ee-symbol-icon class="text-[18px]" [name]="child.icon" />
+                        <span class="whitespace-nowrap">{{ child.label }}</span>
+                      </button>
+                    }
+                  }
+                </div>
+              </div>
+            } @else if (item.routerLink) {
               <a
                 [routerLink]="item.routerLink"
                 routerLinkActive="border-b-2 border-primary-container text-primary-container"
@@ -46,7 +110,8 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
                 {{ item.label }}
               </a>
             } @else {
-              <button type="button" [class]="navClass(item.id)" (click)="onPrimaryButton(item.id)">
+              <button type="button" [class]="navClass(item)" (click)="onPrimaryButton(item.id)">
+                <ee-symbol-icon class="text-[18px]" [name]="item.icon" />
                 {{ item.label }}
               </button>
             }
@@ -87,6 +152,8 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopNavComponent {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
   readonly items = input.required<readonly NavItem[]>();
   readonly activeId = input.required<string>();
   readonly character = input.required<CharacterSummary>();
@@ -100,10 +167,26 @@ export class TopNavComponent {
   readonly localeSelected = output<string>();
   readonly toggleMobileDrawer = output<void>();
 
-  protected navClass(id: string): string {
+  protected readonly openDropdownId = signal<string | null>(null);
+
+  @HostListener('document:click', ['$event'])
+  protected onDocumentClick(event: MouseEvent): void {
+    const target = event.target;
+    if (target instanceof Node && this.host.nativeElement.contains(target)) {
+      return;
+    }
+    this.closeDropdown();
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onDocumentEscape(): void {
+    this.closeDropdown();
+  }
+
+  protected navClass(item: NavItem, routerActive = false): string {
     const base =
-      'rounded px-1 py-2 font-cinzel text-sm font-bold uppercase tracking-wide transition hover:bg-white/5';
-    return id === this.activeId()
+      'inline-flex items-center gap-1.5 rounded px-1 py-2 font-cinzel text-sm font-bold uppercase tracking-wide transition hover:bg-white/5';
+    return item.id === this.activeId() || this.hasActiveChild(item) || routerActive
       ? `${base} border-b-2 border-primary-container text-primary-container`
       : `${base} text-slate-400 hover:text-on-surface`;
   }
@@ -114,6 +197,31 @@ export class TopNavComponent {
 
   protected onPrimaryButton(id: string): void {
     this.navSelected.emit(id);
+  }
+
+  protected hasChildren(item: NavItem): boolean {
+    return Boolean(item.children?.length);
+  }
+
+  protected hasActiveChild(item: NavItem): boolean {
+    return Boolean(item.children?.some((child) => child.id === this.activeId()));
+  }
+
+  protected isDropdownOpen(id: string): boolean {
+    return this.openDropdownId() === id;
+  }
+
+  protected toggleDropdown(id: string): void {
+    this.openDropdownId.update((openId) => (openId === id ? null : id));
+  }
+
+  protected closeDropdown(): void {
+    this.openDropdownId.set(null);
+  }
+
+  protected onDropdownButton(id: string): void {
+    this.navSelected.emit(id);
+    this.closeDropdown();
   }
 
   protected onLocaleChange(event: Event): void {
