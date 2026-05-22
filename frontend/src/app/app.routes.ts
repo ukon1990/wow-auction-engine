@@ -41,22 +41,6 @@ export const routes: TitledRoutes = [
       import('./features/profile/profile.page').then((module) => module.ProfilePage),
   },
   {
-    path: 'admin',
-    title: $localize`:@@route.admin.title:Admin`,
-    icon: 'admin_panel_settings',
-    children: [
-      {
-        path: 'users',
-        title: $localize`:@@route.admin.users:Users`,
-        icon: 'manage_accounts',
-        loadComponent: () =>
-          import('@features/admin/user-administration/user-administration.page').then(
-            (module) => module.UserAdministrationPage,
-          ),
-      },
-    ],
-  },
-  {
     path: ':region/:realm',
     canActivate: [realmSelectedGuard],
     children: [
@@ -142,6 +126,22 @@ export const routes: TitledRoutes = [
               ),
           },
         ],
+      },
+    ],
+  },
+  {
+    path: 'admin',
+    title: $localize`:@@route.admin.title:Admin`,
+    icon: 'admin_panel_settings',
+    children: [
+      {
+        path: 'users',
+        title: $localize`:@@route.admin.users:Users`,
+        icon: 'manage_accounts',
+        loadComponent: () =>
+          import('@features/admin/user-administration/user-administration.page').then(
+            (module) => module.UserAdministrationPage,
+          ),
       },
     ],
   },
