@@ -17,6 +17,7 @@ describe('userHasRoleGuard', () => {
 
   const authServiceMock = {
     user: vi.fn(),
+    whenReady: vi.fn(),
   };
 
   const route = {
@@ -32,10 +33,11 @@ describe('userHasRoleGuard', () => {
   const state = {
     url: '/admin',
   } as RouterStateSnapshot;
-  const getAuthUserWithRoles = (roles: UserRole[]): AuthUser => ({
-    roles,
-    email: 'example@example.com',
-  });
+  const getAuthUserWithRoles = (roles: UserRole[]): Promise<AuthUser> =>
+    Promise.resolve({
+      roles,
+      email: 'example@example.com',
+    });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -52,15 +54,15 @@ describe('userHasRoleGuard', () => {
     expect(executeGuard).toBeTruthy();
   });
 
-  it('should be true if the user has the required role', () => {
-    authServiceMock.user.mockReturnValue(getAuthUserWithRoles([UserRole.Admin]));
-    expect(executeGuard(route, state)).toBeTruthy();
+  it('should be true if the user has the required role', async () => {
+    authServiceMock.whenReady.mockReturnValue(getAuthUserWithRoles([UserRole.Admin]));
+    await expect(executeGuard(route, state)).resolves.toBeTruthy();
     expect(routerMock.createUrlTree).not.toHaveBeenCalled();
   });
 
-  it('should be false if the user does not have the required role', () => {
-    authServiceMock.user.mockReturnValue(getAuthUserWithRoles([]));
-    expect(executeGuard(route, state)).toBeFalsy();
+  it('should be false if the user does not have the required role', async () => {
+    authServiceMock.whenReady.mockReturnValue(getAuthUserWithRoles([]));
+    await expect(executeGuard(route, state)).resolves.toBeFalsy();
     expect(routerMock.createUrlTree).toHaveBeenCalledOnce();
   });
 });
