@@ -2,26 +2,47 @@ package net.jonasmf.auctionengine.service.admin
 
 import aws.sdk.kotlin.services.cognitoidentityprovider.CognitoIdentityProviderClient
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.ListUsersRequest
+import aws.smithy.kotlin.runtime.collections.push
+import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.generated.model.Users
+import net.jonasmf.auctionengine.mapper.admin.toUser
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
 class UserService(
-    @Value("\${aws.cognito.identity-provider.url}")
-    private val cognitoPoolId: String,
+    // @Value("\${spring.cloud.aws.cognito.pool_id}")
+    // We can derive the pool ID from here
+    @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    private val issuerUri: String,
+    private val cognitoRegion: String = "eu-north-1",
 ) {
-    suspend fun getUsers(): List<Users> {
+    private val logger = LoggerFactory.getLogger(UserService::class.java)
+
+    fun getCognitoPoolId(): String? {
+        if (issuerUri == null) return null
+        val parts = issuerUri.split("amazonaws.com/")
+        val poolId = parts[parts.size - 1] // The last part is the pool id
+        return poolId ?: null
+    }
+
+    suspend fun getUsers(): List<User> {
+        val poolId = getCognitoPoolId()
         val request =
             ListUsersRequest {
-                this.userPoolId = userPoolId
+                this.userPoolId = poolId
             }
-        CognitoIdentityProviderClient.fromEnvironment { region = "us-east-1" }.use { cognitoClient ->
+        var users: List<User> = mutableListOf<User>()
+
+        logger.info("Fetching users for pool $poolId...")
+        CognitoIdentityProviderClient.fromEnvironment { region = cognitoRegion }.use { cognitoClient ->
             val response = cognitoClient.listUsers(request)
-            response.users?.forEach { user ->
-                println("The user name is ${user.username}")
-            }
+            users =
+                response.users?.map {
+                    it.toUser()
+                }!!
         }
-        return emptyList<Users>()
+        return users
     }
 }

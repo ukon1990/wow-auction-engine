@@ -8,6 +8,8 @@ spring:
       credentials:
         access-key: ${AWS_ACCESS_KEY:local-dev-key}
         secret-key: ${AWS_SECRET_KEY:local-dev-secret}
+      cognito:
+        pool_id: ${WAE_COGNITO_USER_POOL_ID}
       dynamodb:
         endpoint: "http://localhost:4566"
       s3:
