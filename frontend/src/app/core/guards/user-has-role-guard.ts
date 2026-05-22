@@ -3,13 +3,17 @@ import { UserRole } from '@api/auth/auth.model';
 import { inject } from '@angular/core';
 import { AuthService } from '@core/services/auth.service';
 
-export const userHasRoleGuard: (userRole: UserRole) => CanActivateFn =
-  (userRole: UserRole) => () => {
-    const service = inject(AuthService);
-    const user = service.user();
-    if (!userRole || !user) return false;
-    const hasRole = service.user()?.roles?.includes(userRole) === true;
+export const userHasRoleGuard =
+  (userRole: UserRole): CanActivateFn =>
+  async (_route, state) => {
+    const auth = inject(AuthService);
     const router = inject(Router);
 
-    return hasRole ? true : router.createUrlTree(['']);
+    const user = await auth.whenReady();
+
+    return user?.roles.includes(userRole)
+      ? true
+      : router.createUrlTree(['/login'], {
+          queryParams: { returnUrl: state.url },
+        });
   };
