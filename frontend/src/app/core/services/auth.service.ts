@@ -9,10 +9,13 @@ import {
   AuthMeResponse,
   AuthResetPasswordResponse,
   AuthSignupResponse,
+  UserRole,
 } from '@api/auth/auth.model';
+import { Router } from '@angular/router';
 
 export type AuthUser = {
   readonly email: string | null;
+  readonly roles: UserRole[];
 };
 
 @Injectable({ providedIn: 'root' })
@@ -20,17 +23,25 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   readonly user = signal<AuthUser | null>(null);
   readonly loaded = signal(false);
+  private readonly router = inject(Router);
 
   refresh(): Promise<AuthUser | null> {
     return firstValueFrom(
       this.http.get<AuthMeResponse>('/auth/me').pipe(
-        map((response) => (response.authenticated ? { email: response.email } : null)),
+        map((response) =>
+          response.authenticated ? { email: response.email, roles: response.roles } : null,
+        ),
         tap((user) => this.user.set(user)),
         catchError(() => {
           this.user.set(null);
           return of(null);
         }),
-        finalize(() => this.loaded.set(true)),
+        finalize(() => {
+          this.loaded.set(true);
+          this.router.navigateByUrl(this.router.url, {
+            onSameUrlNavigation: 'reload',
+          }).catch(console.error);
+        }),
       ),
     );
   }
