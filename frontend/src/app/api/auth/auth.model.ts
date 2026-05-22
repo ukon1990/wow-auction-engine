@@ -4,11 +4,15 @@ export type AuthConfig = {
   sessionSecret: string;
 };
 
+export enum UserRole {
+  Admin = 'admin',
+}
 export type SessionPayload = {
   accessToken: string;
   idToken?: string;
   refreshToken?: string;
   expiresAt: number;
+  roles: UserRole[];
 };
 
 export type OAuthStatePayload = {
@@ -78,6 +82,7 @@ export type AuthMeResponse =
   | {
       authenticated: true;
       email: string | null;
+      roles: UserRole[];
     }
   | {
       authenticated: false;
