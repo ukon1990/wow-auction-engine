@@ -6,8 +6,8 @@ properties:
     dailySeries:
         type: array
         items:
-            $ref: ./auction-market-item-crafting-analytics-point.yml
+            $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemCraftingAnalyticsPoint"
     heatmap:
         type: array
         items:
-            $ref: ./auction-market-item-crafting-heatmap-cell.yml
+            $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemCraftingHeatmapCell"

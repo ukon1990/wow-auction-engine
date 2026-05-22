@@ -12,7 +12,7 @@ class HealthController(
 ) : HealthApi {
     private val logger = LoggerFactory.getLogger(HealthController::class.java)
 
-    override fun health(): ResponseEntity<Unit> {
+    override suspend fun health(): ResponseEntity<Unit> {
         val snapshot = runtimeHealthTracker.snapshot()
         return if (snapshot.healthy) {
             ResponseEntity.noContent().build()

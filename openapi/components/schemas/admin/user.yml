@@ -1,0 +1,19 @@
+type: object
+properties:
+    sub:
+        type: string
+        description: This is the users GUID id.
+    username:
+        type: string
+    email:
+        type: string
+    email_verified:
+        type: boolean
+    status: # UNCONFIRMED, CONFIRMED
+        type: string
+    created:
+        type: string
+        format: date-time
+    lastModified:
+        type: string
+        format: date-time

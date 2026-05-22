@@ -4,13 +4,15 @@ info:
   version: 0.0.1
   description: Public API for WoW Auction Engine.
 servers:
-  - url: http://localhost:8080/api
-    description: Local backend
   - url: /api
     description: Same origin
+  - url: http://localhost:8080/api
+    description: Local backend (direct)
 tags:
   - name: Health
     description: Runtime health endpoints.
+  - name: Admin
+    description: Endpoints for administrating users and data.
   - name: Realm
     description: Realm catalog and per-realm auction house status.
   - name: AuctionMarket
@@ -20,6 +22,8 @@ tags:
 paths:
   /health:
     $ref: ./paths/health.yml#/health
+  /admin/users:
+    $ref: ./paths/admin.yml#/getUsers
   /realms:
     $ref: ./paths/realm.yml#/listRealms
   /realms/{region}/{slug}:
@@ -36,3 +40,67 @@ paths:
     $ref: ./paths/crafting.yml#/search
   /crafting/filters:
     $ref: ./paths/crafting.yml#/filters
+components:
+  schemas:
+    User:
+      $ref: ./components/schemas/admin/user.yml
+    AuctionHouseStatus:
+      $ref: ./components/schemas/auction-house-status.yml
+    AuctionListingKey:
+      $ref: ./components/schemas/auction-listing-key.yml
+    AuctionMarketFilter:
+      $ref: ./components/schemas/auction-market-filter.yml
+    AuctionMarketFilterOption:
+      $ref: ./components/schemas/auction-market-filter-option.yml
+    AuctionMarketFilterResponse:
+      $ref: ./components/schemas/auction-market-filter-response.yml
+    AuctionMarketItem:
+      $ref: ./components/schemas/auction-market-item.yml
+    AuctionMarketItemCrafting:
+      $ref: ./components/schemas/auction-market-item-crafting.yml
+    AuctionMarketItemCraftingAnalyticsPoint:
+      $ref: ./components/schemas/auction-market-item-crafting-analytics-point.yml
+    AuctionMarketItemCraftingAnalyticsResponse:
+      $ref: ./components/schemas/auction-market-item-crafting-analytics-response.yml
+    AuctionMarketItemCraftingDetail:
+      $ref: ./components/schemas/auction-market-item-crafting-detail.yml
+    AuctionMarketItemCraftingHeatmapCell:
+      $ref: ./components/schemas/auction-market-item-crafting-heatmap-cell.yml
+    AuctionMarketItemCraftingReagent:
+      $ref: ./components/schemas/auction-market-item-crafting-reagent.yml
+    AuctionMarketItemDetailPoint:
+      $ref: ./components/schemas/auction-market-item-detail-point.yml
+    AuctionMarketItemDetailResponse:
+      $ref: ./components/schemas/auction-market-item-detail-response.yml
+    AuctionMarketItemDetailSummary:
+      $ref: ./components/schemas/auction-market-item-detail-summary.yml
+    AuctionMarketItemHourlyPoint:
+      $ref: ./components/schemas/auction-market-item-hourly-point.yml
+    AuctionMarketMetrics:
+      $ref: ./components/schemas/auction-market-metrics.yml
+    AuctionMarketNamedId:
+      $ref: ./components/schemas/auction-market-named-id.yml
+    AuctionMarketQuantityPieSlice:
+      $ref: ./components/schemas/auction-market-quantity-pie-slice.yml
+    AuctionMarketRecipe:
+      $ref: ./components/schemas/auction-market-recipe.yml
+    AuctionMarketSearchPage:
+      $ref: ./components/schemas/auction-market-search-page.yml
+    AuctionMarketSearchRow:
+      $ref: ./components/schemas/auction-market-search-row.yml
+    AuctionMarketSort:
+      $ref: ./components/schemas/auction-market-sort.yml
+    CraftingMarketFilterResponse:
+      $ref: ./components/schemas/crafting-market-filter-response.yml
+    CraftingMarketSearchPage:
+      $ref: ./components/schemas/crafting-market-search-page.yml
+    CraftingMarketSearchRow:
+      $ref: ./components/schemas/crafting-market-search-row.yml
+    MarketDataSource:
+      $ref: ./components/schemas/market-data-source.yml
+    PageMetadata:
+      $ref: ./components/schemas/page-metadata.yml
+    Realm:
+      $ref: ./components/schemas/realm.yml
+    RealmDetail:
+      $ref: ./components/schemas/realm-detail.yml

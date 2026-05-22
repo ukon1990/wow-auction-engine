@@ -359,19 +359,40 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
 
         @Test
         fun `should update the next update time, and add a new log entry for successful updates`() {
-            val originalState = repository.findById(1)
-            val newLastModified = originalState?.lastModified?.plus(60.minutes)
-            auctionHouseService.updateTimes(1, newLastModified, true)
+            val connectedRealmId = 1004
+            repository.save(
+                AuctionHouse(
+                    id = connectedRealmId,
+                    connectedId = connectedRealmId,
+                    autoUpdate = true,
+                    region = Region.Europe,
+                    avgDelay = 60,
+                    nextUpdate = getOffsetFromNow(-10),
+                    lastModified = getOffsetFromNow(-300),
+                ),
+            )
 
-            val result = repository.findById(1)
+            var lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
+            auctionHouseService.updateTimes(
+                connectedRealmId,
+                lastModified.plus(60.minutes),
+                true,
+            )
+            lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
+
+            val newLastModified = lastModified.plus(60.minutes)
+            auctionHouseService.updateTimes(connectedRealmId, newLastModified, true)
+
+            val result = repository.findById(connectedRealmId)
             assertEquals(newLastModified, result?.lastModified)
             assertTrue(result?.lastModified!! < result.nextUpdate!!)
             assertEquals(60, result.lowestDelay)
             assertEquals(60, result.avgDelay)
             assertEquals(60, result.highestDelay)
+            assertEquals(60, result.nextUpdate!!.minus(result.lastModified!!).inWholeMinutes)
 
-            val logEntries = auctionHouseUpdateLogRepository.findByIdAndMostRecentLastModified(1)
-            assertEquals(2, logEntries.size)
+            val logEntries = auctionHouseUpdateLogRepository.findByIdAndMostRecentLastModified(connectedRealmId)
+            assertEquals(3, logEntries.size)
         }
 
         @Test

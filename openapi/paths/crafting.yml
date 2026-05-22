@@ -148,7 +148,7 @@ search:
         content:
           application/json:
             schema:
-              $ref: ../components/schemas/crafting-market-search-page.yml
+              $ref: "../openapi.yml#/components/schemas/CraftingMarketSearchPage"
       "400":
         description: Invalid search request.
       "404":
@@ -184,7 +184,7 @@ filters:
         content:
           application/json:
             schema:
-              $ref: ../components/schemas/auction-market-filter-response.yml
+              $ref: "../openapi.yml#/components/schemas/AuctionMarketFilterResponse"
       "400":
         description: Invalid filter request.
       "404":

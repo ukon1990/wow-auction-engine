@@ -7,8 +7,8 @@ properties:
   items:
     type: array
     items:
-      $ref: ./crafting-market-search-row.yml
+      $ref: "../../openapi.yml#/components/schemas/CraftingMarketSearchRow"
   page:
-    $ref: ./page-metadata.yml
+    $ref: "../../openapi.yml#/components/schemas/PageMetadata"
   sort:
-    $ref: ./auction-market-sort.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionMarketSort"

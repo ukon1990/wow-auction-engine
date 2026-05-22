@@ -2,8 +2,8 @@ type: object
 required: [realm, auctionHouse, commodity]
 properties:
   realm:
-    $ref: ./realm.yml
+    $ref: "../../openapi.yml#/components/schemas/Realm"
   auctionHouse:
-    $ref: ./auction-house-status.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionHouseStatus"
   commodity:
-    $ref: ./auction-house-status.yml
+    $ref: "../../openapi.yml#/components/schemas/AuctionHouseStatus"

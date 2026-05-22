@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.controller
 
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.service.RuntimeHealthSnapshot
 import net.jonasmf.auctionengine.service.RuntimeHealthTracker
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -16,7 +17,7 @@ class HealthControllerTest {
     fun `health endpoint returns no content`() {
         every { runtimeHealthTracker.snapshot(any()) } returns RuntimeHealthSnapshot(healthy = true)
 
-        val response = controller.health()
+        val response = runBlocking { controller.health() }
 
         assertEquals(HttpStatus.NO_CONTENT, response.statusCode)
     }
@@ -26,7 +27,7 @@ class HealthControllerTest {
         every { runtimeHealthTracker.snapshot(any()) } returns
             RuntimeHealthSnapshot(healthy = false, reason = "stalled")
 
-        val response = controller.health()
+        val response = runBlocking { controller.health() }
 
         assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.statusCode)
         assertEquals(null, response.headers.getFirst("X-Health-Reason"))

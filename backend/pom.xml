@@ -139,6 +139,16 @@
             <artifactId>kotlinx-coroutines-core-jvm</artifactId>
             <version>${kotlinx.coroutines.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-reactor</artifactId>
+            <version>${kotlinx.coroutines.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-reactor</artifactId>
+            <version>${kotlinx.coroutines.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
@@ -155,6 +165,11 @@
         <dependency>
             <groupId>aws.sdk.kotlin</groupId>
             <artifactId>s3-jvm</artifactId>
+            <version>${aws.sdk.kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>aws.sdk.kotlin</groupId>
+            <artifactId>cognitoidentityprovider-jvm</artifactId>
             <version>${aws.sdk.kotlin.version}</version>
         </dependency>
         <dependency>
@@ -301,8 +316,8 @@
                             <modelPackage>net.jonasmf.auctionengine.generated.model</modelPackage>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
-                            <generateApiDocumentation>false</generateApiDocumentation>
-                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateApiDocumentation>true</generateApiDocumentation>
+                            <generateModelDocumentation>true</generateModelDocumentation>
                             <nameMappings>
                                 <nameMapping>isCommodity=commodityOnly</nameMapping>
                             </nameMappings>
@@ -313,6 +328,8 @@
                                 <interfaceOnly>true</interfaceOnly>
                                 <sourceFolder>src/main/kotlin</sourceFolder>
                                 <useSpringBoot3>true</useSpringBoot3>
+                                <reactive>true</reactive>
+                                <useFlowForArrayReturnType>false</useFlowForArrayReturnType>
                                 <useTags>true</useTags>
                             </configOptions>
                         </configuration>

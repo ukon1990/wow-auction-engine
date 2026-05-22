@@ -17,9 +17,9 @@ required:
     - craftings
 properties:
     item:
-        $ref: ./auction-market-item.yml
+        $ref: "../../openapi.yml#/components/schemas/AuctionMarketItem"
     listingKey:
-        $ref: ./auction-listing-key.yml
+        $ref: "../../openapi.yml#/components/schemas/AuctionListingKey"
         description: Effective listing key used for all queries (defaults applied when query omitted).
     rollupListing:
         type: boolean
@@ -29,42 +29,42 @@ properties:
     marketDataSources:
         type: array
         items:
-            $ref: ./market-data-source.yml
+            $ref: "../../openapi.yml#/components/schemas/MarketDataSource"
     selectedRealm:
-        $ref: ./auction-market-metrics.yml
+        $ref: "../../openapi.yml#/components/schemas/AuctionMarketMetrics"
     commodity:
-        $ref: ./auction-market-metrics.yml
+        $ref: "../../openapi.yml#/components/schemas/AuctionMarketMetrics"
     summary:
-        $ref: ./auction-market-item-detail-summary.yml
+        $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemDetailSummary"
     dailySeriesRealm:
         type: array
         items:
-            $ref: ./auction-market-item-detail-point.yml
+            $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemDetailPoint"
     dailySeriesCommodity:
         type: array
         items:
-            $ref: ./auction-market-item-detail-point.yml
+            $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemDetailPoint"
     hourlySeriesRealm:
         type: array
         items:
-            $ref: ./auction-market-item-hourly-point.yml
+            $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemHourlyPoint"
     hourlySeriesCommodity:
         type: array
         items:
-            $ref: ./auction-market-item-hourly-point.yml
+            $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemHourlyPoint"
     quantityPieRealm:
         type: array
         items:
-            $ref: ./auction-market-quantity-pie-slice.yml
+            $ref: "../../openapi.yml#/components/schemas/AuctionMarketQuantityPieSlice"
     quantityPieCommodity:
         type: array
         items:
-            $ref: ./auction-market-quantity-pie-slice.yml
+            $ref: "../../openapi.yml#/components/schemas/AuctionMarketQuantityPieSlice"
     crafting:
-        $ref: ./auction-market-item-crafting.yml
+        $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemCrafting"
         nullable: true
         deprecated: true
     craftings:
         type: array
         items:
-            $ref: ./auction-market-item-crafting-detail.yml
+            $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemCraftingDetail"

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.MvcResult
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -21,20 +23,24 @@ class AuctionMarketSearchRequestCorrelationIntegrationTest : IntegrationTestBase
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
 
+    private fun performAsync(result: MvcResult) = mockMvc.perform(asyncDispatch(result))
+
     @Test
     fun `market search echoes x-request-id for log correlation`() {
         MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
 
-        mockMvc
-            .perform(
-                get("/api/auctions/search")
-                    .contextPath("/api")
-                    .param("region", "eu")
-                    .param("realmSlug", "argent-dawn")
-                    .param("page", "0")
-                    .param("pageSize", "10")
-                    .header("X-Request-Id", "corr-integration-test-1"),
-            ).andExpect(status().isOk)
+        performAsync(
+            mockMvc
+                .perform(
+                    get("/api/auctions/search")
+                        .contextPath("/api")
+                        .param("region", "eu")
+                        .param("realmSlug", "argent-dawn")
+                        .param("page", "0")
+                        .param("pageSize", "10")
+                        .header("X-Request-Id", "corr-integration-test-1"),
+                ).andReturn(),
+        ).andExpect(status().isOk)
             .andExpect(header().string("X-Request-Id", "corr-integration-test-1"))
     }
 
@@ -42,14 +48,16 @@ class AuctionMarketSearchRequestCorrelationIntegrationTest : IntegrationTestBase
     fun `market search filters echoes x-request-id for log correlation`() {
         MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
 
-        mockMvc
-            .perform(
-                get("/api/auctions/search/filters")
-                    .contextPath("/api")
-                    .param("region", "eu")
-                    .param("realmSlug", "argent-dawn")
-                    .header("X-Request-Id", "corr-integration-test-2"),
-            ).andExpect(status().isOk)
+        performAsync(
+            mockMvc
+                .perform(
+                    get("/api/auctions/search/filters")
+                        .contextPath("/api")
+                        .param("region", "eu")
+                        .param("realmSlug", "argent-dawn")
+                        .header("X-Request-Id", "corr-integration-test-2"),
+                ).andReturn(),
+        ).andExpect(status().isOk)
             .andExpect(header().string("X-Request-Id", "corr-integration-test-2"))
     }
 
@@ -58,15 +66,17 @@ class AuctionMarketSearchRequestCorrelationIntegrationTest : IntegrationTestBase
         MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
         MarketSearchTestFixtures.seedCommodityOnlyItem(jdbcTemplate)
 
-        mockMvc
-            .perform(
-                get("/api/auctions/search")
-                    .contextPath("/api")
-                    .param("region", "eu")
-                    .param("realmSlug", "argent-dawn")
-                    .param("page", "0")
-                    .param("pageSize", "10"),
-            ).andExpect(status().isOk)
+        performAsync(
+            mockMvc
+                .perform(
+                    get("/api/auctions/search")
+                        .contextPath("/api")
+                        .param("region", "eu")
+                        .param("realmSlug", "argent-dawn")
+                        .param("page", "0")
+                        .param("pageSize", "10"),
+                ).andReturn(),
+        ).andExpect(status().isOk)
             .andExpect(jsonPath("$.items[?(@.item.id == 19020)].preferredScope").value(contains("commodity")))
             .andExpect(jsonPath("$.items[?(@.item.id == 19020)].isCommodity").value(contains(true)))
             .andExpect(jsonPath("$.items[?(@.item.id == 19020)].listingPrice").value(contains(555)))

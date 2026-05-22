@@ -13,7 +13,7 @@ listRealms:
             schema:
               type: array
               items:
-                $ref: ../components/schemas/realm.yml
+                $ref: "../openapi.yml#/components/schemas/Realm"
 
 getRealm:
   get:
@@ -39,6 +39,6 @@ getRealm:
         content:
           application/json:
             schema:
-              $ref: ../components/schemas/realm-detail.yml
+              $ref: "../openapi.yml#/components/schemas/RealmDetail"
       "404":
         description: No realm exists for the given region and slug, or the regional commodity placeholder has not been seeded yet.

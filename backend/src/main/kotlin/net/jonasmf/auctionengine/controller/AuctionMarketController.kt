@@ -17,7 +17,7 @@ class AuctionMarketController(
     private val auctionMarketItemDetailService: AuctionMarketItemDetailService,
     private val craftingMarketSearchService: CraftingMarketSearchService,
 ) : AuctionMarketApi {
-    override fun filters(
+    override suspend fun filters(
         region: String,
         realmSlug: String,
         locale: String?,
@@ -30,7 +30,7 @@ class AuctionMarketController(
             ),
         )
 
-    override fun search(
+    override suspend fun search(
         region: String,
         realmSlug: String,
         locale: String?,
@@ -69,7 +69,7 @@ class AuctionMarketController(
             ),
         )
 
-    override fun getAuctionMarketItemDetail(
+    override suspend fun getAuctionMarketItemDetail(
         region: String,
         realmSlug: String,
         itemId: Int,
@@ -94,7 +94,7 @@ class AuctionMarketController(
             ),
         )
 
-    override fun getAuctionMarketItemCraftingAnalytics(
+    override suspend fun getAuctionMarketItemCraftingAnalytics(
         region: String,
         realmSlug: String,
         itemId: Int,
