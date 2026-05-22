@@ -1,5 +1,6 @@
 import { AuthError } from './auth-error';
-import type { AuthConfig, SessionPayload } from '../../app/api/auth/auth.model';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { AuthConfig, SessionPayload, UserRole } from '../../app/api/auth/auth.model';
 
 type TokenResponse = {
   access_token?: string;
@@ -72,5 +73,15 @@ async function requestTokens(config: AuthConfig, body: URLSearchParams): Promise
     accessToken: tokenResponse.access_token,
     refreshToken: tokenResponse.refresh_token,
     expiresAt: Date.now() + tokenResponse.expires_in * 1000,
+    roles: getUserRoleFromAccessToken(tokenResponse.access_token)
   };
+}
+
+export function getUserRoleFromAccessToken(accessToken: string): UserRole[] {
+  const decodedToken: { ['cognito:groups']: UserRole[] } & JwtPayload = jwtDecode(accessToken);
+  let roles: UserRole[] = [];
+  if (decodedToken) {
+    roles = decodedToken['cognito:groups'];
+  }
+  return roles;
 }
