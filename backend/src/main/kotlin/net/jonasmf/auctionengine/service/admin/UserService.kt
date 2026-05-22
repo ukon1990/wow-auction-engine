@@ -2,9 +2,7 @@ package net.jonasmf.auctionengine.service.admin
 
 import aws.sdk.kotlin.services.cognitoidentityprovider.CognitoIdentityProviderClient
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.ListUsersRequest
-import aws.smithy.kotlin.runtime.collections.push
 import net.jonasmf.auctionengine.generated.model.User
-import net.jonasmf.auctionengine.generated.model.Users
 import net.jonasmf.auctionengine.mapper.admin.toUser
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

@@ -5,7 +5,6 @@ import aws.sdk.kotlin.services.cognitoidentityprovider.model.UserStatusType
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.UserType
 import aws.smithy.kotlin.runtime.time.Instant
 import net.jonasmf.auctionengine.generated.model.User
-import net.jonasmf.auctionengine.generated.model.Users
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.OffsetDateTime

@@ -3,7 +3,6 @@ package net.jonasmf.auctionengine.mapper.admin
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.UserType
 import aws.smithy.kotlin.runtime.time.toJvmInstant
 import net.jonasmf.auctionengine.generated.model.User
-import net.jonasmf.auctionengine.generated.model.Users
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
