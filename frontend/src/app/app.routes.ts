@@ -16,6 +16,8 @@ import {
 } from '@core/services/query.service';
 import { AuctionItemService } from '@core/services/auction-item.service';
 import { CraftingItemService } from '@core/services/crafting-item.service';
+import { UserRole } from '@api/auth/auth.model';
+import { userHasRoleGuard } from '@core/guards/user-has-role-guard';
 
 export type TitledRoutes = (Route & {
   icon?: string;
@@ -133,6 +135,8 @@ export const routes: TitledRoutes = [
     path: 'admin',
     title: $localize`:@@route.admin.title:Admin`,
     icon: 'admin_panel_settings',
+    canActivate: [userHasRoleGuard(UserRole.Admin)],
+    runGuardsAndResolvers: 'always',
     children: [
       {
         path: 'users',
