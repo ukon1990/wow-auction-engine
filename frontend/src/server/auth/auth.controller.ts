@@ -288,7 +288,7 @@ export function createAuthRouter(authConfig: AuthConfig | null): express.Router 
         config: authConfig!,
         accessToken: session.accessToken,
       });
-      res.json({ authenticated: true, email: user.email });
+      res.json({ authenticated: true, email: user.email, roles: user.roles });
     } catch (error) {
       console.error(`Get current user failed ${formatErrorForLogSafe(error)}`);
       res.status(authErrorStatus(error, 502)).json(
