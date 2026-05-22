@@ -2,6 +2,7 @@ import {
   afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  effect,
   ElementRef,
   HostListener,
   inject,
@@ -62,6 +63,19 @@ export class DropdownComponent {
   readonly ariaHasPopup = input('menu');
   readonly toggle = output<void>();
   readonly close = output<void>();
+
+  constructor() {
+    effect(() => {
+      if (this.open()) {
+        return;
+      }
+      const panel = this.host.nativeElement.querySelector<HTMLElement>('[role="menu"]');
+      const active = this.host.nativeElement.ownerDocument.activeElement;
+      if (panel && active instanceof Node && panel.contains(active)) {
+        this.focusTrigger();
+      }
+    });
+  }
 
   @HostListener('document:click', ['$event'])
   protected onDocumentClick(event: MouseEvent): void {
