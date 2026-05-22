@@ -41,6 +41,19 @@ export const routes: TitledRoutes = [
       import('./features/profile/profile.page').then((module) => module.ProfilePage),
   },
   {
+    path: 'admin',
+    title: $localize`@@route.admin.title`,
+    icon: 'travel_explore',
+    children: [
+      {
+        path: 'users',
+        title: $localize`@@route.admin.users`,
+        icon: 'travel_explore',
+        loadComponent: () => import('@features/admin/user-administration/user-administration.page').then((module) => module.UserAdministrationPage)
+      }
+    ]
+  },
+  {
     path: ':region/:realm',
     canActivate: [realmSelectedGuard],
     children: [
