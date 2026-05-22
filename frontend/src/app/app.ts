@@ -69,7 +69,7 @@ export class App {
 
   constructor() {
     afterNextRender(() => {
-      void this.auth.refresh();
+      void this.auth.whenReady();
     });
   }
 
