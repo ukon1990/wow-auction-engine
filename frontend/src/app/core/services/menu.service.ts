@@ -79,19 +79,22 @@ export class MenuService {
         continue;
       }
 
-      links.push({
+      const childLinks = await this.getActiveRouteLinks(
+        route.children || [],
+        routeSnapshot,
+        state,
+        path,
+        selected,
+      );
+      const link: NavItem = {
         id: path,
         label: this.getRouteTitle(route.title),
         icon: route.icon,
-        routerLink: `/${path}`,
-        children: await this.getActiveRouteLinks(
-          route.children || [],
-          routeSnapshot,
-          state,
-          path,
-          selected,
-        ),
-      });
+        ...(route.loadComponent ? { routerLink: `/${path}` } : {}),
+        children: childLinks,
+      };
+
+      links.push(link);
     }
 
     return links;
