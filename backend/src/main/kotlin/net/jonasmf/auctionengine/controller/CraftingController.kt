@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 class CraftingController(
     private val craftingMarketSearchService: CraftingMarketSearchService,
 ) : CraftingMarketApi {
-    override fun filters(
+    override suspend fun filters(
         region: String,
         realmSlug: String,
         locale: String?,
@@ -24,7 +24,7 @@ class CraftingController(
             ),
         )
 
-    override fun search(
+    override suspend fun search(
         region: String,
         realmSlug: String,
         locale: String?,

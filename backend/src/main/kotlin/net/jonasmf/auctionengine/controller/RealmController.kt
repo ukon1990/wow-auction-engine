@@ -16,7 +16,7 @@ class RealmController(
 ) : RealmApi {
     private val logger = LoggerFactory.getLogger(RealmController::class.java)
 
-    override fun listRealms(): ResponseEntity<List<Realm>> {
+    override suspend fun listRealms(): ResponseEntity<List<Realm>> {
         val totalStart = System.nanoTime()
         val result = realmQueryService.listAllRealms()
         val totalDuration = (System.nanoTime() - totalStart).toDuration(DurationUnit.NANOSECONDS)
@@ -37,7 +37,7 @@ class RealmController(
             ).body(result.realms)
     }
 
-    override fun getRealm(
+    override suspend fun getRealm(
         region: String,
         slug: String,
     ): ResponseEntity<RealmDetail> {
