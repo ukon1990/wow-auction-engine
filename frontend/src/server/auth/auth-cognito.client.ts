@@ -143,7 +143,7 @@ export async function authenticateWithPassword(input: {
 export async function getUserFromAccessToken(input: {
   config: AuthConfig;
   accessToken: string;
-}): Promise<{ email: string | null, roles: UserRole[] }> {
+}): Promise<{ email: string | null; roles: UserRole[] }> {
   try {
     const response = await cognitoClient(input.config).send(
       new GetUserCommand({

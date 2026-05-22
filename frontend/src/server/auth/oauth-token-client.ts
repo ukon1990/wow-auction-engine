@@ -73,7 +73,7 @@ async function requestTokens(config: AuthConfig, body: URLSearchParams): Promise
     accessToken: tokenResponse.access_token,
     refreshToken: tokenResponse.refresh_token,
     expiresAt: Date.now() + tokenResponse.expires_in * 1000,
-    roles: getUserRoleFromAccessToken(tokenResponse.access_token)
+    roles: getUserRoleFromAccessToken(tokenResponse.access_token),
   };
 }
 

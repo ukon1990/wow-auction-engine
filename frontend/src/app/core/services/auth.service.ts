@@ -38,9 +38,11 @@ export class AuthService {
         }),
         finalize(() => {
           this.loaded.set(true);
-          this.router.navigateByUrl(this.router.url, {
-            onSameUrlNavigation: 'reload',
-          }).catch(console.error);
+          this.router
+            .navigateByUrl(this.router.url, {
+              onSameUrlNavigation: 'reload',
+            })
+            .catch(console.error);
         }),
       ),
     );

@@ -4,10 +4,9 @@ import { inject } from '@angular/core';
 import { AuthService } from '@core/services/auth.service';
 
 export const userHasRoleGuard: (userRole: UserRole) => CanActivateFn =
-  (userRole: UserRole) =>
-    () => {
-      const service = inject(AuthService);
-      const user = service.user();
+  (userRole: UserRole) => () => {
+    const service = inject(AuthService);
+    const user = service.user();
     if (!userRole || !user) return false;
     const hasRole = service.user()?.roles?.includes(userRole) === true;
     const router = inject(Router);
