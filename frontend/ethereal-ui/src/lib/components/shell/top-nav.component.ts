@@ -136,16 +136,9 @@ import { TopNavItemComponent } from './top-nav-item.component';
       >
         @for (item of items(); track item.id) {
           @if (hasChildren(item)) {
-            <ee-top-nav-dropdown-item
-              [item]="item"
-              [activeId]="activeId()"
-              [open]="false"
-            />
+            <ee-top-nav-dropdown-item [item]="item" [activeId]="activeId()" [open]="false" />
           } @else {
-            <ee-top-nav-item
-              [item]="item"
-              [activeId]="activeId()"
-            />
+            <ee-top-nav-item [item]="item" [activeId]="activeId()" />
           }
         }
       </nav>
@@ -163,7 +156,9 @@ import { TopNavItemComponent } from './top-nav-item.component';
         aria-label="Primary navigation"
         i18n-aria-label="@@topNav.primaryNavigation"
       >
-        <div class="border-b border-white/10 px-4 py-3 font-cinzel text-sm font-bold uppercase tracking-wide text-primary-container">
+        <div
+          class="border-b border-white/10 px-4 py-3 font-cinzel text-sm font-bold uppercase tracking-wide text-primary-container"
+        >
           Menu
         </div>
         @if (items().length) {
@@ -171,7 +166,9 @@ import { TopNavItemComponent } from './top-nav-item.component';
             @for (item of items(); track item.id) {
               @if (hasChildren(item)) {
                 <section class="border-t border-white/10 first:border-t-0">
-                  <div class="flex items-center gap-3 px-4 py-3 font-cinzel text-xs font-bold uppercase tracking-wide text-slate-400">
+                  <div
+                    class="flex items-center gap-3 px-4 py-3 font-cinzel text-xs font-bold uppercase tracking-wide text-slate-400"
+                  >
                     <ee-symbol-icon class="text-[18px]" [name]="item.icon" />
                     <span>{{ item.label }}</span>
                   </div>
@@ -191,9 +188,7 @@ import { TopNavItemComponent } from './top-nav-item.component';
             }
           </div>
         } @else {
-          <p class="px-4 py-5 text-sm text-on-surface-variant">
-            No navigation items available.
-          </p>
+          <p class="px-4 py-5 text-sm text-on-surface-variant">No navigation items available.</p>
         }
         <div class="border-t border-white/10 p-4">
           <label
