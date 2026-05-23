@@ -606,6 +606,42 @@
           <context context-type="linenumber">147,148</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="common.email" datatype="html">
+        <source>Email</source>
+        <target>Correo electrónico</target>
+      </trans-unit>
+      <trans-unit id="common.verified" datatype="html">
+        <source>Verified</source>
+        <target>Verificado</target>
+      </trans-unit>
+      <trans-unit id="common.yes" datatype="html">
+        <source>Yes</source>
+        <target>Sí</target>
+      </trans-unit>
+      <trans-unit id="common.no" datatype="html">
+        <source>No</source>
+        <target>No</target>
+      </trans-unit>
+      <trans-unit id="common.status" datatype="html">
+        <source>Status</source>
+        <target>Estado</target>
+      </trans-unit>
+      <trans-unit id="common.confirmed" datatype="html">
+        <source>Confirmed</source>
+        <target>Confirmado</target>
+      </trans-unit>
+      <trans-unit id="common.unconfirmed" datatype="html">
+        <source>Unconfirmed</source>
+        <target>Sin confirmar</target>
+      </trans-unit>
+      <trans-unit id="common.lastModified" datatype="html">
+        <source>Last modified</source>
+        <target>Última modificación</target>
+      </trans-unit>
+      <trans-unit id="admin.users.table.aria" datatype="html">
+        <source>Users</source>
+        <target>Usuarios</target>
+      </trans-unit>
       <trans-unit id="common.close" datatype="html">
         <source>Close</source>
         <target>Cerrar</target>

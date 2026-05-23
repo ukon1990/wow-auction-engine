@@ -607,6 +607,33 @@
           <context context-type="linenumber">78,79</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="common.email" datatype="html">
+        <source>Email</source>
+      </trans-unit>
+      <trans-unit id="common.verified" datatype="html">
+        <source>Verified</source>
+      </trans-unit>
+      <trans-unit id="common.yes" datatype="html">
+        <source>Yes</source>
+      </trans-unit>
+      <trans-unit id="common.no" datatype="html">
+        <source>No</source>
+      </trans-unit>
+      <trans-unit id="common.status" datatype="html">
+        <source>Status</source>
+      </trans-unit>
+      <trans-unit id="common.confirmed" datatype="html">
+        <source>Confirmed</source>
+      </trans-unit>
+      <trans-unit id="common.unconfirmed" datatype="html">
+        <source>Unconfirmed</source>
+      </trans-unit>
+      <trans-unit id="common.lastModified" datatype="html">
+        <source>Last modified</source>
+      </trans-unit>
+      <trans-unit id="admin.users.table.aria" datatype="html">
+        <source>Users</source>
+      </trans-unit>
       <trans-unit id="common.close" datatype="html">
         <source>Close</source>
         <context-group purpose="location">

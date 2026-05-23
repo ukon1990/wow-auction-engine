@@ -606,6 +606,42 @@
           <context context-type="linenumber">147,148</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="common.email" datatype="html">
+        <source>Email</source>
+        <target>电子邮件</target>
+      </trans-unit>
+      <trans-unit id="common.verified" datatype="html">
+        <source>Verified</source>
+        <target>已验证</target>
+      </trans-unit>
+      <trans-unit id="common.yes" datatype="html">
+        <source>Yes</source>
+        <target>是</target>
+      </trans-unit>
+      <trans-unit id="common.no" datatype="html">
+        <source>No</source>
+        <target>否</target>
+      </trans-unit>
+      <trans-unit id="common.status" datatype="html">
+        <source>Status</source>
+        <target>状态</target>
+      </trans-unit>
+      <trans-unit id="common.confirmed" datatype="html">
+        <source>Confirmed</source>
+        <target>已确认</target>
+      </trans-unit>
+      <trans-unit id="common.unconfirmed" datatype="html">
+        <source>Unconfirmed</source>
+        <target>未确认</target>
+      </trans-unit>
+      <trans-unit id="common.lastModified" datatype="html">
+        <source>Last modified</source>
+        <target>上次修改</target>
+      </trans-unit>
+      <trans-unit id="admin.users.table.aria" datatype="html">
+        <source>Users</source>
+        <target>用户</target>
+      </trans-unit>
       <trans-unit id="common.close" datatype="html">
         <source>Close</source>
         <target>关闭</target>
