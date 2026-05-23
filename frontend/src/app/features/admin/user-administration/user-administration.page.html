@@ -1,16 +1,10 @@
 <ee-page-frame [title]="'Users'" eyebrow="Admin" [loading]="loading()" titleId="user-page-title">
   <ee-table
-    headerRowClass=""
-    [bodyRowClassFn]="rowClass"
-    [clickableRows]="false"
     [columns]="columns()"
-    [contentMinWidthClass]="'auto'"
     [data]="users()"
     [loading]="loading()"
-    [manualSorting]="true"
-    [rowGridTemplateColumns]="gridTemplate()"
     [skeletonRowCount]="25"
-    emptyMessage="No market items available."
+    emptyMessage="No users available."
     i18n-sectionAriaLabel="@@admin.users.table.aria"
     sectionAriaLabel="Users"
   />

@@ -6,6 +6,7 @@ import {
   computed,
   input,
   output,
+  signal,
 } from '@angular/core';
 import {
   ColumnDef,
@@ -13,11 +14,26 @@ import {
   FlexRenderDirective,
   functionalUpdate,
   getCoreRowModel,
+  getSortedRowModel,
   type RowData,
 } from '@tanstack/angular-table';
 import type { Column, Header, SortingState, Table } from '@tanstack/table-core';
 
 import { SymbolIconComponent } from '../primitives/symbol-icon.component';
+
+const DEFAULT_CONTENT_MIN_WIDTH_CLASS = 'min-w-0 w-full';
+const DEFAULT_HEADER_ROW_CLASS =
+  'grid w-full gap-4 border-b border-white/10 bg-surface-container-high px-container-padding py-4 ee-label text-outline';
+const DEFAULT_BODY_ROW_CLASS =
+  'grid w-full items-center gap-4 px-container-padding py-3 text-left transition hover:bg-white/5 select-text';
+const DEFAULT_SKELETON_ROW_CLASS =
+  'grid w-full items-center gap-4 px-container-padding py-3 text-left';
+const DEFAULT_GRID_TRACK = 'minmax(12rem, 1fr)';
+
+type TableColumnMeta = {
+  readonly align?: 'left' | 'right';
+  readonly gridTrack?: string;
+};
 
 @Component({
   selector: 'ee-table',
@@ -108,7 +124,7 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
                 @if (clickableRows()) {
                   <button
                     type="button"
-                    [class]="bodyRowClassFn()(row.original)"
+                    [class]="bodyRowClass(row.original)"
                     [style.grid-template-columns]="rowGridTemplateStyle()"
                     (click)="rowClick.emit(row.original)"
                   >
@@ -129,7 +145,7 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
                 } @else {
                   <div
                     role="row"
-                    [class]="bodyRowClassFn()(row.original)"
+                    [class]="bodyRowClass(row.original)"
                     [style.grid-template-columns]="rowGridTemplateStyle()"
                   >
                     @for (cell of row.getVisibleCells(); track cell.id) {
@@ -196,22 +212,22 @@ export class TableComponent<TData extends RowData> {
 
   readonly sectionAriaLabel = input<string>('Data table');
   readonly emptyMessage = input<string>('No rows to display.');
-  readonly contentMinWidthClass = input.required<string>();
-  readonly headerRowClass = input.required<string>();
-  readonly bodyRowClassFn = input.required<(row: TData) => string>();
+  readonly contentMinWidthClass = input<string>(DEFAULT_CONTENT_MIN_WIDTH_CLASS);
+  readonly headerRowClass = input<string>(DEFAULT_HEADER_ROW_CLASS);
+  readonly bodyRowClassFn = input<((row: TData) => string) | undefined>(undefined);
   readonly showFooter = input(false, { transform: booleanAttribute });
   readonly footerSummary = input<string>('');
   readonly showPagination = input(false, { transform: booleanAttribute });
   readonly previousPageAriaLabel = input<string>('Previous page');
   readonly nextPageAriaLabel = input<string>('Next page');
-  readonly clickableRows = input(true, { transform: booleanAttribute });
+  readonly clickableRows = input(false, { transform: booleanAttribute });
   readonly getRowId = input<(row: TData, index: number) => string>();
 
   readonly manualSorting = input(false, { transform: booleanAttribute });
   readonly sorting = input<SortingState>([]);
   readonly loading = input(false, { transform: booleanAttribute });
   readonly skeletonRowCount = input(0, { transform: Number });
-  readonly skeletonRowClass = input<string>('');
+  readonly skeletonRowClass = input<string>(DEFAULT_SKELETON_ROW_CLASS);
   /** When set, drives `grid-template-columns` so layouts match visible column count (avoids brittle Tailwind arbitrary grids). */
   readonly rowGridTemplateColumns = input<string | undefined>(undefined);
 
@@ -220,6 +236,8 @@ export class TableComponent<TData extends RowData> {
   readonly nextPage = output<void>();
   readonly sortingChange = output<SortingState>();
   private readonly coreRowModel = getCoreRowModel<TData>();
+  private readonly sortedRowModel = getSortedRowModel<TData>();
+  private readonly localSorting = signal<SortingState>([]);
 
   /**
    * Cast for ng-packagr `.d.ts` emit: the real value is a TanStack `Table` plus an Angular `Signal` proxy.
@@ -229,6 +247,7 @@ export class TableComponent<TData extends RowData> {
       data: this.data() as TData[],
       columns: this.columns(),
       getCoreRowModel: this.coreRowModel,
+      enableSortingRemoval: false,
       getRowId: (originalRow: TData, index: number) => {
         const fn = this.getRowId();
         return fn ? fn(originalRow as TData, index) : String(index);
@@ -238,7 +257,6 @@ export class TableComponent<TData extends RowData> {
       return {
         ...base,
         manualSorting: true,
-        enableSortingRemoval: false,
         state: {
           sorting: this.sorting(),
         },
@@ -248,7 +266,18 @@ export class TableComponent<TData extends RowData> {
         },
       };
     }
-    return base;
+    return {
+      ...base,
+      getSortedRowModel: this.sortedRowModel,
+      state: {
+        sorting: this.localSorting(),
+      },
+      onSortingChange: (updater) => {
+        const next = functionalUpdate(updater, this.localSorting());
+        this.localSorting.set(next);
+        this.sortingChange.emit(next);
+      },
+    };
   }) as unknown as Table<TData>;
 
   protected showSkeleton = computed(
@@ -269,14 +298,28 @@ export class TableComponent<TData extends RowData> {
     return index === 0 ? 'w-full' : 'w-full max-w-[5rem]';
   }
 
+  protected bodyRowClass(row: TData): string {
+    return this.bodyRowClassFn()?.(row) ?? DEFAULT_BODY_ROW_CLASS;
+  }
+
   protected rowGridTemplateStyle(): string | undefined {
     const raw = this.rowGridTemplateColumns();
     const trimmed = raw?.trim();
-    return trimmed && trimmed.length > 0 ? trimmed : undefined;
+    if (trimmed && trimmed.length > 0) return trimmed;
+
+    const columns = this.table.getVisibleLeafColumns();
+    if (columns.length === 0) return undefined;
+    return columns
+      .map((column) => {
+        const meta = column.columnDef.meta as TableColumnMeta | undefined;
+        const gridTrack = meta?.gridTrack?.trim();
+        return gridTrack && gridTrack.length > 0 ? gridTrack : DEFAULT_GRID_TRACK;
+      })
+      .join(' ');
   }
 
   protected sortableHeader(header: Header<TData, unknown>): boolean {
-    return this.manualSorting() && header.column.getCanSort();
+    return header.column.getCanSort();
   }
 
   protected headerAriaSort(
@@ -290,7 +333,7 @@ export class TableComponent<TData extends RowData> {
   }
 
   protected sortHeaderButtonClass(meta: unknown): string {
-    const m = meta as { align?: 'left' | 'right' } | undefined;
+    const m = meta as TableColumnMeta | undefined;
     const align = m?.align === 'right' ? 'justify-end text-right' : 'justify-start text-left';
     return `flex w-full min-w-0 cursor-pointer items-center gap-1 rounded px-0.5 py-0.5 ee-label outline-none transition hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/60 disabled:cursor-not-allowed disabled:opacity-50 ${align}`;
   }
@@ -308,12 +351,12 @@ export class TableComponent<TData extends RowData> {
   }
 
   protected headerColumnClass(meta: unknown): string {
-    const m = meta as { align?: 'left' | 'right' } | undefined;
+    const m = meta as TableColumnMeta | undefined;
     return m?.align === 'right' ? 'min-w-0 text-right' : 'min-w-0 text-left';
   }
 
   protected bodyCellClass(meta: unknown): string {
-    const m = meta as { align?: 'left' | 'right' } | undefined;
+    const m = meta as TableColumnMeta | undefined;
     return m?.align === 'right'
       ? 'min-w-0 justify-self-end text-right'
       : 'min-w-0 overflow-hidden text-ellipsis text-left';
