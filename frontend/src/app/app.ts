@@ -7,7 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { Params, Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { CharacterSummary, TopNavComponent } from '@ui';
 
 import { WowheadTooltipLayer } from '@core/components/wowhead-tooltip-layer/wowhead-tooltip-layer';
@@ -65,7 +65,6 @@ export class App {
   readonly menu = inject(MenuService);
   private readonly auth = inject(AuthService);
   private readonly realmSelection = inject(RealmSelectionService);
-  private readonly router = inject(Router);
   protected readonly locale = inject(LocaleService);
   protected readonly mobileNavOpen = signal(false);
   readonly commodityDetails = this.realmSelection.commodityDetails.asReadonly();
@@ -106,20 +105,14 @@ export class App {
     };
   });
 
-  protected readonly accountRouterLink = computed(() => (this.auth.user() ? '/profile' : '/login'));
+  protected readonly accountRouterLink = computed(() => '/profile');
 
-  protected readonly accountQueryParams = computed<Params | null>(() =>
-    this.auth.user()
-      ? null
-      : {
-          returnTo: this.returnToUrl(),
-        },
-  );
+  protected readonly accountQueryParams = computed(() => null);
 
   protected readonly accountLabel = computed(() =>
     this.auth.user()
       ? $localize`:@@app.account.openProfile:Open profile`
-      : $localize`:@@app.account.signIn:Sign in`,
+      : $localize`:@@app.account.openProfile:Open profile`,
   );
 
   protected toggleMobileNav(): void {
@@ -134,11 +127,6 @@ export class App {
     if (isAppLocale(locale)) {
       this.locale.switchLocale(locale as AppLocale);
     }
-  }
-
-  private returnToUrl(): string {
-    const url = this.router.url || '/';
-    return url.startsWith('/login') ? '/' : url;
   }
 
   private formatLastModified(value: string | null | undefined): string {
