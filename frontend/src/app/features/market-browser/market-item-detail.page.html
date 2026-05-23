@@ -151,29 +151,6 @@
       />
     </div>
 
-    <p class="ee-data text-on-surface-variant select-text">
-      <ng-container i18n="@@itemDetail.snapshotRealm">
-        Snapshot: realm {{ d.selectedRealm.date ?? '—' }}, hour
-      </ng-container>
-      {{ d.selectedRealm.hourOfDay ?? '—' }}
-      @if (showCommoditySnapshotLine(d) && chartScope() === 'commodity') {
-        <span>
-          <ng-container i18n="@@itemDetail.snapshotCommodity">
-            · commodity {{ d.commodity.date ?? '—' }}, hour {{ d.commodity.hourOfDay ?? '—' }}
-          </ng-container></span
-        >
-      }
-    </p>
-
-    @if (d.marketDataSources.length) {
-      <p class="ee-label text-outline select-text">
-        <ng-container i18n="@@itemDetail.dataVersion">Data version:</ng-container>
-        @for (s of d.marketDataSources; track s.connectedRealmId) {
-          <span class="ml-2 font-mono text-[0.7rem]">{{ s.auctionHouseLastModified ?? '—' }}</span>
-        }
-      </p>
-    }
-
     <ng-template #dailyChartTip let-ctx>
       @let rows = dailyTooltipRows(d, ctx.x);
       <ee-tooltip-card

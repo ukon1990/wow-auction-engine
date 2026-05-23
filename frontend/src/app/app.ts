@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -48,6 +49,7 @@ const FALLBACK_CHARACTER: CharacterSummary = {
         [localeOptions]="locale.localeOptions"
         [activeLocale]="locale.activeLocale()"
         [mobileDrawerOpen]="mobileNavOpen()"
+        [subText]="lastModifiedSubText()"
         (toggleMobileDrawer)="toggleMobileNav()"
         (navSelected)="onPrimaryNavSelected($event)"
         (localeSelected)="onLocaleSelected($event)"
@@ -66,6 +68,28 @@ export class App {
   private readonly router = inject(Router);
   protected readonly locale = inject(LocaleService);
   protected readonly mobileNavOpen = signal(false);
+  readonly commodityDetails = this.realmSelection.commodityDetails.asReadonly();
+  readonly auctionHouseDetails = this.realmSelection.auctionHouseDetails.asReadonly();
+  readonly isSameTimeForRealmAndCommodity = computed(() => {
+    const commodityTime = new Date(this.commodityDetails()?.lastModified || 0);
+    const houseTime = new Date(this.auctionHouseDetails()?.lastModified || 0);
+    return +commodityTime === +houseTime;
+  });
+  protected readonly lastModifiedSubText = computed(() => {
+    const auctionHouseLastModified = this.auctionHouseDetails()?.lastModified;
+    const commodityLastModified = this.commodityDetails()?.lastModified;
+    const auctionHouseText = this.formatLastModified(auctionHouseLastModified);
+    const commodityText = this.formatLastModified(commodityLastModified);
+    const lastModifiedText = $localize`:@@common.lastModified:Last modified` + ': ';
+
+    if (!auctionHouseText) return lastModifiedText + commodityText;
+    if (!commodityText) return lastModifiedText + auctionHouseText;
+    const lastModifiedTime = this.isSameTimeForRealmAndCommodity()
+      ? `${commodityText} - ${auctionHouseText}`
+      : auctionHouseText;
+
+    return lastModifiedText + lastModifiedTime;
+  });
 
   constructor() {
     afterNextRender(() => {
@@ -115,5 +139,9 @@ export class App {
   private returnToUrl(): string {
     const url = this.router.url || '/';
     return url.startsWith('/login') ? '/' : url;
+  }
+
+  private formatLastModified(value: string | null | undefined): string {
+    return value ? formatDate(value, 'short', this.locale.activeLocale()) : '';
   }
 }

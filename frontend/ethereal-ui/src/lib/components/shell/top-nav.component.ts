@@ -41,10 +41,19 @@ import { TopNavItemComponent } from './top-nav-item.component';
         >
           <ee-symbol-icon class="text-[22px]" name="menu" />
         </button>
-        <div
-          class="min-w-0 truncate font-cinzel text-lg font-bold tracking-[0.05em] text-primary-container drop-shadow-[0_0_8px_rgba(236,185,19,0.4)] sm:text-xl md:text-2xl"
-        >
-          <ng-container i18n="@@brand.name">The Ethereal Exchange</ng-container>
+        <div class="flex min-w-0 flex-col">
+          <div
+            class="min-w-0 truncate font-cinzel text-lg font-bold tracking-[0.05em] text-primary-container drop-shadow-[0_0_8px_rgba(236,185,19,0.4)] sm:text-xl md:text-2xl"
+          >
+            <ng-container i18n="@@brand.name">The Ethereal Exchange</ng-container>
+          </div>
+          @if (subText()) {
+            <small
+              class="min-w-0 truncate text-[0.7rem] font-medium leading-3 tracking-normal text-on-surface-variant sm:text-xs"
+            >
+              {{ subText() }}
+            </small>
+          }
         </div>
         <nav
           class="hidden min-w-0 items-center gap-4 lg:gap-6 md:flex"
@@ -119,6 +128,7 @@ export class TopNavComponent {
   readonly navSelected = output<string>();
   readonly localeSelected = output<string>();
   readonly toggleMobileDrawer = output<void>();
+  readonly subText = input<string>('');
 
   protected readonly openDropdownId = signal<string | null>(null);
 
