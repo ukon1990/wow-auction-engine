@@ -37,15 +37,13 @@ describe('AuthService', () => {
   });
 
   it('force refresh fetches /auth/me again after an earlier unauthenticated result', async () => {
-    httpMock.get
-      .mockReturnValueOnce(of({ authenticated: false }))
-      .mockReturnValueOnce(
-        of({
-          authenticated: true,
-          email: 'admin@example.com',
-          roles: [UserRole.Admin],
-        }),
-      );
+    httpMock.get.mockReturnValueOnce(of({ authenticated: false })).mockReturnValueOnce(
+      of({
+        authenticated: true,
+        email: 'admin@example.com',
+        roles: [UserRole.Admin],
+      }),
+    );
     const auth = TestBed.inject(AuthService);
 
     await expect(auth.whenReady()).resolves.toBeNull();
