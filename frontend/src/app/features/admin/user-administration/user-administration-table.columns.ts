@@ -3,5 +3,10 @@ import { User } from '@api/generated';
 
 export const createUserColumns = () => {
   const helper = createColumnHelper<User>();
-  return [helper.accessor('username', {})] as ColumnDef<User, unknown>[];
+  return [
+    helper.accessor('email', {}),
+    helper.accessor('email_verified', {}),
+    helper.accessor('status', {}),
+    helper.accessor('lastModified', {}),
+  ] as ColumnDef<User, unknown>[];
 };
