@@ -29,6 +29,7 @@ export function createAuthRouter(authConfig: AuthConfig | null): express.Router 
   const router = express.Router();
 
   router.use(express.json({ limit: '16kb' }));
+  router.use(disableAuthResponseCaching);
   router.use(logAuthRequest);
 
   router.get('/login', (req, res) => {
@@ -335,6 +336,17 @@ export function createAuthRouter(authConfig: AuthConfig | null): express.Router 
   });
 
   return router;
+}
+
+function disableAuthResponseCaching(
+  _req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+): void {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
 }
 
 function logAuthRequest(
