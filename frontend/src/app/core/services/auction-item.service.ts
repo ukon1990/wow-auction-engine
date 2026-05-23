@@ -1,4 +1,4 @@
-import { computed, effect, Injectable } from '@angular/core';
+import { computed, effect, Injectable, untracked } from '@angular/core';
 import { defaultMarketBrowserQueryState } from '@core/mappers/market-browser-query.mapper';
 import { BaseSearchService } from './base-search.service';
 import { AuctionMarketApiService, AuctionMarketSearchPage } from '@api/generated';
@@ -31,7 +31,7 @@ export class AuctionItemService extends BaseSearchService<
     const slug = this.queryService.realmSlug();
     const locale = this.queryService.locale();
     if (!filter || !region || !slug || !locale) return;
-    firstValueFrom(this.getPageByQuery(locale, region, slug, filter));
+    untracked(() => firstValueFrom(this.getPageByQuery(locale, region, slug, filter)));
   });
 
   constructor(private api: AuctionMarketApiService) {
@@ -85,8 +85,7 @@ export class AuctionItemService extends BaseSearchService<
       recipeOnly,
     } = queryParams;
 
-    return super.search(
-      queryParams,
+    return super.search(queryParams, () =>
       this.api.search(
         region,
         slug,

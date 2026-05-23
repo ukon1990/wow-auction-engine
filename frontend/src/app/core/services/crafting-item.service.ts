@@ -1,4 +1,4 @@
-import { computed, effect, Injectable } from '@angular/core';
+import { computed, effect, Injectable, untracked } from '@angular/core';
 import { defaultCraftingBrowserQueryState } from '@core/mappers/crafting-browser-query.mapper';
 import { toCraftingFilterSections } from '@core/mappers/crafting-filter-mapper';
 import { toCraftingRow } from '@core/mappers/crafting-mapper';
@@ -34,7 +34,7 @@ export class CraftingItemService extends BaseSearchService<
     const slug = this.queryService.realmSlug();
     const locale = this.queryService.locale();
     if (!filter || !region || !slug || !locale) return;
-    firstValueFrom(this.getPageByQuery(locale, region, slug, filter));
+    untracked(() => firstValueFrom(this.getPageByQuery(locale, region, slug, filter)));
   });
 
   constructor(private api: CraftingMarketApiService) {
@@ -97,8 +97,7 @@ export class CraftingItemService extends BaseSearchService<
       requireCompleteReagentPricing,
     } = queryParams;
 
-    return super.search(
-      queryParams,
+    return super.search(queryParams, () =>
       this.api.search(
         region,
         slug,

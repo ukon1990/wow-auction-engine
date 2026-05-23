@@ -1,7 +1,7 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { RealmSelectionService } from '@core/services/realm-selection.service';
 import { LocaleService } from '@core/services/locale.service';
-import { catchError, finalize, firstValueFrom, Observable, of, tap } from 'rxjs';
+import { catchError, finalize, firstValueFrom, Observable, of, switchMap, tap, timer } from 'rxjs';
 import { QueryService } from '@core/services/query.service';
 import { AuctionMarketFilter, AuctionMarketFilterResponse } from '@api/generated';
 import { MarketBrowserQueryState } from '@core/models/market-browser.models';
@@ -45,6 +45,10 @@ interface CacheEntry<DataType> {
   };
   data: DataType;
 }
+
+type SearchSource<PageType> = Observable<PageType> | (() => Observable<PageType>);
+
+const SEARCH_DEBOUNCE_MS = 200;
 
 @Injectable({
   providedIn: 'root',
@@ -95,6 +99,8 @@ export abstract class BaseSearchService<
   private readonly auctionHouseDetails = this.realmService.auctionHouseDetails;
   private readonly commodityDetails = this.realmService.commodityDetails;
   protected readonly defaultQueryParams: QueryParams;
+  private searchRequestId = 0;
+  private pendingSearchKey: string | undefined;
 
   private readonly _filterEffect = effect(() => {
     const region = this.queryService.region();
@@ -146,35 +152,56 @@ export abstract class BaseSearchService<
     );
   }
 
-  search(
-    query: QueryParams,
-    observable: Observable<PageType>,
-  ): Observable<PageType> | Observable<null> {
+  search(query: QueryParams, source: SearchSource<PageType>): Observable<PageType | null> {
     const cacheKey = this.getCacheKey(query);
     const cache = this.cache().get(cacheKey);
-    if (cache) return of(cache.data);
+    if (cache) {
+      this.searchRequestId++;
+      this.pendingSearchKey = undefined;
+      this.isLoading.set(false);
+      return of(cache.data);
+    }
+    if (this.pendingSearchKey === cacheKey) return of(null);
+
     const metadata = this.getAhMetadata();
 
     // Realm and commodity ah details and locale must be available before we can search
-    if (!metadata) return observable;
+    if (!metadata) return this.resolveSearchSource(source);
 
+    const requestId = ++this.searchRequestId;
+    this.pendingSearchKey = cacheKey;
     this.isLoading.set(true);
-    return observable.pipe(
-      tap((data: PageType) => {
-        const cache = this.cache();
-        cache.set(cacheKey, { metadata, data });
-        this.cache.set(new Map(cache));
-        this.latestPageMetadata.set(data.page);
-      }),
-      catchError((error) => {
-        this.toast.error(
-          $localize`:@@search.loadResultsError:Could not load search results. Please try again later.`,
+    return timer(SEARCH_DEBOUNCE_MS).pipe(
+      switchMap(() => {
+        if (requestId !== this.searchRequestId) return of(null);
+
+        return this.resolveSearchSource(source).pipe(
+          tap((data: PageType) => {
+            const cache = this.cache();
+            cache.set(cacheKey, { metadata, data });
+            this.cache.set(new Map(cache));
+            this.latestPageMetadata.set(data.page);
+          }),
+          catchError((error) => {
+            this.toast.error(
+              $localize`:@@search.loadResultsError:Could not load search results. Please try again later.`,
+            );
+            console.error(error);
+            return of();
+          }),
         );
-        console.error(error);
-        return of();
       }),
-      finalize(() => this.isLoading.set(false)),
+      finalize(() => {
+        if (requestId === this.searchRequestId) {
+          this.pendingSearchKey = undefined;
+          this.isLoading.set(false);
+        }
+      }),
     );
+  }
+
+  private resolveSearchSource(source: SearchSource<PageType>): Observable<PageType> {
+    return typeof source === 'function' ? source() : source;
   }
 
   protected currentQueryState(): QueryParams {
