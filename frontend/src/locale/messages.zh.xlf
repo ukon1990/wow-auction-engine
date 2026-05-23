@@ -226,6 +226,22 @@
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="route.admin.title" datatype="html">
+        <source>Admin</source>
+        <target>Admin</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.routes.ts</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="route.admin.users" datatype="html">
+        <source>Users</source>
+        <target>Users</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.routes.ts</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="route.auctions" datatype="html">
         <source>Auctions</source>
         <target>拍卖</target>
@@ -589,6 +605,42 @@
           <context context-type="sourcefile">src/app/features/market-browser/market-browser.page.ts</context>
           <context context-type="linenumber">147,148</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="common.email" datatype="html">
+        <source>Email</source>
+        <target>电子邮件</target>
+      </trans-unit>
+      <trans-unit id="common.verified" datatype="html">
+        <source>Verified</source>
+        <target>已验证</target>
+      </trans-unit>
+      <trans-unit id="common.yes" datatype="html">
+        <source>Yes</source>
+        <target>是</target>
+      </trans-unit>
+      <trans-unit id="common.no" datatype="html">
+        <source>No</source>
+        <target>否</target>
+      </trans-unit>
+      <trans-unit id="common.status" datatype="html">
+        <source>Status</source>
+        <target>状态</target>
+      </trans-unit>
+      <trans-unit id="common.confirmed" datatype="html">
+        <source>Confirmed</source>
+        <target>已确认</target>
+      </trans-unit>
+      <trans-unit id="common.unconfirmed" datatype="html">
+        <source>Unconfirmed</source>
+        <target>未确认</target>
+      </trans-unit>
+      <trans-unit id="common.lastModified" datatype="html">
+        <source>Last modified</source>
+        <target>上次修改</target>
+      </trans-unit>
+      <trans-unit id="admin.users.table.aria" datatype="html">
+        <source>Users</source>
+        <target>用户</target>
       </trans-unit>
       <trans-unit id="common.close" datatype="html">
         <source>Close</source>

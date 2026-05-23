@@ -1,13 +1,32 @@
-import type { Meta, StoryObj } from '@storybook/angular';
+import { provideRouter } from '@angular/router';
+import { applicationConfig, type Meta, moduleMetadata, type StoryObj } from '@storybook/angular';
 
-import { TopNavigationStoryHostComponent } from '../../support/story-hosts';
+import {
+  TopNavigationChildRoutesStoryHostComponent,
+  TopNavigationStoryHostComponent,
+} from '../../support/story-hosts';
 
 const meta: Meta<TopNavigationStoryHostComponent> = {
   title: 'Ethereal UI/Navigation',
-  component: TopNavigationStoryHostComponent,
   parameters: { layout: 'fullscreen' },
+  decorators: [
+    applicationConfig({ providers: [provideRouter([])] }),
+    moduleMetadata({
+      imports: [TopNavigationChildRoutesStoryHostComponent, TopNavigationStoryHostComponent],
+    }),
+  ],
 };
 
 export default meta;
 
-export const TopNavigation: StoryObj<TopNavigationStoryHostComponent> = {};
+export const TopNavigation: StoryObj<TopNavigationStoryHostComponent> = {
+  render: () => ({
+    template: '<story-top-navigation-host />',
+  }),
+};
+
+export const TopNavigationWithChildRoutes: StoryObj<TopNavigationChildRoutesStoryHostComponent> = {
+  render: () => ({
+    template: '<story-top-navigation-child-routes-host />',
+  }),
+};

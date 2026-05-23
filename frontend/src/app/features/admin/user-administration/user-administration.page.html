@@ -1,0 +1,11 @@
+<ee-page-frame [title]="'Users'" eyebrow="Admin" [loading]="loading()" titleId="user-page-title">
+  <ee-table
+    [columns]="columns()"
+    [data]="users()"
+    [loading]="loading()"
+    [skeletonRowCount]="25"
+    emptyMessage="No users available."
+    i18n-sectionAriaLabel="@@admin.users.table.aria"
+    sectionAriaLabel="Users"
+  />
+</ee-page-frame>

@@ -12,6 +12,6 @@ class AdminController(
     val userService: UserService,
 ) : AdminApi {
     // TODO: Need a paginated response - Update openApi as well
-    @PreAuthorize("hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('admin')")
     override suspend fun listUsers(): ResponseEntity<List<User>> = ResponseEntity.ok(userService.getUsers())
 }

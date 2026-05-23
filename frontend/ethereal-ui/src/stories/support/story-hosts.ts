@@ -39,6 +39,46 @@ export const primaryItems: readonly NavItem[] = [
   { id: 'archive', label: 'Archive', icon: 'inventory_2' },
 ];
 
+export const topNavigationChildRouteItems: readonly NavItem[] = [
+  {
+    id: 'eu/stormrage/auctions',
+    label: 'Auctions',
+    icon: 'travel_explore',
+    routerLink: '/eu/stormrage/auctions',
+  },
+  {
+    id: 'eu/stormrage/crafting',
+    label: 'Crafting',
+    icon: 'schema',
+    routerLink: '/eu/stormrage/crafting',
+  },
+  {
+    id: 'admin',
+    label: 'Admin',
+    icon: 'admin_panel_settings',
+    children: [
+      {
+        id: 'admin/users',
+        label: 'Users',
+        icon: 'manage_accounts',
+        routerLink: '/admin/users',
+      },
+      {
+        id: 'admin/audit-log',
+        label: 'Audit Log',
+        icon: 'query_stats',
+        routerLink: '/admin/audit-log',
+      },
+      {
+        id: 'admin/settings',
+        label: 'Settings',
+        icon: 'settings',
+        routerLink: '/admin/settings',
+      },
+    ],
+  },
+];
+
 export const professionItems: readonly NavItem[] = [
   { id: 'alchemy', label: 'Alchemy', icon: 'water_medium' },
   { id: 'blacksmithing', label: 'Blacksmithing', icon: 'swords' },
@@ -472,6 +512,7 @@ export class ReactiveFormStoryHostComponent {
 }
 
 @Component({
+  selector: 'story-top-navigation-host',
   imports: [TopNavComponent],
   template: `
     <ee-top-nav
@@ -486,6 +527,32 @@ export class ReactiveFormStoryHostComponent {
 })
 export class TopNavigationStoryHostComponent {
   readonly items = primaryItems;
+  readonly character = character;
+  protected readonly mobileNavOpen = signal(false);
+
+  protected toggleMobileNav(): void {
+    this.mobileNavOpen.update((open) => !open);
+  }
+}
+
+@Component({
+  selector: 'story-top-navigation-child-routes-host',
+  imports: [TopNavComponent],
+  template: `
+    <ee-top-nav
+      [items]="items"
+      activeId="admin/users"
+      [character]="character"
+      accountRouterLink="/profile"
+      accountLabel="Open profile"
+      [mobileDrawerOpen]="mobileNavOpen()"
+      (toggleMobileDrawer)="toggleMobileNav()"
+    />
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class TopNavigationChildRoutesStoryHostComponent {
+  readonly items = topNavigationChildRouteItems;
   readonly character = character;
   protected readonly mobileNavOpen = signal(false);
 

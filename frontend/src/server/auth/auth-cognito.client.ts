@@ -13,7 +13,13 @@ import {
 } from '@aws-sdk/client-cognito-identity-provider';
 
 import { AuthError } from './auth-error';
-import type { AuthConfig, PasswordAuthResult, SessionPayload } from '../../app/api/auth/auth.model';
+import {
+  AuthConfig,
+  PasswordAuthResult,
+  SessionPayload,
+  UserRole,
+} from '../../app/api/auth/auth.model';
+import { getUserRoleFromAccessToken } from './oauth-token-client';
 
 export async function signUpWithPassword(input: {
   config: AuthConfig;
@@ -137,15 +143,15 @@ export async function authenticateWithPassword(input: {
 export async function getUserFromAccessToken(input: {
   config: AuthConfig;
   accessToken: string;
-}): Promise<{ email: string | null }> {
+}): Promise<{ email: string | null; roles: UserRole[] }> {
   try {
     const response = await cognitoClient(input.config).send(
       new GetUserCommand({
         AccessToken: input.accessToken,
       }),
     );
-
     return {
+      roles: getUserRoleFromAccessToken(input.accessToken),
       email: readCognitoAttribute(response.UserAttributes ?? [], 'email'),
     };
   } catch (error) {
@@ -204,6 +210,7 @@ function sessionFromAuthenticationResult(result: AuthenticationResultType): Sess
     accessToken: result.AccessToken,
     refreshToken: result.RefreshToken,
     expiresAt: Date.now() + (result.ExpiresIn ?? 3600) * 1000,
+    roles: getUserRoleFromAccessToken(result.AccessToken),
   };
 }
 

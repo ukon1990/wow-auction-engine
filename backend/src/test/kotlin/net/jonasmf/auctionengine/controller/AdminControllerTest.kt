@@ -66,7 +66,7 @@ class AdminControllerTest {
                             .with(
                                 jwt()
                                     .jwt { token ->
-                                        token.claim("cognito:groups", listOf("Admin"))
+                                        token.claim("cognito:groups", listOf("admin"))
                                     }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
                             ),
                     ).andExpect(request().asyncStarted())

@@ -70,6 +70,7 @@ describe('auth session helpers', () => {
       idToken: 'id',
       refreshToken: 'refresh',
       expiresAt: 123,
+      roles: [],
     };
     const headers = new Map<string, number | string | string[]>();
     const res = {
@@ -124,11 +125,11 @@ describe('auth session helpers', () => {
   });
 
   it('refreshes sessions before access token expiry', () => {
-    expect(sessionNeedsRefresh({ accessToken: 'a', idToken: 'i', expiresAt: 120_000 }, 1_000)).toBe(
-      false,
-    );
-    expect(sessionNeedsRefresh({ accessToken: 'a', idToken: 'i', expiresAt: 60_000 }, 1_000)).toBe(
-      true,
-    );
+    expect(
+      sessionNeedsRefresh({ accessToken: 'a', idToken: 'i', expiresAt: 120_000, roles: [] }, 1_000),
+    ).toBe(false);
+    expect(
+      sessionNeedsRefresh({ accessToken: 'a', idToken: 'i', expiresAt: 60_000, roles: [] }, 1_000),
+    ).toBe(true);
   });
 });

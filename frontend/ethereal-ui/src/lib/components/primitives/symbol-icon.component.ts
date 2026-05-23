@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export type SymbolIconName =
   | 'account_circle'
   | 'add'
+  | 'admin_panel_settings'
   | 'auto_stories'
   | 'chevron_left'
   | 'chevron_right'
@@ -18,6 +19,7 @@ export type SymbolIconName =
   | 'close'
   | 'menu'
   | 'magic_button'
+  | 'manage_accounts'
   | 'person'
   | 'query_stats'
   | 'schema'
@@ -49,6 +51,10 @@ export type SymbolIconName =
         }
         @case ('add') {
           <path d="M12 5v14M5 12h14" />
+        }
+        @case ('admin_panel_settings') {
+          <path d="M12 3 5 6v5.5c0 4.2 2.8 7.9 7 9.5 4.2-1.6 7-5.3 7-9.5V6l-7-3Z" />
+          <path d="M9 12.5 11.2 15 15.5 9" />
         }
         @case ('auto_stories') {
           <path d="M4 6.5c2.7-.8 5-.4 7 1.2v10.8c-2-1.6-4.3-2-7-1.2V6.5Z" />
@@ -103,6 +109,14 @@ export type SymbolIconName =
           <path d="m4 20 11-11" />
           <path
             d="m13 7 4 4M16 3l.6 2.1L19 6l-2.4.9L16 9l-.6-2.1L13 6l2.4-.9L16 3ZM6 5l.4 1.4L8 7l-1.6.6L6 9l-.4-1.4L4 7l1.6-.6L6 5Z"
+          />
+        }
+        @case ('manage_accounts') {
+          <circle cx="9" cy="8" r="3.5" />
+          <path d="M3.5 20c1-3.8 2.8-5.7 5.5-5.7 1.7 0 3 .7 4.1 2" />
+          <circle cx="17" cy="15" r="2" />
+          <path
+            d="M17 10.8v1.2M17 18v1.2M12.9 12.6l1 .6M20.1 16.8l1 .6M12.9 17.4l1-.6M20.1 13.2l1-.6"
           />
         }
         @case ('person') {

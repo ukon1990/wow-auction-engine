@@ -16,6 +16,8 @@ import {
 } from '@core/services/query.service';
 import { AuctionItemService } from '@core/services/auction-item.service';
 import { CraftingItemService } from '@core/services/crafting-item.service';
+import { UserRole } from '@api/auth/auth.model';
+import { userHasRoleGuard } from '@core/guards/user-has-role-guard';
 
 export type TitledRoutes = (Route & {
   icon?: string;
@@ -39,6 +41,24 @@ export const routes: TitledRoutes = [
     title: $localize`:@@route.profile:Profile`,
     loadComponent: () =>
       import('./features/profile/profile.page').then((module) => module.ProfilePage),
+  },
+  {
+    path: 'admin',
+    title: $localize`:@@route.admin.title:Admin`,
+    icon: 'admin_panel_settings',
+    canActivate: [userHasRoleGuard(UserRole.Admin)],
+    runGuardsAndResolvers: 'always',
+    children: [
+      {
+        path: 'users',
+        title: $localize`:@@route.admin.users:Users`,
+        icon: 'manage_accounts',
+        loadComponent: () =>
+          import('@features/admin/user-administration/user-administration.page').then(
+            (module) => module.UserAdministrationPage,
+          ),
+      },
+    ],
   },
   {
     path: ':region/:realm',

@@ -220,6 +220,20 @@
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="route.admin.title" datatype="html">
+        <source>Admin</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.routes.ts</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="route.admin.users" datatype="html">
+        <source>Users</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.routes.ts</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="route.auctions" datatype="html">
         <source>Auctions</source>
         <context-group purpose="location">
@@ -592,6 +606,33 @@
           <context context-type="sourcefile">src/app/features/market-browser/market-browser.page.html</context>
           <context context-type="linenumber">78,79</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="common.email" datatype="html">
+        <source>Email</source>
+      </trans-unit>
+      <trans-unit id="common.verified" datatype="html">
+        <source>Verified</source>
+      </trans-unit>
+      <trans-unit id="common.yes" datatype="html">
+        <source>Yes</source>
+      </trans-unit>
+      <trans-unit id="common.no" datatype="html">
+        <source>No</source>
+      </trans-unit>
+      <trans-unit id="common.status" datatype="html">
+        <source>Status</source>
+      </trans-unit>
+      <trans-unit id="common.confirmed" datatype="html">
+        <source>Confirmed</source>
+      </trans-unit>
+      <trans-unit id="common.unconfirmed" datatype="html">
+        <source>Unconfirmed</source>
+      </trans-unit>
+      <trans-unit id="common.lastModified" datatype="html">
+        <source>Last modified</source>
+      </trans-unit>
+      <trans-unit id="admin.users.table.aria" datatype="html">
+        <source>Users</source>
       </trans-unit>
       <trans-unit id="common.close" datatype="html">
         <source>Close</source>

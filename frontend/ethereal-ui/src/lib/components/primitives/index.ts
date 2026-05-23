@@ -1,4 +1,5 @@
 export * from './currency-amount.component';
+export * from './dropdown.component';
 export * from './glass-panel.component';
 export * from './icon-button.component';
 export * from './quality-badge.component';

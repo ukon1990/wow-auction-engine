@@ -1,13 +1,30 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { Params, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
+import { Params, RouterLink } from '@angular/router';
 
 import { CharacterSummary, LocaleOption, NavItem } from '../../models/ui-models';
 import { IconButtonComponent } from '../primitives/icon-button.component';
 import { SymbolIconComponent } from '../primitives/symbol-icon.component';
+import { TopNavDropdownItemComponent } from './top-nav-dropdown-item.component';
+import { TopNavItemComponent } from './top-nav-item.component';
 
 @Component({
   selector: 'ee-top-nav',
-  imports: [IconButtonComponent, SymbolIconComponent, RouterLink, RouterLinkActive],
+  imports: [
+    IconButtonComponent,
+    SymbolIconComponent,
+    RouterLink,
+    TopNavDropdownItemComponent,
+    TopNavItemComponent,
+  ],
   template: `
     <header
       class="sticky top-0 z-50 flex h-16 w-full items-center justify-between gap-2 border-b border-white/10 bg-slate-950/80 px-3 shadow-[0_4px_20px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:px-6"
@@ -35,20 +52,21 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
           i18n-aria-label="@@topNav.primaryNavigation"
         >
           @for (item of items(); track item.id) {
-            @if (item.routerLink) {
-              <a
-                [routerLink]="item.routerLink"
-                routerLinkActive="border-b-2 border-primary-container text-primary-container"
-                [routerLinkActiveOptions]="{ exact: true }"
-                [class]="navLinkClass()"
-                [attr.aria-current]="item.id === activeId() ? 'page' : null"
-              >
-                {{ item.label }}
-              </a>
+            @if (hasChildren(item)) {
+              <ee-top-nav-dropdown-item
+                [item]="item"
+                [activeId]="activeId()"
+                [open]="isDropdownOpen(item.id)"
+                (toggle)="toggleDropdown(item.id)"
+                (close)="closeDropdown()"
+                (selected)="onDropdownButton($event)"
+              />
             } @else {
-              <button type="button" [class]="navClass(item.id)" (click)="onPrimaryButton(item.id)">
-                {{ item.label }}
-              </button>
+              <ee-top-nav-item
+                [item]="item"
+                [activeId]="activeId()"
+                (selected)="onPrimaryButton($event)"
+              />
             }
           }
         </nav>
@@ -87,6 +105,8 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopNavComponent {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
   readonly items = input.required<readonly NavItem[]>();
   readonly activeId = input.required<string>();
   readonly character = input.required<CharacterSummary>();
@@ -100,20 +120,45 @@ export class TopNavComponent {
   readonly localeSelected = output<string>();
   readonly toggleMobileDrawer = output<void>();
 
-  protected navClass(id: string): string {
-    const base =
-      'rounded px-1 py-2 font-cinzel text-sm font-bold uppercase tracking-wide transition hover:bg-white/5';
-    return id === this.activeId()
-      ? `${base} border-b-2 border-primary-container text-primary-container`
-      : `${base} text-slate-400 hover:text-on-surface`;
+  protected readonly openDropdownId = signal<string | null>(null);
+
+  @HostListener('document:click', ['$event'])
+  protected onDocumentClick(event: MouseEvent): void {
+    const target = event.target;
+    if (target instanceof Node && this.host.nativeElement.contains(target)) {
+      return;
+    }
+    this.closeDropdown();
   }
 
-  protected navLinkClass(): string {
-    return 'rounded px-1 py-2 font-cinzel text-sm font-bold uppercase tracking-wide transition hover:bg-white/5 text-slate-400 hover:text-on-surface';
+  @HostListener('document:keydown.escape')
+  protected onDocumentEscape(): void {
+    this.closeDropdown();
   }
 
   protected onPrimaryButton(id: string): void {
     this.navSelected.emit(id);
+  }
+
+  protected hasChildren(item: NavItem): boolean {
+    return Boolean(item.children?.length);
+  }
+
+  protected isDropdownOpen(id: string): boolean {
+    return this.openDropdownId() === id;
+  }
+
+  protected toggleDropdown(id: string): void {
+    this.openDropdownId.update((openId) => (openId === id ? null : id));
+  }
+
+  protected closeDropdown(): void {
+    this.openDropdownId.set(null);
+  }
+
+  protected onDropdownButton(id: string): void {
+    this.navSelected.emit(id);
+    this.closeDropdown();
   }
 
   protected onLocaleChange(event: Event): void {

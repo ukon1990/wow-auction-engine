@@ -112,7 +112,7 @@ export class ProfilePage {
   }
 
   private async loadUser(): Promise<void> {
-    const user = await this.auth.refresh();
+    const user = await this.auth.whenReady();
     this.loading.set(false);
     if (!user) {
       await this.router.navigate(['/login'], {
