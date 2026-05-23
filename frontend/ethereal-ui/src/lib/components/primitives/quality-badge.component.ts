@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 import { ItemQuality } from '../../models/ui-models';
-import { formatQuality, qualityToneClasses } from '../../helpers/quality';
+import { formatQuality } from '../../helpers/quality';
+import { BadgeComponent } from './badge.component';
 
 @Component({
   selector: 'ee-quality-badge',
-  template: `<span [class]="badgeClass()">{{ label() }}</span>`,
+  imports: [BadgeComponent],
+  template: `<ee-badge [quality]="quality()">{{ label() }}</ee-badge>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QualityBadgeComponent {
@@ -13,9 +15,5 @@ export class QualityBadgeComponent {
 
   protected label(): string {
     return formatQuality(this.quality());
-  }
-
-  protected badgeClass(): string {
-    return `inline-flex rounded border px-2 py-1 ee-label ${qualityToneClasses(this.quality())}`;
   }
 }
