@@ -63,6 +63,22 @@ const canonicalBlizzardLocale: Record<AppLocale, string> = {
   zh: 'zh_CN',
 };
 
+const blizzardToFormatLocale: Record<string, string> = {
+  en_us: 'en-US',
+  en_gb: 'en-GB',
+  de_de: 'de-DE',
+  es_es: 'es-ES',
+  es_mx: 'es-MX',
+  fr_fr: 'fr-FR',
+  it_it: 'it-IT',
+  ko_kr: 'ko-KR',
+  pt_br: 'pt-BR',
+  pt_pt: 'pt-PT',
+  ru_ru: 'ru-RU',
+  zh_cn: 'zh-CN',
+  zh_tw: 'zh-TW',
+};
+
 export function isAppLocale(value: string | null | undefined): value is AppLocale {
   return Boolean(value && supportedSet.has(value.toLowerCase()));
 }
@@ -76,6 +92,14 @@ export function normalizeAppLocale(value: string | null | undefined): AppLocale 
 export function blizzardLocaleToAppLocale(value: string | null | undefined): AppLocale {
   if (!value) return 'en';
   return blizzardToAppLocale[value.toLowerCase()] ?? normalizeAppLocale(value) ?? 'en';
+}
+
+export function blizzardLocaleToFormatLocale(
+  value: string | null | undefined,
+  fallback: AppLocale,
+): string {
+  if (!value) return fallback;
+  return blizzardToFormatLocale[value.toLowerCase()] ?? value.replace(/_/g, '-');
 }
 
 export function appLocaleToCanonicalBlizzardLocale(locale: AppLocale): string {

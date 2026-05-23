@@ -165,6 +165,29 @@ describe('RealmSelectionService', () => {
     );
   });
 
+  it('hydrates a stored placeholder selection from the API', async () => {
+    localStorage.setItem('wae.selectedRealm', JSON.stringify({ region: 'eu', slug: 'stormrage' }));
+    const getRealm = vitest.fn().mockReturnValue(of(detailFixture));
+    const service = createService({ getRealm });
+
+    const ok = await service.hydrateStoredSelectionFromApi();
+
+    expect(ok).toBe(true);
+    expect(getRealm).toHaveBeenCalledWith('eu', 'stormrage');
+    expect(service.selected()?.locale).toBe('en_GB');
+  });
+
+  it('does not refetch a selected realm that already has locale data', async () => {
+    const getRealm = vitest.fn();
+    const service = createService({ getRealm });
+    service.select(realmFixture);
+
+    const ok = await service.hydrateStoredSelectionFromApi();
+
+    expect(ok).toBe(true);
+    expect(getRealm).not.toHaveBeenCalled();
+  });
+
   it('hydrateSelectedFromApi returns false when the API fails', async () => {
     const service = createService({
       getRealm: () => throwError(() => new Error('404')),

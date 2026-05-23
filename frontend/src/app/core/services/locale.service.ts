@@ -5,6 +5,7 @@ import {
   apiLocaleOverrideFor,
   appLocaleFromPath,
   AppLocale,
+  blizzardLocaleToFormatLocale,
   localizedPath,
   LOCALE_OPTIONS,
   LOCALE_OVERRIDE_COOKIE_KEY,
@@ -13,6 +14,16 @@ import {
   normalizeAppLocale,
   SUPPORTED_APP_LOCALES,
 } from './locale-support';
+
+export function selectedRealmFormatLocale(): string {
+  const realmSelection = inject(RealmSelectionService);
+  const platformId = inject(PLATFORM_ID);
+  const document = inject(DOCUMENT);
+  const fallback = isPlatformBrowser(platformId)
+    ? (appLocaleFromPath(document.location.pathname) ?? 'en')
+    : 'en';
+  return blizzardLocaleToFormatLocale(realmSelection.selected()?.locale, fallback);
+}
 
 @Injectable({ providedIn: 'root' })
 export class LocaleService {
@@ -46,7 +57,10 @@ export class LocaleService {
   }
 
   formatLocale(): string {
-    return this.activeLocale();
+    return blizzardLocaleToFormatLocale(
+      this.realmSelection.selected()?.locale,
+      this.activeLocale(),
+    );
   }
 
   switchLocale(locale: AppLocale): void {

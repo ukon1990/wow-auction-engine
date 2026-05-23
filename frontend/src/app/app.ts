@@ -142,6 +142,6 @@ export class App {
   }
 
   private formatLastModified(value: string | null | undefined): string {
-    return value ? formatDate(value, 'short', this.locale.activeLocale()) : '';
+    return value ? formatDate(value, 'short', this.locale.formatLocale()) : '';
   }
 }

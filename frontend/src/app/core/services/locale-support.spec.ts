@@ -1,6 +1,7 @@
 import {
   apiLocaleOverrideFor,
   appLocaleToCanonicalBlizzardLocale,
+  blizzardLocaleToFormatLocale,
   blizzardLocaleToAppLocale,
   localizedPath,
   stripLocalePrefix,
@@ -28,6 +29,15 @@ describe('locale support', () => {
     expect(appLocaleToCanonicalBlizzardLocale('es')).toBe('es_ES');
     expect(appLocaleToCanonicalBlizzardLocale('pt')).toBe('pt_BR');
     expect(appLocaleToCanonicalBlizzardLocale('zh')).toBe('zh_CN');
+  });
+
+  it('maps Blizzard locales to regional format locales', () => {
+    expect(blizzardLocaleToFormatLocale('en_GB', 'en')).toBe('en-GB');
+    expect(blizzardLocaleToFormatLocale('en_US', 'en')).toBe('en-US');
+    expect(blizzardLocaleToFormatLocale('es_MX', 'es')).toBe('es-MX');
+    expect(blizzardLocaleToFormatLocale('pt_PT', 'pt')).toBe('pt-PT');
+    expect(blizzardLocaleToFormatLocale('zh_TW', 'zh')).toBe('zh-TW');
+    expect(blizzardLocaleToFormatLocale(null, 'fr')).toBe('fr');
   });
 
   it('omits the API locale override when the realm already matches the app language', () => {

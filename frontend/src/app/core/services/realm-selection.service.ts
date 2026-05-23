@@ -131,6 +131,14 @@ export class RealmSelectionService {
     });
   }
 
+  hydrateStoredSelectionFromApi(): Promise<boolean> {
+    const selected = this.selectedSignal();
+    if (!selected || selected.locale) {
+      return Promise.resolve(Boolean(selected));
+    }
+    return this.hydrateSelectedFromApi(selected.region, selected.slug);
+  }
+
   /**
    * SSR-only: set selection from URL so shell/menu can render without calling the API.
    */
