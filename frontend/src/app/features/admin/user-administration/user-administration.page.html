@@ -1,10 +1,10 @@
 <ee-page-frame [title]="'Users'" eyebrow="Admin" [loading]="loading()" titleId="user-page-title">
   <ee-table
     headerRowClass=""
-    [bodyRowClassFn]="marketRowClass"
+    [bodyRowClassFn]="rowClass"
     [clickableRows]="false"
     [columns]="columns()"
-    [contentMinWidthClass]="'full'"
+    [contentMinWidthClass]="'auto'"
     [data]="users()"
     [loading]="loading()"
     [manualSorting]="true"
