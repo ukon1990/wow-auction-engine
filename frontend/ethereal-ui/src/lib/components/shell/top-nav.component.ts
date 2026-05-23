@@ -1,14 +1,19 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  effect,
   HostListener,
   inject,
   input,
+  OnDestroy,
   output,
   signal,
+  viewChild,
 } from '@angular/core';
-import { Params, RouterLink } from '@angular/router';
+import { NgTemplateOutlet } from '@angular/common';
+import { Params, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { CharacterSummary, LocaleOption, NavItem } from '../../models/ui-models';
 import { IconButtonComponent } from '../primitives/icon-button.component';
@@ -20,101 +25,26 @@ import { TopNavItemComponent } from './top-nav-item.component';
   selector: 'ee-top-nav',
   imports: [
     IconButtonComponent,
+    NgTemplateOutlet,
+    RouterLinkActive,
     SymbolIconComponent,
     RouterLink,
     TopNavDropdownItemComponent,
     TopNavItemComponent,
   ],
-  template: `
-    <header
-      class="sticky top-0 z-50 flex h-16 w-full items-center justify-between gap-2 border-b border-white/10 bg-slate-950/80 px-3 shadow-[0_4px_20px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:px-6"
-    >
-      <div class="flex min-w-0 flex-1 items-center gap-3 md:gap-8">
-        <button
-          type="button"
-          class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-primary transition hover:bg-white/5 md:hidden"
-          [attr.aria-expanded]="mobileDrawerOpen()"
-          aria-controls="ee-side-nav-drawer"
-          aria-label="Open navigation menu"
-          i18n-aria-label="@@topNav.openNavigation"
-          (click)="toggleMobileDrawer.emit()"
-        >
-          <ee-symbol-icon class="text-[22px]" name="menu" />
-        </button>
-        <div class="flex min-w-0 flex-col">
-          <div
-            class="min-w-0 truncate font-cinzel text-lg font-bold tracking-[0.05em] text-primary-container drop-shadow-[0_0_8px_rgba(236,185,19,0.4)] sm:text-xl md:text-2xl"
-          >
-            <ng-container i18n="@@brand.name">The Ethereal Exchange</ng-container>
-          </div>
-          @if (subText()) {
-            <small
-              class="min-w-0 truncate text-[0.7rem] font-medium leading-3 tracking-normal text-on-surface-variant sm:text-xs"
-            >
-              {{ subText() }}
-            </small>
-          }
-        </div>
-        <nav
-          class="hidden min-w-0 items-center gap-4 lg:gap-6 md:flex"
-          aria-label="Primary navigation"
-          i18n-aria-label="@@topNav.primaryNavigation"
-        >
-          @for (item of items(); track item.id) {
-            @if (hasChildren(item)) {
-              <ee-top-nav-dropdown-item
-                [item]="item"
-                [activeId]="activeId()"
-                [open]="isDropdownOpen(item.id)"
-                (toggle)="toggleDropdown(item.id)"
-                (close)="closeDropdown()"
-                (selected)="onDropdownButton($event)"
-              />
-            } @else {
-              <ee-top-nav-item
-                [item]="item"
-                [activeId]="activeId()"
-                (selected)="onPrimaryButton($event)"
-              />
-            }
-          }
-        </nav>
-      </div>
-      <div class="flex shrink-0 items-center gap-1 sm:gap-3">
-        <label class="sr-only" for="ee-locale-select" i18n="@@topNav.language">Language</label>
-        <select
-          id="ee-locale-select"
-          class="h-8 rounded border border-white/10 bg-surface-container px-2 ee-label text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-          [value]="activeLocale()"
-          aria-label="Language"
-          i18n-aria-label="@@topNav.language"
-          (change)="onLocaleChange($event)"
-        >
-          @for (locale of localeOptions(); track locale.id) {
-            <option [value]="locale.id" [selected]="locale.id === activeLocale()">
-              {{ locale.label }}
-            </option>
-          }
-        </select>
-        <ee-icon-button icon="settings" i18n-label="@@topNav.settings" label="Settings" />
-        <span class="hidden md:inline-flex">
-          <ee-icon-button icon="query_stats" i18n-label="@@topNav.analytics" label="Analytics" />
-        </span>
-        <a
-          class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-surface-container text-primary transition hover:bg-white/5 hover:text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container"
-          [routerLink]="accountRouterLink()"
-          [queryParams]="accountQueryParams()"
-          [attr.aria-label]="accountLabel()"
-        >
-          <ee-symbol-icon class="text-[18px]" name="person" />
-        </a>
-      </div>
-    </header>
-  `,
+  templateUrl: './top-nav.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TopNavComponent {
+export class TopNavComponent implements OnDestroy {
+  private static readonly FIT_BUFFER_PX = 12;
+  private static readonly MIN_DESKTOP_WIDTH_PX = 768;
+
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly header = viewChild<ElementRef<HTMLElement>>('header');
+  private readonly leftCluster = viewChild<ElementRef<HTMLElement>>('leftCluster');
+  private readonly brandBlock = viewChild<ElementRef<HTMLElement>>('brandBlock');
+  private readonly actionCluster = viewChild<ElementRef<HTMLElement>>('actionCluster');
+  private readonly measureNav = viewChild<ElementRef<HTMLElement>>('measureNav');
 
   readonly items = input.required<readonly NavItem[]>();
   readonly activeId = input.required<string>();
@@ -131,6 +61,31 @@ export class TopNavComponent {
   readonly subText = input<string>('');
 
   protected readonly openDropdownId = signal<string | null>(null);
+  protected readonly useMobileNavigation = signal(true);
+
+  private resizeObserver: ResizeObserver | null = null;
+  private measureFrame = 0;
+
+  constructor() {
+    afterNextRender(() => {
+      this.resizeObserver = new ResizeObserver(() => {
+        this.scheduleNavigationMeasurement();
+      });
+      for (const element of this.observedElements()) {
+        this.resizeObserver.observe(element);
+      }
+      this.scheduleNavigationMeasurement();
+    });
+
+    effect(() => {
+      this.items();
+      this.localeOptions();
+      this.activeLocale();
+      this.subText();
+      this.accountLabel();
+      this.scheduleNavigationMeasurement();
+    });
+  }
 
   @HostListener('document:click', ['$event'])
   protected onDocumentClick(event: MouseEvent): void {
@@ -144,6 +99,11 @@ export class TopNavComponent {
   @HostListener('document:keydown.escape')
   protected onDocumentEscape(): void {
     this.closeDropdown();
+  }
+
+  @HostListener('window:resize')
+  protected onWindowResize(): void {
+    this.scheduleNavigationMeasurement();
   }
 
   protected onPrimaryButton(id: string): void {
@@ -171,10 +131,100 @@ export class TopNavComponent {
     this.closeDropdown();
   }
 
+  protected onMobilePrimaryButton(id: string): void {
+    this.navSelected.emit(id);
+    this.closeMobileNavigation();
+  }
+
+  protected onMobileLinkSelected(): void {
+    this.closeMobileNavigation();
+  }
+
   protected onLocaleChange(event: Event): void {
     const select = event.target as HTMLSelectElement | null;
     if (select?.value) {
       this.localeSelected.emit(select.value);
     }
+  }
+
+  protected onMobileLocaleChange(event: Event): void {
+    this.onLocaleChange(event);
+    this.closeMobileNavigation();
+  }
+
+  ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
+    if (this.measureFrame) {
+      cancelAnimationFrame(this.measureFrame);
+    }
+  }
+
+  private scheduleNavigationMeasurement(): void {
+    if (typeof requestAnimationFrame !== 'function') {
+      return;
+    }
+    cancelAnimationFrame(this.measureFrame);
+    this.measureFrame = requestAnimationFrame(() => {
+      this.measureFrame = 0;
+      this.updateNavigationMode();
+    });
+  }
+
+  private updateNavigationMode(): void {
+    const header = this.header()?.nativeElement;
+    const leftCluster = this.leftCluster()?.nativeElement;
+    const brandBlock = this.brandBlock()?.nativeElement;
+    const actionCluster = this.actionCluster()?.nativeElement;
+    const measureNav = this.measureNav()?.nativeElement;
+    if (!header || !leftCluster || !brandBlock || !actionCluster || !measureNav) {
+      return;
+    }
+
+    const headerStyles = getComputedStyle(header);
+    const leftStyles = getComputedStyle(leftCluster);
+    const headerHorizontalPadding =
+      this.cssPixels(headerStyles.paddingLeft) + this.cssPixels(headerStyles.paddingRight);
+    const headerGap = this.cssPixels(headerStyles.columnGap || headerStyles.gap);
+    const leftGap = this.cssPixels(leftStyles.columnGap || leftStyles.gap);
+
+    const availableWidth =
+      header.clientWidth -
+      headerHorizontalPadding -
+      (this.useMobileNavigation() ? 0 : actionCluster.offsetWidth) -
+      headerGap -
+      TopNavComponent.FIT_BUFFER_PX;
+    const requiredWidth = brandBlock.scrollWidth + measureNav.scrollWidth + leftGap;
+    const nextUseMobileNavigation =
+      header.clientWidth < TopNavComponent.MIN_DESKTOP_WIDTH_PX || requiredWidth > availableWidth;
+
+    if (this.useMobileNavigation() !== nextUseMobileNavigation) {
+      this.useMobileNavigation.set(nextUseMobileNavigation);
+      if (nextUseMobileNavigation) {
+        this.closeDropdown();
+      } else if (this.mobileDrawerOpen()) {
+        this.toggleMobileDrawer.emit();
+      }
+    }
+  }
+
+  protected closeMobileNavigation(): void {
+    if (this.mobileDrawerOpen()) {
+      this.toggleMobileDrawer.emit();
+    }
+  }
+
+  private observedElements(): HTMLElement[] {
+    return [
+      this.header()?.nativeElement,
+      this.leftCluster()?.nativeElement,
+      this.brandBlock()?.nativeElement,
+      this.actionCluster()?.nativeElement,
+      this.measureNav()?.nativeElement,
+    ].filter((element): element is HTMLElement => Boolean(element));
+  }
+
+  private cssPixels(value: string): number {
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : 0;
   }
 }
