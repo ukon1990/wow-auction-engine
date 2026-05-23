@@ -1,54 +1,64 @@
+import { Component, Type, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import type { CellContext } from '@tanstack/table-core';
+import { ColumnDef, createColumnHelper, flexRenderComponent } from '@tanstack/angular-table';
 
+import { TableComponent } from '../../table.component';
 import { DateColumnComponent, DateTimeColumnComponent } from './date-column.component';
 
-const { flexRenderContext } = vi.hoisted(() => ({
-  flexRenderContext: {
-    getValue: () => '2026-05-23T09:15:00.000Z',
-  } as CellContext<unknown, unknown>,
-}));
+type TestRow = {
+  readonly id: string;
+  readonly value: string;
+};
 
-vi.mock('@tanstack/angular-table', () => {
-  return {
-    injectFlexRenderContext: () => flexRenderContext,
-  };
-});
+const rows: TestRow[] = [{ id: 'row-1', value: '2026-05-23T09:15:00.000Z' }];
+const helper = createColumnHelper<TestRow>();
+
+@Component({
+  imports: [TableComponent],
+  template: ` <ee-table [columns]="columns()" [data]="rows" [getRowId]="getRowId" /> `,
+})
+class DateColumnHostComponent {
+  readonly rows = rows;
+  readonly columns = signal<ColumnDef<TestRow, unknown>[]>([]);
+  readonly getRowId = (row: TestRow) => row.id;
+}
 
 describe('DateColumnComponent', () => {
-  let component: DateColumnComponent;
-  let fixture: ComponentFixture<DateColumnComponent>;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DateColumnComponent],
+      imports: [DateColumnHostComponent],
     }).compileComponents();
-
-    fixture = TestBed.createComponent(DateColumnComponent);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    const fixture = createHostWithCell(DateColumnComponent);
+
+    expect(fixture.nativeElement.textContent).toContain('2026');
   });
 });
 
 describe('DateTimeColumnComponent', () => {
-  let component: DateTimeColumnComponent;
-  let fixture: ComponentFixture<DateTimeColumnComponent>;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DateTimeColumnComponent],
+      imports: [DateColumnHostComponent],
     }).compileComponents();
-
-    fixture = TestBed.createComponent(DateTimeColumnComponent);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    const fixture = createHostWithCell(DateTimeColumnComponent);
+
+    expect((fixture.nativeElement.textContent as string).trim()).not.toBe('Value');
   });
 });
+
+function createHostWithCell(component: Type<unknown>): ComponentFixture<DateColumnHostComponent> {
+  const fixture = TestBed.createComponent(DateColumnHostComponent);
+  fixture.componentInstance.columns.set([
+    helper.accessor('value', {
+      header: 'Value',
+      cell: () => flexRenderComponent(component),
+    }),
+  ] as ColumnDef<TestRow, unknown>[]);
+  fixture.detectChanges();
+  return fixture;
+}

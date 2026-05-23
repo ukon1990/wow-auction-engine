@@ -6,10 +6,19 @@ import { MarketBrowserPage } from './market-browser.page';
 import { AuctionItemService } from '@core/services/auction-item.service';
 
 describe('MarketBrowserPage', () => {
+  const pageData = signal({
+    page: {
+      page: 0,
+      pageSize: 10,
+      totalItems: 42,
+      totalPages: 5,
+    },
+  });
   const serviceStub = {
     queryParams: signal({
       sortBy: 'itemName' as const,
       sortDirection: 'asc' as const,
+      query: '',
     }),
     currentRows: signal([
       {
@@ -26,16 +35,29 @@ describe('MarketBrowserPage', () => {
       },
     ]),
     filterSections: signal([]),
-    pageData: signal({
-      page: {
-        pageSize: 10,
-      },
-    }),
+    pageData,
+    paginationState: () => pageData().page,
     isLoading: signal(false),
     setSearchQuery: vitest.fn(),
+    toggleFilter: vitest.fn(),
+    selectFilter: vitest.fn(),
+    setRangeFilter: vitest.fn(),
+    resetFilters: vitest.fn(),
+    goToPage: vitest.fn(),
+    upsertSorting: vitest.fn(),
   };
 
   beforeEach(async () => {
+    pageData.set({
+      page: {
+        page: 0,
+        pageSize: 10,
+        totalItems: 42,
+        totalPages: 5,
+      },
+    });
+    vitest.clearAllMocks();
+
     await TestBed.configureTestingModule({
       imports: [MarketBrowserPage],
       providers: [
@@ -80,5 +102,42 @@ describe('MarketBrowserPage', () => {
     expect(compiled.textContent).toContain('Healing Potion');
     expect(compiled.textContent).toContain('Consumable');
     expect(compiled.textContent).toContain('Potion');
+  });
+
+  it('shows the visible market row range and total row count', () => {
+    const fixture = TestBed.createComponent(MarketBrowserPage);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.textContent).toContain('Showing 1-10 of 42 rows');
+  });
+
+  it('shows the empty market summary when there are no rows', () => {
+    pageData.set({
+      page: {
+        page: 0,
+        pageSize: 10,
+        totalItems: 0,
+        totalPages: 0,
+      },
+    });
+    const fixture = TestBed.createComponent(MarketBrowserPage);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.textContent).toContain('No market items available.');
+  });
+
+  it('delegates selected page events to the market service', () => {
+    const fixture = TestBed.createComponent(MarketBrowserPage);
+    fixture.detectChanges();
+
+    (fixture.componentInstance as unknown as { onPageChange: (page: number) => void }).onPageChange(
+      2,
+    );
+
+    expect(serviceStub.goToPage).toHaveBeenCalledWith(2);
   });
 });

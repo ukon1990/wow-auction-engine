@@ -4,9 +4,16 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 import { CraftingBrowserPage } from './crafting-browser.page';
 import { CraftingItemService } from '@core/services/crafting-item.service';
-import { LocaleService } from '@core/services/locale.service';
 
 describe('CraftingBrowserPage', () => {
+  const pageData = signal({
+    page: {
+      page: 0,
+      pageSize: 25,
+      totalItems: 1,
+      totalPages: 1,
+    },
+  });
   const serviceStub = {
     queryParams: signal({
       sortBy: 'itemName' as const,
@@ -34,21 +41,14 @@ describe('CraftingBrowserPage', () => {
       },
     ]),
     filterSections: signal([]),
-    pageData: signal({
-      page: {
-        page: 0,
-        pageSize: 25,
-        totalItems: 1,
-        totalPages: 1,
-      },
-    }),
+    pageData,
+    paginationState: () => pageData().page,
     isLoading: signal(false),
     setSearchQuery: vitest.fn(),
     toggleFilter: vitest.fn(),
     setRangeFilter: vitest.fn(),
     resetFilters: vitest.fn(),
-    goToPreviousPage: vitest.fn(),
-    goToNextPage: vitest.fn(),
+    goToPage: vitest.fn(),
     upsertSorting: vitest.fn(),
   };
 
@@ -62,12 +62,6 @@ describe('CraftingBrowserPage', () => {
           useValue: {
             snapshot: { paramMap: convertToParamMap({}) },
             queryParamMap: of(convertToParamMap({})),
-          },
-        },
-        {
-          provide: LocaleService,
-          useValue: {
-            formatLocale: () => 'en',
           },
         },
       ],
@@ -89,5 +83,16 @@ describe('CraftingBrowserPage', () => {
     expect(compiled.textContent).toContain('Output');
     expect(compiled.textContent).toContain('Healing Potion');
     expect(compiled.textContent).toContain('Alchemy');
+  });
+
+  it('delegates selected page events to the crafting service', () => {
+    const fixture = TestBed.createComponent(CraftingBrowserPage);
+    fixture.detectChanges();
+
+    (fixture.componentInstance as unknown as { onPageChange: (page: number) => void }).onPageChange(
+      2,
+    );
+
+    expect(serviceStub.goToPage).toHaveBeenCalledWith(2);
   });
 });

@@ -78,7 +78,7 @@ function readSortBy(value: string | null): MarketBrowserQueryState['sortBy'] {
 
 function clampPage(value: number | null): number {
   if (value == null || !Number.isFinite(value)) return defaultMarketBrowserQueryState.page;
-  return Math.max(1, Math.floor(value));
+  return Math.max(0, Math.floor(value));
 }
 
 function clampPageSize(value: number | null): number {

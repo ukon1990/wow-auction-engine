@@ -64,19 +64,6 @@ export class CraftingItemService extends BaseSearchService<
     this.navigateQueryState({ ...defaultCraftingBrowserQueryState, pageSize });
   }
 
-  goToPreviousPage(): void {
-    const state = this.currentQueryState();
-    if (state.page <= 0) return;
-    this.navigateQueryState({ ...state, page: state.page - 1 });
-  }
-
-  goToNextPage(): void {
-    const state = this.currentQueryState();
-    const totalPages = this.pageData()?.page?.totalPages ?? 0;
-    if (state.page + 1 >= totalPages) return;
-    this.navigateQueryState({ ...state, page: state.page + 1 });
-  }
-
   protected override mapFiltersToSections(
     filters: readonly AuctionMarketFilter[],
     state: CraftingBrowserQueryState,

@@ -17,8 +17,19 @@ export type QueryBase = {
   sortDirection?: 'asc' | 'desc';
 };
 
+export type PageMetadataBase = {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+};
+
+export type SearchPageBase = {
+  page: PageMetadataBase;
+};
+
 export const BASE_QUERY = (): QueryBase => ({
-  page: 1,
+  page: 0,
   pageSize: 25,
 });
 
@@ -39,7 +50,7 @@ interface CacheEntry<DataType> {
   providedIn: 'root',
 })
 export abstract class BaseSearchService<
-  PageType,
+  PageType extends SearchPageBase,
   SingularType,
   OutputDataType,
   QueryParams extends QueryBase,
@@ -54,6 +65,7 @@ export abstract class BaseSearchService<
   });
   protected readonly cache = signal(new Map<string, CacheEntry<PageType>>());
   protected readonly cacheById = signal(new Map<string, CacheEntry<SingularType>>());
+  private readonly latestPageMetadata = signal<PageMetadataBase | undefined>(undefined);
   protected readonly queryService = inject(QueryService<QueryParams>);
   readonly queryParams = this.queryService.queryParams;
   readonly pageData = computed(() => {
@@ -62,6 +74,20 @@ export abstract class BaseSearchService<
     const key = this.getCacheKey(query);
     const cachedValue = this.cache().get(key);
     return cachedValue?.data;
+  });
+  readonly paginationState = computed(() => {
+    const pageData = this.pageData();
+    if (pageData) return pageData.page;
+
+    const query = this.queryParams();
+    const latestPageMetadata = this.latestPageMetadata();
+    if (!query || !latestPageMetadata || !this.isLoading()) return undefined;
+
+    return {
+      ...latestPageMetadata,
+      page: query.page,
+      pageSize: query.pageSize,
+    };
   });
   private readonly realmService = inject(RealmSelectionService);
   private readonly locale = inject(LocaleService);
@@ -138,6 +164,7 @@ export abstract class BaseSearchService<
         const cache = this.cache();
         cache.set(cacheKey, { metadata, data });
         this.cache.set(new Map(cache));
+        this.latestPageMetadata.set(data.page);
       }),
       catchError((error) => {
         this.toast.error(
@@ -185,6 +212,31 @@ export abstract class BaseSearchService<
     this.queryService.navigateWithState(this.defaultQueryParams);
   }
 
+  public goToPreviousPage(): void {
+    const state = this.currentQueryState();
+    if (state.page <= 0) return;
+    this.navigateToPage(state.page - 1, false);
+  }
+
+  public goToNextPage(): void {
+    const state = this.currentQueryState();
+    this.navigateToPage(state.page + 1, true);
+  }
+
+  public goToPage(page: number): void {
+    this.navigateToPage(page, true);
+  }
+
+  public goToFirstPage(): void {
+    this.navigateToPage(0, false);
+  }
+
+  public goToLastPage(): void {
+    const pageMeta = this.paginationState();
+    if (!pageMeta) return;
+    this.navigateToPage(pageMeta.totalPages - 1, true);
+  }
+
   protected fetchFilterDefinitions() {
     const region = this.queryService.region();
     const slug = this.queryService.realmSlug();
@@ -203,6 +255,20 @@ export abstract class BaseSearchService<
       }),
       finalize(() => this.isLoadingFilters.set(false)),
     );
+  }
+
+  private navigateToPage(page: number, requirePageMetadata: boolean): void {
+    if (!Number.isFinite(page)) return;
+
+    const state = this.currentQueryState();
+    const pageMeta = this.paginationState();
+    if (requirePageMetadata && !pageMeta) return;
+
+    const maxPage = pageMeta ? Math.max(0, pageMeta.totalPages - 1) : Number.MAX_SAFE_INTEGER;
+    const targetPage = Math.max(0, Math.min(Math.floor(page), maxPage));
+    if (targetPage === state.page) return;
+
+    this.navigateQueryState({ ...state, page: targetPage });
   }
 
   private getAhMetadata(): CacheEntry<OutputDataType>['metadata'] | null {

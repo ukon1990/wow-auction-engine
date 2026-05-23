@@ -1,4 +1,4 @@
-import { DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,7 +25,6 @@ import {
 } from '@ui';
 
 import { CraftingItemService } from '@core/services/crafting-item.service';
-import { LocaleService } from '@core/services/locale.service';
 
 import type { CraftingTableRow } from './crafting-browser.models';
 import {
@@ -73,8 +72,6 @@ export class CraftingBrowserPage {
   protected readonly headerRowClass = craftingBrowserHeaderRowClass();
   protected readonly skeletonRowClass = craftingBrowserSkeletonRowClass();
   private readonly craftingService = inject(CraftingItemService);
-  private readonly locale = inject(LocaleService);
-  private readonly decimalPipe = new DecimalPipe(this.locale.formatLocale());
   protected readonly tableSorting = computed<SortingState>(() => {
     const params = this.craftingService.queryParams();
     if (!params) return [];
@@ -84,26 +81,10 @@ export class CraftingBrowserPage {
   readonly currentRows = this.craftingService.currentRows;
   readonly filterSections = this.craftingService.filterSections;
   readonly pageSize = computed(() => this.craftingService.pageData()?.page?.pageSize ?? 25);
+  readonly paginationState = this.craftingService.paginationState;
   readonly isLoading = this.craftingService.isLoading;
-  protected readonly paginationSummary = computed(() => {
-    if (this.isLoading()) {
-      return $localize`:@@crafting.loadingRecipes:Loading recipes...`;
-    }
-    const pageMeta = this.craftingService.pageData()?.page;
-    const totalItems = pageMeta?.totalItems ?? 0;
-    if (totalItems === 0) {
-      return $localize`:@@crafting.pagination.empty:No recipes available.`;
-    }
-    const page = pageMeta?.page ?? 0;
-    const pageSize = pageMeta?.pageSize ?? this.pageSize();
-    const start = page * pageSize + 1;
-    const end = Math.min((page + 1) * pageSize, totalItems);
-    const locale = this.locale.formatLocale();
-    const startLabel = this.formatInteger(start, locale);
-    const endLabel = this.formatInteger(end, locale);
-    const totalLabel = this.formatInteger(totalItems, locale);
-    return $localize`:@@crafting.pagination.summary:Showing ${startLabel}-${endLabel} of ${totalLabel} rows`;
-  });
+  protected readonly loadingPaginationSummary = $localize`:@@crafting.loadingRecipes:Loading recipes...`;
+  protected readonly emptyPaginationSummary = $localize`:@@crafting.pagination.empty:No recipes available.`;
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
 
@@ -171,19 +152,11 @@ export class CraftingBrowserPage {
     this.mobileFiltersOpen.set(false);
   }
 
-  protected onPreviousPage(): void {
-    this.craftingService.goToPreviousPage();
-  }
-
-  protected onNextPage(): void {
-    this.craftingService.goToNextPage();
+  protected onPageChange(page: number): void {
+    this.craftingService.goToPage(page);
   }
 
   protected onTableSortingChange(sorting: SortingState): void {
     this.craftingService.upsertSorting(sorting);
-  }
-
-  private formatInteger(value: number, locale: string): string {
-    return this.decimalPipe.transform(value, '1.0-0', locale) ?? String(value);
   }
 }

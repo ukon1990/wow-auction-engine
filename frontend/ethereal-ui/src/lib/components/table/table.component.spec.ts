@@ -4,6 +4,7 @@ import { ColumnDef, createColumnHelper } from '@tanstack/angular-table';
 import type { SortingState } from '@tanstack/table-core';
 
 import { TableComponent } from './table.component';
+import { PaginationState } from './pagination.component';
 
 type TestRow = {
   readonly id: string;
@@ -68,10 +69,41 @@ class ManualSortingTableHostComponent {
   readonly getRowId = (row: TestRow) => row.id;
 }
 
+@Component({
+  imports: [TableComponent],
+  template: `
+    <ee-table
+      [columns]="columns"
+      [data]="rows()"
+      [getRowId]="getRowId"
+      [paginationState]="paginationState()"
+      [showFooter]="true"
+      [showPagination]="true"
+      (pageChange)="pageChanges.push($event)"
+    />
+  `,
+})
+class PaginatedTableHostComponent {
+  readonly columns = columns;
+  readonly rows = signal(unsortedRows);
+  readonly paginationState = signal<PaginationState>({
+    page: 0,
+    pageSize: 10,
+    totalItems: 42,
+    totalPages: 5,
+  });
+  readonly pageChanges: number[] = [];
+  readonly getRowId = (row: TestRow) => row.id;
+}
+
 describe('TableComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MinimalTableHostComponent, ManualSortingTableHostComponent],
+      imports: [
+        MinimalTableHostComponent,
+        ManualSortingTableHostComponent,
+        PaginatedTableHostComponent,
+      ],
     }).compileComponents();
   });
 
@@ -122,6 +154,17 @@ describe('TableComponent', () => {
     expect(bodyText[1]).toContain('Alice');
     expect(fixture.componentInstance.sortingEvents.at(-1)).toEqual([{ id: 'name', desc: false }]);
   });
+
+  it('renders shared pagination and forwards page changes', () => {
+    const fixture = TestBed.createComponent(PaginatedTableHostComponent);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Showing 1-10 of 42 rows');
+
+    clickButton(fixture, 'Page 2');
+
+    expect(fixture.componentInstance.pageChanges).toEqual([1]);
+  });
 });
 
 function getHeaderRow<T>(fixture: ComponentFixture<T>): HTMLElement {
@@ -141,6 +184,15 @@ function clickHeader<T>(fixture: ComponentFixture<T>, label: string): void {
     fixture.nativeElement.querySelectorAll('button'),
   ) as HTMLButtonElement[];
   const button = buttons.find((b) => b.textContent?.includes(label));
+  expect(button).toBeTruthy();
+  button?.click();
+}
+
+function clickButton<T>(fixture: ComponentFixture<T>, ariaLabel: string): void {
+  const buttons = Array.from(
+    fixture.nativeElement.querySelectorAll('button'),
+  ) as HTMLButtonElement[];
+  const button = buttons.find((b) => b.getAttribute('aria-label') === ariaLabel);
   expect(button).toBeTruthy();
   button?.click();
 }

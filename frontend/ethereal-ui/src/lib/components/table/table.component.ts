@@ -20,6 +20,7 @@ import {
 import type { Column, Header, SortingState, Table } from '@tanstack/table-core';
 
 import { SymbolIconComponent } from '../primitives/symbol-icon.component';
+import { PaginationComponent, PaginationState } from './pagination.component';
 
 const DEFAULT_CONTENT_MIN_WIDTH_CLASS = 'min-w-0 w-full';
 const DEFAULT_HEADER_ROW_CLASS =
@@ -40,7 +41,7 @@ type TableColumnMeta = {
   host: {
     class: 'flex min-h-0 min-w-0 flex-1',
   },
-  imports: [FlexRenderDirective, ScrollingModule, SymbolIconComponent],
+  imports: [FlexRenderDirective, ScrollingModule, PaginationComponent, SymbolIconComponent],
   template: `
     <section
       class="ee-glass flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg"
@@ -174,30 +175,21 @@ type TableColumnMeta = {
       </div>
       @if (showFooter()) {
         <footer
-          class="flex items-center justify-between border-t border-white/10 bg-surface-container-high p-4 ee-data text-outline"
+          class="flex w-full items-center border-t border-white/10 bg-surface-container-high p-4 ee-data text-outline"
         >
-          <span>{{ footerSummary() }}</span>
           @if (showPagination()) {
-            <div class="flex gap-2">
-              <button
-                type="button"
-                class="rounded p-1 transition hover:text-primary enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
-                [attr.aria-label]="previousPageAriaLabel()"
-                [disabled]="loading()"
-                (click)="previousPage.emit()"
-              >
-                <ee-symbol-icon name="chevron_left" />
-              </button>
-              <button
-                type="button"
-                class="rounded p-1 transition hover:text-primary enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
-                [attr.aria-label]="nextPageAriaLabel()"
-                [disabled]="loading()"
-                (click)="nextPage.emit()"
-              >
-                <ee-symbol-icon name="chevron_right" />
-              </button>
-            </div>
+            <ee-pagination
+              class="w-full"
+              [emptySummary]="emptyPaginationSummary()"
+              [loading]="loading()"
+              [loadingSummary]="loadingPaginationSummary()"
+              [pageState]="paginationState()"
+              [rowLabel]="paginationRowLabel()"
+              [windowSize]="paginationWindowSize()"
+              (pageChange)="pageChange.emit($event)"
+            />
+          } @else {
+            <span>{{ footerSummary() }}</span>
           }
         </footer>
       }
@@ -217,9 +209,12 @@ export class TableComponent<TData extends RowData> {
   readonly bodyRowClassFn = input<((row: TData) => string) | undefined>(undefined);
   readonly showFooter = input(false, { transform: booleanAttribute });
   readonly footerSummary = input<string>('');
+  readonly paginationState = input<PaginationState | undefined>(undefined);
+  readonly loadingPaginationSummary = input<string>('Loading rows...');
+  readonly emptyPaginationSummary = input<string>('No rows available.');
+  readonly paginationRowLabel = input<string>('rows');
+  readonly paginationWindowSize = input(5, { transform: Number });
   readonly showPagination = input(false, { transform: booleanAttribute });
-  readonly previousPageAriaLabel = input<string>('Previous page');
-  readonly nextPageAriaLabel = input<string>('Next page');
   readonly clickableRows = input(false, { transform: booleanAttribute });
   readonly getRowId = input<(row: TData, index: number) => string>();
 
@@ -232,8 +227,7 @@ export class TableComponent<TData extends RowData> {
   readonly rowGridTemplateColumns = input<string | undefined>(undefined);
 
   readonly rowClick = output<TData>();
-  readonly previousPage = output<void>();
-  readonly nextPage = output<void>();
+  readonly pageChange = output<number>();
   readonly sortingChange = output<SortingState>();
   private readonly coreRowModel = getCoreRowModel<TData>();
   private readonly sortedRowModel = getSortedRowModel<TData>();

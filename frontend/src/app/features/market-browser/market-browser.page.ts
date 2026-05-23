@@ -83,11 +83,11 @@ export class MarketBrowserPage {
   });
   readonly currentRows = this.auctionService.currentRows;
   readonly filterSections = this.auctionService.filterSections;
-  readonly pageSize = this.auctionService.pageData()?.page?.pageSize;
+  readonly pageSize = computed(() => this.auctionService.pageData()?.page?.pageSize ?? 25);
+  readonly paginationState = this.auctionService.paginationState;
   readonly isLoading = this.auctionService.isLoading;
-  paginationSummary = computed(() =>
-    this.isLoading() ? $localize`:@@market.loadingItems:Loading market items...` : '',
-  );
+  readonly loadingPaginationSummary = $localize`:@@market.loadingItems:Loading market items...`;
+  readonly emptyPaginationSummary = $localize`:@@market.pagination.empty:No market items available.`;
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
@@ -158,12 +158,8 @@ export class MarketBrowserPage {
     this.mobileFiltersOpen.set(false);
   }
 
-  protected onPreviousPage(): void {
-    // TODO: pagination via query state
-  }
-
-  protected onNextPage(): void {
-    // TODO: pagination via query state
+  protected onPageChange(page: number): void {
+    this.auctionService.goToPage(page);
   }
 
   protected onTableSortingChange(sorting: SortingState): void {
