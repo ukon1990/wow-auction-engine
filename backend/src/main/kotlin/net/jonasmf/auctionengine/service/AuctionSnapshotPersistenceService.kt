@@ -40,10 +40,11 @@ class AuctionSnapshotPersistenceService(
     fun saveSnapshot(
         payloadPath: Path,
         connectedRealm: ConnectedRealm,
-        auctionCount: Int,
         lastModified: ZonedDateTime,
     ): AuctionSnapshotPersistenceSummary {
         val snapshotStartTime = System.currentTimeMillis()
+        // TODO: Remember to update the count part. Not sure if we need to save that in the db
+        val auctionCount = 0
         val updateHistory = updateHistoryService.startUpdate(connectedRealm, auctionCount, lastModified)
         var processedAuctions = 0
         var batchCount = 0

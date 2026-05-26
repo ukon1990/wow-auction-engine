@@ -3,21 +3,31 @@ package net.jonasmf.auctionengine.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.constant.AuctionTimeLeft
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
+import net.jonasmf.auctionengine.dto.Link
+import net.jonasmf.auctionengine.dto.Links
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
+import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
 import net.jonasmf.auctionengine.repository.rds.AuctionJDBCRepository
+import net.jonasmf.auctionengine.testsupport.writeJsonToDisk
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.dao.CannotAcquireLockException
 import java.sql.SQLException
 import java.time.Instant
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import kotlin.io.path.pathString
 
-class AuctionSnapshotPersistenceServiceTest {
+class AuctionSnapshotPersistenceServiceTest(
+    val service: AuctionSnapshotPersistenceService,
+) : IntegrationTestBase() {
     private val auctionJdbcRepository = mockk<AuctionJDBCRepository>()
     private val updateHistoryService = mockk<ConnectedRealmUpdateHistoryService>()
 
@@ -65,6 +75,42 @@ class AuctionSnapshotPersistenceServiceTest {
         verify(exactly = 2) { auctionJdbcRepository.upsertAuctions(any()) }
         verify(exactly = 1) { updateHistoryService.setUpdateToCompleted(connectedRealm.id, lastModified) }
     }
+
+    @Nested
+    inner class SaveSnapshot {
+        @Test
+        fun `Can save snapshot to the database`() {
+            val realm = createRealm(1)
+            val lastModified = ZonedDateTime.of(2026, 5, 25, 5, 0, 0, 0, ZoneOffset.UTC)
+            val auctionFile =
+                createFileForAuctions(
+                    auctions =
+                        listOf(
+                            AuctionDTO(
+                                id = 123,
+                                item = AuctionItemDTO(id = 82800),
+                                bid = null,
+                                unit_price = 1500,
+                                buyout = 3000,
+                                time_left = AuctionTimeLeft.SHORT,
+                                quantity = 30,
+                            ),
+                        ),
+                )
+            val result = service.saveSnapshot(auctionFile.fileName.toAbsolutePath(), realm, lastModified)
+        }
+    }
+
+    private fun createFileForAuctions(
+        auctions: List<AuctionDTO>,
+        fileName: String = "auctions",
+    ) = writeJsonToDisk(
+        "",
+        AuctionData(
+            _links = Links(Link(href = "")),
+            auctions = auctions,
+        ),
+    )
 
     private fun createRealm(id: Int) =
         ConnectedRealm(
