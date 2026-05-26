@@ -213,19 +213,25 @@ class AuctionSnapshotPersistenceService(
                 else -> failure
             }
         return when {
-            mostSpecificCause is SQLException ->
+            mostSpecificCause is SQLException -> {
                 mostSpecificCause.sqlState == "40001" ||
                     mostSpecificCause.errorCode == 1213 ||
                     mostSpecificCause.message?.contains(
                         "Deadlock found when trying to get lock",
                         ignoreCase = true,
                     ) == true
-            failure is DataAccessException ->
+            }
+
+            failure is DataAccessException -> {
                 failure.message?.contains(
                     "Deadlock found when trying to get lock",
                     ignoreCase = true,
                 ) == true
-            else -> false
+            }
+
+            else -> {
+                false
+            }
         }
     }
 

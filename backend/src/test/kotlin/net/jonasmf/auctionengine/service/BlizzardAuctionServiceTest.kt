@@ -10,8 +10,6 @@ import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
-import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as RealmAuctionHouse
-import net.jonasmf.auctionengine.domain.realm.AuctionHouse as AuctionHouseDomain
 import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
@@ -28,6 +26,8 @@ import java.nio.file.Files
 import java.sql.SQLException
 import java.time.Duration
 import java.time.ZonedDateTime
+import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as RealmAuctionHouse
+import net.jonasmf.auctionengine.domain.realm.AuctionHouse as AuctionHouseDomain
 
 class BlizzardAuctionServiceTest {
     private val properties =

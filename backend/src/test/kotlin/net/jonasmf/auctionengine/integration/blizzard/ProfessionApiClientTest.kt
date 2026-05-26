@@ -77,15 +77,24 @@ class ProfessionApiClientTest {
         val path = request.url().path
 
         return when {
-            path.endsWith(PROFESSION_INDEX_PATH) -> okJson(professionIndexBody())
-            path.matches(Regex(".*/profession/\\d+$")) -> okJson(professionById(path.substringAfterLast('/').toInt()))
+            path.endsWith(PROFESSION_INDEX_PATH) -> {
+                okJson(professionIndexBody())
+            }
+
+            path.matches(Regex(".*/profession/\\d+$")) -> {
+                okJson(professionById(path.substringAfterLast('/').toInt()))
+            }
+
             path.matches(Regex(".*/profession/\\d+/skill-tier/\\d+$")) -> {
                 val parts = path.split("/")
                 val professionId = parts[parts.size - 3].toInt()
                 val skillTierId = parts.last().toInt()
                 okJson(professionSkillTierById(professionId, skillTierId))
             }
-            else -> error("Unexpected request: ${request.method()} ${request.url()}")
+
+            else -> {
+                error("Unexpected request: ${request.method()} ${request.url()}")
+            }
         }
     }
 }
