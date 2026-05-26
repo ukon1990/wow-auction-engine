@@ -17,83 +17,35 @@ import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.MapsId
+import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderColumn
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import net.jonasmf.auctionengine.constant.AuctionTimeLeft
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
+import java.time.Instant
 import java.time.OffsetDateTime
 
-@Embeddable
-data class AuctionId(
-    @Column(name = "id")
-    val id: Long = 0,
-    @Column(name = "connected_realm_id")
-    val connectedRealmId: Int = 0,
-)
-
 @Entity
 @Table(
-    name = "auction_item_modifier",
-    uniqueConstraints = [
-        UniqueConstraint(
-            name = "uk_auction_item_modifier_type_value",
-            columnNames = ["type", "value"],
-        ),
-    ],
-)
-data class AuctionItemModifier(
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    val id: Long? = null,
-    @Column(nullable = false)
-    val type: String,
-    @Column(nullable = false)
-    val value: Int,
-)
-
-@Entity
-@Table(
-    name = "auction_item",
+    name = "auction_price",
     indexes = [
         Index(name = "idx_auction_item_item_id", columnList = "item_id, id"),
     ],
-    uniqueConstraints = [
-        UniqueConstraint(
-            name = "uk_auction_item_variant_hash",
-            columnNames = ["variant_hash"],
-        ),
-    ],
 )
-data class AuctionItem(
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+data class AuctionPrice(
     @Id
-    val id: Long? = null,
-    @Column(name = "item_id", nullable = false)
-    val itemId: Int,
-    @Column(name = "variant_hash", nullable = false, length = 64)
-    val variantHash: String,
-    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.MERGE])
-    @JoinTable(
-        name = "auction_item_modifier_link",
-        joinColumns = [JoinColumn(name = "auction_item_id")],
-        inverseJoinColumns = [JoinColumn(name = "modifier_id")],
-    )
-    @OrderColumn(name = "sort_order")
-    val modifiers: MutableList<AuctionItemModifier> = mutableListOf(),
-    @Column(name = "bonus_lists", nullable = false)
-    val bonusLists: String = "",
-    val context: Int? = null,
-    @Column(name = "pet_breed_id")
-    val petBreedId: Int? = null,
-    @Column(name = "pet_level")
-    val petLevel: Int? = null,
-    @Column(name = "pet_quality_id")
-    val petQualityId: Int? = null,
-    @Column(name = "pet_species_id")
-    val petSpeciesId: Int? = null,
-)
+    var id: Long,
+    var buyout: Long?,
+    var bid: Long?,
+    var quantity: Long,
+    var lastModified: Instant? = null,
+) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "auction_id", nullable = false)
+    lateinit var auction: Auction,
+}
 
 @Entity
 @Table(
@@ -111,30 +63,33 @@ data class AuctionItem(
     ],
 )
 data class Auction(
-    @EmbeddedId
-    val id: AuctionId,
-    @MapsId("connectedRealmId")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long?,
+    @MapsId("connected_realm_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "connected_realm_id", nullable = false)
-    val connectedRealm: ConnectedRealm,
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "item_id", nullable = false)
-    val item: AuctionItem,
-    val quantity: Long,
-    val bid: Long?,
-    @Column(name = "unit_price")
-    val unitPrice: Long?,
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "time_left", nullable = false)
-    val timeLeft: AuctionTimeLeft,
-    val buyout: Long?,
+    var connectedRealm: ConnectedRealm,
+    var itemId: Int,
+    var petSpeciesId: Int? = null,
+    var petQualityId: Int? = null,
+    var petLevel: Int? = null,
+    var buyout: Long?,
+    var p25: Long?,
+    var p75: Long?,
+    var quantity: Long,
+    @OneToMany(
+        mappedBy = "auction",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true,
+    )
+    var prices: MutableList<AuctionPrice>,
     @Column(name = "first_seen", columnDefinition = "DATETIME(6)")
-    val firstSeen: OffsetDateTime?,
+    var firstSeen: OffsetDateTime?,
     @Column(name = "last_seen", columnDefinition = "DATETIME(6)")
-    val lastSeen: OffsetDateTime?,
-    @Column(name = "deleted_at", columnDefinition = "DATETIME(6)")
-    val deletedAt: OffsetDateTime? = null,
+    var lastSeen: OffsetDateTime?,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "update_history_id")
-    val updateHistory: ConnectedRealmUpdateHistory,
+    var updateHistory: ConnectedRealmUpdateHistory,
 )
