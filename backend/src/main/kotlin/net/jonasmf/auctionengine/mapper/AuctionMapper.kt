@@ -2,8 +2,8 @@ package net.jonasmf.auctionengine.mapper
 
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionId
-import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItem
-import net.jonasmf.auctionengine.dbo.rds.auction.AuctionItemModifier
+import net.jonasmf.auctionengine.dbo.rds.auction.AuctionPrice
+import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsId
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
@@ -14,6 +14,7 @@ import net.jonasmf.auctionengine.repository.rds.AuctionItemUpsertRow
 import net.jonasmf.auctionengine.repository.rds.AuctionModifierUpsertRow
 import net.jonasmf.auctionengine.repository.rds.AuctionUpsertRow
 import net.jonasmf.auctionengine.utility.AuctionVariantKeyUtility
+import java.time.Instant
 import java.time.OffsetDateTime
 
 data class AuctionModifierKey(
@@ -137,47 +138,33 @@ fun AuctionItemVariant.toModifierLinkRows(
         )
     }
 
-fun ModifierDTO.toDBO(): AuctionItemModifier =
-    AuctionItemModifier(
-        type = type,
-        value = value,
-    )
-
-fun AuctionItemDTO.toDBO(): AuctionItem {
-    val item =
-        AuctionItem(
-            itemId = id,
-            variantHash = toAuctionItemVariant().variantHash,
-            bonusLists = AuctionVariantKeyUtility.canonicalBonusKey(bonus_lists),
-            context = context,
-            petBreedId = pet_breed_id,
-            petLevel = pet_level,
-            petQualityId = pet_quality_id,
-            petSpeciesId = pet_species_id,
-        )
-    item.modifiers.addAll(modifiers.orEmpty().map(ModifierDTO::toDBO))
-    return item
-}
-
 fun AuctionDTO.toDBO(
     connectedRealm: ConnectedRealm,
     updateHistory: ConnectedRealmUpdateHistory,
 ): Auction =
     Auction(
-        id =
-            AuctionId(
-                id = id,
-                connectedRealmId = connectedRealm.id,
-            ),
+        id = null,
         connectedRealm = connectedRealm,
-        item = item.toDBO(),
+        itemId = item.id,
+        petSpeciesId = item.pet_species_id,
+        petQualityId = item.pet_quality_id,
+        petLevel = item.pet_level,
+        prices =
+            mutableListOf(
+                AuctionPrice(
+                    id = id,
+                    buyout = buyout ?: unit_price,
+                    bid = bid,
+                    quantity = quantity,
+                    lastModified = updateHistory.lastModified?.toInstant(),
+                ),
+            ),
+        // TODO: Mapping for this later? item = item.toDBO(),
         quantity = quantity,
-        bid = bid,
-        unitPrice = unit_price,
-        buyout = buyout,
-        timeLeft = time_left,
+        buyout = buyout ?: unit_price,
+        p25 = null,
+        p75 = null,
         firstSeen = null,
         lastSeen = null,
-        deletedAt = null,
         updateHistory = updateHistory,
     )
