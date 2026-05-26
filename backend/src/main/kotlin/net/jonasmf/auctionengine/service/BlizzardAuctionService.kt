@@ -182,6 +182,23 @@ class BlizzardAuctionService(
                     region = region,
                     connectedRealmId = connectedRealmId,
                 )
+                val auctionInsertStart = System.currentTimeMillis()
+
+                val auctionSaveSummary =
+                    auctionSnapshotPersistenceService.saveSnapshot(
+                        connectedRealm = connectedRealm,
+                        lastModified = lastModified,
+                        payloadPath = downloadedPayload.path,
+                    )
+                logger.info(
+                    "Completed auction price inserts stats processing for realm {} region {} auctions={} in {}ms {}",
+                    connectedRealmId,
+                    region,
+                    auctionSaveSummary.processedAuctions,
+                    System.currentTimeMillis() - auctionInsertStart,
+                    JvmRuntimeDiagnostics.snapshot(),
+                )
+
                 val hourlyStatsStartTime = System.currentTimeMillis()
                 val hourlyStatsSummary =
                     auctionStatsHourlyService.processHourlyPriceStatisticsFromFile(
@@ -348,28 +365,6 @@ class BlizzardAuctionService(
         val message: String,
         val warnOnly: Boolean,
     )
-
-    /**
-     * Stores the full auctions in the database
-     */
-    private fun saveAuctionsToDatabase(
-        connectedRealm: ConnectedRealm,
-        auctionCount: Int,
-        lastModified: ZonedDateTime,
-        payloadPath: java.nio.file.Path,
-        connectedRealmId: Int,
-    ): AuctionSnapshotPersistenceSummary {
-        if (auctionCount <= 0) {
-            logger.warn("No auction data to process for realm {}", connectedRealmId)
-            return AuctionSnapshotPersistenceSummary(processedAuctions = 0, batchCount = 0, softDeletedAuctions = 0)
-        }
-        return auctionSnapshotPersistenceService.saveSnapshot(
-            payloadPath = payloadPath,
-            connectedRealm = connectedRealm,
-            auctionCount = auctionCount,
-            lastModified = lastModified,
-        )
-    }
 
     fun saveAuction(
         auction: AuctionDTO,

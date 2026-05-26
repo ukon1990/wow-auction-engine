@@ -256,7 +256,7 @@ class BlizzardAuctionServiceTest {
         io.mockk.verify(exactly = 0) { auctionHouseService.updateTimes(eq(1), any(), eq(false)) }
         io.mockk.verify(exactly = 1) { auctionHouseService.updateTimes(eq(1), any(), eq(true)) }
         io.mockk.verify(exactly = 0) {
-            auctionSnapshotPersistenceService.saveSnapshot(eq(data.path), eq(realm), eq(1), any())
+            auctionSnapshotPersistenceService.saveSnapshot(eq(data.path), eq(realm), any())
         }
     }
 
