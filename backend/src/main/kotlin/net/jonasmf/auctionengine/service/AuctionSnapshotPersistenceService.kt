@@ -254,16 +254,12 @@ class AuctionSnapshotPersistenceService(
                         require(parser.currentToken == JsonToken.START_ARRAY) {
                             "Auction payload field 'auctions' must be an array"
                         }
-                        val batch = mutableListOf<SnapshotAuction>()
                         while (parser.nextToken() != JsonToken.END_ARRAY) {
-                            batch += mapper.readValue(parser, AuctionDTO::class.java).toSnapshotAuction()
-                            if (batch.size >= snapshotBatchSize) {
-                                consumer(batch.toList())
-                                batch.clear()
+                            val flatAuction = mapper.readValue(parser, AuctionDTO::class.java).toFlatObject()
+                            if (groupedAuctions[flatAuction.tempId] == null) {
+                                groupedAuctions[flatAuction.tempId] = mutableListOf()
                             }
-                        }
-                        if (batch.isNotEmpty()) {
-                            consumer(batch.toList())
+                            groupedAuctions[flatAuction.tempId]?.add(flatAuction)
                         }
                     } else {
                         parser.skipChildren()
@@ -271,5 +267,6 @@ class AuctionSnapshotPersistenceService(
                 }
             }
         }
+        return groupedAuctions
     }
 }
