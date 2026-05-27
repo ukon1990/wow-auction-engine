@@ -104,190 +104,54 @@ class AuctionSnapshotPersistenceService(
             auctionCount,
             JvmRuntimeDiagnostics.snapshot(),
         )
-
-        streamAuctionBatches(payloadPath) { batch ->
-            batchCount++
-            withDeadlockRetry("persist auction snapshot batch", connectedRealm.id) {
-                persistBatch(
-                    auctions = batch,
-                    connectedRealmId = connectedRealm.id,
-                    updateHistoryId = updateHistory.id,
-                    snapshotTime = lastModified.toOffsetDateTime(),
-                )
-            }
-            processedAuctions += batch.size
-            logger.info(
-                "Persisted auction snapshot batch {}/? for realm {} processed={}/{} {}",
-                batchCount,
-                connectedRealm.id,
-                processedAuctions,
-                auctionCount,
-                JvmRuntimeDiagnostics.snapshot(),
+        val groupedFlatAuctions = streamAndReturnGroupedAuction(payloadPath)
+        val uniqueItemCount = groupedFlatAuctions.size
+        val result =
+            mapToAuctionAndPriceArrayBatchesAndReduceMap(
+                auctions = groupedFlatAuctions,
+                connectedRealm = connectedRealm,
+                updateHistory = updateHistory,
             )
-        }
-
-        val softDeletedAuctions =
-            withDeadlockRetry("mark missing auctions deleted", connectedRealm.id) {
-                auctionJdbcRepository.markMissingAuctionsDeleted(
-                    connectedRealmId = connectedRealm.id,
-                    updateHistoryId = updateHistory.id,
-                    deletedAt = lastModified.toOffsetDateTime(),
-                )
-            }
-        withDeadlockRetry("mark update history completed", connectedRealm.id) {
-            updateHistoryService.setUpdateToCompleted(connectedRealm.id, lastModified)
-        }
+        logger.info(
+            "Grouped auctions into {} items for realm {} {}",
+            uniqueItemCount,
+            connectedRealm.id,
+            JvmRuntimeDiagnostics.snapshot(),
+        )
+        updateHistoryService.setUpdateToCompleted(updateHistory.id, lastModified)
 
         logger.info(
-            "Completed auction snapshot persistence for realm {} in {}ms batches={} processed={} softDeleted={} {}",
+            "Completed auction snapshot persistence for realm {} in {}ms processed={} {}",
             connectedRealm.id,
             System.currentTimeMillis() - snapshotStartTime,
-            batchCount,
-            processedAuctions,
-            softDeletedAuctions,
+            0,
             JvmRuntimeDiagnostics.snapshot(),
         )
 
         return AuctionSnapshotPersistenceSummary(
-            processedAuctions = processedAuctions,
-            batchCount = batchCount,
-            softDeletedAuctions = softDeletedAuctions,
+            processedAuctions = 0, // TODO: Fix propper count
+            uniqueItems = uniqueItemCount,
         )
-    }
-
-    fun saveAuction(
-        auction: AuctionDTO,
-        connectedRealm: ConnectedRealm,
-        lastModified: ZonedDateTime = ZonedDateTime.now(),
-    ) {
-        val updateHistory = updateHistoryService.startUpdate(connectedRealm, 1, lastModified)
-        withDeadlockRetry("persist single auction snapshot", connectedRealm.id) {
-            persistBatch(
-                auctions = listOf(auction.toSnapshotAuction()),
-                connectedRealmId = connectedRealm.id,
-                updateHistoryId = updateHistory.id,
-                snapshotTime = lastModified.toOffsetDateTime(),
-            )
-        }
-        withDeadlockRetry("mark update history completed", connectedRealm.id) {
-            updateHistoryService.setUpdateToCompleted(connectedRealm.id, lastModified)
-        }
     }
 
     fun deleteSoftDeletedAuctionsOlderThan(cutoff: OffsetDateTime): Int =
         auctionJdbcRepository.deleteSoftDeletedAuctionsOlderThan(cutoff)
 
     private fun persistBatch(
-        auctions: List<SnapshotAuction>,
+        auctions: List<Auction>,
         connectedRealmId: Int,
         updateHistoryId: Long,
         snapshotTime: OffsetDateTime,
     ) {
         if (auctions.isEmpty()) return
 
-        val itemVariants =
-            auctions
-                .map(SnapshotAuction::itemVariant)
-                .distinctBy { it.variantHash }
-                .sortedBy { it.variantHash }
-        val modifierRows = itemVariants.flatMap { variant -> variant.modifiers }.distinct().map { it.toUpsertRow() }
-        auctionJdbcRepository.upsertModifiers(modifierRows)
-        val modifierIds =
-            auctionJdbcRepository
-                .findModifierIds(modifierRows)
-                .mapKeys { (modifier, _) ->
-                    net.jonasmf.auctionengine.mapper.AuctionModifierKey(
-                        type = modifier.type,
-                        value = modifier.value,
-                    )
-                }
-
-        val itemRows = itemVariants.map { it.toUpsertRow() }
-        auctionJdbcRepository.upsertAuctionItems(itemRows)
-        val itemIds = auctionJdbcRepository.findAuctionItemIds(itemVariants.map { it.variantHash })
-
-        val linkRows =
-            itemVariants.flatMap { variant ->
-                variant.toModifierLinkRows(
-                    auctionItemId = itemIds.getValue(variant.variantHash),
-                    modifierIds = modifierIds,
-                )
-            }
-        auctionJdbcRepository.upsertAuctionItemModifierLinks(linkRows)
-
-        val auctionRows =
-            auctions.sortedBy(SnapshotAuction::auctionId).map { auction ->
-                auction.toUpsertRow(
-                    connectedRealmId = connectedRealmId,
-                    auctionItemId = itemIds.getValue(auction.itemVariant.variantHash),
-                    updateHistoryId = updateHistoryId,
-                    snapshotTime = snapshotTime,
-                )
-            }
-        auctionJdbcRepository.upsertAuctions(auctionRows)
+        val auctionRows = emptyList<Auction>()
+        // TODO: Remove or update -> auctionJdbcRepository.upsertAuctions(auctionRows)
     }
 
-    private fun <T> withDeadlockRetry(
-        operation: String,
-        connectedRealmId: Int,
-        block: () -> T,
-    ): T {
-        var attempt = 1
-        while (true) {
-            try {
-                return block()
-            } catch (failure: RuntimeException) {
-                if (!isDeadlockFailure(failure) || attempt >= deadlockRetryAttempts) {
-                    throw failure
-                }
-                val delayMs = deadlockRetryBaseDelayMs * attempt
-                logger.warn(
-                    "Deadlock while attempting to {} for realm {}. Retrying attempt {}/{} after {}ms",
-                    operation,
-                    connectedRealmId,
-                    attempt + 1,
-                    deadlockRetryAttempts,
-                    delayMs,
-                )
-                Thread.sleep(delayMs)
-                attempt++
-            }
-        }
-    }
-
-    private fun isDeadlockFailure(failure: RuntimeException): Boolean {
-        val mostSpecificCause =
-            when (failure) {
-                is NestedRuntimeException -> failure.mostSpecificCause
-                else -> failure
-            }
-        return when {
-            mostSpecificCause is SQLException -> {
-                mostSpecificCause.sqlState == "40001" ||
-                    mostSpecificCause.errorCode == 1213 ||
-                    mostSpecificCause.message?.contains(
-                        "Deadlock found when trying to get lock",
-                        ignoreCase = true,
-                    ) == true
-            }
-
-            failure is DataAccessException -> {
-                failure.message?.contains(
-                    "Deadlock found when trying to get lock",
-                    ignoreCase = true,
-                ) == true
-            }
-
-            else -> {
-                false
-            }
-        }
-    }
-
-    private fun streamAuctionBatches(
-        payloadPath: Path,
-        consumer: (List<SnapshotAuction>) -> Unit,
-    ) {
+    // TODO: Split into smaller pieces pre merge
+    private fun streamAndReturnGroupedAuction(payloadPath: Path): MutableMap<String, MutableList<FlatAuction>> {
+        val groupedAuctions = mutableMapOf<String, MutableList<FlatAuction>>()
         val mapper = jacksonObjectMapper()
         val jsonFactory = JsonFactory(mapper)
         payloadPath.toFile().inputStream().use { input ->
