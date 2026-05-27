@@ -3,28 +3,31 @@ package net.jonasmf.auctionengine.service
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import jakarta.transaction.Transactional
+import net.jonasmf.auctionengine.dbo.rds.auction.Auction
+import net.jonasmf.auctionengine.dbo.rds.auction.AuctionPrice
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
+import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
-import net.jonasmf.auctionengine.mapper.SnapshotAuction
-import net.jonasmf.auctionengine.mapper.toModifierLinkRows
-import net.jonasmf.auctionengine.mapper.toSnapshotAuction
-import net.jonasmf.auctionengine.mapper.toUpsertRow
+import net.jonasmf.auctionengine.mapper.FlatAuction
+import net.jonasmf.auctionengine.mapper.toAuctionPriceDBO
+import net.jonasmf.auctionengine.mapper.toDBO
+import net.jonasmf.auctionengine.mapper.toFlatObject
 import net.jonasmf.auctionengine.repository.rds.AuctionJDBCRepository
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.core.NestedRuntimeException
-import org.springframework.dao.DataAccessException
 import org.springframework.stereotype.Service
+import software.amazon.awssdk.annotations.Mutable
 import java.nio.file.Path
-import java.sql.SQLException
 import java.time.OffsetDateTime
 import java.time.ZonedDateTime
+import kotlin.collections.mutableListOf
+import kotlin.math.roundToInt
 
 data class AuctionSnapshotPersistenceSummary(
     val processedAuctions: Int,
-    val batchCount: Int,
-    val softDeletedAuctions: Int,
+    val uniqueItems: Int,
 )
 
 @Service
@@ -46,8 +49,6 @@ class AuctionSnapshotPersistenceService(
         // TODO: Remember to update the count part. Not sure if we need to save that in the db
         val auctionCount = 0
         val updateHistory = updateHistoryService.startUpdate(connectedRealm, auctionCount, lastModified)
-        var processedAuctions = 0
-        var batchCount = 0
 
         logger.info(
             "Persisting current auction snapshot for realm {} auctions={} {}",
