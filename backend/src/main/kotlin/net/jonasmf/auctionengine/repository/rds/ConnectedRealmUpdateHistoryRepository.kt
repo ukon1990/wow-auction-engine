@@ -30,8 +30,8 @@ interface ConnectedRealmUpdateHistoryRepository : JpaRepository<ConnectedRealmUp
         where h.connectedRealm.id = :connectedRealmId and h.lastModified = :lastModified
     """,
     )
-    fun updateCompletedTimeForConnectedRealmAndLastModified(
-        @Param("connectedRealmId") connectedRealmId: Int,
+    fun updateCompletedTimeForIdAndLastModified(
+        @Param("id") id: Long,
         @Param("lastModified") lastModified: OffsetDateTime,
         @Param("completedTimestamp") completedTimestamp: OffsetDateTime,
     ): Int
