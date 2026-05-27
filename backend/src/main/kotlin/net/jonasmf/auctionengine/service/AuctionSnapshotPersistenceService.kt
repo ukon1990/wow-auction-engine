@@ -36,10 +36,58 @@ class AuctionSnapshotPersistenceService(
     private val updateHistoryService: ConnectedRealmUpdateHistoryService,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AuctionSnapshotPersistenceService::class.java)
-    private val snapshotBatchSize = 5_000
-    private val deadlockRetryAttempts = 3
-    private val deadlockRetryBaseDelayMs = 100L
 
+    // TODO: Consider, if I should return the values and process for readability, or process each batch imminently to save memory
+
+    /**
+     * Processes the grouped auctions into batches that are then upserted.
+     * Prices and auctions are split pre insert.
+     * The percentile prices at 25 and 75 percentile are calculated.
+     *
+     * I want this to be blocking, as I don't want to overload the database as It's shared with other users.
+     * So I am intentionally not parallelizing.
+     */
+    private fun mapToAuctionAndPriceArrayBatchesAndReduceMap(
+        auctions: MutableMap<String, MutableList<FlatAuction>>,
+        updateHistory: ConnectedRealmUpdateHistory,
+        connectedRealm: ConnectedRealm,
+    ): Pair<MutableList<Auction>, MutableList<AuctionPrice>> {
+        val auctionBatches = mutableListOf<Auction>()
+        val priceBatches = mutableListOf<AuctionPrice>()
+        val batchSize = 5_000
+
+        auctions.forEach { uniqueAuctionItem ->
+            val value = uniqueAuctionItem.value
+            val auction = value.first().toDBO(connectedRealm, updateHistory)
+            val prices =
+                uniqueAuctionItem.value
+                    .map { auctionItem ->
+                        auctionItem.toAuctionPriceDBO(updateHistory.lastModified?.toInstant())
+                    }.sortedBy { it.buyout }
+            val priceEntryMaxIndex = (prices.size - 1).toFloat()
+            val percentile25Index = (priceEntryMaxIndex * 0.25f).roundToInt()
+            val percentile75Index = (priceEntryMaxIndex * 0.75f).roundToInt()
+            auction.p25 = prices[percentile25Index].buyout
+            auction.p75 = prices[percentile75Index].buyout
+
+            auctionBatches.add(auction)
+            priceBatches.addAll(prices)
+
+            if (auctionBatches.size >= batchSize) {
+                // TODO: Update DB
+                auctionBatches.clear()
+            }
+            if (priceBatches.size >= batchSize) {
+                // SQL, where I query for the auctions to get their ID and bulk update upon insert or update after
+                // TODO: Update DB
+                auctionBatches.clear()
+            }
+        }
+
+        return Pair(auctionBatches, priceBatches)
+    }
+
+    @Transactional
     fun saveSnapshot(
         payloadPath: Path,
         connectedRealm: ConnectedRealm,
