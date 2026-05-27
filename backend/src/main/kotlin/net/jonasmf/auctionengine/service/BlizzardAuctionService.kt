@@ -365,12 +365,4 @@ class BlizzardAuctionService(
         val message: String,
         val warnOnly: Boolean,
     )
-
-    fun saveAuction(
-        auction: AuctionDTO,
-        connectedRealm: ConnectedRealm,
-    ) {
-        auctionSnapshotPersistenceService.saveAuction(auction, connectedRealm)
-        logger.debug("Successfully upserted auction {} for realm {}", auction.id, connectedRealm.id)
-    }
 }
