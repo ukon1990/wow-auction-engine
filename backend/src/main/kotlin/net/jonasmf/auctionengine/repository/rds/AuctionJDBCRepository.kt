@@ -253,25 +253,6 @@ class AuctionJDBCRepository(
     }
 
     @Transactional
-    fun markMissingAuctionsDeleted(
-        connectedRealmId: Int,
-        updateHistoryId: Long,
-        deletedAt: OffsetDateTime,
-    ): Int =
-        jdbcTemplate.update(
-            """
-            UPDATE auction
-            SET deleted_at = ?
-            WHERE connected_realm_id = ?
-              AND update_history_id <> ?
-              AND deleted_at IS NULL
-            """.trimIndent(),
-            deletedAt.toSqlTimestamp(),
-            connectedRealmId,
-            updateHistoryId,
-        )
-
-    @Transactional
     fun deleteSoftDeletedAuctionsOlderThan(cutoff: OffsetDateTime): Int =
         jdbcTemplate.update(
             """
