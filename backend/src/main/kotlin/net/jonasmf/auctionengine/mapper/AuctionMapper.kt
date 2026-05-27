@@ -1,9 +1,7 @@
 package net.jonasmf.auctionengine.mapper
 
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction
-import net.jonasmf.auctionengine.dbo.rds.auction.AuctionId
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionPrice
-import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsId
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
@@ -14,7 +12,6 @@ import net.jonasmf.auctionengine.repository.rds.AuctionItemUpsertRow
 import net.jonasmf.auctionengine.repository.rds.AuctionModifierUpsertRow
 import net.jonasmf.auctionengine.repository.rds.AuctionUpsertRow
 import net.jonasmf.auctionengine.utility.AuctionVariantKeyUtility
-import java.time.Instant
 import java.time.OffsetDateTime
 
 data class AuctionModifierKey(
@@ -151,20 +148,30 @@ fun AuctionDTO.toDBO(
         petLevel = item.pet_level,
         prices =
             mutableListOf(
-                AuctionPrice(
-                    id = id,
-                    buyout = buyout ?: unit_price,
-                    bid = bid,
-                    quantity = quantity,
-                    lastModified = updateHistory.lastModified?.toInstant(),
-                ),
+                toAuctionPriceDBO(updateHistory),
             ),
         // TODO: Mapping for this later? item = item.toDBO(),
         quantity = quantity,
         buyout = buyout ?: unit_price,
+        bid = bid,
         p25 = null,
         p75 = null,
         firstSeen = null,
         lastSeen = null,
         updateHistory = updateHistory,
+    )
+
+fun AuctionDTO.getUniqueId(): String =
+    "${item.id}-${item.pet_species_id}-${item.pet_quality_id}-${item.pet_level}-${
+        AuctionVariantKeyUtility.canonicalBonusKey(item.bonus_lists)}-${
+        AuctionVariantKeyUtility.canonicalModifierKey(item.modifiers)
+    }"
+
+fun AuctionDTO.toAuctionPriceDBO(updateHistory: ConnectedRealmUpdateHistory): AuctionPrice =
+    AuctionPrice(
+        id = id,
+        buyout = buyout ?: unit_price,
+        bid = bid,
+        quantity = quantity,
+        lastModified = updateHistory.lastModified?.toInstant(),
     )

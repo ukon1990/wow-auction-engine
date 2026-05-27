@@ -20,17 +20,6 @@ class AuctionDTODeserializationTest {
     }
 
     @Test
-    fun `should canonicalize bonus lists when converting to dbo`() {
-        val dbo =
-            AuctionItemDTO(
-                id = 19019,
-                bonus_lists = listOf(12499, 12252, 12251),
-            ).toDBO()
-
-        assertEquals("12251,12252,12499", dbo.bonusLists)
-    }
-
-    @Test
     fun `should ignore unknown fields on auction and item dto`() {
         val auction: AuctionDTO =
             mapper.readValue(

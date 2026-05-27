@@ -44,7 +44,7 @@ data class AuctionPrice(
 ) {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_id", nullable = false)
-    lateinit var auction: Auction,
+    lateinit var auction: Auction
 }
 
 @Entity
@@ -75,6 +75,7 @@ data class Auction(
     var petQualityId: Int? = null,
     var petLevel: Int? = null,
     var buyout: Long?,
+    var bid: Long?,
     var p25: Long?,
     var p75: Long?,
     var quantity: Long,

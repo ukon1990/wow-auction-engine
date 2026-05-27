@@ -24,6 +24,7 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import kotlin.io.path.pathString
+import kotlin.test.assertEquals
 
 class AuctionSnapshotPersistenceServiceTest(
     val service: AuctionSnapshotPersistenceService,
@@ -91,13 +92,27 @@ class AuctionSnapshotPersistenceServiceTest(
                                 item = AuctionItemDTO(id = 82800),
                                 bid = null,
                                 unit_price = 1500,
-                                buyout = 3000,
+                                buyout = null,
                                 time_left = AuctionTimeLeft.SHORT,
                                 quantity = 30,
                             ),
+                            AuctionDTO(
+                                id = 124,
+                                item = AuctionItemDTO(id = 82800),
+                                bid = null,
+                                unit_price = 1501,
+                                buyout = null,
+                                time_left = AuctionTimeLeft.SHORT,
+                                quantity = 10,
+                            ),
                         ),
                 )
-            val result = service.saveSnapshot(auctionFile.fileName.toAbsolutePath(), realm, lastModified)
+            var result = AuctionSnapshotPersistenceSummary(0, 0, 0)
+            if (auctionFile?.fileName != null) {
+                result = service.saveSnapshot(auctionFile.fileName.toAbsolutePath(), realm, lastModified)
+            }
+            assertEquals(2, result.processedAuctions)
+            assertEquals(1, result.batchCount)
         }
     }
 
