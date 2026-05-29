@@ -1,8 +1,8 @@
 -- DROP TABLE deprecated tables
-DROP TABLE auction_item_modifier_link;
-DROP TABLE auction_item_modifier;
-DROP TABLE auction_item;
-DROP TABLE auction;
+DROP TABLE IF EXISTS auction_item_modifier_link;
+DROP TABLE IF EXISTS auction_item_modifier;
+DROP TABLE IF EXISTS auction;
+DROP TABLE IF EXISTS auction_item;
 
 -- Creating the new smaller focused tables
 CREATE TABLE auction
@@ -16,6 +16,7 @@ CREATE TABLE auction
     modifier_key       VARCHAR(255) NOT NULL DEFAULT '',
     bonus_key          VARCHAR(255) NOT NULL DEFAULT '',
     buyout             BIGINT NOT NULL,
+    bid                BIGINT NOT NULL,
     p25                BIGINT NOT NULL,
     p75                BIGINT NOT NULL,
     quantity           INT NOT NULL,
@@ -25,7 +26,7 @@ CREATE TABLE auction
     CONSTRAINT auction_connected_realm_id_fk
         FOREIGN KEY (connected_realm_id) REFERENCES connected_realm (id),
     CONSTRAINT auction_update_history_id_fk
-        FOREIGN KEY (connected_realm_id) REFERENCES auction_update_history (id),
+        FOREIGN KEY (update_history_id) REFERENCES auction_update_history (id),
     CONSTRAINT auction_unique_variant
         UNIQUE (
                 connected_realm_id,
