@@ -39,7 +39,7 @@ data class AuctionPrice(
     var id: Long,
     var buyout: Long?,
     var bid: Long?,
-    var quantity: Long,
+    var quantity: Int,
     var lastModified: Instant? = null,
 ) {
     @ManyToOne(fetch = FetchType.LAZY)
@@ -66,19 +66,18 @@ data class Auction(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long?,
-    @MapsId("connected_realm_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "connected_realm_id", nullable = false)
     var connectedRealm: ConnectedRealm,
     var itemId: Int,
     var petSpeciesId: Int? = null,
     var petQualityId: Int? = null,
-    var petLevel: Int? = null,
+    var petLevel: Byte? = null,
     var buyout: Long?,
     var bid: Long?,
     var p25: Long?,
     var p75: Long?,
-    var quantity: Long,
+    var quantity: Int,
     @OneToMany(
         mappedBy = "auction",
         fetch = FetchType.LAZY,

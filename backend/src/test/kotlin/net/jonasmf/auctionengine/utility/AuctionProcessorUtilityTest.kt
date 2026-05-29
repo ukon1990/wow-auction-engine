@@ -47,13 +47,13 @@ class AuctionProcessorUtilityTest {
                 item =
                     AuctionItemDTO(
                         id = 100,
-                        bonus_lists = listOf(20, 10),
+                        bonusLists = listOf(20, 10),
                         modifiers = null,
                         context = null,
-                        pet_breed_id = null,
-                        pet_level = null,
-                        pet_quality_id = null,
-                        pet_species_id = null,
+                        petBreedId = null,
+                        petLevel = null,
+                        petQualityId = null,
+                        petSpeciesId = null,
                     ),
                 quantity = 5,
                 unit_price = 12345L,
@@ -94,10 +94,10 @@ class AuctionProcessorUtilityTest {
                             id = 100 + it,
                             modifiers = null,
                             context = null,
-                            pet_breed_id = null,
-                            pet_level = null,
-                            pet_quality_id = null,
-                            pet_species_id = null,
+                            petBreedId = null,
+                            petLevel = null,
+                            petQualityId = null,
+                            petSpeciesId = null,
                         ),
                     quantity = it * 2L,
                     unit_price = it * 1000L,
@@ -131,10 +131,22 @@ class AuctionProcessorUtilityTest {
                         capture.calls.add(entities)
                         entities
                     }
-                    "toString" -> "${TRepo::class.java.simpleName}Proxy"
-                    "hashCode" -> System.identityHashCode(capture)
-                    "equals" -> false
-                    else -> defaultValue(method.returnType)
+
+                    "toString" -> {
+                        "${TRepo::class.java.simpleName}Proxy"
+                    }
+
+                    "hashCode" -> {
+                        System.identityHashCode(capture)
+                    }
+
+                    "equals" -> {
+                        false
+                    }
+
+                    else -> {
+                        defaultValue(method.returnType)
+                    }
                 }
             }.let { it as TRepo }
 

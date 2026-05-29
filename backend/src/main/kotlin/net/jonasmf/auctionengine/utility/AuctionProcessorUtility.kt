@@ -72,8 +72,8 @@ class AuctionProcessorUtility(
                 connectedRealmId = connectedRealm.id,
                 itemId = auctionDTO.item.id,
                 date = LocalDate.now(),
-                petSpeciesId = auctionDTO.item.pet_species_id,
-                bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auctionDTO.item.bonus_lists),
+                petSpeciesId = auctionDTO.item.petSpeciesId,
+                bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auctionDTO.item.bonusLists),
             )
         val hourlyStat =
             AuctionStatsHourly(
@@ -144,8 +144,8 @@ class AuctionProcessorUtility(
                 connectedRealmId = connectedRealm.id,
                 itemId = auctionDTO.item.id,
                 date = LocalDate.now(),
-                petSpeciesId = auctionDTO.item.pet_species_id,
-                bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auctionDTO.item.bonus_lists),
+                petSpeciesId = auctionDTO.item.petSpeciesId,
+                bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auctionDTO.item.bonusLists),
             )
         val dailyStat =
             AuctionStatsDaily(

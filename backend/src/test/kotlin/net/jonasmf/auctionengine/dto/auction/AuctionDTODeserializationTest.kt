@@ -16,7 +16,7 @@ class AuctionDTODeserializationTest {
         val response: AuctionData = mapper.readValue(payload)
 
         assertEquals(125000000L, response.auctions[0].bid)
-        assertEquals(listOf(12499, 12252, 12251), response.auctions[1].item.bonus_lists)
+        assertEquals(listOf(12499, 12252, 12251), response.auctions[1].item.bonusLists)
     }
 
     @Test
@@ -41,7 +41,7 @@ class AuctionDTODeserializationTest {
             )
 
         assertEquals(1000L, auction.bid)
-        assertEquals(listOf(7, 5), auction.item.bonus_lists)
+        assertEquals(listOf(7, 5), auction.item.bonusLists)
     }
 
     @Test

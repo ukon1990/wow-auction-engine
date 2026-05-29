@@ -378,7 +378,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             AuctionItemDTO(
                 id = itemId,
                 modifiers = modifiers,
-                bonus_lists = bonusLists,
+                bonusLists = bonusLists,
             ),
         quantity = quantity,
         unit_price = null,

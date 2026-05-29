@@ -17,10 +17,10 @@ class FlatAuction(
     val itemId: Int,
     var petSpeciesId: Int? = null,
     var petQualityId: Int? = null,
-    var petLevel: Int? = null,
+    var petLevel: Byte? = null,
     var buyout: Long?,
     var bid: Long?,
-    var quantity: Long,
+    var quantity: Int,
 )
 
 fun AuctionDTO.toFlatObject() =
@@ -28,9 +28,9 @@ fun AuctionDTO.toFlatObject() =
         tempId = getUniqueId(),
         auctionId = id,
         itemId = item.id,
-        petSpeciesId = item.pet_species_id,
-        petQualityId = item.pet_quality_id,
-        petLevel = item.pet_level,
+        petSpeciesId = item.petSpeciesId,
+        petQualityId = item.petQualityId,
+        petLevel = item.petLevel,
         buyout = buyout ?: unit_price,
         bid = bid,
         quantity = quantity,
@@ -46,7 +46,7 @@ fun FlatAuction.toDBO(
         itemId = itemId,
         petSpeciesId = petSpeciesId,
         petQualityId = petQualityId,
-        petLevel = petLevel,
+        petLevel = petLevel?.toByte(),
         prices =
             mutableListOf(
                 toAuctionPriceDBO(updateHistory.lastModified?.toInstant()),
@@ -71,8 +71,8 @@ fun FlatAuction.toAuctionPriceDBO(lastModified: Instant?): AuctionPrice =
     )
 
 fun AuctionDTO.getUniqueId(): String =
-    "${item.id}-${item.pet_species_id}-${item.pet_quality_id}-${item.pet_level}-${
-        AuctionVariantKeyUtility.canonicalBonusKey(item.bonus_lists)
+    "${item.id}-${item.petSpeciesId}-${item.petQualityId}-${item.petLevel}-${
+        AuctionVariantKeyUtility.canonicalBonusKey(item.bonusLists)
     }-${
         AuctionVariantKeyUtility.canonicalModifierKey(item.modifiers)
     }"

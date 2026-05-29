@@ -14,7 +14,7 @@ data class HourlyStatsUpsertRow(
     val modifierKey: String,
     val bonusKey: String,
     val price: Long?,
-    val quantity: Long?,
+    val quantity: Int?,
 )
 
 @Repository

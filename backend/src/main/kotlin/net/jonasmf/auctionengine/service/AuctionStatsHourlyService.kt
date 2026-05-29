@@ -80,12 +80,12 @@ class AuctionStatsHourlyService(
 
         iterateAuctions { auction ->
             val itemId = auction.item.id
-            val petSpeciesId = auction.item.pet_species_id
+            val petSpeciesId = auction.item.petSpeciesId
             val modifierKey = AuctionVariantKeyUtility.canonicalModifierKey(auction.item.modifiers)
-            val bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auction.item.bonus_lists)
+            val bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auction.item.bonusLists)
             val key = "${connectedRealm.id}|$itemId|$date|${petSpeciesId ?: ""}|$modifierKey|$bonusKey"
             val price = auction.buyout ?: auction.unit_price ?: 0L
-            val quantity = auction.quantity.takeIf { it > 0 } ?: 1L
+            val quantity = auction.quantity.takeIf { it > 0 } ?: 1
 
             val existing = grouped[key]
             if (existing == null) {
@@ -103,7 +103,7 @@ class AuctionStatsHourlyService(
             } else {
                 grouped[key] =
                     existing.copy(
-                        quantity = (existing.quantity ?: 0L) + quantity,
+                        quantity = (existing.quantity ?: 0) + quantity,
                         price = (existing.price ?: 0).coerceAtMost(price),
                     )
             }
