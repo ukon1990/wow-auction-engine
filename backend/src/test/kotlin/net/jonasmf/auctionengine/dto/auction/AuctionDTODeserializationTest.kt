@@ -2,7 +2,7 @@ package net.jonasmf.auctionengine.dto.auction
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import net.jonasmf.auctionengine.mapper.toDBO
+import net.jonasmf.auctionengine.mapper.toFlatObject
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -86,7 +86,7 @@ class AuctionDTODeserializationTest {
                 connectedRealm = connectedRealm,
             )
 
-        val dbo = auction.toDBO(connectedRealm, updateHistory)
+        val dbo = auction.toFlatObject()
 
         assertEquals(1500L, dbo.bid)
     }

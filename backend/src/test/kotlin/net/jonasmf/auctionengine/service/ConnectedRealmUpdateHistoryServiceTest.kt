@@ -35,7 +35,8 @@ class ConnectedRealmUpdateHistoryServiceTest : IntegrationTestBase() {
                 lastModified = lastModified,
             )
 
-        val updated = connectedRealmUpdateHistoryService.setUpdateToCompleted(connectedRealm.id, lastModified)
+        val updated =
+            connectedRealmUpdateHistoryService.setUpdateToCompleted(history.id, lastModified)
 
         assertTrue(updated)
         val completedTimestamp =
