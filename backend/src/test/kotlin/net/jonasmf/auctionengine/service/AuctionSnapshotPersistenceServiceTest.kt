@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.service
 
+import jakarta.transaction.Transactional
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.constant.AuctionTimeLeft
 import net.jonasmf.auctionengine.constant.Region
@@ -10,6 +11,7 @@ import net.jonasmf.auctionengine.dto.Links
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
+import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
 import net.jonasmf.auctionengine.testsupport.writeJsonToDisk
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -23,10 +25,14 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
     @Autowired
     lateinit var service: AuctionSnapshotPersistenceService
 
+    @Autowired
+    lateinit var realmService: ConnectedRealmRepository
+
     @Nested
-    inner class SaveSnapshot {
+    open inner class SaveSnapshot {
+        @Transactional
         @Test
-        fun `Can save snapshot to the database`() {
+        open fun `Can save snapshot to the database`() {
             val realm = createRealm(1)
             val lastModified = ZonedDateTime.of(2026, 5, 25, 5, 0, 0, 0, ZoneOffset.UTC)
             val auctionFile =
@@ -55,7 +61,7 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
                 )
             var result = AuctionSnapshotPersistenceSummary(0, 0)
             if (auctionFile?.fileName != null) {
-                result = service.saveSnapshot(auctionFile.fileName.toAbsolutePath(), realm, lastModified)
+                result = service.saveSnapshot(auctionFile.toAbsolutePath(), realm, lastModified)
             }
             assertEquals(2, result.processedAuctions)
             assertEquals(1, result.uniqueItems)
@@ -66,7 +72,7 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
         auctions: List<AuctionDTO>,
         fileName: String = "auctions",
     ) = writeJsonToDisk(
-        "",
+        fileName,
         AuctionData(
             _links = Links(Link(href = "")),
             auctions = auctions,
@@ -74,20 +80,22 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
     )
 
     private fun createRealm(id: Int) =
-        ConnectedRealm(
-            id = id,
-            auctionHouse =
-                AuctionHouse(
-                    connectedId = id,
-                    region = Region.Europe,
-                    lastModified = null,
-                    lastRequested = null,
-                    nextUpdate = Instant.EPOCH,
-                    lowestDelay = 60,
-                    avgDelay = 60,
-                    highestDelay = 60,
-                    updateAttempts = 0,
-                ),
-            realms = mutableListOf(),
+        realmService.save(
+            ConnectedRealm(
+                id = id,
+                auctionHouse =
+                    AuctionHouse(
+                        connectedId = id,
+                        region = Region.Europe,
+                        lastModified = null,
+                        lastRequested = null,
+                        nextUpdate = Instant.EPOCH,
+                        lowestDelay = 60,
+                        avgDelay = 60,
+                        highestDelay = 60,
+                        updateAttempts = 0,
+                    ),
+                realms = mutableListOf(),
+            ),
         )
 }
