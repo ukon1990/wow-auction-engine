@@ -118,7 +118,7 @@ class AuctionSnapshotPersistenceService(
             connectedRealm.id,
             JvmRuntimeDiagnostics.snapshot(),
         )
-        updateHistoryService.setUpdateToCompleted(updateHistory.id, lastModified)
+        updateHistoryService.setUpdateToCompleted(updateHistory.id)
 
         logger.info(
             "Completed auction snapshot persistence for realm {} in {}ms processed={} {}",
