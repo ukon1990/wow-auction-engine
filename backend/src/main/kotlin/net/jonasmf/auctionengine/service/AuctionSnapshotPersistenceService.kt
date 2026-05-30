@@ -18,7 +18,6 @@ import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import software.amazon.awssdk.annotations.Mutable
 import java.nio.file.Path
 import java.time.OffsetDateTime
 import java.time.ZonedDateTime
@@ -28,6 +27,7 @@ import kotlin.math.roundToInt
 data class AuctionSnapshotPersistenceSummary(
     val processedAuctions: Int,
     val uniqueItems: Int,
+    val groupedResult: Pair<MutableList<Auction>, MutableList<AuctionPrice>>,
 )
 
 @Service
@@ -67,6 +67,7 @@ class AuctionSnapshotPersistenceService(
             val priceEntryMaxIndex = (prices.size - 1).toFloat()
             val percentile25Index = (priceEntryMaxIndex * 0.25f).roundToInt()
             val percentile75Index = (priceEntryMaxIndex * 0.75f).roundToInt()
+            auction.buyout = prices.first().buyout
             auction.p25 = prices[percentile25Index].buyout
             auction.p75 = prices[percentile75Index].buyout
 
@@ -106,7 +107,7 @@ class AuctionSnapshotPersistenceService(
         )
         val groupedFlatAuctions = streamAndReturnGroupedAuction(payloadPath)
         val uniqueItemCount = groupedFlatAuctions.size
-        val result =
+        val groupedResult =
             mapToAuctionAndPriceArrayBatchesAndReduceMap(
                 auctions = groupedFlatAuctions,
                 connectedRealm = connectedRealm,
@@ -131,6 +132,7 @@ class AuctionSnapshotPersistenceService(
         return AuctionSnapshotPersistenceSummary(
             processedAuctions = 0, // TODO: Fix propper count
             uniqueItems = uniqueItemCount,
+            groupedResult = groupedResult,
         )
     }
 
