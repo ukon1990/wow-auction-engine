@@ -302,7 +302,7 @@ class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
         modifierKey: String,
         bonusKey: String,
         price: Long,
-        quantity: Long,
+        quantity: Int,
     ) {
         auctionStatsHourlyJDBCRepository.upsertHour(
             listOf(
@@ -326,6 +326,6 @@ class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
     private data class HourlyValue(
         val hourOfDay: Int,
         val price: Long,
-        val quantity: Long,
+        val quantity: Int,
     )
 }

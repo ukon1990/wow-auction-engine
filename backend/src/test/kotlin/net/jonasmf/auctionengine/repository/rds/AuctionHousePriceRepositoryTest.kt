@@ -96,7 +96,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                         modifierKey = "",
                         bonusKey = "",
                         price = 123_456L,
-                        quantity = 10L,
+                        quantity = 10,
                     ),
                 ),
             hour = 3,
@@ -112,7 +112,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                         modifierKey = "",
                         bonusKey = "",
                         price = 120_000L,
-                        quantity = 15L,
+                        quantity = 15,
                     ),
                 ),
             hour = 7,
@@ -152,7 +152,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                         modifierKey = "",
                         bonusKey = "",
                         price = 99L,
-                        quantity = 2L,
+                        quantity = 2,
                     ),
                 ),
             hour = 11,
@@ -174,8 +174,8 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
-                    auction(1, 19021, 500L, 2L, modifiers = listOf(ModifierDTO("9", 100), ModifierDTO("30", 7))),
-                    auction(2, 19021, 450L, 3L, modifiers = listOf(ModifierDTO("9", 101), ModifierDTO("30", 7))),
+                    auction(1, 19021, 500L, 2, modifiers = listOf(ModifierDTO("9", 100), ModifierDTO("30", 7))),
+                    auction(2, 19021, 450L, 3, modifiers = listOf(ModifierDTO("9", 101), ModifierDTO("30", 7))),
                 ),
             lastModified = lastModified,
         )
@@ -212,7 +212,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                         11,
                         19031,
                         500L,
-                        2L,
+                        2,
                         modifiers = listOf(ModifierDTO("9", 100)),
                         bonusLists = listOf(12251, 12252),
                     ),
@@ -220,7 +220,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                         12,
                         19031,
                         450L,
-                        3L,
+                        3,
                         modifiers = listOf(ModifierDTO("9", 100)),
                         bonusLists = listOf(12251, 12253),
                     ),
@@ -258,8 +258,8 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
-                    auction(3, 19022, 700L, 4L, modifiers = listOf(ModifierDTO("30", 7), ModifierDTO("9", 100))),
-                    auction(4, 19022, 650L, 5L, modifiers = listOf(ModifierDTO("9", 100), ModifierDTO("30", 7))),
+                    auction(3, 19022, 700L, 4, modifiers = listOf(ModifierDTO("30", 7), ModifierDTO("9", 100))),
+                    auction(4, 19022, 650L, 5, modifiers = listOf(ModifierDTO("9", 100), ModifierDTO("30", 7))),
                 ),
             lastModified = lastModified,
         )
@@ -286,8 +286,8 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
-                    auction(13, 19032, 700L, 4L, bonusLists = listOf(12499, 12252, 12251)),
-                    auction(14, 19032, 650L, 5L, bonusLists = listOf(12251, 12499, 12252)),
+                    auction(13, 19032, 700L, 4, bonusLists = listOf(12499, 12252, 12251)),
+                    auction(14, 19032, 650L, 5, bonusLists = listOf(12251, 12499, 12252)),
                 ),
             lastModified = lastModified,
         )
@@ -316,8 +316,8 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
-                    auction(5, 19023, 20L, 10L),
-                    auction(6, 19023, 18L, 2L),
+                    auction(5, 19023, 20L, 10),
+                    auction(6, 19023, 18L, 2),
                 ),
             lastModified = lastModified,
         )
@@ -369,7 +369,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         id: Long,
         itemId: Int,
         price: Long,
-        quantity: Long,
+        quantity: Int,
         modifiers: List<ModifierDTO>? = null,
         bonusLists: List<Int>? = null,
     ) = AuctionDTO(

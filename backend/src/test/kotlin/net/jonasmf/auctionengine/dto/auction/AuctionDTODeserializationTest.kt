@@ -50,7 +50,7 @@ class AuctionDTODeserializationTest {
             AuctionDTO(
                 id = 99L,
                 item = AuctionItemDTO(id = 19019),
-                quantity = 1L,
+                quantity = 1,
                 bid = 1500L,
                 unit_price = null,
                 buyout = 2500L,
