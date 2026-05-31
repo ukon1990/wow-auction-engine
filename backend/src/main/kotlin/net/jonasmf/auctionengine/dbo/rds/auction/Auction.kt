@@ -2,26 +2,14 @@ package net.jonasmf.auctionengine.dbo.rds.auction
 
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
-import jakarta.persistence.Embeddable
-import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
-import jakarta.persistence.JoinTable
-import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.MapsId
 import jakarta.persistence.OneToMany
-import jakarta.persistence.OrderColumn
 import jakarta.persistence.Table
-import jakarta.persistence.UniqueConstraint
-import net.jonasmf.auctionengine.constant.AuctionTimeLeft
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import java.time.Instant
@@ -62,16 +50,17 @@ data class AuctionPrice(
         Index(name = "idx_auction_deleted_at", columnList = "deleted_at"),
     ],
 )
-data class Auction(
+class Auction(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long?,
+    var id: String?,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "connected_realm_id", nullable = false)
     var connectedRealm: ConnectedRealm,
     var itemId: Int,
     var petSpeciesId: Int? = null,
     var petQualityId: Int? = null,
+    var modifierKey: String? = null,
+    var bonusKey: String? = null,
     var petLevel: Byte? = null,
     var buyout: Long?,
     var bid: Long?,
