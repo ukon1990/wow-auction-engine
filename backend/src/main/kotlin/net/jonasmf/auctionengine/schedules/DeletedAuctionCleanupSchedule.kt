@@ -20,7 +20,8 @@ class DeletedAuctionCleanupSchedule(
     )
     fun deleteSoftDeletedAuctions() {
         val cutoff = OffsetDateTime.now(ZoneOffset.UTC).minusDays(7)
-        val deletedRows = auctionSnapshotPersistenceService.deleteSoftDeletedAuctionsOlderThan(cutoff)
-        logger.info("Deleted {} soft-deleted auctions older than {}", deletedRows, cutoff)
+        // TODO: Fix just for price table instead
+        //  val deletedRows = auctionSnapshotPersistenceService.deleteSoftDeletedAuctionsOlderThan(cutoff)
+        //  logger.info("Deleted {} soft-deleted auctions older than {}", deletedRows, cutoff)
     }
 }

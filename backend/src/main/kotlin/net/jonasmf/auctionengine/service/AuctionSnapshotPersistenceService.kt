@@ -19,7 +19,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.nio.file.Path
-import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 import kotlin.collections.mutableListOf
 import kotlin.math.roundToInt
@@ -62,7 +61,12 @@ class AuctionSnapshotPersistenceService(
             val prices =
                 uniqueAuctionItem.value
                     .map { auctionItem ->
-                        auctionItem.toAuctionPriceDBO(updateHistory.lastModified?.toInstant())
+                        if (auctionItem.bid != null && (auction.bid == null || auctionItem.bid!! < auction.bid!!)) {
+                            auction.bid = auctionItem.bid
+                        }
+                        val priceItem = auctionItem.toAuctionPriceDBO(updateHistory.lastModified?.toInstant())
+                        priceItem.auction = auction
+                        priceItem
                     }.sortedBy { it.buyout }
             val priceEntryMaxIndex = (prices.size - 1).toFloat()
             val percentile25Index = (priceEntryMaxIndex * 0.25f).roundToInt()
@@ -75,12 +79,12 @@ class AuctionSnapshotPersistenceService(
             priceBatches.addAll(prices)
 
             if (auctionBatches.size >= batchSize) {
-                // TODO: Update DB
+                auctionJdbcRepository.upsertAuctions(auctionBatches)
                 auctionBatches.clear()
             }
             if (priceBatches.size >= batchSize) {
                 // SQL, where I query for the auctions to get their ID and bulk update upon insert or update after
-                // TODO: Update DB
+                auctionJdbcRepository.upsertAuctionPrices(priceBatches)
                 auctionBatches.clear()
             }
         }
@@ -105,7 +109,7 @@ class AuctionSnapshotPersistenceService(
             auctionCount,
             JvmRuntimeDiagnostics.snapshot(),
         )
-        val groupedFlatAuctions = streamAndReturnGroupedAuction(payloadPath)
+        val groupedFlatAuctions = streamAndReturnGroupedAuction(payloadPath, connectedRealm.id)
         val uniqueItemCount = groupedFlatAuctions.size
         val groupedResult =
             mapToAuctionAndPriceArrayBatchesAndReduceMap(
@@ -136,23 +140,16 @@ class AuctionSnapshotPersistenceService(
         )
     }
 
-    fun deleteSoftDeletedAuctionsOlderThan(cutoff: OffsetDateTime): Int =
-        auctionJdbcRepository.deleteSoftDeletedAuctionsOlderThan(cutoff)
-
-    private fun persistBatch(
-        auctions: List<Auction>,
-        connectedRealmId: Int,
-        updateHistoryId: Long,
-        snapshotTime: OffsetDateTime,
-    ) {
-        if (auctions.isEmpty()) return
-
-        val auctionRows = emptyList<Auction>()
-        // TODO: Remove or update -> auctionJdbcRepository.upsertAuctions(auctionRows)
-    }
-
     // TODO: Split into smaller pieces pre merge
-    private fun streamAndReturnGroupedAuction(payloadPath: Path): MutableMap<String, MutableList<FlatAuction>> {
+
+    /**
+     * Streaming in the auctions from file on disk to save memory and creating objects with a smaller memory footprint.
+     * Not calculating values like p25 and p75 etc here, as we need to have processed/grouped all the auctions first
+     */
+    private fun streamAndReturnGroupedAuction(
+        payloadPath: Path,
+        connectedRealmId: Int,
+    ): MutableMap<String, MutableList<FlatAuction>> {
         val groupedAuctions = mutableMapOf<String, MutableList<FlatAuction>>()
         val mapper = jacksonObjectMapper()
         val jsonFactory = JsonFactory(mapper)
@@ -169,11 +166,16 @@ class AuctionSnapshotPersistenceService(
                             "Auction payload field 'auctions' must be an array"
                         }
                         while (parser.nextToken() != JsonToken.END_ARRAY) {
-                            val flatAuction = mapper.readValue(parser, AuctionDTO::class.java).toFlatObject()
-                            if (groupedAuctions[flatAuction.tempId] == null) {
-                                groupedAuctions[flatAuction.tempId] = mutableListOf()
+                            val flatAuction =
+                                mapper
+                                    .readValue(
+                                        parser,
+                                        AuctionDTO::class.java,
+                                    ).toFlatObject(connectedRealmId)
+                            if (groupedAuctions[flatAuction.id] == null) {
+                                groupedAuctions[flatAuction.id] = mutableListOf()
                             }
-                            groupedAuctions[flatAuction.tempId]?.add(flatAuction)
+                            groupedAuctions[flatAuction.id]?.add(flatAuction)
                         }
                     } else {
                         parser.skipChildren()
