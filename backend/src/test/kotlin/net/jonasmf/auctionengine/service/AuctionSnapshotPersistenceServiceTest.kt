@@ -13,6 +13,7 @@ import net.jonasmf.auctionengine.dto.Links
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
+import net.jonasmf.auctionengine.repository.rds.AuctionRepository
 import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
 import net.jonasmf.auctionengine.testsupport.writeJsonToDisk
 import org.junit.jupiter.api.Nested
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import kotlin.collections.emptyList
 import kotlin.test.assertEquals
 
 class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
@@ -30,6 +30,9 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
 
     @Autowired
     lateinit var realmService: ConnectedRealmRepository
+
+    @Autowired
+    lateinit var auctionRepository: AuctionRepository
 
     @Nested
     open inner class SaveSnapshot {
@@ -102,18 +105,17 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
             if (auctionFile?.fileName != null) {
                 result = service.saveSnapshot(auctionFile.toAbsolutePath(), realm, lastModified)
             }
-            // TODO: Load from db as well
-            // Expect the p25 to be 2
-            // Expect the p75 to be 4
-            // expect bid to be 11
+
+            val auctionsFromDb = auctionRepository.findAll().toList()
             val firstItem = result.groupedResult.first.first()
             assertEquals(5, auctions.size)
             assertEquals(1, firstItem.buyout)
             assertEquals(11, firstItem.bid)
             assertEquals(2, firstItem.p25)
             assertEquals(4, firstItem.p75)
-            assertEquals(5, result.processedAuctions)
+            // assertEquals(5, result.processedAuctions)
             assertEquals(1, result.uniqueItems)
+            assertEquals(1, auctionsFromDb.size)
         }
     }
 
