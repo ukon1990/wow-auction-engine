@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS auction_item;
 -- Creating the new smaller focused tables
 CREATE TABLE auction
 (
-    id                 BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    id                 VARCHAR(64) PRIMARY KEY NOT NULL,
     connected_realm_id INT NOT NULL,
     item_id            INT NOT NULL,
     pet_species_id     INT,
@@ -41,7 +41,7 @@ CREATE TABLE auction
 
 CREATE TABLE auction_price (
     id              BIGINT PRIMARY KEY, -- From blizzard's id
-    auction_id      BIGINT,
+    auction_id      VARCHAR(64),
     buyout          BIGINT,
     bid             BIGINT,
     quantity        INT,
