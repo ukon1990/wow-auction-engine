@@ -2,13 +2,14 @@ package net.jonasmf.auctionengine.repository.rds
 
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionPrice
+import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.sql.Timestamp
 import java.time.OffsetDateTime
 
-private const val AUCTION_JDBC_CHUNK_SIZE = 1_000
+private const val AUCTION_JDBC_CHUNK_SIZE = 10_000
 
 @Repository
 class AuctionJDBCRepository(
@@ -18,7 +19,7 @@ class AuctionJDBCRepository(
     fun upsertAuctions(auctions: Collection<Auction>): Int {
         if (auctions.isEmpty()) return 0
         var totalRows = 0
-        val columnCount = 14
+        val columnCount = 16
         auctions
             .sortedWith(compareBy(Auction::id, Auction::id))
             .chunked(AUCTION_JDBC_CHUNK_SIZE)
@@ -29,9 +30,11 @@ class AuctionJDBCRepository(
                         id,
                         connected_realm_id,
                         item_id,
-                        petSpeciesId,
-                        petQualityId,
-                        petLevel,
+                        pet_species_id,
+                        pet_quality_id,
+                        pet_level,
+                        modifier_key,
+                        bonus_key,
                         buyout,
                         bid,
                         p25,
@@ -77,10 +80,13 @@ class AuctionJDBCRepository(
     }
 
     @Transactional
-    fun upsertAuctionPrices(auctions: Collection<AuctionPrice>): Int {
+    fun upsertAuctionPrices(
+        auctions: Collection<AuctionPrice>,
+        updateHistory: ConnectedRealmUpdateHistory,
+    ): Int {
         if (auctions.isEmpty()) return 0
         var totalRows = 0
-        val columnCount = 5
+        val columnCount = 7
         auctions
             .sortedWith(compareBy(AuctionPrice::id, AuctionPrice::id))
             .chunked(AUCTION_JDBC_CHUNK_SIZE)
@@ -93,13 +99,14 @@ class AuctionJDBCRepository(
                         buyout,
                         bid,
                         quantity,
-                        last_modified
+                        last_modified,
+                        update_history_id
                     ) VALUES (${placeholders(columnCount)})
                     ON DUPLICATE KEY UPDATE
                         buyout = VALUES(buyout),
                         bid = VALUES(bid),
                         quantity = VALUES(quantity),
-                        last_seen = VALUES(last_seen),
+                        last_modified = VALUES(last_modified),
                         update_history_id = VALUES(update_history_id)
                     """.trimIndent()
                 val params =
@@ -110,6 +117,8 @@ class AuctionJDBCRepository(
                             add(auction.buyout)
                             add(auction.bid)
                             add(auction.quantity)
+                            add(auction.lastModified)
+                            add(updateHistory.id)
                         }
                     }
                 totalRows += jdbcTemplate.update(sql, *params.toTypedArray())
