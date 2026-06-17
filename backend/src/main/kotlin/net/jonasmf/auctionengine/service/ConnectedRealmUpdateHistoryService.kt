@@ -31,7 +31,7 @@ class ConnectedRealmUpdateHistoryService(
                 lastModified.toOffsetDateTime(),
             )
 
-        return existing ?: repository.save(history)
+        return existing ?: repository.saveAndFlush(history)
     }
 
     @Transactional
