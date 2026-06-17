@@ -53,7 +53,6 @@ class AuctionSnapshotPersistenceService(
     ): Pair<MutableList<Auction>, MutableList<AuctionPrice>> {
         val auctionBatches = mutableListOf<Auction>()
         val priceBatches = mutableListOf<AuctionPrice>()
-        val batchSize = 5_000
 
         auctions.forEach { uniqueAuctionItem ->
             val value = uniqueAuctionItem.value
@@ -77,16 +76,6 @@ class AuctionSnapshotPersistenceService(
 
             auctionBatches.add(auction)
             priceBatches.addAll(prices)
-
-            if (auctionBatches.size >= batchSize) {
-                auctionJdbcRepository.upsertAuctions(auctionBatches)
-                auctionBatches.clear()
-            }
-            if (priceBatches.size >= batchSize) {
-                // SQL, where I query for the auctions to get their ID and bulk update upon insert or update after
-                auctionJdbcRepository.upsertAuctionPrices(priceBatches)
-                auctionBatches.clear()
-            }
         }
 
         return Pair(auctionBatches, priceBatches)
@@ -117,6 +106,8 @@ class AuctionSnapshotPersistenceService(
                 connectedRealm = connectedRealm,
                 updateHistory = updateHistory,
             )
+        auctionJdbcRepository.upsertAuctions(groupedResult.first)
+        auctionJdbcRepository.upsertAuctionPrices(groupedResult.second, updateHistory)
         logger.info(
             "Grouped auctions into {} items for realm {} {}",
             uniqueItemCount,
