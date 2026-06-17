@@ -127,6 +127,11 @@ class AuctionJDBCRepository(
     }
 
     private fun placeholders(count: Int): String = List(count) { "?" }.joinToString(",")
+
+    private fun rowPlaceholders(
+        rowCount: Int,
+        columnCount: Int,
+    ): String = List(rowCount) { "(${placeholders(columnCount)})" }.joinToString(",")
 }
 
 private fun OffsetDateTime.toSqlTimestamp(): Timestamp = Timestamp.from(toInstant())
