@@ -15,6 +15,8 @@ class FlatAuction(
     val id: String,
     val auctionId: Long,
     val itemId: Int,
+    var context: Int? = null,
+    var petBreedId: Int? = null,
     var petSpeciesId: Int? = null,
     var petQualityId: Int? = null,
     var petLevel: Byte? = null,
@@ -41,12 +43,14 @@ fun AuctionDTO.toFlatObject(connectedRealmId: Int) =
             ),
         auctionId = id,
         itemId = item.id,
+        context = item.context,
+        petBreedId = item.petBreedId,
         petSpeciesId = item.petSpeciesId,
         petQualityId = item.petQualityId,
         petLevel = item.petLevel,
         modifierKey = AuctionVariantKeyUtility.canonicalModifierKey(item.modifiers),
         bonusList = AuctionVariantKeyUtility.canonicalBonusKey(item.bonusLists),
-        buyout = buyout ?: unit_price,
+        buyout = buyout ?: unit_price ?: 0,
         bid = bid,
         quantity = quantity,
     )
@@ -59,6 +63,8 @@ fun FlatAuction.toDBO(
         id = "${connectedRealm.id}-$id",
         connectedRealm = connectedRealm,
         itemId = itemId,
+        context = context,
+        petBreedId = petBreedId,
         petSpeciesId = petSpeciesId,
         petQualityId = petQualityId,
         petLevel = petLevel,
@@ -91,7 +97,7 @@ fun FlatAuction.toAuctionPriceDBO(lastModified: Instant?): AuctionPrice =
  * Generates a unique id for this auction
  */
 fun AuctionDTO.getUniqueId(): String =
-    "${item.id}-${item.petSpeciesId}-${item.petQualityId}-${item.petLevel}-${
+    "${item.id}-${item.context}-${item.petBreedId}-${item.petSpeciesId}-${item.petQualityId}-${item.petLevel}-${
         AuctionVariantKeyUtility.canonicalBonusKey(item.bonusLists)
     }-${
         AuctionVariantKeyUtility.canonicalModifierKey(item.modifiers)

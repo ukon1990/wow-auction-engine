@@ -57,6 +57,8 @@ class Auction(
     @JoinColumn(name = "connected_realm_id", nullable = false)
     var connectedRealm: ConnectedRealm,
     var itemId: Int,
+    var context: Int? = null,
+    var petBreedId: Int? = null,
     var petSpeciesId: Int? = null,
     var petQualityId: Int? = null,
     var modifierKey: String? = null,
