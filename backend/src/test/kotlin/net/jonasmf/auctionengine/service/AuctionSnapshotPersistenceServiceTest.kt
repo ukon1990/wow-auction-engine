@@ -39,7 +39,7 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
         @Transactional
         @Test
         open fun `Can save snapshot to the database`() {
-            val realm = createRealm(1)
+            val realm = createRealm(9_999)
             val lastModified = ZonedDateTime.of(2026, 5, 25, 5, 0, 0, 0, ZoneOffset.UTC)
             val auctions =
                 listOf(
@@ -88,6 +88,15 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
                         time_left = AuctionTimeLeft.SHORT,
                         quantity = 5,
                     ),
+                    AuctionDTO(
+                        id = 6,
+                        item = AuctionItemDTO(id = 200),
+                        bid = 11,
+                        unit_price = 4,
+                        buyout = null,
+                        time_left = AuctionTimeLeft.SHORT,
+                        quantity = 5,
+                    ),
                 )
             val auctionFile =
                 createFileForAuctions(
@@ -108,14 +117,14 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
 
             val auctionsFromDb = auctionRepository.findAll().toList()
             val firstItem = result.groupedResult.first.first()
-            assertEquals(5, auctions.size)
+            assertEquals(6, auctions.size)
             assertEquals(1, firstItem.buyout)
             assertEquals(11, firstItem.bid)
             assertEquals(2, firstItem.p25)
             assertEquals(4, firstItem.p75)
             // assertEquals(5, result.processedAuctions)
-            assertEquals(1, result.uniqueItems)
-            assertEquals(1, auctionsFromDb.size)
+            assertEquals(2, result.uniqueItems)
+            assertEquals(2, auctionsFromDb.size)
         }
     }
 
