@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS auction_item;
 -- Creating the new smaller focused tables
 CREATE TABLE auction
 (
-    id                 VARCHAR(64) PRIMARY KEY NOT NULL,
+    id                 VARCHAR(66) PRIMARY KEY NOT NULL,
     connected_realm_id INT NOT NULL,
     item_id            INT NOT NULL,
     pet_species_id     INT,
@@ -26,7 +26,7 @@ CREATE TABLE auction
     CONSTRAINT auction_connected_realm_id_fk
         FOREIGN KEY (connected_realm_id) REFERENCES connected_realm (id),
     CONSTRAINT auction_update_history_id_fk
-        FOREIGN KEY (update_history_id) REFERENCES auction_update_history (id),
+        FOREIGN KEY (update_history_id) REFERENCES connected_realm_update_history (id),
     CONSTRAINT auction_unique_variant
         UNIQUE (
                 connected_realm_id,
@@ -41,13 +41,16 @@ CREATE TABLE auction
 
 CREATE TABLE auction_price (
     id              BIGINT PRIMARY KEY, -- From blizzard's id
-    auction_id      VARCHAR(64),
+    auction_id      VARCHAR(66),
     buyout          BIGINT,
     bid             BIGINT,
     quantity        INT,
     last_modified   DATETIME,
+    update_history_id  BIGINT,
     CONSTRAINT auction_price_auction_id_fk
-        FOREIGN KEY (auction_id) REFERENCES auction (id)
+        FOREIGN KEY (auction_id) REFERENCES auction (id),
+    CONSTRAINT auction_price_update_history_id_fk
+        FOREIGN KEY (update_history_id) REFERENCES connected_realm_update_history (id)
 );
 
 CREATE INDEX auction_price_auction_id_idx ON auction_price (auction_id);
