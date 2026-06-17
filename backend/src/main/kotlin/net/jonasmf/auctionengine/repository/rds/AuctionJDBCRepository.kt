@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.sql.Timestamp
 import java.time.OffsetDateTime
 
-private const val AUCTION_JDBC_CHUNK_SIZE = 10_000
+private const val AUCTION_JDBC_CHUNK_SIZE = 1_000
 
 @Repository
 class AuctionJDBCRepository(
