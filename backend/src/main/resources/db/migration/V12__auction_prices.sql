@@ -1,13 +1,15 @@
 -- DROP TABLE deprecated tables
 DROP TABLE IF EXISTS auction_item_modifier_link;
 DROP TABLE IF EXISTS auction_item_modifier;
+DROP TABLE IF EXISTS auction_price;
 DROP TABLE IF EXISTS auction;
 DROP TABLE IF EXISTS auction_item;
+
 
 -- Creating the new smaller focused tables
 CREATE TABLE auction
 (
-    id                 VARCHAR(66) PRIMARY KEY NOT NULL,
+    id                 VARCHAR(70) PRIMARY KEY NOT NULL,
     connected_realm_id INT NOT NULL,
     item_id            INT NOT NULL,
     pet_species_id     INT,
@@ -41,7 +43,7 @@ CREATE TABLE auction
 
 CREATE TABLE auction_price (
     id              BIGINT PRIMARY KEY, -- From blizzard's id
-    auction_id      VARCHAR(66),
+    auction_id      VARCHAR(70),
     buyout          BIGINT,
     bid             BIGINT,
     quantity        INT,
