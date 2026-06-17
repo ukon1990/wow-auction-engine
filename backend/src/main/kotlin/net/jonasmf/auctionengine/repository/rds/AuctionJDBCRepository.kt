@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.sql.Timestamp
 import java.time.OffsetDateTime
 
-private const val AUCTION_JDBC_CHUNK_SIZE = 1_000
+private const val MAX_PREPARED_STATEMENT_PLACEHOLDERS = 60_000
 
 @Repository
 class AuctionJDBCRepository(
@@ -19,10 +19,10 @@ class AuctionJDBCRepository(
     fun upsertAuctions(auctions: Collection<Auction>): Int {
         if (auctions.isEmpty()) return 0
         var totalRows = 0
-        val columnCount = 16
+        val columnCount = 18
         auctions
             .sortedWith(compareBy(Auction::id, Auction::id))
-            .chunked(AUCTION_JDBC_CHUNK_SIZE)
+            .chunked(maxRowsPerStatement(columnCount))
             .forEach { chunk ->
                 val sql =
                     """
@@ -30,6 +30,8 @@ class AuctionJDBCRepository(
                         id,
                         connected_realm_id,
                         item_id,
+                        context,
+                        pet_breed_id,
                         pet_species_id,
                         pet_quality_id,
                         pet_level,
@@ -59,6 +61,8 @@ class AuctionJDBCRepository(
                             add(auction.id)
                             add(auction.connectedRealm.id)
                             add(auction.itemId)
+                            add(auction.context)
+                            add(auction.petBreedId)
                             add(auction.petSpeciesId)
                             add(auction.petQualityId)
                             add(auction.petLevel)
@@ -89,7 +93,7 @@ class AuctionJDBCRepository(
         val columnCount = 7
         auctions
             .sortedWith(compareBy(AuctionPrice::id, AuctionPrice::id))
-            .chunked(AUCTION_JDBC_CHUNK_SIZE)
+            .chunked(maxRowsPerStatement(columnCount))
             .forEach { chunk ->
                 val sql = // Fetch auction id via query
                     """
@@ -132,6 +136,8 @@ class AuctionJDBCRepository(
         rowCount: Int,
         columnCount: Int,
     ): String = List(rowCount) { "(${placeholders(columnCount)})" }.joinToString(",")
+
+    private fun maxRowsPerStatement(columnCount: Int): Int = MAX_PREPARED_STATEMENT_PLACEHOLDERS / columnCount
 }
 
 private fun OffsetDateTime.toSqlTimestamp(): Timestamp = Timestamp.from(toInstant())
