@@ -43,7 +43,7 @@ class AuctionJDBCRepository(
                         first_seen,
                         last_seen,
                         update_history_id
-                    ) VALUES (${placeholders(columnCount)})
+                    ) VALUES ${rowPlaceholders(chunk.size, columnCount)}
                     ON DUPLICATE KEY UPDATE
                         buyout = VALUES(buyout),
                         bid = VALUES(bid),
@@ -101,7 +101,7 @@ class AuctionJDBCRepository(
                         quantity,
                         last_modified,
                         update_history_id
-                    ) VALUES (${placeholders(columnCount)})
+                    ) VALUES ${rowPlaceholders(chunk.size, columnCount)}
                     ON DUPLICATE KEY UPDATE
                         buyout = VALUES(buyout),
                         bid = VALUES(bid),
