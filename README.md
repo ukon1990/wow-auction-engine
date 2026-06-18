@@ -1,6 +1,6 @@
 # The Ethereal Exchange
 The Ethereal Exchange is the successor to Wow Auction Helper.
-It is currently **work in progress**.
+It is currently **work in progress**, and I am currently cleaning up and optimizing the code.
 
 ## What This Project Does
 
