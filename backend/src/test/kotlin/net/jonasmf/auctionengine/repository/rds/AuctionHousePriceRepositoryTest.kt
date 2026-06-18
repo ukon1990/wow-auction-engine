@@ -170,7 +170,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         val connectedRealm = seedConnectedRealm(3084)
         val lastModified = ZonedDateTime.of(2026, 4, 8, 9, 0, 0, 0, ZonedDateTime.now().zone)
 
-        auctionStatsHourlyService.processHourlyPriceStatistics(
+        auctionStatsHourlyService.updateHourlyStatsForRealm(
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
@@ -204,7 +204,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         val connectedRealm = seedConnectedRealm(3584)
         val lastModified = ZonedDateTime.of(2026, 4, 8, 11, 0, 0, 0, ZonedDateTime.now().zone)
 
-        auctionStatsHourlyService.processHourlyPriceStatistics(
+        auctionStatsHourlyService.updateHourlyStatsForRealm(
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
@@ -254,7 +254,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         val connectedRealm = seedConnectedRealm(4084)
         val lastModified = ZonedDateTime.of(2026, 4, 9, 14, 0, 0, 0, ZonedDateTime.now().zone)
 
-        auctionStatsHourlyService.processHourlyPriceStatistics(
+        auctionStatsHourlyService.updateHourlyStatsForRealm(
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
@@ -282,7 +282,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         val connectedRealm = seedConnectedRealm(4584)
         val lastModified = ZonedDateTime.of(2026, 4, 9, 16, 0, 0, 0, ZonedDateTime.now().zone)
 
-        auctionStatsHourlyService.processHourlyPriceStatistics(
+        auctionStatsHourlyService.updateHourlyStatsForRealm(
             connectedRealm = connectedRealm,
             auctions =
                 listOf(
@@ -312,7 +312,7 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         val connectedRealm = seedConnectedRealm(5084)
         val lastModified = ZonedDateTime.of(2026, 4, 10, 6, 0, 0, 0, ZonedDateTime.now().zone)
 
-        auctionStatsHourlyService.processHourlyPriceStatistics(
+        auctionStatsHourlyService.updateHourlyStatsForRealm(
             connectedRealm = connectedRealm,
             auctions =
                 listOf(

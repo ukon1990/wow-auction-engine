@@ -31,7 +31,7 @@ class AuctionStatsHourlyServiceTest {
         val service = AuctionStatsHourlyService(repository)
         val connectedRealm = connectedRealm(timezone = "Pacific/Auckland")
 
-        service.processHourlyPriceStatistics(
+        service.updateHourlyStatsForRealm(
             connectedRealm = connectedRealm,
             auctions = listOf(auction()),
             lastModified = ZonedDateTime.of(2026, 1, 1, 11, 15, 0, 0, ZoneOffset.UTC),
