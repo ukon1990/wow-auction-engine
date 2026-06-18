@@ -4,9 +4,9 @@ import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
-import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
+import net.jonasmf.auctionengine.repository.rds.AuctionStatsHourlyJDBCRepository
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -29,6 +29,7 @@ class BlizzardAuctionService(
     private val auctionSnapshotPersistenceService: AuctionSnapshotPersistenceService,
     private val auctionHouseService: AuctionHouseService,
     private val runtimeHealthTracker: RuntimeHealthTracker,
+    private val auctionStatsHourlyJDBCRepository: AuctionStatsHourlyJDBCRepository,
 ) {
     val logger: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
 
@@ -199,34 +200,12 @@ class BlizzardAuctionService(
                     JvmRuntimeDiagnostics.snapshot(),
                 )
 
-                val hourlyStatsStartTime = System.currentTimeMillis()
-                val hourlyStatsSummary =
-                    auctionStatsHourlyService.processHourlyPriceStatisticsFromFile(
-                        connectedRealm = connectedRealm,
-                        payloadPath = downloadedPayload.path,
-                        lastModified = lastModified,
-                    )
-                if (hourlyStatsSummary.processedAuctions == 0) {
-                    logger.warn("No auctions found for realm {}", connectedRealmId)
-                    markAuctionUpdateFailed(connectedRealmId, lastModified)
-                    return
-                }
-                logger.info(
-                    "Completed hourly stats processing for realm {} region {} auctions={} groupedRows={} insertedRows={} in {}ms {}",
-                    connectedRealmId,
-                    region,
-                    hourlyStatsSummary.processedAuctions,
-                    hourlyStatsSummary.groupedRows,
-                    hourlyStatsSummary.insertedRows,
-                    System.currentTimeMillis() - hourlyStatsStartTime,
-                    JvmRuntimeDiagnostics.snapshot(),
+                auctionStatsHourlyService.updateHourlyStatsForRealm(
+                    connectedRealm = connectedRealm,
+                    lastModified = lastModified,
+                    connectedRealmUpdateHistoryId = auctionSaveSummary.updateHistory.id,
                 )
-                runtimeHealthTracker.markUpdateBatchProgress(
-                    "skip-current-auctions-persistence",
-                    region = region,
-                    connectedRealmId = connectedRealmId,
-                )
-                // TODO: Consider whether persisting current auctions should stay disabled to reduce transfer costs.
+
                 runtimeHealthTracker.markUpdateBatchProgress(
                     "update-auction-house-times",
                     region = region,

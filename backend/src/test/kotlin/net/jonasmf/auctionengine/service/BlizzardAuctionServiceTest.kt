@@ -55,6 +55,7 @@ class BlizzardAuctionServiceTest {
             auctionSnapshotPersistenceService = auctionSnapshotPersistenceService,
             auctionHouseService = auctionHouseService,
             runtimeHealthTracker = runtimeHealthTracker,
+            auctionStatsHourlyJDBCRepository = auctionStatsHourlyJDBCRepository,
         )
 
     @Test
