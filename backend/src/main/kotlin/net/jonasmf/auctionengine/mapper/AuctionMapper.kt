@@ -79,8 +79,8 @@ fun FlatAuction.toDBO(
         bid = bid,
         p25 = null,
         p75 = null,
-        firstSeen = null,
-        lastSeen = null,
+        firstSeen = updateHistory.lastModified,
+        lastSeen = updateHistory.lastModified,
         updateHistory = updateHistory,
     )
 
