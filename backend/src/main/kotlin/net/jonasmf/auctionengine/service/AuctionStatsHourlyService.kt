@@ -1,24 +1,16 @@
 package net.jonasmf.auctionengine.service
 
-import com.fasterxml.jackson.core.JsonFactory
-import com.fasterxml.jackson.core.JsonToken
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
-import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.repository.rds.AuctionStatsHourlyJDBCRepository
-import net.jonasmf.auctionengine.repository.rds.HourlyStatsUpsertRow
-import net.jonasmf.auctionengine.utility.AuctionVariantKeyUtility
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import net.jonasmf.auctionengine.utility.resolveZone
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.nio.file.Path
 import java.time.ZonedDateTime
 
 data class HourlyPriceStatisticsSummary(
     val insertedRows: Int,
-    val groupedRows: Int,
     val processedAuctions: Int = 0,
 )
 
@@ -27,153 +19,33 @@ class AuctionStatsHourlyService(
     val auctionStatsHourlyJDBCRepository: AuctionStatsHourlyJDBCRepository,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AuctionStatsHourlyService::class.java)
-    private val progressLogInterval = 100_000
 
-    fun processHourlyPriceStatistics(
-        connectedRealm: ConnectedRealm,
-        auctions: List<AuctionDTO>,
-        lastModified: ZonedDateTime,
-    ): HourlyPriceStatisticsSummary =
-        processHourlyPriceStatistics(
-            connectedRealm = connectedRealm,
-            lastModified = lastModified,
-            expectedAuctionCount = auctions.size,
-        ) { consumer ->
-            auctions.forEach(consumer)
-        }
-
-    fun processHourlyPriceStatisticsFromFile(
-        connectedRealm: ConnectedRealm,
-        payloadPath: Path,
-        lastModified: ZonedDateTime,
-    ): HourlyPriceStatisticsSummary =
-        processHourlyPriceStatistics(
-            connectedRealm = connectedRealm,
-            lastModified = lastModified,
-            expectedAuctionCount = null,
-        ) { consumer ->
-            streamAuctions(payloadPath, consumer)
-        }
-
-    private fun processHourlyPriceStatistics(
+    fun updateHourlyStatsForRealm(
         connectedRealm: ConnectedRealm,
         lastModified: ZonedDateTime,
-        expectedAuctionCount: Int?,
-        iterateAuctions: (((AuctionDTO) -> Unit) -> Unit),
+        connectedRealmUpdateHistoryId: Long,
     ): HourlyPriceStatisticsSummary {
         val startTime = System.currentTimeMillis()
         val zone = connectedRealm.resolveZone(defaultZone = lastModified.zone)
         val localLastModified = lastModified.withZoneSameInstant(zone)
         val hour = localLastModified.hour
-        val date = localLastModified.toLocalDate()
-        val grouped = linkedMapOf<String, HourlyStatsUpsertRow>()
         var processedAuctions = 0
 
+        val insertedRows =
+            auctionStatsHourlyJDBCRepository.updateHourlyStats(
+                hour,
+                connectedRealmUpdateHistoryId,
+            )
         logger.info(
-            "Starting hourly stats aggregation for realm {} with {} auctions at local time {} in zone {} and {}",
-            connectedRealm.id,
-            expectedAuctionCount ?: "streamed",
-            localLastModified,
-            zone,
-            JvmRuntimeDiagnostics.snapshot(),
-        )
-
-        iterateAuctions { auction ->
-            val itemId = auction.item.id
-            val petSpeciesId = auction.item.petSpeciesId
-            val modifierKey = AuctionVariantKeyUtility.canonicalModifierKey(auction.item.modifiers)
-            val bonusKey = AuctionVariantKeyUtility.canonicalBonusKey(auction.item.bonusLists)
-            val key = "${connectedRealm.id}|$itemId|$date|${petSpeciesId ?: ""}|$modifierKey|$bonusKey"
-            val price = auction.buyout ?: auction.unit_price ?: 0L
-            val quantity = auction.quantity.takeIf { it > 0 } ?: 1
-
-            val existing = grouped[key]
-            if (existing == null) {
-                grouped[key] =
-                    HourlyStatsUpsertRow(
-                        connectedRealmId = connectedRealm.id,
-                        itemId = itemId,
-                        date = date,
-                        petSpeciesId = petSpeciesId,
-                        modifierKey = modifierKey,
-                        bonusKey = bonusKey,
-                        price = price,
-                        quantity = quantity,
-                    )
-            } else {
-                grouped[key] =
-                    existing.copy(
-                        quantity = (existing.quantity ?: 0) + quantity,
-                        price = (existing.price ?: 0).coerceAtMost(price),
-                    )
-            }
-
-            processedAuctions++
-            if (processedAuctions % progressLogInterval == 0) {
-                logger.info(
-                    "Hourly stats aggregation progress for realm {}: {}/{} auctions groupedRows={} {}",
-                    connectedRealm.id,
-                    processedAuctions,
-                    expectedAuctionCount ?: "streamed",
-                    grouped.size,
-                    JvmRuntimeDiagnostics.snapshot(),
-                )
-            }
-        }
-
-        val groupedRows = ArrayList(grouped.values)
-        logger.info(
-            "Starting hourly stats upsert for realm {} with groupedRows={} at local date {} hour {} zone {} {}",
-            connectedRealm.id,
-            groupedRows.size,
-            date,
-            hour,
-            zone,
-            JvmRuntimeDiagnostics.snapshot(),
-        )
-        val insertedRows = auctionStatsHourlyJDBCRepository.upsertHour(groupedRows, hour)
-        grouped.clear()
-        logger.info(
-            "Processed hourly auctions for realm {} with insertedRows={} groupedRows={} in {} ms {}",
+            "Processed hourly auctions for realm {} with insertedRows={} in {} ms {}",
             connectedRealm.id,
             insertedRows,
-            groupedRows.size,
             System.currentTimeMillis() - startTime,
             JvmRuntimeDiagnostics.snapshot(),
         )
         return HourlyPriceStatisticsSummary(
             insertedRows = insertedRows,
-            groupedRows = groupedRows.size,
             processedAuctions = processedAuctions,
         )
-    }
-
-    private fun streamAuctions(
-        payloadPath: Path,
-        consumer: (AuctionDTO) -> Unit,
-    ) {
-        val mapper = jacksonObjectMapper()
-        val jsonFactory = JsonFactory(mapper)
-        payloadPath.toFile().inputStream().use { input ->
-            jsonFactory.createParser(input).use { parser ->
-                require(parser.nextToken() == JsonToken.START_OBJECT) {
-                    "Auction payload root must be a JSON object"
-                }
-                while (parser.nextToken() != JsonToken.END_OBJECT) {
-                    val fieldName = parser.currentName
-                    parser.nextToken()
-                    if (fieldName == "auctions") {
-                        require(parser.currentToken == JsonToken.START_ARRAY) {
-                            "Auction payload field 'auctions' must be an array"
-                        }
-                        while (parser.nextToken() != JsonToken.END_ARRAY) {
-                            consumer(mapper.readValue(parser, AuctionDTO::class.java))
-                        }
-                    } else {
-                        parser.skipChildren()
-                    }
-                }
-            }
-        }
     }
 }
