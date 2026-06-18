@@ -7,7 +7,9 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionPrice
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
+import net.jonasmf.auctionengine.dbo.rds.realm.AuctionUpdateHistory
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
+import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.dto.Link
 import net.jonasmf.auctionengine.dto.Links
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
@@ -109,6 +111,14 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
                     Pair<MutableList<Auction>, MutableList<AuctionPrice>>(
                         mutableListOf(),
                         mutableListOf(),
+                    ),
+                    ConnectedRealmUpdateHistory(
+                        id = 0L,
+                        auctionCount = 0,
+                        lastModified = null,
+                        updateTimestamp = null,
+                        completedTimestamp = null,
+                        connectedRealm = realm,
                     ),
                 )
             if (auctionFile?.fileName != null) {

@@ -27,6 +27,7 @@ data class AuctionSnapshotPersistenceSummary(
     val processedAuctions: Int,
     val uniqueItems: Int,
     val groupedResult: Pair<MutableList<Auction>, MutableList<AuctionPrice>>,
+    val updateHistory: ConnectedRealmUpdateHistory,
 )
 
 @Service
@@ -125,9 +126,10 @@ class AuctionSnapshotPersistenceService(
         )
 
         return AuctionSnapshotPersistenceSummary(
-            processedAuctions = 0, // TODO: Fix propper count
+            processedAuctions = groupedResult.second.size, // TODO: Fix propper count
             uniqueItems = uniqueItemCount,
             groupedResult = groupedResult,
+            updateHistory = updateHistory,
         )
     }
 
