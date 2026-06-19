@@ -6,8 +6,11 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
+    private var updateHistorySequence = 0L
+
     @Autowired
     lateinit var auctionStatsHourlyJDBCRepository: AuctionStatsHourlyJDBCRepository
 
@@ -28,6 +31,7 @@ class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
         val petSpeciesId = 42
         val modifierKey = "7,100"
         val bonusKey = "12251,12252"
+        seedConnectedRealm(connectedRealmId)
 
         listOf(
             HourlyValue(hourOfDay = 1, price = 100, quantity = 10),
@@ -36,7 +40,7 @@ class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
             HourlyValue(hourOfDay = 4, price = 400, quantity = 40),
             HourlyValue(hourOfDay = 5, price = 500, quantity = 50),
         ).forEach {
-            upsertHourly(
+            updateHourlyStats(
                 hourOfDay = it.hourOfDay,
                 date = date,
                 connectedRealmId = connectedRealmId,
@@ -84,7 +88,7 @@ class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
             expectedMaxQuantity = 50,
         )
 
-        upsertHourly(
+        updateHourlyStats(
             hourOfDay = 5,
             date = date,
             connectedRealmId = connectedRealmId,
@@ -139,6 +143,7 @@ class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
         val petSpeciesId = 0
         val modifierKey = ""
         val bonusKey = ""
+        seedConnectedRealm(connectedRealmId)
 
         listOf(
             HourlyValue(hourOfDay = 1, price = 100, quantity = 10),
@@ -146,7 +151,7 @@ class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
             HourlyValue(hourOfDay = 3, price = 300, quantity = 30),
             HourlyValue(hourOfDay = 4, price = 400, quantity = 40),
         ).forEach {
-            upsertHourly(
+            updateHourlyStats(
                 hourOfDay = it.hourOfDay,
                 date = date,
                 connectedRealmId = connectedRealmId,
@@ -293,7 +298,7 @@ class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
         assertEquals(expectedMaxQuantity, dailyPrice.maxQuantity)
     }
 
-    private fun upsertHourly(
+    private fun updateHourlyStats(
         hourOfDay: Int,
         date: LocalDate,
         connectedRealmId: Int,
@@ -304,20 +309,129 @@ class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
         price: Long,
         quantity: Int,
     ) {
-        auctionStatsHourlyJDBCRepository.upsertHour(
-            listOf(
-                HourlyStatsUpsertRow(
-                    connectedRealmId = connectedRealmId,
-                    itemId = itemId,
-                    date = date,
-                    petSpeciesId = petSpeciesId,
-                    modifierKey = modifierKey,
-                    bonusKey = bonusKey,
-                    price = price,
-                    quantity = quantity,
-                ),
-            ),
-            hourOfDay,
+        val updateHistoryId = insertUpdateHistory(connectedRealmId, date.atTime(hourOfDay, 0))
+        insertAuction(
+            id = "auction-$updateHistoryId",
+            connectedRealmId = connectedRealmId,
+            updateHistoryId = updateHistoryId,
+            itemId = itemId,
+            date = date,
+            hour = hourOfDay,
+            petSpeciesId = petSpeciesId,
+            modifierKey = modifierKey,
+            bonusKey = bonusKey,
+            price = price,
+            quantity = quantity,
+        )
+        auctionStatsHourlyJDBCRepository.updateHourlyStats(hourOfDay, updateHistoryId)
+    }
+
+    private fun seedConnectedRealm(id: Int) {
+        jdbcTemplate.update(
+            """
+            INSERT INTO auction_house (
+                id,
+                connected_id,
+                auto_update,
+                avg_delay,
+                game_build,
+                highest_delay,
+                last_modified,
+                last_requested,
+                lowest_delay,
+                next_update,
+                region,
+                update_attempts
+            ) VALUES (?, ?, false, 60, 0, 60, NULL, NULL, 60, '1970-01-01 00:00:00', 'Europe', 0)
+            ON DUPLICATE KEY UPDATE connected_id = VALUES(connected_id)
+            """.trimIndent(),
+            id,
+            id,
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO connected_realm (id, auction_house_id)
+            VALUES (?, ?)
+            ON DUPLICATE KEY UPDATE auction_house_id = VALUES(auction_house_id)
+            """.trimIndent(),
+            id,
+            id,
+        )
+    }
+
+    private fun insertUpdateHistory(
+        connectedRealmId: Int,
+        lastModified: LocalDateTime,
+    ): Long =
+        jdbcTemplate.queryForObject(
+            """
+            INSERT INTO connected_realm_update_history (
+                auction_count,
+                last_modified,
+                update_timestamp,
+                completed_timestamp,
+                connected_realm_id
+            ) VALUES (1, ?, ?, ?, ?)
+            RETURNING id
+            """.trimIndent(),
+            Long::class.java,
+            uniqueUpdateHistoryTimestamp(lastModified),
+            lastModified,
+            lastModified,
+            connectedRealmId,
+        )!!
+
+    private fun uniqueUpdateHistoryTimestamp(lastModified: LocalDateTime): LocalDateTime =
+        lastModified.plusNanos(++updateHistorySequence * 1_000)
+
+    private fun insertAuction(
+        id: String,
+        connectedRealmId: Int,
+        updateHistoryId: Long,
+        itemId: Int,
+        date: LocalDate,
+        hour: Int,
+        petSpeciesId: Int?,
+        modifierKey: String,
+        bonusKey: String,
+        price: Long,
+        quantity: Int,
+    ) {
+        jdbcTemplate.update(
+            """
+            INSERT INTO auction (
+                id,
+                connected_realm_id,
+                item_id,
+                pet_breed_id,
+                pet_species_id,
+                pet_quality_id,
+                pet_level,
+                modifier_key,
+                bonus_key,
+                buyout,
+                bid,
+                p25,
+                p75,
+                quantity,
+                first_seen,
+                last_seen,
+                update_history_id
+            ) VALUES (?, ?, ?, NULL, ?, NULL, NULL, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?)
+            """.trimIndent(),
+            id,
+            connectedRealmId,
+            itemId,
+            petSpeciesId,
+            modifierKey,
+            bonusKey,
+            price,
+            price,
+            price,
+            quantity,
+            date.atTime(hour, 0),
+            date.atTime(hour, 0),
+            updateHistoryId,
         )
     }
 
