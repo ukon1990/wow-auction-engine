@@ -8,6 +8,10 @@ object MarketSearchTestFixtures {
         insertAuctionHouse(jdbcTemplate, id = 100, connectedId = 1084, lastModified = "2026-05-01 11:15:00")
         insertAuctionHouse(jdbcTemplate, id = 101, connectedId = -2, lastModified = "2026-05-01 10:30:00")
         jdbcTemplate.update("INSERT INTO connected_realm (id, auction_house_id) VALUES (1084, 100), (-2, 101)")
+        insertUpdateHistory(jdbcTemplate, id = 1_000, connectedRealmId = 1084, lastModified = "2026-04-30 11:15:00")
+        insertUpdateHistory(jdbcTemplate, id = 1_001, connectedRealmId = 1084, lastModified = "2026-05-01 11:15:00")
+        insertUpdateHistory(jdbcTemplate, id = 2_000, connectedRealmId = -2, lastModified = "2026-04-30 10:30:00")
+        insertUpdateHistory(jdbcTemplate, id = 2_001, connectedRealmId = -2, lastModified = "2026-05-01 10:30:00")
         jdbcTemplate.update(
             """
             INSERT INTO realm (id, category, game_build, locale, name, slug, timezone, region_id)
@@ -47,6 +51,46 @@ object MarketSearchTestFixtures {
             VALUES (7001, 19019, 1, 'https://media.example/recipe.png', ?)
             """.trimIndent(),
             recipeName,
+        )
+        insertAuction(
+            jdbcTemplate,
+            id = "1084-old-19019",
+            connectedRealmId = 1084,
+            itemId = 19019,
+            buyout = 777,
+            quantity = 1,
+            lastSeen = "2026-04-30 11:15:00",
+            updateHistoryId = 1_000,
+        )
+        insertAuction(
+            jdbcTemplate,
+            id = "1084-current-19019",
+            connectedRealmId = 1084,
+            itemId = 19019,
+            buyout = 1_000,
+            quantity = 4,
+            lastSeen = "2026-05-01 11:15:00",
+            updateHistoryId = 1_001,
+        )
+        insertAuction(
+            jdbcTemplate,
+            id = "-2-old-19019",
+            connectedRealmId = -2,
+            itemId = 19019,
+            buyout = 444,
+            quantity = 2,
+            lastSeen = "2026-04-30 10:30:00",
+            updateHistoryId = 2_000,
+        )
+        insertAuction(
+            jdbcTemplate,
+            id = "-2-current-19019",
+            connectedRealmId = -2,
+            itemId = 19019,
+            buyout = 900,
+            quantity = 8,
+            lastSeen = "2026-05-01 10:30:00",
+            updateHistoryId = 2_001,
         )
         jdbcTemplate.update(
             """
@@ -270,12 +314,88 @@ object MarketSearchTestFixtures {
             """.trimIndent(),
             itemName,
         )
+        insertAuction(
+            jdbcTemplate,
+            id = "-2-current-19020",
+            connectedRealmId = -2,
+            itemId = 19020,
+            buyout = 555,
+            quantity = 99,
+            lastSeen = "2026-05-01 10:30:00",
+            updateHistoryId = 2_001,
+        )
         jdbcTemplate.update(
             """
             INSERT INTO auction_stats_hourly (
                 connected_realm_id, item_id, date, pet_species_id, modifier_key, bonus_key, price10, quantity10
             ) VALUES (-2, 19020, '2026-05-01', -1, '', '', 555, 99)
             """.trimIndent(),
+        )
+    }
+
+    private fun insertUpdateHistory(
+        jdbcTemplate: JdbcTemplate,
+        id: Long,
+        connectedRealmId: Int,
+        lastModified: String,
+    ) {
+        jdbcTemplate.update(
+            """
+            INSERT INTO connected_realm_update_history (
+                id, auction_count, last_modified, update_timestamp, completed_timestamp, connected_realm_id
+            ) VALUES (?, 0, ?, ?, ?, ?)
+            """.trimIndent(),
+            id,
+            lastModified,
+            lastModified,
+            lastModified,
+            connectedRealmId,
+        )
+    }
+
+    private fun insertAuction(
+        jdbcTemplate: JdbcTemplate,
+        id: String,
+        connectedRealmId: Int,
+        itemId: Int,
+        buyout: Long,
+        quantity: Int,
+        lastSeen: String,
+        updateHistoryId: Long,
+    ) {
+        jdbcTemplate.update(
+            """
+            INSERT INTO auction (
+                id,
+                connected_realm_id,
+                item_id,
+                context,
+                pet_breed_id,
+                pet_species_id,
+                pet_quality_id,
+                pet_level,
+                modifier_key,
+                bonus_key,
+                buyout,
+                bid,
+                p25,
+                p75,
+                quantity,
+                first_seen,
+                last_seen,
+                update_history_id
+            ) VALUES (?, ?, ?, NULL, NULL, -1, NULL, NULL, '', '', ?, NULL, ?, ?, ?, ?, ?, ?)
+            """.trimIndent(),
+            id,
+            connectedRealmId,
+            itemId,
+            buyout,
+            buyout,
+            buyout,
+            quantity,
+            lastSeen,
+            lastSeen,
+            updateHistoryId,
         )
     }
 
