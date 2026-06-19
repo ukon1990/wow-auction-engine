@@ -183,7 +183,6 @@ class BlizzardAuctionService(
                     region = region,
                     connectedRealmId = connectedRealmId,
                 )
-                val auctionInsertStart = System.currentTimeMillis()
 
                 val auctionSaveSummary =
                     auctionSnapshotPersistenceService.saveSnapshot(
@@ -191,14 +190,6 @@ class BlizzardAuctionService(
                         lastModified = lastModified,
                         payloadPath = downloadedPayload.path,
                     )
-                logger.info(
-                    "Completed auction price inserts stats processing for realm {} region {} auctions={} in {}ms {}",
-                    connectedRealmId,
-                    region,
-                    auctionSaveSummary.processedAuctions,
-                    System.currentTimeMillis() - auctionInsertStart,
-                    JvmRuntimeDiagnostics.snapshot(),
-                )
 
                 auctionStatsHourlyService.updateHourlyStatsForRealm(
                     connectedRealm = connectedRealm,
