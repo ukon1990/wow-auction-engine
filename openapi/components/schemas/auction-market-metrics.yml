@@ -19,6 +19,16 @@ properties:
     type: integer
     format: int64
     nullable: true
+  p25Price:
+    type: integer
+    format: int64
+    nullable: true
+    description: 25th percentile buyout for the same current auction variant.
+  p75Price:
+    type: integer
+    format: int64
+    nullable: true
+    description: 75th percentile buyout for the same current auction variant.
   quantity:
     type: integer
     format: int64

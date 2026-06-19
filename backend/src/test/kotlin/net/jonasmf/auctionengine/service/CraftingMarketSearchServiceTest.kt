@@ -54,6 +54,8 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
         assertEquals(7001, row.recipeId)
         assertEquals("Healing Potion", row.item?.name)
         assertEquals(1_000L, row.outputPriceCopper)
+        assertEquals(950L, row.outputP25PriceCopper)
+        assertEquals(1_100L, row.outputP75PriceCopper)
         assertEquals(100L, row.reagentCostCopper)
         assertEquals(900L, row.profitCopper)
         assertNotNull(row.roiPercent)

@@ -45,6 +45,17 @@ CREATE TABLE auction
         )
 );
 
+CREATE OR REPLACE INDEX idx_auction_update_history_realm_item_buyout
+    ON auction (
+        update_history_id,
+        connected_realm_id,
+        item_id,
+        buyout,
+        bonus_key,
+        modifier_key,
+        pet_species_id
+    );
+
 CREATE TABLE auction_price (
     id              BIGINT PRIMARY KEY, -- From blizzard's id
     auction_id      VARCHAR(70),
@@ -61,3 +72,5 @@ CREATE TABLE auction_price (
 
 CREATE INDEX auction_price_auction_id_idx ON auction_price (auction_id);
 CREATE INDEX auction_price_last_modified_idx ON auction_price (last_modified);
+CREATE OR REPLACE INDEX idx_connected_realm_update_history_realm_id_id
+    ON connected_realm_update_history (connected_realm_id, id);

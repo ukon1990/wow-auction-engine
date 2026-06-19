@@ -50,6 +50,8 @@ data class CraftingMarketSqlRow(
     val craftedQuantity: Int,
     val listingQuantity: Long?,
     val outputUnitPrice: Long?,
+    val outputP25Price: Long?,
+    val outputP75Price: Long?,
     val reagentCost: Long?,
     val profitCopper: Long?,
     val roiPercent: Double?,
@@ -269,6 +271,8 @@ class CraftingMarketSearchRepository(
                     a.modifier_key,
                     COALESCE(a.pet_species_id, -1) AS pet_species_id,
                     a.buyout AS output_unit_price,
+                    a.p25 AS output_p25_price,
+                    a.p75 AS output_p75_price,
                     a.quantity AS listing_quantity
                 FROM recipe r
                     INNER JOIN auction a
@@ -287,6 +291,8 @@ class CraftingMarketSearchRepository(
                     a.modifier_key,
                     COALESCE(a.pet_species_id, -1) AS pet_species_id,
                     a.buyout AS output_unit_price,
+                    a.p25 AS output_p25_price,
+                    a.p75 AS output_p75_price,
                     a.quantity AS listing_quantity
                 FROM recipe r
                     INNER JOIN auction a
@@ -300,7 +306,7 @@ class CraftingMarketSearchRepository(
                 SELECT * FROM realm_outputs
                 UNION ALL
                 SELECT c.recipe_id, c.crafted_item_id, c.crafted_qty, c.bonus_key, c.modifier_key, c.pet_species_id,
-                       c.output_unit_price, c.listing_quantity
+                       c.output_unit_price, c.output_p25_price, c.output_p75_price, c.listing_quantity
                 FROM com_outputs c
                 WHERE NOT EXISTS (
                     SELECT 1 FROM realm_outputs ro
@@ -322,6 +328,8 @@ class CraftingMarketSearchRepository(
                     '' AS modifier_key,
                     0 AS pet_species_id,
                     CAST(NULL AS UNSIGNED) AS output_unit_price,
+                    CAST(NULL AS UNSIGNED) AS output_p25_price,
+                    CAST(NULL AS UNSIGNED) AS output_p75_price,
                     CAST(NULL AS SIGNED) AS listing_quantity
                 FROM recipe r
                 WHERE r.crafted_item_id IS NOT NULL
@@ -406,6 +414,8 @@ class CraftingMarketSearchRepository(
                     cc.crafted_qty AS crafted_quantity,
                     cc.listing_quantity,
                     cc.output_unit_price,
+                    cc.output_p25_price,
+                    cc.output_p75_price,
                     rrc.reagent_cost,
                     rrc.reagents_fully_priced,
                     (cc.output_unit_price * cc.crafted_qty - rrc.reagent_cost) AS profit_copper,
@@ -486,6 +496,8 @@ class CraftingMarketSearchRepository(
             wrapped.crafted_quantity,
             wrapped.listing_quantity,
             wrapped.output_unit_price,
+            wrapped.output_p25_price,
+            wrapped.output_p75_price,
             wrapped.reagent_cost,
             wrapped.profit_copper,
             wrapped.roi_percent,
@@ -518,6 +530,8 @@ class CraftingMarketSearchRepository(
                 c.crafted_quantity,
                 c.listing_quantity,
                 c.output_unit_price,
+                c.output_p25_price,
+                c.output_p75_price,
                 c.reagent_cost,
                 CASE WHEN c.reagents_fully_priced THEN c.profit_copper ELSE NULL END AS profit_copper,
                 CASE WHEN c.reagents_fully_priced THEN c.roi_percent ELSE NULL END AS roi_percent,
@@ -652,6 +666,8 @@ class CraftingMarketSearchRepository(
                 craftedQuantity = rs.getInt("crafted_quantity"),
                 listingQuantity = rs.getNullableLong("listing_quantity"),
                 outputUnitPrice = rs.getNullableLong("output_unit_price"),
+                outputP25Price = rs.getNullableLong("output_p25_price"),
+                outputP75Price = rs.getNullableLong("output_p75_price"),
                 reagentCost = rs.getNullableLong("reagent_cost"),
                 profitCopper = rs.getNullableLong("profit_copper"),
                 roiPercent = rs.getNullableDouble("roi_percent"),

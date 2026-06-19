@@ -12,6 +12,8 @@ export interface CraftingTableRow {
   readonly quality: ItemQuality;
   readonly iconUrl?: string;
   readonly outputPriceCopper: number | null;
+  readonly outputP25PriceCopper: number | null;
+  readonly outputP75PriceCopper: number | null;
   readonly reagentCostCopper: number | null;
   readonly profitCopper: number | null;
   readonly roiPercent: number | null;

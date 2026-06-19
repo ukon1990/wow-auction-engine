@@ -54,8 +54,12 @@ data class AuctionMarketRow(
     val selectedModifierKey: String,
     val selectedPetSpeciesId: Int,
     val selectedPrice: Long?,
+    val selectedP25Price: Long?,
+    val selectedP75Price: Long?,
     val selectedQuantity: Long?,
     val commodityPrice: Long?,
+    val commodityP25Price: Long?,
+    val commodityP75Price: Long?,
     val commodityQuantity: Long?,
 )
 
@@ -190,8 +194,12 @@ class AuctionMarketSearchRepository(
             wrapped.selected_modifier_key,
             wrapped.selected_pet_species_id,
             wrapped.selected_price,
+            wrapped.selected_p25_price,
+            wrapped.selected_p75_price,
             wrapped.selected_quantity,
             wrapped.commodity_price,
+            wrapped.commodity_p25_price,
+            wrapped.commodity_p75_price,
             wrapped.commodity_quantity,
             wrapped.total_items
         FROM (
@@ -211,13 +219,17 @@ class AuctionMarketSearchRepository(
                 d.recipe_id,
                 COALESCE(d.recipe_name_${request.localeColumnSuffix}, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
                 d.recipe_media_url,
-                COALESCE(s.bonus_key, c.bonus_key) AS selected_bonus_key,
-                COALESCE(s.modifier_key, c.modifier_key) AS selected_modifier_key,
-                COALESCE(s.pet_species_id, c.pet_species_id) AS selected_pet_species_id,
-                s.price AS selected_price,
-                s.quantity AS selected_quantity,
-                c.price AS commodity_price,
-                c.quantity AS commodity_quantity,
+                p.selected_bonus_key,
+                p.selected_modifier_key,
+                p.selected_pet_species_id,
+                p.selected_price,
+                p.selected_p25_price,
+                p.selected_p75_price,
+                p.selected_quantity,
+                p.commodity_price,
+                p.commodity_p25_price,
+                p.commodity_p75_price,
+                p.commodity_quantity,
                 COUNT(*) OVER () AS total_items
             $fromSql
             $whereSql
@@ -252,44 +264,19 @@ class AuctionMarketSearchRepository(
     }
 
     /**
-     * One ranked current auction snapshot per side (`sel`, `com`) as CTEs, then `u` = union
-     * of item ids so commodity-only listings appear. Join `d` from `u` (not only from realm auctions).
+     * Rank selected and commodity current snapshots together, then pivot to one row per item.
+     * This keeps commodity-only listings visible without making MariaDB expand the same CTEs
+     * once for the item union and again for the selected/commodity joins.
      */
     private fun buildWithAndFromSql(
         request: AuctionMarketSearchRequest,
         params: MutableList<Any?>,
     ): Pair<String, String> {
-        val selCtes =
-            buildCurrentAuctionCtes(
-                "sel",
-                request.selectedConnectedRealmId,
-                request,
-                params,
-            )
-        val comCtes =
-            buildCurrentAuctionCtes(
-                "com",
-                request.commodityConnectedRealmId,
-                request,
-                params,
-            )
-        val withSql =
-            """
-            WITH
-            $selCtes,
-            $comCtes,
-            u AS (
-                SELECT item_id FROM sel
-                UNION
-                SELECT item_id FROM com
-            )
-            """.trimIndent()
+        val withSql = buildCurrentAuctionSnapshotCtes(request, params)
         val fromSql =
             """
-            FROM u
-                     STRAIGHT_JOIN v_auction_market_item_details d ON d.item_id = u.item_id
-                     LEFT JOIN sel s ON s.item_id = u.item_id
-                     LEFT JOIN com c ON c.item_id = u.item_id
+            FROM market_prices p
+                     STRAIGHT_JOIN v_auction_market_item_details d ON d.item_id = p.item_id
             """.trimIndent()
         return Pair(withSql, fromSql)
     }
@@ -304,9 +291,7 @@ class AuctionMarketSearchRepository(
             request.itemSubclassIds.isNotEmpty() ||
             request.recipeOnly == true
 
-    private fun buildCurrentAuctionCtes(
-        ctePrefix: String,
-        connectedRealmId: Int,
+    private fun buildCurrentAuctionSnapshotCtes(
         request: AuctionMarketSearchRequest,
         params: MutableList<Any?>,
     ): String {
@@ -318,50 +303,93 @@ class AuctionMarketSearchRepository(
                 ""
             }
         val itemFilterSql = if (useItemJoin) buildItemDimensionFilterSql(request) else ""
-        params.add(connectedRealmId)
-        params.add(connectedRealmId)
+        params.add(request.selectedConnectedRealmId)
+        params.add(request.commodityConnectedRealmId)
         if (useItemJoin) {
             appendItemDimensionFilterParams(params, request)
         }
         return """
-            ${ctePrefix}_latest_history AS (
-                SELECT MAX(id) AS update_history_id
+            WITH
+            latest_history AS (
+                SELECT 'sel' AS side, connected_realm_id, MAX(id) AS update_history_id
                 FROM connected_realm_update_history
                 WHERE connected_realm_id = ?
+                GROUP BY connected_realm_id
+                UNION ALL
+                SELECT 'com' AS side, connected_realm_id, MAX(id) AS update_history_id
+                FROM connected_realm_update_history
+                WHERE connected_realm_id = ?
+                GROUP BY connected_realm_id
             ),
-            ${ctePrefix}_base AS (
+            auction_base AS (
                 SELECT
+                    lh.side,
                     a.item_id,
                     a.bonus_key,
                     a.modifier_key,
                     COALESCE(a.pet_species_id, -1) AS pet_species_id,
                     a.buyout AS price,
+                    a.p25 AS p25_price,
+                    a.p75 AS p75_price,
                     a.quantity AS quantity
                 FROM auction a
-                INNER JOIN ${ctePrefix}_latest_history lh ON lh.update_history_id = a.update_history_id
+                    INNER JOIN latest_history lh
+                        ON lh.connected_realm_id = a.connected_realm_id
+                        AND lh.update_history_id = a.update_history_id
                 $itemJoin
-                WHERE a.connected_realm_id = ?
-                  AND a.buyout IS NOT NULL
+                WHERE a.buyout IS NOT NULL
                 $itemFilterSql
             ),
-            ${ctePrefix}_ranked AS (
+            auction_ranked AS (
                 SELECT
+                    side,
                     item_id,
                     bonus_key,
                     modifier_key,
                     pet_species_id,
                     price,
+                    p25_price,
+                    p75_price,
                     quantity,
                     ROW_NUMBER() OVER (
-                        PARTITION BY item_id
+                        PARTITION BY side, item_id
                         ORDER BY price ASC, bonus_key, modifier_key, pet_species_id
                     ) AS rn
-                FROM ${ctePrefix}_base
+                FROM auction_base
             ),
-            $ctePrefix AS (
-                SELECT item_id, bonus_key, modifier_key, pet_species_id, price, quantity
-                FROM ${ctePrefix}_ranked
+            current_auction AS (
+                SELECT side, item_id, bonus_key, modifier_key, pet_species_id, price, p25_price, p75_price, quantity
+                FROM auction_ranked
                 WHERE rn = 1
+            ),
+            market_prices AS (
+                SELECT
+                    item_id,
+                    COALESCE(
+                        MAX(CASE WHEN side = 'sel' THEN bonus_key END),
+                        MAX(CASE WHEN side = 'com' THEN bonus_key END),
+                        ''
+                    ) AS selected_bonus_key,
+                    COALESCE(
+                        MAX(CASE WHEN side = 'sel' THEN modifier_key END),
+                        MAX(CASE WHEN side = 'com' THEN modifier_key END),
+                        ''
+                    ) AS selected_modifier_key,
+                    COALESCE(
+                        MAX(CASE WHEN side = 'sel' THEN pet_species_id END),
+                        MAX(CASE WHEN side = 'com' THEN pet_species_id END),
+                        -1
+                    ) AS selected_pet_species_id,
+                    MAX(CASE WHEN side = 'sel' THEN price END) AS selected_price,
+                    MAX(CASE WHEN side = 'sel' THEN p25_price END) AS selected_p25_price,
+                    MAX(CASE WHEN side = 'sel' THEN p75_price END) AS selected_p75_price,
+                    MAX(CASE WHEN side = 'sel' THEN quantity END) AS selected_quantity,
+                    MAX(CASE WHEN side = 'com' THEN price END) AS commodity_price,
+                    MAX(CASE WHEN side = 'com' THEN p25_price END) AS commodity_p25_price,
+                    MAX(CASE WHEN side = 'com' THEN p75_price END) AS commodity_p75_price,
+                    MAX(CASE WHEN side = 'com' THEN quantity END) AS commodity_quantity
+                FROM current_auction
+                GROUP BY item_id
             )
             """.trimIndent()
     }
@@ -421,19 +449,19 @@ class AuctionMarketSearchRepository(
             }
         }
         request.minPrice?.let {
-            predicates.add("COALESCE(s.price, c.price) >= ?")
+            predicates.add("COALESCE(p.selected_price, p.commodity_price) >= ?")
             params.add(it)
         }
         request.maxPrice?.let {
-            predicates.add("COALESCE(s.price, c.price) <= ?")
+            predicates.add("COALESCE(p.selected_price, p.commodity_price) <= ?")
             params.add(it)
         }
         request.minQuantity?.let {
-            predicates.add("COALESCE(s.quantity, c.quantity) >= ?")
+            predicates.add("COALESCE(p.selected_quantity, p.commodity_quantity) >= ?")
             params.add(it)
         }
         request.maxQuantity?.let {
-            predicates.add("COALESCE(s.quantity, c.quantity) <= ?")
+            predicates.add("COALESCE(p.selected_quantity, p.commodity_quantity) <= ?")
             params.add(it)
         }
 
@@ -478,8 +506,12 @@ class AuctionMarketSearchRepository(
                 selectedModifierKey = rs.getString("selected_modifier_key") ?: "",
                 selectedPetSpeciesId = rs.getInt("selected_pet_species_id"),
                 selectedPrice = rs.getNullableLong("selected_price"),
+                selectedP25Price = rs.getNullableLong("selected_p25_price"),
+                selectedP75Price = rs.getNullableLong("selected_p75_price"),
                 selectedQuantity = rs.getNullableLong("selected_quantity"),
                 commodityPrice = rs.getNullableLong("commodity_price"),
+                commodityP25Price = rs.getNullableLong("commodity_p25_price"),
+                commodityP75Price = rs.getNullableLong("commodity_p75_price"),
                 commodityQuantity = rs.getNullableLong("commodity_quantity"),
             )
         }

@@ -96,6 +96,20 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
                 ?.price,
         )
         assertEquals(
+            950L,
+            result.items
+                .single()
+                .selectedRealm
+                ?.p25Price,
+        )
+        assertEquals(
+            1_100L,
+            result.items
+                .single()
+                .selectedRealm
+                ?.p75Price,
+        )
+        assertEquals(
             -2,
             result.items
                 .single()
@@ -115,6 +129,20 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
                 .single()
                 .commodity
                 ?.price,
+        )
+        assertEquals(
+            850L,
+            result.items
+                .single()
+                .commodity
+                ?.p25Price,
+        )
+        assertEquals(
+            950L,
+            result.items
+                .single()
+                .commodity
+                ?.p75Price,
         )
         assertEquals("realm", result.items.single().preferredScope)
         assertEquals(1_000L, result.items.single().listingPrice)

@@ -55,6 +55,16 @@ properties:
     format: int64
     nullable: true
     description: Unit buyout for this listing variant at the snapshot hour.
+  outputP25PriceCopper:
+    type: integer
+    format: int64
+    nullable: true
+    description: 25th percentile buyout for this listing variant at the current snapshot.
+  outputP75PriceCopper:
+    type: integer
+    format: int64
+    nullable: true
+    description: 75th percentile buyout for this listing variant at the current snapshot.
   profitCopper:
     type: integer
     format: int64
