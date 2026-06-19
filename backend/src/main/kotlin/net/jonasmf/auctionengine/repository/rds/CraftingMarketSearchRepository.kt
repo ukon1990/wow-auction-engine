@@ -140,23 +140,17 @@ class CraftingMarketSearchRepository(
         val hourSel = hourColumnSuffix(request.selectedHour)
         val hourCom = hourColumnSuffix(request.commodityHour)
         val priceSel = "price$hourSel"
-        val qtySel = "quantity$hourSel"
         val priceCom = "price$hourCom"
-        val qtyCom = "quantity$hourCom"
-        val selectedDate = java.sql.Date.valueOf(request.selectedDate)
-        val commodityDate = java.sql.Date.valueOf(request.commodityDate)
         val previousDate = java.sql.Date.valueOf(request.previousDate)
         val commodityPreviousDate = java.sql.Date.valueOf(request.commodityPreviousDate)
         val loc = request.localeColumnSuffix
 
         params.add(request.selectedConnectedRealmId)
-        params.add(selectedDate)
         params.add(request.commodityConnectedRealmId)
-        params.add(commodityDate)
         params.add(request.selectedConnectedRealmId)
-        params.add(selectedDate)
         params.add(request.commodityConnectedRealmId)
-        params.add(commodityDate)
+        params.add(request.selectedConnectedRealmId)
+        params.add(request.commodityConnectedRealmId)
         params.add(request.selectedConnectedRealmId)
         params.add(previousDate)
         params.add(request.commodityConnectedRealmId)
@@ -164,18 +158,28 @@ class CraftingMarketSearchRepository(
 
         return """
             WITH
+            sel_latest_history AS (
+                SELECT MAX(id) AS update_history_id
+                FROM connected_realm_update_history
+                WHERE connected_realm_id = ?
+            ),
+            com_latest_history AS (
+                SELECT MAX(id) AS update_history_id
+                FROM connected_realm_update_history
+                WHERE connected_realm_id = ?
+            ),
             reagent_sel_base AS (
                 SELECT
-                    ash.item_id,
-                    ash.$priceSel AS price,
-                    ash.bonus_key,
-                    ash.modifier_key,
-                    ash.pet_species_id
-                FROM auction_stats_hourly ash
-                WHERE ash.connected_realm_id = ?
-                  AND ash.date = ?
-                  AND ash.$priceSel IS NOT NULL
-                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr)
+                    a.item_id,
+                    a.buyout AS price,
+                    a.bonus_key,
+                    a.modifier_key,
+                    COALESCE(a.pet_species_id, -1) AS pet_species_id
+                FROM auction a
+                    INNER JOIN sel_latest_history lh ON lh.update_history_id = a.update_history_id
+                WHERE a.connected_realm_id = ?
+                  AND a.buyout IS NOT NULL
+                  AND a.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr)
             ),
             reagent_sel_ranked AS (
                 SELECT
@@ -192,16 +196,16 @@ class CraftingMarketSearchRepository(
             ),
             reagent_com_base AS (
                 SELECT
-                    ash.item_id,
-                    ash.$priceCom AS price,
-                    ash.bonus_key,
-                    ash.modifier_key,
-                    ash.pet_species_id
-                FROM auction_stats_hourly ash
-                WHERE ash.connected_realm_id = ?
-                  AND ash.date = ?
-                  AND ash.$priceCom IS NOT NULL
-                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr)
+                    a.item_id,
+                    a.buyout AS price,
+                    a.bonus_key,
+                    a.modifier_key,
+                    COALESCE(a.pet_species_id, -1) AS pet_species_id
+                FROM auction a
+                    INNER JOIN com_latest_history lh ON lh.update_history_id = a.update_history_id
+                WHERE a.connected_realm_id = ?
+                  AND a.buyout IS NOT NULL
+                  AND a.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr)
             ),
             reagent_com_ranked AS (
                 SELECT
@@ -261,17 +265,17 @@ class CraftingMarketSearchRepository(
                     r.id AS recipe_id,
                     r.crafted_item_id,
                     COALESCE(NULLIF(r.crafted_quantity, 0), 1) AS crafted_qty,
-                    ash.bonus_key,
-                    ash.modifier_key,
-                    ash.pet_species_id,
-                    ash.$priceSel AS output_unit_price,
-                    ash.$qtySel AS listing_quantity
+                    a.bonus_key,
+                    a.modifier_key,
+                    COALESCE(a.pet_species_id, -1) AS pet_species_id,
+                    a.buyout AS output_unit_price,
+                    a.quantity AS listing_quantity
                 FROM recipe r
-                    INNER JOIN auction_stats_hourly ash
-                        ON ash.item_id = r.crafted_item_id
-                        AND ash.connected_realm_id = ?
-                        AND ash.date = ?
-                        AND ash.$priceSel IS NOT NULL
+                    INNER JOIN auction a
+                        ON a.item_id = r.crafted_item_id
+                        AND a.connected_realm_id = ?
+                        AND a.buyout IS NOT NULL
+                    INNER JOIN sel_latest_history lh ON lh.update_history_id = a.update_history_id
                 WHERE r.crafted_item_id IS NOT NULL
             ),
             com_outputs AS (
@@ -279,17 +283,17 @@ class CraftingMarketSearchRepository(
                     r.id AS recipe_id,
                     r.crafted_item_id,
                     COALESCE(NULLIF(r.crafted_quantity, 0), 1) AS crafted_qty,
-                    ash.bonus_key,
-                    ash.modifier_key,
-                    ash.pet_species_id,
-                    ash.$priceCom AS output_unit_price,
-                    ash.$qtyCom AS listing_quantity
+                    a.bonus_key,
+                    a.modifier_key,
+                    COALESCE(a.pet_species_id, -1) AS pet_species_id,
+                    a.buyout AS output_unit_price,
+                    a.quantity AS listing_quantity
                 FROM recipe r
-                    INNER JOIN auction_stats_hourly ash
-                        ON ash.item_id = r.crafted_item_id
-                        AND ash.connected_realm_id = ?
-                        AND ash.date = ?
-                        AND ash.$priceCom IS NOT NULL
+                    INNER JOIN auction a
+                        ON a.item_id = r.crafted_item_id
+                        AND a.connected_realm_id = ?
+                        AND a.buyout IS NOT NULL
+                    INNER JOIN com_latest_history lh ON lh.update_history_id = a.update_history_id
                 WHERE r.crafted_item_id IS NOT NULL
             ),
             listed_outputs AS (

@@ -149,6 +149,26 @@ object MarketSearchTestFixtures {
             VALUES (19050, 2, 7001)
             """.trimIndent(),
         )
+        insertAuction(
+            jdbcTemplate,
+            id = "1084-old-19050",
+            connectedRealmId = 1084,
+            itemId = 19050,
+            buyout = 10,
+            quantity = 5,
+            lastSeen = "2026-04-30 11:15:00",
+            updateHistoryId = 1_000,
+        )
+        insertAuction(
+            jdbcTemplate,
+            id = "1084-current-19050",
+            connectedRealmId = 1084,
+            itemId = 19050,
+            buyout = 50,
+            quantity = 20,
+            lastSeen = "2026-05-01 11:15:00",
+            updateHistoryId = 1_001,
+        )
         jdbcTemplate.update(
             """
             INSERT INTO auction_stats_hourly (
@@ -204,6 +224,46 @@ object MarketSearchTestFixtures {
             INSERT INTO recipe_reagent (item_id, quantity, recipe_id)
             VALUES (19052, 2, 7003)
             """.trimIndent(),
+        )
+        insertAuction(
+            jdbcTemplate,
+            id = "1084-old-19100",
+            connectedRealmId = 1084,
+            itemId = 19100,
+            buyout = 600,
+            quantity = 2,
+            lastSeen = "2026-04-30 11:15:00",
+            updateHistoryId = 1_000,
+        )
+        insertAuction(
+            jdbcTemplate,
+            id = "1084-current-19100",
+            connectedRealmId = 1084,
+            itemId = 19100,
+            buyout = 1_000,
+            quantity = 4,
+            lastSeen = "2026-05-01 11:15:00",
+            updateHistoryId = 1_001,
+        )
+        insertAuction(
+            jdbcTemplate,
+            id = "-2-old-19052",
+            connectedRealmId = -2,
+            itemId = 19052,
+            buyout = 10,
+            quantity = 5,
+            lastSeen = "2026-04-30 10:30:00",
+            updateHistoryId = 2_000,
+        )
+        insertAuction(
+            jdbcTemplate,
+            id = "-2-current-19052",
+            connectedRealmId = -2,
+            itemId = 19052,
+            buyout = 50,
+            quantity = 20,
+            lastSeen = "2026-05-01 10:30:00",
+            updateHistoryId = 2_001,
         )
         jdbcTemplate.update(
             """
@@ -292,6 +352,26 @@ object MarketSearchTestFixtures {
             INSERT INTO recipe_reagent (item_id, quantity, recipe_id)
             VALUES (19050, 2, 7777)
             """.trimIndent(),
+        )
+        insertAuction(
+            jdbcTemplate,
+            id = "1084-old-19101",
+            connectedRealmId = 1084,
+            itemId = 19101,
+            buyout = 600,
+            quantity = 2,
+            lastSeen = "2026-04-30 11:15:00",
+            updateHistoryId = 1_000,
+        )
+        insertAuction(
+            jdbcTemplate,
+            id = "1084-current-19101",
+            connectedRealmId = 1084,
+            itemId = 19101,
+            buyout = 1_000,
+            quantity = 5,
+            lastSeen = "2026-05-01 11:15:00",
+            updateHistoryId = 1_001,
         )
         jdbcTemplate.update(
             """
