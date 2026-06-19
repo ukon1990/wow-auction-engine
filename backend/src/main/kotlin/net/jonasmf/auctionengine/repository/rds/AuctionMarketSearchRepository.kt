@@ -252,30 +252,24 @@ class AuctionMarketSearchRepository(
     }
 
     /**
-     * One ranked hourly snapshot per side (`sel`, `com`) as CTEs, then `u` = union of item ids so
-     * commodity-only listings appear. Join `d` from `u` (not only from realm stats).
+     * One ranked current auction snapshot per side (`sel`, `com`) as CTEs, then `u` = union
+     * of item ids so commodity-only listings appear. Join `d` from `u` (not only from realm auctions).
      */
     private fun buildWithAndFromSql(
         request: AuctionMarketSearchRequest,
         params: MutableList<Any?>,
     ): Pair<String, String> {
-        val selectedDate = java.sql.Date.valueOf(request.selectedDate)
-        val commodityDate = java.sql.Date.valueOf(request.commodityDate)
         val selCtes =
-            buildHourlyAggregateCtes(
+            buildCurrentAuctionCtes(
                 "sel",
-                request.selectedHour,
                 request.selectedConnectedRealmId,
-                selectedDate,
                 request,
                 params,
             )
         val comCtes =
-            buildHourlyAggregateCtes(
+            buildCurrentAuctionCtes(
                 "com",
-                request.commodityHour,
                 request.commodityConnectedRealmId,
-                commodityDate,
                 request,
                 params,
             )
@@ -302,52 +296,52 @@ class AuctionMarketSearchRepository(
 
     /**
      * When set, quality/class/subclass/recipe filters are applied inside this subquery (via `item`)
-     * so `GROUP BY item_id` touches fewer auction_stats rows before joining the heavy view.
+     * so ranking touches fewer auction rows before joining the heavy view.
      */
-    private fun pushesItemDimensionFiltersIntoHourlyAggregate(request: AuctionMarketSearchRequest): Boolean =
+    private fun pushesItemDimensionFiltersIntoAuctionSnapshot(request: AuctionMarketSearchRequest): Boolean =
         request.qualityIds.isNotEmpty() ||
             request.itemClassIds.isNotEmpty() ||
             request.itemSubclassIds.isNotEmpty() ||
             request.recipeOnly == true
 
-    private fun buildHourlyAggregateCtes(
+    private fun buildCurrentAuctionCtes(
         ctePrefix: String,
-        hour: Int,
         connectedRealmId: Int,
-        date: java.sql.Date,
         request: AuctionMarketSearchRequest,
         params: MutableList<Any?>,
     ): String {
-        val hourSuffix = hourColumnSuffix(hour)
-        val priceColumn = "price$hourSuffix"
-        val quantityColumn = "quantity$hourSuffix"
-        val useItemJoin = pushesItemDimensionFiltersIntoHourlyAggregate(request)
+        val useItemJoin = pushesItemDimensionFiltersIntoAuctionSnapshot(request)
         val itemJoin =
             if (useItemJoin) {
-                "INNER JOIN item i ON i.id = ash.item_id\n                "
+                "INNER JOIN item i ON i.id = a.item_id\n                "
             } else {
                 ""
             }
         val itemFilterSql = if (useItemJoin) buildItemDimensionFilterSql(request) else ""
         params.add(connectedRealmId)
-        params.add(date)
+        params.add(connectedRealmId)
         if (useItemJoin) {
             appendItemDimensionFilterParams(params, request)
         }
         return """
+            ${ctePrefix}_latest_history AS (
+                SELECT MAX(id) AS update_history_id
+                FROM connected_realm_update_history
+                WHERE connected_realm_id = ?
+            ),
             ${ctePrefix}_base AS (
                 SELECT
-                    ash.item_id,
-                    ash.bonus_key,
-                    ash.modifier_key,
-                    ash.pet_species_id,
-                    ash.$priceColumn AS price,
-                    ash.$quantityColumn AS quantity
-                FROM auction_stats_hourly ash
+                    a.item_id,
+                    a.bonus_key,
+                    a.modifier_key,
+                    COALESCE(a.pet_species_id, -1) AS pet_species_id,
+                    a.buyout AS price,
+                    a.quantity AS quantity
+                FROM auction a
+                INNER JOIN ${ctePrefix}_latest_history lh ON lh.update_history_id = a.update_history_id
                 $itemJoin
-                WHERE ash.connected_realm_id = ?
-                  AND ash.date = ?
-                  AND ash.$priceColumn IS NOT NULL
+                WHERE a.connected_realm_id = ?
+                  AND a.buyout IS NOT NULL
                 $itemFilterSql
             ),
             ${ctePrefix}_ranked AS (
@@ -402,11 +396,6 @@ class AuctionMarketSearchRepository(
         if (request.itemSubclassIds.isNotEmpty()) params.addAll(request.itemSubclassIds)
     }
 
-    private fun hourColumnSuffix(hour: Int): String {
-        require(hour in 0..23) { "Hour must be between 0 and 23: $hour" }
-        return hour.toString().padStart(2, '0')
-    }
-
     private fun buildWhereSql(
         request: AuctionMarketSearchRequest,
         params: MutableList<Any?>,
@@ -423,7 +412,7 @@ class AuctionMarketSearchRepository(
             params.add(like)
             params.add(like)
         }
-        if (!pushesItemDimensionFiltersIntoHourlyAggregate(request)) {
+        if (!pushesItemDimensionFiltersIntoAuctionSnapshot(request)) {
             addInPredicate("d.quality_id", request.qualityIds, predicates, params)
             addInPredicate("d.item_class_id", request.itemClassIds, predicates, params)
             addInPredicate("d.item_subclass_id", request.itemSubclassIds, predicates, params)
