@@ -135,22 +135,6 @@
       </ng-container>
     </div>
   } @else if (detail(); as d) {
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <ee-item-stat-card
-        [label]="activeScopePriceLabel()"
-        icon="payments"
-        [currency]="activeScopePrice(d.summary) | copperToCurrency"
-        [caption]="activeScopePriceCaption(d.summary)"
-        tone="primary"
-      />
-      <ee-item-stat-card
-        [label]="activeScopeQuantityLabel()"
-        icon="inventory_2"
-        [value]="quantityLabel(activeScopeQuantity(d.summary))"
-        [caption]="''"
-      />
-    </div>
-
     <ng-template #dailyChartTip let-ctx>
       @let rows = dailyTooltipRows(d, ctx.x);
       <ee-tooltip-card
@@ -182,49 +166,121 @@
       <div class="font-space-mono">{{ cell.label }}</div>
     </ng-template>
 
-    <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
-      <div class="min-w-0 max-w-full">
-        <ee-chart-panel
-          i18n-title="@@itemDetail.dailyMarket"
-          title="Daily market"
-          i18n-rangeLabel="@@itemDetail.range14Days"
-          rangeLabel="14 days"
-          [series]="dailyChartSeries()"
-          [options]="dailyChartOptions()"
-          [tooltipTemplate]="dailyChartTip"
-          i18n-description="@@itemDetail.dailyMarketDescription"
-          description="Average quantity per hour as bars; buyout spread and average as lines."
-        />
+    <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)]">
+      <div class="space-y-4 min-w-0">
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
+          <ee-item-stat-card
+            [label]="activeScopePriceLabel()"
+            icon="payments"
+            [currency]="activeScopePrice(d.summary) | copperToCurrency"
+            [caption]="activeScopePriceCaption(d.summary)"
+            tone="primary"
+          />
+          <ee-item-stat-card
+            [label]="activeScopeQuantityLabel()"
+            icon="inventory_2"
+            [value]="quantityLabel(activeScopeQuantity(d.summary))"
+            [caption]="''"
+          />
+        </div>
+
+        <div class="grid gap-4 2xl:grid-cols-2">
+          <div class="min-w-0 max-w-full">
+            <ee-chart-panel
+              i18n-title="@@itemDetail.dailyMarket"
+              title="Daily market"
+              i18n-rangeLabel="@@itemDetail.range14Days"
+              rangeLabel="14 days"
+              [series]="dailyChartSeries()"
+              [options]="dailyChartOptions()"
+              [tooltipTemplate]="dailyChartTip"
+              i18n-description="@@itemDetail.dailyMarketDescription"
+              description="Average quantity per hour as bars; buyout spread and average as lines."
+            />
+          </div>
+
+          <div class="min-w-0 max-w-full">
+            <ee-chart-panel
+              i18n-title="@@itemDetail.hourlyMarket"
+              title="Hourly market"
+              i18n-rangeLabel="@@itemDetail.range14Days"
+              rangeLabel="14 days"
+              [series]="hourlyChartSeries()"
+              [options]="hourlyChartOptions()"
+              [tooltipTemplate]="hourlyChartTip"
+              i18n-description="@@itemDetail.hourlyMarketDescription"
+              description="Listed quantity per hour over 14 days as bars; buyout spread and average as lines."
+            />
+          </div>
+
+          <div class="min-w-0 max-w-full 2xl:col-span-2">
+            <ee-heatmap-grid
+              i18n-title="@@itemDetail.hourlyPriceHeatmap"
+              title="Hourly price heatmap"
+              i18n-rangeLabel="@@itemDetail.range14Days"
+              rangeLabel="14 days"
+              i18n-description="@@itemDetail.hourlyPriceHeatmapDescription"
+              description="Average market unit price by day and hour."
+              [rowLabels]="heatmapRowLabels"
+              [columnLabels]="heatmapColumnLabels"
+              [cells]="hourlyPriceHeatmapCells()"
+              [tooltipTemplate]="priceHeatmapTip"
+            />
+          </div>
+        </div>
       </div>
 
-      <div class="min-w-0 max-w-full">
-        <ee-chart-panel
-          i18n-title="@@itemDetail.hourlyMarket"
-          title="Hourly market"
-          i18n-rangeLabel="@@itemDetail.range14Days"
-          rangeLabel="14 days"
-          [series]="hourlyChartSeries()"
-          [options]="hourlyChartOptions()"
-          [tooltipTemplate]="hourlyChartTip"
-          i18n-description="@@itemDetail.hourlyMarketDescription"
-          description="Listed quantity per hour over 14 days as bars; buyout spread and average as lines."
-        />
-      </div>
+      <section class="ee-glass min-w-0 rounded-lg p-inner-padding xl:self-start">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h2 class="ee-section-heading flex items-center gap-2 text-on-surface">
+            <ee-symbol-icon class="text-outline" name="receipt_long" />
+            <ng-container i18n="@@itemDetail.currentListings">Current listings</ng-container>
+          </h2>
+          <span class="ee-label text-outline">
+            {{ currentListingsForActiveScope().length }}
+            <ng-container i18n="@@itemDetail.listingsCount">listings</ng-container>
+          </span>
+        </div>
 
-      <div class="min-w-0 max-w-full">
-        <ee-heatmap-grid
-          i18n-title="@@itemDetail.hourlyPriceHeatmap"
-          title="Hourly price heatmap"
-          i18n-rangeLabel="@@itemDetail.range14Days"
-          rangeLabel="14 days"
-          i18n-description="@@itemDetail.hourlyPriceHeatmapDescription"
-          description="Average market unit price by day and hour."
-          [rowLabels]="heatmapRowLabels"
-          [columnLabels]="heatmapColumnLabels"
-          [cells]="hourlyPriceHeatmapCells()"
-          [tooltipTemplate]="priceHeatmapTip"
-        />
-      </div>
+        @if (currentListingsForActiveScope().length) {
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse ee-data text-left text-on-surface">
+              <thead>
+                <tr class="border-b border-white/10 ee-label text-outline">
+                  <th class="py-2 pr-4 text-right" i18n="@@itemDetail.unitPrice">Unit price</th>
+                  <th class="py-2 text-right" i18n="@@itemDetail.quantity">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (listing of pagedCurrentListings(); track $index) {
+                  <tr class="border-b border-white/5">
+                    <td class="py-3 pr-4 text-right tabular-nums select-text">
+                      <ee-currency-amount
+                        class="inline-flex justify-end"
+                        [amount]="listing.price | copperToCurrency"
+                      />
+                    </td>
+                    <td class="py-3 text-right tabular-nums select-text">
+                      {{ quantityLabel(listing.quantity) }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <ee-pagination
+            class="mt-4 ee-label text-outline"
+            [pageState]="currentListingsPagination()"
+            [rowLabel]="currentListingsRowLabel"
+            [emptySummary]="currentListingsEmptySummary"
+            (pageChange)="onCurrentListingsPageChange($event)"
+          />
+        } @else {
+          <p class="ee-data text-outline" i18n="@@itemDetail.noCurrentListings">
+            No current listings for this item.
+          </p>
+        }
+      </section>
     </div>
 
     @if (d.craftings.length) {
@@ -393,7 +449,7 @@
             }
           </div>
         </section>
-      } @else if (craftingAnalytics(); as analytics) {
+      } @else if (craftingAnalytics()) {
         <ng-template
           #heatmapTip
           let-cell="cell"

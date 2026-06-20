@@ -58,6 +58,8 @@ class AuctionSnapshotPersistenceService(
         auctions.forEach { uniqueAuctionItem ->
             val value = uniqueAuctionItem.value
             val auction = value.first().toDBO(connectedRealm, updateHistory)
+            auction.quantity = 0 // Resetting, so that we don't include the initial value as we summerize below
+
             val prices =
                 uniqueAuctionItem.value
                     .map { auctionItem ->
@@ -66,6 +68,7 @@ class AuctionSnapshotPersistenceService(
                         }
                         val priceItem = auctionItem.toAuctionPriceDBO(updateHistory.lastModified?.toInstant())
                         priceItem.auction = auction
+                        auction.quantity += auctionItem.quantity
                         priceItem
                     }
             val pricedEntries = prices.filter { it.buyout != null }.sortedBy { it.buyout }
@@ -81,7 +84,6 @@ class AuctionSnapshotPersistenceService(
                 auction.p25 = null
                 auction.p75 = null
             }
-
             auctionBatches.add(auction)
             priceBatches.addAll(prices)
         }

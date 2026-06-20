@@ -64,6 +64,15 @@ class AuctionMarketItemDetailQueryPlanIntegrationTest : IntegrationTestBase() {
                 modifierKey = "",
                 petSpeciesId = 0,
             )
+        val (currentListings, currentListingsArgs) =
+            repository.buildCurrentListingsSqlAndArgs(
+                connectedRealmId = 1084,
+                itemId = 19019,
+                variant = false,
+                bonusKey = "",
+                modifierKey = "",
+                petSpeciesId = 0,
+            )
         val (craft, craftArgs) =
             repository.buildCraftingSqlAndArgs(
                 connectedRealmId = 1084,
@@ -85,6 +94,7 @@ class AuctionMarketItemDetailQueryPlanIntegrationTest : IntegrationTestBase() {
         assertTrue(jdbcTemplate.queryForList("EXPLAIN $dailyVar", *dailyVarArgs).isNotEmpty())
         assertTrue(jdbcTemplate.queryForList("EXPLAIN $hourly", *hourlyArgs).isNotEmpty())
         assertTrue(jdbcTemplate.queryForList("EXPLAIN $pie", *pieArgs).isNotEmpty())
+        assertTrue(jdbcTemplate.queryForList("EXPLAIN $currentListings", *currentListingsArgs).isNotEmpty())
         assertTrue(jdbcTemplate.queryForList("EXPLAIN $craft", *craftArgs).isNotEmpty())
     }
 }

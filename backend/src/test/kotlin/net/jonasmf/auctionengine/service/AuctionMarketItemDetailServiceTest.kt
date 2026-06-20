@@ -101,6 +101,79 @@ class AuctionMarketItemDetailServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `item detail exposes current realm listings from latest auction price rows`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+
+        val detail =
+            service.itemDetail(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                itemId = 19019,
+                bonusKey = "",
+                modifierKey = "",
+                petSpeciesId = 0,
+                scope = "realm",
+                localeOverride = null,
+            )
+
+        assertEquals(listOf(950L, 1_200L), detail.currentListings.map { it.price })
+        assertEquals(listOf(1, 3), detail.currentListings.map { it.quantity })
+    }
+
+    @Test
+    fun `commodity scope item detail exposes current commodity listings`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+
+        val detail =
+            service.itemDetail(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                itemId = 19019,
+                bonusKey = "",
+                modifierKey = "",
+                petSpeciesId = 0,
+                scope = "commodity",
+                localeOverride = null,
+            )
+
+        assertEquals(listOf(880L, 930L), detail.currentListings.map { it.price })
+        assertEquals(listOf(3, 5), detail.currentListings.map { it.quantity })
+    }
+
+    @Test
+    fun `item detail current listings filter variants only when variant key is explicit`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        addVariantCurrentListingForHealingPotion()
+
+        val rollup =
+            service.itemDetail(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                itemId = 19019,
+                bonusKey = "",
+                modifierKey = "",
+                petSpeciesId = 0,
+                scope = "realm",
+                localeOverride = null,
+            )
+        val variant =
+            service.itemDetail(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                itemId = 19019,
+                bonusKey = "bonus-a",
+                modifierKey = "mod-a",
+                petSpeciesId = 123,
+                scope = "realm",
+                localeOverride = null,
+            )
+
+        assertEquals(listOf(950L, 1_200L, 2_222L), rollup.currentListings.map { it.price })
+        assertEquals(listOf(2_222L), variant.currentListings.map { it.price })
+        assertEquals(7, variant.currentListings.single().quantity)
+    }
+
+    @Test
     fun `item detail falls back to commodity reagent price`() {
         MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
         MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
@@ -395,6 +468,65 @@ class AuctionMarketItemDetailServiceTest : IntegrationTestBase() {
             INSERT INTO auction_stats_hourly (
                 connected_realm_id, item_id, date, pet_species_id, modifier_key, bonus_key, price10, quantity10
             ) VALUES (-2, 19199, '2026-05-01', -1, '', '', 145, 30)
+            """.trimIndent(),
+        )
+    }
+
+    private fun addVariantCurrentListingForHealingPotion() {
+        jdbcTemplate.update(
+            """
+            INSERT INTO auction (
+                id,
+                connected_realm_id,
+                item_id,
+                context,
+                pet_breed_id,
+                pet_species_id,
+                pet_quality_id,
+                pet_level,
+                modifier_key,
+                bonus_key,
+                buyout,
+                bid,
+                p25,
+                p75,
+                quantity,
+                first_seen,
+                last_seen,
+                update_history_id
+            ) VALUES (
+                '1084-current-19019-variant',
+                1084,
+                19019,
+                NULL,
+                NULL,
+                123,
+                NULL,
+                NULL,
+                'mod-a',
+                'bonus-a',
+                2222,
+                NULL,
+                2222,
+                2222,
+                7,
+                '2026-05-01 11:15:00',
+                '2026-05-01 11:15:00',
+                1001
+            )
+            """.trimIndent(),
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO auction_price (
+                id,
+                auction_id,
+                buyout,
+                bid,
+                quantity,
+                last_modified,
+                update_history_id
+            ) VALUES (10000005, '1084-current-19019-variant', 2222, NULL, 7, '2026-05-01 11:15:00', 1001)
             """.trimIndent(),
         )
     }

@@ -138,6 +138,7 @@ export function mergeCommodityScope(
     dailySeriesCommodity: commodity.dailySeriesCommodity,
     hourlySeriesCommodity: commodity.hourlySeriesCommodity,
     quantityPieCommodity: commodity.quantityPieCommodity,
+    currentListings: commodity.currentListings,
     marketDataSources:
       commodity.marketDataSources.length > 0
         ? commodity.marketDataSources
