@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.Instant
+import java.time.OffsetDateTime
 import java.util.Optional
 
 @Repository
@@ -36,5 +37,18 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
     fun updateLastDailyPriceUpdate(
         @Param("connectedId") connectedId: Int,
         @Param("lastDailyPriceUpdate") lastDailyPriceUpdate: Instant,
+    ): Int
+
+    @Modifying
+    @Query(
+        """
+        UPDATE AuctionHouse a
+        SET a.lastHistoryDeleteEvent = :lastHistoryDeleteEvent
+        WHERE a.connectedId = :connectedId
+    """,
+    )
+    fun updateLastHistoryDeleteEvent(
+        connectedRealmId: Int,
+        lastDeletedTime: OffsetDateTime,
     ): Int
 }
