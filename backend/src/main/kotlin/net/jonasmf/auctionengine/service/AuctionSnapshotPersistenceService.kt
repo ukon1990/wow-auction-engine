@@ -67,13 +67,20 @@ class AuctionSnapshotPersistenceService(
                         val priceItem = auctionItem.toAuctionPriceDBO(updateHistory.lastModified?.toInstant())
                         priceItem.auction = auction
                         priceItem
-                    }.sortedBy { it.buyout }
-            val priceEntryMaxIndex = (prices.size - 1).toFloat()
-            val percentile25Index = (priceEntryMaxIndex * 0.25f).roundToInt()
-            val percentile75Index = (priceEntryMaxIndex * 0.75f).roundToInt()
-            auction.buyout = prices.first().buyout
-            auction.p25 = prices[percentile25Index].buyout
-            auction.p75 = prices[percentile75Index].buyout
+                    }
+            val pricedEntries = prices.filter { it.buyout != null }.sortedBy { it.buyout }
+            if (pricedEntries.isNotEmpty()) {
+                val priceEntryMaxIndex = (pricedEntries.size - 1).toFloat()
+                val percentile25Index = (priceEntryMaxIndex * 0.25f).roundToInt()
+                val percentile75Index = (priceEntryMaxIndex * 0.75f).roundToInt()
+                auction.buyout = pricedEntries.first().buyout
+                auction.p25 = pricedEntries[percentile25Index].buyout
+                auction.p75 = pricedEntries[percentile75Index].buyout
+            } else {
+                auction.buyout = null
+                auction.p25 = null
+                auction.p75 = null
+            }
 
             auctionBatches.add(auction)
             priceBatches.addAll(prices)
