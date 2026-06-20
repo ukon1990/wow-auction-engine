@@ -13,29 +13,30 @@ class AuctionMarketItemDetailRepository(
         itemId: Int,
         localeColumnSuffix: String,
     ): AuctionMarketItemHeaderRow? =
-        jdbcTemplate.query(
-            """
-            SELECT
-                d.item_id,
-                COALESCE(d.item_name_$localeColumnSuffix, d.item_name_en_gb, d.item_name_en_us) AS item_name,
-                d.item_media_url,
-                d.quality_id,
-                d.quality_type,
-                COALESCE(d.quality_name_$localeColumnSuffix, d.quality_name_en_gb, d.quality_name_en_us) AS quality_name,
-                d.item_class_id,
-                COALESCE(d.item_class_name_$localeColumnSuffix, d.item_class_name_en_gb, d.item_class_name_en_us) AS item_class_name,
-                d.item_subclass_id,
-                COALESCE(d.item_subclass_name_$localeColumnSuffix, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
-                d.recipe_id,
-                COALESCE(d.recipe_name_$localeColumnSuffix, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
-                d.recipe_media_url
-            FROM v_auction_market_item_details d
-            WHERE d.item_id = ?
-            LIMIT 1
-            """.trimIndent(),
-            AuctionMarketItemDetailRowMappers.headerRowMapper,
-            itemId,
-        ).firstOrNull()
+        jdbcTemplate
+            .query(
+                """
+                SELECT
+                    d.item_id,
+                    COALESCE(d.item_name_$localeColumnSuffix, d.item_name_en_gb, d.item_name_en_us) AS item_name,
+                    d.item_media_url,
+                    d.quality_id,
+                    d.quality_type,
+                    COALESCE(d.quality_name_$localeColumnSuffix, d.quality_name_en_gb, d.quality_name_en_us) AS quality_name,
+                    d.item_class_id,
+                    COALESCE(d.item_class_name_$localeColumnSuffix, d.item_class_name_en_gb, d.item_class_name_en_us) AS item_class_name,
+                    d.item_subclass_id,
+                    COALESCE(d.item_subclass_name_$localeColumnSuffix, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
+                    d.recipe_id,
+                    COALESCE(d.recipe_name_$localeColumnSuffix, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
+                    d.recipe_media_url
+                FROM v_auction_market_item_details d
+                WHERE d.item_id = ?
+                LIMIT 1
+                """.trimIndent(),
+                AuctionMarketItemDetailRowMappers.headerRowMapper,
+                itemId,
+            ).firstOrNull()
 
     fun loadSnapshotPriceQuantity(
         connectedRealmId: Int,
