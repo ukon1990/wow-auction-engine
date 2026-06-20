@@ -96,8 +96,8 @@ class AuctionSnapshotPersistenceService(
         lastModified: ZonedDateTime,
     ): AuctionSnapshotPersistenceSummary {
         val snapshotStartTime = System.currentTimeMillis()
-        // TODO: Remember to update the count part. Not sure if we need to save that in the db
-        val auctionCount = 0
+        val groupedFlatAuctions = streamAndReturnGroupedAuction(payloadPath, connectedRealm.id)
+        val auctionCount = groupedFlatAuctions.second
         val updateHistory = updateHistoryService.startUpdate(connectedRealm, auctionCount, lastModified)
 
         logger.info(
@@ -106,11 +106,10 @@ class AuctionSnapshotPersistenceService(
             auctionCount,
             JvmRuntimeDiagnostics.snapshot(),
         )
-        val groupedFlatAuctions = streamAndReturnGroupedAuction(payloadPath, connectedRealm.id)
-        val uniqueItemCount = groupedFlatAuctions.size
+        val uniqueItemCount = groupedFlatAuctions.first.size
         val groupedResult =
             mapToAuctionAndPriceArrayBatchesAndReduceMap(
-                auctions = groupedFlatAuctions,
+                auctions = groupedFlatAuctions.first,
                 connectedRealm = connectedRealm,
                 updateHistory = updateHistory,
             )
@@ -128,12 +127,12 @@ class AuctionSnapshotPersistenceService(
             "Completed auction snapshot persistence for realm {} in {}ms processed={} {}",
             connectedRealm.id,
             System.currentTimeMillis() - snapshotStartTime,
-            0,
+            auctionCount,
             JvmRuntimeDiagnostics.snapshot(),
         )
 
         return AuctionSnapshotPersistenceSummary(
-            processedAuctions = groupedResult.second.size, // TODO: Fix propper count
+            processedAuctions = auctionCount,
             uniqueItems = uniqueItemCount,
             groupedResult = groupedResult,
             updateHistory = updateHistory,
@@ -149,8 +148,9 @@ class AuctionSnapshotPersistenceService(
     private fun streamAndReturnGroupedAuction(
         payloadPath: Path,
         connectedRealmId: Int,
-    ): MutableMap<String, MutableList<FlatAuction>> {
+    ): Pair<MutableMap<String, MutableList<FlatAuction>>, Int> {
         val groupedAuctions = mutableMapOf<String, MutableList<FlatAuction>>()
+        var auctionCount = 0
         val mapper = jacksonObjectMapper()
         val jsonFactory = JsonFactory(mapper)
         payloadPath.toFile().inputStream().use { input ->
@@ -176,6 +176,7 @@ class AuctionSnapshotPersistenceService(
                                 groupedAuctions[flatAuction.id] = mutableListOf()
                             }
                             groupedAuctions[flatAuction.id]?.add(flatAuction)
+                            auctionCount++
                         }
                     } else {
                         parser.skipChildren()
@@ -183,6 +184,6 @@ class AuctionSnapshotPersistenceService(
                 }
             }
         }
-        return groupedAuctions
+        return Pair(groupedAuctions, auctionCount)
     }
 }
