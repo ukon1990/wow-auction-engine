@@ -7,7 +7,6 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionPrice
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
-import net.jonasmf.auctionengine.dbo.rds.realm.AuctionUpdateHistory
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import net.jonasmf.auctionengine.dto.Link
@@ -21,10 +20,12 @@ import net.jonasmf.auctionengine.testsupport.writeJsonToDisk
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
     @Autowired
@@ -35,6 +36,9 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
 
     @Autowired
     lateinit var auctionRepository: AuctionRepository
+
+    @Autowired
+    lateinit var jdbcTemplate: JdbcTemplate
 
     @Nested
     open inner class SaveSnapshot {
@@ -91,13 +95,31 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
                         quantity = 5,
                     ),
                     AuctionDTO(
-                        id = 6,
+                        id = 7,
+                        item = AuctionItemDTO(id = 82800),
+                        bid = 5,
+                        unit_price = null,
+                        buyout = null,
+                        time_left = AuctionTimeLeft.SHORT,
+                        quantity = 1,
+                    ),
+                    AuctionDTO(
+                        id = 8,
                         item = AuctionItemDTO(id = 200),
                         bid = 11,
                         unit_price = 4,
                         buyout = null,
                         time_left = AuctionTimeLeft.SHORT,
                         quantity = 5,
+                    ),
+                    AuctionDTO(
+                        id = 9,
+                        item = AuctionItemDTO(id = 201),
+                        bid = 50,
+                        unit_price = null,
+                        buyout = null,
+                        time_left = AuctionTimeLeft.SHORT,
+                        quantity = 1,
                     ),
                 )
             val auctionFile =
@@ -126,15 +148,50 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
             }
 
             val auctionsFromDb = auctionRepository.findAll().toList()
-            val firstItem = result.groupedResult.first.first()
-            assertEquals(6, auctions.size)
+            val firstItem = result.groupedResult.first.single { it.itemId == 82800 }
+            val onlyBidItem = result.groupedResult.first.single { it.itemId == 201 }
+            assertEquals(8, auctions.size)
             assertEquals(1, firstItem.buyout)
-            assertEquals(11, firstItem.bid)
+            assertEquals(5, firstItem.bid)
             assertEquals(2, firstItem.p25)
             assertEquals(4, firstItem.p75)
-            // assertEquals(5, result.processedAuctions)
-            assertEquals(2, result.uniqueItems)
-            assertEquals(2, auctionsFromDb.size)
+            assertNull(onlyBidItem.buyout)
+            assertEquals(50, onlyBidItem.bid)
+            assertNull(onlyBidItem.p25)
+            assertNull(onlyBidItem.p75)
+            assertEquals(8, result.processedAuctions)
+            assertEquals(8, result.updateHistory.auctionCount)
+            assertEquals(3, result.uniqueItems)
+            assertEquals(3, auctionsFromDb.size)
+            assertEquals(
+                8,
+                jdbcTemplate.queryForObject(
+                    "SELECT auction_count FROM connected_realm_update_history WHERE id = ?",
+                    Int::class.java,
+                    result.updateHistory.id,
+                ),
+            )
+            assertEquals(
+                0,
+                jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM auction WHERE buyout = 0 OR p25 = 0 OR p75 = 0",
+                    Int::class.java,
+                ),
+            )
+            assertEquals(
+                0,
+                jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM auction_price WHERE buyout = 0",
+                    Int::class.java,
+                ),
+            )
+            assertEquals(
+                2,
+                jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM auction_price WHERE id IN (7, 9) AND buyout IS NULL",
+                    Int::class.java,
+                ),
+            )
         }
     }
 
