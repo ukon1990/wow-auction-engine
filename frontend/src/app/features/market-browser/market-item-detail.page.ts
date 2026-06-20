@@ -28,6 +28,7 @@ import {
 import {
   AuctionMarketItemCraftingAnalyticsResponse,
   AuctionMarketItemCraftingDetail,
+  AuctionMarketItemCurrentListing,
   AuctionMarketItemDetailPoint,
   AuctionMarketItemDetailResponse,
   AuctionMarketItemDetailSummary,
@@ -110,6 +111,10 @@ export class MarketItemDetailPage {
   protected readonly commodityLoading = signal(false);
   protected readonly error = signal(false);
   protected readonly detail = signal<AuctionMarketItemDetailResponse | null>(null);
+  protected readonly realmCurrentListings = signal<readonly AuctionMarketItemCurrentListing[]>([]);
+  protected readonly commodityCurrentListings = signal<readonly AuctionMarketItemCurrentListing[]>(
+    [],
+  );
   protected readonly commodityLoaded = signal(false);
   protected readonly chartScope = signal<'realm' | 'commodity'>('realm');
   protected readonly selectedRecipeId = signal<number | null>(null);
@@ -242,6 +247,13 @@ export class MarketItemDetailPage {
     return hourlyPriceHeatmapCellsFromPoints(points);
   });
 
+  protected readonly currentListingsForActiveScope = computed(() => {
+    if (this.chartScope() === 'commodity' && this.commodityCurrentListings().length > 0) {
+      return this.commodityCurrentListings();
+    }
+    return this.realmCurrentListings();
+  });
+
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       const raw = window.history.state as Record<string, unknown> | null;
@@ -302,6 +314,8 @@ export class MarketItemDetailPage {
           this.loading.set(true);
           this.error.set(false);
           this.commodityLoaded.set(false);
+          this.realmCurrentListings.set([]);
+          this.commodityCurrentListings.set([]);
           this.craftingAnalytics.set(null);
           this.analyticsError.set(false);
           this.selectedRecipeId.set(null);
@@ -332,6 +346,11 @@ export class MarketItemDetailPage {
       .subscribe((res) => {
         if (res) {
           this.detail.set(res);
+          if (this.chartScope() === 'commodity') {
+            this.commodityCurrentListings.set(res.currentListings);
+          } else {
+            this.realmCurrentListings.set(res.currentListings);
+          }
           this.selectedRecipeId.set(res.craftings[0]?.recipeId ?? null);
           this.loadSelectedRecipeAnalytics();
           if (shouldFallbackToCommodityFetch(res)) {
@@ -466,6 +485,7 @@ export class MarketItemDetailPage {
       .subscribe({
         next: (commodityRes) => {
           this.detail.update((existing) => mergeCommodityScope(existing, commodityRes));
+          this.commodityCurrentListings.set(commodityRes.currentListings);
           this.commodityLoaded.set(true);
           this.chartScope.set('commodity');
         },

@@ -74,6 +74,42 @@ object MarketSearchTestFixtures {
             lastSeen = "2026-05-01 11:15:00",
             updateHistoryId = 1_001,
         )
+        insertAuctionPrice(
+            jdbcTemplate,
+            id = 10_000_001,
+            auctionId = "1084-old-19019",
+            buyout = 777,
+            quantity = 1,
+            lastModified = "2026-04-30 11:15:00",
+            updateHistoryId = 1_000,
+        )
+        insertAuctionPrice(
+            jdbcTemplate,
+            id = 10_000_002,
+            auctionId = "1084-current-19019",
+            buyout = 1_200,
+            quantity = 3,
+            lastModified = "2026-05-01 11:15:00",
+            updateHistoryId = 1_001,
+        )
+        insertAuctionPrice(
+            jdbcTemplate,
+            id = 10_000_003,
+            auctionId = "1084-current-19019",
+            buyout = 950,
+            quantity = 1,
+            lastModified = "2026-05-01 11:15:00",
+            updateHistoryId = 1_001,
+        )
+        insertAuctionPrice(
+            jdbcTemplate,
+            id = 10_000_004,
+            auctionId = "1084-current-19019",
+            buyout = 500,
+            quantity = 99,
+            lastModified = "2026-04-30 11:15:00",
+            updateHistoryId = 1_000,
+        )
         insertAuction(
             jdbcTemplate,
             id = "-2-old-19019",
@@ -94,6 +130,33 @@ object MarketSearchTestFixtures {
             p75 = 950,
             quantity = 8,
             lastSeen = "2026-05-01 10:30:00",
+            updateHistoryId = 2_001,
+        )
+        insertAuctionPrice(
+            jdbcTemplate,
+            id = 20_000_001,
+            auctionId = "-2-old-19019",
+            buyout = 444,
+            quantity = 2,
+            lastModified = "2026-04-30 10:30:00",
+            updateHistoryId = 2_000,
+        )
+        insertAuctionPrice(
+            jdbcTemplate,
+            id = 20_000_002,
+            auctionId = "-2-current-19019",
+            buyout = 930,
+            quantity = 5,
+            lastModified = "2026-05-01 10:30:00",
+            updateHistoryId = 2_001,
+        )
+        insertAuctionPrice(
+            jdbcTemplate,
+            id = 20_000_003,
+            auctionId = "-2-current-19019",
+            buyout = 880,
+            quantity = 3,
+            lastModified = "2026-05-01 10:30:00",
             updateHistoryId = 2_001,
         )
         jdbcTemplate.update(
@@ -489,6 +552,36 @@ object MarketSearchTestFixtures {
             quantity,
             lastSeen,
             lastSeen,
+            updateHistoryId,
+        )
+    }
+
+    private fun insertAuctionPrice(
+        jdbcTemplate: JdbcTemplate,
+        id: Long,
+        auctionId: String,
+        buyout: Long,
+        quantity: Int,
+        lastModified: String,
+        updateHistoryId: Long,
+    ) {
+        jdbcTemplate.update(
+            """
+            INSERT INTO auction_price (
+                id,
+                auction_id,
+                buyout,
+                bid,
+                quantity,
+                last_modified,
+                update_history_id
+            ) VALUES (?, ?, ?, NULL, ?, ?, ?)
+            """.trimIndent(),
+            id,
+            auctionId,
+            buyout,
+            quantity,
+            lastModified,
             updateHistoryId,
         )
     }

@@ -227,6 +227,51 @@
       </div>
     </div>
 
+    <section class="ee-glass rounded-lg p-inner-padding">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h2 class="ee-section-heading flex items-center gap-2 text-on-surface">
+          <ee-symbol-icon class="text-outline" name="receipt_long" />
+          <ng-container i18n="@@itemDetail.currentListings">Current listings</ng-container>
+        </h2>
+        <span class="ee-label text-outline">
+          {{ currentListingsForActiveScope().length }}
+          <ng-container i18n="@@itemDetail.listingsCount">listings</ng-container>
+        </span>
+      </div>
+
+      @if (currentListingsForActiveScope().length) {
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse ee-data text-left text-on-surface">
+            <thead>
+              <tr class="border-b border-white/10 ee-label text-outline">
+                <th class="py-2 pr-4 text-right" i18n="@@itemDetail.unitPrice">Unit price</th>
+                <th class="py-2 text-right" i18n="@@itemDetail.quantity">Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (listing of currentListingsForActiveScope(); track $index) {
+                <tr class="border-b border-white/5">
+                  <td class="py-3 pr-4 text-right tabular-nums select-text">
+                    <ee-currency-amount
+                      class="inline-flex justify-end"
+                      [amount]="listing.price | copperToCurrency"
+                    />
+                  </td>
+                  <td class="py-3 text-right tabular-nums select-text">
+                    {{ quantityLabel(listing.quantity) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="ee-data text-outline" i18n="@@itemDetail.noCurrentListings">
+          No current listings for this item.
+        </p>
+      }
+    </section>
+
     @if (d.craftings.length) {
       <section class="ee-glass rounded-lg p-inner-padding">
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">

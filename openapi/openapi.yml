@@ -68,6 +68,8 @@ components:
       $ref: ./components/schemas/auction-market-item-crafting-heatmap-cell.yml
     AuctionMarketItemCraftingReagent:
       $ref: ./components/schemas/auction-market-item-crafting-reagent.yml
+    AuctionMarketItemCurrentListing:
+      $ref: ./components/schemas/auction-market-item-current-listing.yml
     AuctionMarketItemDetailPoint:
       $ref: ./components/schemas/auction-market-item-detail-point.yml
     AuctionMarketItemDetailResponse:

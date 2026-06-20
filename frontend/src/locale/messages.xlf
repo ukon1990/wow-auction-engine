@@ -1071,6 +1071,22 @@
           <context context-type="linenumber">296</context>
         </context-group>
       </trans-unit>
+<trans-unit id="itemDetail.currentListings" datatype="html">
+  <source>Current listings</source>
+  <target>Current listings</target>
+</trans-unit>
+<trans-unit id="itemDetail.listingsCount" datatype="html">
+  <source>listings</source>
+  <target>listings</target>
+</trans-unit>
+<trans-unit id="itemDetail.quantity" datatype="html">
+  <source>Quantity</source>
+  <target>Quantity</target>
+</trans-unit>
+<trans-unit id="itemDetail.noCurrentListings" datatype="html">
+  <source>No current listings for this item.</source>
+  <target>No current listings for this item.</target>
+</trans-unit>
       <trans-unit id="itemDetail.reagent" datatype="html">
         <source>Reagent</source>
         <context-group purpose="location">

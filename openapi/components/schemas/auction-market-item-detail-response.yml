@@ -14,6 +14,7 @@ required:
     - hourlySeriesCommodity
     - quantityPieRealm
     - quantityPieCommodity
+    - currentListings
     - craftings
 properties:
     item:
@@ -60,6 +61,10 @@ properties:
         type: array
         items:
             $ref: "../../openapi.yml#/components/schemas/AuctionMarketQuantityPieSlice"
+    currentListings:
+        type: array
+        items:
+            $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemCurrentListing"
     crafting:
         $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemCrafting"
         nullable: true

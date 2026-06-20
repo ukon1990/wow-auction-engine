@@ -1,0 +1,11 @@
+type: object
+required:
+  - price
+  - quantity
+properties:
+  price:
+    type: integer
+    format: int64
+  quantity:
+    type: integer
+    format: int32
