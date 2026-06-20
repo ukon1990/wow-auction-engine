@@ -15,9 +15,9 @@ internal object AuctionMarketItemDetailSql {
         val variantWhere =
             if (variant) {
                 """
-                  AND a.bonus_key <=> ?
-                  AND a.modifier_key <=> ?
-                  AND COALESCE(a.pet_species_id, -1) = ?
+                AND a.bonus_key <=> ?
+                AND a.modifier_key <=> ?
+                AND COALESCE(a.pet_species_id, -1) = ?
                 """.trimIndent()
             } else {
                 ""
@@ -31,7 +31,7 @@ internal object AuctionMarketItemDetailSql {
             )
             SELECT
                 ap.buyout AS price,
-                ap.quantity AS quantity
+                SUM(ap.quantity) AS quantity
             FROM auction_price ap
             INNER JOIN auction a ON a.id = ap.auction_id
             INNER JOIN latest_history lh
@@ -42,7 +42,8 @@ internal object AuctionMarketItemDetailSql {
               AND a.buyout IS NOT NULL
               AND ap.buyout IS NOT NULL
               $variantWhere
-            ORDER BY ap.buyout ASC, ap.quantity ASC, ap.id ASC
+            GROUP BY ap.buyout
+            ORDER BY ap.buyout ASC
             """.trimIndent()
         val params: Array<Any?> =
             if (variant) {
@@ -574,18 +575,18 @@ internal object AuctionMarketItemDetailSql {
                     itemId,
                 )
             }
-        return sql to arrayOf(
-            connectedRealmId,
-            Date.valueOf(statDate),
-            commodityConnectedRealmId,
-            Date.valueOf(commodityStatDate),
-            itemId,
-            *outputParams,
-            itemId,
-            preferredRecipeId ?: -1,
-        )
+        return sql to
+            arrayOf(
+                connectedRealmId,
+                Date.valueOf(statDate),
+                commodityConnectedRealmId,
+                Date.valueOf(commodityStatDate),
+                itemId,
+                *outputParams,
+                itemId,
+                preferredRecipeId ?: -1,
+            )
     }
-
 
     private fun hourColumnSuffix(hourOfDay: Int): String = hourOfDay.coerceIn(0, 23).toString().padStart(2, '0')
 
