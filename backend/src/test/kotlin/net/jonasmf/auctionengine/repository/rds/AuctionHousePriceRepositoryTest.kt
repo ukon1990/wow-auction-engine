@@ -165,7 +165,6 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
                         avgDelay = 60,
                         highestDelay = 0L,
                         updateAttempts = 0,
-                        updateLog = mutableListOf(),
                     ),
                 realms = mutableListOf(),
             ),

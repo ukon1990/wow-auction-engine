@@ -8,11 +8,9 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
-import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
@@ -27,19 +25,6 @@ class ConnectedRealm(
     var auctionHouse: AuctionHouse,
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var realms: MutableList<Realm> = mutableListOf(),
-)
-
-@Entity
-@Table(name = "auction_update_history")
-class AuctionUpdateHistory(
-    @Id
-    @GeneratedValue
-    var id: Long? = null,
-    var lastModified: Instant? = null,
-    var timeSincePreviousDump: Long = 0L,
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "auction_house_id")
-    var auctionHouse: AuctionHouse? = null,
 )
 
 @Entity
@@ -72,9 +57,6 @@ class AuctionHouse(
     var lastHistoryDeleteEventDaily: Instant? = null, // TODO: Probably redundant due to SQL query?
     @Nullable
     var updateAttempts: Int = 0,
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, mappedBy = "auctionHouse", orphanRemoval = true)
-    @OrderBy("lastModified DESC")
-    var updateLog: MutableList<AuctionUpdateHistory> = mutableListOf(),
 )
 
 @Entity(name = "region")

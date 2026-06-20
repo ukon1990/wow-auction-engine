@@ -8,10 +8,8 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm
 import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
-import net.jonasmf.auctionengine.domain.AuctionHouseUpdateLog
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
 import net.jonasmf.auctionengine.repository.AuctionHouseRepository
-import net.jonasmf.auctionengine.repository.AuctionHouseUpdateLogRepository
 import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
 import net.jonasmf.auctionengine.repository.rds.RegionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -21,12 +19,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import java.time.ZoneOffset
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as RealmAuctionHouse
+import net.jonasmf.auctionengine.repository.rds.AuctionHouseRepository as AuctionHouseEntityRepository
 
 class AuctionHouseServiceTest : IntegrationTestBase() {
     @Autowired
@@ -36,7 +37,13 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
     lateinit var repository: AuctionHouseRepository
 
     @Autowired
-    lateinit var auctionHouseUpdateLogRepository: AuctionHouseUpdateLogRepository
+    lateinit var auctionHouseEntityRepository: AuctionHouseEntityRepository
+
+    @Autowired
+    lateinit var connectedRealmUpdateHistoryService: ConnectedRealmUpdateHistoryService
+
+    @Autowired
+    lateinit var jdbcTemplate: JdbcTemplate
 
     @Autowired
     lateinit var connectedRealmRepository: ConnectedRealmRepository
@@ -111,26 +118,21 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
             ),
         )
 
-    private val updateLogs =
-        List(10) {
-            AuctionHouseUpdateLog(
-                id = auctionHouseIdWithLogs,
-                lastModified = auctionHouseIdWithLogsLastModified.minus((it * 60).minutes),
-                timeSincePreviousDump = 0,
-            )
-        }
-
     private fun getOffsetFromNow(minutes: Int): Instant = Clock.System.now().plus(minutes.minutes)
 
     @BeforeEach
     fun setUp() {
+        testDataCleaner.resetRelationalDatabase()
         seedRegion(Region.Europe, 2)
         seedRegion(Region.Korea, 3)
-        auctionHouses.forEach { repository.save(it) }
-        updateLogs.forEach {
-            auctionHouseUpdateLogRepository.save(
-                it.id,
-                it.lastModified,
+        auctionHouses.forEach {
+            repository.save(it)
+            ensureConnectedRealm(it)
+        }
+        List(10) {
+            seedUpdateHistory(
+                auctionHouseIdWithLogs,
+                auctionHouseIdWithLogsLastModified.minus((it * 60).minutes),
             )
         }
     }
@@ -233,6 +235,8 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
             val connectedRealmId = 5
             var house = repository.findById(connectedRealmId)
             var lastModified = requireNotNull(house?.lastModified)
+            seedUpdateHistory(connectedRealmId, lastModified)
+            seedUpdateHistory(connectedRealmId, lastModified.plus(35.minutes))
 
             auctionHouseService.updateTimes(
                 connectedRealmId,
@@ -240,6 +244,7 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
                 true,
             )
             lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
+            seedUpdateHistory(connectedRealmId, lastModified.plus(48.minutes))
 
             auctionHouseService.updateTimes(
                 connectedRealmId,
@@ -256,7 +261,7 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
         }
 
         @Test
-        fun `should default delay summary to 45 when no usable file log values are present`() {
+        fun `should default delay summary to 45 when no usable connected realm history values are present`() {
             val connectedRealmId = 1001
             connectedRealmRepository.save(
                 connectedRealm(
@@ -286,9 +291,9 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
         }
 
         @Test
-        fun `should ignore file log rows older than 72 hours when calculating delay summary`() {
+        fun `should ignore connected realm history rows older than 72 hours when calculating delay summary`() {
             val connectedRealmId = 1002
-            repository.save(
+            seedAuctionHouseWithConnectedRealm(
                 AuctionHouse(
                     id = connectedRealmId,
                     connectedId = connectedRealmId,
@@ -301,12 +306,14 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
             )
 
             var lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
+            seedUpdateHistory(connectedRealmId, lastModified.plus(20.minutes))
             auctionHouseService.updateTimes(
                 connectedRealmId,
                 lastModified.plus(20.minutes),
                 true,
             )
             lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
+            seedUpdateHistory(connectedRealmId, lastModified.plus(70.minutes))
 
             auctionHouseService.updateTimes(
                 connectedRealmId,
@@ -324,7 +331,7 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
         @Test
         fun `should clamp min and max delay stats on update`() {
             val connectedRealmId = 1003
-            repository.save(
+            seedAuctionHouseWithConnectedRealm(
                 AuctionHouse(
                     id = connectedRealmId,
                     connectedId = connectedRealmId,
@@ -337,12 +344,15 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
             )
 
             var lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
+            seedUpdateHistory(connectedRealmId, lastModified)
+            seedUpdateHistory(connectedRealmId, lastModified.plus(20.minutes))
             auctionHouseService.updateTimes(
                 connectedRealmId,
                 lastModified.plus(20.minutes),
                 true,
             )
             lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
+            seedUpdateHistory(connectedRealmId, lastModified.plus(130.minutes))
 
             auctionHouseService.updateTimes(
                 connectedRealmId,
@@ -358,9 +368,9 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
         }
 
         @Test
-        fun `should update the next update time, and add a new log entry for successful updates`() {
+        fun `should update the next update time without writing redundant history`() {
             val connectedRealmId = 1004
-            repository.save(
+            seedAuctionHouseWithConnectedRealm(
                 AuctionHouse(
                     id = connectedRealmId,
                     connectedId = connectedRealmId,
@@ -373,6 +383,8 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
             )
 
             var lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
+            seedUpdateHistory(connectedRealmId, lastModified)
+            seedUpdateHistory(connectedRealmId, lastModified.plus(60.minutes))
             auctionHouseService.updateTimes(
                 connectedRealmId,
                 lastModified.plus(60.minutes),
@@ -381,6 +393,8 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
             lastModified = requireNotNull(repository.findById(connectedRealmId)?.lastModified)
 
             val newLastModified = lastModified.plus(60.minutes)
+            seedUpdateHistory(connectedRealmId, newLastModified)
+            val historyCountBefore = countUpdateHistoryRows(connectedRealmId)
             auctionHouseService.updateTimes(connectedRealmId, newLastModified, true)
 
             val result = repository.findById(connectedRealmId)
@@ -390,19 +404,19 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
             assertEquals(60, result.avgDelay)
             assertEquals(60, result.highestDelay)
             assertEquals(60, result.nextUpdate!!.minus(result.lastModified!!).inWholeMinutes)
-
-            val logEntries = auctionHouseUpdateLogRepository.findByIdAndMostRecentLastModified(connectedRealmId)
-            assertEquals(3, logEntries.size)
+            assertEquals(historyCountBefore, countUpdateHistoryRows(connectedRealmId))
         }
 
         @Test
         fun `should add a delay based on the number of failed attempts`() {
             val originalState = repository.findById(1)
+            val historyCountBefore = countUpdateHistoryRows(1)
             auctionHouseService.updateTimes(1, null, false)
 
             val result = repository.findById(1)
             assertEquals(originalState?.lastModified, result?.lastModified)
             assertTrue(result?.nextUpdate!!.toEpochMilliseconds() > originalState?.nextUpdate!!.toEpochMilliseconds())
+            assertEquals(historyCountBefore, countUpdateHistoryRows(1))
         }
     }
 
@@ -418,21 +432,68 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
         }
     }
 
+    private fun seedUpdateHistory(
+        connectedRealmId: Int,
+        lastModified: Instant,
+    ) {
+        val connectedRealm = connectedRealmRepository.findById(connectedRealmId).orElseThrow()
+        connectedRealmUpdateHistoryService.startUpdate(
+            connectedRealm = connectedRealm,
+            auctionCount = 1,
+            lastModified = lastModified.toJavaInstant().atZone(ZoneOffset.UTC),
+        )
+    }
+
+    private fun countUpdateHistoryRows(connectedRealmId: Int): Int =
+        jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM connected_realm_update_history WHERE connected_realm_id = ?",
+            Int::class.java,
+            connectedRealmId,
+        ) ?: 0
+
+    private fun seedAuctionHouseWithConnectedRealm(auctionHouse: AuctionHouse) {
+        repository.save(auctionHouse)
+        ensureConnectedRealm(auctionHouse)
+    }
+
+    private fun ensureConnectedRealm(auctionHouse: AuctionHouse) {
+        val connectedId = requireNotNull(auctionHouse.id)
+        if (connectedRealmRepository.findById(connectedId).isPresent) return
+
+        val persistedAuctionHouse = auctionHouseEntityRepository.findByConnectedId(connectedId).orElseThrow()
+        connectedRealmRepository.save(
+            connectedRealm(
+                auctionHouse = auctionHouse,
+                persistedAuctionHouse = persistedAuctionHouse,
+            ),
+        )
+    }
+
     private fun connectedRealm(auctionHouse: AuctionHouse): ConnectedRealm =
+        connectedRealm(
+            auctionHouse = auctionHouse,
+            persistedAuctionHouse = null,
+        )
+
+    private fun connectedRealm(
+        auctionHouse: AuctionHouse,
+        persistedAuctionHouse: RealmAuctionHouse?,
+    ): ConnectedRealm =
         ConnectedRealm(
             id = requireNotNull(auctionHouse.id),
             auctionHouse =
-                RealmAuctionHouse(
-                    connectedId = requireNotNull(auctionHouse.id),
-                    region = auctionHouse.region,
-                    lastModified = auctionHouse.lastModified?.toJavaInstant(),
-                    lastRequested = auctionHouse.lastRequested?.toJavaInstant(),
-                    nextUpdate = auctionHouse.nextUpdate?.toJavaInstant(),
-                    lowestDelay = auctionHouse.lowestDelay,
-                    avgDelay = auctionHouse.avgDelay,
-                    highestDelay = auctionHouse.highestDelay,
-                    updateAttempts = auctionHouse.updateAttempts,
-                ),
+                persistedAuctionHouse
+                    ?: RealmAuctionHouse(
+                        connectedId = requireNotNull(auctionHouse.id),
+                        region = auctionHouse.region,
+                        lastModified = auctionHouse.lastModified?.toJavaInstant(),
+                        lastRequested = auctionHouse.lastRequested?.toJavaInstant(),
+                        nextUpdate = auctionHouse.nextUpdate?.toJavaInstant(),
+                        lowestDelay = auctionHouse.lowestDelay,
+                        avgDelay = auctionHouse.avgDelay,
+                        highestDelay = auctionHouse.highestDelay,
+                        updateAttempts = auctionHouse.updateAttempts,
+                    ),
             realms =
                 mutableListOf(
                     Realm(

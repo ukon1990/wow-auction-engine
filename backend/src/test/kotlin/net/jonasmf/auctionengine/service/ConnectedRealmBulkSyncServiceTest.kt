@@ -220,7 +220,6 @@ class ConnectedRealmBulkSyncServiceTest : IntegrationTestBase() {
             avgDelay = 60L,
             highestDelay = 0L,
             updateAttempts = 0,
-            updateLog = mutableListOf(),
         )
 
     private fun seedRegion(region: Region) {

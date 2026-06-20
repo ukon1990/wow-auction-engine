@@ -1,7 +1,5 @@
 package net.jonasmf.auctionengine.mapper.realm
 
-import net.jonasmf.auctionengine.dbo.rds.realm.AuctionUpdateHistory
-import net.jonasmf.auctionengine.domain.AuctionHouseUpdateLog
 import kotlin.time.toJavaInstant
 import kotlin.time.toKotlinInstant
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as AuctionHouseDbo
@@ -45,13 +43,6 @@ fun AuctionHouseDbo.toDomain(realms: List<RealmDomain>): AuctionHouseDomain =
         nextUpdate = nextUpdate?.toKotlinInstant(),
         realms = realms,
         updateAttempts = updateAttempts,
-    )
-
-fun AuctionUpdateHistory.toDomain(): AuctionHouseUpdateLog =
-    AuctionHouseUpdateLog(
-        id = auctionHouse?.connectedId ?: 0,
-        lastModified = requireNotNull(lastModified).toKotlinInstant(),
-        timeSincePreviousDump = timeSincePreviousDump,
     )
 
 fun AuctionHouseDomain.toDbo() =
