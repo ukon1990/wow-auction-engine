@@ -9,6 +9,9 @@ import type { CraftingTableRow } from './crafting-browser.models';
 type ColumnMeta = {
   readonly align: 'left' | 'right';
   readonly gridTrack: string;
+  readonly cardRole: 'primary' | 'metric' | 'detail';
+  readonly cardLabel?: string;
+  readonly cardPriority: number;
 };
 
 const GRID_HEADER =
@@ -49,56 +52,103 @@ export function createCraftingBrowserTableColumns(): ColumnDef<CraftingTableRow,
       id: 'itemName',
       accessorKey: 'craftedItemName',
       header: $localize`:@@crafting.column.output:Output`,
-      meta: { align: 'left', gridTrack: 'minmax(14rem, 2fr)' } satisfies ColumnMeta,
+      meta: {
+        align: 'left',
+        gridTrack: 'minmax(14rem, 2fr)',
+        cardRole: 'primary',
+        cardPriority: 0,
+      } satisfies ColumnMeta,
       cell: () => flexRenderComponent(CraftingItemCellComponent),
     },
     {
       id: 'recipeName',
       accessorKey: 'recipeName',
       header: $localize`:@@crafting.column.recipe:Recipe`,
-      meta: { align: 'left', gridTrack: 'minmax(8rem, 1.2fr)' } satisfies ColumnMeta,
+      meta: {
+        align: 'left',
+        gridTrack: 'minmax(8rem, 1.2fr)',
+        cardRole: 'detail',
+        cardLabel: $localize`:@@crafting.column.recipe:Recipe`,
+        cardPriority: 10,
+      } satisfies ColumnMeta,
       cell: (info) => textCell(info.getValue()),
     },
     {
       id: 'professionName',
       accessorKey: 'professionName',
       header: $localize`:@@crafting.column.profession:Profession`,
-      meta: { align: 'left', gridTrack: 'minmax(6rem, 1fr)' } satisfies ColumnMeta,
+      meta: {
+        align: 'left',
+        gridTrack: 'minmax(6rem, 1fr)',
+        cardRole: 'detail',
+        cardLabel: $localize`:@@crafting.column.profession:Profession`,
+        cardPriority: 20,
+      } satisfies ColumnMeta,
       cell: (info) => textCell(info.getValue()),
     },
     {
       id: 'reagentCost',
       accessorKey: 'reagentCostCopper',
       header: $localize`:@@crafting.column.materialCost:Mat. cost`,
-      meta: { align: 'right', gridTrack: 'minmax(5.5rem, max-content)' } satisfies ColumnMeta,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(5.5rem, max-content)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@crafting.column.materialCost:Mat. cost`,
+        cardPriority: 30,
+      } satisfies ColumnMeta,
       cell: () => flexRenderComponent(CraftingCurrencyCellComponent),
     },
     {
       id: 'outputPrice',
       accessorKey: 'outputPriceCopper',
       header: $localize`:@@crafting.column.buyout:Buyout`,
-      meta: { align: 'right', gridTrack: 'minmax(5.5rem, max-content)' } satisfies ColumnMeta,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(5.5rem, max-content)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@crafting.column.buyout:Buyout`,
+        cardPriority: 10,
+      } satisfies ColumnMeta,
       cell: () => flexRenderComponent(CraftingCurrencyCellComponent),
     },
     {
       id: 'profit',
       accessorKey: 'profitCopper',
       header: $localize`:@@crafting.column.profit:Profit`,
-      meta: { align: 'right', gridTrack: 'minmax(5.5rem, max-content)' } satisfies ColumnMeta,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(5.5rem, max-content)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@crafting.column.profit:Profit`,
+        cardPriority: 20,
+      } satisfies ColumnMeta,
       cell: () => flexRenderComponent(CraftingCurrencyCellComponent),
     },
     {
       id: 'roiPercent',
       accessorKey: 'roiPercent',
       header: $localize`:@@crafting.column.roi:ROI`,
-      meta: { align: 'right', gridTrack: 'minmax(4rem, max-content)' } satisfies ColumnMeta,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(4rem, max-content)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@crafting.column.roi:ROI`,
+        cardPriority: 40,
+      } satisfies ColumnMeta,
       cell: () => flexRenderComponent(CraftingPercentCellComponent),
     },
     {
       id: 'outputPriceChangePercent',
       accessorKey: 'outputPriceChangePercent',
       header: $localize`:@@crafting.column.trend:Trend`,
-      meta: { align: 'right', gridTrack: 'minmax(4rem, max-content)' } satisfies ColumnMeta,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(4rem, max-content)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@crafting.column.trend:Trend`,
+        cardPriority: 50,
+      } satisfies ColumnMeta,
       cell: () => flexRenderComponent(CraftingPercentCellComponent),
     },
   ];

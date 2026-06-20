@@ -12,11 +12,11 @@ import { copperToCurrencyAmount, CurrencyAmountComponent, MarketItemRow } from '
   template: `
     @switch (columnId()) {
       @case ('selectedPrice') {
-        <div class="flex flex-col items-end gap-1 justify-self-end">
+        <div class="space-y-1">
           <ee-currency-amount [amount]="row().minBuyout" [emphasis]="row().selected === true" />
           @if (hasPercentileRange()) {
             <div
-              class="flex flex-wrap items-center justify-end gap-x-1 text-[11px] leading-none text-outline"
+              class="inline-flex flex-wrap items-center gap-x-1 text-[11px] leading-none text-outline"
             >
               <span>p25</span>
               <ee-currency-amount [amount]="p25Amount()" />
@@ -28,11 +28,11 @@ import { copperToCurrencyAmount, CurrencyAmountComponent, MarketItemRow } from '
       }
       @case ('selectedQuantity') {
         @if (row().selectedQuantity !== undefined) {
-          <div class="justify-self-end ee-data text-on-surface">
+          <div class="ee-data text-on-surface">
             {{ row().selectedQuantity | number: '1.0-0' : selectedLocaleForNumberPipe() }}
           </div>
         } @else {
-          <ee-currency-amount class="justify-self-end opacity-80" [amount]="row().marketValue" />
+          <ee-currency-amount class="opacity-80" [amount]="row().marketValue" />
         }
       }
     }

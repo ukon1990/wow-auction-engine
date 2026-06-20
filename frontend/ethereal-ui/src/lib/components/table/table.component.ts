@@ -1,4 +1,5 @@
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -17,7 +18,7 @@ import {
   getSortedRowModel,
   type RowData,
 } from '@tanstack/angular-table';
-import type { Column, Header, SortingState, Table } from '@tanstack/table-core';
+import type { Cell, Column, Header, Row, SortingState, Table } from '@tanstack/table-core';
 
 import { SymbolIconComponent } from '../primitives/symbol-icon.component';
 import { PaginationComponent, PaginationState } from './pagination.component';
@@ -34,14 +35,28 @@ const DEFAULT_GRID_TRACK = 'minmax(12rem, 1fr)';
 type TableColumnMeta = {
   readonly align?: 'left' | 'right';
   readonly gridTrack?: string;
+  readonly cardRole?: 'primary' | 'metric' | 'detail';
+  readonly cardLabel?: string;
+  readonly cardPriority?: number;
 };
+
+export interface MobileSortOption {
+  readonly id: string;
+  readonly label: string;
+}
 
 @Component({
   selector: 'ee-table',
   host: {
     class: 'flex min-h-0 min-w-0 flex-1',
   },
-  imports: [FlexRenderDirective, ScrollingModule, PaginationComponent, SymbolIconComponent],
+  imports: [
+    FlexRenderDirective,
+    NgTemplateOutlet,
+    ScrollingModule,
+    PaginationComponent,
+    SymbolIconComponent,
+  ],
   template: `
     <section
       class="ee-glass flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg"
@@ -49,77 +64,211 @@ type TableColumnMeta = {
     >
       <div class="min-h-0 flex-1 overflow-x-auto">
         <div class="flex h-full min-w-0 flex-col" [class]="contentMinWidthClass()">
-          @for (headerGroup of table.getHeaderGroups(); track headerGroup.id) {
-            <div
-              role="row"
-              [class]="headerRowClass()"
-              [style.grid-template-columns]="rowGridTemplateStyle()"
-            >
-              @for (header of headerGroup.headers; track header.id) {
-                <div
-                  role="columnheader"
-                  [attr.aria-sort]="headerAriaSort(header)"
-                  [class]="headerColumnClass(header.column.columnDef.meta)"
+          @if (cardView()) {
+            @if (mobileSortOptions().length > 0) {
+              <div
+                class="flex items-center gap-2 border-b border-white/10 bg-surface-container-high px-container-padding py-3"
+              >
+                <label class="min-w-0 flex-1">
+                  <span class="sr-only">Sort column</span>
+                  <select
+                    class="w-full rounded border border-white/10 bg-surface-container px-3 py-2 ee-label text-on-surface outline-none focus-visible:ring-2 focus-visible:ring-primary/60 disabled:opacity-50"
+                    [disabled]="loading()"
+                    [value]="currentSortColumnId()"
+                    (change)="onMobileSortColumnChange($event)"
+                  >
+                    @for (option of mobileSortOptions(); track option.id) {
+                      <option [value]="option.id">{{ option.label }}</option>
+                    }
+                  </select>
+                </label>
+                <button
+                  type="button"
+                  class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded border border-white/10 bg-surface-container-high text-on-surface transition hover:bg-surface-container-highest focus-visible:ring-2 focus-visible:ring-primary/60 disabled:opacity-50"
+                  [attr.aria-label]="mobileSortDirectionLabel()"
+                  [disabled]="loading()"
+                  (click)="toggleMobileSortDirection()"
                 >
-                  @if (!header.isPlaceholder) {
-                    @if (sortableHeader(header)) {
-                      <button
-                        type="button"
-                        [class]="sortHeaderButtonClass(header.column.columnDef.meta)"
-                        [disabled]="loading()"
-                        (click)="header.column.getToggleSortingHandler()?.($event)"
-                      >
-                        <span class="min-w-0 truncate">
+                  <ee-symbol-icon [name]="mobileSortDirectionIcon()" />
+                </button>
+              </div>
+            }
+          } @else {
+            @for (headerGroup of table.getHeaderGroups(); track headerGroup.id) {
+              <div
+                role="row"
+                [class]="headerRowClass()"
+                [style.grid-template-columns]="rowGridTemplateStyle()"
+              >
+                @for (header of headerGroup.headers; track header.id) {
+                  <div
+                    role="columnheader"
+                    [attr.aria-sort]="headerAriaSort(header)"
+                    [class]="headerColumnClass(header.column.columnDef.meta)"
+                  >
+                    @if (!header.isPlaceholder) {
+                      @if (sortableHeader(header)) {
+                        <button
+                          type="button"
+                          [class]="sortHeaderButtonClass(header.column.columnDef.meta)"
+                          [disabled]="loading()"
+                          (click)="header.column.getToggleSortingHandler()?.($event)"
+                        >
+                          <span class="min-w-0 truncate">
+                            <ng-container
+                              *flexRender="
+                                header.column.columnDef.header;
+                                props: header.getContext();
+                                let rendered
+                              "
+                            >
+                              {{ rendered }}
+                            </ng-container>
+                          </span>
+                          <ee-symbol-icon
+                            [class]="sortIconClass(header)"
+                            [name]="sortIconName(header)"
+                          />
+                        </button>
+                      } @else {
+                        <ng-container
+                          *flexRender="
+                            header.column.columnDef.header;
+                            props: header.getContext();
+                            let rendered
+                          "
+                        >
+                          {{ rendered }}
+                        </ng-container>
+                      }
+                    }
+                  </div>
+                }
+              </div>
+            }
+          }
+          <div
+            cdkScrollable
+            [class]="
+              cardView()
+                ? 'min-h-0 flex-1 overflow-y-auto space-y-3 p-3'
+                : 'min-h-0 flex-1 overflow-y-auto divide-y divide-white/5'
+            "
+          >
+            @if (showSkeleton()) {
+              @if (cardView()) {
+                @for (r of skeletonRowIndices(); track r) {
+                  <div
+                    aria-hidden="true"
+                    class="rounded-lg border border-white/10 bg-surface-container/70 p-4"
+                  >
+                    <div class="h-5 w-3/4 rounded bg-white/10 animate-pulse"></div>
+                    <div class="mt-4 grid grid-cols-2 gap-3">
+                      <div class="h-4 rounded bg-white/10 animate-pulse"></div>
+                      <div class="h-4 rounded bg-white/10 animate-pulse"></div>
+                    </div>
+                  </div>
+                }
+              } @else {
+                @for (r of skeletonRowIndices(); track r) {
+                  <div
+                    role="row"
+                    aria-hidden="true"
+                    [class]="skeletonRowClass()"
+                    [style.grid-template-columns]="rowGridTemplateStyle()"
+                  >
+                    @for (meta of skeletonColumnMetas(); track $index) {
+                      <div [class]="bodyCellClass(meta)">
+                        <div
+                          class="h-4 max-w-full rounded bg-white/10 animate-pulse"
+                          [class]="skeletonBarWidthClass($index)"
+                        ></div>
+                      </div>
+                    }
+                  </div>
+                }
+              }
+            } @else if (cardView()) {
+              @for (row of table.getRowModel().rows; track row.id) {
+                @if (clickableRows()) {
+                  <button
+                    type="button"
+                    [class]="cardRowClass(row.original)"
+                    (click)="rowClick.emit(row.original)"
+                  >
+                    <ng-container
+                      [ngTemplateOutlet]="cardContent"
+                      [ngTemplateOutletContext]="{ row }"
+                    />
+                  </button>
+                } @else {
+                  <article [class]="cardRowClass(row.original)">
+                    <ng-container
+                      [ngTemplateOutlet]="cardContent"
+                      [ngTemplateOutletContext]="{ row }"
+                    />
+                  </article>
+                }
+              } @empty {
+                <div class="p-8 text-center text-on-surface-variant" i18n="@@table.empty">
+                  {{ emptyMessage() }}
+                </div>
+              }
+              <ng-template #cardContent let-row="row">
+                @for (cell of cardPrimaryCells(row); track cell.id) {
+                  <div class="min-w-0">
+                    <ng-container
+                      *flexRender="
+                        cell.column.columnDef.cell;
+                        props: cell.getContext();
+                        let rendered
+                      "
+                    >
+                      {{ rendered }}
+                    </ng-container>
+                  </div>
+                }
+                @if (cardMetricCells(row).length > 0) {
+                  <div class="mt-4 grid grid-cols-2 gap-3">
+                    @for (cell of cardMetricCells(row); track cell.id) {
+                      <div [class]="cardGridCellClass($index)">
+                        <div class="ee-label text-outline">{{ cardLabel(cell.column) }}</div>
+                        <div class="mt-1 min-w-0">
                           <ng-container
                             *flexRender="
-                              header.column.columnDef.header;
-                              props: header.getContext();
+                              cell.column.columnDef.cell;
+                              props: cell.getContext();
                               let rendered
                             "
                           >
                             {{ rendered }}
                           </ng-container>
-                        </span>
-                        <ee-symbol-icon
-                          [class]="sortIconClass(header)"
-                          [name]="sortIconName(header)"
-                        />
-                      </button>
-                    } @else {
-                      <ng-container
-                        *flexRender="
-                          header.column.columnDef.header;
-                          props: header.getContext();
-                          let rendered
-                        "
-                      >
-                        {{ rendered }}
-                      </ng-container>
+                        </div>
+                      </div>
                     }
-                  }
-                </div>
-              }
-            </div>
-          }
-          <div cdkScrollable class="min-h-0 flex-1 overflow-y-auto divide-y divide-white/5">
-            @if (showSkeleton()) {
-              @for (r of skeletonRowIndices(); track r) {
-                <div
-                  role="row"
-                  aria-hidden="true"
-                  [class]="skeletonRowClass()"
-                  [style.grid-template-columns]="rowGridTemplateStyle()"
-                >
-                  @for (meta of skeletonColumnMetas(); track $index) {
-                    <div [class]="bodyCellClass(meta)">
-                      <div
-                        class="h-4 max-w-full rounded bg-white/10 animate-pulse"
-                        [class]="skeletonBarWidthClass($index)"
-                      ></div>
-                    </div>
-                  }
-                </div>
-              }
+                  </div>
+                }
+                @if (cardDetailCells(row).length > 0) {
+                  <dl class="mt-4 grid grid-cols-2 gap-x-3 gap-y-2">
+                    @for (cell of cardDetailCells(row); track cell.id) {
+                      <div [class]="cardGridCellClass($index)">
+                        <dt class="ee-label text-outline">{{ cardLabel(cell.column) }}</dt>
+                        <dd class="mt-0.5 min-w-0 truncate text-sm text-on-surface">
+                          <ng-container
+                            *flexRender="
+                              cell.column.columnDef.cell;
+                              props: cell.getContext();
+                              let rendered
+                            "
+                          >
+                            {{ rendered }}
+                          </ng-container>
+                        </dd>
+                      </div>
+                    }
+                  </dl>
+                }
+              </ng-template>
             } @else {
               @for (row of table.getRowModel().rows; track row.id) {
                 @if (clickableRows()) {
@@ -217,6 +366,8 @@ export class TableComponent<TData extends RowData> {
   readonly showPagination = input(false, { transform: booleanAttribute });
   readonly clickableRows = input(false, { transform: booleanAttribute });
   readonly getRowId = input<(row: TData, index: number) => string>();
+  readonly cardView = input(false, { transform: booleanAttribute });
+  readonly mobileSortOptions = input<readonly MobileSortOption[]>([]);
 
   readonly manualSorting = input(false, { transform: booleanAttribute });
   readonly sorting = input<SortingState>([]);
@@ -296,6 +447,55 @@ export class TableComponent<TData extends RowData> {
     return this.bodyRowClassFn()?.(row) ?? DEFAULT_BODY_ROW_CLASS;
   }
 
+  protected cardRowClass(row: TData): string {
+    const selected = this.bodyRowClass(row).includes('border-l-2')
+      ? 'border-l-2 border-primary bg-primary/10'
+      : '';
+    const interactive = this.clickableRows()
+      ? 'w-full cursor-pointer text-left transition hover:bg-surface-container-highest focus-visible:ring-2 focus-visible:ring-primary/60'
+      : '';
+    return `block min-w-0 rounded-lg border border-white/10 bg-surface-container/70 p-4 ${interactive} ${selected}`;
+  }
+
+  protected cardPrimaryCells(row: Row<TData>): Cell<TData, unknown>[] {
+    return this.cardCellsByRole(row, 'primary');
+  }
+
+  protected cardMetricCells(row: Row<TData>): Cell<TData, unknown>[] {
+    return this.cardCellsByRole(row, 'metric');
+  }
+
+  protected cardDetailCells(row: Row<TData>): Cell<TData, unknown>[] {
+    return this.cardCellsByRole(row, 'detail');
+  }
+
+  protected cardLabel(column: Column<TData, unknown>): string {
+    const meta = column.columnDef.meta as TableColumnMeta | undefined;
+    return meta?.cardLabel ?? String(column.columnDef.header ?? column.id);
+  }
+
+  protected cardGridCellClass(index: number): string {
+    return index % 2 === 0 ? 'min-w-0 text-left' : 'min-w-0 text-right';
+  }
+
+  private cardCellsByRole(
+    row: Row<TData>,
+    role: NonNullable<TableColumnMeta['cardRole']>,
+  ): Cell<TData, unknown>[] {
+    return row
+      .getVisibleCells()
+      .filter(
+        (cell) =>
+          ((cell.column.columnDef.meta as TableColumnMeta | undefined)?.cardRole ?? 'detail') ===
+          role,
+      )
+      .sort((a, b) => this.cardPriority(a.column) - this.cardPriority(b.column));
+  }
+
+  private cardPriority(column: Column<TData, unknown>): number {
+    return (column.columnDef.meta as TableColumnMeta | undefined)?.cardPriority ?? 100;
+  }
+
   protected rowGridTemplateStyle(): string | undefined {
     const raw = this.rowGridTemplateColumns();
     const trimmed = raw?.trim();
@@ -354,5 +554,39 @@ export class TableComponent<TData extends RowData> {
     return m?.align === 'right'
       ? 'min-w-0 justify-self-end text-right'
       : 'min-w-0 overflow-hidden text-ellipsis text-left';
+  }
+
+  protected currentSortColumnId(): string {
+    return this.currentSorting()[0]?.id ?? this.mobileSortOptions()[0]?.id ?? '';
+  }
+
+  protected mobileSortDirectionIcon(): string {
+    return this.currentSorting()[0]?.desc ? 'keyboard_arrow_down' : 'keyboard_arrow_up';
+  }
+
+  protected mobileSortDirectionLabel(): string {
+    return this.currentSorting()[0]?.desc ? 'Sort descending' : 'Sort ascending';
+  }
+
+  protected onMobileSortColumnChange(event: Event): void {
+    const select = event.target as HTMLSelectElement | null;
+    const id = select?.value;
+    if (!id) return;
+    this.setSorting([{ id, desc: this.currentSorting()[0]?.desc ?? false }]);
+  }
+
+  protected toggleMobileSortDirection(): void {
+    const id = this.currentSortColumnId();
+    if (!id) return;
+    this.setSorting([{ id, desc: !(this.currentSorting()[0]?.desc ?? false) }]);
+  }
+
+  private currentSorting(): SortingState {
+    return this.manualSorting() ? this.sorting() : this.localSorting();
+  }
+
+  private setSorting(next: SortingState): void {
+    if (!this.manualSorting()) this.localSorting.set(next);
+    this.sortingChange.emit(next);
   }
 }

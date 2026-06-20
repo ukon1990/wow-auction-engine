@@ -37,6 +37,7 @@ import {
 import { activeColumnIdsForViewport } from './crafting-browser.helpers';
 
 const DEFAULT_VIEWPORT_WIDTH = 1280;
+const CARD_VIEW_MAX_WIDTH = 1023;
 
 @Component({
   selector: 'app-crafting-browser-page',
@@ -59,18 +60,32 @@ export class CraftingBrowserPage {
   protected readonly mobileFiltersOpen = signal(false);
   protected readonly viewportWidth = signal(DEFAULT_VIEWPORT_WIDTH);
   protected readonly allColumns = createCraftingBrowserTableColumns();
+  protected readonly cardView = computed(() => this.viewportWidth() <= CARD_VIEW_MAX_WIDTH);
   protected readonly activeColumns = computed(() =>
     this.allColumns.filter((column) =>
       activeColumnIdsForViewport(this.viewportWidth()).has(String(column.id ?? '')),
     ),
   );
+  protected readonly tableColumns = computed(() =>
+    this.cardView() ? this.allColumns : this.activeColumns(),
+  );
   protected readonly rowGridTemplate = computed(() =>
-    craftingBrowserRowGridTemplateColumns(this.activeColumns()),
+    craftingBrowserRowGridTemplateColumns(this.tableColumns()),
   );
   protected readonly bodyRowClass = craftingBrowserRowClass;
   protected readonly tableMinWidth = 'min-w-0 w-full';
   protected readonly headerRowClass = craftingBrowserHeaderRowClass();
   protected readonly skeletonRowClass = craftingBrowserSkeletonRowClass();
+  protected readonly mobileSortOptions = [
+    { id: 'itemName', label: $localize`:@@crafting.column.output:Output` },
+    { id: 'outputPrice', label: $localize`:@@crafting.column.buyout:Buyout` },
+    { id: 'profit', label: $localize`:@@crafting.column.profit:Profit` },
+    { id: 'reagentCost', label: $localize`:@@crafting.column.materialCost:Mat. cost` },
+    { id: 'roiPercent', label: $localize`:@@crafting.column.roi:ROI` },
+    { id: 'outputPriceChangePercent', label: $localize`:@@crafting.column.trend:Trend` },
+    { id: 'recipeName', label: $localize`:@@crafting.column.recipe:Recipe` },
+    { id: 'professionName', label: $localize`:@@crafting.column.profession:Profession` },
+  ];
   private readonly craftingService = inject(CraftingItemService);
   protected readonly tableSorting = computed<SortingState>(() => {
     const params = this.craftingService.queryParams();

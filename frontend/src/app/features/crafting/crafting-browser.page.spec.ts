@@ -99,4 +99,28 @@ describe('CraftingBrowserPage', () => {
 
     expect(serviceStub.goToPage).toHaveBeenCalledWith(2);
   });
+
+  it('renders crafting results as cards with compact sorting on mobile', () => {
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      writable: true,
+      value: 480,
+    });
+    const fixture = TestBed.createComponent(CraftingBrowserPage);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const sortSelect = compiled.querySelector('select') as HTMLSelectElement | null;
+
+    expect(sortSelect).not.toBeNull();
+    expect(sortSelect?.value).toBe('itemName');
+    expect(compiled.querySelector('[role="columnheader"]')).toBeNull();
+    expect(compiled.textContent).toContain('Healing Potion');
+    expect(compiled.textContent).toContain('Buyout');
+    expect(compiled.textContent).toContain('Profit');
+    expect(compiled.textContent).toContain('Mat. cost');
+    expect(compiled.textContent).toContain('Recipe');
+    expect(compiled.textContent).toContain('Profession');
+    expect(compiled.textContent).toContain('Alchemy');
+  });
 });

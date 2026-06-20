@@ -36,6 +36,7 @@ import { AuctionItemService } from '@core/services/auction-item.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 const DEFAULT_VIEWPORT_WIDTH = 1280;
+const CARD_VIEW_MAX_WIDTH = 1023;
 const CLASS_MIN_WIDTH = 860;
 const SUBCLASS_MIN_WIDTH = 1040;
 const QUALITY_MIN_WIDTH = 1200;
@@ -62,18 +63,30 @@ export class MarketBrowserPage {
   protected readonly mobileFiltersOpen = signal(false);
   protected readonly viewportWidth = signal(DEFAULT_VIEWPORT_WIDTH);
   protected readonly marketColumns = createMarketBrowserTableColumns();
+  protected readonly cardView = computed(() => this.viewportWidth() <= CARD_VIEW_MAX_WIDTH);
   protected readonly activeMarketColumns = computed(() =>
     this.marketColumns.filter((column) =>
       activeColumnIdsForViewport(this.viewportWidth()).has(String(column.id ?? '')),
     ),
   );
+  protected readonly marketTableColumns = computed(() =>
+    this.cardView() ? this.marketColumns : this.activeMarketColumns(),
+  );
   protected readonly marketRowGridTemplate = computed(() =>
-    marketBrowserRowGridTemplateColumns(this.activeMarketColumns()),
+    marketBrowserRowGridTemplateColumns(this.marketTableColumns()),
   );
   protected readonly marketRowClass = marketBrowserRowClass;
   protected readonly marketTableMinWidth = 'min-w-0 w-full';
   protected readonly marketTableHeaderRow = marketBrowserHeaderRowClass();
   protected readonly marketSkeletonRowClass = marketBrowserSkeletonRowClass();
+  protected readonly marketMobileSortOptions = [
+    { id: 'itemName', label: $localize`:@@market.column.item:Item` },
+    { id: 'selectedPrice', label: $localize`:@@market.column.price:Price` },
+    { id: 'selectedQuantity', label: $localize`:@@market.column.quantity:Quantity` },
+    { id: 'quality', label: $localize`:@@market.column.quality:Quality` },
+    { id: 'itemClass', label: $localize`:@@market.column.class:Class` },
+    { id: 'itemSubclass', label: $localize`:@@market.column.subclass:Subclass` },
+  ];
   private readonly auctionService = inject(AuctionItemService);
   protected readonly marketTableSorting = computed<SortingState>(() => {
     const params = this.auctionService.queryParams();

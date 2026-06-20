@@ -12,11 +12,11 @@ import type { CraftingTableRow } from './crafting-browser.models';
   imports: [DecimalPipe],
   template: `
     @if (value() != null) {
-      <div class="justify-self-end ee-data text-on-surface">
+      <div class="ee-data text-on-surface">
         {{ value()! | number: '1.1-1' : selectedLocaleForNumberPipe() }}%
       </div>
     } @else {
-      <span class="justify-self-end text-outline">—</span>
+      <span class="text-outline">—</span>
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

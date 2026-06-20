@@ -11,11 +11,11 @@ import type { CraftingTableRow } from './crafting-browser.models';
   imports: [CurrencyAmountComponent],
   template: `
     @if (copper() != null) {
-      <div class="flex flex-col items-end gap-1 justify-self-end">
+      <div class="space-y-1">
         <ee-currency-amount [amount]="amount()" />
         @if (columnId() === 'outputPrice' && hasPercentileRange()) {
           <div
-            class="flex flex-wrap items-center justify-end gap-x-1 text-[11px] leading-none text-outline"
+            class="inline-flex flex-wrap items-center gap-x-1 text-[11px] leading-none text-outline"
           >
             <span>p25</span>
             <ee-currency-amount [amount]="p25Amount()" />
@@ -25,7 +25,7 @@ import type { CraftingTableRow } from './crafting-browser.models';
         }
       </div>
     } @else {
-      <span class="justify-self-end text-outline">—</span>
+      <span class="text-outline">—</span>
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
