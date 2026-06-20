@@ -11,6 +11,9 @@ import { MarketQualityCellComponent } from './market-quality-cell.component';
 type MarketColumnMeta = {
   readonly align: 'left' | 'right';
   readonly gridTrack: string;
+  readonly cardRole: 'primary' | 'metric' | 'detail';
+  readonly cardLabel?: string;
+  readonly cardPriority: number;
 };
 
 const GRID_HEADER =
@@ -59,42 +62,77 @@ export function createMarketBrowserTableColumns(): ColumnDef<MarketItemRow, unkn
       id: 'itemName',
       accessorKey: 'name',
       header: $localize`:@@market.column.item:Item`,
-      meta: { align: 'left', gridTrack: 'minmax(14rem, 2fr)' } satisfies MarketColumnMeta,
+      meta: {
+        align: 'left',
+        gridTrack: 'minmax(14rem, 2fr)',
+        cardRole: 'primary',
+        cardPriority: 0,
+      } satisfies MarketColumnMeta,
       cell: () => flexRenderComponent(MarketItemCellComponent),
     },
     {
       id: 'itemClass',
       accessorKey: 'itemClassName',
       header: $localize`:@@market.column.class:Class`,
-      meta: { align: 'left', gridTrack: 'minmax(5rem, 1fr)' } satisfies MarketColumnMeta,
+      meta: {
+        align: 'left',
+        gridTrack: 'minmax(5rem, 1fr)',
+        cardRole: 'detail',
+        cardLabel: $localize`:@@market.column.class:Class`,
+        cardPriority: 20,
+      } satisfies MarketColumnMeta,
       cell: (info) => textCell(info.getValue()),
     },
     {
       id: 'itemSubclass',
       accessorKey: 'itemSubclassName',
       header: $localize`:@@market.column.subclass:Subclass`,
-      meta: { align: 'left', gridTrack: 'minmax(5rem, 1fr)' } satisfies MarketColumnMeta,
+      meta: {
+        align: 'left',
+        gridTrack: 'minmax(5rem, 1fr)',
+        cardRole: 'detail',
+        cardLabel: $localize`:@@market.column.subclass:Subclass`,
+        cardPriority: 30,
+      } satisfies MarketColumnMeta,
       cell: (info) => textCell(info.getValue()),
     },
     {
       id: 'quality',
       accessorKey: 'quality',
       header: $localize`:@@market.column.quality:Quality`,
-      meta: { align: 'left', gridTrack: '7rem' } satisfies MarketColumnMeta,
+      meta: {
+        align: 'left',
+        gridTrack: '7rem',
+        cardRole: 'detail',
+        cardLabel: $localize`:@@market.column.quality:Quality`,
+        cardPriority: 40,
+      } satisfies MarketColumnMeta,
       cell: () => flexRenderComponent(MarketQualityCellComponent),
     },
     {
       id: 'selectedPrice',
       accessorKey: 'listingPriceCopper',
       header: $localize`:@@market.column.price:Price`,
-      meta: { align: 'right', gridTrack: 'minmax(6rem, max-content)' } satisfies MarketColumnMeta,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(6rem, max-content)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@market.column.price:Price`,
+        cardPriority: 10,
+      } satisfies MarketColumnMeta,
       cell: () => flexRenderComponent(MarketMetricCellComponent),
     },
     {
       id: 'selectedQuantity',
       accessorKey: 'selectedQuantity',
       header: $localize`:@@market.column.quantity:Quantity`,
-      meta: { align: 'right', gridTrack: 'minmax(4.5rem, max-content)' } satisfies MarketColumnMeta,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(4.5rem, max-content)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@market.column.quantity:Quantity`,
+        cardPriority: 20,
+      } satisfies MarketColumnMeta,
       cell: () => flexRenderComponent(MarketMetricCellComponent),
     },
   ];

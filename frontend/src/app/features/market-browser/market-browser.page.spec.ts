@@ -117,6 +117,30 @@ describe('MarketBrowserPage', () => {
     expect(compiled.textContent).toContain('Showing 1-10 of 42 rows');
   });
 
+  it('renders market results as cards with compact sorting on mobile', () => {
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      writable: true,
+      value: 480,
+    });
+    const fixture = TestBed.createComponent(MarketBrowserPage);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const sortSelect = compiled.querySelector('select') as HTMLSelectElement | null;
+
+    expect(sortSelect).not.toBeNull();
+    expect(sortSelect?.value).toBe('itemName');
+    expect(compiled.querySelector('[role="columnheader"]')).toBeNull();
+    expect(compiled.textContent).toContain('Healing Potion');
+    expect(compiled.textContent).toContain('Price');
+    expect(compiled.textContent).toContain('Quantity');
+    expect(compiled.textContent).toContain('Class');
+    expect(compiled.textContent).toContain('Consumable');
+    expect(compiled.textContent).toContain('Subclass');
+    expect(compiled.textContent).toContain('Potion');
+  });
+
   it('shows the empty market summary when there are no rows', () => {
     pageData.set({
       page: {

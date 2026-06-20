@@ -17,11 +17,21 @@ const helper = createColumnHelper<TestRow>();
 const columns = [
   helper.accessor('name', {
     header: 'Name',
-    meta: { align: 'left', gridTrack: 'minmax(10rem, 2fr)' },
+    meta: {
+      align: 'left',
+      gridTrack: 'minmax(10rem, 2fr)',
+      cardRole: 'primary',
+      cardPriority: 0,
+    },
   }),
   helper.accessor('quantity', {
     header: 'Quantity',
-    meta: { align: 'right' },
+    meta: {
+      align: 'right',
+      cardRole: 'metric',
+      cardLabel: 'Qty',
+      cardPriority: 10,
+    },
   }),
 ] as ColumnDef<TestRow, unknown>[];
 
@@ -96,6 +106,49 @@ class PaginatedTableHostComponent {
   readonly getRowId = (row: TestRow) => row.id;
 }
 
+@Component({
+  imports: [TableComponent],
+  template: `
+    <ee-table
+      [cardView]="true"
+      [columns]="columns"
+      [data]="rows()"
+      [getRowId]="getRowId"
+      [manualSorting]="true"
+      [mobileSortOptions]="mobileSortOptions"
+      [paginationState]="paginationState()"
+      [showFooter]="true"
+      [showPagination]="true"
+      [sorting]="sorting()"
+      (pageChange)="pageChanges.push($event)"
+      (sortingChange)="onSortingChange($event)"
+    />
+  `,
+})
+class CardTableHostComponent {
+  readonly columns = columns;
+  readonly rows = signal(unsortedRows);
+  readonly sorting = signal<SortingState>([{ id: 'name', desc: false }]);
+  readonly sortingEvents: SortingState[] = [];
+  readonly pageChanges: number[] = [];
+  readonly mobileSortOptions = [
+    { id: 'name', label: 'Name' },
+    { id: 'quantity', label: 'Quantity' },
+  ];
+  readonly paginationState = signal<PaginationState>({
+    page: 0,
+    pageSize: 10,
+    totalItems: 42,
+    totalPages: 5,
+  });
+  readonly getRowId = (row: TestRow) => row.id;
+
+  onSortingChange(next: SortingState): void {
+    this.sorting.set(next);
+    this.sortingEvents.push(next);
+  }
+}
+
 describe('TableComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -103,6 +156,7 @@ describe('TableComponent', () => {
         MinimalTableHostComponent,
         ManualSortingTableHostComponent,
         PaginatedTableHostComponent,
+        CardTableHostComponent,
       ],
     }).compileComponents();
   });
@@ -165,12 +219,56 @@ describe('TableComponent', () => {
 
     expect(fixture.componentInstance.pageChanges).toEqual([1]);
   });
+
+  it('renders mobile card rows without table headers', () => {
+    const fixture = TestBed.createComponent(CardTableHostComponent);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(getHeaderRowOrNull(fixture)).toBeNull();
+    expect(compiled.textContent).toContain('Charlie');
+    expect(compiled.textContent).toContain('Qty');
+    expect(compiled.textContent).toContain('3');
+  });
+
+  it('emits sorting changes from mobile sort controls', () => {
+    const fixture = TestBed.createComponent(CardTableHostComponent);
+    fixture.detectChanges();
+
+    const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
+    select.value = 'quantity';
+    select.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+
+    clickButton(fixture, 'Sort ascending');
+
+    expect(fixture.componentInstance.sortingEvents).toEqual([
+      [{ id: 'quantity', desc: false }],
+      [{ id: 'quantity', desc: true }],
+    ]);
+  });
+
+  it('keeps pagination in mobile card mode', () => {
+    const fixture = TestBed.createComponent(CardTableHostComponent);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Showing 1-10 of 42 rows');
+
+    clickButton(fixture, 'Page 2');
+
+    expect(fixture.componentInstance.pageChanges).toEqual([1]);
+  });
 });
 
 function getHeaderRow<T>(fixture: ComponentFixture<T>): HTMLElement {
   const row = fixture.nativeElement.querySelector('[role="row"]') as HTMLElement | null;
   expect(row).not.toBeNull();
   return row as HTMLElement;
+}
+
+function getHeaderRowOrNull<T>(fixture: ComponentFixture<T>): HTMLElement | null {
+  return fixture.nativeElement.querySelector('[role="row"]') as HTMLElement | null;
 }
 
 function getBodyRows<T>(fixture: ComponentFixture<T>): HTMLElement[] {
