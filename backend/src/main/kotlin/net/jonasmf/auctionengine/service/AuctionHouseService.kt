@@ -3,7 +3,7 @@ package net.jonasmf.auctionengine.service
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.repository.AuctionHouseRepository
-import net.jonasmf.auctionengine.repository.rds.AuctionUpdateHistoryRepository
+import net.jonasmf.auctionengine.repository.rds.ConnectedRealmUpdateHistoryRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.math.min
@@ -17,7 +17,7 @@ import net.jonasmf.auctionengine.repository.rds.AuctionHouseRepository as Auctio
 class AuctionHouseService(
     val repository: AuctionHouseRepository,
     private val auctionHouseEntityRepository: AuctionHouseEntityRepository,
-    private val auctionUpdateHistoryRepository: AuctionUpdateHistoryRepository,
+    private val connectedRealmUpdateHistoryRepository: ConnectedRealmUpdateHistoryRepository,
 ) {
     companion object {
         private const val DEFAULT_DELAY_MINUTES = 45L
@@ -83,10 +83,10 @@ class AuctionHouseService(
     }
 
     /**
-     * Returns the min, avg and max delay summary based on file-log rows from the past 72 hours.
+     * Returns the min, avg and max delay summary based on successful snapshot rows from the past 72 hours.
      */
     private fun getUpdateStats(id: Int): Triple<Long, Long, Long> {
-        val stats = auctionUpdateHistoryRepository.findDelayStatsByConnectedId(id)
+        val stats = connectedRealmUpdateHistoryRepository.findDelayStatsByConnectedId(id)
         val lowestDelay =
             stats.getMinDelayMinutes()?.coerceAtLeast(MINIMUM_DELAY_FLOOR_MINUTES) ?: DEFAULT_DELAY_MINUTES
         val avgDelay = stats.getAvgDelayMinutes() ?: DEFAULT_DELAY_MINUTES
