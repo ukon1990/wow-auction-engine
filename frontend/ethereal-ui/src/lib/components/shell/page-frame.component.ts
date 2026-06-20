@@ -60,7 +60,9 @@ export class PageFrameComponent {
   });
 
   protected readonly innerClass = computed(() => {
-    const base = 'mx-auto flex w-full max-w-[1500px] flex-col gap-element-gap pb-8 sm:pb-10';
-    return this.bodyLayout() === 'fill' ? `${base} h-full min-h-0 flex-1` : `${base} min-h-min`;
+    const base = 'mx-auto flex w-full max-w-[1500px] flex-col gap-element-gap';
+    return this.bodyLayout() === 'fill'
+      ? `${base} h-full min-h-0 flex-1 pb-0 lg:pb-10`
+      : `${base} min-h-min pb-8 sm:pb-10`;
   });
 }

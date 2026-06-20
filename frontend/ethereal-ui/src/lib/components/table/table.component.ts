@@ -231,9 +231,9 @@ export interface MobileSortOption {
                 @if (cardMetricCells(row).length > 0) {
                   <div class="mt-4 grid grid-cols-2 gap-3">
                     @for (cell of cardMetricCells(row); track cell.id) {
-                      <div class="min-w-0">
+                      <div [class]="cardGridCellClass($index)">
                         <div class="ee-label text-outline">{{ cardLabel(cell.column) }}</div>
-                        <div class="mt-1 min-w-0 text-right">
+                        <div class="mt-1 min-w-0">
                           <ng-container
                             *flexRender="
                               cell.column.columnDef.cell;
@@ -251,7 +251,7 @@ export interface MobileSortOption {
                 @if (cardDetailCells(row).length > 0) {
                   <dl class="mt-4 grid grid-cols-2 gap-x-3 gap-y-2">
                     @for (cell of cardDetailCells(row); track cell.id) {
-                      <div class="min-w-0">
+                      <div [class]="cardGridCellClass($index)">
                         <dt class="ee-label text-outline">{{ cardLabel(cell.column) }}</dt>
                         <dd class="mt-0.5 min-w-0 truncate text-sm text-on-surface">
                           <ng-container
@@ -472,6 +472,10 @@ export class TableComponent<TData extends RowData> {
   protected cardLabel(column: Column<TData, unknown>): string {
     const meta = column.columnDef.meta as TableColumnMeta | undefined;
     return meta?.cardLabel ?? String(column.columnDef.header ?? column.id);
+  }
+
+  protected cardGridCellClass(index: number): string {
+    return index % 2 === 0 ? 'min-w-0 text-left' : 'min-w-0 text-right';
   }
 
   private cardCellsByRole(
