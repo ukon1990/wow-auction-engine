@@ -172,6 +172,14 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
                 ),
             )
             assertEquals(
+                1,
+                jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM connected_realm_update_history WHERE connected_realm_id = ?",
+                    Int::class.java,
+                    realm.id,
+                ),
+            )
+            assertEquals(
                 0,
                 jdbcTemplate.queryForObject(
                     "SELECT COUNT(*) FROM auction WHERE buyout = 0 OR p25 = 0 OR p75 = 0",

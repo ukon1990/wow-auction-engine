@@ -36,7 +36,6 @@ data class ConnectedRealmDTO(
                     avgDelay = 0,
                     highestDelay = 0,
                     updateAttempts = 0,
-                    updateLog = mutableListOf(),
                 ),
         )
 }
