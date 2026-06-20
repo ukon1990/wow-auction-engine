@@ -4,7 +4,7 @@ import { injectFlexRenderContext } from '@tanstack/angular-table';
 import type { CellContext } from '@tanstack/table-core';
 
 import { LocaleService } from '@core/services/locale.service';
-import { CurrencyAmountComponent, MarketItemRow } from '@ui';
+import { copperToCurrencyAmount, CurrencyAmountComponent, MarketItemRow } from '@ui';
 
 @Component({
   selector: 'app-market-metric-cell',
@@ -12,11 +12,19 @@ import { CurrencyAmountComponent, MarketItemRow } from '@ui';
   template: `
     @switch (columnId()) {
       @case ('selectedPrice') {
-        <ee-currency-amount
-          class="justify-self-end"
-          [amount]="row().minBuyout"
-          [emphasis]="row().selected === true"
-        />
+        <div class="flex flex-col items-end gap-1 justify-self-end">
+          <ee-currency-amount [amount]="row().minBuyout" [emphasis]="row().selected === true" />
+          @if (hasPercentileRange()) {
+            <div
+              class="flex flex-wrap items-center justify-end gap-x-1 text-[11px] leading-none text-outline"
+            >
+              <span>p25</span>
+              <ee-currency-amount [amount]="p25Amount()" />
+              <span>/ p75</span>
+              <ee-currency-amount [amount]="p75Amount()" />
+            </div>
+          }
+        </div>
       }
       @case ('selectedQuantity') {
         @if (row().selectedQuantity !== undefined) {
@@ -45,5 +53,18 @@ export class MarketMetricCellComponent {
 
   protected selectedLocaleForNumberPipe(): string | undefined {
     return this.locale.formatLocale();
+  }
+
+  protected hasPercentileRange(): boolean {
+    const row = this.row();
+    return row.p25PriceCopper !== undefined && row.p75PriceCopper !== undefined;
+  }
+
+  protected p25Amount() {
+    return copperToCurrencyAmount(this.row().p25PriceCopper ?? 0);
+  }
+
+  protected p75Amount() {
+    return copperToCurrencyAmount(this.row().p75PriceCopper ?? 0);
   }
 }

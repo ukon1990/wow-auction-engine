@@ -266,7 +266,6 @@
                             <!-- If sourceDirs sits in global plugin config, test-compile also uses main sources and tests never compile. -->
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                                <sourceDir>${project.build.directory}/generated-sources/openapi/src/main/kotlin</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>

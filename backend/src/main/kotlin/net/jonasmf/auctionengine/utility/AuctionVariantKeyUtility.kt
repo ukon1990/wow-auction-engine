@@ -23,17 +23,19 @@ object AuctionVariantKeyUtility {
             .joinToString(",") { "${it.type}:${it.value}" }
 
     fun variantHash(
+        connectedRealmId: Int,
         itemId: Int,
         bonusKey: String,
         modifierKey: String,
         context: Int?,
         petBreedId: Int?,
-        petLevel: Int?,
+        petLevel: Byte?,
         petQualityId: Int?,
         petSpeciesId: Int?,
     ): String =
         sha256Hex(
             listOf(
+                connectedRealmId.toString(),
                 itemId.toString(),
                 bonusKey,
                 modifierKey,

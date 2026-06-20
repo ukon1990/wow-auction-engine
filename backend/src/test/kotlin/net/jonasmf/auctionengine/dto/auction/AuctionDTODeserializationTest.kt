@@ -2,10 +2,14 @@ package net.jonasmf.auctionengine.dto.auction
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import net.jonasmf.auctionengine.mapper.toDBO
+import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
+import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
+import net.jonasmf.auctionengine.mapper.toFlatObject
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.time.Instant
 
 class AuctionDTODeserializationTest {
     private val mapper = jacksonObjectMapper()
@@ -16,18 +20,7 @@ class AuctionDTODeserializationTest {
         val response: AuctionData = mapper.readValue(payload)
 
         assertEquals(125000000L, response.auctions[0].bid)
-        assertEquals(listOf(12499, 12252, 12251), response.auctions[1].item.bonus_lists)
-    }
-
-    @Test
-    fun `should canonicalize bonus lists when converting to dbo`() {
-        val dbo =
-            AuctionItemDTO(
-                id = 19019,
-                bonus_lists = listOf(12499, 12252, 12251),
-            ).toDBO()
-
-        assertEquals("12251,12252,12499", dbo.bonusLists)
+        assertEquals(listOf(12499, 12252, 12251), response.auctions[1].item.bonusLists)
     }
 
     @Test
@@ -52,7 +45,7 @@ class AuctionDTODeserializationTest {
             )
 
         assertEquals(1000L, auction.bid)
-        assertEquals(listOf(7, 5), auction.item.bonus_lists)
+        assertEquals(listOf(7, 5), auction.item.bonusLists)
     }
 
     @Test
@@ -61,7 +54,7 @@ class AuctionDTODeserializationTest {
             AuctionDTO(
                 id = 99L,
                 item = AuctionItemDTO(id = 19019),
-                quantity = 1L,
+                quantity = 1,
                 bid = 1500L,
                 unit_price = null,
                 buyout = 2500L,
@@ -69,16 +62,16 @@ class AuctionDTODeserializationTest {
             )
 
         val connectedRealm =
-            net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm(
+            ConnectedRealm(
                 id = 1,
                 auctionHouse =
-                    net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse(
+                    AuctionHouse(
                         id = null,
                         connectedId = 1,
-                        region = net.jonasmf.auctionengine.constant.Region.Europe,
+                        region = Region.Europe,
                         lastModified = null,
                         lastRequested = null,
-                        nextUpdate = java.time.Instant.EPOCH,
+                        nextUpdate = Instant.EPOCH,
                         lowestDelay = 0L,
                         avgDelay = 60,
                         highestDelay = 0L,
@@ -97,7 +90,7 @@ class AuctionDTODeserializationTest {
                 connectedRealm = connectedRealm,
             )
 
-        val dbo = auction.toDBO(connectedRealm, updateHistory)
+        val dbo = auction.toFlatObject(connectedRealm.id)
 
         assertEquals(1500L, dbo.bid)
     }

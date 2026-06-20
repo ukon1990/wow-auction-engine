@@ -31,6 +31,8 @@ describe('MarketBrowserPage', () => {
         marketValue: {},
         regionalAverage: { gold: 1 },
         saleRate: 0,
+        p25PriceCopper: 95,
+        p75PriceCopper: 120,
         selectedQuantity: 4,
       },
     ]),
@@ -99,6 +101,8 @@ describe('MarketBrowserPage', () => {
     expect(compiled.textContent).toContain('Quality');
     expect(compiled.textContent).toContain('Price');
     expect(compiled.textContent).toContain('Quantity');
+    expect(compiled.textContent).toContain('p25');
+    expect(compiled.textContent).toContain('p75');
     expect(compiled.textContent).toContain('Healing Potion');
     expect(compiled.textContent).toContain('Consumable');
     expect(compiled.textContent).toContain('Potion');

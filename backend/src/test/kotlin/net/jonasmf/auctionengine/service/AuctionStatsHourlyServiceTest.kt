@@ -3,7 +3,6 @@ package net.jonasmf.auctionengine.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import net.jonasmf.auctionengine.constant.AuctionTimeLeft
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.constant.Region
@@ -11,34 +10,32 @@ import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm
 import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
-import net.jonasmf.auctionengine.dto.auction.AuctionDTO
-import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
 import net.jonasmf.auctionengine.repository.rds.AuctionStatsHourlyJDBCRepository
-import net.jonasmf.auctionengine.repository.rds.HourlyStatsUpsertRow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class AuctionStatsHourlyServiceTest {
     @Test
-    fun `processHourlyPriceStatistics uses connected realm local date and hour`() {
+    fun `updateHourlyStatsForRealm uses connected realm local hour and update history id`() {
         val repository = mockk<AuctionStatsHourlyJDBCRepository>()
-        val rows = slot<List<HourlyStatsUpsertRow>>()
         val hour = slot<Int>()
-        every { repository.upsertHour(capture(rows), capture(hour)) } returns 1
+        val updateHistoryId = slot<Long>()
+        every { repository.updateHourlyStats(capture(hour), capture(updateHistoryId)) } returns 1
         val service = AuctionStatsHourlyService(repository)
         val connectedRealm = connectedRealm(timezone = "Pacific/Auckland")
 
-        service.processHourlyPriceStatistics(
-            connectedRealm = connectedRealm,
-            auctions = listOf(auction()),
-            lastModified = ZonedDateTime.of(2026, 1, 1, 11, 15, 0, 0, ZoneOffset.UTC),
-        )
+        val result =
+            service.updateHourlyStatsForRealm(
+                connectedRealm = connectedRealm,
+                lastModified = ZonedDateTime.of(2026, 1, 1, 11, 15, 0, 0, ZoneOffset.UTC),
+                connectedRealmUpdateHistoryId = 42,
+            )
 
         assertEquals(0, hour.captured)
-        assertEquals(LocalDate.of(2026, 1, 2), rows.captured.single().date)
+        assertEquals(42, updateHistoryId.captured)
+        assertEquals(1, result.insertedRows)
     }
 
     private fun connectedRealm(timezone: String) =
@@ -58,15 +55,5 @@ class AuctionStatsHourlyServiceTest {
                         slug = "realm-1",
                     ),
                 ),
-        )
-
-    private fun auction() =
-        AuctionDTO(
-            id = 1,
-            item = AuctionItemDTO(id = 19019),
-            quantity = 2,
-            unit_price = null,
-            buyout = 100,
-            time_left = AuctionTimeLeft.LONG,
         )
 }

@@ -7,7 +7,7 @@ import net.jonasmf.auctionengine.constant.AuctionTimeLeft
 data class AuctionDTO(
     val id: Long,
     val item: AuctionItemDTO,
-    val quantity: Long,
+    val quantity: Int,
     val bid: Long? = null,
     val unit_price: Long?, // Commodity price
     val buyout: Long?, // Realm price

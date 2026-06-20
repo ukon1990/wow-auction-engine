@@ -22,6 +22,8 @@ export function toCraftingRow(row: CraftingMarketSearchRow): CraftingTableRow {
     quality: toQuality(row.item?.quality?.type ?? row.item?.quality?.name),
     iconUrl: row.item?.mediaUrl ?? undefined,
     outputPriceCopper: outPrice,
+    outputP25PriceCopper: toOptionalFiniteNumber(row.outputP25PriceCopper) ?? null,
+    outputP75PriceCopper: toOptionalFiniteNumber(row.outputP75PriceCopper) ?? null,
     reagentCostCopper: toOptionalFiniteNumber(row.reagentCostCopper) ?? null,
     profitCopper: toOptionalFiniteNumber(row.profitCopper) ?? null,
     roiPercent: row.roiPercent ?? null,

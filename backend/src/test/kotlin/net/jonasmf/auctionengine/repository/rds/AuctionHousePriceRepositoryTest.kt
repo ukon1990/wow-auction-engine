@@ -1,15 +1,10 @@
 package net.jonasmf.auctionengine.repository.rds
 
 import net.jonasmf.auctionengine.config.IntegrationTestBase
-import net.jonasmf.auctionengine.constant.AuctionTimeLeft
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
-import net.jonasmf.auctionengine.dto.auction.AuctionDTO
-import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
-import net.jonasmf.auctionengine.dto.auction.ModifierDTO
-import net.jonasmf.auctionengine.service.AuctionStatsHourlyService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -17,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 
 class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
     @Autowired
@@ -25,9 +19,6 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
 
     @Autowired
     lateinit var auctionStatsHourlyJDBCRepository: AuctionStatsHourlyJDBCRepository
-
-    @Autowired
-    lateinit var auctionStatsHourlyService: AuctionStatsHourlyService
 
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
@@ -82,39 +73,29 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
 
     @Test
     fun `should expose populated hours as individual rows through the view`() {
-        seedConnectedRealm(1084)
+        val connectedRealm = seedConnectedRealm(1084)
         val date = LocalDate.of(2026, 4, 6)
 
-        auctionStatsHourlyJDBCRepository.upsertHour(
-            rows =
-                listOf(
-                    HourlyStatsUpsertRow(
-                        connectedRealmId = 1084,
-                        itemId = 19019,
-                        date = date,
-                        petSpeciesId = null,
-                        modifierKey = "",
-                        bonusKey = "",
-                        price = 123_456L,
-                        quantity = 10L,
-                    ),
-                ),
+        updateHourlyStats(
+            connectedRealm = connectedRealm,
+            itemId = 19019,
+            date = date,
+            petSpeciesId = null,
+            modifierKey = "",
+            bonusKey = "",
+            price = 123_456L,
+            quantity = 10,
             hour = 3,
         )
-        auctionStatsHourlyJDBCRepository.upsertHour(
-            rows =
-                listOf(
-                    HourlyStatsUpsertRow(
-                        connectedRealmId = 1084,
-                        itemId = 19019,
-                        date = date,
-                        petSpeciesId = null,
-                        modifierKey = "",
-                        bonusKey = "",
-                        price = 120_000L,
-                        quantity = 15L,
-                    ),
-                ),
+        updateHourlyStats(
+            connectedRealm = connectedRealm,
+            itemId = 19019,
+            date = date,
+            petSpeciesId = null,
+            modifierKey = "",
+            bonusKey = "",
+            price = 120_000L,
+            quantity = 15,
             hour = 7,
         )
 
@@ -138,23 +119,18 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
 
     @Test
     fun `should omit hours with no stored price and quantity`() {
-        seedConnectedRealm(2084)
+        val connectedRealm = seedConnectedRealm(2084)
         val date = LocalDate.of(2026, 4, 7)
 
-        auctionStatsHourlyJDBCRepository.upsertHour(
-            rows =
-                listOf(
-                    HourlyStatsUpsertRow(
-                        connectedRealmId = 2084,
-                        itemId = 19020,
-                        date = date,
-                        petSpeciesId = 42,
-                        modifierKey = "",
-                        bonusKey = "",
-                        price = 99L,
-                        quantity = 2L,
-                    ),
-                ),
+        updateHourlyStats(
+            connectedRealm = connectedRealm,
+            itemId = 19020,
+            date = date,
+            petSpeciesId = 42,
+            modifierKey = "",
+            bonusKey = "",
+            price = 99L,
+            quantity = 2,
             hour = 11,
         )
 
@@ -163,175 +139,6 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         assertEquals(1, prices.size)
         assertEquals(LocalDateTime.of(2026, 4, 7, 11, 0), prices.single().timestamp)
         assertNotNull(prices.single().timestamp)
-    }
-
-    @Test
-    fun `should keep different modifier sets as separate hourly variants`() {
-        val connectedRealm = seedConnectedRealm(3084)
-        val lastModified = ZonedDateTime.of(2026, 4, 8, 9, 0, 0, 0, ZonedDateTime.now().zone)
-
-        auctionStatsHourlyService.processHourlyPriceStatistics(
-            connectedRealm = connectedRealm,
-            auctions =
-                listOf(
-                    auction(1, 19021, 500L, 2L, modifiers = listOf(ModifierDTO("9", 100), ModifierDTO("30", 7))),
-                    auction(2, 19021, 450L, 3L, modifiers = listOf(ModifierDTO("9", 101), ModifierDTO("30", 7))),
-                ),
-            lastModified = lastModified,
-        )
-
-        val first =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByTimestampAsc(
-                3084,
-                19021,
-                "7,100",
-            )
-        val second =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByTimestampAsc(
-                3084,
-                19021,
-                "7,101",
-            )
-
-        assertEquals(1, first.size)
-        assertEquals(1, second.size)
-        assertEquals(500L, first.single().price)
-        assertEquals(450L, second.single().price)
-    }
-
-    @Test
-    fun `should keep different bonus lists as separate hourly variants`() {
-        val connectedRealm = seedConnectedRealm(3584)
-        val lastModified = ZonedDateTime.of(2026, 4, 8, 11, 0, 0, 0, ZonedDateTime.now().zone)
-
-        auctionStatsHourlyService.processHourlyPriceStatistics(
-            connectedRealm = connectedRealm,
-            auctions =
-                listOf(
-                    auction(
-                        11,
-                        19031,
-                        500L,
-                        2L,
-                        modifiers = listOf(ModifierDTO("9", 100)),
-                        bonusLists = listOf(12251, 12252),
-                    ),
-                    auction(
-                        12,
-                        19031,
-                        450L,
-                        3L,
-                        modifiers = listOf(ModifierDTO("9", 100)),
-                        bonusLists = listOf(12251, 12253),
-                    ),
-                ),
-            lastModified = lastModified,
-        )
-
-        val first =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByTimestampAsc(
-                3584,
-                19031,
-                "100",
-                "12251,12252",
-            )
-        val second =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByTimestampAsc(
-                3584,
-                19031,
-                "100",
-                "12251,12253",
-            )
-
-        assertEquals(1, first.size)
-        assertEquals(1, second.size)
-        assertEquals(500L, first.single().price)
-        assertEquals(450L, second.single().price)
-    }
-
-    @Test
-    fun `should canonicalize modifier order into one hourly variant`() {
-        val connectedRealm = seedConnectedRealm(4084)
-        val lastModified = ZonedDateTime.of(2026, 4, 9, 14, 0, 0, 0, ZonedDateTime.now().zone)
-
-        auctionStatsHourlyService.processHourlyPriceStatistics(
-            connectedRealm = connectedRealm,
-            auctions =
-                listOf(
-                    auction(3, 19022, 700L, 4L, modifiers = listOf(ModifierDTO("30", 7), ModifierDTO("9", 100))),
-                    auction(4, 19022, 650L, 5L, modifiers = listOf(ModifierDTO("9", 100), ModifierDTO("30", 7))),
-                ),
-            lastModified = lastModified,
-        )
-
-        val prices =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByTimestampAsc(
-                4084,
-                19022,
-                "7,100",
-            )
-
-        assertEquals(1, prices.size)
-        assertEquals(LocalDateTime.of(2026, 4, 9, 14, 0), prices.single().timestamp)
-        assertEquals(650L, prices.single().price)
-        assertEquals(9L, prices.single().quantity)
-    }
-
-    @Test
-    fun `should canonicalize bonus list order into one hourly variant`() {
-        val connectedRealm = seedConnectedRealm(4584)
-        val lastModified = ZonedDateTime.of(2026, 4, 9, 16, 0, 0, 0, ZonedDateTime.now().zone)
-
-        auctionStatsHourlyService.processHourlyPriceStatistics(
-            connectedRealm = connectedRealm,
-            auctions =
-                listOf(
-                    auction(13, 19032, 700L, 4L, bonusLists = listOf(12499, 12252, 12251)),
-                    auction(14, 19032, 650L, 5L, bonusLists = listOf(12251, 12499, 12252)),
-                ),
-            lastModified = lastModified,
-        )
-
-        val prices =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByTimestampAsc(
-                4584,
-                19032,
-                "",
-                "12251,12252,12499",
-            )
-
-        assertEquals(1, prices.size)
-        assertEquals(LocalDateTime.of(2026, 4, 9, 16, 0), prices.single().timestamp)
-        assertEquals(650L, prices.single().price)
-        assertEquals(9L, prices.single().quantity)
-        assertEquals("12251,12252,12499", prices.single().bonusKey)
-    }
-
-    @Test
-    fun `should aggregate commodity auctions with empty modifier key`() {
-        val connectedRealm = seedConnectedRealm(5084)
-        val lastModified = ZonedDateTime.of(2026, 4, 10, 6, 0, 0, 0, ZonedDateTime.now().zone)
-
-        auctionStatsHourlyService.processHourlyPriceStatistics(
-            connectedRealm = connectedRealm,
-            auctions =
-                listOf(
-                    auction(5, 19023, 20L, 10L),
-                    auction(6, 19023, 18L, 2L),
-                ),
-            lastModified = lastModified,
-        )
-
-        val prices =
-            repository.findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByTimestampAsc(
-                5084,
-                19023,
-                "",
-            )
-
-        assertEquals(1, prices.size)
-        assertEquals(18L, prices.single().price)
-        assertEquals(12L, prices.single().quantity)
     }
 
     private fun seedConnectedRealm(id: Int): ConnectedRealm {
@@ -365,24 +172,105 @@ class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
         )
     }
 
-    private fun auction(
-        id: Long,
+    private fun updateHourlyStats(
+        connectedRealm: ConnectedRealm,
         itemId: Int,
+        date: LocalDate,
+        petSpeciesId: Int?,
+        modifierKey: String,
+        bonusKey: String,
         price: Long,
-        quantity: Long,
-        modifiers: List<ModifierDTO>? = null,
-        bonusLists: List<Int>? = null,
-    ) = AuctionDTO(
-        id = id,
-        item =
-            AuctionItemDTO(
-                id = itemId,
-                modifiers = modifiers,
-                bonus_lists = bonusLists,
-            ),
-        quantity = quantity,
-        unit_price = null,
-        buyout = price,
-        time_left = AuctionTimeLeft.LONG,
-    )
+        quantity: Int,
+        hour: Int,
+    ) {
+        require(hour in 0..23)
+        val updateHistoryId = insertUpdateHistory(connectedRealm.id, date.atTime(hour, 0))
+        insertAuction(
+            id = "auction-${connectedRealm.id}-$itemId-${date}-$hour",
+            connectedRealm = connectedRealm,
+            updateHistoryId = updateHistoryId,
+            itemId = itemId,
+            date = date,
+            hour = hour,
+            petSpeciesId = petSpeciesId,
+            modifierKey = modifierKey,
+            bonusKey = bonusKey,
+            price = price,
+            quantity = quantity,
+        )
+        auctionStatsHourlyJDBCRepository.updateHourlyStats(hour, updateHistoryId)
+    }
+
+    private fun insertUpdateHistory(
+        connectedRealmId: Int,
+        lastModified: LocalDateTime,
+    ): Long =
+        jdbcTemplate.queryForObject(
+            """
+            INSERT INTO connected_realm_update_history (
+                auction_count,
+                last_modified,
+                update_timestamp,
+                completed_timestamp,
+                connected_realm_id
+            ) VALUES (1, ?, ?, ?, ?)
+            RETURNING id
+            """.trimIndent(),
+            Long::class.java,
+            lastModified,
+            lastModified,
+            lastModified,
+            connectedRealmId,
+        )!!
+
+    private fun insertAuction(
+        id: String,
+        connectedRealm: ConnectedRealm,
+        updateHistoryId: Long,
+        itemId: Int,
+        date: LocalDate,
+        hour: Int,
+        petSpeciesId: Int?,
+        modifierKey: String,
+        bonusKey: String,
+        price: Long,
+        quantity: Int,
+    ) {
+        jdbcTemplate.update(
+            """
+            INSERT INTO auction (
+                id,
+                connected_realm_id,
+                item_id,
+                pet_breed_id,
+                pet_species_id,
+                pet_quality_id,
+                pet_level,
+                modifier_key,
+                bonus_key,
+                buyout,
+                bid,
+                p25,
+                p75,
+                quantity,
+                first_seen,
+                last_seen,
+                update_history_id
+            ) VALUES (?, ?, ?, NULL, ?, NULL, NULL, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?)
+            """.trimIndent(),
+            id,
+            connectedRealm.id,
+            itemId,
+            petSpeciesId,
+            modifierKey,
+            bonusKey,
+            price,
+            price,
+            price,
+            quantity,
+            date.atTime(hour, 0),
+            date.atTime(hour, 0),
+            updateHistoryId,
+        )
+    }
 }

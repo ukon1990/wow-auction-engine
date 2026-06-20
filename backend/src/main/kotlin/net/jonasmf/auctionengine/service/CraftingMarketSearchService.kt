@@ -168,6 +168,8 @@ class CraftingMarketSearchService(
                         listingQuantity = row.listingQuantity,
                         reagentCostCopper = row.reagentCost,
                         outputPriceCopper = row.outputUnitPrice,
+                        outputP25PriceCopper = row.outputP25Price,
+                        outputP75PriceCopper = row.outputP75Price,
                         profitCopper = row.profitCopper,
                         roiPercent = row.roiPercent,
                         outputPriceChangePercent = row.outputPriceChangePercent,

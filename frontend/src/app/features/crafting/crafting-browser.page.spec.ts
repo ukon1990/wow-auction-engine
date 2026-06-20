@@ -32,6 +32,8 @@ describe('CraftingBrowserPage', () => {
         listingKey: { bonusKey: '', modifierKey: '', petSpeciesId: 0 },
         quality: 'rare' as const,
         outputPriceCopper: 100,
+        outputP25PriceCopper: 90,
+        outputP75PriceCopper: 120,
         reagentCostCopper: 50,
         profitCopper: 50,
         roiPercent: 100,
@@ -83,6 +85,8 @@ describe('CraftingBrowserPage', () => {
     expect(compiled.textContent).toContain('Output');
     expect(compiled.textContent).toContain('Healing Potion');
     expect(compiled.textContent).toContain('Alchemy');
+    expect(compiled.textContent).toContain('p25');
+    expect(compiled.textContent).toContain('p75');
   });
 
   it('delegates selected page events to the crafting service', () => {

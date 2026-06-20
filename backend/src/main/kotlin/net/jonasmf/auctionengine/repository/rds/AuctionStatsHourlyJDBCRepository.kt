@@ -3,71 +3,50 @@ package net.jonasmf.auctionengine.repository.rds
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
-import java.sql.Date
-import java.time.LocalDate
-
-data class HourlyStatsUpsertRow(
-    val connectedRealmId: Int,
-    val itemId: Int,
-    val date: LocalDate,
-    val petSpeciesId: Int?,
-    val modifierKey: String,
-    val bonusKey: String,
-    val price: Long?,
-    val quantity: Long?,
-)
 
 @Repository
 class AuctionStatsHourlyJDBCRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) {
-    private val chunkSize = 5_000
-
     @Transactional
-    fun upsertHour(
-        rows: List<HourlyStatsUpsertRow>,
+    fun updateHourlyStats(
         hour: Int,
+        connectedRealmUpdateHistoryId: Long,
     ): Int {
-        if (rows.isEmpty()) return 0
         require(hour in 0..23) { "Hour must be between 0 and 23" }
 
         val priceColumn = "price%02d".format(hour)
         val quantityColumn = "quantity%02d".format(hour)
-        val numberOfColumns = 8
-        var total = 0
-        val valueTuple = List(numberOfColumns) { "?" }.joinToString(",", "(", ")")
 
-        rows.chunked(chunkSize).forEach { chunk ->
-            val placeholders = chunk.joinToString(",") { valueTuple }
-            val sql =
-                """
-                INSERT INTO auction_stats_hourly (
-                    connected_realm_id,
-                    item_id,
+        val sql =
+            """
+            INSERT INTO auction_stats_hourly
+                (
                     date,
-                    pet_species_id,
-                    modifier_key,
+                    item_id,
                     bonus_key,
+                    modifier_key,
+                    pet_species_id,
+                    connected_realm_id,
                     $priceColumn,
                     $quantityColumn
-                ) VALUES $placeholders
-                ON DUPLICATE KEY UPDATE
-                    $priceColumn = VALUES($priceColumn),
-                    $quantityColumn = VALUES($quantityColumn)
-                """.trimIndent()
-            val params = ArrayList<Any?>(chunk.size * numberOfColumns)
-            for (row in chunk) {
-                params.add(row.connectedRealmId)
-                params.add(row.itemId)
-                params.add(Date.valueOf(row.date))
-                params.add(row.petSpeciesId ?: -1)
-                params.add(row.modifierKey)
-                params.add(row.bonusKey)
-                params.add(row.price)
-                params.add(row.quantity)
-            }
-            total += jdbcTemplate.update(sql, *params.toTypedArray())
-        }
-        return total
+                )
+            SELECT
+                CAST(last_seen AS DATE) AS date,
+                item_id,
+                COALESCE(bonus_key, ''),
+                COALESCE(modifier_key, ''),
+                COALESCE(pet_species_id, -1),
+                connected_realm_id,
+                buyout AS $priceColumn,
+                quantity AS $quantityColumn
+            FROM auction
+            WHERE update_history_id = ?
+            ON DUPLICATE KEY UPDATE
+                $priceColumn = VALUES($priceColumn),
+                $quantityColumn = VALUES($quantityColumn)
+            """.trimIndent()
+
+        return jdbcTemplate.update(sql, connectedRealmUpdateHistoryId)
     }
 }

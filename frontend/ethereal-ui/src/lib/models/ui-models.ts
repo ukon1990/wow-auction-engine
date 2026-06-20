@@ -74,6 +74,8 @@ export interface MarketItemRow {
   readonly quality: ItemQuality;
   /** Raw copper for server-aligned sort; mirrors unified listing price. */
   readonly listingPriceCopper?: number;
+  readonly p25PriceCopper?: number;
+  readonly p75PriceCopper?: number;
   readonly minBuyout: CurrencyAmount;
   readonly marketValue: CurrencyAmount;
   readonly regionalAverage: CurrencyAmount;

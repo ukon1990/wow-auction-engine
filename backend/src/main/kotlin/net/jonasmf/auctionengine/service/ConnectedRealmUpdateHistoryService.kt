@@ -31,19 +31,14 @@ class ConnectedRealmUpdateHistoryService(
                 lastModified.toOffsetDateTime(),
             )
 
-        return existing ?: repository.save(history)
+        return existing ?: repository.saveAndFlush(history)
     }
 
     @Transactional
-    fun setUpdateToCompleted(
-        connectedRealmId: Int,
-        lastModified: ZonedDateTime,
-    ): Boolean {
+    fun setUpdateToCompleted(historyId: Long): Boolean {
         val updatedRows =
-            repository.updateCompletedTimeForConnectedRealmAndLastModified(
-                connectedRealmId,
-                lastModified.toOffsetDateTime(),
-                ZonedDateTime.now().toOffsetDateTime(),
+            repository.updateCompletedTimeById(
+                historyId,
             )
         return updatedRows > 0
     }

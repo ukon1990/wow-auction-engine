@@ -4,9 +4,9 @@ import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
-import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
+import net.jonasmf.auctionengine.repository.rds.AuctionStatsHourlyJDBCRepository
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -29,6 +29,7 @@ class BlizzardAuctionService(
     private val auctionSnapshotPersistenceService: AuctionSnapshotPersistenceService,
     private val auctionHouseService: AuctionHouseService,
     private val runtimeHealthTracker: RuntimeHealthTracker,
+    private val auctionStatsHourlyJDBCRepository: AuctionStatsHourlyJDBCRepository,
 ) {
     val logger: Logger = LoggerFactory.getLogger(BlizzardAuctionService::class.java)
 
@@ -182,34 +183,20 @@ class BlizzardAuctionService(
                     region = region,
                     connectedRealmId = connectedRealmId,
                 )
-                val hourlyStatsStartTime = System.currentTimeMillis()
-                val hourlyStatsSummary =
-                    auctionStatsHourlyService.processHourlyPriceStatisticsFromFile(
+
+                val auctionSaveSummary =
+                    auctionSnapshotPersistenceService.saveSnapshot(
                         connectedRealm = connectedRealm,
-                        payloadPath = downloadedPayload.path,
                         lastModified = lastModified,
+                        payloadPath = downloadedPayload.path,
                     )
-                if (hourlyStatsSummary.processedAuctions == 0) {
-                    logger.warn("No auctions found for realm {}", connectedRealmId)
-                    markAuctionUpdateFailed(connectedRealmId, lastModified)
-                    return
-                }
-                logger.info(
-                    "Completed hourly stats processing for realm {} region {} auctions={} groupedRows={} insertedRows={} in {}ms {}",
-                    connectedRealmId,
-                    region,
-                    hourlyStatsSummary.processedAuctions,
-                    hourlyStatsSummary.groupedRows,
-                    hourlyStatsSummary.insertedRows,
-                    System.currentTimeMillis() - hourlyStatsStartTime,
-                    JvmRuntimeDiagnostics.snapshot(),
+
+                auctionStatsHourlyService.updateHourlyStatsForRealm(
+                    connectedRealm = connectedRealm,
+                    lastModified = lastModified,
+                    connectedRealmUpdateHistoryId = auctionSaveSummary.updateHistory.id,
                 )
-                runtimeHealthTracker.markUpdateBatchProgress(
-                    "skip-current-auctions-persistence",
-                    region = region,
-                    connectedRealmId = connectedRealmId,
-                )
-                // TODO: Consider whether persisting current auctions should stay disabled to reduce transfer costs.
+
                 runtimeHealthTracker.markUpdateBatchProgress(
                     "update-auction-house-times",
                     region = region,
@@ -348,34 +335,4 @@ class BlizzardAuctionService(
         val message: String,
         val warnOnly: Boolean,
     )
-
-    /**
-     * Stores the full auctions in the database
-     */
-    private fun saveAuctionsToDatabase(
-        connectedRealm: ConnectedRealm,
-        auctionCount: Int,
-        lastModified: ZonedDateTime,
-        payloadPath: java.nio.file.Path,
-        connectedRealmId: Int,
-    ): AuctionSnapshotPersistenceSummary {
-        if (auctionCount <= 0) {
-            logger.warn("No auction data to process for realm {}", connectedRealmId)
-            return AuctionSnapshotPersistenceSummary(processedAuctions = 0, batchCount = 0, softDeletedAuctions = 0)
-        }
-        return auctionSnapshotPersistenceService.saveSnapshot(
-            payloadPath = payloadPath,
-            connectedRealm = connectedRealm,
-            auctionCount = auctionCount,
-            lastModified = lastModified,
-        )
-    }
-
-    fun saveAuction(
-        auction: AuctionDTO,
-        connectedRealm: ConnectedRealm,
-    ) {
-        auctionSnapshotPersistenceService.saveAuction(auction, connectedRealm)
-        logger.debug("Successfully upserted auction {} for realm {}", auction.id, connectedRealm.id)
-    }
 }

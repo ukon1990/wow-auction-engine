@@ -184,11 +184,15 @@ class AuctionMarketSearchService(
                             selectedRealm =
                                 context.selectedSnapshot.toMetrics(
                                     price = row.selectedPrice,
+                                    p25Price = row.selectedP25Price,
+                                    p75Price = row.selectedP75Price,
                                     quantity = row.selectedQuantity,
                                 ),
                             commodity =
                                 context.commoditySnapshot.toMetrics(
                                     price = row.commodityPrice,
+                                    p25Price = row.commodityP25Price,
+                                    p75Price = row.commodityP75Price,
                                     quantity = row.commodityQuantity,
                                 ),
                         )
@@ -379,6 +383,8 @@ class AuctionMarketSearchService(
 
     private fun MarketSnapshot.toMetrics(
         price: Long?,
+        p25Price: Long?,
+        p75Price: Long?,
         quantity: Long?,
     ): AuctionMarketMetrics =
         AuctionMarketMetrics(
@@ -387,6 +393,8 @@ class AuctionMarketSearchService(
             date = date,
             hourOfDay = hour,
             price = price,
+            p25Price = p25Price,
+            p75Price = p75Price,
             quantity = quantity,
         )
 
