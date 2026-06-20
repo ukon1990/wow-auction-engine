@@ -155,6 +155,7 @@ class AuctionSnapshotPersistenceServiceTest : IntegrationTestBase() {
             assertEquals(5, firstItem.bid)
             assertEquals(2, firstItem.p25)
             assertEquals(4, firstItem.p75)
+            assertEquals(52, firstItem.quantity)
             assertNull(onlyBidItem.buyout)
             assertEquals(50, onlyBidItem.bid)
             assertNull(onlyBidItem.p25)
