@@ -20,6 +20,8 @@ import {
   type ChartSeries,
   type HeatmapCell,
   ItemStatCardComponent,
+  PaginationComponent,
+  type PaginationState,
   PageFrameComponent,
   SymbolIconComponent,
   TooltipCardComponent,
@@ -92,6 +94,7 @@ interface ItemDetailBackState {
     HeatmapGridComponent,
     CurrencyAmountComponent,
     ItemStatCardComponent,
+    PaginationComponent,
     SymbolIconComponent,
     TooltipCardComponent,
   ],
@@ -115,6 +118,8 @@ export class MarketItemDetailPage {
   protected readonly commodityCurrentListings = signal<readonly AuctionMarketItemCurrentListing[]>(
     [],
   );
+  protected readonly currentListingsPage = signal(0);
+  protected readonly currentListingsPageSize = 10;
   protected readonly commodityLoaded = signal(false);
   protected readonly chartScope = signal<'realm' | 'commodity'>('realm');
   protected readonly selectedRecipeId = signal<number | null>(null);
@@ -145,6 +150,8 @@ export class MarketItemDetailPage {
     { index: 11, height: 66 },
   ] as const;
   protected readonly heatmapSkeletonRows = Array.from({ length: 7 }, (_, i) => i);
+  protected readonly currentListingsRowLabel = $localize`:@@itemDetail.listingsCount:listings`;
+  protected readonly currentListingsEmptySummary = $localize`:@@itemDetail.noCurrentListings:No current listings for this item.`;
 
   protected pageEyebrow(): string {
     return $localize`:@@itemDetail.eyebrow:Item Codex`;
@@ -248,10 +255,29 @@ export class MarketItemDetailPage {
   });
 
   protected readonly currentListingsForActiveScope = computed(() => {
-    if (this.chartScope() === 'commodity' && this.commodityCurrentListings().length > 0) {
+    if (this.chartScope() === 'commodity') {
       return this.commodityCurrentListings();
     }
     return this.realmCurrentListings();
+  });
+
+  protected readonly currentListingsPagination = computed<PaginationState>(() => {
+    const totalItems = this.currentListingsForActiveScope().length;
+    const totalPages = Math.ceil(totalItems / this.currentListingsPageSize);
+    const page = totalPages > 0 ? Math.min(this.currentListingsPage(), totalPages - 1) : 0;
+    return {
+      page,
+      pageSize: this.currentListingsPageSize,
+      totalItems,
+      totalPages,
+    };
+  });
+
+  protected readonly pagedCurrentListings = computed(() => {
+    const listings = this.currentListingsForActiveScope();
+    const page = this.currentListingsPagination().page;
+    const start = page * this.currentListingsPageSize;
+    return listings.slice(start, start + this.currentListingsPageSize);
   });
 
   constructor() {
@@ -316,6 +342,7 @@ export class MarketItemDetailPage {
           this.commodityLoaded.set(false);
           this.realmCurrentListings.set([]);
           this.commodityCurrentListings.set([]);
+          this.currentListingsPage.set(0);
           this.craftingAnalytics.set(null);
           this.analyticsError.set(false);
           this.selectedRecipeId.set(null);
@@ -459,10 +486,12 @@ export class MarketItemDetailPage {
   protected onScopeSelected(scope: ItemDetailScope): void {
     if (scope === 'realm') {
       this.chartScope.set('realm');
+      this.currentListingsPage.set(0);
       return;
     }
     if (this.commodityLoaded()) {
       this.chartScope.set('commodity');
+      this.currentListingsPage.set(0);
       return;
     }
     const ctx = this.routeCtx();
@@ -488,6 +517,7 @@ export class MarketItemDetailPage {
           this.commodityCurrentListings.set(commodityRes.currentListings);
           this.commodityLoaded.set(true);
           this.chartScope.set('commodity');
+          this.currentListingsPage.set(0);
         },
         error: () => {
           this.error.set(true);
@@ -512,6 +542,10 @@ export class MarketItemDetailPage {
   protected quantityLabel(q: number | null | undefined): string {
     if (q == null || !Number.isFinite(q)) return '—';
     return this.formatDecimal(Math.round(q), '1.0-0');
+  }
+
+  protected onCurrentListingsPageChange(page: number): void {
+    this.currentListingsPage.set(page);
   }
 
   protected dailyTooltipTitle(d: AuctionMarketItemDetailResponse, x: number): string {
