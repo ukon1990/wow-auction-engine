@@ -50,7 +50,7 @@ fun AuctionDTO.toFlatObject(connectedRealmId: Int) =
         petLevel = item.petLevel,
         modifierKey = AuctionVariantKeyUtility.canonicalModifierKey(item.modifiers),
         bonusList = AuctionVariantKeyUtility.canonicalBonusKey(item.bonusLists),
-        buyout = buyout ?: unit_price ?: 0,
+        buyout = buyout ?: unit_price,
         bid = bid,
         quantity = quantity,
     )
