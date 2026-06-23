@@ -34,6 +34,13 @@ listExpansions:
             - Admin
         operationId: listExpansions
         summary: Lists configured item expansions
+        parameters:
+            - name: locale
+              in: query
+              required: false
+              schema:
+                  type: string
+              description: Optional locale override for resolved expansion names.
         responses:
             "200":
                 description: Expansions
@@ -43,12 +50,90 @@ listExpansions:
                             type: array
                             items:
                                 $ref: "../openapi.yml#/components/schemas/AdminExpansion"
+    post:
+        tags:
+            - Admin
+        operationId: createExpansion
+        summary: Creates an expansion
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "../openapi.yml#/components/schemas/AdminExpansionRequest"
+        responses:
+            "200":
+                description: Created expansion
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminExpansion"
+            "400":
+                description: Invalid expansion
+            "409":
+                description: Expansion id, slug, or major version already exists
+expansionById:
+    put:
+        tags:
+            - Admin
+        operationId: updateExpansion
+        summary: Updates an expansion
+        parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                  type: integer
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "../openapi.yml#/components/schemas/AdminExpansionRequest"
+        responses:
+            "200":
+                description: Updated expansion
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminExpansion"
+            "400":
+                description: Invalid expansion
+            "404":
+                description: Expansion not found
+            "409":
+                description: Slug or major version already exists
+    delete:
+        tags:
+            - Admin
+        operationId: deleteExpansion
+        summary: Deletes an expansion
+        parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                  type: integer
+        responses:
+            "204":
+                description: Expansion deleted
+            "404":
+                description: Expansion not found
+            "409":
+                description: Expansion is referenced by ranges or items
 expansionRanges:
     get:
         tags:
             - Admin
         operationId: listExpansionRanges
         summary: Lists configured item expansion ranges
+        parameters:
+            - name: locale
+              in: query
+              required: false
+              schema:
+                  type: string
+              description: Optional locale override for resolved expansion names.
         responses:
             "200":
                 description: Expansion ranges

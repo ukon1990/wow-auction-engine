@@ -1,0 +1,13 @@
+type: object
+required: [id, slug, nameLocales, majorVersion, displayOrder]
+properties:
+    id:
+        type: integer
+    slug:
+        type: string
+    majorVersion:
+        type: integer
+    displayOrder:
+        type: integer
+    nameLocales:
+        $ref: "../game-locale.yml"

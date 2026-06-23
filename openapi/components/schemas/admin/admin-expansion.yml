@@ -1,5 +1,5 @@
 type: object
-required: [id, slug, name, majorVersion, displayOrder]
+required: [id, slug, name, nameLocales, majorVersion, displayOrder]
 properties:
   id:
     type: integer
@@ -7,6 +7,8 @@ properties:
     type: string
   name:
     type: string
+  nameLocales:
+    $ref: "../game-locale.yml"
   majorVersion:
     type: integer
   displayOrder:

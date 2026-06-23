@@ -28,6 +28,8 @@ paths:
     $ref: ./paths/admin.yml#/getStatus
   /admin/expansions:
     $ref: ./paths/admin.yml#/listExpansions
+  /admin/expansions/{id}:
+    $ref: ./paths/admin.yml#/expansionById
   /admin/expansion-ranges:
     $ref: ./paths/admin.yml#/expansionRanges
   /admin/expansion-ranges/{id}:
@@ -70,6 +72,10 @@ components:
       $ref: ./components/schemas/admin/admin-table-size.yml
     AdminExpansion:
       $ref: ./components/schemas/admin/admin-expansion.yml
+    AdminExpansionRequest:
+      $ref: ./components/schemas/admin/admin-expansion-request.yml
+    GameLocale:
+      $ref: ./components/schemas/game-locale.yml
     AdminExpansionItemRange:
       $ref: ./components/schemas/admin/admin-expansion-item-range.yml
     AdminExpansionItemRangeRequest:

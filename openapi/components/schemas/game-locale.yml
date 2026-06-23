@@ -1,0 +1,41 @@
+type: object
+properties:
+    en_US:
+        type: string
+        nullable: true
+    en_GB:
+        type: string
+        nullable: true
+    de_DE:
+        type: string
+        nullable: true
+    es_ES:
+        type: string
+        nullable: true
+    es_MX:
+        type: string
+        nullable: true
+    fr_FR:
+        type: string
+        nullable: true
+    it_IT:
+        type: string
+        nullable: true
+    ko_KR:
+        type: string
+        nullable: true
+    pt_BR:
+        type: string
+        nullable: true
+    pt_PT:
+        type: string
+        nullable: true
+    ru_RU:
+        type: string
+        nullable: true
+    zh_CN:
+        type: string
+        nullable: true
+    zh_TW:
+        type: string
+        nullable: true
