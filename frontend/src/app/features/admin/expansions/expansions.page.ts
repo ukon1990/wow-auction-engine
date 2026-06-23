@@ -16,8 +16,10 @@ import { AdminExpansionJobService } from '@features/admin/expansions/admin-expan
 import { AdminExpansionService } from '@features/admin/expansions/admin-expansion.service';
 import {
   defaultExpansionRangeFilters,
+  defaultCreateRangeValues,
   filterExpansionRanges,
   sortExpansionRanges,
+  type CreateExpansionRangeDefaults,
   type ExpansionRangeFilterState,
 } from '@features/admin/expansions/expansion-range-filters';
 import {
@@ -84,6 +86,10 @@ export class ExpansionsPage {
   protected readonly page = signal(1);
   protected readonly formMode = signal<ExpansionRangeFormMode | null>(null);
   protected readonly editingRange = signal<AdminExpansionItemRange | null>(null);
+  protected readonly createRangeDefaults = signal<CreateExpansionRangeDefaults>({
+    expansionId: '',
+    startItemId: '',
+  });
   protected readonly formError = signal<string | null>(null);
 
   protected readonly expansionFilterOptions = computed(() => [
@@ -179,6 +185,7 @@ export class ExpansionsPage {
   protected openCreateForm(): void {
     this.formError.set(null);
     this.editingRange.set(null);
+    this.createRangeDefaults.set(defaultCreateRangeValues(this.expansions(), this.ranges()));
     this.formMode.set('create');
   }
 

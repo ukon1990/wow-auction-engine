@@ -147,6 +147,7 @@
   @if (formMode(); as mode) {
     <app-expansion-range-form
       [expansions]="expansions()"
+      [createDefaults]="createRangeDefaults()"
       [mode]="mode"
       [range]="editingRange()"
       [submitting]="mutationLoading()"
