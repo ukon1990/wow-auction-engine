@@ -1,0 +1,23 @@
+type: object
+required: [name, rows, tableSizeInMb, indexSizeInMb, sizeInMb, freeTableSizeInMb, allocatedTableSize]
+properties:
+    name:
+        type: string
+    rows:
+        type: integer
+        format: int64
+    tableSizeInMb:
+        type: integer
+        format: int64
+    indexSizeInMb:
+        type: integer
+        format: int64
+    sizeInMb:
+        type: integer
+        format: int64
+    freeTableSizeInMb:
+        type: integer
+        format: int64
+    allocatedTableSize:
+        type: integer
+        format: int64

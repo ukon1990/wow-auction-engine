@@ -24,6 +24,8 @@ paths:
     $ref: ./paths/health.yml#/health
   /admin/users:
     $ref: ./paths/admin.yml#/getUsers
+  /admin/status:
+    $ref: ./paths/admin.yml#/getStatus
   /realms:
     $ref: ./paths/realm.yml#/listRealms
   /realms/{region}/{slug}:
@@ -44,6 +46,16 @@ components:
   schemas:
     User:
       $ref: ./components/schemas/admin/user.yml
+    AdminStatus:
+      $ref: ./components/schemas/admin/admin-status.yml
+    AdminConnectionStatus:
+      $ref: ./components/schemas/admin/admin-connection-status.yml
+    AdminServerStatus:
+      $ref: ./components/schemas/admin/admin-server-status.yml
+    AdminRunningQuery:
+      $ref: ./components/schemas/admin/admin-running-query.yml
+    AdminTableSize:
+      $ref: ./components/schemas/admin/admin-table-size.yml
     AuctionHouseStatus:
       $ref: ./components/schemas/auction-house-status.yml
     AuctionListingKey:

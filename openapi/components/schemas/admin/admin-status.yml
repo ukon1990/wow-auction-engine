@@ -1,0 +1,15 @@
+type: object
+required: [connections, server, runningQueries, tableSizes]
+properties:
+    connections:
+        $ref: "../../../openapi.yml#/components/schemas/AdminConnectionStatus"
+    server:
+        $ref: "../../../openapi.yml#/components/schemas/AdminServerStatus"
+    runningQueries:
+        type: array
+        items:
+            $ref: "../../../openapi.yml#/components/schemas/AdminRunningQuery"
+    tableSizes:
+        type: array
+        items:
+            $ref: "../../../openapi.yml#/components/schemas/AdminTableSize"

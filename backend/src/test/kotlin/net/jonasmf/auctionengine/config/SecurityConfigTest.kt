@@ -4,6 +4,7 @@ import net.jonasmf.auctionengine.controller.AdminController
 import net.jonasmf.auctionengine.controller.HealthController
 import net.jonasmf.auctionengine.service.RuntimeHealthSnapshot
 import net.jonasmf.auctionengine.service.RuntimeHealthTracker
+import net.jonasmf.auctionengine.service.admin.AdminStatusService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyLong
@@ -48,6 +49,9 @@ class SecurityConfigTest {
 
     @MockitoBean
     private lateinit var userService: UserService
+
+    @MockitoBean
+    private lateinit var adminStatusService: AdminStatusService
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder

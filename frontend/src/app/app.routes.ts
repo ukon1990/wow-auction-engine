@@ -50,6 +50,20 @@ export const routes: TitledRoutes = [
     runGuardsAndResolvers: 'always',
     children: [
       {
+        path: '',
+        redirectTo: 'status',
+        pathMatch: 'full',
+      },
+      {
+        path: 'status',
+        title: 'Status',
+        icon: 'query_stats',
+        loadComponent: () =>
+          import('@features/admin/status/admin-status.page').then(
+            (module) => module.AdminStatusPage,
+          ),
+      },
+      {
         path: 'users',
         title: $localize`:@@route.admin.users:Users`,
         icon: 'manage_accounts',
