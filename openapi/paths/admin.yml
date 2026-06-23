@@ -222,7 +222,7 @@ applyExpansionRanges:
                 content:
                     application/json:
                         schema:
-                            $ref: "../openapi.yml#/components/schemas/AdminItemJob"
+                            $ref: "../openapi.yml#/components/schemas/AdminJob"
             "409":
                 description: A job of this type is already running
 fetchMissingExpansionRangeItems:
@@ -237,15 +237,15 @@ fetchMissingExpansionRangeItems:
                 content:
                     application/json:
                         schema:
-                            $ref: "../openapi.yml#/components/schemas/AdminItemJob"
+                            $ref: "../openapi.yml#/components/schemas/AdminJob"
             "409":
                 description: A job of this type is already running
-getAdminItemJob:
+getAdminJob:
     get:
         tags:
             - Admin
-        operationId: getAdminItemJob
-        summary: Gets an admin item job
+        operationId: getAdminJob
+        summary: Gets an admin job
         parameters:
             - name: id
               in: path
@@ -255,10 +255,10 @@ getAdminItemJob:
                   format: int64
         responses:
             "200":
-                description: Admin item job
+                description: Admin job
                 content:
                     application/json:
                         schema:
-                            $ref: "../openapi.yml#/components/schemas/AdminItemJob"
+                            $ref: "../openapi.yml#/components/schemas/AdminJob"
             "404":
                 description: Job not found

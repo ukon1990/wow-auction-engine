@@ -4,12 +4,13 @@ import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.config.SecurityConfig
 import net.jonasmf.auctionengine.generated.model.AdminExpansion1
 import net.jonasmf.auctionengine.generated.model.GameLocale
-import net.jonasmf.auctionengine.generated.model.AdminItemJob
+import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.generated.model.AdminConnectionStatus
 import net.jonasmf.auctionengine.generated.model.AdminServerStatus
 import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
+import net.jonasmf.auctionengine.service.admin.AdminJobService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.junit.jupiter.api.Nested
@@ -56,6 +57,9 @@ class AdminControllerTest {
 
     @MockitoBean
     private lateinit var adminExpansionService: AdminExpansionService
+
+    @MockitoBean
+    private lateinit var adminJobService: AdminJobService
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder
@@ -229,10 +233,11 @@ class AdminControllerTest {
         @Test
         fun `should start apply job if Cognito Admin group`() {
             `when`(adminExpansionService.applyExpansionRanges("user")).thenReturn(
-                AdminItemJob(
+                AdminJob(
                     id = 1,
-                    type = "apply-expansion-ranges",
-                    status = AdminItemJob.Status.RUNNING,
+                    domain = AdminJob.Domain.ITEM,
+                    operation = "apply-expansion-ranges",
+                    status = AdminJob.Status.RUNNING,
                     startedAt = OffsetDateTime.parse("2026-06-23T08:00:00Z"),
                     requestedBy = "user",
                 ),

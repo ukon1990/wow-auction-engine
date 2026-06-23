@@ -1,37 +1,38 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { AdminApiService, AdminItemJob } from '@api/generated';
+import { AdminApiService, AdminJob } from '@api/generated';
 import { EMPTY, Subscription, catchError, exhaustMap, tap, timer } from 'rxjs';
 
 const POLL_INTERVAL_MS = 2000;
 
-export const APPLY_EXPANSION_RANGES_JOB = 'apply-expansion-ranges';
-export const FETCH_EXPANSION_RANGE_ITEMS_JOB = 'fetch-expansion-range-items';
+export const ADMIN_JOB_DOMAIN_ITEM = 'item';
+export const APPLY_EXPANSION_RANGES_OPERATION = 'apply-expansion-ranges';
+export const FETCH_EXPANSION_RANGE_ITEMS_OPERATION = 'fetch-expansion-range-items';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AdminExpansionJobService {
-  readonly activeJob = signal<AdminItemJob | null>(null);
+export class AdminJobService {
+  readonly activeJob = signal<AdminJob | null>(null);
   readonly dismissed = signal(false);
 
   private readonly api = inject(AdminApiService);
   private pollingSubscription: Subscription | null = null;
 
-  trackJob(job: AdminItemJob): void {
+  trackJob(job: AdminJob): void {
     this.dismissed.set(false);
     this.activeJob.set(job);
     this.stopPolling();
 
-    if (job.status !== AdminItemJob.StatusEnum.Running) {
+    if (job.status !== AdminJob.StatusEnum.Running) {
       return;
     }
 
     this.pollingSubscription = timer(POLL_INTERVAL_MS, POLL_INTERVAL_MS)
       .pipe(
-        exhaustMap(() => this.api.getAdminItemJob(job.id)),
+        exhaustMap(() => this.api.getAdminJob(job.id)),
         tap((updated) => {
           this.activeJob.set(updated);
-          if (updated.status !== AdminItemJob.StatusEnum.Running) {
+          if (updated.status !== AdminJob.StatusEnum.Running) {
             this.stopPolling();
           }
         }),

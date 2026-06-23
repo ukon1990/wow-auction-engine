@@ -1,8 +1,5 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
 import net.jonasmf.auctionengine.dto.LocaleDTO
@@ -10,7 +7,6 @@ import net.jonasmf.auctionengine.generated.model.AdminExpansion1
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
-import net.jonasmf.auctionengine.generated.model.AdminItemJob
 import net.jonasmf.auctionengine.mapper.toGameLocale
 import net.jonasmf.auctionengine.mapper.toLocaleDTO
 import org.springframework.jdbc.core.JdbcTemplate
@@ -31,8 +27,6 @@ class AdminExpansionRepository(
     private val jdbcTemplate: JdbcTemplate,
     private val localeJdbcRepository: LocaleJdbcRepository,
 ) {
-    private val objectMapper = jacksonObjectMapper()
-
     fun listExpansions(localeColumnSuffix: String = DEFAULT_LOCALE_COLUMN_SUFFIX): List<AdminExpansion1> =
         jdbcTemplate.query(
             expansionSelectSql("ORDER BY e.display_order, e.id", localeColumnSuffix),
@@ -333,68 +327,6 @@ class AdminExpansionRepository(
         )
     }
 
-    fun createJob(
-        type: String,
-        requestedBy: String?,
-    ): AdminItemJob {
-        jdbcTemplate.update(
-            """
-            INSERT INTO admin_item_job (type, status, requested_by)
-            VALUES (?, 'running', ?)
-            """.trimIndent(),
-            type,
-            requestedBy,
-        )
-        val id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long::class.java)!!
-        return findJob(id) ?: error("Created admin item job $id was not found")
-    }
-
-    fun completeJob(
-        id: Long,
-        summary: Map<String, Any?>,
-    ) {
-        jdbcTemplate.update(
-            """
-            UPDATE admin_item_job
-            SET status = 'completed',
-                finished_at = CURRENT_TIMESTAMP,
-                summary_json = ?
-            WHERE id = ?
-            """.trimIndent(),
-            objectMapper.writeValueAsString(summary),
-            id,
-        )
-    }
-
-    fun failJob(
-        id: Long,
-        error: Throwable,
-    ) {
-        jdbcTemplate.update(
-            """
-            UPDATE admin_item_job
-            SET status = 'failed',
-                finished_at = CURRENT_TIMESTAMP,
-                error_message = ?
-            WHERE id = ?
-            """.trimIndent(),
-            error.message?.take(1024) ?: error.javaClass.simpleName,
-            id,
-        )
-    }
-
-    fun findJob(id: Long): AdminItemJob? =
-        jdbcTemplate
-            .query(
-                """
-                SELECT id, type, status, requested_by, started_at, finished_at, summary_json, error_message
-                FROM admin_item_job
-                WHERE id = ?
-                """.trimIndent(),
-                { rs, _ -> rs.toAdminItemJob(objectMapper) },
-                id,
-            ).firstOrNull()
-
     private fun expansionSelectSql(
         suffix: String,
         localeColumnSuffix: String,
@@ -511,24 +443,6 @@ private fun ResultSet.toNestedAdminExpansion(): AdminExpansion1 {
         nameLocales = locale.toGameLocale(),
         majorVersion = getInt("expansion_major_version"),
         displayOrder = getInt("expansion_display_order"),
-    )
-}
-
-private fun ResultSet.toAdminItemJob(objectMapper: ObjectMapper): AdminItemJob {
-    val summaryJson = getString("summary_json")
-    val summary =
-        summaryJson?.let {
-            objectMapper.readValue(it, object : TypeReference<Map<String, Any>>() {})
-        }
-    return AdminItemJob(
-        id = getLong("id"),
-        type = getString("type"),
-        status = AdminItemJob.Status.forValue(getString("status")),
-        requestedBy = getString("requested_by"),
-        startedAt = getTimestamp("started_at").toOffsetDateTime(),
-        finishedAt = getTimestamp("finished_at")?.toOffsetDateTime(),
-        summary = summary,
-        errorMessage = getString("error_message"),
     )
 }
 

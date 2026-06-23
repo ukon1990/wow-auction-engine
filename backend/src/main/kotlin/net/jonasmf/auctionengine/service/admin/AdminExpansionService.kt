@@ -4,10 +4,11 @@ import net.jonasmf.auctionengine.generated.model.AdminExpansion1
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
-import net.jonasmf.auctionengine.generated.model.AdminItemJob
+import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.mapper.hasEnglishName
 import net.jonasmf.auctionengine.mapper.toLocaleDTO
 import net.jonasmf.auctionengine.repository.rds.AdminExpansionRepository
+import net.jonasmf.auctionengine.repository.rds.AdminJobRepository
 import net.jonasmf.auctionengine.service.ItemSyncResult
 import net.jonasmf.auctionengine.service.ItemSyncService
 import org.slf4j.LoggerFactory
@@ -17,12 +18,10 @@ import org.springframework.web.server.ResponseStatusException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicBoolean
 
-private const val APPLY_EXPANSION_RANGES_JOB = "apply-expansion-ranges"
-private const val FETCH_EXPANSION_RANGE_ITEMS_JOB = "fetch-expansion-range-items"
-
 @Service
 class AdminExpansionService(
     private val adminExpansionRepository: AdminExpansionRepository,
+    private val adminJobRepository: AdminJobRepository,
     private val itemSyncService: ItemSyncService,
 ) {
     private val log = LoggerFactory.getLogger(AdminExpansionService::class.java)
@@ -114,36 +113,42 @@ class AdminExpansionService(
         }
     }
 
-    fun applyExpansionRanges(requestedBy: String?): AdminItemJob {
+    fun applyExpansionRanges(requestedBy: String?): AdminJob {
         if (!applyRunning.compareAndSet(false, true)) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Expansion range apply job is already running")
         }
-        val job = adminExpansionRepository.createJob(APPLY_EXPANSION_RANGES_JOB, requestedBy)
+        val job =
+            adminJobRepository.createJob(
+                domain = AdminJobDomain.ITEM,
+                operation = AdminJobOperations.APPLY_EXPANSION_RANGES,
+                requestedBy = requestedBy,
+            )
         log.info("Accepted apply expansion ranges job id={} requestedBy={}", job.id, requestedBy)
         CompletableFuture.runAsync { runApplyJob(job.id) }
         return job
     }
 
-    fun fetchMissingExpansionRangeItems(requestedBy: String?): AdminItemJob {
+    fun fetchMissingExpansionRangeItems(requestedBy: String?): AdminJob {
         if (!fetchMissingRunning.compareAndSet(false, true)) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Expansion range item fetch job is already running")
         }
-        val job = adminExpansionRepository.createJob(FETCH_EXPANSION_RANGE_ITEMS_JOB, requestedBy)
+        val job =
+            adminJobRepository.createJob(
+                domain = AdminJobDomain.ITEM,
+                operation = AdminJobOperations.FETCH_EXPANSION_RANGE_ITEMS,
+                requestedBy = requestedBy,
+            )
         log.info("Accepted fetch missing expansion range items job id={} requestedBy={}", job.id, requestedBy)
         CompletableFuture.runAsync { runFetchMissingJob(job.id) }
         return job
     }
-
-    fun getJob(id: Long): AdminItemJob =
-        adminExpansionRepository.findJob(id)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Admin item job not found: $id")
 
     fun runApplyJob(jobId: Long) {
         val startTime = System.currentTimeMillis()
         log.info("Starting apply expansion ranges job id={}", jobId)
         try {
             val summary = adminExpansionRepository.applyEnabledRanges()
-            adminExpansionRepository.completeJob(
+            adminJobRepository.completeJob(
                 jobId,
                 mapOf(
                     "matchedItemCount" to summary.matchedItemCount,
@@ -166,7 +171,7 @@ class AdminExpansionService(
                 System.currentTimeMillis() - startTime,
                 error,
             )
-            adminExpansionRepository.failJob(jobId, error)
+            adminJobRepository.failJob(jobId, error)
         } finally {
             applyRunning.set(false)
         }
@@ -177,7 +182,7 @@ class AdminExpansionService(
         log.info("Starting fetch missing expansion range items job id={}", jobId)
         try {
             val result = itemSyncService.syncMissingItemsFromEnabledExpansionRanges()
-            adminExpansionRepository.completeJob(jobId, result.toSummaryMap())
+            adminJobRepository.completeJob(jobId, result.toSummaryMap())
             log.info(
                 "Completed fetch missing expansion range items job id={} in {}ms region={} candidates={} missing={} fetched={} persisted={}",
                 jobId,
@@ -195,7 +200,7 @@ class AdminExpansionService(
                 System.currentTimeMillis() - startTime,
                 error,
             )
-            adminExpansionRepository.failJob(jobId, error)
+            adminJobRepository.failJob(jobId, error)
         } finally {
             fetchMissingRunning.set(false)
         }

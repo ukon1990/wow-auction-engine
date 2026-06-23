@@ -6,11 +6,11 @@ import {
   AdminExpansionItemRange,
   AdminExpansionItemRangeRequest,
   AdminExpansionRequest,
-  AdminItemJob,
+  AdminJob,
 } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
 import { ToastService } from '@core/services/toast.service';
-import { AdminExpansionJobService } from '@features/admin/expansions/admin-expansion-job.service';
+import { AdminJobService } from '@features/admin/shared/admin-job.service';
 import { catchError, finalize, forkJoin, map, Observable, switchMap, tap, throwError } from 'rxjs';
 
 @Injectable({
@@ -24,7 +24,7 @@ export class AdminExpansionService {
   readonly error = signal<string | null>(null);
 
   private readonly api = inject(AdminApiService);
-  private readonly jobs = inject(AdminExpansionJobService);
+  private readonly jobs = inject(AdminJobService);
   private readonly toast = inject(ToastService);
   private readonly localeService = inject(LocaleService);
 
@@ -79,11 +79,11 @@ export class AdminExpansionService {
     return this.mutateRanges(() => this.api.deleteExpansionRange(id));
   }
 
-  startApplyJob(): Observable<AdminItemJob> {
+  startApplyJob(): Observable<AdminJob> {
     return this.startJob(() => this.api.applyExpansionRanges());
   }
 
-  startFetchMissingJob(): Observable<AdminItemJob> {
+  startFetchMissingJob(): Observable<AdminJob> {
     return this.startJob(() => this.api.fetchMissingExpansionRangeItems());
   }
 
@@ -140,7 +140,7 @@ export class AdminExpansionService {
     );
   }
 
-  private startJob(request: () => Observable<AdminItemJob>): Observable<AdminItemJob> {
+  private startJob(request: () => Observable<AdminJob>): Observable<AdminJob> {
     this.mutationLoading.set(true);
     return request().pipe(
       tap({
@@ -150,7 +150,7 @@ export class AdminExpansionService {
             this.toast.error('A job of this type is already running.');
             return;
           }
-          this.toast.error(readHttpErrorMessage(error, 'Unable to start admin item job.'));
+          this.toast.error(readHttpErrorMessage(error, 'Unable to start admin job.'));
         },
       }),
       finalize(() => this.mutationLoading.set(false)),

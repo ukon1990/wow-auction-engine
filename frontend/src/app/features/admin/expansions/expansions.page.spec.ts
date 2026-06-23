@@ -3,7 +3,7 @@ import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import { AdminExpansion, AdminExpansionItemRange } from '@api/generated';
 import { englishGameLocale } from '@features/admin/shared/game-locale-test-fixtures';
-import { AdminExpansionJobService } from './admin-expansion-job.service';
+import { AdminJobService } from '@features/admin/shared/admin-job.service';
 import { AdminExpansionService } from './admin-expansion.service';
 import { ExpansionsPage } from './expansions.page';
 
@@ -69,7 +69,7 @@ describe('ExpansionsPage', () => {
       imports: [ExpansionsPage],
       providers: [
         { provide: AdminExpansionService, useValue: serviceStub },
-        { provide: AdminExpansionJobService, useValue: jobStub },
+        { provide: AdminJobService, useValue: jobStub },
       ],
     }).compileComponents();
 

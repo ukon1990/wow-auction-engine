@@ -1,28 +1,28 @@
-import { AdminItemJob } from '@api/generated';
+import { AdminJob } from '@api/generated';
 import {
-  APPLY_EXPANSION_RANGES_JOB,
-  FETCH_EXPANSION_RANGE_ITEMS_JOB,
-} from '@features/admin/expansions/admin-expansion-job.service';
+  APPLY_EXPANSION_RANGES_OPERATION,
+  FETCH_EXPANSION_RANGE_ITEMS_OPERATION,
+} from '@features/admin/shared/admin-job.service';
 
-export function expansionJobTitle(job: AdminItemJob): string {
-  if (job.type === APPLY_EXPANSION_RANGES_JOB) {
-    return job.status === AdminItemJob.StatusEnum.Running
+export function expansionJobTitle(job: AdminJob): string {
+  if (job.operation === APPLY_EXPANSION_RANGES_OPERATION) {
+    return job.status === AdminJob.StatusEnum.Running
       ? $localize`:@@admin.expansions.jobs.apply.running:Applying expansion ranges…`
       : $localize`:@@admin.expansions.jobs.apply.done:Apply expansion ranges finished`;
   }
-  if (job.type === FETCH_EXPANSION_RANGE_ITEMS_JOB) {
-    return job.status === AdminItemJob.StatusEnum.Running
+  if (job.operation === FETCH_EXPANSION_RANGE_ITEMS_OPERATION) {
+    return job.status === AdminJob.StatusEnum.Running
       ? $localize`:@@admin.expansions.jobs.fetch.running:Fetching missing items…`
       : $localize`:@@admin.expansions.jobs.fetch.done:Fetch missing items finished`;
   }
-  return $localize`:@@admin.expansions.jobs.generic:Admin item job`;
+  return $localize`:@@admin.expansions.jobs.generic:Admin job`;
 }
 
-export function expansionJobSummary(job: AdminItemJob): string | null {
-  if (job.status === AdminItemJob.StatusEnum.Running) {
+export function expansionJobSummary(job: AdminJob): string | null {
+  if (job.status === AdminJob.StatusEnum.Running) {
     return null;
   }
-  if (job.status === AdminItemJob.StatusEnum.Failed) {
+  if (job.status === AdminJob.StatusEnum.Failed) {
     return job.errorMessage ?? $localize`:@@admin.expansions.jobs.failed:Job failed.`;
   }
 
@@ -31,7 +31,7 @@ export function expansionJobSummary(job: AdminItemJob): string | null {
     return null;
   }
 
-  if (job.type === APPLY_EXPANSION_RANGES_JOB) {
+  if (job.operation === APPLY_EXPANSION_RANGES_OPERATION) {
     return [
       formatCount('matched', summary['matchedItemCount']),
       formatCount('updated', summary['updatedItemCount']),
@@ -41,7 +41,7 @@ export function expansionJobSummary(job: AdminItemJob): string | null {
       .join(' · ');
   }
 
-  if (job.type === FETCH_EXPANSION_RANGE_ITEMS_JOB) {
+  if (job.operation === FETCH_EXPANSION_RANGE_ITEMS_OPERATION) {
     return [
       formatCount('missing', summary['missingItemCount']),
       formatCount('fetched', summary['fetchedItemCount']),

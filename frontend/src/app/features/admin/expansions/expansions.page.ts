@@ -12,9 +12,9 @@ import {
   AdminExpansionItemRange,
   AdminExpansionItemRangeRequest,
   AdminExpansionRequest,
-  AdminItemJob,
+  AdminJob,
 } from '@api/generated';
-import { AdminExpansionJobService } from '@features/admin/expansions/admin-expansion-job.service';
+import { AdminJobService } from '@features/admin/shared/admin-job.service';
 import { AdminExpansionService } from '@features/admin/expansions/admin-expansion.service';
 import {
   ExpansionFormComponent,
@@ -70,7 +70,7 @@ const PAGE_SIZE = 50;
 })
 export class ExpansionsPage {
   private readonly service = inject(AdminExpansionService);
-  private readonly jobService = inject(AdminExpansionJobService);
+  private readonly jobService = inject(AdminJobService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly loading = this.service.loading.asReadonly();
@@ -182,11 +182,11 @@ export class ExpansionsPage {
   });
 
   protected readonly jobIsRunning = computed(
-    () => this.activeJob()?.status === AdminItemJob.StatusEnum.Running,
+    () => this.activeJob()?.status === AdminJob.StatusEnum.Running,
   );
 
   protected readonly jobFailed = computed(
-    () => this.activeJob()?.status === AdminItemJob.StatusEnum.Failed,
+    () => this.activeJob()?.status === AdminJob.StatusEnum.Failed,
   );
 
   protected readonly rangeFormTitle = computed(() =>

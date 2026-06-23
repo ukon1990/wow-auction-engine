@@ -38,8 +38,8 @@ paths:
     $ref: ./paths/admin.yml#/applyExpansionRanges
   /admin/expansion-ranges/fetch-missing-items:
     $ref: ./paths/admin.yml#/fetchMissingExpansionRangeItems
-  /admin/item-jobs/{id}:
-    $ref: ./paths/admin.yml#/getAdminItemJob
+  /admin/jobs/{id}:
+    $ref: ./paths/admin.yml#/getAdminJob
   /realms:
     $ref: ./paths/realm.yml#/listRealms
   /realms/{region}/{slug}:
@@ -80,8 +80,8 @@ components:
       $ref: ./components/schemas/admin/admin-expansion-item-range.yml
     AdminExpansionItemRangeRequest:
       $ref: ./components/schemas/admin/admin-expansion-item-range-request.yml
-    AdminItemJob:
-      $ref: ./components/schemas/admin/admin-item-job.yml
+    AdminJob:
+      $ref: ./components/schemas/admin/admin-job.yml
     AuctionHouseStatus:
       $ref: ./components/schemas/auction-house-status.yml
     AuctionListingKey:

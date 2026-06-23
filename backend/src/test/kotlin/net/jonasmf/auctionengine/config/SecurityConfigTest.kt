@@ -5,6 +5,7 @@ import net.jonasmf.auctionengine.controller.HealthController
 import net.jonasmf.auctionengine.service.RuntimeHealthSnapshot
 import net.jonasmf.auctionengine.service.RuntimeHealthTracker
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
+import net.jonasmf.auctionengine.service.admin.AdminJobService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.junit.jupiter.api.Test
@@ -56,6 +57,9 @@ class SecurityConfigTest {
 
     @MockitoBean
     private lateinit var adminExpansionService: AdminExpansionService
+
+    @MockitoBean
+    private lateinit var adminJobService: AdminJobService
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder

@@ -5,10 +5,11 @@ import net.jonasmf.auctionengine.generated.model.AdminExpansion1
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
-import net.jonasmf.auctionengine.generated.model.AdminItemJob
+import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
+import net.jonasmf.auctionengine.service.admin.AdminJobService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.springframework.http.HttpStatus
@@ -22,6 +23,7 @@ class AdminController(
     private val userService: UserService,
     private val adminStatusService: AdminStatusService,
     private val adminExpansionService: AdminExpansionService,
+    private val adminJobService: AdminJobService,
 ) : AdminApi {
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getAdminStatus(): ResponseEntity<AdminStatus> = ResponseEntity.ok(adminStatusService.getStatus())
@@ -67,20 +69,20 @@ class AdminController(
     }
 
     @PreAuthorize("hasAuthority('admin')")
-    override suspend fun applyExpansionRanges(): ResponseEntity<AdminItemJob> =
+    override suspend fun applyExpansionRanges(): ResponseEntity<AdminJob> =
         ResponseEntity
             .status(HttpStatus.ACCEPTED)
             .body(adminExpansionService.applyExpansionRanges(requestedBy()))
 
     @PreAuthorize("hasAuthority('admin')")
-    override suspend fun fetchMissingExpansionRangeItems(): ResponseEntity<AdminItemJob> =
+    override suspend fun fetchMissingExpansionRangeItems(): ResponseEntity<AdminJob> =
         ResponseEntity
             .status(HttpStatus.ACCEPTED)
             .body(adminExpansionService.fetchMissingExpansionRangeItems(requestedBy()))
 
     @PreAuthorize("hasAuthority('admin')")
-    override suspend fun getAdminItemJob(id: Long): ResponseEntity<AdminItemJob> =
-        ResponseEntity.ok(adminExpansionService.getJob(id))
+    override suspend fun getAdminJob(id: Long): ResponseEntity<AdminJob> =
+        ResponseEntity.ok(adminJobService.getJob(id))
 
     // TODO: Need a paginated response - Update openApi as well
     @PreAuthorize("hasAuthority('admin')")

@@ -4,6 +4,7 @@ import { AdminApiService, AdminExpansion, AdminExpansionItemRange } from '@api/g
 import { englishGameLocale } from '@features/admin/shared/game-locale-test-fixtures';
 import { ToastService } from '@core/services/toast.service';
 import { LocaleService } from '@core/services/locale.service';
+import { AdminJobService } from '@features/admin/shared/admin-job.service';
 import { AdminExpansionService } from './admin-expansion.service';
 
 const expansionFixture: AdminExpansion = {
@@ -51,6 +52,14 @@ describe('AdminExpansionService', () => {
         { provide: AdminApiService, useValue: api },
         { provide: ToastService, useValue: toast },
         { provide: LocaleService, useValue: { apiLocaleOverride: () => undefined } },
+        {
+          provide: AdminJobService,
+          useValue: {
+            trackJob: vitest.fn(),
+            activeJob: { set: vitest.fn() },
+            dismissed: { set: vitest.fn() },
+          },
+        },
       ],
     });
     service = TestBed.inject(AdminExpansionService);
