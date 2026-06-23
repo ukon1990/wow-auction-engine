@@ -58,6 +58,10 @@
         <source>Has Recipe</source>
         <target>Tiene receta</target>
       </trans-unit>
+      <trans-unit id="filters.expansion" datatype="html">
+        <source>Expansion</source>
+        <target>Expansión</target>
+      </trans-unit>
       <trans-unit id="filters.aria" datatype="html">
         <source>Market filters</source>
         <target>Filtros del mercado</target>
