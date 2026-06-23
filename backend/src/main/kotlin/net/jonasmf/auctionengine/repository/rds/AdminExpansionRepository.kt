@@ -3,10 +3,16 @@ package net.jonasmf.auctionengine.repository.rds
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import net.jonasmf.auctionengine.generated.model.AdminExpansion
+import net.jonasmf.auctionengine.constant.Locale
+import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
+import net.jonasmf.auctionengine.dto.LocaleDTO
+import net.jonasmf.auctionengine.generated.model.AdminExpansion1
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
+import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemJob
+import net.jonasmf.auctionengine.mapper.toGameLocale
+import net.jonasmf.auctionengine.mapper.toLocaleDTO
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
@@ -23,16 +29,25 @@ data class ExpansionRangeApplySummary(
 @Repository
 class AdminExpansionRepository(
     private val jdbcTemplate: JdbcTemplate,
+    private val localeJdbcRepository: LocaleJdbcRepository,
 ) {
     private val objectMapper = jacksonObjectMapper()
-    fun listExpansions(): List<AdminExpansion> =
+
+    fun listExpansions(localeColumnSuffix: String = DEFAULT_LOCALE_COLUMN_SUFFIX): List<AdminExpansion1> =
         jdbcTemplate.query(
-            """
-            SELECT id, slug, name, major_version, display_order
-            FROM expansion
-            ORDER BY display_order, id
-            """.trimIndent(),
-        ) { rs, _ -> rs.toAdminExpansion() }
+            expansionSelectSql("ORDER BY e.display_order, e.id", localeColumnSuffix),
+        ) { rs, _ -> rs.toAdminExpansion(localeColumnSuffix) }
+
+    fun findExpansion(
+        id: Int,
+        localeColumnSuffix: String = DEFAULT_LOCALE_COLUMN_SUFFIX,
+    ): AdminExpansion1? =
+        jdbcTemplate
+            .query(
+                expansionSelectSql("WHERE e.id = ?", localeColumnSuffix),
+                { rs, _ -> rs.toAdminExpansion(localeColumnSuffix) },
+                id,
+            ).firstOrNull()
 
     fun expansionExists(expansionId: Int): Boolean =
         jdbcTemplate.queryForObject(
@@ -41,16 +56,145 @@ class AdminExpansionRepository(
             expansionId,
         )!! > 0
 
-    fun listRanges(): List<AdminExpansionItemRange> =
-        jdbcTemplate.query(
-            rangeSelectSql("ORDER BY r.start_item_id, r.end_item_id, r.id"),
-        ) { rs, _ -> rs.toAdminExpansionItemRange() }
+    fun slugExists(
+        slug: String,
+        idToIgnore: Int? = null,
+    ): Boolean {
+        val params = mutableListOf<Any>(slug)
+        val ignoreSql =
+            if (idToIgnore == null) {
+                ""
+            } else {
+                params += idToIgnore
+                "AND id <> ?"
+            }
+        return jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM expansion WHERE slug = ? $ignoreSql",
+            Long::class.java,
+            *params.toTypedArray(),
+        )!! > 0
+    }
 
-    fun findRange(id: Long): AdminExpansionItemRange? =
+    fun majorVersionExists(
+        majorVersion: Int,
+        idToIgnore: Int? = null,
+    ): Boolean {
+        val params = mutableListOf<Any>(majorVersion)
+        val ignoreSql =
+            if (idToIgnore == null) {
+                ""
+            } else {
+                params += idToIgnore
+                "AND id <> ?"
+            }
+        return jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM expansion WHERE major_version = ? $ignoreSql",
+            Long::class.java,
+            *params.toTypedArray(),
+        )!! > 0
+    }
+
+    fun createExpansion(request: AdminExpansionRequest): AdminExpansion1 {
+        val nameId =
+            localeJdbcRepository.upsert(
+                LocaleSourceType.EXPANSION,
+                request.id.toString(),
+                "name",
+                request.nameLocales.toLocaleDTO(),
+            )
+        jdbcTemplate.update(
+            """
+            INSERT INTO expansion (id, slug, name_id, major_version, display_order)
+            VALUES (?, ?, ?, ?, ?)
+            """.trimIndent(),
+            request.id,
+            request.slug,
+            nameId,
+            request.majorVersion,
+            request.displayOrder,
+        )
+        return findExpansion(request.id) ?: error("Created expansion ${request.id} was not found")
+    }
+
+    fun updateExpansion(
+        id: Int,
+        request: AdminExpansionRequest,
+    ): AdminExpansion1? {
+        val existing =
+            jdbcTemplate
+                .query(
+                    "SELECT name_id FROM expansion WHERE id = ?",
+                    { rs, _ -> rs.getLong("name_id") },
+                    id,
+                ).firstOrNull() ?: return null
+
+        localeJdbcRepository.upsert(
+            LocaleSourceType.EXPANSION,
+            id.toString(),
+            "name",
+            request.nameLocales.toLocaleDTO(),
+        )
+        jdbcTemplate.update(
+            """
+            UPDATE expansion
+            SET slug = ?,
+                major_version = ?,
+                display_order = ?
+            WHERE id = ?
+            """.trimIndent(),
+            request.slug,
+            request.majorVersion,
+            request.displayOrder,
+            id,
+        )
+        return findExpansion(id)
+    }
+
+    fun isExpansionReferenced(id: Int): Boolean {
+        val rangeCount =
+            jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM expansion_item_range WHERE expansion_id = ?",
+                Long::class.java,
+                id,
+            )!!
+        if (rangeCount > 0) return true
+        val itemCount =
+            jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM `item` WHERE expansion_id = ?",
+                Long::class.java,
+                id,
+            )!!
+        return itemCount > 0
+    }
+
+    fun deleteExpansion(id: Int): Boolean {
+        val nameId =
+            jdbcTemplate
+                .query(
+                    "SELECT name_id FROM expansion WHERE id = ?",
+                    { rs, _ -> rs.getLong("name_id") },
+                    id,
+                ).firstOrNull() ?: return false
+        if (jdbcTemplate.update("DELETE FROM expansion WHERE id = ?", id) == 0) {
+            return false
+        }
+        localeJdbcRepository.deleteById(nameId)
+        return true
+    }
+
+    fun listRanges(localeColumnSuffix: String = DEFAULT_LOCALE_COLUMN_SUFFIX): List<AdminExpansionItemRange> =
+        jdbcTemplate.query(
+            rangeSelectSql("ORDER BY r.start_item_id, r.end_item_id, r.id", localeColumnSuffix),
+        ) { rs, _ -> rs.toAdminExpansionItemRange(localeColumnSuffix) }
+
+    fun findRange(
+        id: Long,
+        localeColumnSuffix: String = DEFAULT_LOCALE_COLUMN_SUFFIX,
+    ): AdminExpansionItemRange? =
         jdbcTemplate
             .query(
-                rangeSelectSql("WHERE r.id = ?"),
-                { rs, _ -> rs.toAdminExpansionItemRange() },
+                rangeSelectSql("WHERE r.id = ?", localeColumnSuffix),
+                { rs, _ -> rs.toAdminExpansionItemRange(localeColumnSuffix) },
                 id,
             ).firstOrNull()
 
@@ -251,7 +395,39 @@ class AdminExpansionRepository(
                 id,
             ).firstOrNull()
 
-    private fun rangeSelectSql(suffix: String): String =
+    private fun expansionSelectSql(
+        suffix: String,
+        localeColumnSuffix: String,
+    ): String =
+        """
+        SELECT
+            e.id,
+            e.slug,
+            e.major_version,
+            e.display_order,
+            COALESCE(l.$localeColumnSuffix, l.en_gb, l.en_us, e.slug) AS expansion_name,
+            l.en_us,
+            l.en_gb,
+            l.de_de,
+            l.es_es,
+            l.es_mx,
+            l.fr_fr,
+            l.it_it,
+            l.ko_kr,
+            l.pt_br,
+            l.pt_pt,
+            l.ru_ru,
+            l.zh_cn,
+            l.zh_tw
+        FROM expansion e
+            INNER JOIN locale l ON l.id = e.name_id
+        $suffix
+        """.trimIndent()
+
+    private fun rangeSelectSql(
+        suffix: String,
+        localeColumnSuffix: String,
+    ): String =
         """
         SELECT
             r.id,
@@ -264,35 +440,59 @@ class AdminExpansionRepository(
             r.updated_at,
             e.id AS expansion_id,
             e.slug AS expansion_slug,
-            e.name AS expansion_name,
             e.major_version AS expansion_major_version,
-            e.display_order AS expansion_display_order
+            e.display_order AS expansion_display_order,
+            COALESCE(l.$localeColumnSuffix, l.en_gb, l.en_us, e.slug) AS expansion_name,
+            l.en_us,
+            l.en_gb,
+            l.de_de,
+            l.es_es,
+            l.es_mx,
+            l.fr_fr,
+            l.it_it,
+            l.ko_kr,
+            l.pt_br,
+            l.pt_pt,
+            l.ru_ru,
+            l.zh_cn,
+            l.zh_tw
         FROM expansion_item_range r
             INNER JOIN expansion e ON e.id = r.expansion_id
+            INNER JOIN locale l ON l.id = e.name_id
         $suffix
         """.trimIndent()
+
+    companion object {
+        const val DEFAULT_LOCALE_COLUMN_SUFFIX = "en_gb"
+
+        fun resolveLocaleColumnSuffix(locale: String?): String =
+            locale
+                ?.let { localeValue ->
+                    runCatching { Locale.getAllValues().getValue(localeValue) }
+                        .recoverCatching { Locale.fromCompactString(localeValue) }
+                        .getOrNull()
+                        ?.value
+                        ?.lowercase()
+                } ?: DEFAULT_LOCALE_COLUMN_SUFFIX
+    }
 }
 
-private fun ResultSet.toAdminExpansion(): AdminExpansion =
-    AdminExpansion(
+private fun ResultSet.toAdminExpansion(localeColumnSuffix: String): AdminExpansion1 {
+    val locale = toLocaleDTO()
+    return AdminExpansion1(
         id = getInt("id"),
         slug = getString("slug"),
-        name = getString("name"),
+        name = getString("expansion_name"),
+        nameLocales = locale.toGameLocale(),
         majorVersion = getInt("major_version"),
         displayOrder = getInt("display_order"),
     )
+}
 
-private fun ResultSet.toAdminExpansionItemRange(): AdminExpansionItemRange =
+private fun ResultSet.toAdminExpansionItemRange(localeColumnSuffix: String): AdminExpansionItemRange =
     AdminExpansionItemRange(
         id = getLong("id"),
-        expansion =
-            AdminExpansion(
-                id = getInt("expansion_id"),
-                slug = getString("expansion_slug"),
-                name = getString("expansion_name"),
-                majorVersion = getInt("expansion_major_version"),
-                displayOrder = getInt("expansion_display_order"),
-            ),
+        expansion = toNestedAdminExpansion(),
         startItemId = getInt("start_item_id"),
         endItemId = getInt("end_item_id"),
         source = getString("source"),
@@ -301,6 +501,18 @@ private fun ResultSet.toAdminExpansionItemRange(): AdminExpansionItemRange =
         createdAt = getTimestamp("created_at").toOffsetDateTime(),
         updatedAt = getTimestamp("updated_at").toOffsetDateTime(),
     )
+
+private fun ResultSet.toNestedAdminExpansion(): AdminExpansion1 {
+    val locale = toLocaleDTO()
+    return AdminExpansion1(
+        id = getInt("expansion_id"),
+        slug = getString("expansion_slug"),
+        name = getString("expansion_name"),
+        nameLocales = locale.toGameLocale(),
+        majorVersion = getInt("expansion_major_version"),
+        displayOrder = getInt("expansion_display_order"),
+    )
+}
 
 private fun ResultSet.toAdminItemJob(objectMapper: ObjectMapper): AdminItemJob {
     val summaryJson = getString("summary_json")

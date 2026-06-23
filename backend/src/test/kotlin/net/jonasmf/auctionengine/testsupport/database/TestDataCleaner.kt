@@ -18,7 +18,6 @@ class TestDataCleaner(
                 WHERE table_schema = DATABASE()
                   AND table_type = 'BASE TABLE'
                   AND table_name <> 'flyway_schema_history'
-                  AND table_name <> 'expansion'
                 """.trimIndent(),
                 String::class.java,
             )

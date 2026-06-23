@@ -2,7 +2,8 @@ package net.jonasmf.auctionengine.controller
 
 import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.config.SecurityConfig
-import net.jonasmf.auctionengine.generated.model.AdminExpansion
+import net.jonasmf.auctionengine.generated.model.AdminExpansion1
+import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.generated.model.AdminItemJob
 import net.jonasmf.auctionengine.generated.model.AdminConnectionStatus
 import net.jonasmf.auctionengine.generated.model.AdminServerStatus
@@ -193,12 +194,13 @@ class AdminControllerTest {
 
         @Test
         fun `should list expansions if Cognito Admin group`() {
-            `when`(adminExpansionService.listExpansions()).thenReturn(
+            `when`(adminExpansionService.listExpansions(null)).thenReturn(
                 listOf(
-                    AdminExpansion(
+                    AdminExpansion1(
                         id = 1,
                         slug = "vanilla",
                         name = "Vanilla",
+                        nameLocales = GameLocale(enUS = "Vanilla", enGB = "Vanilla"),
                         majorVersion = 1,
                         displayOrder = 10,
                     ),

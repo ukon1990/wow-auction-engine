@@ -5,11 +5,14 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.dto.item.ItemDTO
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
+import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
+import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.mapper.toDomain
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
@@ -25,6 +28,29 @@ class AdminExpansionRepositoryTest : IntegrationTestBase() {
     lateinit var jdbcTemplate: JdbcTemplate
 
     private val mapper = jacksonObjectMapper()
+
+    @BeforeEach
+    fun seedExpansions() {
+        val catalog =
+            listOf(
+                Triple(1, "vanilla", "Vanilla"),
+                Triple(2, "the-burning-crusade", "The Burning Crusade"),
+                Triple(3, "wrath-of-the-lich-king", "Wrath of the Lich King"),
+            )
+        catalog.forEach { (id, slug, name) ->
+            if (!adminExpansionRepository.expansionExists(id)) {
+                adminExpansionRepository.createExpansion(
+                    expansionRequest(
+                        id = id,
+                        slug = slug,
+                        majorVersion = id,
+                        displayOrder = id * 10,
+                        enName = name,
+                    ),
+                )
+            }
+        }
+    }
 
     @Test
     fun `create update delete range manages expansion ranges`() {
@@ -111,6 +137,78 @@ class AdminExpansionRepositoryTest : IntegrationTestBase() {
             Int::class.java,
             itemId,
         )
+
+    @Test
+    fun `create update and delete expansion manages locales`() {
+        val created =
+            adminExpansionRepository.createExpansion(
+                expansionRequest(
+                    id = 99,
+                    slug = "test-expansion",
+                    majorVersion = 99,
+                    displayOrder = 990,
+                    enName = "Test Expansion",
+                ),
+            )
+
+        assertEquals(99, created.id)
+        assertEquals("Test Expansion", created.name)
+        assertEquals("Test Expansion", created.nameLocales?.enUS)
+
+        val updated =
+            adminExpansionRepository.updateExpansion(
+                99,
+                expansionRequest(
+                    id = 99,
+                    slug = "test-expansion-updated",
+                    majorVersion = 99,
+                    displayOrder = 995,
+                    enName = "Updated Expansion",
+                    deName = "Aktualisiert",
+                ),
+            )
+
+        assertEquals("test-expansion-updated", updated?.slug)
+        assertEquals("Updated Expansion", updated?.name)
+        assertEquals("Aktualisiert", updated?.nameLocales?.deDE)
+
+        assertTrue(adminExpansionRepository.deleteExpansion(99))
+        assertEquals(null, adminExpansionRepository.findExpansion(99))
+    }
+
+    @Test
+    fun `isExpansionReferenced detects item ranges`() {
+        adminExpansionRepository.createRange(rangeRequest(expansionId = 1, startItemId = 50, endItemId = 60))
+        assertTrue(adminExpansionRepository.isExpansionReferenced(1))
+    }
+
+    @Test
+    fun `list expansions resolves locale suffix`() {
+        val german =
+            adminExpansionRepository.listExpansions("de_DE").first { it.id == 1 }
+
+        assertEquals("Vanilla", german.name)
+    }
+
+    private fun expansionRequest(
+        id: Int,
+        slug: String,
+        majorVersion: Int,
+        displayOrder: Int,
+        enName: String,
+        deName: String? = null,
+    ) = AdminExpansionRequest(
+        id = id,
+        slug = slug,
+        majorVersion = majorVersion,
+        displayOrder = displayOrder,
+        nameLocales =
+            GameLocale(
+                enUS = enName,
+                enGB = enName,
+                deDE = deName,
+            ),
+    )
 
     private fun rangeRequest(
         expansionId: Int,

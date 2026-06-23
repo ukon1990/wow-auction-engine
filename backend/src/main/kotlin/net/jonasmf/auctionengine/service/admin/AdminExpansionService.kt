@@ -1,9 +1,12 @@
 package net.jonasmf.auctionengine.service.admin
 
-import net.jonasmf.auctionengine.generated.model.AdminExpansion
+import net.jonasmf.auctionengine.generated.model.AdminExpansion1
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
+import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemJob
+import net.jonasmf.auctionengine.mapper.hasEnglishName
+import net.jonasmf.auctionengine.mapper.toLocaleDTO
 import net.jonasmf.auctionengine.repository.rds.AdminExpansionRepository
 import net.jonasmf.auctionengine.service.ItemSyncResult
 import net.jonasmf.auctionengine.service.ItemSyncService
@@ -24,9 +27,67 @@ class AdminExpansionService(
     private val applyRunning = AtomicBoolean(false)
     private val fetchMissingRunning = AtomicBoolean(false)
 
-    fun listExpansions(): List<AdminExpansion> = adminExpansionRepository.listExpansions()
+    fun listExpansions(locale: String? = null): List<AdminExpansion1> =
+        adminExpansionRepository.listExpansions(AdminExpansionRepository.resolveLocaleColumnSuffix(locale))
 
-    fun listRanges(): List<AdminExpansionItemRange> = adminExpansionRepository.listRanges()
+    fun createExpansion(request: AdminExpansionRequest): AdminExpansion1 {
+        validateExpansionRequest(request, idToIgnore = null, requireId = true)
+        if (adminExpansionRepository.expansionExists(request.id)) {
+            throw ResponseStatusException(HttpStatus.CONFLICT, "Expansion already exists: ${request.id}")
+        }
+        if (adminExpansionRepository.slugExists(request.slug)) {
+            throw ResponseStatusException(HttpStatus.CONFLICT, "Expansion slug already exists: ${request.slug}")
+        }
+        if (adminExpansionRepository.majorVersionExists(request.majorVersion)) {
+            throw ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Expansion major version already exists: ${request.majorVersion}",
+            )
+        }
+        return adminExpansionRepository.createExpansion(request)
+    }
+
+    fun updateExpansion(
+        id: Int,
+        request: AdminExpansionRequest,
+    ): AdminExpansion1 {
+        if (adminExpansionRepository.findExpansion(id) == null) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Expansion not found: $id")
+        }
+        if (request.id != id) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Expansion id in body must match path id")
+        }
+        validateExpansionRequest(request, idToIgnore = id, requireId = false)
+        if (adminExpansionRepository.slugExists(request.slug, idToIgnore = id)) {
+            throw ResponseStatusException(HttpStatus.CONFLICT, "Expansion slug already exists: ${request.slug}")
+        }
+        if (adminExpansionRepository.majorVersionExists(request.majorVersion, idToIgnore = id)) {
+            throw ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Expansion major version already exists: ${request.majorVersion}",
+            )
+        }
+        return adminExpansionRepository.updateExpansion(id, request)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Expansion not found: $id")
+    }
+
+    fun deleteExpansion(id: Int) {
+        if (adminExpansionRepository.findExpansion(id) == null) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Expansion not found: $id")
+        }
+        if (adminExpansionRepository.isExpansionReferenced(id)) {
+            throw ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Expansion is referenced by item ranges or items",
+            )
+        }
+        if (!adminExpansionRepository.deleteExpansion(id)) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Expansion not found: $id")
+        }
+    }
+
+    fun listRanges(locale: String? = null): List<AdminExpansionItemRange> =
+        adminExpansionRepository.listRanges(AdminExpansionRepository.resolveLocaleColumnSuffix(locale))
 
     fun createRange(request: AdminExpansionItemRangeRequest): AdminExpansionItemRange {
         validateRangeRequest(request, idToIgnore = null)
@@ -99,6 +160,28 @@ class AdminExpansionService(
             adminExpansionRepository.failJob(jobId, error)
         } finally {
             fetchMissingRunning.set(false)
+        }
+    }
+
+    private fun validateExpansionRequest(
+        request: AdminExpansionRequest,
+        idToIgnore: Int?,
+        requireId: Boolean,
+    ) {
+        if (requireId && request.id < 1) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Expansion id must be at least 1")
+        }
+        if (request.slug.isBlank()) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Expansion slug is required")
+        }
+        if (request.majorVersion < 1) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "majorVersion must be at least 1")
+        }
+        if (request.displayOrder < 0) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "displayOrder must be non-negative")
+        }
+        if (!request.nameLocales.toLocaleDTO().hasEnglishName()) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "At least one English name (en_US or en_GB) is required")
         }
     }
 

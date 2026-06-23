@@ -1,9 +1,10 @@
 package net.jonasmf.auctionengine.controller
 
 import net.jonasmf.auctionengine.generated.api.AdminApi
-import net.jonasmf.auctionengine.generated.model.AdminExpansion
+import net.jonasmf.auctionengine.generated.model.AdminExpansion1
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
+import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemJob
 import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.User
@@ -26,12 +27,28 @@ class AdminController(
     override suspend fun getAdminStatus(): ResponseEntity<AdminStatus> = ResponseEntity.ok(adminStatusService.getStatus())
 
     @PreAuthorize("hasAuthority('admin')")
-    override suspend fun listExpansions(): ResponseEntity<List<AdminExpansion>> =
-        ResponseEntity.ok(adminExpansionService.listExpansions())
+    override suspend fun listExpansions(locale: String?): ResponseEntity<List<AdminExpansion1>> =
+        ResponseEntity.ok(adminExpansionService.listExpansions(locale))
 
     @PreAuthorize("hasAuthority('admin')")
-    override suspend fun listExpansionRanges(): ResponseEntity<List<AdminExpansionItemRange>> =
-        ResponseEntity.ok(adminExpansionService.listRanges())
+    override suspend fun createExpansion(body: AdminExpansionRequest): ResponseEntity<AdminExpansion1> =
+        ResponseEntity.ok(adminExpansionService.createExpansion(body))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun updateExpansion(
+        id: Int,
+        body: AdminExpansionRequest,
+    ): ResponseEntity<AdminExpansion1> = ResponseEntity.ok(adminExpansionService.updateExpansion(id, body))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun deleteExpansion(id: Int): ResponseEntity<Unit> {
+        adminExpansionService.deleteExpansion(id)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun listExpansionRanges(locale: String?): ResponseEntity<List<AdminExpansionItemRange>> =
+        ResponseEntity.ok(adminExpansionService.listRanges(locale))
 
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun createExpansionRange(body: AdminExpansionItemRangeRequest): ResponseEntity<AdminExpansionItemRange> =
