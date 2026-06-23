@@ -1,11 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import {
-  AdminApiService,
-  AdminExpansion,
-  AdminExpansionItemRange,
-  AdminItemJob,
-} from '@api/generated';
+import { AdminApiService, AdminExpansion, AdminExpansionItemRange } from '@api/generated';
 import { ToastService } from '@core/services/toast.service';
 import { AdminExpansionService } from './admin-expansion.service';
 
