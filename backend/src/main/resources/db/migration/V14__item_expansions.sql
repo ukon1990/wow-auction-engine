@@ -1,12 +1,14 @@
 CREATE TABLE expansion (
     id            INT          NOT NULL,
     slug          VARCHAR(64)  NOT NULL,
-    name          VARCHAR(128) NOT NULL,
+    name_id       BIGINT       NOT NULL,
     major_version INT          NOT NULL,
     display_order INT          NOT NULL,
     PRIMARY KEY (id),
     UNIQUE KEY uk_expansion_slug (slug),
-    UNIQUE KEY uk_expansion_major_version (major_version)
+    UNIQUE KEY uk_expansion_major_version (major_version),
+    CONSTRAINT fk_expansion_name
+        FOREIGN KEY (name_id) REFERENCES locale (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE expansion_item_range (
