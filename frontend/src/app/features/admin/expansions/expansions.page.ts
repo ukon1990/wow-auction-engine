@@ -58,7 +58,7 @@ const PAGE_SIZE = 50;
     SlideOverPanelComponent,
   ],
   templateUrl: './expansions.page.html',
-  styleUrl: './expansions.page.css',
+  styleUrl: './expansions.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExpansionsPage {
@@ -83,7 +83,7 @@ export class ExpansionsPage {
   );
 
   protected readonly filters = signal<ExpansionRangeFilterState>(defaultExpansionRangeFilters());
-  protected readonly page = signal(1);
+  protected readonly page = signal(0);
   protected readonly formMode = signal<ExpansionRangeFormMode | null>(null);
   protected readonly editingRange = signal<AdminExpansionItemRange | null>(null);
   protected readonly createRangeDefaults = signal<CreateExpansionRangeDefaults>({
@@ -123,7 +123,7 @@ export class ExpansionsPage {
   protected readonly paginationState = computed<PaginationState>(() => {
     const totalItems = this.filteredRanges().length;
     const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
-    const page = Math.min(this.page(), totalPages);
+    const page = Math.min(this.page(), Math.max(0, totalPages - 1));
     return {
       page,
       pageSize: PAGE_SIZE,
@@ -134,7 +134,7 @@ export class ExpansionsPage {
 
   protected readonly paginatedRanges = computed(() => {
     const { page, pageSize } = this.paginationState();
-    const start = (page - 1) * pageSize;
+    const start = page * pageSize;
     return this.filteredRanges().slice(start, start + pageSize);
   });
 
@@ -175,7 +175,7 @@ export class ExpansionsPage {
     value: ExpansionRangeFilterState[K],
   ): void {
     this.filters.update((current) => ({ ...current, [key]: value }));
-    this.page.set(1);
+    this.page.set(0);
   }
 
   protected onPageChange(page: number): void {
