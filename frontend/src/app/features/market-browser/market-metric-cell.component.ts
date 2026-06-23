@@ -12,27 +12,29 @@ import { copperToCurrencyAmount, CurrencyAmountComponent, MarketItemRow } from '
   template: `
     @switch (columnId()) {
       @case ('selectedPrice') {
-        <div class="space-y-1">
+        <div class="min-w-0 max-w-full space-y-1 lg:flex lg:flex-col lg:items-end lg:gap-1">
           <ee-currency-amount [amount]="row().minBuyout" [emphasis]="row().selected === true" />
           @if (hasPercentileRange()) {
-            <div
-              class="inline-flex flex-wrap items-center gap-x-1 text-[11px] leading-none text-outline"
-            >
-              <span>p25</span>
-              <ee-currency-amount [amount]="p25Amount()" />
-              <span>/ p75</span>
-              <ee-currency-amount [amount]="p75Amount()" />
+            <div class="flex flex-col gap-0.5 text-[11px] leading-none text-outline lg:items-end">
+              <div class="inline-flex items-center gap-x-1">
+                <span>p25</span>
+                <ee-currency-amount [amount]="p25Amount()" />
+              </div>
+              <div class="inline-flex items-center gap-x-1">
+                <span>p75</span>
+                <ee-currency-amount [amount]="p75Amount()" />
+              </div>
             </div>
           }
         </div>
       }
       @case ('selectedQuantity') {
         @if (row().selectedQuantity !== undefined) {
-          <div class="ee-data text-on-surface">
+          <div class="ee-data text-on-surface lg:ml-auto">
             {{ row().selectedQuantity | number: '1.0-0' : selectedLocaleForNumberPipe() }}
           </div>
         } @else {
-          <ee-currency-amount class="opacity-80" [amount]="row().marketValue" />
+          <ee-currency-amount class="opacity-80 lg:ml-auto" [amount]="row().marketValue" />
         }
       }
     }

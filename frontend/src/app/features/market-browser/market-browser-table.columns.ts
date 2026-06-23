@@ -115,7 +115,7 @@ export function createMarketBrowserTableColumns(): ColumnDef<MarketItemRow, unkn
       header: $localize`:@@market.column.price:Price`,
       meta: {
         align: 'right',
-        gridTrack: 'minmax(6rem, max-content)',
+        gridTrack: 'minmax(6rem, 8rem)',
         cardRole: 'metric',
         cardLabel: $localize`:@@market.column.price:Price`,
         cardPriority: 10,
@@ -128,7 +128,7 @@ export function createMarketBrowserTableColumns(): ColumnDef<MarketItemRow, unkn
       header: $localize`:@@market.column.quantity:Quantity`,
       meta: {
         align: 'right',
-        gridTrack: 'minmax(4.5rem, max-content)',
+        gridTrack: 'minmax(4.5rem, 5.5rem)',
         cardRole: 'metric',
         cardLabel: $localize`:@@market.column.quantity:Quantity`,
         cardPriority: 20,

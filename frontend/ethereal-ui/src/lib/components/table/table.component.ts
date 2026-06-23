@@ -93,68 +93,69 @@ export interface MobileSortOption {
                 </button>
               </div>
             }
-          } @else {
-            @for (headerGroup of table.getHeaderGroups(); track headerGroup.id) {
-              <div
-                role="row"
-                [class]="headerRowClass()"
-                [style.grid-template-columns]="rowGridTemplateStyle()"
-              >
-                @for (header of headerGroup.headers; track header.id) {
-                  <div
-                    role="columnheader"
-                    [attr.aria-sort]="headerAriaSort(header)"
-                    [class]="headerColumnClass(header.column.columnDef.meta)"
-                  >
-                    @if (!header.isPlaceholder) {
-                      @if (sortableHeader(header)) {
-                        <button
-                          type="button"
-                          [class]="sortHeaderButtonClass(header.column.columnDef.meta)"
-                          [disabled]="loading()"
-                          (click)="header.column.getToggleSortingHandler()?.($event)"
-                        >
-                          <span class="min-w-0 truncate">
-                            <ng-container
-                              *flexRender="
-                                header.column.columnDef.header;
-                                props: header.getContext();
-                                let rendered
-                              "
-                            >
-                              {{ rendered }}
-                            </ng-container>
-                          </span>
-                          <ee-symbol-icon
-                            [class]="sortIconClass(header)"
-                            [name]="sortIconName(header)"
-                          />
-                        </button>
-                      } @else {
-                        <ng-container
-                          *flexRender="
-                            header.column.columnDef.header;
-                            props: header.getContext();
-                            let rendered
-                          "
-                        >
-                          {{ rendered }}
-                        </ng-container>
-                      }
-                    }
-                  </div>
-                }
-              </div>
-            }
           }
           <div
             cdkScrollable
             [class]="
               cardView()
                 ? 'min-h-0 flex-1 overflow-y-auto space-y-3 p-3'
-                : 'min-h-0 flex-1 overflow-y-auto divide-y divide-white/5'
+                : 'min-h-0 flex-1 overflow-y-auto divide-y divide-white/5 [scrollbar-gutter:stable]'
             "
           >
+            @if (!cardView()) {
+              @for (headerGroup of table.getHeaderGroups(); track headerGroup.id) {
+                <div
+                  role="row"
+                  [class]="headerRowClass() + ' sticky top-0 z-10'"
+                  [style.grid-template-columns]="rowGridTemplateStyle()"
+                >
+                  @for (header of headerGroup.headers; track header.id) {
+                    <div
+                      role="columnheader"
+                      [attr.aria-sort]="headerAriaSort(header)"
+                      [class]="headerColumnClass(header.column.columnDef.meta)"
+                    >
+                      @if (!header.isPlaceholder) {
+                        @if (sortableHeader(header)) {
+                          <button
+                            type="button"
+                            [class]="sortHeaderButtonClass(header.column.columnDef.meta)"
+                            [disabled]="loading()"
+                            (click)="header.column.getToggleSortingHandler()?.($event)"
+                          >
+                            <span class="min-w-0 truncate">
+                              <ng-container
+                                *flexRender="
+                                  header.column.columnDef.header;
+                                  props: header.getContext();
+                                  let rendered
+                                "
+                              >
+                                {{ rendered }}
+                              </ng-container>
+                            </span>
+                            <ee-symbol-icon
+                              [class]="sortIconClass(header)"
+                              [name]="sortIconName(header)"
+                            />
+                          </button>
+                        } @else {
+                          <ng-container
+                            *flexRender="
+                              header.column.columnDef.header;
+                              props: header.getContext();
+                              let rendered
+                            "
+                          >
+                            {{ rendered }}
+                          </ng-container>
+                        }
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            }
             @if (showSkeleton()) {
               @if (cardView()) {
                 @for (r of skeletonRowIndices(); track r) {
@@ -552,7 +553,7 @@ export class TableComponent<TData extends RowData> {
   protected bodyCellClass(meta: unknown): string {
     const m = meta as TableColumnMeta | undefined;
     return m?.align === 'right'
-      ? 'min-w-0 justify-self-end text-right'
+      ? 'min-w-0 overflow-hidden text-right'
       : 'min-w-0 overflow-hidden text-ellipsis text-left';
   }
 
