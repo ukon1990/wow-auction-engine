@@ -156,7 +156,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN || github.token }}
+          password: ${{ secrets.PROD_GHCR_PULL_TOKEN || github.token }}
 
       - name: Publish images to GHCR
         id: images
@@ -216,8 +216,9 @@ jobs:
           WAE_COGNITO_ISSUER_URI: ${{ secrets.PROD_COGNITO_ISSUER_URI }}
           WAE_COGNITO_CLIENT_ID: ${{ secrets.PROD_COGNITO_CLIENT_ID }}
           WAE_COGNITO_HOSTED_UI_BASE_URL: ${{ secrets.PROD_COGNITO_HOSTED_UI_BASE_URL }}
+          WAE_COGNITO_USER_POOL_ID: ${{ secrets.PROD_COGNITO_USER_POOL_ID }}
           JAVA_TOOL_OPTIONS: ${{ secrets.PROD_JAVA_TOOL_OPTIONS }}
-          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+          GHCR_PULL_TOKEN: ${{ secrets.PROD_GHCR_PULL_TOKEN }}
         run: |
           set -euo pipefail
           required_vars=(
@@ -227,6 +228,7 @@ jobs:
             AUCTION_ENGINE_DB_USERNAME
             AUCTION_ENGINE_DB_PASSWORD
             WAE_AUTH_SESSION_SECRET
+            GHCR_PULL_TOKEN
           )
           for var_name in "${required_vars[@]}"; do
             if [[ -z "${!var_name:-}" ]]; then
@@ -238,11 +240,11 @@ jobs:
           kubectl apply -f infra/kubernetes/vps/namespace.yaml
           kubectl apply -f infra/kubernetes/vps
 
-          if [[ -n "${GITHUB_PERSONAL_ACCESS_TOKEN:-}" ]]; then
+          if [[ -n "${GHCR_PULL_TOKEN:-}" ]]; then
             kubectl -n "${APP_NAMESPACE}" create secret docker-registry ghcr \
               --docker-server=ghcr.io \
               --docker-username="${GITHUB_ACTOR}" \
-              --docker-password="${GITHUB_PERSONAL_ACCESS_TOKEN}" \
+              --docker-password="${GHCR_PULL_TOKEN}" \
               --docker-email="${GITHUB_ACTOR}@users.noreply.github.com" \
               --dry-run=client \
               -o yaml | kubectl apply -f -
@@ -264,6 +266,7 @@ jobs:
             WAE_COGNITO_ISSUER_URI
             WAE_COGNITO_CLIENT_ID
             WAE_COGNITO_HOSTED_UI_BASE_URL
+            WAE_COGNITO_USER_POOL_ID
             JAVA_TOOL_OPTIONS
           )
           for var_name in "${optional_secret_vars[@]}"; do

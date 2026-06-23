@@ -13,6 +13,7 @@ APP_HOST="${APP_HOST:-ee.jonaskf.net}"
 HEALTH_PATH="${HEALTH_PATH:-/api/health}"
 GHCR_IMAGE_PREFIX="${GHCR_IMAGE_PREFIX:-}"
 GHCR_USERNAME="${GHCR_USERNAME:-}"
+GHCR_PULL_TOKEN="${GHCR_PULL_TOKEN:-}"
 IMAGE_PLATFORM="${IMAGE_PLATFORM:-linux/amd64}"
 
 required_commands=(kubectl docker git curl)
@@ -25,6 +26,7 @@ required_env=(
   AUCTION_ENGINE_DB_USERNAME
   AUCTION_ENGINE_DB_PASSWORD
   WAE_AUTH_SESSION_SECRET
+  GHCR_PULL_TOKEN
 )
 
 for command_name in "${required_commands[@]}"; do
@@ -57,12 +59,12 @@ fi
 
 docker_config="${DOCKER_CONFIG:-${HOME}/.docker}/config.json"
 if [[ ! -r "$docker_config" ]] || ! grep -q '"ghcr.io"' "$docker_config"; then
-  if [[ -z "${GITHUB_PERSONAL_ACCESS_TOKEN:-}" ]]; then
+  if [[ -z "$GHCR_PULL_TOKEN" ]]; then
     echo "Docker does not appear to be logged in to ghcr.io. Run: docker login ghcr.io" >&2
     exit 1
   fi
   echo "Logging in to ghcr.io as ${GHCR_USERNAME}"
-  printf '%s' "$GITHUB_PERSONAL_ACCESS_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+  printf '%s' "$GHCR_PULL_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
 fi
 
 short_sha="$(git -C "$ROOT_DIR" rev-parse --short=12 HEAD)"
@@ -106,12 +108,12 @@ echo "Applying Kubernetes manifests"
 kubectl apply -f "${K8S_DIR}/namespace.yaml"
 kubectl apply -f "$K8S_DIR"
 
-if [[ -n "${GITHUB_PERSONAL_ACCESS_TOKEN:-}" ]]; then
+if [[ -n "$GHCR_PULL_TOKEN" ]]; then
   echo "Applying GHCR image pull secret"
   kubectl -n "$APP_NAMESPACE" create secret docker-registry ghcr \
     --docker-server=ghcr.io \
     --docker-username="$GHCR_USERNAME" \
-    --docker-password="$GITHUB_PERSONAL_ACCESS_TOKEN" \
+    --docker-password="$GHCR_PULL_TOKEN" \
     --docker-email="${GHCR_USERNAME}@users.noreply.github.com" \
     --dry-run=client \
     -o yaml | kubectl apply -f -
@@ -134,6 +136,7 @@ optional_secret_vars=(
   WAE_COGNITO_ISSUER_URI
   WAE_COGNITO_CLIENT_ID
   WAE_COGNITO_HOSTED_UI_BASE_URL
+  WAE_COGNITO_USER_POOL_ID
   JAVA_TOOL_OPTIONS
 )
 
