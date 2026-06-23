@@ -113,6 +113,7 @@ jobs:
       git_ref: ${{ needs.classify-changes.outputs.git_ref }}
       workflow_run_id: ${{ needs.classify-changes.outputs.workflow_run_id }}
       image_tag: ${{ needs.classify-changes.outputs.image_tag }}
+      image_platform: linux/amd64
       service: backend
 
   build-frontend-image:
@@ -123,6 +124,7 @@ jobs:
       git_ref: ${{ needs.classify-changes.outputs.git_ref }}
       workflow_run_id: ${{ needs.classify-changes.outputs.workflow_run_id }}
       image_tag: ${{ needs.classify-changes.outputs.image_tag }}
+      image_platform: linux/amd64
       service: frontend
 
   deploy-vps:
@@ -277,6 +279,24 @@ jobs:
 
           kubectl -n "${APP_NAMESPACE}" create secret generic wow-auction-engine-secrets \
             "${secret_args[@]}" \
+            --dry-run=client \
+            -o yaml | kubectl apply -f -
+
+          frontend_secret_args=(
+            --from-literal=WAE_AUTH_SESSION_SECRET="${WAE_AUTH_SESSION_SECRET}"
+          )
+          frontend_optional_secret_vars=(
+            WAE_COGNITO_CLIENT_ID
+            WAE_COGNITO_HOSTED_UI_BASE_URL
+          )
+          for var_name in "${frontend_optional_secret_vars[@]}"; do
+            if [[ -n "${!var_name:-}" ]]; then
+              frontend_secret_args+=("--from-literal=${var_name}=${!var_name}")
+            fi
+          done
+
+          kubectl -n "${APP_NAMESPACE}" create secret generic wow-auction-engine-frontend-secrets \
+            "${frontend_secret_args[@]}" \
             --dry-run=client \
             -o yaml | kubectl apply -f -
 

@@ -176,6 +176,7 @@ jobs:
       git_ref: ${{ needs.classify-changes.outputs.git_ref }}
       workflow_run_id: ${{ needs.classify-changes.outputs.workflow_run_id }}
       image_tag: ${{ needs.classify-changes.outputs.image_tag }}
+      image_platform: linux/arm64
       service: backend
 
   build-frontend-image:
@@ -188,6 +189,7 @@ jobs:
       git_ref: ${{ needs.classify-changes.outputs.git_ref }}
       workflow_run_id: ${{ needs.classify-changes.outputs.workflow_run_id }}
       image_tag: ${{ needs.classify-changes.outputs.image_tag }}
+      image_platform: linux/arm64
       service: frontend
 
   deploy-auth:

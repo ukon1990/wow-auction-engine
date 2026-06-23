@@ -1,27 +1,25 @@
-# AWS Deployment
+# Deployment
 
-This repository includes a minimal single-instance regional deployment path for the WoW Auction Engine.
+This repository supports two production deployment paths:
 
-It is intended for:
+- **AWS EC2** (legacy): one instance per region, Docker on EC2, SSM restarts
+- **VPS Kubernetes** (current): a single Kubernetes cluster on a VPS hosts the app at `ee.jonaskf.net`
 
-- one EC2 instance per region
-- Docker on EC2
-- GitHub Actions deployment from `master`
-- AWS Systems Manager for in-place restarts
-- SSM Parameter Store for runtime configuration
-
-It is not a Kubernetes or EKS deployment.
+EC2 app rollouts are disabled while `instance_enabled` is `"false"` in `infra/regions.json`. CloudFormation stacks can still be maintained for auth and shared AWS resources.
 
 ## Layout
 
 - `infra/regions.json`: enabled regions and per-region overrides
 - `infra/cloudformation/app-region.yaml`: reusable per-region CloudFormation stack
+- `infra/kubernetes/vps/`: Kubernetes manifests for the VPS deployment
 - `scripts/deploy/sync-ssm-parameters.sh`: writes runtime configuration to SSM Parameter Store
 - `scripts/deploy/restart-container.sh`: restarts backend and frontend containers on the EC2 instance through SSM
+- `scripts/deploy/deploy-vps-local.sh`: local VPS deploy script (build, push to GHCR, kubectl apply)
 - `.github/workflows/ci.yml`: verifies backend/frontend changes and uploads deployable artifacts on `master`
-- `.github/workflows/deploy-production.yml`: orchestrates production deployment from `master`
+- `.github/workflows/deploy-production.yml`: orchestrates EC2 production deployment from `master`
+- `.github/workflows/deploy-vps.yml`: orchestrates VPS Kubernetes deployment from `master`
 - `.github/workflows/reusable-build-image.yml`: builds backend or frontend runtime images from deployable artifacts
-- `.github/workflows/reusable-deploy-region.yml`: deploys one region at a time
+- `.github/workflows/reusable-deploy-region.yml`: deploys one EC2 region at a time
 
 ## What Happens On Push To `master`
 
@@ -103,6 +101,73 @@ Use it when you want to force CloudFormation without relying on changed-file det
 - one region or `all`
 - an option to skip the app rollout and perform infra-only sync
 
+## VPS Kubernetes Deployment
+
+Production app traffic is served from a VPS Kubernetes cluster at `https://ee.jonaskf.net`.
+
+### What Happens On Push To `master` (VPS)
+
+1. `App PR Checks` finishes successfully on `master`.
+2. `Deploy VPS` starts and classifies changed files.
+3. When app rollout is required, it builds `linux/amd64` images, pushes them to GHCR, applies manifests under `infra/kubernetes/vps/`, updates deployment images, and verifies `/` and `/api/health`.
+
+EC2 `Deploy Production` still runs for auth/infra work, but app rollouts to EC2 are skipped while every region has `instance_enabled: "false"`.
+
+### VPS Cluster Prerequisites
+
+The manifests assume the cluster already provides:
+
+- Traefik as the ingress controller (`ingressClassName: traefik`)
+- cert-manager with a `letsencrypt-http01` cluster issuer for TLS
+
+The VPS backend runs as a single deployment handling all Blizzard regions (`Europe`, `NorthAmerica`, `Korea`, `Taiwan`).
+
+### Local VPS Deploy
+
+Use `scripts/deploy/deploy-vps-local.sh` when you already have `kubectl` access to the cluster. It reads kubeconfig from the `KUBECONFIG` environment variable (the same file `kubectl` uses on your machine).
+
+Example:
+
+```bash
+export KUBECONFIG="$HOME/.kube/config"
+export GHCR_IMAGE_PREFIX="ghcr.io/<owner>/wow-auction-engine"
+export GHCR_PULL_TOKEN="<github-token-with-read:packages>"
+# plus BLIZZARD_*, DB_*, and WAE_AUTH_SESSION_SECRET
+
+bash scripts/deploy/deploy-vps-local.sh
+```
+
+### VPS GitHub Secrets
+
+Add these to the `production` GitHub Environment:
+
+- `KUBECONFIG_B64`: base64-encoded kubeconfig for the VPS cluster
+- `PROD_GHCR_PULL_TOKEN`: GitHub token that can pull (and push, for CI) images from GHCR
+
+The workflow also reuses the existing production secrets (`PROD_BLIZZARD_*`, `PROD_AUCTION_ENGINE_DB_*`, `PROD_AUTH_SESSION_SECRET`, optional Cognito/AWS overrides).
+
+#### Creating `KUBECONFIG_B64`
+
+GitHub Actions runners do not have your local kubeconfig. Locally, `kubectl` works because it reads `~/.kube/config` (or whatever `KUBECONFIG` points to). For CI, copy that same file into a secret:
+
+```bash
+# macOS / Linux — use the kubeconfig that already works for you:
+base64 < "${KUBECONFIG:-$HOME/.kube/config}" | tr -d '\n'
+```
+
+Paste the single-line output into a GitHub Environment secret named `KUBECONFIG_B64` under **Settings → Environments → production → Secrets**.
+
+To verify before saving:
+
+```bash
+printf '%s' "$KUBECONFIG_B64" | base64 -d > /tmp/ci-kubeconfig
+KUBECONFIG=/tmp/ci-kubeconfig kubectl cluster-info
+```
+
+#### Creating `PROD_GHCR_PULL_TOKEN`
+
+Create a fine-grained or classic GitHub personal access token with `read:packages` (and `write:packages` if CI should push images). The cluster uses this token for the `ghcr` image pull secret; the workflow uses it to push images during deploy.
+
 ## GitHub Setup
 
 ### Required GitHub Secrets
@@ -132,6 +197,8 @@ Optional secrets:
 - `PROD_WAE_DYNAMODB_ENDPOINT`
 - `PROD_WAE_S3_ENDPOINT`
 - `PROD_JAVA_TOOL_OPTIONS`
+- `PROD_GHCR_PULL_TOKEN` (required for VPS deploy; cluster image pulls and CI GHCR push)
+- `KUBECONFIG_B64` (required for VPS deploy; see [VPS Kubernetes Deployment](#vps-kubernetes-deployment))
 
 Notes:
 

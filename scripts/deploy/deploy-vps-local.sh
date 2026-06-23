@@ -152,6 +152,26 @@ kubectl -n "$APP_NAMESPACE" create secret generic wow-auction-engine-secrets \
   --dry-run=client \
   -o yaml | kubectl apply -f -
 
+frontend_secret_args=(
+  --from-literal=WAE_AUTH_SESSION_SECRET="${WAE_AUTH_SESSION_SECRET}"
+)
+frontend_optional_secret_vars=(
+  WAE_COGNITO_CLIENT_ID
+  WAE_COGNITO_HOSTED_UI_BASE_URL
+)
+
+for var_name in "${frontend_optional_secret_vars[@]}"; do
+  if [[ -n "${!var_name:-}" ]]; then
+    frontend_secret_args+=("--from-literal=${var_name}=${!var_name}")
+  fi
+done
+
+echo "Applying frontend secret"
+kubectl -n "$APP_NAMESPACE" create secret generic wow-auction-engine-frontend-secrets \
+  "${frontend_secret_args[@]}" \
+  --dry-run=client \
+  -o yaml | kubectl apply -f -
+
 echo "Updating deployment images"
 kubectl -n "$APP_NAMESPACE" set image "deployment/${BACKEND_DEPLOYMENT}" \
   "${BACKEND_CONTAINER}=${backend_image}"

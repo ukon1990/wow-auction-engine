@@ -114,6 +114,7 @@ jobs:
       git_ref: ${{ needs.load-regions.outputs.git_ref }}
       workflow_run_id: ""
       image_tag: ${{ needs.load-regions.outputs.git_ref }}
+      image_platform: linux/arm64
       service: backend
 
   build-frontend-image:
@@ -124,6 +125,7 @@ jobs:
       git_ref: ${{ needs.load-regions.outputs.git_ref }}
       workflow_run_id: ""
       image_tag: ${{ needs.load-regions.outputs.git_ref }}
+      image_platform: linux/arm64
       service: frontend
 
   deploy-auth:
