@@ -6,6 +6,9 @@ import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dto.item.ItemDTO
+import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
+import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
+import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.mapper.toDomain
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,6 +21,9 @@ import java.time.LocalDate
 class ItemJdbcRepositoryTest : IntegrationTestBase() {
     @Autowired
     lateinit var itemJdbcRepository: ItemJdbcRepository
+
+    @Autowired
+    lateinit var adminExpansionRepository: AdminExpansionRepository
 
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
@@ -182,27 +188,37 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
     @Test
     fun `findMissingItemIdsForEnabledExpansionRanges returns missing ids covered by ranges`() {
         itemJdbcRepository.syncItems(listOf(loadItem(171374)))
-        jdbcTemplate.update(
-            """
-            INSERT INTO expansion_item_range (expansion_id, start_item_id, end_item_id, source, enabled)
-            VALUES (?, ?, ?, ?, ?)
-            """.trimIndent(),
-            1,
-            171374,
-            171376,
-            "manual",
-            true,
+        ensureExpansionExists(
+            id = 1,
+            slug = "vanilla",
+            majorVersion = 1,
+            displayOrder = 10,
+            enName = "Vanilla",
         )
-        jdbcTemplate.update(
-            """
-            INSERT INTO expansion_item_range (expansion_id, start_item_id, end_item_id, source, enabled)
-            VALUES (?, ?, ?, ?, ?)
-            """.trimIndent(),
-            2,
-            999001,
-            999002,
-            "manual",
-            false,
+        ensureExpansionExists(
+            id = 2,
+            slug = "the-burning-crusade",
+            majorVersion = 2,
+            displayOrder = 20,
+            enName = "The Burning Crusade",
+        )
+        adminExpansionRepository.createRange(
+            AdminExpansionItemRangeRequest(
+                expansionId = 1,
+                startItemId = 171374,
+                endItemId = 171376,
+                source = "manual",
+                enabled = true,
+            ),
+        )
+        adminExpansionRepository.createRange(
+            AdminExpansionItemRangeRequest(
+                expansionId = 2,
+                startItemId = 999001,
+                endItemId = 999002,
+                source = "manual",
+                enabled = false,
+            ),
         )
 
         val discovery = itemJdbcRepository.findMissingItemIdsForEnabledExpansionRanges()
@@ -214,6 +230,31 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
 
     private fun loadItem(itemId: Int) =
         mapper.readValue<ItemDTO>(loadFixture(this, "/blizzard/item/$itemId-response.json")).toDomain()
+
+    private fun ensureExpansionExists(
+        id: Int,
+        slug: String,
+        majorVersion: Int,
+        displayOrder: Int,
+        enName: String,
+    ) {
+        if (adminExpansionRepository.expansionExists(id)) {
+            return
+        }
+        adminExpansionRepository.createExpansion(
+            AdminExpansionRequest(
+                id = id,
+                slug = slug,
+                majorVersion = majorVersion,
+                displayOrder = displayOrder,
+                nameLocales =
+                    GameLocale(
+                        enUS = enName,
+                        enGB = enName,
+                    ),
+            ),
+        )
+    }
 
     private fun countRows(tableName: String): Int =
         jdbcTemplate.queryForObject("SELECT COUNT(*) FROM $tableName", Int::class.java)!!
