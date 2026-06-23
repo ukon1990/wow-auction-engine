@@ -1,13 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { AdminApiService, AdminExpansion, AdminExpansionItemRange } from '@api/generated';
+import { englishGameLocale } from '@features/admin/shared/game-locale-test-fixtures';
 import { ToastService } from '@core/services/toast.service';
+import { LocaleService } from '@core/services/locale.service';
 import { AdminExpansionService } from './admin-expansion.service';
 
 const expansionFixture: AdminExpansion = {
   id: 1,
   slug: 'vanilla',
   name: 'Vanilla',
+  nameLocales: englishGameLocale('Vanilla'),
   majorVersion: 1,
   displayOrder: 1,
 };
@@ -47,6 +50,7 @@ describe('AdminExpansionService', () => {
         AdminExpansionService,
         { provide: AdminApiService, useValue: api },
         { provide: ToastService, useValue: toast },
+        { provide: LocaleService, useValue: { apiLocaleOverride: () => undefined } },
       ],
     });
     service = TestBed.inject(AdminExpansionService);
@@ -55,8 +59,8 @@ describe('AdminExpansionService', () => {
   it('loads expansions and ranges', () => {
     service.load().subscribe();
 
-    expect(api.listExpansions).toHaveBeenCalledOnce();
-    expect(api.listExpansionRanges).toHaveBeenCalledOnce();
+    expect(api.listExpansions).toHaveBeenCalledWith(undefined);
+    expect(api.listExpansionRanges).toHaveBeenCalledWith(undefined);
     expect(service.expansions()).toEqual([expansionFixture]);
     expect(service.ranges()).toEqual([rangeFixture]);
     expect(service.loading()).toBe(false);

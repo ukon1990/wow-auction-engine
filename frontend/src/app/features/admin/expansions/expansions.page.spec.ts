@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import { AdminExpansion, AdminExpansionItemRange } from '@api/generated';
+import { englishGameLocale } from '@features/admin/shared/game-locale-test-fixtures';
 import { AdminExpansionJobService } from './admin-expansion-job.service';
 import { AdminExpansionService } from './admin-expansion.service';
 import { ExpansionsPage } from './expansions.page';
@@ -10,6 +11,7 @@ const vanillaExpansion: AdminExpansion = {
   id: 1,
   slug: 'vanilla',
   name: 'Vanilla',
+  nameLocales: englishGameLocale('Vanilla'),
   majorVersion: 1,
   displayOrder: 1,
 };
@@ -18,6 +20,7 @@ const midnightExpansion: AdminExpansion = {
   id: 12,
   slug: 'midnight',
   name: 'Midnight',
+  nameLocales: englishGameLocale('Midnight'),
   majorVersion: 12,
   displayOrder: 120,
 };
@@ -49,6 +52,9 @@ describe('ExpansionsPage', () => {
       createRange: vitest.fn(),
       updateRange: vitest.fn(),
       deleteRange: vitest.fn(),
+      createExpansion: vitest.fn(),
+      updateExpansion: vitest.fn(),
+      deleteExpansion: vitest.fn(),
       startApplyJob: vitest.fn(),
       startFetchMissingJob: vitest.fn(),
     };

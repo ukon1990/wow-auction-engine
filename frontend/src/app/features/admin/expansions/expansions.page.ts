@@ -8,12 +8,18 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  AdminExpansion,
   AdminExpansionItemRange,
   AdminExpansionItemRangeRequest,
+  AdminExpansionRequest,
   AdminItemJob,
 } from '@api/generated';
 import { AdminExpansionJobService } from '@features/admin/expansions/admin-expansion-job.service';
 import { AdminExpansionService } from '@features/admin/expansions/admin-expansion.service';
+import {
+  ExpansionFormComponent,
+  type ExpansionFormMode,
+} from '@features/admin/expansions/expansion-form.component';
 import {
   defaultExpansionRangeFilters,
   defaultCreateRangeValues,
@@ -55,6 +61,7 @@ const PAGE_SIZE = 50;
     SearchInputComponent,
     SelectInputComponent,
     ExpansionRangeFormComponent,
+    ExpansionFormComponent,
     SlideOverPanelComponent,
   ],
   templateUrl: './expansions.page.html',
@@ -74,23 +81,31 @@ export class ExpansionsPage {
   protected readonly activeJob = this.jobService.activeJob.asReadonly();
   protected readonly jobDismissed = this.jobService.dismissed.asReadonly();
 
-  protected readonly catalogColumns = signal(createExpansionCatalogColumns());
+  protected readonly catalogColumns = signal(
+    createExpansionCatalogColumns({
+      onEdit: (expansion) => this.openEditExpansionForm(expansion),
+      onDelete: (expansion) => void this.deleteExpansion(expansion),
+    }),
+  );
   protected readonly rangeColumns = signal(
     createExpansionRangeColumns({
-      onEdit: (range) => this.openEditForm(range),
+      onEdit: (range) => this.openEditRangeForm(range),
       onDelete: (range) => void this.deleteRange(range),
     }),
   );
 
   protected readonly filters = signal<ExpansionRangeFilterState>(defaultExpansionRangeFilters());
   protected readonly page = signal(0);
-  protected readonly formMode = signal<ExpansionRangeFormMode | null>(null);
+  protected readonly rangeFormMode = signal<ExpansionRangeFormMode | null>(null);
+  protected readonly expansionFormMode = signal<ExpansionFormMode | null>(null);
   protected readonly editingRange = signal<AdminExpansionItemRange | null>(null);
+  protected readonly editingExpansion = signal<AdminExpansion | null>(null);
   protected readonly createRangeDefaults = signal<CreateExpansionRangeDefaults>({
     expansionId: '',
     startItemId: '',
   });
-  protected readonly formError = signal<string | null>(null);
+  protected readonly rangeFormError = signal<string | null>(null);
+  protected readonly expansionFormError = signal<string | null>(null);
 
   protected readonly expansionFilterOptions = computed(() => [
     { id: '', label: 'All expansions' },
@@ -115,6 +130,19 @@ export class ExpansionsPage {
   protected readonly sortedCatalog = computed(() =>
     [...this.expansions()].sort((left, right) => left.displayOrder - right.displayOrder),
   );
+
+  protected readonly createExpansionDefaults = computed(() => {
+    const expansions = this.sortedCatalog();
+    const maxId = expansions.reduce((max, expansion) => Math.max(max, expansion.id), 0);
+    const maxDisplayOrder = expansions.reduce(
+      (max, expansion) => Math.max(max, expansion.displayOrder),
+      0,
+    );
+    return {
+      id: maxId + 1,
+      displayOrder: maxDisplayOrder + 10,
+    };
+  });
 
   protected readonly filteredRanges = computed(() =>
     sortExpansionRanges(filterExpansionRanges(this.ranges(), this.filters())),
@@ -161,8 +189,12 @@ export class ExpansionsPage {
     () => this.activeJob()?.status === AdminItemJob.StatusEnum.Failed,
   );
 
-  protected readonly formTitle = computed(() =>
-    this.formMode() === 'edit' ? 'Edit expansion range' : 'Add expansion range',
+  protected readonly rangeFormTitle = computed(() =>
+    this.rangeFormMode() === 'edit' ? 'Edit expansion range' : 'Add expansion range',
+  );
+
+  protected readonly expansionFormTitle = computed(() =>
+    this.expansionFormMode() === 'edit' ? 'Edit expansion' : 'Add expansion',
   );
 
   constructor() {
@@ -182,28 +214,50 @@ export class ExpansionsPage {
     this.page.set(page);
   }
 
-  protected openCreateForm(): void {
-    this.formError.set(null);
+  protected openCreateRangeForm(): void {
+    this.expansionFormMode.set(null);
+    this.rangeFormError.set(null);
     this.editingRange.set(null);
     this.createRangeDefaults.set(defaultCreateRangeValues(this.expansions(), this.ranges()));
-    this.formMode.set('create');
+    this.rangeFormMode.set('create');
   }
 
-  protected openEditForm(range: AdminExpansionItemRange): void {
-    this.formError.set(null);
+  protected openEditRangeForm(range: AdminExpansionItemRange): void {
+    this.expansionFormMode.set(null);
+    this.rangeFormError.set(null);
     this.editingRange.set(range);
-    this.formMode.set('edit');
+    this.rangeFormMode.set('edit');
   }
 
-  protected closeForm(): void {
-    this.formMode.set(null);
+  protected closeRangeForm(): void {
+    this.rangeFormMode.set(null);
     this.editingRange.set(null);
-    this.formError.set(null);
+    this.rangeFormError.set(null);
+  }
+
+  protected openCreateExpansionForm(): void {
+    this.rangeFormMode.set(null);
+    this.expansionFormError.set(null);
+    this.editingExpansion.set(null);
+    this.expansionFormMode.set('create');
+  }
+
+  protected openEditExpansionForm(expansion: AdminExpansion): void {
+    this.rangeFormMode.set(null);
+    this.expansionFormError.set(null);
+    this.editingExpansion.set(expansion);
+    this.expansionFormMode.set('edit');
+  }
+
+  protected closeExpansionForm(): void {
+    this.expansionFormMode.set(null);
+    this.editingExpansion.set(null);
+    this.expansionFormError.set(null);
   }
 
   protected async submitRange(request: AdminExpansionItemRangeRequest): Promise<void> {
-    this.formError.set(null);
-    const mode = this.formMode();
+    this.rangeFormError.set(null);
+    const mode = this.rangeFormMode();
     const editing = this.editingRange();
 
     try {
@@ -212,9 +266,26 @@ export class ExpansionsPage {
       } else {
         await firstValueFrom(this.service.createRange(request));
       }
-      this.closeForm();
+      this.closeRangeForm();
     } catch (error: unknown) {
-      this.formError.set(readSubmitError(error));
+      this.rangeFormError.set(readSubmitError(error, 'Unable to save expansion range.'));
+    }
+  }
+
+  protected async submitExpansion(request: AdminExpansionRequest): Promise<void> {
+    this.expansionFormError.set(null);
+    const mode = this.expansionFormMode();
+    const editing = this.editingExpansion();
+
+    try {
+      if (mode === 'edit' && editing) {
+        await firstValueFrom(this.service.updateExpansion(editing.id, request));
+      } else {
+        await firstValueFrom(this.service.createExpansion(request));
+      }
+      this.closeExpansionForm();
+    } catch (error: unknown) {
+      this.expansionFormError.set(readSubmitError(error, 'Unable to save expansion.'));
     }
   }
 
@@ -227,7 +298,25 @@ export class ExpansionsPage {
     }
     await firstValueFrom(this.service.deleteRange(range.id));
     if (this.editingRange()?.id === range.id) {
-      this.closeForm();
+      this.closeRangeForm();
+    }
+  }
+
+  protected async deleteExpansion(expansion: AdminExpansion): Promise<void> {
+    const confirmed = globalThis.confirm?.(`Delete expansion ${expansion.name}?`);
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await firstValueFrom(this.service.deleteExpansion(expansion.id));
+      if (this.editingExpansion()?.id === expansion.id) {
+        this.closeExpansionForm();
+      }
+    } catch (error: unknown) {
+      this.expansionFormError.set(
+        readSubmitError(error, 'Expansion is in use by ranges or items.'),
+      );
     }
   }
 
@@ -246,7 +335,7 @@ export class ExpansionsPage {
   protected readonly rangeRowId = (row: AdminExpansionItemRange): string => String(row.id);
 }
 
-function readSubmitError(error: unknown): string {
+function readSubmitError(error: unknown, fallback: string): string {
   if (error && typeof error === 'object' && 'error' in error) {
     const body = (error as { error?: unknown }).error;
     if (typeof body === 'string' && body.trim().length > 0) {
@@ -256,5 +345,5 @@ function readSubmitError(error: unknown): string {
       return body.message;
     }
   }
-  return 'Unable to save expansion range.';
+  return fallback;
 }

@@ -64,9 +64,19 @@
   </section>
 
   <section class="grid gap-4" aria-label="Expansion catalog">
-    <header>
-      <h2 class="font-cinzel text-xl font-bold text-primary-container">Expansion catalog</h2>
-      <p class="ee-data text-outline">Read-only list of configured expansions.</p>
+    <header class="flex flex-wrap items-end justify-between gap-3">
+      <div class="grid gap-1">
+        <h2 class="font-cinzel text-xl font-bold text-primary-container">Expansion catalog</h2>
+        <p class="ee-data text-outline">Manage expansions and their localized names.</p>
+      </div>
+      <button
+        type="button"
+        class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+        [disabled]="mutationLoading()"
+        (click)="openCreateExpansionForm()"
+      >
+        Add expansion
+      </button>
     </header>
     <ee-table
       [columns]="catalogColumns()"
@@ -89,7 +99,7 @@
         type="button"
         class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
         [disabled]="mutationLoading()"
-        (click)="openCreateForm()"
+        (click)="openCreateRangeForm()"
       >
         Add range
       </button>
@@ -140,21 +150,41 @@
 </ee-page-frame>
 
 <ee-slide-over
-  [open]="formMode() !== null"
-  [title]="formTitle()"
+  [open]="rangeFormMode() !== null"
+  [title]="rangeFormTitle()"
   titleId="expansion-range-form-title"
-  (closed)="closeForm()"
+  (closed)="closeRangeForm()"
 >
-  @if (formMode(); as mode) {
+  @if (rangeFormMode(); as mode) {
     <app-expansion-range-form
       [expansions]="expansions()"
       [createDefaults]="createRangeDefaults()"
       [mode]="mode"
       [range]="editingRange()"
       [submitting]="mutationLoading()"
-      [submitError]="formError()"
+      [submitError]="rangeFormError()"
       (submitted)="submitRange($event)"
-      (cancelled)="closeForm()"
+      (cancelled)="closeRangeForm()"
+    />
+  }
+</ee-slide-over>
+
+<ee-slide-over
+  [open]="expansionFormMode() !== null"
+  [title]="expansionFormTitle()"
+  titleId="expansion-form-title"
+  (closed)="closeExpansionForm()"
+>
+  @if (expansionFormMode(); as mode) {
+    <app-expansion-form
+      [mode]="mode"
+      [expansion]="editingExpansion()"
+      [defaultId]="createExpansionDefaults().id"
+      [defaultDisplayOrder]="createExpansionDefaults().displayOrder"
+      [submitting]="mutationLoading()"
+      [submitError]="expansionFormError()"
+      (submitted)="submitExpansion($event)"
+      (cancelled)="closeExpansionForm()"
     />
   }
 </ee-slide-over>

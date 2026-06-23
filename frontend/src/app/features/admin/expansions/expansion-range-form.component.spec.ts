@@ -1,11 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AdminExpansion } from '@api/generated';
+import { englishGameLocale } from '@features/admin/shared/game-locale-test-fixtures';
 import { ExpansionRangeFormComponent } from './expansion-range-form.component';
 
 const vanillaExpansion: AdminExpansion = {
   id: 1,
   slug: 'vanilla',
   name: 'Vanilla',
+  nameLocales: englishGameLocale('Vanilla'),
   majorVersion: 1,
   displayOrder: 1,
 };
@@ -14,6 +16,7 @@ const midnightExpansion: AdminExpansion = {
   id: 12,
   slug: 'midnight',
   name: 'Midnight',
+  nameLocales: englishGameLocale('Midnight'),
   majorVersion: 12,
   displayOrder: 120,
 };

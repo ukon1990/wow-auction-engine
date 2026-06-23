@@ -1,5 +1,6 @@
 import { ColumnDef, createColumnHelper, flexRenderComponent } from '@tanstack/angular-table';
 import { AdminExpansion, AdminExpansionItemRange } from '@api/generated';
+import { ExpansionCatalogActionsCellComponent } from '@features/admin/expansions/expansion-catalog-actions-cell.component';
 import { ExpansionRangeActionsCellComponent } from '@features/admin/expansions/expansion-range-actions-cell.component';
 import { DateTimeColumnComponent } from '@ui';
 
@@ -8,24 +9,57 @@ type ExpansionColumnMeta = {
   readonly gridTrack: string;
 };
 
-export const createExpansionCatalogColumns = () => {
+export type ExpansionCatalogTableActions = {
+  readonly onEdit: (expansion: AdminExpansion) => void;
+  readonly onDelete: (expansion: AdminExpansion) => void;
+};
+
+type ExpansionCatalogColumnMeta = ExpansionColumnMeta & ExpansionCatalogTableActions;
+
+export const createExpansionCatalogColumns = (actions: ExpansionCatalogTableActions) => {
   const helper = createColumnHelper<AdminExpansion>();
   return [
     helper.accessor('name', {
       header: $localize`:@@admin.expansions.catalog.name:Name`,
-      meta: { align: 'left', gridTrack: 'minmax(12rem, 2fr)' } satisfies ExpansionColumnMeta,
+      meta: {
+        align: 'left',
+        gridTrack: 'minmax(12rem, 2fr)',
+        ...actions,
+      } satisfies ExpansionCatalogColumnMeta,
     }),
     helper.accessor('slug', {
       header: $localize`:@@admin.expansions.catalog.slug:Slug`,
-      meta: { align: 'left', gridTrack: 'minmax(10rem, 1.5fr)' } satisfies ExpansionColumnMeta,
+      meta: {
+        align: 'left',
+        gridTrack: 'minmax(10rem, 1.5fr)',
+        ...actions,
+      } satisfies ExpansionCatalogColumnMeta,
     }),
     helper.accessor('majorVersion', {
       header: $localize`:@@admin.expansions.catalog.majorVersion:Major version`,
-      meta: { align: 'left', gridTrack: 'minmax(6rem, 0.75fr)' } satisfies ExpansionColumnMeta,
+      meta: {
+        align: 'left',
+        gridTrack: 'minmax(6rem, 0.75fr)',
+        ...actions,
+      } satisfies ExpansionCatalogColumnMeta,
     }),
     helper.accessor('displayOrder', {
       header: $localize`:@@admin.expansions.catalog.displayOrder:Display order`,
-      meta: { align: 'left', gridTrack: 'minmax(6rem, 0.75fr)' } satisfies ExpansionColumnMeta,
+      meta: {
+        align: 'left',
+        gridTrack: 'minmax(6rem, 0.75fr)',
+        ...actions,
+      } satisfies ExpansionCatalogColumnMeta,
+    }),
+    helper.display({
+      id: 'actions',
+      header: 'Actions',
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(6rem, 0.75fr)',
+        ...actions,
+      } satisfies ExpansionCatalogColumnMeta,
+      cell: () => flexRenderComponent(ExpansionCatalogActionsCellComponent),
     }),
   ] as ColumnDef<AdminExpansion, unknown>[];
 };

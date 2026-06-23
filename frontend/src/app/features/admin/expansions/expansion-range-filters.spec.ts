@@ -1,4 +1,5 @@
 import { AdminExpansion, AdminExpansionItemRange } from '@api/generated';
+import { englishGameLocale } from '@features/admin/shared/game-locale-test-fixtures';
 import {
   defaultCreateRangeValues,
   defaultExpansionRangeFilters,
@@ -10,6 +11,7 @@ const expansion = {
   id: 2,
   slug: 'tbc',
   name: 'The Burning Crusade',
+  nameLocales: englishGameLocale('The Burning Crusade'),
   majorVersion: 2,
   displayOrder: 2,
 };
@@ -55,6 +57,7 @@ describe('expansion-range-filters', () => {
       id: 1,
       slug: 'vanilla',
       name: 'Vanilla',
+      nameLocales: englishGameLocale('Vanilla'),
       majorVersion: 1,
       displayOrder: 1,
     };
@@ -72,6 +75,7 @@ describe('expansion-range-filters', () => {
         id: 1,
         slug: 'vanilla',
         name: 'Vanilla',
+        nameLocales: englishGameLocale('Vanilla'),
         majorVersion: 1,
         displayOrder: 1,
       },
@@ -79,6 +83,7 @@ describe('expansion-range-filters', () => {
         id: 3,
         slug: 'wotlk',
         name: 'Wrath of the Lich King',
+        nameLocales: englishGameLocale('Wrath of the Lich King'),
         majorVersion: 3,
         displayOrder: 3,
       },
@@ -128,6 +133,7 @@ describe('expansion-range-filters', () => {
         id: 2,
         slug: 'tbc',
         name: 'The Burning Crusade',
+        nameLocales: englishGameLocale('The Burning Crusade'),
         majorVersion: 2,
         displayOrder: 2,
       },
