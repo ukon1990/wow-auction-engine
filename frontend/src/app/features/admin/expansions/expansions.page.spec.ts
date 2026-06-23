@@ -6,7 +6,7 @@ import { AdminExpansionJobService } from './admin-expansion-job.service';
 import { AdminExpansionService } from './admin-expansion.service';
 import { ExpansionsPage } from './expansions.page';
 
-const expansionFixture: AdminExpansion = {
+const vanillaExpansion: AdminExpansion = {
   id: 1,
   slug: 'vanilla',
   name: 'Vanilla',
@@ -14,11 +14,19 @@ const expansionFixture: AdminExpansion = {
   displayOrder: 1,
 };
 
+const midnightExpansion: AdminExpansion = {
+  id: 12,
+  slug: 'midnight',
+  name: 'Midnight',
+  majorVersion: 12,
+  displayOrder: 120,
+};
+
 const rangeFixture: AdminExpansionItemRange = {
   id: 10,
-  expansion: expansionFixture,
-  startItemId: 1,
-  endItemId: 100,
+  expansion: midnightExpansion,
+  startItemId: 260000,
+  endItemId: 274578,
   source: 'manual',
   enabled: true,
   createdAt: '2026-06-23T10:00:00Z',
@@ -32,10 +40,12 @@ describe('ExpansionsPage', () => {
     const serviceStub = {
       loading: signal(false),
       mutationLoading: signal(false),
-      expansions: signal([expansionFixture]),
+      expansions: signal([vanillaExpansion, midnightExpansion]),
       ranges: signal([rangeFixture]),
       error: signal<string | null>(null),
-      load: vitest.fn().mockReturnValue(of([[expansionFixture], [rangeFixture]])),
+      load: vitest
+        .fn()
+        .mockReturnValue(of([[vanillaExpansion, midnightExpansion], [rangeFixture]])),
       createRange: vitest.fn(),
       updateRange: vitest.fn(),
       deleteRange: vitest.fn(),
@@ -66,20 +76,33 @@ describe('ExpansionsPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
     expect(fixture.nativeElement.textContent).toContain('Expansion catalog');
     expect(fixture.nativeElement.textContent).toContain('Vanilla');
+    expect(fixture.nativeElement.textContent).toContain('Midnight');
   });
 
-  it('opens the slide-over when Add range is clicked', () => {
+  it('opens the slide-over with create defaults when Add range is clicked', async () => {
     fixture.detectChanges();
 
-    const addButton = Array.from(fixture.nativeElement.querySelectorAll('button')).find((button) =>
-      button.textContent?.includes('Add range'),
-    ) as HTMLButtonElement | undefined;
+    const addButton = Array.from(
+      fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>,
+    ).find((button) => button.textContent?.includes('Add range'));
     expect(addButton).toBeTruthy();
     addButton?.click();
+    await fixture.whenStable();
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('[role="dialog"]')).toBeTruthy();
     expect(fixture.nativeElement.textContent).toContain('Add expansion range');
     expect(fixture.nativeElement.textContent).toContain('Create range');
+
+    const expansionSelect = fixture.nativeElement.querySelector(
+      'app-expansion-range-form select',
+    ) as HTMLSelectElement;
+    const numberInputs = Array.from(
+      fixture.nativeElement.querySelectorAll('app-expansion-range-form input[type="number"]'),
+    ) as HTMLInputElement[];
+
+    expect(expansionSelect.value).toBe('12');
+    expect(numberInputs[0].value).toBe('274578');
+    expect(numberInputs[1].value).toBe('');
   });
 });

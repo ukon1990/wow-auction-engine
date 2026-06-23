@@ -2,12 +2,20 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AdminExpansion } from '@api/generated';
 import { ExpansionRangeFormComponent } from './expansion-range-form.component';
 
-const expansionFixture: AdminExpansion = {
+const vanillaExpansion: AdminExpansion = {
   id: 1,
   slug: 'vanilla',
   name: 'Vanilla',
   majorVersion: 1,
   displayOrder: 1,
+};
+
+const midnightExpansion: AdminExpansion = {
+  id: 12,
+  slug: 'midnight',
+  name: 'Midnight',
+  majorVersion: 12,
+  displayOrder: 120,
 };
 
 describe('ExpansionRangeFormComponent', () => {
@@ -19,9 +27,26 @@ describe('ExpansionRangeFormComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(ExpansionRangeFormComponent);
-    fixture.componentRef.setInput('expansions', [expansionFixture]);
+    fixture.componentRef.setInput('expansions', [vanillaExpansion, midnightExpansion]);
+    fixture.componentRef.setInput('createDefaults', {
+      expansionId: '12',
+      startItemId: '274578',
+    });
     fixture.componentRef.setInput('mode', 'create');
     await fixture.whenStable();
+  });
+
+  it('prefills create mode with the latest expansion and max item id', () => {
+    fixture.detectChanges();
+
+    const expansionSelect = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
+    const numberInputs = Array.from(
+      fixture.nativeElement.querySelectorAll('input[type="number"]'),
+    ) as HTMLInputElement[];
+
+    expect(expansionSelect.value).toBe('12');
+    expect(numberInputs[0].value).toBe('274578');
+    expect(numberInputs[1].value).toBe('');
   });
 
   it('renders without ngModel form registration errors', () => {
