@@ -16,13 +16,6 @@ spec:
     - host: ee.jonaskf.net
       http:
         paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: ee-backend
-                port:
-                  number: 8080
           - path: /
             pathType: Prefix
             backend:

@@ -64,6 +64,14 @@ Resources:
       Domain: !Ref AuthDomainPrefix
       UserPoolId: !Ref UserPool
 
+  AdminGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Condition: IsEuNorthOne
+    Properties:
+      GroupName: admin
+      Description: Administrators with access to admin API and UI
+      UserPoolId: !Ref UserPool
+
   UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Condition: IsEuNorthOne

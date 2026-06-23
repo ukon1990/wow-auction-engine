@@ -64,5 +64,8 @@ describe('userHasRoleGuard', () => {
     authServiceMock.whenReady.mockReturnValue(getAuthUserWithRoles([]));
     await expect(executeGuard(route, state)).resolves.toBeFalsy();
     expect(routerMock.createUrlTree).toHaveBeenCalledOnce();
+    expect(routerMock.createUrlTree).toHaveBeenCalledWith(['/login'], {
+      queryParams: { returnTo: '/admin' },
+    });
   });
 });

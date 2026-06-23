@@ -31,6 +31,7 @@ const hopByHopHeaders = new Set([
 ]);
 
 const app = express();
+app.set('trust proxy', 1);
 const angularApp = new AngularNodeAppEngine();
 const authConfig = readAuthConfig();
 
