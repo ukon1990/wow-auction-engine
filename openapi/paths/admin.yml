@@ -28,3 +28,152 @@ getStatus:
                     application/json:
                         schema:
                             $ref: "../openapi.yml#/components/schemas/AdminStatus"
+listExpansions:
+    get:
+        tags:
+            - Admin
+        operationId: listExpansions
+        summary: Lists configured item expansions
+        responses:
+            "200":
+                description: Expansions
+                content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                $ref: "../openapi.yml#/components/schemas/AdminExpansion"
+expansionRanges:
+    get:
+        tags:
+            - Admin
+        operationId: listExpansionRanges
+        summary: Lists configured item expansion ranges
+        responses:
+            "200":
+                description: Expansion ranges
+                content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                $ref: "../openapi.yml#/components/schemas/AdminExpansionItemRange"
+    post:
+        tags:
+            - Admin
+        operationId: createExpansionRange
+        summary: Creates an item expansion range
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "../openapi.yml#/components/schemas/AdminExpansionItemRangeRequest"
+        responses:
+            "200":
+                description: Created range
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminExpansionItemRange"
+            "400":
+                description: Invalid range
+expansionRangeById:
+    put:
+        tags:
+            - Admin
+        operationId: updateExpansionRange
+        summary: Updates an item expansion range
+        parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                  type: integer
+                  format: int64
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "../openapi.yml#/components/schemas/AdminExpansionItemRangeRequest"
+        responses:
+            "200":
+                description: Updated range
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminExpansionItemRange"
+            "400":
+                description: Invalid range
+            "404":
+                description: Range not found
+    delete:
+        tags:
+            - Admin
+        operationId: deleteExpansionRange
+        summary: Deletes an item expansion range
+        parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                  type: integer
+                  format: int64
+        responses:
+            "204":
+                description: Range deleted
+            "404":
+                description: Range not found
+applyExpansionRanges:
+    post:
+        tags:
+            - Admin
+        operationId: applyExpansionRanges
+        summary: Starts a job that applies enabled expansion ranges to existing items
+        responses:
+            "202":
+                description: Job accepted
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminItemJob"
+            "409":
+                description: A job of this type is already running
+fetchMissingExpansionRangeItems:
+    post:
+        tags:
+            - Admin
+        operationId: fetchMissingExpansionRangeItems
+        summary: Starts a job that fetches missing items covered by enabled expansion ranges
+        responses:
+            "202":
+                description: Job accepted
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminItemJob"
+            "409":
+                description: A job of this type is already running
+getAdminItemJob:
+    get:
+        tags:
+            - Admin
+        operationId: getAdminItemJob
+        summary: Gets an admin item job
+        parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                  type: integer
+                  format: int64
+        responses:
+            "200":
+                description: Admin item job
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminItemJob"
+            "404":
+                description: Job not found

@@ -26,6 +26,18 @@ paths:
     $ref: ./paths/admin.yml#/getUsers
   /admin/status:
     $ref: ./paths/admin.yml#/getStatus
+  /admin/expansions:
+    $ref: ./paths/admin.yml#/listExpansions
+  /admin/expansion-ranges:
+    $ref: ./paths/admin.yml#/expansionRanges
+  /admin/expansion-ranges/{id}:
+    $ref: ./paths/admin.yml#/expansionRangeById
+  /admin/expansion-ranges/apply:
+    $ref: ./paths/admin.yml#/applyExpansionRanges
+  /admin/expansion-ranges/fetch-missing-items:
+    $ref: ./paths/admin.yml#/fetchMissingExpansionRangeItems
+  /admin/item-jobs/{id}:
+    $ref: ./paths/admin.yml#/getAdminItemJob
   /realms:
     $ref: ./paths/realm.yml#/listRealms
   /realms/{region}/{slug}:
@@ -56,6 +68,14 @@ components:
       $ref: ./components/schemas/admin/admin-running-query.yml
     AdminTableSize:
       $ref: ./components/schemas/admin/admin-table-size.yml
+    AdminExpansion:
+      $ref: ./components/schemas/admin/admin-expansion.yml
+    AdminExpansionItemRange:
+      $ref: ./components/schemas/admin/admin-expansion-item-range.yml
+    AdminExpansionItemRangeRequest:
+      $ref: ./components/schemas/admin/admin-expansion-item-range-request.yml
+    AdminItemJob:
+      $ref: ./components/schemas/admin/admin-item-job.yml
     AuctionHouseStatus:
       $ref: ./components/schemas/auction-house-status.yml
     AuctionListingKey:
