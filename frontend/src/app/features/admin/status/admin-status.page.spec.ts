@@ -35,6 +35,17 @@ const statusFixture: AdminStatus = {
       startedAt: '2026-06-23T05:59:56Z',
       info: longQuery,
     },
+    {
+      id: 4,
+      queryId: 5,
+      tid: 6,
+      command: 'Execute',
+      state: 'Updating',
+      time: 1,
+      timeMs: 900,
+      startedAt: '2026-06-23T05:59:59Z',
+      info: 'UPDATE mailbox SET unread = 0 WHERE user_id = 42',
+    },
   ],
   tableSizes: [
     {
@@ -153,6 +164,20 @@ describe('AdminStatusPage', () => {
     const text = fixture.nativeElement.textContent as string;
     expect(text).toContain('SQL query');
     expect(text).toContain(longQuery);
+  });
+
+  it('filters running queries across table values', () => {
+    fixture = TestBed.createComponent(AdminStatusPage);
+    fixture.detectChanges();
+
+    const input = fixture.nativeElement.querySelector('input[type="search"]') as HTMLInputElement;
+    input.value = 'mailbox';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('UPDATE mailbox');
+    expect(text).not.toContain('Show more');
   });
 
   it('refreshes manually', () => {

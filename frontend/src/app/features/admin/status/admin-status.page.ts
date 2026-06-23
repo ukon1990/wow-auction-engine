@@ -36,6 +36,15 @@ export class AdminStatusPage {
   protected readonly history = this.service.history.asReadonly();
   protected readonly tableSizeColumns = signal(createTableSizeColumns());
   protected readonly selectedQuery = signal<AdminRunningQuery | null>(null);
+  protected readonly runningQuerySearch = signal('');
+  protected readonly filteredRunningQueries = computed(() => {
+    const queries = this.status()?.runningQueries ?? [];
+    const needle = this.runningQuerySearch().trim().toLowerCase();
+    if (!needle) {
+      return queries;
+    }
+    return queries.filter((query) => this.runningQuerySearchText(query).includes(needle));
+  });
   protected readonly memoryGaugeOptions = computed<Highcharts.Options>(() => {
     const status = this.status();
     return this.gaugeOptions({
@@ -128,6 +137,11 @@ export class AdminStatusPage {
   protected updateBackgroundUpdates(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.service.setBackgroundUpdates(input.checked);
+  }
+
+  protected updateRunningQuerySearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.runningQuerySearch.set(input.value);
   }
 
   protected uptimeLabel(seconds: number | undefined): string {
@@ -311,6 +325,29 @@ export class AdminStatusPage {
 
   protected closeQuery(): void {
     this.selectedQuery.set(null);
+  }
+
+  private runningQuerySearchText(query: AdminRunningQuery): string {
+    return [
+      query.id,
+      query.queryId,
+      query.tid,
+      query.command,
+      query.state,
+      query.time,
+      query.timeMs,
+      this.startedAtLabel(query.startedAt),
+      this.durationLabel(query.timeMs),
+      query.info,
+      query.stage,
+      query.maxStage,
+      query.progress,
+      query.memoryUsed,
+      query.examinedRows,
+    ]
+      .filter((value) => value !== null && value !== undefined)
+      .join(' ')
+      .toLowerCase();
   }
 }
 
