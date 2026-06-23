@@ -20,12 +20,23 @@ const statusFixture: AdminStatus = {
   runningQueries: [],
   tableSizes: [],
 };
+const runningQueryFixture = {
+  id: 10,
+  queryId: 20,
+  tid: 30,
+  command: 'Query',
+  state: 'Running',
+  time: 2,
+  timeMs: 2000,
+  info: 'SELECT * FROM auction',
+};
 
 describe('AdminStatusService', () => {
   let service: AdminStatusService;
   let api: { getAdminStatus: ReturnType<typeof vitest.fn> };
 
   beforeEach(() => {
+    vitest.useFakeTimers();
     api = {
       getAdminStatus: vitest.fn().mockReturnValue(of(statusFixture)),
     };
@@ -36,6 +47,11 @@ describe('AdminStatusService', () => {
     service = TestBed.inject(AdminStatusService);
   });
 
+  afterEach(() => {
+    service.setBackgroundUpdates(false);
+    vitest.useRealTimers();
+  });
+
   it('updates status and loading state from the API response', () => {
     service.refresh().subscribe();
 
@@ -44,6 +60,15 @@ describe('AdminStatusService', () => {
     expect(service.error()).toBeNull();
     expect(service.loading()).toBe(false);
     expect(service.lastUpdated()).toBeInstanceOf(Date);
+    expect(service.history()).toHaveLength(1);
+    expect(service.history()[0]).toMatchObject({
+      threadsConnected: 2,
+      maxUsedConnections: 4,
+      usedMemoryMb: 128,
+      maxMemoryMb: 512,
+      processCpuLoad: 12.5,
+      systemCpuLoad: 40,
+    });
   });
 
   it('stores an error when the API request fails', () => {
@@ -65,5 +90,66 @@ describe('AdminStatusService', () => {
     expect(api.getAdminStatus).toHaveBeenCalledOnce();
     response.next(statusFixture);
     response.complete();
+  });
+
+  it('marks previously seen queries as completed when they disappear', () => {
+    api.getAdminStatus
+      .mockReturnValueOnce(
+        of({
+          ...statusFixture,
+          runningQueries: [runningQueryFixture],
+        }),
+      )
+      .mockReturnValueOnce(of(statusFixture));
+
+    service.refresh().subscribe();
+    service.refresh().subscribe();
+
+    expect(service.status()?.runningQueries).toEqual([
+      {
+        ...runningQueryFixture,
+        state: 'Completed',
+      },
+    ]);
+  });
+
+  it('polls while a page consumer is active and stops when released', async () => {
+    const stopPolling = service.startPagePolling();
+
+    await vitest.advanceTimersByTimeAsync(0);
+    expect(api.getAdminStatus).toHaveBeenCalledTimes(1);
+
+    await vitest.advanceTimersByTimeAsync(1000);
+    expect(api.getAdminStatus).toHaveBeenCalledTimes(2);
+
+    stopPolling();
+    await vitest.advanceTimersByTimeAsync(1000);
+
+    expect(api.getAdminStatus).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps polling after page release when background updates are enabled', async () => {
+    const stopPolling = service.startPagePolling();
+    service.setBackgroundUpdates(true);
+
+    await vitest.advanceTimersByTimeAsync(0);
+    expect(api.getAdminStatus).toHaveBeenCalledTimes(1);
+
+    stopPolling();
+    await vitest.advanceTimersByTimeAsync(1000);
+
+    expect(api.getAdminStatus).toHaveBeenCalledTimes(2);
+  });
+
+  it('stops background polling when background updates are disabled', async () => {
+    service.setBackgroundUpdates(true);
+
+    await vitest.advanceTimersByTimeAsync(0);
+    expect(api.getAdminStatus).toHaveBeenCalledTimes(1);
+
+    service.setBackgroundUpdates(false);
+    await vitest.advanceTimersByTimeAsync(1000);
+
+    expect(api.getAdminStatus).toHaveBeenCalledTimes(1);
   });
 });

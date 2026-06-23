@@ -1,7 +1,9 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { provideHighchartsTheme } from '@ui';
 import { AdminStatus } from '@api/generated';
+import type { AdminStatusHistoryPoint } from './admin-status.service';
 import { AdminStatusPage } from './admin-status.page';
 import { AdminStatusService } from './admin-status.service';
 
@@ -43,6 +45,26 @@ const statusFixture: AdminStatus = {
     },
   ],
 };
+const historyFixture: AdminStatusHistoryPoint[] = [
+  {
+    timestamp: new Date('2026-06-23T06:00:00Z').getTime(),
+    threadsConnected: 2,
+    maxUsedConnections: 6,
+    usedMemoryMb: 80,
+    maxMemoryMb: 500,
+    processCpuLoad: 10,
+    systemCpuLoad: 30,
+  },
+  {
+    timestamp: new Date('2026-06-23T06:00:01Z').getTime(),
+    threadsConnected: 3,
+    maxUsedConnections: 8,
+    usedMemoryMb: 100,
+    maxMemoryMb: 500,
+    processCpuLoad: 11.2,
+    systemCpuLoad: 33.3,
+  },
+];
 
 describe('AdminStatusPage', () => {
   let fixture: ComponentFixture<AdminStatusPage>;
@@ -51,69 +73,72 @@ describe('AdminStatusPage', () => {
     status: ReturnType<typeof signal<AdminStatus | null>>;
     error: ReturnType<typeof signal<string | null>>;
     lastUpdated: ReturnType<typeof signal<Date | null>>;
+    backgroundUpdates: ReturnType<typeof signal<boolean>>;
+    history: ReturnType<typeof signal<readonly AdminStatusHistoryPoint[]>>;
     refresh: ReturnType<typeof vitest.fn>;
+    startPagePolling: ReturnType<typeof vitest.fn>;
+    setBackgroundUpdates: ReturnType<typeof vitest.fn>;
   };
 
   beforeEach(async () => {
-    vitest.useFakeTimers();
     serviceStub = {
       loading: signal(false),
       status: signal(statusFixture),
       error: signal(null),
       lastUpdated: signal(new Date('2026-06-23T06:00:00Z')),
+      backgroundUpdates: signal(false),
+      history: signal(historyFixture),
       refresh: vitest.fn().mockReturnValue(of(statusFixture)),
+      startPagePolling: vitest.fn().mockReturnValue(vitest.fn()),
+      setBackgroundUpdates: vitest.fn(),
     };
 
     await TestBed.configureTestingModule({
       imports: [AdminStatusPage],
-      providers: [{ provide: AdminStatusService, useValue: serviceStub }],
+      providers: [provideHighchartsTheme(), { provide: AdminStatusService, useValue: serviceStub }],
     }).compileComponents();
   });
 
   afterEach(() => {
     fixture?.destroy();
-    vitest.useRealTimers();
   });
 
-  it('loads immediately and then polls every 1000ms', async () => {
+  it('starts service-managed page polling', () => {
     fixture = TestBed.createComponent(AdminStatusPage);
 
-    await vitest.advanceTimersByTimeAsync(0);
-    expect(serviceStub.refresh).toHaveBeenCalledWith(true);
-
-    await vitest.advanceTimersByTimeAsync(1000);
-    expect(serviceStub.refresh).toHaveBeenCalledWith(false);
+    expect(serviceStub.startPagePolling).toHaveBeenCalledOnce();
   });
 
-  it('stops polling when destroyed', async () => {
+  it('releases service-managed page polling when destroyed', () => {
+    const stopPolling = vitest.fn();
+    serviceStub.startPagePolling.mockReturnValue(stopPolling);
     fixture = TestBed.createComponent(AdminStatusPage);
-    await vitest.advanceTimersByTimeAsync(0);
+
     fixture.destroy();
-    serviceStub.refresh.mockClear();
 
-    await vitest.advanceTimersByTimeAsync(1000);
-
-    expect(serviceStub.refresh).not.toHaveBeenCalled();
+    expect(stopPolling).toHaveBeenCalledOnce();
   });
 
-  it('renders stat cards and tables', async () => {
+  it('renders stat cards and tables', () => {
     fixture = TestBed.createComponent(AdminStatusPage);
-    await vitest.advanceTimersByTimeAsync(0);
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent as string;
     expect(text).toContain('Threads connected');
     expect(text).toContain('Database uptime');
     expect(text).toContain('JVM memory');
+    expect(text).toContain('Status history');
+    expect(text).toContain('CPU over time');
+    expect(text).toContain('Memory over time');
+    expect(text).toContain('Threads over time');
     expect(text).toContain('Running queries');
     expect(text).toContain('SELECT * FROM auction');
     expect(text).toContain('Table and index sizes');
     expect(text).toContain('auction');
   });
 
-  it('refreshes manually', async () => {
+  it('refreshes manually', () => {
     fixture = TestBed.createComponent(AdminStatusPage);
-    await vitest.advanceTimersByTimeAsync(0);
     fixture.detectChanges();
     serviceStub.refresh.mockClear();
 
@@ -121,5 +146,18 @@ describe('AdminStatusPage', () => {
     button.click();
 
     expect(serviceStub.refresh).toHaveBeenCalledWith(true);
+  });
+
+  it('toggles background updates', () => {
+    fixture = TestBed.createComponent(AdminStatusPage);
+    fixture.detectChanges();
+
+    const checkbox = fixture.nativeElement.querySelector(
+      'input[type="checkbox"]',
+    ) as HTMLInputElement;
+    checkbox.checked = true;
+    checkbox.dispatchEvent(new Event('change'));
+
+    expect(serviceStub.setBackgroundUpdates).toHaveBeenCalledWith(true);
   });
 });
