@@ -40,6 +40,12 @@ data class ItemSourceDiscovery(
     val missingItemIds: List<Int>,
 )
 
+data class ExpansionRangeItemDiscovery(
+    val candidateItemCount: Int,
+    val existingItemCount: Int,
+    val missingItemIds: List<Int>,
+)
+
 data class ItemFetchFailureState(
     val itemId: Int,
     val failureCount: Int,
@@ -318,6 +324,31 @@ class ItemJdbcRepository(
                     *chunk.toTypedArray(),
                 )
             }.toSet()
+    }
+
+    fun findMissingItemIdsForEnabledExpansionRanges(): ExpansionRangeItemDiscovery {
+        val candidateIds = linkedSetOf<Int>()
+        jdbcTemplate.query(
+            """
+            SELECT start_item_id, end_item_id
+            FROM expansion_item_range
+            WHERE enabled = TRUE
+            ORDER BY start_item_id, end_item_id
+            """.trimIndent(),
+            { rs ->
+                val start = rs.getInt("start_item_id")
+                val end = rs.getInt("end_item_id")
+                for (itemId in start..end) {
+                    candidateIds += itemId
+                }
+            },
+        )
+        val existingIds = findExistingItemIds(candidateIds)
+        return ExpansionRangeItemDiscovery(
+            candidateItemCount = candidateIds.size,
+            existingItemCount = existingIds.size,
+            missingItemIds = candidateIds.filterNot(existingIds::contains),
+        )
     }
 
     @Transactional
