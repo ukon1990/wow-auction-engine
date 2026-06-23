@@ -58,17 +58,21 @@ def main() -> int:
     ]
     deploy_patterns = [
         ".github/workflows/deploy-production.yml",
+        ".github/workflows/deploy-vps.yml",
         ".github/workflows/reusable-build-image.yml",
         ".github/workflows/reusable-deploy-region.yml",
         ".github/workflows/manual-infra-sync.yml",
         ".github/actions/**",
         "scripts/deploy/**",
         "infra/regions.json",
+        "infra/kubernetes/**",
     ]
     infra_patterns = [
         "infra/cloudformation/**",
+        "infra/kubernetes/**",
         "infra/regions.json",
         ".github/workflows/deploy-production.yml",
+        ".github/workflows/deploy-vps.yml",
         ".github/workflows/reusable-deploy-region.yml",
         ".github/workflows/manual-infra-sync.yml",
         ".github/actions/**",

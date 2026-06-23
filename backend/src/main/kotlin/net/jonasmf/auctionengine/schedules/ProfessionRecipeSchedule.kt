@@ -1,7 +1,6 @@
 package net.jonasmf.auctionengine.schedules
 
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.config.WaeS3Properties
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -12,10 +11,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 @Component
 class ProfessionRecipeSchedule(
     private val properties: BlizzardApiProperties,
-    private val s3Properties: WaeS3Properties,
     private val professionRecipeSyncService: ProfessionRecipeSyncService,
-    @Value("\${spring.cloud.aws.region.static}")
-    private val deploymentAwsRegion: String,
+    @Value("\${app.scheduling.static-data-sync-enabled:true}")
+    private val staticDataSyncEnabled: Boolean,
 ) {
     private val log = LoggerFactory.getLogger(ProfessionRecipeSchedule::class.java)
     private val syncRunning = AtomicBoolean(false)
@@ -25,7 +23,7 @@ class ProfessionRecipeSchedule(
         zone = "\${app.scheduling.profession-recipe-sync-zone:GMT+1}",
     )
     fun syncProfessionRecipesOnSchedule() {
-        if (!shouldRunInCurrentDeploymentRegion("scheduled")) return
+        if (!shouldRunStaticDataSync("scheduled")) return
         runSync("scheduled")
     }
 
@@ -39,7 +37,7 @@ class ProfessionRecipeSchedule(
         // fixedDelayString = "\${app.scheduling.profession-recipe-sync-startup-repeat-delay:P3650D}",
     )
     fun syncProfessionRecipesAfterStartup() {
-        if (!shouldRunInCurrentDeploymentRegion("startup")) return
+        if (!shouldRunStaticDataSync("startup")) return
         if (!professionRecipeSyncService.shouldInitiallySync()) return
         runSync("startup")
     }
@@ -48,15 +46,11 @@ class ProfessionRecipeSchedule(
         runSync("manual")
     }
 
-    private fun shouldRunInCurrentDeploymentRegion(trigger: String): Boolean {
-        val expectedAwsRegion = s3Properties.bucketFor(properties.staticDataRegion).bucketRegion
-        if (deploymentAwsRegion != expectedAwsRegion) {
+    private fun shouldRunStaticDataSync(trigger: String): Boolean {
+        if (!staticDataSyncEnabled) {
             log.info(
-                "Skipping {} profession/recipe sync because deployment AWS region {} does not match static data region {} bucket region {}.",
+                "Skipping {} profession/recipe sync because static data sync is disabled for this deployment.",
                 trigger,
-                deploymentAwsRegion,
-                properties.staticDataRegion,
-                expectedAwsRegion,
             )
             return false
         }

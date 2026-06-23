@@ -1,7 +1,6 @@
 package net.jonasmf.auctionengine.schedules
 
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.config.WaeS3Properties
 import net.jonasmf.auctionengine.service.ItemSyncService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -12,10 +11,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 @Component
 class ItemSchedule(
     private val properties: BlizzardApiProperties,
-    private val s3Properties: WaeS3Properties,
     private val itemSyncService: ItemSyncService,
-    @Value("\${spring.cloud.aws.region.static}")
-    private val deploymentAwsRegion: String,
+    @Value("\${app.scheduling.static-data-sync-enabled:true}")
+    private val staticDataSyncEnabled: Boolean,
 ) {
     private val log = LoggerFactory.getLogger(ItemSchedule::class.java)
     private val syncRunning = AtomicBoolean(false)
@@ -25,7 +23,7 @@ class ItemSchedule(
         zone = "\${app.scheduling.item-sync-zone:GMT+1}",
     )
     fun syncItemsOnSchedule() {
-        if (!shouldRunInCurrentDeploymentRegion("scheduled")) return
+        if (!shouldRunStaticDataSync("scheduled")) return
         runSync("scheduled")
     }
 
@@ -34,7 +32,7 @@ class ItemSchedule(
         fixedDelayString = "\${app.scheduling.item-sync-startup-repeat-delay:P3650D}",
     )
     fun syncItemsAfterStartup() {
-        if (!shouldRunInCurrentDeploymentRegion("startup")) return
+        if (!shouldRunStaticDataSync("startup")) return
         runSync("startup")
     }
 
@@ -42,15 +40,11 @@ class ItemSchedule(
         runSync("manual")
     }
 
-    private fun shouldRunInCurrentDeploymentRegion(trigger: String): Boolean {
-        val expectedAwsRegion = s3Properties.bucketFor(properties.staticDataRegion).bucketRegion
-        if (deploymentAwsRegion != expectedAwsRegion) {
+    private fun shouldRunStaticDataSync(trigger: String): Boolean {
+        if (!staticDataSyncEnabled) {
             log.info(
-                "Skipping {} item sync because deployment AWS region {} does not match static data region {} bucket region {}.",
+                "Skipping {} item sync because static data sync is disabled for this deployment.",
                 trigger,
-                deploymentAwsRegion,
-                properties.staticDataRegion,
-                expectedAwsRegion,
             )
             return false
         }

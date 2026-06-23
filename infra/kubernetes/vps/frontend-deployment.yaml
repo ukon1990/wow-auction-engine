@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ee-frontend
+  namespace: ee
+  labels:
+    app: ee-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ee-frontend
+  template:
+    metadata:
+      labels:
+        app: ee-frontend
+    spec:
+      imagePullSecrets:
+        - name: ghcr
+      containers:
+        - name: frontend
+          image: ghcr.io/placeholder/ee-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4000
+              name: http
+          env:
+            - name: PORT
+              value: "4000"
+          envFrom:
+            - configMapRef:
+                name: wow-auction-engine-config
+            - secretRef:
+                name: wow-auction-engine-secrets
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 4000
+              httpHeaders:
+                - name: Host
+                  value: ee.jonaskf.net
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 4000
+              httpHeaders:
+                - name: Host
+                  value: ee.jonaskf.net
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 6
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 750m
+              memory: 768Mi

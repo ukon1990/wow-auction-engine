@@ -237,6 +237,7 @@ jobs:
           urls = [
               "http://localhost:4000/auth/callback",
               "http://127.0.0.1:4000/auth/callback",
+              "https://ee.jonaskf.net/auth/callback",
           ]
           if root:
               for region in data["regions"]:
@@ -256,6 +257,7 @@ jobs:
           urls = [
               "http://localhost:4000/",
               "http://127.0.0.1:4000/",
+              "https://ee.jonaskf.net/",
           ]
           if root:
               for region in data["regions"]:
@@ -350,6 +352,6 @@ jobs:
       cognito_client_id: ${{ needs.deploy-auth.outputs.cognito_client_id }}
       cognito_hosted_ui_base_url: ${{ needs.deploy-auth.outputs.cognito_hosted_ui_base_url }}
       run_infra_phase: ${{ needs.classify-changes.outputs.infra_apply_required == 'true' }}
-      run_backend_rollout: ${{ needs.classify-changes.outputs.backend_rollout_required == 'true' }}
-      run_frontend_rollout: ${{ needs.classify-changes.outputs.frontend_rollout_required == 'true' }}
+      run_backend_rollout: ${{ needs.classify-changes.outputs.backend_rollout_required == 'true' && matrix.instance_enabled == 'true' }}
+      run_frontend_rollout: ${{ needs.classify-changes.outputs.frontend_rollout_required == 'true' && matrix.instance_enabled == 'true' }}
     secrets: inherit

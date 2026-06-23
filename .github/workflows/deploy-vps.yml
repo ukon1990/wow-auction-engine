@@ -1,0 +1,312 @@
+name: Deploy VPS
+
+concurrency:
+  group: >-
+    deploy-vps-${{
+      github.event_name == 'workflow_run'
+        && github.event.workflow_run.head_sha
+        || github.sha
+    }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  APP_NAMESPACE: ee
+  BACKEND_DEPLOYMENT: ee-backend
+  FRONTEND_DEPLOYMENT: ee-frontend
+  BACKEND_CONTAINER: backend
+  FRONTEND_CONTAINER: frontend
+  APP_HOST: ee.jonaskf.net
+  HEALTH_PATH: /api/health
+
+permissions:
+  contents: read
+  actions: read
+  packages: write
+
+on:
+  workflow_run:
+    workflows:
+      - App PR Checks
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      ci_workflow_run_id:
+        description: Optional App PR Checks run id to reuse backend-war and frontend-dist artifacts.
+        required: false
+        type: string
+        default: ""
+      force_app_rollout:
+        description: Run the VPS rollout even if change classification would skip it.
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  classify-changes:
+    if: >-
+      ${{
+        (github.event_name == 'workflow_run' &&
+          github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.head_branch == 'master') ||
+        (github.event_name == 'workflow_dispatch' &&
+          github.ref == 'refs/heads/master')
+      }}
+    runs-on: ubuntu-latest
+    outputs:
+      app_rollout_required: ${{ steps.classify.outputs.app_rollout_required }}
+      relevant_changed: ${{ steps.classify.outputs.relevant_changed }}
+      git_ref: ${{ steps.config.outputs.git_ref }}
+      image_tag: ${{ steps.config.outputs.image_tag }}
+      workflow_run_id: ${{ steps.config.outputs.workflow_run_id }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 2
+
+      - name: Read workflow context
+        id: config
+        shell: bash
+        env:
+          DISPATCH_CI_RUN_ID: ${{ github.event.inputs.ci_workflow_run_id || '' }}
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            echo "git_ref=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+            echo "image_tag=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+            echo "workflow_run_id=${DISPATCH_CI_RUN_ID}" >> "$GITHUB_OUTPUT"
+          else
+            echo "git_ref=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+            echo "image_tag=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+            echo "workflow_run_id=${{ github.event.workflow_run.id }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Classify changed files
+        id: classify
+        shell: bash
+        env:
+          FORCE_APP_ROLLOUT: ${{ github.event.inputs.force_app_rollout }}
+        run: |
+          set -euo pipefail
+          parent_sha="$(git rev-list --parents -n 1 HEAD | awk '{print $2}')"
+          if [[ -z "$parent_sha" ]]; then
+            git ls-tree -r --name-only HEAD > /tmp/changed-files.txt
+          else
+            git diff --name-only "$parent_sha" HEAD > /tmp/changed-files.txt
+          fi
+          classification="$(python3 scripts/deploy/classify_changes.py < /tmp/changed-files.txt)"
+          echo "app_rollout_required=$(python3 -c "import json,sys; print(str(json.load(sys.stdin)['app_rollout_required']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
+          echo "relevant_changed=$(python3 -c "import json,sys; print(str(json.load(sys.stdin)['relevant_changed']).lower())" <<< "$classification")" >> "$GITHUB_OUTPUT"
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" && "${FORCE_APP_ROLLOUT:-}" == "true" ]]; then
+            echo "app_rollout_required=true" >> "$GITHUB_OUTPUT"
+            echo "relevant_changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build-backend-image:
+    needs: classify-changes
+    if: ${{ needs.classify-changes.outputs.app_rollout_required == 'true' }}
+    uses: ./.github/workflows/reusable-build-image.yml
+    with:
+      git_ref: ${{ needs.classify-changes.outputs.git_ref }}
+      workflow_run_id: ${{ needs.classify-changes.outputs.workflow_run_id }}
+      image_tag: ${{ needs.classify-changes.outputs.image_tag }}
+      service: backend
+
+  build-frontend-image:
+    needs: classify-changes
+    if: ${{ needs.classify-changes.outputs.app_rollout_required == 'true' }}
+    uses: ./.github/workflows/reusable-build-image.yml
+    with:
+      git_ref: ${{ needs.classify-changes.outputs.git_ref }}
+      workflow_run_id: ${{ needs.classify-changes.outputs.workflow_run_id }}
+      image_tag: ${{ needs.classify-changes.outputs.image_tag }}
+      service: frontend
+
+  deploy-vps:
+    needs:
+      - classify-changes
+      - build-backend-image
+      - build-frontend-image
+    if: ${{ always() && needs.classify-changes.outputs.app_rollout_required == 'true' && !failure() && !cancelled() }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.classify-changes.outputs.git_ref }}
+
+      - name: Download backend image artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.build-backend-image.outputs.artifact_name }}
+          path: /tmp/backend-image-artifact
+
+      - name: Download frontend image artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.build-frontend-image.outputs.artifact_name }}
+          path: /tmp/frontend-image-artifact
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN || github.token }}
+
+      - name: Publish images to GHCR
+        id: images
+        shell: bash
+        env:
+          BACKEND_ARTIFACT_NAME: ${{ needs.build-backend-image.outputs.artifact_name }}
+          FRONTEND_ARTIFACT_NAME: ${{ needs.build-frontend-image.outputs.artifact_name }}
+          IMAGE_TAG: ${{ needs.classify-changes.outputs.image_tag }}
+        run: |
+          set -euo pipefail
+          image_prefix="ghcr.io/${GITHUB_REPOSITORY,,}"
+          backend_image="${image_prefix}/backend:${IMAGE_TAG}"
+          frontend_image="${image_prefix}/frontend:${IMAGE_TAG}"
+
+          docker load --input "/tmp/backend-image-artifact/${BACKEND_ARTIFACT_NAME}.tar"
+          docker load --input "/tmp/frontend-image-artifact/${FRONTEND_ARTIFACT_NAME}.tar"
+
+          docker tag "localbuild:backend-${IMAGE_TAG}" "$backend_image"
+          docker tag "localbuild:frontend-${IMAGE_TAG}" "$frontend_image"
+          docker push "$backend_image"
+          docker push "$frontend_image"
+
+          echo "backend_image=$backend_image" >> "$GITHUB_OUTPUT"
+          echo "frontend_image=$frontend_image" >> "$GITHUB_OUTPUT"
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Configure kubeconfig
+        shell: bash
+        env:
+          KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$KUBECONFIG_B64" ]]; then
+            echo "Missing KUBECONFIG_B64 secret" >&2
+            exit 1
+          fi
+          mkdir -p "${HOME}/.kube"
+          printf '%s' "$KUBECONFIG_B64" | base64 -d > "${HOME}/.kube/config"
+          chmod 600 "${HOME}/.kube/config"
+          kubectl cluster-info
+
+      - name: Apply manifests and runtime secret
+        shell: bash
+        env:
+          BLIZZARD_CLIENT_ID: ${{ secrets.PROD_BLIZZARD_CLIENT_ID }}
+          BLIZZARD_CLIENT_SECRET: ${{ secrets.PROD_BLIZZARD_CLIENT_SECRET }}
+          AUCTION_ENGINE_DB_URL: ${{ secrets.PROD_AUCTION_ENGINE_DB_URL }}
+          AUCTION_ENGINE_DB_USERNAME: ${{ secrets.PROD_AUCTION_ENGINE_DB_USERNAME }}
+          AUCTION_ENGINE_DB_PASSWORD: ${{ secrets.PROD_AUCTION_ENGINE_DB_PASSWORD }}
+          WAE_AUTH_SESSION_SECRET: ${{ secrets.PROD_AUTH_SESSION_SECRET }}
+          AWS_ACCESS_KEY: ${{ secrets.PROD_AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.PROD_AWS_SECRET_KEY }}
+          WAE_DYNAMODB_ENDPOINT: ${{ secrets.PROD_WAE_DYNAMODB_ENDPOINT }}
+          WAE_S3_ENDPOINT: ${{ secrets.PROD_WAE_S3_ENDPOINT }}
+          WAE_COGNITO_ISSUER_URI: ${{ secrets.PROD_COGNITO_ISSUER_URI }}
+          WAE_COGNITO_CLIENT_ID: ${{ secrets.PROD_COGNITO_CLIENT_ID }}
+          WAE_COGNITO_HOSTED_UI_BASE_URL: ${{ secrets.PROD_COGNITO_HOSTED_UI_BASE_URL }}
+          JAVA_TOOL_OPTIONS: ${{ secrets.PROD_JAVA_TOOL_OPTIONS }}
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          required_vars=(
+            BLIZZARD_CLIENT_ID
+            BLIZZARD_CLIENT_SECRET
+            AUCTION_ENGINE_DB_URL
+            AUCTION_ENGINE_DB_USERNAME
+            AUCTION_ENGINE_DB_PASSWORD
+            WAE_AUTH_SESSION_SECRET
+          )
+          for var_name in "${required_vars[@]}"; do
+            if [[ -z "${!var_name:-}" ]]; then
+              echo "Missing required secret-backed env: ${var_name}" >&2
+              exit 1
+            fi
+          done
+
+          kubectl apply -f infra/kubernetes/vps/namespace.yaml
+          kubectl apply -f infra/kubernetes/vps
+
+          if [[ -n "${GITHUB_PERSONAL_ACCESS_TOKEN:-}" ]]; then
+            kubectl -n "${APP_NAMESPACE}" create secret docker-registry ghcr \
+              --docker-server=ghcr.io \
+              --docker-username="${GITHUB_ACTOR}" \
+              --docker-password="${GITHUB_PERSONAL_ACCESS_TOKEN}" \
+              --docker-email="${GITHUB_ACTOR}@users.noreply.github.com" \
+              --dry-run=client \
+              -o yaml | kubectl apply -f -
+          fi
+
+          secret_args=(
+            --from-literal=BLIZZARD_CLIENT_ID="${BLIZZARD_CLIENT_ID}"
+            --from-literal=BLIZZARD_CLIENT_SECRET="${BLIZZARD_CLIENT_SECRET}"
+            --from-literal=AUCTION_ENGINE_DB_URL="${AUCTION_ENGINE_DB_URL}"
+            --from-literal=AUCTION_ENGINE_DB_USERNAME="${AUCTION_ENGINE_DB_USERNAME}"
+            --from-literal=AUCTION_ENGINE_DB_PASSWORD="${AUCTION_ENGINE_DB_PASSWORD}"
+            --from-literal=WAE_AUTH_SESSION_SECRET="${WAE_AUTH_SESSION_SECRET}"
+          )
+          optional_secret_vars=(
+            AWS_ACCESS_KEY
+            AWS_SECRET_KEY
+            WAE_DYNAMODB_ENDPOINT
+            WAE_S3_ENDPOINT
+            WAE_COGNITO_ISSUER_URI
+            WAE_COGNITO_CLIENT_ID
+            WAE_COGNITO_HOSTED_UI_BASE_URL
+            JAVA_TOOL_OPTIONS
+          )
+          for var_name in "${optional_secret_vars[@]}"; do
+            if [[ -n "${!var_name:-}" ]]; then
+              secret_args+=("--from-literal=${var_name}=${!var_name}")
+            fi
+          done
+
+          kubectl -n "${APP_NAMESPACE}" create secret generic wow-auction-engine-secrets \
+            "${secret_args[@]}" \
+            --dry-run=client \
+            -o yaml | kubectl apply -f -
+
+      - name: Update deployments
+        shell: bash
+        env:
+          BACKEND_IMAGE: ${{ steps.images.outputs.backend_image }}
+          FRONTEND_IMAGE: ${{ steps.images.outputs.frontend_image }}
+        run: |
+          set -euo pipefail
+          kubectl -n "${APP_NAMESPACE}" set image "deployment/${BACKEND_DEPLOYMENT}" \
+            "${BACKEND_CONTAINER}=${BACKEND_IMAGE}"
+          kubectl -n "${APP_NAMESPACE}" set image "deployment/${FRONTEND_DEPLOYMENT}" \
+            "${FRONTEND_CONTAINER}=${FRONTEND_IMAGE}"
+          kubectl -n "${APP_NAMESPACE}" rollout status "deployment/${BACKEND_DEPLOYMENT}" --timeout=300s
+          kubectl -n "${APP_NAMESPACE}" rollout status "deployment/${FRONTEND_DEPLOYMENT}" --timeout=180s
+
+      - name: Verify public endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          for _ in $(seq 1 30); do
+            if curl --fail --silent --show-error --connect-timeout 5 --max-time 10 "https://${APP_HOST}/" >/dev/null; then
+              break
+            fi
+            sleep 10
+          done
+          curl --fail --silent --show-error --connect-timeout 5 --max-time 10 "https://${APP_HOST}/" >/dev/null
+
+          for _ in $(seq 1 30); do
+            if curl --fail --silent --show-error --connect-timeout 5 --max-time 10 "https://${APP_HOST}${HEALTH_PATH}" >/dev/null; then
+              break
+            fi
+            sleep 10
+          done
+          curl --fail --silent --show-error --connect-timeout 5 --max-time 10 "https://${APP_HOST}${HEALTH_PATH}" >/dev/null

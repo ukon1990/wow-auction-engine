@@ -7,8 +7,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.config.BucketConfig
-import net.jonasmf.auctionengine.config.WaeS3Properties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.repository.rds.ItemPersistenceSummary
 import net.jonasmf.auctionengine.service.ItemSyncResult
@@ -29,17 +27,6 @@ class ItemScheduleTest {
             clientSecret = "secret",
             regions = listOf(Region.Europe, Region.Taiwan),
         )
-    private val s3Properties =
-        WaeS3Properties(
-            buckets =
-                mapOf(
-                    "europe" to BucketConfig("wah-data-eu", "eu-north-1"),
-                    "northamerica" to BucketConfig("wah-data-us", "us-west-1"),
-                    "korea" to BucketConfig("wah-data-as", "ap-northeast-2"),
-                    "taiwan" to BucketConfig("wah-data-as", "ap-northeast-2"),
-                ),
-        )
-
     @Test
     fun `syncItems skips and logs when sync already running`() {
         val service = mockk<ItemSyncService>()
@@ -55,7 +42,7 @@ class ItemScheduleTest {
         }
 
         try {
-            val schedule = ItemSchedule(properties, s3Properties, service, "eu-north-1")
+            val schedule = ItemSchedule(properties, service, true)
             val future = executor.submit<Unit> { schedule.syncItems() }
             assertTrue(started.await(5, TimeUnit.SECONDS))
 
@@ -75,10 +62,10 @@ class ItemScheduleTest {
     }
 
     @Test
-    fun `scheduled sync skips when deployment region does not match static data region`() {
+    fun `scheduled sync skips when static data sync is disabled`() {
         val service = mockk<ItemSyncService>()
         val listAppender = attachAppender()
-        val schedule = ItemSchedule(properties, s3Properties, service, "us-west-1")
+        val schedule = ItemSchedule(properties, service, false)
 
         try {
             schedule.syncItemsOnSchedule()
@@ -87,7 +74,7 @@ class ItemScheduleTest {
             assertTrue(
                 messages.any {
                     it.contains(
-                        "Skipping scheduled item sync because deployment AWS region us-west-1 does not match static data region Europe bucket region eu-north-1.",
+                        "Skipping scheduled item sync because static data sync is disabled for this deployment.",
                     )
                 },
             )

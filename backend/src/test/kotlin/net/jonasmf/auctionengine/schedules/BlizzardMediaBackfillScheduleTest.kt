@@ -7,8 +7,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.config.BucketConfig
-import net.jonasmf.auctionengine.config.WaeS3Properties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.service.BlizzardMediaBackfillResult
 import net.jonasmf.auctionengine.service.BlizzardMediaBackfillService
@@ -28,17 +26,6 @@ class BlizzardMediaBackfillScheduleTest {
             clientSecret = "secret",
             regions = listOf(Region.Europe, Region.Taiwan),
         )
-    private val s3Properties =
-        WaeS3Properties(
-            buckets =
-                mapOf(
-                    "europe" to BucketConfig("wah-data-eu", "eu-north-1"),
-                    "northamerica" to BucketConfig("wah-data-us", "us-west-1"),
-                    "korea" to BucketConfig("wah-data-as", "ap-northeast-2"),
-                    "taiwan" to BucketConfig("wah-data-as", "ap-northeast-2"),
-                ),
-        )
-
     @Test
     fun `backfillMedia skips and logs when backfill already running`() {
         val service = mockk<BlizzardMediaBackfillService>()
@@ -54,7 +41,7 @@ class BlizzardMediaBackfillScheduleTest {
         }
 
         try {
-            val schedule = BlizzardMediaBackfillSchedule(properties, s3Properties, service, "eu-north-1")
+            val schedule = BlizzardMediaBackfillSchedule(properties, service, true)
             val future = executor.submit<Unit> { schedule.backfillMedia() }
             assertTrue(started.await(5, TimeUnit.SECONDS))
 
@@ -74,10 +61,10 @@ class BlizzardMediaBackfillScheduleTest {
     }
 
     @Test
-    fun `scheduled backfill skips when deployment region does not match static data region`() {
+    fun `scheduled backfill skips when static data sync is disabled`() {
         val service = mockk<BlizzardMediaBackfillService>()
         val listAppender = attachAppender()
-        val schedule = BlizzardMediaBackfillSchedule(properties, s3Properties, service, "us-west-1")
+        val schedule = BlizzardMediaBackfillSchedule(properties, service, false)
 
         try {
             schedule.backfillMediaOnSchedule()
@@ -86,7 +73,7 @@ class BlizzardMediaBackfillScheduleTest {
             assertTrue(
                 messages.any {
                     it.contains(
-                        "Skipping scheduled media backfill because deployment AWS region us-west-1 does not match static data region Europe bucket region eu-north-1.",
+                        "Skipping scheduled media backfill because static data sync is disabled for this deployment.",
                     )
                 },
             )
