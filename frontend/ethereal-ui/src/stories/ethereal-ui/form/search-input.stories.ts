@@ -48,3 +48,16 @@ export const SearchInputErrorState: StoryObj<SearchInputComponent> = {
     error: 'Enter at least 3 characters.',
   },
 };
+
+export const SearchInputWithVisibleLabel: StoryObj<SearchInputComponent> = {
+  args: {
+    label: 'Item ID',
+    showLabel: true,
+    placeholder: 'Contains item ID',
+    value: '',
+    disabled: false,
+    required: false,
+    invalid: false,
+    error: '',
+  },
+};
