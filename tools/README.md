@@ -25,6 +25,28 @@ Outputs are written under `target/auction-field-analysis/` by default:
 - `summary.json`: aggregate results across all URLs
 - `summary.txt`: readable aggregate summary
 
+## `generate-expansion-ranges.mjs`
+
+Parses ItemVersion `Data.lua`, derives an expansion from each item version's major client version, compresses exact item ids into contiguous ranges, and writes the repeatable Flyway seed for `expansion_item_range`.
+
+Default update:
+
+```powershell
+node .\tools\generate-expansion-ranges.mjs
+```
+
+Offline update from a downloaded `Data.lua`:
+
+```powershell
+node .\tools\generate-expansion-ranges.mjs --input .\Data.lua
+```
+
+Tests:
+
+```powershell
+node --test .\tools\generate-expansion-ranges.test.mjs
+```
+
 ## Usage
 
 ```powershell
@@ -174,4 +196,3 @@ cd backend; .\mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--profess
 ```
 
 The Maven entry point still requires a local `node` executable on `PATH`. Override it with `-Dnode.executable=<path-to-node>` if needed.
-
