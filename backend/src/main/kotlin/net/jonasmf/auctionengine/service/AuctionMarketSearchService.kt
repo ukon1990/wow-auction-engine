@@ -34,6 +34,7 @@ private data class FiltersRepositoryRows(
     val qualityOptions: List<AuctionMarketFilterOption>,
     val itemClassOptions: List<AuctionMarketFilterOption>,
     val itemSubclassOptions: List<AuctionMarketFilterOption>,
+    val expansionOptions: List<AuctionMarketFilterOption>,
 )
 
 private data class FiltersCacheKey(
@@ -72,6 +73,7 @@ class AuctionMarketSearchService(
         qualityIds: List<Int>?,
         itemClassIds: List<Int>?,
         itemSubclassIds: List<Int>?,
+        expansionIds: List<Int>?,
         recipeOnly: Boolean?,
         minPrice: Long?,
         maxPrice: Long?,
@@ -106,6 +108,7 @@ class AuctionMarketSearchService(
                 qualityIds = qualityIds.orEmpty().distinct(),
                 itemClassIds = itemClassIds.orEmpty().distinct(),
                 itemSubclassIds = itemSubclassIds.orEmpty().distinct(),
+                expansionIds = expansionIds.orEmpty().distinct(),
                 recipeOnly = recipeOnly,
                 minPrice = minPrice,
                 maxPrice = maxPrice,
@@ -268,6 +271,7 @@ class AuctionMarketSearchService(
                 qualityIds = emptyList(),
                 itemClassIds = emptyList(),
                 itemSubclassIds = emptyList(),
+                expansionIds = emptyList(),
                 recipeOnly = null,
                 minPrice = null,
                 maxPrice = null,
@@ -297,16 +301,24 @@ class AuctionMarketSearchService(
                                 auctionMarketSearchRepository.itemSubclassOptions(request).toDtoOptions()
                             }
                         }
+                    val expansionDef =
+                        async {
+                            withAuctionMdc(mdcSnapshot) {
+                                auctionMarketSearchRepository.expansionOptions(request).toDtoOptions()
+                            }
+                        }
                     FiltersRepositoryRows(
                         qualityOptions = qualityDef.await(),
                         itemClassOptions = itemClassDef.await(),
                         itemSubclassOptions = itemSubclassDef.await(),
+                        expansionOptions = expansionDef.await(),
                     )
                 }
             }
         val qualityOptions = filterRows.qualityOptions
         val itemClassOptions = filterRows.itemClassOptions
         val itemSubclassOptions = filterRows.itemSubclassOptions
+        val expansionOptions = filterRows.expansionOptions
         val parallelFiltersMs = elapsedMs(parallelStartNanos)
 
         val response =
@@ -346,6 +358,12 @@ class AuctionMarketSearchService(
                             options = itemSubclassOptions,
                         ),
                         AuctionMarketFilter(
+                            id = "expansionIds",
+                            label = "Expansion",
+                            type = AuctionMarketFilter.Type.MULTI_SELECT,
+                            options = expansionOptions,
+                        ),
+                        AuctionMarketFilter(
                             id = "recipeOnly",
                             label = "Has Recipe",
                             type = AuctionMarketFilter.Type.BOOLEAN,
@@ -353,7 +371,7 @@ class AuctionMarketSearchService(
                     ),
             )
         log.info(
-            "Auction market filters service completed in {}ms (requestId={} resolveContext={}ms parallelFilters={}ms region={} realmSlug={} qualityOptionsCount={} itemClassOptionsCount={} itemSubclassOptionsCount={})",
+            "Auction market filters service completed in {}ms (requestId={} resolveContext={}ms parallelFilters={}ms region={} realmSlug={} qualityOptionsCount={} itemClassOptionsCount={} itemSubclassOptionsCount={} expansionOptionsCount={})",
             elapsedMs(totalStartNanos),
             requestId(),
             resolveContextMs,
@@ -363,6 +381,7 @@ class AuctionMarketSearchService(
             qualityOptions.size,
             itemClassOptions.size,
             itemSubclassOptions.size,
+            expansionOptions.size,
         )
         filtersCache[cacheKey] = CachedFiltersResponse(response, now.plus(filtersCacheTtl))
         return response

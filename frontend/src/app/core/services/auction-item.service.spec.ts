@@ -124,6 +124,7 @@ describe('AuctionItemService', () => {
       undefined,
       undefined,
       undefined,
+      undefined,
       'body',
       false,
       { transferCache: false },

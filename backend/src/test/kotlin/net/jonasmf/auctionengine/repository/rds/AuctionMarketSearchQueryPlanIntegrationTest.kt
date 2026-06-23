@@ -58,6 +58,7 @@ class AuctionMarketSearchQueryPlanIntegrationTest : IntegrationTestBase() {
             qualityIds = emptyList(),
             itemClassIds = emptyList(),
             itemSubclassIds = emptyList(),
+            expansionIds = emptyList(),
             recipeOnly = null,
             minPrice = null,
             maxPrice = null,

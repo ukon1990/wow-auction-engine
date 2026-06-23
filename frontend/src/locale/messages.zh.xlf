@@ -58,6 +58,10 @@
         <source>Has Recipe</source>
         <target>有配方</target>
       </trans-unit>
+      <trans-unit id="filters.expansion" datatype="html">
+        <source>Expansion</source>
+        <target>资料片</target>
+      </trans-unit>
       <trans-unit id="filters.aria" datatype="html">
         <source>Market filters</source>
         <target>市场筛选器</target>

@@ -58,6 +58,10 @@
         <source>Has Recipe</source>
         <target>제조법 있음</target>
       </trans-unit>
+      <trans-unit id="filters.expansion" datatype="html">
+        <source>Expansion</source>
+        <target>확장팩</target>
+      </trans-unit>
       <trans-unit id="filters.aria" datatype="html">
         <source>Market filters</source>
         <target>시장 필터</target>

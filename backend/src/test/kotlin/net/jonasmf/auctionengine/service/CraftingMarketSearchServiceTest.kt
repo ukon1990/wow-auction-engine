@@ -36,6 +36,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 sortDirection = "asc",
                 query = null,
                 professionIds = null,
+                expansionIds = null,
                 minProfit = null,
                 maxProfit = null,
                 minRoiPercent = null,
@@ -84,6 +85,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 sortDirection = "asc",
                 query = null,
                 professionIds = null,
+                expansionIds = null,
                 minProfit = null,
                 maxProfit = null,
                 minRoiPercent = null,
@@ -122,6 +124,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 sortDirection = "asc",
                 query = null,
                 professionIds = null,
+                expansionIds = null,
                 minProfit = null,
                 maxProfit = null,
                 minRoiPercent = null,
@@ -161,6 +164,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 sortDirection = "asc",
                 query = null,
                 professionIds = null,
+                expansionIds = null,
                 minProfit = null,
                 maxProfit = null,
                 minRoiPercent = null,
@@ -198,6 +202,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 sortDirection = "asc",
                 query = null,
                 professionIds = null,
+                expansionIds = null,
                 minProfit = 100L,
                 maxProfit = 50L,
                 minRoiPercent = null,
@@ -211,5 +216,75 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 requireCompleteReagentPricing = false,
             )
         }
+    }
+
+    @Test
+    fun `crafting filters include expansion options`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
+
+        val result = craftingMarketSearchService.filters("eu", "argent-dawn", null)
+
+        val expansion = result.filters.single { it.id == "expansionIds" }
+        assertTrue(expansion.options.orEmpty().any { it.id == "1" && it.label == "Vanilla" })
+    }
+
+    @Test
+    fun `crafting search filters by expansion id`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
+        jdbcTemplate.update("UPDATE item SET expansion_id = 1 WHERE id = 19019")
+
+        val matching =
+            craftingMarketSearchService.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = null,
+                professionIds = null,
+                expansionIds = listOf(1),
+                minProfit = null,
+                maxProfit = null,
+                minRoiPercent = null,
+                maxRoiPercent = null,
+                minReagentCost = null,
+                maxReagentCost = null,
+                minOutputPrice = null,
+                maxOutputPrice = null,
+                minOutputPriceChangePercent = null,
+                maxOutputPriceChangePercent = null,
+                requireCompleteReagentPricing = false,
+            )
+        assertEquals(1L, matching.page.totalItems)
+
+        val nonMatching =
+            craftingMarketSearchService.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = null,
+                professionIds = null,
+                expansionIds = listOf(2),
+                minProfit = null,
+                maxProfit = null,
+                minRoiPercent = null,
+                maxRoiPercent = null,
+                minReagentCost = null,
+                maxReagentCost = null,
+                minOutputPrice = null,
+                maxOutputPrice = null,
+                minOutputPriceChangePercent = null,
+                maxOutputPriceChangePercent = null,
+                requireCompleteReagentPricing = false,
+            )
+        assertEquals(0L, nonMatching.page.totalItems)
     }
 }

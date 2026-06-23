@@ -23,6 +23,7 @@ data class CraftingMarketSearchRequest(
     val sortDirection: String,
     val query: String?,
     val professionIds: List<Int>,
+    val expansionIds: List<Int>,
     val minProfit: Long?,
     val maxProfit: Long?,
     val minRoiPercent: Double?,
@@ -131,6 +132,20 @@ class CraftingMarketSearchRepository(
             FROM profession p
                 LEFT JOIN locale l ON l.id = p.name_id
             ORDER BY label
+            """.trimIndent(),
+            filterOptionRowMapper,
+        )
+
+    fun expansionOptions(localeColumnSuffix: String): List<AuctionMarketFilterOptionRow> =
+        jdbcTemplate.query(
+            """
+            SELECT
+                CAST(e.id AS CHAR) AS id,
+                COALESCE(l.${localeColumnSuffix}, l.en_gb, l.en_us, e.slug) AS label,
+                NULL AS parent_id
+            FROM expansion e
+                LEFT JOIN locale l ON l.id = e.name_id
+            ORDER BY e.display_order, e.id
             """.trimIndent(),
             filterOptionRowMapper,
         )
@@ -455,7 +470,8 @@ class CraftingMarketSearchRepository(
                     d.item_class_id,
                     COALESCE(d.item_class_name_$loc, d.item_class_name_en_gb, d.item_class_name_en_us) AS item_class_name,
                     d.item_subclass_id,
-                    COALESCE(d.item_subclass_name_$loc, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name
+                    COALESCE(d.item_subclass_name_$loc, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
+                    d.expansion_id
                 FROM crafted_current cc
                     INNER JOIN recipe_dim rd ON rd.recipe_id = cc.recipe_id
                     LEFT JOIN recipe_reagent_cost rrc ON rrc.recipe_id = cc.recipe_id
@@ -598,6 +614,10 @@ class CraftingMarketSearchRepository(
         if (request.professionIds.isNotEmpty()) {
             predicates.add("c.profession_id IN (${request.professionIds.joinToString(",") { "?" }})")
             params.addAll(request.professionIds)
+        }
+        if (request.expansionIds.isNotEmpty()) {
+            predicates.add("c.expansion_id IN (${request.expansionIds.joinToString(",") { "?" }})")
+            params.addAll(request.expansionIds)
         }
         if (request.requireCompleteReagentPricing) {
             predicates.add("c.reagents_fully_priced = 1")

@@ -76,6 +76,16 @@ search:
             format: int32
         style: form
         explode: true
+      - name: expansionIds
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int32
+        style: form
+        explode: true
       - name: minProfit
         in: query
         required: false

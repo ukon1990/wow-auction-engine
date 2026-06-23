@@ -70,6 +70,24 @@ describe('market-browser-query.mapper', () => {
     });
   });
 
+  it('reads expansionIds from the URL', () => {
+    expect(
+      readMarketBrowserQueryState(
+        convertToParamMap({
+          expansionIds: ['1', '2'],
+        }),
+      ).expansionIds,
+    ).toEqual([1, 2]);
+  });
+
+  it('serializes expansionIds to URL params', () => {
+    const params = toMarketBrowserQueryParams({
+      ...defaultMarketBrowserQueryState,
+      expansionIds: [1, 2],
+    });
+    expect(params['expansionIds']).toEqual([1, 2]);
+  });
+
   it('omits default sort from serialized params', () => {
     expect(toMarketBrowserQueryParams(defaultMarketBrowserQueryState)).toMatchObject({
       sortBy: null,

@@ -47,6 +47,7 @@ class CraftingMarketSearchService(
         sortDirection: String,
         query: String?,
         professionIds: List<Int>?,
+        expansionIds: List<Int>?,
         minProfit: Long?,
         maxProfit: Long?,
         minRoiPercent: Double?,
@@ -89,6 +90,7 @@ class CraftingMarketSearchService(
                 sortDirection = normalizedSortDirection,
                 query = query,
                 professionIds = professionIds.orEmpty().distinct(),
+                expansionIds = expansionIds.orEmpty().distinct(),
                 minProfit = minProfit,
                 maxProfit = maxProfit,
                 minRoiPercent = minRoiPercent,
@@ -199,9 +201,19 @@ class CraftingMarketSearchService(
         localeOverride: String?,
     ): AuctionMarketFilterResponse {
         val context = auctionMarketContextService.resolve(regionCode, realmSlug, localeOverride)
-        val options =
+        val professionOptions =
             craftingMarketSearchRepository
                 .professionOptions(context.localeColumnSuffix)
+                .map {
+                    AuctionMarketFilterOption(
+                        id = it.id,
+                        label = it.label,
+                        parentId = it.parentId,
+                    )
+                }
+        val expansionOptions =
+            craftingMarketSearchRepository
+                .expansionOptions(context.localeColumnSuffix)
                 .map {
                     AuctionMarketFilterOption(
                         id = it.id,
@@ -216,7 +228,13 @@ class CraftingMarketSearchService(
                         id = "professionIds",
                         label = "Profession",
                         type = AuctionMarketFilter.Type.MULTI_SELECT,
-                        options = options,
+                        options = professionOptions,
+                    ),
+                    AuctionMarketFilter(
+                        id = "expansionIds",
+                        label = "Expansion",
+                        type = AuctionMarketFilter.Type.MULTI_SELECT,
+                        options = expansionOptions,
                     ),
                     AuctionMarketFilter(
                         id = "profit",
