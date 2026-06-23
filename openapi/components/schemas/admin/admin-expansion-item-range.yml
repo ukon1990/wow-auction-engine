@@ -1,0 +1,25 @@
+type: object
+required: [id, expansion, startItemId, endItemId, source, enabled, createdAt, updatedAt]
+properties:
+  id:
+    type: integer
+    format: int64
+  expansion:
+    $ref: "../../../openapi.yml#/components/schemas/AdminExpansion"
+  startItemId:
+    type: integer
+  endItemId:
+    type: integer
+  source:
+    type: string
+  enabled:
+    type: boolean
+  note:
+    type: string
+    nullable: true
+  createdAt:
+    type: string
+    format: date-time
+  updatedAt:
+    type: string
+    format: date-time

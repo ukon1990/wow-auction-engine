@@ -31,26 +31,37 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
   ],
   template: `
     @if (!hidden()) {
-      <label class="relative block">
-        <span class="sr-only">{{ label() }}</span>
-        <ee-symbol-icon
-          class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-xl text-primary"
-          name="search"
-        />
-        <input
-          cdkMonitorElementFocus
-          type="search"
-          [class]="inputClass()"
-          [attr.aria-invalid]="ariaInvalid()"
-          [attr.placeholder]="placeholder()"
-          [attr.name]="name() || null"
-          [disabled]="isDisabled()"
-          [readonly]="readonly()"
-          [required]="required()"
-          [value]="value()"
-          (blur)="onBlur()"
-          (input)="onInput(inputValue($event))"
-        />
+      <label class="block">
+        @if (showLabel()) {
+          <span class="mb-2 block ee-label text-outline">
+            {{ label() }}
+            @if (required()) {
+              <span class="text-error">*</span>
+            }
+          </span>
+        } @else {
+          <span class="sr-only">{{ label() }}</span>
+        }
+        <div class="relative">
+          <ee-symbol-icon
+            class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-xl text-primary"
+            name="search"
+          />
+          <input
+            cdkMonitorElementFocus
+            type="search"
+            [class]="inputClass()"
+            [attr.aria-invalid]="ariaInvalid()"
+            [attr.placeholder]="placeholder()"
+            [attr.name]="name() || null"
+            [disabled]="isDisabled()"
+            [readonly]="readonly()"
+            [required]="required()"
+            [value]="value()"
+            (blur)="onBlur()"
+            (input)="onInput(inputValue($event))"
+          />
+        </div>
         @for (msg of errorLines(); track $index) {
           <span class="mt-2 block ee-data text-error" role="alert">{{ msg }}</span>
         }
@@ -69,6 +80,7 @@ import { SymbolIconComponent } from '../primitives/symbol-icon.component';
 export class SearchInputComponent implements ControlValueAccessor, FormValueControl<string> {
   readonly value = model('');
   readonly label = input($localize`:@@search.label:Search`);
+  readonly showLabel = input(false);
   readonly placeholder = input(
     $localize`:@@search.placeholder:Search items, reagents, or recipes...`,
   );

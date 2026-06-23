@@ -72,6 +72,15 @@ export const routes: TitledRoutes = [
             (module) => module.UserAdministrationPage,
           ),
       },
+      {
+        path: 'expansions',
+        title: $localize`:@@route.admin.expansions:Expansions`,
+        icon: 'category',
+        loadComponent: () =>
+          import('@features/admin/expansions/expansions.page').then(
+            (module) => module.ExpansionsPage,
+          ),
+      },
     ],
   },
   {

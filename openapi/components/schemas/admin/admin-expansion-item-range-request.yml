@@ -1,0 +1,20 @@
+type: object
+required: [expansionId, startItemId, endItemId, source, enabled]
+properties:
+  expansionId:
+    type: integer
+  startItemId:
+    type: integer
+    minimum: 1
+  endItemId:
+    type: integer
+    minimum: 1
+  source:
+    type: string
+    default: manual
+  enabled:
+    type: boolean
+    default: true
+  note:
+    type: string
+    nullable: true

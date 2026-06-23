@@ -67,7 +67,53 @@ class ItemSyncService(
         log.info("Starting item sync for region {} date={}", region, today)
 
         val discovery = itemJdbcRepository.findMissingItemIdsForDate(today)
-        val missingIds = discovery.missingItemIds
+        return syncDiscoveredItems(
+            region = region,
+            startTime = startTime,
+            auctionSourceCount = discovery.auctionSourceCount,
+            recipeCraftedSourceCount = discovery.recipeCraftedSourceCount,
+            recipeReagentSourceCount = discovery.recipeReagentSourceCount,
+            candidateItemCount = discovery.candidateItemCount,
+            existingItemCount = discovery.existingItemCount,
+            missingIds = discovery.missingItemIds,
+            sourceDescription = "auction/recipe",
+        )
+    }
+
+    fun syncMissingItemsFromEnabledExpansionRanges(region: Region = properties.staticDataRegion): ItemSyncResult {
+        val startTime = System.currentTimeMillis()
+        val discovery = itemJdbcRepository.findMissingItemIdsForEnabledExpansionRanges()
+        log.info(
+            "Starting expansion range item sync for region {} candidates={} existing={} missing={}",
+            region,
+            discovery.candidateItemCount,
+            discovery.existingItemCount,
+            discovery.missingItemIds.size,
+        )
+        return syncDiscoveredItems(
+            region = region,
+            startTime = startTime,
+            auctionSourceCount = 0,
+            recipeCraftedSourceCount = 0,
+            recipeReagentSourceCount = 0,
+            candidateItemCount = discovery.candidateItemCount,
+            existingItemCount = discovery.existingItemCount,
+            missingIds = discovery.missingItemIds,
+            sourceDescription = "expansion-range",
+        )
+    }
+
+    private fun syncDiscoveredItems(
+        region: Region,
+        startTime: Long,
+        auctionSourceCount: Int,
+        recipeCraftedSourceCount: Int,
+        recipeReagentSourceCount: Int,
+        candidateItemCount: Int,
+        existingItemCount: Int,
+        missingIds: List<Int>,
+        sourceDescription: String,
+    ): ItemSyncResult {
         val now = OffsetDateTime.now(clock)
         val eligibility = itemJdbcRepository.classifyItemRetryEligibility(missingIds, now)
         val retryableMissingIds = eligibility.retryableIds
@@ -77,13 +123,14 @@ class ItemSyncService(
                 .toMutableMap()
 
         log.info(
-            "Discovered item sync sources region={} auction={} crafted={} reagents={} candidates={} existing={} missing={} retryable={} cooldownSkipped={} manualDisabledSkipped={}",
+            "Discovered item sync sources region={} source={} auction={} crafted={} reagents={} candidates={} existing={} missing={} retryable={} cooldownSkipped={} manualDisabledSkipped={}",
             region,
-            discovery.auctionSourceCount,
-            discovery.recipeCraftedSourceCount,
-            discovery.recipeReagentSourceCount,
-            discovery.candidateItemCount,
-            discovery.existingItemCount,
+            sourceDescription,
+            auctionSourceCount,
+            recipeCraftedSourceCount,
+            recipeReagentSourceCount,
+            candidateItemCount,
+            existingItemCount,
             missingIds.size,
             retryableMissingIds.size,
             eligibility.cooldownSkippedIds.size,
@@ -236,11 +283,11 @@ class ItemSyncService(
 
         return ItemSyncResult(
             region = region,
-            auctionSourceCount = discovery.auctionSourceCount,
-            recipeCraftedSourceCount = discovery.recipeCraftedSourceCount,
-            recipeReagentSourceCount = discovery.recipeReagentSourceCount,
-            candidateItemCount = discovery.candidateItemCount,
-            existingItemCount = discovery.existingItemCount,
+            auctionSourceCount = auctionSourceCount,
+            recipeCraftedSourceCount = recipeCraftedSourceCount,
+            recipeReagentSourceCount = recipeReagentSourceCount,
+            candidateItemCount = candidateItemCount,
+            existingItemCount = existingItemCount,
             missingItemCount = missingIds.size,
             skippedByBackoffCount = eligibility.cooldownSkippedIds.size,
             skippedManualDisabledCount = eligibility.manualDisabledIds.size,

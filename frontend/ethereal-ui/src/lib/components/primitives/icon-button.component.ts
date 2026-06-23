@@ -12,6 +12,7 @@ import { SymbolIconComponent, SymbolIconName } from './symbol-icon.component';
       type="button"
       class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/0 text-primary transition hover:bg-white/5 hover:text-on-surface disabled:cursor-not-allowed disabled:opacity-45"
       [attr.aria-label]="label()"
+      [attr.title]="label()"
       [disabled]="disabled()"
       (click)="pressed.emit()"
     >

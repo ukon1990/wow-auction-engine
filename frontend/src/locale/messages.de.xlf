@@ -242,6 +242,74 @@
           <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="route.admin.expansions" datatype="html">
+        <source>Expansions</source>
+        <target>Expansions</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.routes.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.expansions.jobs.apply.running" datatype="html">
+        <source>Applying expansion ranges…</source>
+        <target>Applying expansion ranges…</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.jobs.apply.done" datatype="html">
+        <source>Apply expansion ranges finished</source>
+        <target>Apply expansion ranges finished</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.jobs.fetch.running" datatype="html">
+        <source>Fetching missing items…</source>
+        <target>Fetching missing items…</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.jobs.fetch.done" datatype="html">
+        <source>Fetch missing items finished</source>
+        <target>Fetch missing items finished</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.jobs.generic" datatype="html">
+        <source>Admin item job</source>
+        <target>Admin item job</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.jobs.failed" datatype="html">
+        <source>Job failed.</source>
+        <target>Job failed.</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.catalog.name" datatype="html">
+        <source>Name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.catalog.slug" datatype="html">
+        <source>Slug</source>
+        <target>Slug</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.catalog.majorVersion" datatype="html">
+        <source>Major version</source>
+        <target>Major version</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.catalog.displayOrder" datatype="html">
+        <source>Display order</source>
+        <target>Display order</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.ranges.expansion" datatype="html">
+        <source>Expansion</source>
+        <target>Expansion</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.ranges.startItemId" datatype="html">
+        <source>Start item ID</source>
+        <target>Start item ID</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.ranges.endItemId" datatype="html">
+        <source>End item ID</source>
+        <target>End item ID</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.ranges.source" datatype="html">
+        <source>Source</source>
+        <target>Source</target>
+      </trans-unit>
+      <trans-unit id="admin.expansions.ranges.note" datatype="html">
+        <source>Note</source>
+        <target>Note</target>
+      </trans-unit>
       <trans-unit id="route.auctions" datatype="html">
         <source>Auctions</source>
         <target>Auktionen</target>

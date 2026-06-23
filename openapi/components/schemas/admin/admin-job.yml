@@ -1,0 +1,31 @@
+type: object
+required: [id, domain, operation, status, startedAt]
+properties:
+  id:
+    type: integer
+    format: int64
+  domain:
+    type: string
+    enum: [item, recipe, profession, media, system]
+  operation:
+    type: string
+  status:
+    type: string
+    enum: [running, completed, failed]
+  requestedBy:
+    type: string
+    nullable: true
+  startedAt:
+    type: string
+    format: date-time
+  finishedAt:
+    type: string
+    format: date-time
+    nullable: true
+  summary:
+    type: object
+    additionalProperties: true
+    nullable: true
+  errorMessage:
+    type: string
+    nullable: true
