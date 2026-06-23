@@ -10,6 +10,7 @@ import net.jonasmf.auctionengine.mapper.toLocaleDTO
 import net.jonasmf.auctionengine.repository.rds.AdminExpansionRepository
 import net.jonasmf.auctionengine.service.ItemSyncResult
 import net.jonasmf.auctionengine.service.ItemSyncService
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -24,6 +25,7 @@ class AdminExpansionService(
     private val adminExpansionRepository: AdminExpansionRepository,
     private val itemSyncService: ItemSyncService,
 ) {
+    private val log = LoggerFactory.getLogger(AdminExpansionService::class.java)
     private val applyRunning = AtomicBoolean(false)
     private val fetchMissingRunning = AtomicBoolean(false)
 
@@ -117,6 +119,7 @@ class AdminExpansionService(
             throw ResponseStatusException(HttpStatus.CONFLICT, "Expansion range apply job is already running")
         }
         val job = adminExpansionRepository.createJob(APPLY_EXPANSION_RANGES_JOB, requestedBy)
+        log.info("Accepted apply expansion ranges job id={} requestedBy={}", job.id, requestedBy)
         CompletableFuture.runAsync { runApplyJob(job.id) }
         return job
     }
@@ -126,6 +129,7 @@ class AdminExpansionService(
             throw ResponseStatusException(HttpStatus.CONFLICT, "Expansion range item fetch job is already running")
         }
         val job = adminExpansionRepository.createJob(FETCH_EXPANSION_RANGE_ITEMS_JOB, requestedBy)
+        log.info("Accepted fetch missing expansion range items job id={} requestedBy={}", job.id, requestedBy)
         CompletableFuture.runAsync { runFetchMissingJob(job.id) }
         return job
     }
@@ -135,6 +139,8 @@ class AdminExpansionService(
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Admin item job not found: $id")
 
     fun runApplyJob(jobId: Long) {
+        val startTime = System.currentTimeMillis()
+        log.info("Starting apply expansion ranges job id={}", jobId)
         try {
             val summary = adminExpansionRepository.applyEnabledRanges()
             adminExpansionRepository.completeJob(
@@ -145,7 +151,21 @@ class AdminExpansionService(
                     "conflictItemCount" to summary.conflictItemCount,
                 ),
             )
+            log.info(
+                "Completed apply expansion ranges job id={} in {}ms matched={} updated={} conflicts={}",
+                jobId,
+                System.currentTimeMillis() - startTime,
+                summary.matchedItemCount,
+                summary.updatedItemCount,
+                summary.conflictItemCount,
+            )
         } catch (error: Throwable) {
+            log.error(
+                "Failed apply expansion ranges job id={} in {}ms",
+                jobId,
+                System.currentTimeMillis() - startTime,
+                error,
+            )
             adminExpansionRepository.failJob(jobId, error)
         } finally {
             applyRunning.set(false)
@@ -153,10 +173,28 @@ class AdminExpansionService(
     }
 
     fun runFetchMissingJob(jobId: Long) {
+        val startTime = System.currentTimeMillis()
+        log.info("Starting fetch missing expansion range items job id={}", jobId)
         try {
             val result = itemSyncService.syncMissingItemsFromEnabledExpansionRanges()
             adminExpansionRepository.completeJob(jobId, result.toSummaryMap())
+            log.info(
+                "Completed fetch missing expansion range items job id={} in {}ms region={} candidates={} missing={} fetched={} persisted={}",
+                jobId,
+                System.currentTimeMillis() - startTime,
+                result.region,
+                result.candidateItemCount,
+                result.missingItemCount,
+                result.fetchedItemCount,
+                result.persistedItemCount,
+            )
         } catch (error: Throwable) {
+            log.error(
+                "Failed fetch missing expansion range items job id={} in {}ms",
+                jobId,
+                System.currentTimeMillis() - startTime,
+                error,
+            )
             adminExpansionRepository.failJob(jobId, error)
         } finally {
             fetchMissingRunning.set(false)
