@@ -116,6 +116,7 @@
       />
       <ee-search-input
         label="Item ID"
+        [showLabel]="true"
         placeholder="Contains item ID"
         [ngModel]="filters().itemId"
         (ngModelChange)="updateFilter('itemId', $event)"
