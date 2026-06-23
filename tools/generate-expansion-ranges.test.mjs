@@ -92,7 +92,8 @@ test("validateRanges allows same-expansion overlap", () => {
 test('renders idempotent sql with generated range replacement', () => {
   const sql = renderSql([{ expansionId: 1, startItemId: 5, endItemId: 6 }], new Date('2026-06-23T00:00:00Z'));
 
-  assert.match(sql, /INSERT INTO expansion/);
+  assert.match(sql, /INSERT INTO locale/);
+  assert.match(sql, /INSERT INTO expansion \(id, slug, name_id/);
   assert.match(sql, /DELETE FROM expansion_item_range\nWHERE source = 'itemversion'/);
   assert.match(sql, /\(1, 5, 6, 'itemversion', TRUE, 'Generated from ItemVersion\/Data.lua'\)/);
 });
