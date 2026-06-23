@@ -1,7 +1,6 @@
 package net.jonasmf.auctionengine.schedules
 
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.config.WaeS3Properties
 import net.jonasmf.auctionengine.service.BlizzardMediaBackfillService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -12,10 +11,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 @Component
 class BlizzardMediaBackfillSchedule(
     private val properties: BlizzardApiProperties,
-    private val s3Properties: WaeS3Properties,
     private val blizzardMediaBackfillService: BlizzardMediaBackfillService,
-    @Value("\${spring.cloud.aws.region.static}")
-    private val deploymentAwsRegion: String,
+    @Value("\${app.scheduling.static-data-sync-enabled:true}")
+    private val staticDataSyncEnabled: Boolean,
 ) {
     private val log = LoggerFactory.getLogger(BlizzardMediaBackfillSchedule::class.java)
     private val backfillRunning = AtomicBoolean(false)
@@ -25,7 +23,7 @@ class BlizzardMediaBackfillSchedule(
         zone = "\${app.scheduling.media-backfill-zone:GMT+1}",
     )
     fun backfillMediaOnSchedule() {
-        if (!shouldRunInCurrentDeploymentRegion("scheduled")) return
+        if (!shouldRunStaticDataSync("scheduled")) return
         runBackfill("scheduled")
     }
 
@@ -34,7 +32,7 @@ class BlizzardMediaBackfillSchedule(
         fixedDelayString = "\${app.scheduling.media-backfill-startup-repeat-delay:P3650D}",
     )
     fun backfillMediaAfterStartup() {
-        if (!shouldRunInCurrentDeploymentRegion("startup")) return
+        if (!shouldRunStaticDataSync("startup")) return
         runBackfill("startup")
     }
 
@@ -42,15 +40,11 @@ class BlizzardMediaBackfillSchedule(
         runBackfill("manual")
     }
 
-    private fun shouldRunInCurrentDeploymentRegion(trigger: String): Boolean {
-        val expectedAwsRegion = s3Properties.bucketFor(properties.staticDataRegion).bucketRegion
-        if (deploymentAwsRegion != expectedAwsRegion) {
+    private fun shouldRunStaticDataSync(trigger: String): Boolean {
+        if (!staticDataSyncEnabled) {
             log.info(
-                "Skipping {} media backfill because deployment AWS region {} does not match static data region {} bucket region {}.",
+                "Skipping {} media backfill because static data sync is disabled for this deployment.",
                 trigger,
-                deploymentAwsRegion,
-                properties.staticDataRegion,
-                expectedAwsRegion,
             )
             return false
         }

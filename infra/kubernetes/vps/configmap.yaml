@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wow-auction-engine-config
+  namespace: ee
+data:
+  SPRING_PROFILES_ACTIVE: production
+  WAE_AWS_REGION: eu-north-1
+  WAE_BLIZZARD_REGIONS: Europe,NorthAmerica,Korea,Taiwan
+  WAE_BLIZZARD_REGION: Europe
+  WAE_STATIC_DATA_REGION: Europe
+  WAE_STATIC_DATA_SYNC_ENABLED: "true"
+  JVM_MAX_RAM_PERCENTAGE: "65.0"
+  BACKEND_ORIGIN: http://ee-backend:8080

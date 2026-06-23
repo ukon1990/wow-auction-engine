@@ -18,7 +18,7 @@
         "jvm_max_ram_percentage": "65.0",
         "container_port": 8080,
         "health_check_path": "/api/health",
-        "instance_enabled": "true",
+        "instance_enabled": "false",
         "stack_name": "wah-wow-auction-engine-prod-eu-north-1"
     },
     {
@@ -31,7 +31,7 @@
       "jvm_max_ram_percentage": "65.0",
       "container_port": 8080,
       "health_check_path": "/api/health",
-      "instance_enabled": "true",
+      "instance_enabled": "false",
       "stack_name": "wah-wow-auction-engine-prod-us-west-1"
     },
     {
@@ -44,7 +44,7 @@
       "jvm_max_ram_percentage": "65.0",
       "container_port": 8080,
       "health_check_path": "/api/health",
-      "instance_enabled": "true",
+      "instance_enabled": "false",
       "stack_name": "wah-wow-auction-engine-prod-ap-northeast-2"
     }
   ]

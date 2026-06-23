@@ -22,6 +22,10 @@ on:
       service:
         required: true
         type: string
+      image_platform:
+        required: false
+        type: string
+        default: linux/amd64
     outputs:
       artifact_name:
         description: Uploaded Docker image artifact name
@@ -99,19 +103,19 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           WORKFLOW_RUN_ID: ${{ inputs.workflow_run_id }}
 
-      - name: Build ARM64 Docker image
+      - name: Build Docker image
         shell: bash
         run: |
           set -euo pipefail
           if [[ "$SERVICE" == "backend" ]]; then
             docker buildx build \
-              --platform linux/arm64 \
+              --platform "${IMAGE_PLATFORM}" \
               --tag "localbuild:${SERVICE}-${IMAGE_TAG}" \
               --load \
               backend
           elif [[ "$SERVICE" == "frontend" ]]; then
             docker buildx build \
-              --platform linux/arm64 \
+              --platform "${IMAGE_PLATFORM}" \
               --file frontend/Dockerfile \
               --tag "localbuild:${SERVICE}-${IMAGE_TAG}" \
               --load \
@@ -122,6 +126,7 @@ jobs:
           fi
         env:
           IMAGE_TAG: ${{ inputs.image_tag }}
+          IMAGE_PLATFORM: ${{ inputs.image_platform }}
           SERVICE: ${{ inputs.service }}
 
       - name: Export Docker image artifact

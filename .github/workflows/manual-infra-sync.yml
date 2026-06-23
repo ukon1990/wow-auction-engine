@@ -7,6 +7,7 @@ permissions:
   contents: read
   id-token: write
   actions: read
+  packages: write
 
 on:
   workflow_dispatch:
@@ -27,7 +28,7 @@ on:
           - us-west-1
           - ap-northeast-2
       run_app_rollout:
-        description: Also push and restart the current image after infra sync
+        description: Also build images and deploy the app to the VPS Kubernetes cluster after infra sync
         required: true
         default: true
         type: boolean
@@ -114,6 +115,7 @@ jobs:
       git_ref: ${{ needs.load-regions.outputs.git_ref }}
       workflow_run_id: ""
       image_tag: ${{ needs.load-regions.outputs.git_ref }}
+      image_platform: linux/amd64
       service: backend
 
   build-frontend-image:
@@ -124,6 +126,7 @@ jobs:
       git_ref: ${{ needs.load-regions.outputs.git_ref }}
       workflow_run_id: ""
       image_tag: ${{ needs.load-regions.outputs.git_ref }}
+      image_platform: linux/amd64
       service: frontend
 
   deploy-auth:
@@ -170,6 +173,7 @@ jobs:
           urls = [
               "http://localhost:4000/auth/callback",
               "http://127.0.0.1:4000/auth/callback",
+              "https://ee.jonaskf.net/auth/callback",
           ]
           if root:
               urls.extend(
@@ -191,6 +195,7 @@ jobs:
           urls = [
               "http://localhost:4000/",
               "http://127.0.0.1:4000/",
+              "https://ee.jonaskf.net/",
           ]
           if root:
               urls.extend(
@@ -248,10 +253,8 @@ jobs:
   deploy-region:
     needs:
       - load-regions
-      - build-backend-image
-      - build-frontend-image
       - deploy-auth
-    if: ${{ always() && (inputs.run_app_rollout == false || (needs.build-backend-image.result == 'success' && needs.build-frontend-image.result == 'success')) }}
+    if: ${{ always() && !failure() && !cancelled() }}
     strategy:
       fail-fast: true
       max-parallel: 1
@@ -259,8 +262,6 @@ jobs:
     uses: ./.github/workflows/reusable-deploy-region.yml
     with:
       git_ref: ${{ needs.load-regions.outputs.git_ref }}
-      backend_artifact_name: ${{ inputs.run_app_rollout && needs.build-backend-image.outputs.artifact_name || '' }}
-      frontend_artifact_name: ${{ inputs.run_app_rollout && needs.build-frontend-image.outputs.artifact_name || '' }}
       image_tag: ${{ needs.load-regions.outputs.git_ref }}
       app_name: ${{ needs.load-regions.outputs.app_name }}
       environment: ${{ needs.load-regions.outputs.environment }}
@@ -281,6 +282,32 @@ jobs:
       cognito_client_id: ${{ needs.deploy-auth.outputs.cognito_client_id }}
       cognito_hosted_ui_base_url: ${{ needs.deploy-auth.outputs.cognito_hosted_ui_base_url }}
       run_infra_phase: true
-      run_backend_rollout: ${{ inputs.run_app_rollout }}
-      run_frontend_rollout: ${{ inputs.run_app_rollout }}
+      run_backend_rollout: false
+      run_frontend_rollout: false
+    secrets: inherit
+
+  deploy-vps:
+    needs:
+      - load-regions
+      - build-backend-image
+      - build-frontend-image
+      - deploy-auth
+    if: >-
+      ${{
+        always() &&
+        inputs.run_app_rollout &&
+        needs.build-backend-image.result == 'success' &&
+        needs.build-frontend-image.result == 'success' &&
+        !failure() &&
+        !cancelled()
+      }}
+    uses: ./.github/workflows/reusable-deploy-vps.yml
+    with:
+      git_ref: ${{ needs.load-regions.outputs.git_ref }}
+      image_tag: ${{ needs.load-regions.outputs.git_ref }}
+      backend_artifact_name: ${{ needs.build-backend-image.outputs.artifact_name }}
+      frontend_artifact_name: ${{ needs.build-frontend-image.outputs.artifact_name }}
+      cognito_issuer_uri: ${{ needs.deploy-auth.outputs.cognito_issuer_uri }}
+      cognito_client_id: ${{ needs.deploy-auth.outputs.cognito_client_id }}
+      cognito_hosted_ui_base_url: ${{ needs.deploy-auth.outputs.cognito_hosted_ui_base_url }}
     secrets: inherit

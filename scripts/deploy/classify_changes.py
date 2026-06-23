@@ -59,18 +59,18 @@ def main() -> int:
     deploy_patterns = [
         ".github/workflows/deploy-production.yml",
         ".github/workflows/reusable-build-image.yml",
-        ".github/workflows/reusable-deploy-region.yml",
+        ".github/workflows/reusable-deploy-vps.yml",
         ".github/workflows/manual-infra-sync.yml",
         ".github/actions/**",
         "scripts/deploy/**",
         "infra/regions.json",
+        "infra/kubernetes/**",
     ]
     infra_patterns = [
         "infra/cloudformation/**",
         "infra/regions.json",
-        ".github/workflows/deploy-production.yml",
-        ".github/workflows/reusable-deploy-region.yml",
         ".github/workflows/manual-infra-sync.yml",
+        ".github/workflows/reusable-deploy-region.yml",
         ".github/actions/**",
         "scripts/deploy/**",
     ]
@@ -97,8 +97,8 @@ def main() -> int:
     backend_runtime_changed = any(matches(path, backend_runtime_patterns) for path in changed_files)
     frontend_runtime_changed = any(matches(path, frontend_runtime_patterns) for path in changed_files)
     deploy_changed = any(matches(path, deploy_patterns) for path in changed_files)
-    backend_rollout_required = backend_runtime_changed or deploy_changed or infra_apply_required
-    frontend_rollout_required = frontend_runtime_changed or deploy_changed or infra_apply_required
+    backend_rollout_required = backend_runtime_changed or deploy_changed
+    frontend_rollout_required = frontend_runtime_changed or deploy_changed
     app_rollout_required = backend_rollout_required or frontend_rollout_required
     relevant_changed = backend_verify_required or frontend_verify_required or app_rollout_required or infra_apply_required
 
