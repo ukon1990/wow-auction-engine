@@ -92,6 +92,15 @@ search:
             type: integer
         style: form
         explode: true
+      - name: expansionIds
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
       - name: recipeOnly
         in: query
         required: false

@@ -1,7 +1,7 @@
 import { AuctionMarketFilter, AuctionMarketFilterResponse } from '@api/generated';
+import { defaultMarketBrowserQueryState } from '@core/mappers/market-browser-query.mapper';
 import { toFilterSections } from '@core/mappers/filter-mapper';
 import { expect } from 'vitest';
-import { MarketBrowserQueryState } from '@core/models/market-browser.models';
 
 describe('Filter Mapper', () => {
   it('toFilterSections', () => {
@@ -68,21 +68,7 @@ describe('Filter Mapper', () => {
         },
       ],
     };
-    const sections = toFilterSections(filter.filters, {
-      query: '',
-      qualityIds: [],
-      itemClassIds: [],
-      itemSubclassIds: [],
-      recipeOnly: null,
-      minPrice: null,
-      maxPrice: null,
-      minQuantity: null,
-      maxQuantity: null,
-      page: 1,
-      pageSize: 20,
-      sortBy: 'itemName',
-      sortDirection: 'asc',
-    } satisfies MarketBrowserQueryState);
+    const sections = toFilterSections(filter.filters, defaultMarketBrowserQueryState);
 
     expect(sections.map((section) => section.id)).toEqual([
       'price',

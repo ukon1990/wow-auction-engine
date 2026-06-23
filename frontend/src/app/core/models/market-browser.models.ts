@@ -3,6 +3,7 @@ export interface MarketBrowserQueryState {
   readonly qualityIds: readonly number[];
   readonly itemClassIds: readonly number[];
   readonly itemSubclassIds: readonly number[];
+  readonly expansionIds: readonly number[];
   readonly recipeOnly: boolean | null;
   readonly minPrice: number | null;
   readonly maxPrice: number | null;

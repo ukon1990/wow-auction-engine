@@ -2,6 +2,7 @@ CREATE OR REPLACE VIEW v_auction_market_item_details AS
 SELECT
     i.id AS item_id,
     i.media_url AS item_media_url,
+    i.expansion_id AS expansion_id,
     i_l.de_de AS item_name_de_de,
     i_l.en_gb AS item_name_en_gb,
     i_l.en_us AS item_name_en_us,

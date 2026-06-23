@@ -20,6 +20,7 @@ const MAX_PAGE_SIZE = 200;
 export const defaultCraftingBrowserQueryState: CraftingBrowserQueryState = {
   query: '',
   professionIds: [],
+  expansionIds: [],
   minProfit: null,
   maxProfit: null,
   minRoiPercent: null,
@@ -42,6 +43,7 @@ export function readCraftingBrowserQueryState(queryParamMap: ParamMap): Crafting
     ...defaultCraftingBrowserQueryState,
     query: queryParamMap.get('query') ?? '',
     professionIds: queryParamMap.getAll('professionIds').map(Number).filter(Number.isFinite),
+    expansionIds: queryParamMap.getAll('expansionIds').map(Number).filter(Number.isFinite),
     minProfit: nullableNumber(queryParamMap.get('minProfit')),
     maxProfit: nullableNumber(queryParamMap.get('maxProfit')),
     minRoiPercent: nullableNumber(queryParamMap.get('minRoiPercent')),
@@ -64,6 +66,7 @@ export function toCraftingBrowserQueryParams(state: CraftingBrowserQueryState): 
   return {
     query: state.query || null,
     professionIds: state.professionIds.length ? [...state.professionIds] : null,
+    expansionIds: state.expansionIds.length ? [...state.expansionIds] : null,
     minProfit: state.minProfit,
     maxProfit: state.maxProfit,
     minRoiPercent: state.minRoiPercent,

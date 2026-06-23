@@ -29,6 +29,8 @@ export const filterLabel = (filter: AuctionMarketFilter): string => {
       return $localize`:@@market.column.class:Class`;
     case 'itemSubclassIds':
       return $localize`:@@market.column.subclass:Subclass`;
+    case 'expansionIds':
+      return $localize`:@@filters.expansion:Expansion`;
     case 'recipeOnly':
       return $localize`:@@filters.hasRecipe:Has Recipe`;
     default:
@@ -87,6 +89,7 @@ export const selectedSet = (filterId: string, state: MarketBrowserQueryState): S
   if (filterId === 'qualityIds') return new Set((state.qualityIds || []).map(String));
   if (filterId === 'itemClassIds') return new Set((state.itemClassIds || []).map(String));
   if (filterId === 'itemSubclassIds') return new Set((state.itemSubclassIds || []).map(String));
+  if (filterId === 'expansionIds') return new Set((state.expansionIds || []).map(String));
   return new Set();
 };
 
@@ -137,6 +140,7 @@ export const MARKET_MULTI_SELECT_KEYS = new Set<string>([
   'qualityIds',
   'itemClassIds',
   'itemSubclassIds',
+  'expansionIds',
 ]);
 
 export function parseFilterOptionId(optionId: string): ParsedFilterOptionId | null {
@@ -192,7 +196,7 @@ export function applyMarketFilterToggle(
 
   if (!MARKET_MULTI_SELECT_KEYS.has(parsed.filterId)) return state;
 
-  const key = parsed.filterId as 'qualityIds' | 'itemClassIds' | 'itemSubclassIds';
+  const key = parsed.filterId as 'qualityIds' | 'itemClassIds' | 'itemSubclassIds' | 'expansionIds';
   const current = [...state[key]];
   const next = toggleNumberInList(current, parsed.value);
 
@@ -239,7 +243,7 @@ export function applyMarketFilterSelect(
   }
 
   if (MARKET_MULTI_SELECT_KEYS.has(sectionId)) {
-    const key = sectionId as 'qualityIds' | 'itemClassIds' | 'itemSubclassIds';
+    const key = sectionId as 'qualityIds' | 'itemClassIds' | 'itemSubclassIds' | 'expansionIds';
     return { ...state, [key]: [parsed.value] };
   }
 
@@ -266,13 +270,14 @@ export const CRAFTING_RANGE_SECTION_KEYS = {
   readonly [keyof CraftingBrowserQueryState, keyof CraftingBrowserQueryState]
 >;
 
-export const CRAFTING_MULTI_SELECT_KEYS = new Set<string>(['professionIds']);
+export const CRAFTING_MULTI_SELECT_KEYS = new Set<string>(['professionIds', 'expansionIds']);
 
 export const craftingSelectedSet = (
   filterId: string,
   state: CraftingBrowserQueryState,
 ): Set<string> => {
   if (filterId === 'professionIds') return new Set(state.professionIds.map(String));
+  if (filterId === 'expansionIds') return new Set(state.expansionIds.map(String));
   return new Set();
 };
 
@@ -311,9 +316,10 @@ export function applyCraftingFilterToggle(
   const parsed = parseFilterOptionId(optionId);
   if (!parsed || !CRAFTING_MULTI_SELECT_KEYS.has(parsed.filterId)) return state;
 
+  const key = parsed.filterId as 'professionIds' | 'expansionIds';
   return {
     ...state,
-    professionIds: toggleNumberInList([...state.professionIds], parsed.value),
+    [key]: toggleNumberInList([...state[key]], parsed.value),
   };
 }
 

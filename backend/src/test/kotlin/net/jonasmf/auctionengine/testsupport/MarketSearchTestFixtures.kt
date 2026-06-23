@@ -3,7 +3,22 @@ package net.jonasmf.auctionengine.testsupport
 import org.springframework.jdbc.core.JdbcTemplate
 
 object MarketSearchTestFixtures {
+    fun seedExpansionCatalog(jdbcTemplate: JdbcTemplate) {
+        val vanillaName = insertLocale(jdbcTemplate, 200, "Vanilla", "Vanilla", "expansion", "1", "name")
+        val tbcName =
+            insertLocale(jdbcTemplate, 201, "The Burning Crusade", "The Burning Crusade", "expansion", "2", "name")
+        jdbcTemplate.update(
+            """
+            INSERT INTO expansion (id, slug, name_id, major_version, display_order)
+            VALUES (1, 'vanilla', ?, 1, 10), (2, 'the-burning-crusade', ?, 2, 20)
+            """.trimIndent(),
+            vanillaName,
+            tbcName,
+        )
+    }
+
     fun seedMarketSearchData(jdbcTemplate: JdbcTemplate) {
+        seedExpansionCatalog(jdbcTemplate)
         jdbcTemplate.update("INSERT INTO region (id, name, type) VALUES (2, 'Europe', 1)")
         insertAuctionHouse(jdbcTemplate, id = 100, connectedId = 1084, lastModified = "2026-05-01 11:15:00")
         insertAuctionHouse(jdbcTemplate, id = 101, connectedId = -2, lastModified = "2026-05-01 10:30:00")

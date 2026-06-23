@@ -68,6 +68,16 @@ describe('crafting-browser-query.mapper', () => {
     });
   });
 
+  it('reads expansionIds from the URL', () => {
+    expect(
+      readCraftingBrowserQueryState(
+        convertToParamMap({
+          expansionIds: ['1', '3'],
+        }),
+      ).expansionIds,
+    ).toEqual([1, 3]);
+  });
+
   it('omits default sort and page from serialized params', () => {
     expect(toCraftingBrowserQueryParams(defaultCraftingBrowserQueryState)).toMatchObject({
       sortBy: null,

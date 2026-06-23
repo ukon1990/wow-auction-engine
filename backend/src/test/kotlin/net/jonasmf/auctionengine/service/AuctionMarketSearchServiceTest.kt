@@ -33,6 +33,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
                 qualityIds = null,
                 itemClassIds = null,
                 itemSubclassIds = null,
+                expansionIds = null,
                 recipeOnly = null,
                 minPrice = null,
                 maxPrice = null,
@@ -168,6 +169,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
                 qualityIds = null,
                 itemClassIds = null,
                 itemSubclassIds = null,
+                expansionIds = null,
                 recipeOnly = null,
                 minPrice = null,
                 maxPrice = null,
@@ -200,6 +202,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
                 qualityIds = null,
                 itemClassIds = null,
                 itemSubclassIds = null,
+                expansionIds = null,
                 recipeOnly = null,
                 minPrice = null,
                 maxPrice = null,
@@ -222,6 +225,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
                 qualityIds = null,
                 itemClassIds = null,
                 itemSubclassIds = null,
+                expansionIds = null,
                 recipeOnly = null,
                 minPrice = null,
                 maxPrice = null,
@@ -249,6 +253,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
                 qualityIds = null,
                 itemClassIds = null,
                 itemSubclassIds = null,
+                expansionIds = null,
                 recipeOnly = null,
                 minPrice = null,
                 maxPrice = null,
@@ -284,6 +289,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
                 qualityIds = listOf(3),
                 itemClassIds = listOf(2),
                 itemSubclassIds = listOf(7),
+                expansionIds = null,
                 recipeOnly = true,
                 minPrice = 500,
                 maxPrice = 1_500,
@@ -317,6 +323,58 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
         val quantityFilter = result.filters.single { it.id == "quantity" }
         assertEquals(null, quantityFilter.min)
         assertEquals(null, quantityFilter.max)
+        val expansion = result.filters.single { it.id == "expansionIds" }
+        assertTrue(expansion.options.orEmpty().any { it.id == "1" && it.label == "Vanilla" })
+    }
+
+    @Test
+    fun `search filters by expansion id`() {
+        seedMarketSearchData()
+        jdbcTemplate.update("UPDATE item SET expansion_id = 1 WHERE id = 19019")
+
+        val matching =
+            service.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = null,
+                qualityIds = null,
+                itemClassIds = null,
+                itemSubclassIds = null,
+                expansionIds = listOf(1),
+                recipeOnly = null,
+                minPrice = null,
+                maxPrice = null,
+                minQuantity = null,
+                maxQuantity = null,
+            )
+        assertEquals(1, matching.page.totalItems)
+
+        val nonMatching =
+            service.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = null,
+                qualityIds = null,
+                itemClassIds = null,
+                itemSubclassIds = null,
+                expansionIds = listOf(2),
+                recipeOnly = null,
+                minPrice = null,
+                maxPrice = null,
+                minQuantity = null,
+                maxQuantity = null,
+            )
+        assertEquals(0, nonMatching.page.totalItems)
     }
 
     @Test

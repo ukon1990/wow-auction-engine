@@ -24,6 +24,7 @@ data class AuctionMarketSearchRequest(
     val qualityIds: List<Int>,
     val itemClassIds: List<Int>,
     val itemSubclassIds: List<Int>,
+    val expansionIds: List<Int>,
     val recipeOnly: Boolean?,
     val minPrice: Long?,
     val maxPrice: Long?,
@@ -168,6 +169,20 @@ class AuctionMarketSearchRepository(
             filterOptionRowMapper,
         )
 
+    fun expansionOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
+        jdbcTemplate.query(
+            """
+            SELECT
+                CAST(e.id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, e.slug) AS label,
+                NULL AS parent_id
+            FROM expansion e
+                LEFT JOIN locale l ON l.id = e.name_id
+            ORDER BY e.display_order, e.id
+            """.trimIndent(),
+            filterOptionRowMapper,
+        )
+
     private fun buildSearchPagedSql(
         request: AuctionMarketSearchRequest,
         withSql: String,
@@ -289,6 +304,7 @@ class AuctionMarketSearchRepository(
         request.qualityIds.isNotEmpty() ||
             request.itemClassIds.isNotEmpty() ||
             request.itemSubclassIds.isNotEmpty() ||
+            request.expansionIds.isNotEmpty() ||
             request.recipeOnly == true
 
     private fun buildCurrentAuctionSnapshotCtes(
@@ -409,6 +425,9 @@ class AuctionMarketSearchRepository(
                 "EXISTS (SELECT 1 FROM item_subclass isc WHERE isc.internal_id = i.item_subclass_id AND isc.class_id <=> i.item_class_id AND isc.subclass_id IN ($placeholders))",
             )
         }
+        if (request.expansionIds.isNotEmpty()) {
+            parts.add("i.expansion_id IN (${request.expansionIds.joinToString(",") { "?" }})")
+        }
         if (request.recipeOnly == true) {
             parts.add("EXISTS (SELECT 1 FROM recipe r WHERE r.crafted_item_id = i.id)")
         }
@@ -422,6 +441,7 @@ class AuctionMarketSearchRepository(
         if (request.qualityIds.isNotEmpty()) params.addAll(request.qualityIds)
         if (request.itemClassIds.isNotEmpty()) params.addAll(request.itemClassIds)
         if (request.itemSubclassIds.isNotEmpty()) params.addAll(request.itemSubclassIds)
+        if (request.expansionIds.isNotEmpty()) params.addAll(request.expansionIds)
     }
 
     private fun buildWhereSql(
@@ -444,6 +464,7 @@ class AuctionMarketSearchRepository(
             addInPredicate("d.quality_id", request.qualityIds, predicates, params)
             addInPredicate("d.item_class_id", request.itemClassIds, predicates, params)
             addInPredicate("d.item_subclass_id", request.itemSubclassIds, predicates, params)
+            addInPredicate("d.expansion_id", request.expansionIds, predicates, params)
             if (request.recipeOnly == true) {
                 predicates.add("d.recipe_id IS NOT NULL")
             }
