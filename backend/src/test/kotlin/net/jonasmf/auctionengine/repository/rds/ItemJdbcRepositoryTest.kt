@@ -179,6 +179,39 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
         assertEquals(setOf(171374, 171391), existingIds)
     }
 
+    @Test
+    fun `findMissingItemIdsForEnabledExpansionRanges returns missing ids covered by ranges`() {
+        itemJdbcRepository.syncItems(listOf(loadItem(171374)))
+        jdbcTemplate.update(
+            """
+            INSERT INTO expansion_item_range (expansion_id, start_item_id, end_item_id, source, enabled)
+            VALUES (?, ?, ?, ?, ?)
+            """.trimIndent(),
+            1,
+            171374,
+            171376,
+            "manual",
+            true,
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO expansion_item_range (expansion_id, start_item_id, end_item_id, source, enabled)
+            VALUES (?, ?, ?, ?, ?)
+            """.trimIndent(),
+            2,
+            999001,
+            999002,
+            "manual",
+            false,
+        )
+
+        val discovery = itemJdbcRepository.findMissingItemIdsForEnabledExpansionRanges()
+
+        assertEquals(3, discovery.candidateItemCount)
+        assertEquals(1, discovery.existingItemCount)
+        assertEquals(listOf(171375, 171376), discovery.missingItemIds)
+    }
+
     private fun loadItem(itemId: Int) =
         mapper.readValue<ItemDTO>(loadFixture(this, "/blizzard/item/$itemId-response.json")).toDomain()
 

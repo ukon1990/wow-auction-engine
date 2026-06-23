@@ -13,6 +13,7 @@ import net.jonasmf.auctionengine.domain.item.ItemQuality
 import net.jonasmf.auctionengine.domain.item.ItemSubclass
 import net.jonasmf.auctionengine.dto.LocaleDTO
 import net.jonasmf.auctionengine.integration.blizzard.ItemApiClient
+import net.jonasmf.auctionengine.repository.rds.ExpansionRangeItemDiscovery
 import net.jonasmf.auctionengine.repository.rds.ItemJdbcRepository
 import net.jonasmf.auctionengine.repository.rds.ItemPersistenceSummary
 import net.jonasmf.auctionengine.repository.rds.ItemRetryEligibility
@@ -164,6 +165,40 @@ class ItemSyncServiceTest {
         assertEquals(1, result.skippedManualDisabledCount)
         assertEquals(0, result.fetchedItemCount)
         verify(exactly = 0) { itemApiClient.getById(any(), any()) }
+    }
+
+    @Test
+    fun `syncMissingItemsFromEnabledExpansionRanges fetches missing ids from expansion ranges`() {
+        val service = createService()
+        val item = item(4001)
+
+        every { itemJdbcRepository.findMissingItemIdsForEnabledExpansionRanges() } returns
+            ExpansionRangeItemDiscovery(
+                candidateItemCount = 2,
+                existingItemCount = 1,
+                missingItemIds = listOf(4001),
+            )
+        every { itemJdbcRepository.classifyItemRetryEligibility(listOf(4001), any()) } returns
+            ItemRetryEligibility(
+                retryableIds = listOf(4001),
+                cooldownSkippedIds = emptyList(),
+                manualDisabledIds = emptyList(),
+            )
+        every { itemJdbcRepository.findItemFetchFailureStates(listOf(4001)) } returns emptyMap()
+        every { itemApiClient.getById(4001, Region.Europe) } returns item
+        every { blizzardMediaService.resolveItem(Region.Europe, item) } returns item
+        every { itemBulkSyncService.syncItems(listOf(item)) } returns summary(items = 1)
+        every { itemJdbcRepository.clearItemFetchFailureStates(listOf(4001)) } returns Unit
+        every { itemJdbcRepository.findExistingItemIds(listOf(4001)) } returns setOf(4001)
+
+        val result = service.syncMissingItemsFromEnabledExpansionRanges(Region.Europe)
+
+        assertEquals(2, result.candidateItemCount)
+        assertEquals(1, result.existingItemCount)
+        assertEquals(1, result.missingItemCount)
+        assertEquals(1, result.fetchedItemCount)
+        verify(exactly = 1) { itemJdbcRepository.findMissingItemIdsForEnabledExpansionRanges() }
+        verify(exactly = 1) { itemApiClient.getById(4001, Region.Europe) }
     }
 
     private fun item(id: Int) =
