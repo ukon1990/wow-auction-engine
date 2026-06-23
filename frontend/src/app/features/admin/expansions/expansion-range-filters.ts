@@ -1,4 +1,4 @@
-import { AdminExpansionItemRange } from '@api/generated';
+import { AdminExpansion, AdminExpansionItemRange } from '@api/generated';
 
 export type ExpansionRangeFilterState = {
   readonly expansionId: string;
@@ -13,6 +13,33 @@ export const defaultExpansionRangeFilters = (): ExpansionRangeFilterState => ({
   enabled: '',
   itemId: '',
 });
+
+export type CreateExpansionRangeDefaults = {
+  readonly expansionId: string;
+  readonly startItemId: string;
+};
+
+export function defaultCreateRangeValues(
+  expansions: readonly AdminExpansion[],
+  ranges: readonly AdminExpansionItemRange[],
+): CreateExpansionRangeDefaults {
+  if (expansions.length === 0) {
+    return { expansionId: '', startItemId: '' };
+  }
+
+  const currentExpansion = expansions.reduce((latest, expansion) =>
+    expansion.id > latest.id ? expansion : latest,
+  );
+
+  const maxItemId = ranges
+    .filter((range) => range.expansion.id === currentExpansion.id)
+    .reduce((max, range) => Math.max(max, range.startItemId, range.endItemId), 0);
+
+  return {
+    expansionId: String(currentExpansion.id),
+    startItemId: String(maxItemId > 0 ? maxItemId : 1),
+  };
+}
 
 export function filterExpansionRanges(
   ranges: readonly AdminExpansionItemRange[],
