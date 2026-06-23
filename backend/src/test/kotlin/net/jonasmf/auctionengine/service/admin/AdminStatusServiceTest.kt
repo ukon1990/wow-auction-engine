@@ -9,6 +9,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import java.sql.ResultSet
+import java.sql.Timestamp
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 class AdminStatusServiceTest {
     private val jdbcTemplate = mockk<JdbcTemplate>()
@@ -40,6 +44,7 @@ class AdminStatusServiceTest {
         every { resultSet.getString("state") } returns "Sending data"
         every { resultSet.getLong("time") } returns 4
         every { resultSet.getDouble("timeMs") } returns 4100.0
+        every { resultSet.getTimestamp("startedAt") } returns Timestamp.from(Instant.parse("2026-06-23T06:00:00Z"))
         every { resultSet.getString("info") } returns "SELECT * FROM auction"
         every { resultSet.getLong("stage") } returns 1
         every { resultSet.getLong("maxStage") } returns 2
@@ -50,6 +55,9 @@ class AdminStatusServiceTest {
         every {
             jdbcTemplate.query(match<String> { it.contains("information_schema.processlist") }, any<RowMapper<AdminRunningQuery>>())
         } answers {
+            val sql = firstArg<String>()
+            assert(sql.contains("LEFT(info, 10000)"))
+            assert(sql.contains("LIMIT 100"))
             listOf(secondArg<RowMapper<AdminRunningQuery>>().mapRow(resultSet, 0))
         }
 
@@ -62,6 +70,7 @@ class AdminStatusServiceTest {
         assertEquals("Sending data", query.state)
         assertEquals(4, query.time)
         assertEquals(4100.0, query.timeMs)
+        assertEquals(OffsetDateTime.of(2026, 6, 23, 6, 0, 0, 0, ZoneOffset.UTC), query.startedAt)
         assertEquals("SELECT * FROM auction", query.info)
         assertEquals(1, query.stage)
         assertEquals(2, query.maxStage)

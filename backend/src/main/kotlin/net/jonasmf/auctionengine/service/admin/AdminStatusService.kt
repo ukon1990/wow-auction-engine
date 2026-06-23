@@ -8,11 +8,17 @@ import net.jonasmf.auctionengine.generated.model.AdminTableSize
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Service
 import java.lang.management.ManagementFactory
+import java.time.ZoneOffset
 
 @Service
 class AdminStatusService(
     private val jdbcTemplate: JdbcTemplate,
 ) {
+    private companion object {
+        const val RUNNING_QUERY_SQL_LIMIT = 10_000
+        const val RUNNING_QUERY_ROW_LIMIT = 100
+    }
+
     fun getStatus(): AdminStatus =
         AdminStatus(
             connections = getConnectionStatus(),
@@ -55,7 +61,8 @@ class AdminStatusService(
                     state,
                     time,
                     time_ms                          as timeMs,
-                    info,
+                    DATE_SUB(NOW(3), INTERVAL CAST(time_ms * 1000 AS UNSIGNED) MICROSECOND) as startedAt,
+                    LEFT(info, $RUNNING_QUERY_SQL_LIMIT) as info,
                     stage,
                     max_stage                        as maxStage,
                     progress,
@@ -65,6 +72,8 @@ class AdminStatusService(
             WHERE info IS NOT NULL
             AND info NOT LIKE '%SHOW GLOBAL STATUS%'
             AND info NOT LIKE '%information_schema.processlist%'
+            ORDER BY time_ms DESC
+            LIMIT $RUNNING_QUERY_ROW_LIMIT
             """.trimIndent(),
         ) { rs, _ ->
             AdminRunningQuery(
@@ -75,6 +84,7 @@ class AdminStatusService(
                 state = rs.getString("state"),
                 time = rs.getLong("time"),
                 timeMs = rs.getDouble("timeMs"),
+                startedAt = rs.getTimestamp("startedAt").toInstant().atOffset(ZoneOffset.UTC),
                 info = rs.getString("info"),
                 stage = rs.getNullableLong("stage"),
                 maxStage = rs.getNullableLong("maxStage"),

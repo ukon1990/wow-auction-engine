@@ -28,6 +28,7 @@ const runningQueryFixture = {
   state: 'Running',
   time: 2,
   timeMs: 2000,
+  startedAt: '2026-06-23T06:00:00Z',
   info: 'SELECT * FROM auction',
 };
 

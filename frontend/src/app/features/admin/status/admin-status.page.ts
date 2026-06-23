@@ -8,9 +8,12 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChartComponent, ItemStatCardComponent, PageFrameComponent, TableComponent } from '@ui';
+import { AdminRunningQuery } from '@api/generated';
 import type Highcharts from 'highcharts/esm/highcharts';
 import { AdminStatusService } from './admin-status.service';
-import { createRunningQueryColumns, createTableSizeColumns } from './admin-status-table.columns';
+import { createTableSizeColumns } from './admin-status-table.columns';
+
+const QUERY_PREVIEW_LIMIT = 220;
 
 @Component({
   selector: 'app-admin-status-page',
@@ -31,8 +34,8 @@ export class AdminStatusPage {
   protected readonly lastUpdated = this.service.lastUpdated.asReadonly();
   protected readonly backgroundUpdates = this.service.backgroundUpdates.asReadonly();
   protected readonly history = this.service.history.asReadonly();
-  protected readonly runningQueryColumns = signal(createRunningQueryColumns());
   protected readonly tableSizeColumns = signal(createTableSizeColumns());
+  protected readonly selectedQuery = signal<AdminRunningQuery | null>(null);
   protected readonly memoryGaugeOptions = computed<Highcharts.Options>(() => {
     const status = this.status();
     return this.gaugeOptions({
@@ -241,10 +244,14 @@ export class AdminStatusPage {
         enabled: true,
         shared: true,
         valueSuffix: config.suffix,
-        xDateFormat: '%H:%M:%S',
+        xDateFormat: '%H:%M',
       },
       xAxis: {
         type: 'datetime',
+        labels: {
+          format: '{value:%H:%M}',
+          style: { color: 'var(--color-outline)' },
+        },
       },
       yAxis: {
         min: 0,
@@ -262,6 +269,48 @@ export class AdminStatusPage {
         connectNulls: false,
       })),
     };
+  }
+
+  protected startedAtLabel(value: string): string {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime())
+      ? '-'
+      : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+
+  protected durationLabel(timeMs: number): string {
+    if (timeMs >= 1000) {
+      return `${(timeMs / 1000).toFixed(1)} s`;
+    }
+    return `${Math.round(timeMs)} ms`;
+  }
+
+  protected queryPreview(query: AdminRunningQuery): string {
+    const sql = query.info?.trim() || '-';
+    if (sql.length <= QUERY_PREVIEW_LIMIT) {
+      return sql;
+    }
+    return `${sql.slice(0, QUERY_PREVIEW_LIMIT).trimEnd()}...`;
+  }
+
+  protected isQueryTruncated(query: AdminRunningQuery): boolean {
+    return (query.info?.trim().length ?? 0) > QUERY_PREVIEW_LIMIT;
+  }
+
+  protected nullableLabel(value: string | null | undefined): string {
+    return value?.trim() || '-';
+  }
+
+  protected nullableNumberLabel(value: number | null | undefined): string {
+    return value === null || value === undefined ? '-' : new Intl.NumberFormat().format(value);
+  }
+
+  protected showQuery(query: AdminRunningQuery): void {
+    this.selectedQuery.set(query);
+  }
+
+  protected closeQuery(): void {
+    this.selectedQuery.set(null);
   }
 }
 

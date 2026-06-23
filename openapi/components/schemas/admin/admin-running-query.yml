@@ -1,5 +1,5 @@
 type: object
-required: [id, queryId, tid, command, time, timeMs]
+required: [id, queryId, tid, command, time, timeMs, startedAt]
 properties:
     id:
         type: integer
@@ -21,6 +21,9 @@ properties:
     timeMs:
         type: number
         format: double
+    startedAt:
+        type: string
+        format: date-time
     info:
         type: string
         nullable: true

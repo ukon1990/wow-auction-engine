@@ -7,6 +7,8 @@ import type { AdminStatusHistoryPoint } from './admin-status.service';
 import { AdminStatusPage } from './admin-status.page';
 import { AdminStatusService } from './admin-status.service';
 
+const longQuery = `SELECT ${'column_name, '.repeat(30)}FROM auction WHERE item_id = 19019`;
+
 const statusFixture: AdminStatus = {
   connections: {
     maxUsedConnections: 8,
@@ -30,7 +32,8 @@ const statusFixture: AdminStatus = {
       state: 'Sending data',
       time: 4,
       timeMs: 4000,
-      info: 'SELECT * FROM auction',
+      startedAt: '2026-06-23T05:59:56Z',
+      info: longQuery,
     },
   ],
   tableSizes: [
@@ -132,9 +135,24 @@ describe('AdminStatusPage', () => {
     expect(text).toContain('Memory over time');
     expect(text).toContain('Threads over time');
     expect(text).toContain('Running queries');
-    expect(text).toContain('SELECT * FROM auction');
+    expect(text).toContain('Show more');
     expect(text).toContain('Table and index sizes');
     expect(text).toContain('auction');
+  });
+
+  it('opens a modal with the full SQL for truncated queries', () => {
+    fixture = TestBed.createComponent(AdminStatusPage);
+    fixture.detectChanges();
+
+    const button = [...fixture.nativeElement.querySelectorAll('button')].find(
+      (candidate: HTMLButtonElement) => candidate.textContent?.includes('Show more'),
+    ) as HTMLButtonElement;
+    button.click();
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('SQL query');
+    expect(text).toContain(longQuery);
   });
 
   it('refreshes manually', () => {
