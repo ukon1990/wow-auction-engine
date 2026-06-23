@@ -13,6 +13,7 @@ import {
   AdminExpansionItemRange,
   AdminExpansionItemRangeRequest,
 } from '@api/generated';
+import { type CreateExpansionRangeDefaults } from '@features/admin/expansions/expansion-range-filters';
 import { CheckboxInputComponent, SelectInputComponent, TextInputComponent } from '@ui';
 
 export type ExpansionRangeFormMode = 'create' | 'edit';
@@ -109,6 +110,10 @@ export class ExpansionRangeFormComponent {
   protected readonly standaloneModel = standaloneModel;
 
   readonly expansions = input.required<readonly AdminExpansion[]>();
+  readonly createDefaults = input<CreateExpansionRangeDefaults>({
+    expansionId: '',
+    startItemId: '',
+  });
   readonly mode = input<ExpansionRangeFormMode>('create');
   readonly range = input<AdminExpansionItemRange | null>(null);
   readonly submitting = input(false);
@@ -145,8 +150,9 @@ export class ExpansionRangeFormComponent {
         this.enabled.set(range.enabled);
         this.note.set(range.note ?? '');
       } else if (this.mode() === 'create') {
-        this.expansionId.set('');
-        this.startItemId.set('');
+        const defaults = this.createDefaults();
+        this.expansionId.set(defaults.expansionId);
+        this.startItemId.set(defaults.startItemId);
         this.endItemId.set('');
         this.enabled.set(true);
         this.note.set('');
