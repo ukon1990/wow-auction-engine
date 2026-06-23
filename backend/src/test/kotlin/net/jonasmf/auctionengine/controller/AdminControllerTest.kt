@@ -2,7 +2,11 @@ package net.jonasmf.auctionengine.controller
 
 import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.config.SecurityConfig
+import net.jonasmf.auctionengine.generated.model.AdminConnectionStatus
+import net.jonasmf.auctionengine.generated.model.AdminServerStatus
+import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.User
+import net.jonasmf.auctionengine.service.admin.AdminStatusService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -42,10 +46,83 @@ class AdminControllerTest {
     private lateinit var userService: UserService
 
     @MockitoBean
+    private lateinit var adminStatusService: AdminStatusService
+
+    @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder
 
     @Autowired
     private lateinit var cognitoGroupsGrantedAuthoritiesConverter: Converter<Jwt, Collection<GrantedAuthority>>
+
+    @Nested
+    inner class GetAdminStatus {
+        @Autowired
+        private lateinit var mockMvc: MockMvc
+
+        @Test
+        fun `should return admin status if Cognito Admin group`() {
+            `when`(adminStatusService.getStatus()).thenReturn(
+                AdminStatus(
+                    connections =
+                        AdminConnectionStatus(
+                            maxUsedConnections = 2,
+                            threadsConnected = 1,
+                            uptimeSeconds = 60,
+                        ),
+                    server =
+                        AdminServerStatus(
+                            usedMemoryMb = 128,
+                            totalMemoryMb = 256,
+                            freeMemoryMb = 128,
+                            maxMemoryMb = 512,
+                        ),
+                    runningQueries = emptyList(),
+                    tableSizes = emptyList(),
+                ),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        get("/api/admin/status")
+                            .contextPath("/api")
+                            .with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+        }
+
+        @Test
+        fun `should return 401 if unauthenticated`() {
+            mockMvc
+                .perform(get("/api/admin/status").contextPath("/api"))
+                .andExpect(status().isUnauthorized)
+        }
+
+        @Test
+        fun `should return 403 if authenticated but not admin`() {
+            val result =
+                mockMvc
+                    .perform(
+                        get("/api/admin/status")
+                            .contextPath("/api")
+                            .with(jwt()),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isForbidden)
+        }
+    }
 
     @Nested
     inner class ListUsers {

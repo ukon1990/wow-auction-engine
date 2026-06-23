@@ -14,3 +14,17 @@ getUsers:
                             type: array
                             items:
                                 $ref: "../openapi.yml#/components/schemas/User"
+getStatus:
+    get:
+        tags:
+            - Admin
+        operationId: getAdminStatus
+        summary: Gets database and server diagnostic metrics
+        description: Allows an administrator to review current database and server status.
+        responses:
+            "200":
+                description: Database and server status
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminStatus"

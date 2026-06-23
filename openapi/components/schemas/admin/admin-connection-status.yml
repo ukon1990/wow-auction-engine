@@ -1,0 +1,12 @@
+type: object
+required: [maxUsedConnections, threadsConnected, uptimeSeconds]
+properties:
+    maxUsedConnections:
+        type: integer
+        format: int64
+    threadsConnected:
+        type: integer
+        format: int64
+    uptimeSeconds:
+        type: integer
+        format: int64

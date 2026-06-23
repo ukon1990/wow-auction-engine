@@ -1,0 +1,23 @@
+type: object
+required: [usedMemoryMb, totalMemoryMb, freeMemoryMb, maxMemoryMb]
+properties:
+    usedMemoryMb:
+        type: integer
+        format: int64
+    totalMemoryMb:
+        type: integer
+        format: int64
+    freeMemoryMb:
+        type: integer
+        format: int64
+    maxMemoryMb:
+        type: integer
+        format: int64
+    processCpuLoad:
+        type: number
+        format: double
+        nullable: true
+    systemCpuLoad:
+        type: number
+        format: double
+        nullable: true

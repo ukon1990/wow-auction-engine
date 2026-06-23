@@ -1,0 +1,46 @@
+type: object
+required: [id, queryId, tid, command, time, timeMs]
+properties:
+    id:
+        type: integer
+        format: int64
+    queryId:
+        type: integer
+        format: int64
+    tid:
+        type: integer
+        format: int64
+    command:
+        type: string
+    state:
+        type: string
+        nullable: true
+    time:
+        type: integer
+        format: int64
+    timeMs:
+        type: number
+        format: double
+    info:
+        type: string
+        nullable: true
+    stage:
+        type: integer
+        format: int64
+        nullable: true
+    maxStage:
+        type: integer
+        format: int64
+        nullable: true
+    progress:
+        type: number
+        format: double
+        nullable: true
+    memoryUsed:
+        type: integer
+        format: int64
+        nullable: true
+    examinedRows:
+        type: integer
+        format: int64
+        nullable: true

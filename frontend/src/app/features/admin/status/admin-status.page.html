@@ -1,0 +1,84 @@
+<ee-page-frame
+  title="Status"
+  eyebrow="Admin"
+  [loading]="loading() && !status()"
+  titleId="admin-status-title"
+>
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <p class="ee-data text-outline">Last updated: {{ lastUpdatedLabel() }}</p>
+    <button
+      type="button"
+      class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+      [disabled]="loading()"
+      (click)="refresh()"
+    >
+      Refresh
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error">
+      {{ error() }}
+    </p>
+  }
+
+  @if (status(); as s) {
+    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4" aria-label="Status metrics">
+      <ee-item-stat-card
+        label="Threads connected"
+        icon="settings"
+        [value]="s.connections.threadsConnected"
+        [caption]="'Max used: ' + s.connections.maxUsedConnections"
+      />
+      <ee-item-stat-card
+        label="Database uptime"
+        icon="query_stats"
+        [value]="uptimeLabel(s.connections.uptimeSeconds)"
+        caption="From MariaDB global status"
+      />
+      <ee-item-stat-card
+        label="JVM memory"
+        icon="schema"
+        [value]="s.server.usedMemoryMb"
+        unit="MB"
+        [caption]="
+          'Total: ' + s.server.totalMemoryMb + ' MB / Max: ' + s.server.maxMemoryMb + ' MB'
+        "
+      />
+      <ee-item-stat-card
+        label="CPU"
+        icon="show_chart"
+        [value]="percentLabel(s.server.processCpuLoad)"
+        [caption]="'System: ' + percentLabel(s.server.systemCpuLoad)"
+      />
+    </section>
+
+    <section class="grid min-h-[22rem] gap-3">
+      <header>
+        <h2 class="font-cinzel text-xl font-bold text-primary-container">Running queries</h2>
+      </header>
+      <ee-table
+        [columns]="runningQueryColumns()"
+        [data]="s.runningQueries"
+        [loading]="loading() && s.runningQueries.length === 0"
+        [skeletonRowCount]="5"
+        emptyMessage="No running queries."
+        sectionAriaLabel="Running queries"
+      />
+    </section>
+
+    <section class="grid min-h-[28rem] gap-3">
+      <header>
+        <h2 class="font-cinzel text-xl font-bold text-primary-container">Table and index sizes</h2>
+      </header>
+      <ee-table
+        [columns]="tableSizeColumns()"
+        [data]="s.tableSizes"
+        [loading]="loading() && s.tableSizes.length === 0"
+        [skeletonRowCount]="10"
+        emptyMessage="No table size metrics available."
+        sectionAriaLabel="Table and index sizes"
+      />
+    </section>
+  }
+</ee-page-frame>
