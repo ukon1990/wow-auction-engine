@@ -12,4 +12,14 @@ describe('routes', () => {
     expect(statusRoute?.icon).toBe('query_stats');
     expect(statusRoute?.loadComponent).toBeTruthy();
   });
+
+  it('exposes expansions as an admin child route', () => {
+    const adminRoute = routes.find((route) => route.path === 'admin');
+    const children = (adminRoute?.children ?? []) as TitledRoutes;
+    const expansionsRoute = children.find((route) => route.path === 'expansions');
+
+    expect(expansionsRoute?.title).toContain('Expansions');
+    expect(expansionsRoute?.icon).toBe('category');
+    expect(expansionsRoute?.loadComponent).toBeTruthy();
+  });
 });

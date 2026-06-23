@@ -13,7 +13,8 @@
         "format:frontend": "cd frontend && bun run format",
         "format:backend": "cd backend && ./mvnw ktlint:format",
         "mvn": "cd backend && ./mvnw",
-        "refresh:fixtures": "bun tools/refresh-fixtures.mjs"
+        "refresh:fixtures": "bun tools/refresh-fixtures.mjs",
+        "generate:expansion-ranges": "node tools/generate-expansion-ranges.mjs"
     },
     "packageManager": "bun@1.3.3"
 }

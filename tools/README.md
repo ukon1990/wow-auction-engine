@@ -27,7 +27,7 @@ Outputs are written under `target/auction-field-analysis/` by default:
 
 ## `generate-expansion-ranges.mjs`
 
-Parses ItemVersion `Data.lua`, derives an expansion from each item version's major client version, compresses exact item ids into contiguous ranges, and writes the repeatable Flyway seed for `expansion_item_range`.
+Parses ItemVersion `Data.lua`, derives an expansion from each item version's major client version, compresses item ids into maximal ranges (bridging gaps when no intervening item maps to a different expansion), and writes the repeatable Flyway seed for `expansion_item_range`.
 
 Default update:
 

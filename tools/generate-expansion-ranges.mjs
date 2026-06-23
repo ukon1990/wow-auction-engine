@@ -68,34 +68,70 @@ export function parseDataLua(source) {
   return { versions, itemVersions };
 }
 
+export function buildItemExpansionMap(itemVersions) {
+    const itemExpansion = new Map();
+    for (const { itemId, expansionId } of itemVersions) {
+        const existing = itemExpansion.get(itemId);
+        if (existing !== undefined && existing !== expansionId) {
+            throw new Error(`Item ${itemId} maps to conflicting expansions ${existing} and ${expansionId}`);
+        }
+        itemExpansion.set(itemId, expansionId);
+    }
+    return itemExpansion;
+}
+
 export function compressRanges(itemVersions) {
-  const byExpansion = new Map();
-  for (const itemVersion of itemVersions) {
-    if (!byExpansion.has(itemVersion.expansionId)) byExpansion.set(itemVersion.expansionId, []);
-    byExpansion.get(itemVersion.expansionId).push(itemVersion.itemId);
-  }
-
-  const ranges = [];
-  for (const [expansionId, itemIds] of byExpansion.entries()) {
-    const sortedIds = [...new Set(itemIds)].sort((a, b) => a - b);
-    let start = sortedIds[0];
-    let previous = sortedIds[0];
-    for (let index = 1; index < sortedIds.length; index += 1) {
-      const itemId = sortedIds[index];
-      if (itemId === previous + 1) {
-        previous = itemId;
-      } else {
-        ranges.push({ expansionId, startItemId: start, endItemId: previous });
-        start = itemId;
-        previous = itemId;
-      }
+    const itemExpansion = buildItemExpansionMap(itemVersions);
+    const sortedItems = [...itemExpansion.entries()].sort(([leftId], [rightId]) => leftId - rightId);
+    if (sortedItems.length === 0) {
+        return [];
     }
-    if (start !== undefined) {
-      ranges.push({ expansionId, startItemId: start, endItemId: previous });
-    }
-  }
 
-  return ranges.sort((a, b) => a.expansionId - b.expansionId || a.startItemId - b.startItemId);
+    const ranges = [];
+    let [startItemId, expansionId] = sortedItems[0];
+    let endItemId = startItemId;
+
+    for (let index = 1; index < sortedItems.length; index += 1) {
+        const [itemId, itemExpansionId] = sortedItems[index];
+        if (itemExpansionId === expansionId) {
+            endItemId = itemId;
+        } else {
+            ranges.push({ expansionId, startItemId, endItemId });
+            startItemId = itemId;
+            endItemId = itemId;
+            expansionId = itemExpansionId;
+        }
+    }
+
+    ranges.push({ expansionId, startItemId, endItemId });
+    const sortedRanges = ranges.sort((a, b) => a.expansionId - b.expansionId || a.startItemId - b.startItemId);
+    validateRanges(sortedRanges);
+    return sortedRanges;
+}
+
+export function validateRanges(ranges) {
+    for (const range of ranges) {
+        if (range.startItemId > range.endItemId) {
+            throw new Error(
+                `Invalid range for expansion ${range.expansionId}: start ${range.startItemId} > end ${range.endItemId}`,
+            );
+        }
+    }
+
+    for (let leftIndex = 0; leftIndex < ranges.length; leftIndex += 1) {
+        const left = ranges[leftIndex];
+        for (let rightIndex = leftIndex + 1; rightIndex < ranges.length; rightIndex += 1) {
+            const right = ranges[rightIndex];
+            if (left.expansionId === right.expansionId) {
+                continue;
+            }
+            if (left.startItemId <= right.endItemId && right.startItemId <= left.endItemId) {
+                throw new Error(
+                    `Overlapping ranges for expansions ${left.expansionId} [${left.startItemId}, ${left.endItemId}] and ${right.expansionId} [${right.startItemId}, ${right.endItemId}]`,
+                );
+            }
+        }
+    }
 }
 
 export function renderSql(ranges, generatedAt = new Date()) {

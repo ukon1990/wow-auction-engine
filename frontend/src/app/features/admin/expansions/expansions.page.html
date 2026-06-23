@@ -1,0 +1,158 @@
+<ee-page-frame
+  title="Expansions"
+  eyebrow="Admin"
+  [loading]="loading() && expansions().length === 0"
+  titleId="admin-expansions-title"
+>
+  @if (error()) {
+    <p
+      class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+      role="alert"
+    >
+      {{ error() }}
+    </p>
+  }
+
+  <section class="grid gap-4" aria-label="Expansion job actions">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <p class="ee-data text-outline">
+        Apply enabled ranges to items or fetch missing item records covered by enabled ranges.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <button
+          type="button"
+          class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+          [disabled]="mutationLoading() || jobIsRunning()"
+          (click)="applyRanges()"
+        >
+          Apply enabled ranges
+        </button>
+        <button
+          type="button"
+          class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+          [disabled]="mutationLoading() || jobIsRunning()"
+          (click)="fetchMissingItems()"
+        >
+          Fetch missing items
+        </button>
+      </div>
+    </div>
+
+    @if (showJobBanner()) {
+      <div
+        class="flex flex-wrap items-start justify-between gap-3 rounded-md border px-4 py-3"
+        [class]="jobFailed() ? 'border-error/30 bg-error/10' : 'border-primary/30 bg-primary/10'"
+        role="status"
+      >
+        <div class="grid gap-1">
+          <p class="font-semibold text-on-surface">{{ jobTitle() }}</p>
+          @if (jobSummary()) {
+            <p class="ee-data text-outline">{{ jobSummary() }}</p>
+          }
+        </div>
+        @if (!jobIsRunning()) {
+          <button
+            type="button"
+            class="h-9 rounded-md border border-white/10 px-3 text-sm font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
+            (click)="dismissJobBanner()"
+          >
+            Dismiss
+          </button>
+        }
+      </div>
+    }
+  </section>
+
+  <section class="grid gap-4" aria-label="Expansion catalog">
+    <header>
+      <h2 class="font-cinzel text-xl font-bold text-primary-container">Expansion catalog</h2>
+      <p class="ee-data text-outline">Read-only list of configured expansions.</p>
+    </header>
+    <ee-table
+      [columns]="catalogColumns()"
+      [data]="sortedCatalog()"
+      [loading]="loading()"
+      emptyMessage="No expansions available."
+      sectionAriaLabel="Expansion catalog"
+    />
+  </section>
+
+  <section class="grid min-h-0 flex-1 gap-4" aria-label="Expansion item ranges">
+    <header class="flex flex-wrap items-end justify-between gap-3">
+      <div class="grid gap-1">
+        <h2 class="font-cinzel text-xl font-bold text-primary-container">Item ranges</h2>
+        <p class="ee-data text-outline">
+          Filter and manage item ID ranges that map items to expansions.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+        [disabled]="mutationLoading()"
+        (click)="openCreateForm()"
+      >
+        Add range
+      </button>
+    </header>
+
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <ee-select-input
+        label="Expansion"
+        [options]="expansionFilterOptions()"
+        [ngModel]="filters().expansionId"
+        (ngModelChange)="updateFilter('expansionId', $event)"
+      />
+      <ee-select-input
+        label="Source"
+        [options]="sourceFilterOptions"
+        [ngModel]="filters().source"
+        (ngModelChange)="updateFilter('source', $event)"
+      />
+      <ee-select-input
+        label="Enabled"
+        [options]="enabledFilterOptions"
+        [ngModel]="filters().enabled"
+        (ngModelChange)="updateFilter('enabled', $event)"
+      />
+      <ee-search-input
+        label="Item ID"
+        placeholder="Contains item ID"
+        [ngModel]="filters().itemId"
+        (ngModelChange)="updateFilter('itemId', $event)"
+      />
+    </div>
+
+    <ee-table
+      [columns]="rangeColumns()"
+      [data]="paginatedRanges()"
+      [loading]="loading()"
+      [skeletonRowCount]="10"
+      [showFooter]="true"
+      [showPagination]="true"
+      [paginationState]="paginationState()"
+      emptyMessage="No ranges match the current filters."
+      sectionAriaLabel="Expansion item ranges"
+      [getRowId]="rangeRowId"
+      (pageChange)="onPageChange($event)"
+    />
+  </section>
+</ee-page-frame>
+
+<ee-slide-over
+  [open]="formMode() !== null"
+  [title]="formTitle()"
+  titleId="expansion-range-form-title"
+  (closed)="closeForm()"
+>
+  @if (formMode(); as mode) {
+    <app-expansion-range-form
+      [expansions]="expansions()"
+      [mode]="mode"
+      [range]="editingRange()"
+      [submitting]="mutationLoading()"
+      [submitError]="formError()"
+      (submitted)="submitRange($event)"
+      (cancelled)="closeForm()"
+    />
+  }
+</ee-slide-over>

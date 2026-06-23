@@ -1,6 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { compressRanges, parseDataLua, renderSql } from './generate-expansion-ranges.mjs';
+import {
+    buildItemExpansionMap,
+    compressRanges,
+    parseDataLua,
+    renderSql,
+    validateRanges,
+} from "./generate-expansion-ranges.mjs";
 
 test('parses Data.lua item and version tables', () => {
   const lua = `
@@ -41,6 +47,46 @@ test('compresses contiguous ranges by expansion', () => {
     { expansionId: 1, startItemId: 8, endItemId: 8 },
     { expansionId: 2, startItemId: 7, endItemId: 7 },
   ]);
+});
+
+test("bridges gaps when no conflicting item exists between known ids", () => {
+    const ranges = compressRanges([
+        { itemId: 5, expansionId: 1 },
+        { itemId: 10, expansionId: 1 },
+    ]);
+
+    assert.deepEqual(ranges, [{ expansionId: 1, startItemId: 5, endItemId: 10 }]);
+});
+
+test("rejects duplicate item ids mapped to different expansions", () => {
+    assert.throws(
+        () =>
+            buildItemExpansionMap([
+                { itemId: 100, expansionId: 1 },
+                { itemId: 100, expansionId: 2 },
+            ]),
+        /conflicting expansions 1 and 2/,
+    );
+});
+
+test("validateRanges rejects cross-expansion overlap", () => {
+    assert.throws(
+        () =>
+            validateRanges([
+                { expansionId: 1, startItemId: 100, endItemId: 150 },
+                { expansionId: 2, startItemId: 140, endItemId: 200 },
+            ]),
+        /Overlapping ranges for expansions 1/,
+    );
+});
+
+test("validateRanges allows same-expansion overlap", () => {
+    assert.doesNotThrow(() =>
+        validateRanges([
+            { expansionId: 1, startItemId: 100, endItemId: 150 },
+            { expansionId: 1, startItemId: 200, endItemId: 250 },
+        ]),
+    );
 });
 
 test('renders idempotent sql with generated range replacement', () => {

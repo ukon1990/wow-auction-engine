@@ -10,6 +10,8 @@ export type SymbolIconName =
   | 'construction'
   | 'deployed_code'
   | 'diamond'
+  | 'edit'
+  | 'delete'
   | 'filter_alt'
   | 'help'
   | 'import_export'
@@ -77,6 +79,16 @@ export type SymbolIconName =
         @case ('diamond') {
           <path d="M6.5 4h11L22 9l-10 11L2 9l4.5-5Z" />
           <path d="M2 9h20M8 4l4 16 4-16" />
+        }
+        @case ('edit') {
+          <path d="M12 20h9" />
+          <path d="m16.5 3.5 4 4L7 21l-4 1 1-4 12.5-12.5Z" />
+        }
+        @case ('delete') {
+          <path d="M4 7h16" />
+          <path d="M9 7V5h6v2" />
+          <path d="M6 7l1 12h10l1-12" />
+          <path d="M10 11v6M14 11v6" />
         }
         @case ('filter_alt') {
           <path d="M4 5h16l-6 7v5l-4 2v-7L4 5Z" />
