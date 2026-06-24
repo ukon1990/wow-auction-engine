@@ -6,109 +6,109 @@
   [loading]="loading()"
 >
   <section class="grid max-w-3xl gap-6" [eeSkeleton]="loading()">
-      <div class="grid gap-2 rounded-md border border-white/10 bg-surface-container-highest p-5">
-        <p class="ee-data uppercase text-outline" i18n="@@profile.email">Email</p>
-        <p class="break-words text-lg font-semibold text-on-surface">
-          {{ user()?.email ?? unknownLabel() }}
+    <div class="grid gap-2 rounded-md border border-white/10 bg-surface-container-highest p-5">
+      <p class="ee-data uppercase text-outline" i18n="@@profile.email">Email</p>
+      <p class="break-words text-lg font-semibold text-on-surface">
+        {{ user()?.email ?? unknownLabel() }}
+      </p>
+    </div>
+
+    <form
+      class="grid gap-4 rounded-md border border-white/10 bg-surface-container-highest p-5"
+      (submit)="$event.preventDefault(); changePassword()"
+    >
+      <header class="grid gap-1">
+        <h2
+          class="font-cinzel text-xl font-bold text-primary-container"
+          i18n="@@profile.changePassword"
+        >
+          Change password
+        </h2>
+      </header>
+
+      <label class="grid gap-2">
+        <span class="ee-data uppercase text-outline">{{ currentPasswordLabel }}</span>
+        <input
+          class="h-12 rounded-md border border-white/10 bg-background px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
+          type="password"
+          name="currentPassword"
+          autocomplete="current-password"
+          required
+          [ngModel]="currentPassword()"
+          (ngModelChange)="currentPassword.set($event)"
+          (blur)="currentPasswordTouched.set(true)"
+        />
+        @if (currentPasswordError()) {
+          <span class="text-sm text-error">{{ currentPasswordError() }}</span>
+        }
+      </label>
+
+      <label class="grid gap-2">
+        <span class="ee-data uppercase text-outline">{{ newPasswordLabel }}</span>
+        <input
+          class="h-12 rounded-md border border-white/10 bg-background px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
+          type="password"
+          name="newPassword"
+          autocomplete="new-password"
+          required
+          minlength="8"
+          [ngModel]="newPassword()"
+          (ngModelChange)="newPassword.set($event)"
+          (blur)="newPasswordTouched.set(true)"
+        />
+        @if (newPasswordError()) {
+          <span class="text-sm text-error">{{ newPasswordError() }}</span>
+        }
+      </label>
+
+      <label class="grid gap-2">
+        <span class="ee-data uppercase text-outline">{{ confirmNewPasswordLabel }}</span>
+        <input
+          class="h-12 rounded-md border border-white/10 bg-background px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
+          type="password"
+          name="confirmPassword"
+          autocomplete="new-password"
+          required
+          minlength="8"
+          [ngModel]="confirmPassword()"
+          (ngModelChange)="confirmPassword.set($event)"
+          (blur)="confirmPasswordTouched.set(true)"
+        />
+        @if (confirmPasswordError()) {
+          <span class="text-sm text-error">{{ confirmPasswordError() }}</span>
+        }
+      </label>
+
+      @if (notice()) {
+        <p
+          class="rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-sm text-primary-container"
+        >
+          {{ notice() }}
         </p>
+      }
+
+      @if (error()) {
+        <p class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error">
+          {{ error() }}
+        </p>
+      }
+
+      <div class="flex flex-wrap gap-3">
+        <button
+          type="submit"
+          class="h-11 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+          [disabled]="changingPassword()"
+        >
+          <ng-container i18n="@@profile.updatePassword">Update password</ng-container>
+        </button>
+        <button
+          type="button"
+          class="h-11 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
+          (click)="signOut()"
+        >
+          <ng-container i18n="@@profile.signOut">Sign out</ng-container>
+        </button>
       </div>
-
-      <form
-        class="grid gap-4 rounded-md border border-white/10 bg-surface-container-highest p-5"
-        (submit)="$event.preventDefault(); changePassword()"
-      >
-        <header class="grid gap-1">
-          <h2
-            class="font-cinzel text-xl font-bold text-primary-container"
-            i18n="@@profile.changePassword"
-          >
-            Change password
-          </h2>
-        </header>
-
-        <label class="grid gap-2">
-          <span class="ee-data uppercase text-outline">{{ currentPasswordLabel }}</span>
-          <input
-            class="h-12 rounded-md border border-white/10 bg-background px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
-            type="password"
-            name="currentPassword"
-            autocomplete="current-password"
-            required
-            [ngModel]="currentPassword()"
-            (ngModelChange)="currentPassword.set($event)"
-            (blur)="currentPasswordTouched.set(true)"
-          />
-          @if (currentPasswordError()) {
-            <span class="text-sm text-error">{{ currentPasswordError() }}</span>
-          }
-        </label>
-
-        <label class="grid gap-2">
-          <span class="ee-data uppercase text-outline">{{ newPasswordLabel }}</span>
-          <input
-            class="h-12 rounded-md border border-white/10 bg-background px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
-            type="password"
-            name="newPassword"
-            autocomplete="new-password"
-            required
-            minlength="8"
-            [ngModel]="newPassword()"
-            (ngModelChange)="newPassword.set($event)"
-            (blur)="newPasswordTouched.set(true)"
-          />
-          @if (newPasswordError()) {
-            <span class="text-sm text-error">{{ newPasswordError() }}</span>
-          }
-        </label>
-
-        <label class="grid gap-2">
-          <span class="ee-data uppercase text-outline">{{ confirmNewPasswordLabel }}</span>
-          <input
-            class="h-12 rounded-md border border-white/10 bg-background px-3 text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
-            type="password"
-            name="confirmPassword"
-            autocomplete="new-password"
-            required
-            minlength="8"
-            [ngModel]="confirmPassword()"
-            (ngModelChange)="confirmPassword.set($event)"
-            (blur)="confirmPasswordTouched.set(true)"
-          />
-          @if (confirmPasswordError()) {
-            <span class="text-sm text-error">{{ confirmPasswordError() }}</span>
-          }
-        </label>
-
-        @if (notice()) {
-          <p
-            class="rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-sm text-primary-container"
-          >
-            {{ notice() }}
-          </p>
-        }
-
-        @if (error()) {
-          <p class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error">
-            {{ error() }}
-          </p>
-        }
-
-        <div class="flex flex-wrap gap-3">
-          <button
-            type="submit"
-            class="h-11 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
-            [disabled]="changingPassword()"
-          >
-            <ng-container i18n="@@profile.updatePassword">Update password</ng-container>
-          </button>
-          <button
-            type="button"
-            class="h-11 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-            (click)="signOut()"
-          >
-            <ng-container i18n="@@profile.signOut">Sign out</ng-container>
-          </button>
-        </div>
-      </form>
+    </form>
   </section>
 </ee-page-frame>

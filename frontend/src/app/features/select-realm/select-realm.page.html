@@ -35,10 +35,7 @@
   @if (error()) {
     <p class="text-center text-error" role="alert">{{ error() }}</p>
   } @else {
-    <div
-      class="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden"
-      [eeSkeleton]="loading()"
-    >
+    <div class="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden" [eeSkeleton]="loading()">
       <div class="flex items-baseline justify-between">
         <h2 class="ee-section-heading text-on-surface" i18n="@@realmPicker.realms">Realms</h2>
         <span class="ee-data text-outline">{{ loading() ? '—' : resultsLabel() }}</span>
@@ -83,7 +80,9 @@
                       >{{ realm.category }} · {{ realm.timezone }}</span
                     >
                   </span>
-                  <span class="ee-data text-primary-container">{{ realm.region.toUpperCase() }}</span>
+                  <span class="ee-data text-primary-container">{{
+                    realm.region.toUpperCase()
+                  }}</span>
                 </a>
               </li>
             }

@@ -41,9 +41,7 @@
         label="Threads connected"
         icon="settings"
         [value]="status()?.connections?.threadsConnected ?? 0"
-        [caption]="
-          'Max used: ' + (status()?.connections?.maxUsedConnections ?? '—')
-        "
+        [caption]="'Max used: ' + (status()?.connections?.maxUsedConnections ?? '—')"
       />
       <ee-item-stat-card
         label="Database uptime"
@@ -71,8 +69,7 @@
         icon="show_chart"
         [value]="status()?.server ? percentLabel(status()!.server.processCpuLoad) : '—'"
         [caption]="
-          'System: ' +
-          (status()?.server ? percentLabel(status()!.server.systemCpuLoad) : '—')
+          'System: ' + (status()?.server ? percentLabel(status()!.server.systemCpuLoad) : '—')
         "
       />
     </section>

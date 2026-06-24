@@ -7,7 +7,13 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ChartComponent, ItemStatCardComponent, PageFrameComponent, SkeletonDirective, TableComponent } from '@ui';
+import {
+  ChartComponent,
+  ItemStatCardComponent,
+  PageFrameComponent,
+  SkeletonDirective,
+  TableComponent,
+} from '@ui';
 import { AdminRunningQuery } from '@api/generated';
 import type Highcharts from 'highcharts/esm/highcharts';
 import { AdminQueryDialogComponent } from './admin-query-dialog.component';
