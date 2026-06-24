@@ -94,6 +94,39 @@ describe('AdminSqlEditorComponent', () => {
     expect(service.execute).not.toHaveBeenCalled();
   });
 
+  it('runs the query when pressing enter in the editor', () => {
+    openEditor();
+    setSql('SELECT 1');
+    const event = new KeyboardEvent('keydown', { key: 'Enter', cancelable: true });
+
+    textarea().dispatchEvent(event);
+    fixture.detectChanges();
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(service.execute).toHaveBeenCalledWith({
+      sql: 'SELECT 1',
+      mode: AdminSqlExecuteRequest.ModeEnum.Query,
+      limitRows: true,
+      rowLimit: 500,
+    });
+  });
+
+  it('keeps shift enter available for new lines', () => {
+    openEditor();
+    setSql('SELECT 1');
+    const event = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      shiftKey: true,
+      cancelable: true,
+    });
+
+    textarea().dispatchEvent(event);
+    fixture.detectChanges();
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(service.execute).not.toHaveBeenCalled();
+  });
+
   it('saves and loads local saved queries', async () => {
     openEditor();
     setSql('SELECT 1');
@@ -111,8 +144,7 @@ describe('AdminSqlEditorComponent', () => {
     clickButton('One');
     await fixture.whenStable();
     fixture.detectChanges();
-    const textarea = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
-    expect(textarea.value).toBe('SELECT 1');
+    expect(textarea().value).toBe('SELECT 1');
   });
 
   it('opens the editor in a large modal', () => {
@@ -128,10 +160,13 @@ describe('AdminSqlEditorComponent', () => {
   }
 
   function setSql(value: string): void {
-    const textarea = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
-    textarea.value = value;
-    textarea.dispatchEvent(new Event('input'));
+    textarea().value = value;
+    textarea().dispatchEvent(new Event('input'));
     fixture.detectChanges();
+  }
+
+  function textarea(): HTMLTextAreaElement {
+    return fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
   }
 
   function clickButton(label: string): void {

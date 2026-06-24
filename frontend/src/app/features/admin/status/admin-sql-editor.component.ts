@@ -81,6 +81,7 @@ const standaloneModel = { standalone: true };
                 [ngModel]="sql()"
                 [ngModelOptions]="standaloneModel"
                 (ngModelChange)="updateSql($event)"
+                (keydown)="handleEditorKeydown($event)"
               ></textarea>
 
               <div class="flex flex-wrap items-center justify-between gap-3">
@@ -254,6 +255,14 @@ export class AdminSqlEditorComponent {
 
   protected deleteSavedQuery(id: string): void {
     this.savedQueryStorage.delete(id);
+  }
+
+  protected handleEditorKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Enter' || event.shiftKey) {
+      return;
+    }
+    event.preventDefault();
+    this.execute(AdminSqlExecuteRequest.ModeEnum.Query);
   }
 
   protected execute(mode: AdminSqlExecuteRequest.ModeEnum): void {
