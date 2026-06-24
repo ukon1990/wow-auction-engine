@@ -15,6 +15,7 @@
         "@angular/compiler": "^21.2.0",
         "@angular/core": "^21.2.0",
         "@angular/forms": "^21.2.0",
+        "@angular/material": "^21.2.11",
         "@angular/platform-browser": "^21.2.0",
         "@angular/platform-server": "^21.2.0",
         "@angular/router": "^21.2.0",
@@ -133,6 +134,8 @@
     "@angular/forms": ["@angular/forms@21.2.13", "", { "dependencies": { "@standard-schema/spec": "^1.0.0", "tslib": "^2.3.0" }, "peerDependencies": { "@angular/common": "21.2.13", "@angular/core": "21.2.13", "@angular/platform-browser": "21.2.13", "rxjs": "^6.5.3 || ^7.4.0" } }, "sha512-efAKdL8eVRlGvcJWrUFcYyRE/togWfopUTw2D5TIkDAndnmmRaWA70wD4n/E1FFV5UdxSBxoyEYE0qVlPiewtQ=="],
 
     "@angular/localize": ["@angular/localize@21.2.13", "", { "dependencies": { "@babel/core": "7.29.0", "@types/babel__core": "7.20.5", "tinyglobby": "^0.2.12", "yargs": "^18.0.0" }, "peerDependencies": { "@angular/compiler": "21.2.13", "@angular/compiler-cli": "21.2.13" }, "bin": { "localize-extract": "tools/bundles/src/extract/cli.js", "localize-migrate": "tools/bundles/src/migrate/cli.js", "localize-translate": "tools/bundles/src/translate/cli.js" } }, "sha512-hP1h1BzCo3vIszQ6Ln+xz45gRhtpiG8RvxGICbBYNt1Haxcdh0NGVF3SpkjPkR8MOlu/9Mmirx82Qg3r8gB26g=="],
+
+    "@angular/material": ["@angular/material@21.2.14", "", { "dependencies": { "tslib": "^2.3.0" }, "peerDependencies": { "@angular/cdk": "21.2.14", "@angular/common": "^21.0.0 || ^22.0.0", "@angular/core": "^21.0.0 || ^22.0.0", "@angular/forms": "^21.0.0 || ^22.0.0", "@angular/platform-browser": "^21.0.0 || ^22.0.0", "rxjs": "^6.5.3 || ^7.4.0" } }, "sha512-fMQca8VRtei93JRRG9qQ+u08DCb0nga59Esoakq5yx3+A1NfdpFeUS1tBns56U04o8KAaIAwZK3NBqXz8ZKNqg=="],
 
     "@angular/platform-browser": ["@angular/platform-browser@21.2.13", "", { "dependencies": { "tslib": "^2.3.0" }, "peerDependencies": { "@angular/animations": "21.2.13", "@angular/common": "21.2.13", "@angular/core": "21.2.13" }, "optionalPeers": ["@angular/animations"] }, "sha512-96rcwLHsklqAYRuS2SEBOUdQS5PLkuUIEEIjpYu4rxU2PVvOMapJEImM/QBxrbwjnCgRbj/CivkgfjiR0R0wSA=="],
 

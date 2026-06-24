@@ -10,6 +10,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChartComponent, ItemStatCardComponent, PageFrameComponent, TableComponent } from '@ui';
 import { AdminRunningQuery } from '@api/generated';
 import type Highcharts from 'highcharts/esm/highcharts';
+import { AdminQueryDialogComponent } from './admin-query-dialog.component';
+import { AdminSqlEditorComponent } from './admin-sql-editor.component';
 import { AdminStatusService } from './admin-status.service';
 import { createTableSizeColumns } from './admin-status-table.columns';
 
@@ -17,7 +19,14 @@ const QUERY_PREVIEW_LIMIT = 220;
 
 @Component({
   selector: 'app-admin-status-page',
-  imports: [ChartComponent, ItemStatCardComponent, PageFrameComponent, TableComponent],
+  imports: [
+    AdminQueryDialogComponent,
+    AdminSqlEditorComponent,
+    ChartComponent,
+    ItemStatCardComponent,
+    PageFrameComponent,
+    TableComponent,
+  ],
   templateUrl: './admin-status.page.html',
   host: {
     class: 'flex min-h-0 flex-1 flex-col',

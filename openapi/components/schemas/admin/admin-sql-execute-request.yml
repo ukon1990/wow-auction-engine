@@ -1,0 +1,15 @@
+type: object
+required: [sql, mode, limitRows]
+properties:
+    sql:
+        type: string
+    mode:
+        type: string
+        enum: [QUERY, EXPLAIN, ANALYZE]
+    limitRows:
+        type: boolean
+    rowLimit:
+        type: integer
+        minimum: 1
+        maximum: 500
+        nullable: true

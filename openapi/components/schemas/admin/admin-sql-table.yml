@@ -1,0 +1,20 @@
+type: object
+required: [name, columns, indexes]
+properties:
+    name:
+        type: string
+    engine:
+        type: string
+        nullable: true
+    tableRows:
+        type: integer
+        format: int64
+        nullable: true
+    columns:
+        type: array
+        items:
+            $ref: "../../../openapi.yml#/components/schemas/AdminSqlColumn"
+    indexes:
+        type: array
+        items:
+            $ref: "../../../openapi.yml#/components/schemas/AdminSqlIndex"

@@ -28,6 +28,42 @@ getStatus:
                     application/json:
                         schema:
                             $ref: "../openapi.yml#/components/schemas/AdminStatus"
+executeAdminSql:
+    post:
+        tags:
+            - Admin
+        operationId: executeAdminSql
+        summary: Executes an admin read-only SQL diagnostic query
+        description: Allows an administrator to run read-only SQL diagnostics, explain plans, and confirmed analyze plans.
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "../openapi.yml#/components/schemas/AdminSqlExecuteRequest"
+        responses:
+            "200":
+                description: SQL execution result
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminSqlResult"
+            "400":
+                description: Invalid or blocked SQL
+getAdminSqlMetadata:
+    get:
+        tags:
+            - Admin
+        operationId: getAdminSqlMetadata
+        summary: Gets available SQL tables, columns, and indexes
+        description: Allows an administrator to inspect read-only database metadata for the SQL editor.
+        responses:
+            "200":
+                description: SQL metadata
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminSqlMetadata"
 listExpansions:
     get:
         tags:

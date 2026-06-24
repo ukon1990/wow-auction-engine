@@ -1,0 +1,20 @@
+type: object
+required: [name, dataType, ordinalPosition, nullable]
+properties:
+    name:
+        type: string
+    dataType:
+        type: string
+    columnType:
+        type: string
+        nullable: true
+    nullable:
+        type: boolean
+    defaultValue:
+        type: string
+        nullable: true
+    extra:
+        type: string
+        nullable: true
+    ordinalPosition:
+        type: integer
