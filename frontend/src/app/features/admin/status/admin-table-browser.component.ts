@@ -1,5 +1,12 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
 import { AdminSqlColumn, AdminSqlIndex, AdminSqlMetadata, AdminSqlTable } from '@api/generated';
@@ -43,11 +50,18 @@ interface DetailNode {
       @if (loading()) {
         <p class="ee-data text-outline">Loading tables...</p>
       } @else if (error()) {
-        <p class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error" role="alert">
+        <p
+          class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+          role="alert"
+        >
           {{ error() }}
         </p>
       } @else {
-        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="grid gap-1 bg-transparent">
+        <mat-tree
+          [dataSource]="dataSource"
+          [treeControl]="treeControl"
+          class="grid gap-1 bg-transparent"
+        >
           <mat-nested-tree-node *matTreeNodeDef="let node">
             <div class="rounded-md border border-white/5 bg-surface-container px-3 py-2">
               <p class="font-mono text-sm text-on-surface">{{ node.label }}</p>
@@ -84,7 +98,9 @@ interface DetailNode {
         </mat-tree>
 
         @if (treeNodes().length === 0) {
-          <p class="rounded-md border border-white/10 bg-surface-container px-3 py-2 text-sm text-on-surface-variant">
+          <p
+            class="rounded-md border border-white/10 bg-surface-container px-3 py-2 text-sm text-on-surface-variant"
+          >
             No tables found.
           </p>
         }
@@ -117,7 +133,10 @@ export class AdminTableBrowserComponent {
   }
 
   protected tableMeta(table: AdminSqlTable): string {
-    const rows = table.tableRows === null || table.tableRows === undefined ? '-' : new Intl.NumberFormat().format(table.tableRows);
+    const rows =
+      table.tableRows === null || table.tableRows === undefined
+        ? '-'
+        : new Intl.NumberFormat().format(table.tableRows);
     return `${table.engine ?? '-'} · ${rows} rows`;
   }
 
@@ -163,7 +182,11 @@ export class AdminTableBrowserComponent {
 
   private columnNode(column: AdminSqlColumn): DetailNode {
     const nullable = column.nullable ? 'nullable' : 'not null';
-    const extras = [nullable, column.defaultValue ? `default ${column.defaultValue}` : null, column.extra || null]
+    const extras = [
+      nullable,
+      column.defaultValue ? `default ${column.defaultValue}` : null,
+      column.extra || null,
+    ]
       .filter(Boolean)
       .join(' · ');
     return {

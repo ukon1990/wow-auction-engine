@@ -304,6 +304,53 @@ class AdminControllerTest {
         }
 
         @Test
+        fun `should return sql execution error detail in body`() {
+            `when`(
+                adminSqlService.execute(
+                    AdminSqlExecuteRequest(
+                        sql = "SELECT * FROM items",
+                        mode = AdminSqlExecuteRequest.Mode.QUERY,
+                        limitRows = true,
+                        rowLimit = null,
+                    ),
+                ),
+            ).thenThrow(
+                ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Table 'dbo.items' doesn't exist",
+                ),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        post("/api/admin/sql/execute")
+                            .contextPath("/api")
+                            .contentType("application/json")
+                            .content(
+                                """
+                                {
+                                  "sql": "SELECT * FROM items",
+                                  "mode": "QUERY",
+                                  "limitRows": true
+                                }
+                                """.trimIndent(),
+                            ).with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("$.detail").value("Table 'dbo.items' doesn't exist"))
+        }
+
+        @Test
         fun `should return 401 if unauthenticated`() {
             mockMvc
                 .perform(

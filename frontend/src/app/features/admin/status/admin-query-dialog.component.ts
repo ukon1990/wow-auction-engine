@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AdminRunningQuery, AdminSqlExecuteRequest, AdminSqlResult } from '@api/generated';
@@ -30,11 +38,15 @@ const standaloneModel = { standalone: true };
         >
           <header class="flex items-center justify-between gap-3">
             <div>
-              <h2 id="query-sql-dialog-title" class="font-cinzel text-xl font-bold text-primary-container">
+              <h2
+                id="query-sql-dialog-title"
+                class="font-cinzel text-xl font-bold text-primary-container"
+              >
                 SQL query
               </h2>
               <p class="ee-data text-outline">
-                Started {{ startedAtLabel()(query.startedAt) }} · {{ durationLabel()(query.timeMs) }}
+                Started {{ startedAtLabel()(query.startedAt) }} ·
+                {{ durationLabel()(query.timeMs) }}
               </p>
             </div>
             <button
@@ -84,13 +96,18 @@ const standaloneModel = { standalone: true };
           </div>
 
           @if (!canExplain(query.info)) {
-            <p class="rounded-md border border-white/10 bg-surface-container px-3 py-2 text-sm text-on-surface-variant">
+            <p
+              class="rounded-md border border-white/10 bg-surface-container px-3 py-2 text-sm text-on-surface-variant"
+            >
               Only SELECT or WITH queries can be explained or analyzed.
             </p>
           }
 
           @if (error()) {
-            <p class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error" role="alert">
+            <p
+              class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+              role="alert"
+            >
               {{ error() }}
             </p>
           }
@@ -131,7 +148,10 @@ export class AdminQueryDialogComponent {
       this.error.set(validationError);
       return;
     }
-    if (mode === AdminSqlExecuteRequest.ModeEnum.Analyze && !confirm('Analyze may execute the query. Continue?')) {
+    if (
+      mode === AdminSqlExecuteRequest.ModeEnum.Analyze &&
+      !confirm('Analyze may execute the query. Continue?')
+    ) {
       return;
     }
 

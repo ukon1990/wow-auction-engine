@@ -20,9 +20,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ResponseStatusException
 
 @RestController
 class AdminController(
@@ -102,17 +100,6 @@ class AdminController(
     // TODO: Need a paginated response - Update openApi as well
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun listUsers(): ResponseEntity<List<User>> = ResponseEntity.ok(userService.getUsers())
-
-    @ExceptionHandler(ResponseStatusException::class)
-    fun handleResponseStatusException(error: ResponseStatusException): ResponseEntity<Map<String, Any>> =
-        ResponseEntity
-            .status(error.statusCode)
-            .body(
-                mapOf(
-                    "status" to error.statusCode.value(),
-                    "detail" to (error.reason ?: error.statusCode.toString()),
-                ),
-            )
 
     private fun requestedBy(): String? = SecurityContextHolder.getContext().authentication?.name
 }

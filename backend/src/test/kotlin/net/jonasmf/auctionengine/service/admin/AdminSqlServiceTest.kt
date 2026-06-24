@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementCreator
 import org.springframework.jdbc.core.ResultSetExtractor
@@ -19,6 +20,7 @@ import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
+import java.sql.SQLException
 
 class AdminSqlServiceTest {
     private val jdbcTemplate = mockk<JdbcTemplate>()
@@ -143,6 +145,32 @@ class AdminSqlServiceTest {
         assertEquals(1, result.rowCount)
         assertTrue(result.truncated)
         assertEquals(listOf(listOf("1")), result.rows)
+    }
+
+    @Test
+    fun `returns safe jdbc execution error as bad request reason`() {
+        every {
+            jdbcTemplate.query(any<PreparedStatementCreator>(), any<ResultSetExtractor<Any>>())
+        } throws
+            BadSqlGrammarException(
+                "admin sql",
+                "SELECT * FROM items LIMIT 500",
+                SQLException("Table 'dbo.items' doesn't exist"),
+            )
+
+        val error =
+            assertThrows(ResponseStatusException::class.java) {
+                service.execute(
+                    AdminSqlExecuteRequest(
+                        sql = "SELECT * FROM items",
+                        mode = AdminSqlExecuteRequest.Mode.QUERY,
+                        limitRows = true,
+                    ),
+                )
+            }
+
+        assertEquals(400, error.statusCode.value())
+        assertEquals("Table 'dbo.items' doesn't exist", error.reason)
     }
 
     @Test

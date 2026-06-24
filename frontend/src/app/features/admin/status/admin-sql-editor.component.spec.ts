@@ -4,7 +4,10 @@ import { of } from 'rxjs';
 import { AdminSqlExecuteRequest, AdminSqlResult } from '@api/generated';
 import { AdminSqlEditorComponent } from './admin-sql-editor.component';
 import { AdminSqlService } from './admin-sql.service';
-import { AdminSavedQueryStorageService, SavedAdminSqlQuery } from './admin-saved-query-storage.service';
+import {
+  AdminSavedQueryStorageService,
+  SavedAdminSqlQuery,
+} from './admin-saved-query-storage.service';
 
 const resultFixture: AdminSqlResult = {
   mode: AdminSqlResult.ModeEnum.Query,

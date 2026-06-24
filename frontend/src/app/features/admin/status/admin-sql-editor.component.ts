@@ -47,12 +47,19 @@ const standaloneModel = { standalone: true };
           class="ee-glass grid h-[92vh] w-full max-w-[96rem] grid-rows-[auto_1fr] overflow-hidden rounded-lg"
           (click)="$event.stopPropagation()"
         >
-          <header class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-container-padding py-4">
+          <header
+            class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-container-padding py-4"
+          >
             <div>
-              <h2 id="admin-sql-editor-title" class="font-cinzel text-xl font-bold text-primary-container">
+              <h2
+                id="admin-sql-editor-title"
+                class="font-cinzel text-xl font-bold text-primary-container"
+              >
                 SQL editor
               </h2>
-              <p class="ee-data text-outline">Read-only query, explain, and confirmed analyze tools.</p>
+              <p class="ee-data text-outline">
+                Read-only query, explain, and confirmed analyze tools.
+              </p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
               <app-admin-table-browser />
@@ -174,7 +181,10 @@ const standaloneModel = { standalone: true };
               </div>
 
               @if (error()) {
-                <p class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error" role="alert">
+                <p
+                  class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+                  role="alert"
+                >
                   {{ error() }}
                 </p>
               }
@@ -253,7 +263,10 @@ export class AdminSqlEditorComponent {
       this.error.set(validationError);
       return;
     }
-    if (mode === AdminSqlExecuteRequest.ModeEnum.Analyze && !confirm('Analyze may execute the query. Continue?')) {
+    if (
+      mode === AdminSqlExecuteRequest.ModeEnum.Analyze &&
+      !confirm('Analyze may execute the query. Continue?')
+    ) {
       return;
     }
 

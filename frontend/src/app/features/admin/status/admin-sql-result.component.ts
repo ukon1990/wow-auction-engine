@@ -36,7 +36,9 @@ import { AdminSqlResult } from '@api/generated';
               <thead class="bg-surface-container-high ee-label text-outline">
                 <tr>
                   @for (column of result.columns; track column; let i = $index) {
-                    <th class="border-b border-white/10 px-3 py-2">{{ column || 'Column ' + (i + 1) }}</th>
+                    <th class="border-b border-white/10 px-3 py-2">
+                      {{ column || 'Column ' + (i + 1) }}
+                    </th>
                   }
                 </tr>
               </thead>
@@ -51,7 +53,10 @@ import { AdminSqlResult } from '@api/generated';
                   </tr>
                 } @empty {
                   <tr>
-                    <td class="px-3 py-6 text-center text-on-surface-variant" [attr.colspan]="result.columns.length">
+                    <td
+                      class="px-3 py-6 text-center text-on-surface-variant"
+                      [attr.colspan]="result.columns.length"
+                    >
                       No rows returned.
                     </td>
                   </tr>
@@ -60,7 +65,9 @@ import { AdminSqlResult } from '@api/generated';
             </table>
           </div>
         } @else {
-          <p class="rounded-md border border-white/10 bg-surface-container px-3 py-2 text-sm text-on-surface">
+          <p
+            class="rounded-md border border-white/10 bg-surface-container px-3 py-2 text-sm text-on-surface"
+          >
             No result set returned.
           </p>
         }
