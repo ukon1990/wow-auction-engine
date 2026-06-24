@@ -1,36 +1,34 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
+import { SkeletonDirective } from '../../directives/skeleton.directive';
+
 /** How the frame uses vertical space under the header. */
 export type PageFrameBodyLayout = 'scroll' | 'fill';
 
 @Component({
   selector: 'ee-page-frame',
+  imports: [SkeletonDirective],
   host: {
     class: 'flex min-h-0 min-w-0 flex-1 flex-col',
   },
   template: `
     <main id="page-main" [class]="mainClass()" tabindex="-1">
       <div [class]="innerClass()">
-        <header class="flex flex-col gap-2">
-          @if (loading()) {
-            <div class="h-3 w-24 rounded bg-white/10 animate-pulse"></div>
-            <div class="h-10 w-64 max-w-full rounded bg-white/10 animate-pulse"></div>
-          } @else {
-            <p
-              class="ee-label text-outline"
-              [attr.id]="titleId() ? titleId() + '-eyebrow' : null"
-              i18n="@@pageFrame.eyebrow"
-            >
-              {{ eyebrow() }}
-            </p>
-            <h1
-              class="font-cinzel text-3xl font-bold text-primary sm:text-4xl"
-              [attr.id]="titleId()"
-              i18n="@@pageFrame.title"
-            >
-              {{ title() }}
-            </h1>
-          }
+        <header class="flex flex-col gap-2" [eeSkeleton]="loading()">
+          <p
+            class="ee-label text-outline"
+            [attr.id]="titleId() ? titleId() + '-eyebrow' : null"
+            i18n="@@pageFrame.eyebrow"
+          >
+            {{ eyebrow() }}
+          </p>
+          <h1
+            class="font-cinzel text-3xl font-bold text-primary sm:text-4xl"
+            [attr.id]="titleId()"
+            i18n="@@pageFrame.title"
+          >
+            {{ title() }}
+          </h1>
         </header>
         <ng-content />
       </div>

@@ -1,0 +1,88 @@
+.ee-skeleton {
+  pointer-events: none;
+  user-select: none;
+  cursor: progress;
+}
+
+.ee-skeleton,
+.ee-skeleton * {
+  color: transparent !important;
+  caret-color: transparent !important;
+  text-shadow: none !important;
+}
+
+.ee-skeleton :where(svg, img, ee-symbol-icon, canvas) {
+  visibility: hidden !important;
+}
+
+.ee-skeleton
+  :where(
+    input,
+    textarea,
+    select,
+    label,
+    button,
+    h1,
+    h2,
+    h3,
+    p,
+    span,
+    a,
+    th,
+    td,
+    .ee-label,
+    .ee-data,
+    .ee-section-heading,
+    .font-space-mono
+  ) {
+  border-color: transparent !important;
+  background-color: rgb(255 255 255 / 0.1) !important;
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.18),
+    transparent
+  ) !important;
+  background-size: 200% 100% !important;
+  border-radius: 0.25rem !important;
+  animation: ee-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.ee-skeleton :where(input, textarea, select, button) {
+  box-shadow: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ee-skeleton
+    :where(
+      input,
+      textarea,
+      select,
+      label,
+      button,
+      h1,
+      h2,
+      h3,
+      p,
+      span,
+      a,
+      th,
+      td,
+      .ee-label,
+      .ee-data,
+      .ee-section-heading,
+      .font-space-mono
+    ) {
+    animation: none;
+  }
+}
+
+@keyframes ee-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
