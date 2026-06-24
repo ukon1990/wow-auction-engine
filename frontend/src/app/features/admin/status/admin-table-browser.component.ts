@@ -9,7 +9,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTreeModule } from '@angular/material/tree';
 import { AdminSqlColumn, AdminSqlIndex, AdminSqlMetadata, AdminSqlTable } from '@api/generated';
-import { SlideOverPanelComponent, SymbolIconComponent } from '@ui';
+import { SlideOverPanelComponent, SkeletonDirective, SymbolIconComponent } from '@ui';
 import { AdminSqlService, readAdminSqlError } from './admin-sql.service';
 
 type TableTreeNode = TableNode | GroupNode | DetailNode;
@@ -35,7 +35,7 @@ interface DetailNode {
 
 @Component({
   selector: 'app-admin-table-browser',
-  imports: [MatTreeModule, SlideOverPanelComponent, SymbolIconComponent],
+  imports: [MatTreeModule, SlideOverPanelComponent, SkeletonDirective, SymbolIconComponent],
   template: `
     <button
       type="button"

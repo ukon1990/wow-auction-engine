@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SearchInputComponent } from '@ui';
+import { SearchInputComponent, SkeletonDirective } from '@ui';
 
 import { Realm } from '@api/generated';
 import { AuthService } from '@core/services/auth.service';
@@ -17,7 +17,7 @@ import { RealmSelectionService } from '@core/services/realm-selection.service';
 
 @Component({
   selector: 'app-select-realm-page',
-  imports: [RouterLink, SearchInputComponent],
+  imports: [RouterLink, SearchInputComponent, SkeletonDirective],
   templateUrl: './select-realm.page.html',
   host: {
     class: 'flex min-h-0 flex-1 flex-col',

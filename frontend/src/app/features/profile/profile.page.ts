@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PageFrameComponent } from '@ui';
+import { PageFrameComponent, SkeletonDirective } from '@ui';
 
 import { AuthService } from '@core/services/auth.service';
 import {
@@ -19,7 +19,7 @@ import {
 
 @Component({
   selector: 'app-profile-page',
-  imports: [FormsModule, PageFrameComponent],
+  imports: [FormsModule, PageFrameComponent, SkeletonDirective],
   templateUrl: './profile.page.html',
   host: {
     class: 'flex min-h-0 flex-1 flex-col',
