@@ -55,6 +55,11 @@ export class AdminStatusPage {
     }
     return queries.filter((query) => this.runningQuerySearchText(query).includes(needle));
   });
+  protected readonly contentLoading = computed(() => this.loading() && !this.status());
+  protected readonly runningQueriesLoading = computed(
+    () => this.loading() && this.filteredRunningQueries().length === 0,
+  );
+  protected readonly runningQuerySkeletonRows = [0, 1, 2, 3, 4] as const;
   protected readonly memoryGaugeOptions = computed<Highcharts.Options>(() => {
     const status = this.status();
     return this.gaugeOptions({

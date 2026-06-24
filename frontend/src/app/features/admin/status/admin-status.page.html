@@ -31,36 +31,49 @@
     <p class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error">
       {{ error() }}
     </p>
-  }
-
-  @if (status(); as s) {
-    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4" aria-label="Status metrics">
+  } @else {
+    <section
+      class="grid gap-4 md:grid-cols-2 xl:grid-cols-4"
+      aria-label="Status metrics"
+      [eeSkeleton]="contentLoading()"
+    >
       <ee-item-stat-card
         label="Threads connected"
         icon="settings"
-        [value]="s.connections.threadsConnected"
-        [caption]="'Max used: ' + s.connections.maxUsedConnections"
+        [value]="status()?.connections?.threadsConnected ?? 0"
+        [caption]="
+          'Max used: ' + (status()?.connections?.maxUsedConnections ?? '—')
+        "
       />
       <ee-item-stat-card
         label="Database uptime"
         icon="query_stats"
-        [value]="uptimeLabel(s.connections.uptimeSeconds)"
+        [value]="status() ? uptimeLabel(status()!.connections.uptimeSeconds) : '—'"
         caption="From MariaDB global status"
       />
       <ee-item-stat-card
         label="JVM memory"
         icon="schema"
-        [value]="s.server.usedMemoryMb"
+        [value]="status()?.server?.usedMemoryMb ?? 0"
         unit="MB"
         [caption]="
-          'Total: ' + s.server.totalMemoryMb + ' MB / Max: ' + s.server.maxMemoryMb + ' MB'
+          status()?.server
+            ? 'Total: ' +
+              status()!.server.totalMemoryMb +
+              ' MB / Max: ' +
+              status()!.server.maxMemoryMb +
+              ' MB'
+            : 'Total: — MB / Max: — MB'
         "
       />
       <ee-item-stat-card
         label="CPU"
         icon="show_chart"
-        [value]="percentLabel(s.server.processCpuLoad)"
-        [caption]="'System: ' + percentLabel(s.server.systemCpuLoad)"
+        [value]="status()?.server ? percentLabel(status()!.server.processCpuLoad) : '—'"
+        [caption]="
+          'System: ' +
+          (status()?.server ? percentLabel(status()!.server.systemCpuLoad) : '—')
+        "
       />
     </section>
 
@@ -73,33 +86,35 @@
       </header>
 
       <div class="grid gap-4 xl:grid-cols-2">
-        <div class="ee-glass min-w-0 rounded-lg p-inner-padding">
+        <div class="ee-glass min-w-0 rounded-lg p-inner-padding" [eeSkeleton]="contentLoading()">
           <h3 class="ee-label mb-3 text-on-surface">Memory usage</h3>
           <ee-chart [options]="memoryGaugeOptions()" [minHeightPx]="260"></ee-chart>
         </div>
-        <div class="ee-glass min-w-0 rounded-lg p-inner-padding">
+        <div class="ee-glass min-w-0 rounded-lg p-inner-padding" [eeSkeleton]="contentLoading()">
           <h3 class="ee-label mb-3 text-on-surface">Threads connected</h3>
           <ee-chart [options]="threadsGaugeOptions()" [minHeightPx]="260"></ee-chart>
         </div>
       </div>
 
       <div class="grid gap-4 xl:grid-cols-3">
-        <div class="ee-glass min-w-0 rounded-lg p-inner-padding">
+        <div class="ee-glass min-w-0 rounded-lg p-inner-padding" [eeSkeleton]="contentLoading()">
           <h3 class="ee-label mb-3 text-on-surface">CPU over time</h3>
           <ee-chart [options]="cpuHistoryOptions()" [minHeightPx]="280"></ee-chart>
         </div>
-        <div class="ee-glass min-w-0 rounded-lg p-inner-padding">
+        <div class="ee-glass min-w-0 rounded-lg p-inner-padding" [eeSkeleton]="contentLoading()">
           <h3 class="ee-label mb-3 text-on-surface">Memory over time</h3>
           <ee-chart [options]="memoryHistoryOptions()" [minHeightPx]="280"></ee-chart>
         </div>
-        <div class="ee-glass min-w-0 rounded-lg p-inner-padding">
+        <div class="ee-glass min-w-0 rounded-lg p-inner-padding" [eeSkeleton]="contentLoading()">
           <h3 class="ee-label mb-3 text-on-surface">Threads over time</h3>
           <ee-chart [options]="threadsHistoryOptions()" [minHeightPx]="280"></ee-chart>
         </div>
       </div>
     </section>
 
-    <app-admin-sql-editor />
+    <div [eeSkeleton]="contentLoading()">
+      <app-admin-sql-editor />
+    </div>
 
     <section class="flex min-h-[22rem] flex-col gap-3">
       <header class="flex flex-wrap items-center justify-between gap-3">
@@ -196,8 +211,8 @@
       </header>
       <ee-table
         [columns]="tableSizeColumns()"
-        [data]="s.tableSizes"
-        [loading]="loading() && s.tableSizes.length === 0"
+        [data]="status()?.tableSizes ?? []"
+        [loading]="contentLoading() || (loading() && (status()?.tableSizes?.length ?? 0) === 0)"
         [skeletonRowCount]="10"
         emptyMessage="No table size metrics available."
         sectionAriaLabel="Table and index sizes"
