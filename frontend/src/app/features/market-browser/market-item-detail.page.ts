@@ -23,6 +23,7 @@ import {
   PaginationComponent,
   type PaginationState,
   PageFrameComponent,
+  SkeletonDirective,
   SymbolIconComponent,
   TooltipCardComponent,
   type TooltipRow,
@@ -95,6 +96,7 @@ interface ItemDetailBackState {
     CurrencyAmountComponent,
     ItemStatCardComponent,
     PaginationComponent,
+    SkeletonDirective,
     SymbolIconComponent,
     TooltipCardComponent,
   ],
@@ -114,6 +116,7 @@ export class MarketItemDetailPage {
   protected readonly commodityLoading = signal(false);
   protected readonly error = signal(false);
   protected readonly detail = signal<AuctionMarketItemDetailResponse | null>(null);
+  protected readonly contentLoading = computed(() => this.loading() || !this.detail());
   protected readonly realmCurrentListings = signal<readonly AuctionMarketItemCurrentListing[]>([]);
   protected readonly commodityCurrentListings = signal<readonly AuctionMarketItemCurrentListing[]>(
     [],
@@ -133,30 +136,12 @@ export class MarketItemDetailPage {
   protected readonly heatmapColumnLabels = Array.from({ length: 24 }, (_, h) =>
     String(h).padStart(2, '0'),
   );
-  protected readonly skeletonCards = [0, 1, 2, 3] as const;
-  protected readonly skeletonCharts = [0, 1] as const;
-  protected readonly skeletonBars = [
-    { index: 0, height: 42 },
-    { index: 1, height: 64 },
-    { index: 2, height: 36 },
-    { index: 3, height: 78 },
-    { index: 4, height: 55 },
-    { index: 5, height: 88 },
-    { index: 6, height: 48 },
-    { index: 7, height: 70 },
-    { index: 8, height: 58 },
-    { index: 9, height: 82 },
-    { index: 10, height: 46 },
-    { index: 11, height: 66 },
-  ] as const;
-  protected readonly heatmapSkeletonRows = Array.from({ length: 7 }, (_, i) => i);
   protected readonly currentListingsRowLabel = $localize`:@@itemDetail.listingsCount:listings`;
   protected readonly currentListingsEmptySummary = $localize`:@@itemDetail.noCurrentListings:No current listings for this item.`;
 
   protected pageEyebrow(): string {
     return $localize`:@@itemDetail.eyebrow:Item Codex`;
   }
-  protected readonly heatmapSkeletonCols = Array.from({ length: 24 }, (_, i) => i);
 
   private readonly backState = signal<ItemDetailBackState>({});
 
