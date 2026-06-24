@@ -4,18 +4,18 @@
   [loading]="loading()"
   titleId="item-codex-title"
 >
-  @if (loading()) {
-    <div class="flex flex-wrap items-center gap-2" aria-hidden="true">
-      <div class="h-3 w-12 rounded bg-white/10 animate-pulse"></div>
-      <div class="h-3 w-20 rounded bg-white/10 animate-pulse"></div>
-      <div class="h-3 w-16 rounded bg-white/10 animate-pulse"></div>
-      <div class="h-3 w-28 rounded bg-white/10 animate-pulse"></div>
+  @if (error()) {
+    <div class="ee-glass rounded-lg border border-error/40 p-inner-padding text-error">
+      <ng-container i18n="@@itemDetail.loadError">
+        Could not load this item. Try again from the market browser.
+      </ng-container>
     </div>
   } @else {
     <nav
       class="ee-label flex flex-wrap items-center gap-x-1 gap-y-1 text-outline select-text"
       aria-label="Breadcrumb"
       i18n-aria-label="@@itemDetail.breadcrumb"
+      [eeSkeleton]="loading()"
     >
       <a
         [routerLink]="['/', regionRealm().region, regionRealm().realm]"
@@ -42,118 +42,75 @@
       <span aria-hidden="true">/</span>
       <span class="text-on-surface" aria-current="page">{{ itemTitle() }}</span>
     </nav>
-  }
 
-  <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-    @if (loading()) {
-      <div class="h-9 w-36 rounded bg-white/10 animate-pulse" aria-hidden="true"></div>
-    } @else {
+    <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
       <button
         type="button"
         class="inline-flex w-fit items-center gap-2 rounded border border-white/10 bg-surface-container-high px-3 py-2 ee-label text-on-surface transition hover:bg-surface-container-highest focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+        [eeSkeleton]="loading()"
         (click)="goBack()"
       >
         <ee-symbol-icon class="text-base" name="arrow_back" aria-hidden="true" />
         {{ backLabel() }}
       </button>
-    }
-    @if (detail(); as d0) {
-      @if (showChartScopeToggle(d0)) {
-        <div
-          class="inline-flex w-fit max-w-full rounded border border-white/10 bg-surface-container-high p-0.5 ee-label"
-          role="group"
-          aria-label="Chart data scope"
-          i18n-aria-label="@@itemDetail.chartDataScope"
-        >
-          <button
-            type="button"
-            class="rounded px-3 py-1.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-            [class.bg-primary]="chartScope() === 'realm'"
-            [class.text-on-primary]="chartScope() === 'realm'"
-            [attr.aria-pressed]="chartScope() === 'realm'"
-            [disabled]="commodityLoading()"
-            (click)="onScopeSelected('realm')"
+      @if (detail(); as itemDetail) {
+        @if (showChartScopeToggle(itemDetail)) {
+          <div
+            class="inline-flex w-fit max-w-full rounded border border-white/10 bg-surface-container-high p-0.5 ee-label"
+            role="group"
+            aria-label="Chart data scope"
+            i18n-aria-label="@@itemDetail.chartDataScope"
           >
-            <ng-container i18n="@@itemDetail.realmScope">Realm</ng-container>
-          </button>
-          <button
-            type="button"
-            class="rounded px-3 py-1.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-            [class.bg-primary]="chartScope() === 'commodity'"
-            [class.text-on-primary]="chartScope() === 'commodity'"
-            [attr.aria-pressed]="chartScope() === 'commodity'"
-            [disabled]="commodityLoading()"
-            (click)="onScopeSelected('commodity')"
-          >
-            <ng-container i18n="@@itemDetail.regionScope">Region</ng-container>
-          </button>
-        </div>
+            <button
+              type="button"
+              class="rounded px-3 py-1.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+              [class.bg-primary]="chartScope() === 'realm'"
+              [class.text-on-primary]="chartScope() === 'realm'"
+              [attr.aria-pressed]="chartScope() === 'realm'"
+              [disabled]="commodityLoading()"
+              (click)="onScopeSelected('realm')"
+            >
+              <ng-container i18n="@@itemDetail.realmScope">Realm</ng-container>
+            </button>
+            <button
+              type="button"
+              class="rounded px-3 py-1.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+              [class.bg-primary]="chartScope() === 'commodity'"
+              [class.text-on-primary]="chartScope() === 'commodity'"
+              [attr.aria-pressed]="chartScope() === 'commodity'"
+              [disabled]="commodityLoading()"
+              (click)="onScopeSelected('commodity')"
+            >
+              <ng-container i18n="@@itemDetail.regionScope">Region</ng-container>
+            </button>
+          </div>
+        }
       }
-    }
-  </div>
+    </div>
 
-  @if (loading()) {
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-hidden="true">
-      @for (i of skeletonCards; track i) {
-        <div class="ee-glass rounded-lg p-inner-padding">
-          <div class="mb-5 flex items-start justify-between gap-4">
-            <div class="h-3 w-24 rounded bg-white/10 animate-pulse"></div>
-            <div class="h-8 w-8 rounded-full bg-white/10 animate-pulse"></div>
-          </div>
-          <div class="h-7 w-32 rounded bg-white/10 animate-pulse"></div>
-          <div class="mt-3 h-3 w-28 rounded bg-white/10 animate-pulse"></div>
-        </div>
-      }
-    </div>
-    <div class="space-y-4" aria-hidden="true">
-      @for (i of skeletonCharts; track i) {
-        <section class="ee-glass rounded-lg p-inner-padding">
-          <div class="mb-6 flex items-center justify-between gap-4">
-            <div class="h-5 w-36 rounded bg-white/10 animate-pulse"></div>
-            <div class="h-3 w-16 rounded bg-white/10 animate-pulse"></div>
-          </div>
-          <div class="relative h-64 overflow-hidden border-b border-l border-white/10">
-            <div class="absolute inset-x-5 top-1/4 h-px bg-white/10"></div>
-            <div class="absolute inset-x-5 top-1/2 h-px bg-white/10"></div>
-            <div class="absolute inset-x-5 top-3/4 h-px bg-white/10"></div>
-            <div class="absolute inset-x-6 bottom-4 flex h-36 items-end gap-2">
-              @for (bar of skeletonBars; track bar.index) {
-                <div
-                  class="w-full rounded-t bg-white/10 animate-pulse"
-                  [style.height.%]="bar.height"
-                ></div>
-              }
-            </div>
-          </div>
-        </section>
-      }
-    </div>
-  } @else if (error()) {
-    <div class="ee-glass rounded-lg border border-error/40 p-inner-padding text-error">
-      <ng-container i18n="@@itemDetail.loadError">
-        Could not load this item. Try again from the market browser.
-      </ng-container>
-    </div>
-  } @else if (detail(); as d) {
     <ng-template #dailyChartTip let-ctx>
-      @let rows = dailyTooltipRows(d, ctx.x);
-      <ee-tooltip-card
-        [title]="dailyTooltipTitle(d, ctx.x)"
-        [rows]="rows"
-        i18n-emptyMessage="@@itemDetail.noDayValues"
-        emptyMessage="No values for this day"
-        [compact]="true"
-      />
+      @if (detail(); as itemDetail) {
+        @let rows = dailyTooltipRows(itemDetail, ctx.x);
+        <ee-tooltip-card
+          [title]="dailyTooltipTitle(itemDetail, ctx.x)"
+          [rows]="rows"
+          i18n-emptyMessage="@@itemDetail.noDayValues"
+          emptyMessage="No values for this day"
+          [compact]="true"
+        />
+      }
     </ng-template>
 
     <ng-template #hourlyChartTip let-ctx>
-      <ee-tooltip-card
-        [title]="hourlyTooltipTitle(d, ctx.x)"
-        [rows]="hourlyTooltipRows(d, ctx.x)"
-        i18n-emptyMessage="@@itemDetail.noHourValues"
-        emptyMessage="No values for this hour"
-        [compact]="true"
-      />
+      @if (detail(); as itemDetail) {
+        <ee-tooltip-card
+          [title]="hourlyTooltipTitle(itemDetail, ctx.x)"
+          [rows]="hourlyTooltipRows(itemDetail, ctx.x)"
+          i18n-emptyMessage="@@itemDetail.noHourValues"
+          emptyMessage="No values for this hour"
+          [compact]="true"
+        />
+      }
     </ng-template>
 
     <ng-template
@@ -170,16 +127,20 @@
       <div class="space-y-4 min-w-0">
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
           <ee-item-stat-card
+            [eeSkeleton]="contentLoading()"
             [label]="activeScopePriceLabel()"
             icon="payments"
-            [currency]="activeScopePrice(d.summary) | copperToCurrency"
-            [caption]="activeScopePriceCaption(d.summary)"
+            [currency]="
+              detail() ? (activeScopePrice(detail()!.summary) | copperToCurrency) : undefined
+            "
+            [caption]="detail() ? activeScopePriceCaption(detail()!.summary) : ''"
             tone="primary"
           />
           <ee-item-stat-card
+            [eeSkeleton]="contentLoading()"
             [label]="activeScopeQuantityLabel()"
             icon="inventory_2"
-            [value]="quantityLabel(activeScopeQuantity(d.summary))"
+            [value]="detail() ? quantityLabel(activeScopeQuantity(detail()!.summary)) : '—'"
             [caption]="''"
           />
         </div>
@@ -187,12 +148,13 @@
         <div class="grid gap-4 2xl:grid-cols-2">
           <div class="min-w-0 max-w-full">
             <ee-chart-panel
+              [eeSkeleton]="contentLoading()"
               i18n-title="@@itemDetail.dailyMarket"
               title="Daily market"
               i18n-rangeLabel="@@itemDetail.range14Days"
               rangeLabel="14 days"
-              [series]="dailyChartSeries()"
-              [options]="dailyChartOptions()"
+              [series]="contentLoading() ? [] : dailyChartSeries()"
+              [options]="contentLoading() ? null : dailyChartOptions()"
               [tooltipTemplate]="dailyChartTip"
               i18n-description="@@itemDetail.dailyMarketDescription"
               description="Average quantity per hour as bars; buyout spread and average as lines."
@@ -201,12 +163,13 @@
 
           <div class="min-w-0 max-w-full">
             <ee-chart-panel
+              [eeSkeleton]="contentLoading()"
               i18n-title="@@itemDetail.hourlyMarket"
               title="Hourly market"
               i18n-rangeLabel="@@itemDetail.range14Days"
               rangeLabel="14 days"
-              [series]="hourlyChartSeries()"
-              [options]="hourlyChartOptions()"
+              [series]="contentLoading() ? [] : hourlyChartSeries()"
+              [options]="contentLoading() ? null : hourlyChartOptions()"
               [tooltipTemplate]="hourlyChartTip"
               i18n-description="@@itemDetail.hourlyMarketDescription"
               description="Listed quantity per hour over 14 days as bars; buyout spread and average as lines."
@@ -215,6 +178,7 @@
 
           <div class="min-w-0 max-w-full 2xl:col-span-2">
             <ee-heatmap-grid
+              [eeSkeleton]="contentLoading()"
               i18n-title="@@itemDetail.hourlyPriceHeatmap"
               title="Hourly price heatmap"
               i18n-rangeLabel="@@itemDetail.range14Days"
@@ -223,14 +187,17 @@
               description="Average market unit price by day and hour."
               [rowLabels]="heatmapRowLabels"
               [columnLabels]="heatmapColumnLabels"
-              [cells]="hourlyPriceHeatmapCells()"
+              [cells]="contentLoading() ? [] : hourlyPriceHeatmapCells()"
               [tooltipTemplate]="priceHeatmapTip"
             />
           </div>
         </div>
       </div>
 
-      <section class="ee-glass min-w-0 rounded-lg p-inner-padding xl:self-start">
+      <section
+        class="ee-glass min-w-0 rounded-lg p-inner-padding xl:self-start"
+        [eeSkeleton]="contentLoading()"
+      >
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 class="ee-section-heading flex items-center gap-2 text-on-surface">
             <ee-symbol-icon class="text-outline" name="receipt_long" />
@@ -242,7 +209,7 @@
           </span>
         </div>
 
-        @if (currentListingsForActiveScope().length) {
+        @if (!contentLoading() && currentListingsForActiveScope().length) {
           <div class="overflow-x-auto">
             <table class="w-full border-collapse ee-data text-left text-on-surface">
               <thead>
@@ -275,7 +242,7 @@
             [emptySummary]="currentListingsEmptySummary"
             (pageChange)="onCurrentListingsPageChange($event)"
           />
-        } @else {
+        } @else if (!contentLoading()) {
           <p class="ee-data text-outline" i18n="@@itemDetail.noCurrentListings">
             No current listings for this item.
           </p>
@@ -283,216 +250,182 @@
       </section>
     </div>
 
-    @if (d.craftings.length) {
-      <section class="ee-glass rounded-lg p-inner-padding">
-        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <h2 class="ee-section-heading flex items-center gap-2 text-on-surface">
-            <ee-symbol-icon class="text-outline" name="handyman" />
-            <ng-container i18n="@@route.crafting">Crafting</ng-container>
-          </h2>
-          @if (analyticsLoading()) {
-            <span class="ee-label text-outline" i18n="@@itemDetail.loadingRecipeAnalytics">
-              Loading recipe analytics...
-            </span>
+    @if (detail(); as itemDetail) {
+      @if (itemDetail.craftings.length) {
+        <section class="ee-glass rounded-lg p-inner-padding">
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h2 class="ee-section-heading flex items-center gap-2 text-on-surface">
+              <ee-symbol-icon class="text-outline" name="handyman" />
+              <ng-container i18n="@@route.crafting">Crafting</ng-container>
+            </h2>
+            @if (analyticsLoading()) {
+              <span class="ee-label text-outline" i18n="@@itemDetail.loadingRecipeAnalytics">
+                Loading recipe analytics...
+              </span>
+            }
+          </div>
+
+          @if (itemDetail.craftings.length > 1) {
+            <div
+              class="mb-4 flex flex-wrap gap-2"
+              role="radiogroup"
+              aria-label="Recipes"
+              i18n-aria-label="@@itemDetail.recipes"
+              (keydown)="onRecipeRadioKeydown($event, itemDetail.craftings)"
+            >
+              @for (recipe of itemDetail.craftings; track recipe.recipeId; let i = $index) {
+                <button
+                  type="button"
+                  role="radio"
+                  class="rounded border border-white/10 px-3 py-1.5 ee-label transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                  [class.bg-primary]="recipe.recipeId === selectedRecipeId()"
+                  [class.text-on-primary]="recipe.recipeId === selectedRecipeId()"
+                  [class.bg-surface-container-high]="recipe.recipeId !== selectedRecipeId()"
+                  [attr.aria-checked]="recipe.recipeId === selectedRecipeId()"
+                  [attr.tabindex]="recipe.recipeId === selectedRecipeId() ? 0 : -1"
+                  [attr.data-recipe-index]="i"
+                  (click)="selectRecipe(recipe.recipeId)"
+                >
+                  {{ recipe.recipeName }}
+                </button>
+              }
+            </div>
           }
-        </div>
 
-        @if (d.craftings.length > 1) {
-          <div
-            class="mb-4 flex flex-wrap gap-2"
-            role="radiogroup"
-            aria-label="Recipes"
-            i18n-aria-label="@@itemDetail.recipes"
-            (keydown)="onRecipeRadioKeydown($event, d.craftings)"
-          >
-            @for (recipe of d.craftings; track recipe.recipeId; let i = $index) {
-              <button
-                type="button"
-                role="radio"
-                class="rounded border border-white/10 px-3 py-1.5 ee-label transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-                [class.bg-primary]="recipe.recipeId === selectedRecipeId()"
-                [class.text-on-primary]="recipe.recipeId === selectedRecipeId()"
-                [class.bg-surface-container-high]="recipe.recipeId !== selectedRecipeId()"
-                [attr.aria-checked]="recipe.recipeId === selectedRecipeId()"
-                [attr.tabindex]="recipe.recipeId === selectedRecipeId() ? 0 : -1"
-                [attr.data-recipe-index]="i"
-                (click)="selectRecipe(recipe.recipeId)"
-              >
-                {{ recipe.recipeName }}
-              </button>
-            }
-          </div>
-        }
-
-        @if (selectedCrafting(); as crafting) {
-          <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)]">
-            <div class="overflow-x-auto">
-              <table class="w-full border-collapse ee-data text-left text-on-surface">
-                <thead>
-                  <tr class="border-b border-white/10 ee-label text-outline">
-                    <th class="py-2 pr-4" i18n="@@itemDetail.reagent">Reagent</th>
-                    <th class="py-2 pr-4 text-right" i18n="@@itemDetail.quantityShort">Qty</th>
-                    <th class="py-2 pr-4 text-right" i18n="@@itemDetail.unitPrice">Unit price</th>
-                    <th class="py-2 text-right" i18n="@@itemDetail.lineTotal">Line total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (reagent of crafting.reagents; track $index) {
-                    <tr class="border-b border-white/5">
-                      <td class="py-3 pr-4 select-text">
-                        <div class="flex items-center gap-2">
-                          @if (reagent.mediaUrl) {
-                            <img class="h-6 w-6 rounded" [src]="reagent.mediaUrl" alt="" />
-                          }
-                          <span>{{ reagent.name }}</span>
-                          @if (!reagent.priced) {
-                            <span class="rounded bg-error/15 px-2 py-0.5 ee-label text-error"
-                              ><ng-container i18n="@@itemDetail.missingPrice"
-                                >missing price</ng-container
-                              ></span
-                            >
-                          }
-                        </div>
-                      </td>
-                      <td class="py-3 pr-4 text-right tabular-nums select-text">
-                        {{ reagent.quantity }}
-                      </td>
-                      <td class="py-3 pr-4 text-right tabular-nums select-text">
-                        <ee-currency-amount
-                          class="inline-flex justify-end"
-                          [amount]="reagent.unitPrice | copperToCurrency"
-                        />
-                      </td>
-                      <td class="py-3 text-right tabular-nums select-text">
-                        <ee-currency-amount
-                          class="inline-flex justify-end"
-                          [amount]="reagent.lineTotal | copperToCurrency"
-                        />
-                      </td>
+          @if (selectedCrafting(); as crafting) {
+            <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)]">
+              <div class="overflow-x-auto">
+                <table class="w-full border-collapse ee-data text-left text-on-surface">
+                  <thead>
+                    <tr class="border-b border-white/10 ee-label text-outline">
+                      <th class="py-2 pr-4" i18n="@@itemDetail.reagent">Reagent</th>
+                      <th class="py-2 pr-4 text-right" i18n="@@itemDetail.quantityShort">Qty</th>
+                      <th class="py-2 pr-4 text-right" i18n="@@itemDetail.unitPrice">Unit price</th>
+                      <th class="py-2 text-right" i18n="@@itemDetail.lineTotal">Line total</th>
                     </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-
-            <div class="rounded border border-white/10 bg-surface-container-high/60 p-4">
-              <div class="ee-label mb-3 text-outline">{{ crafting.recipeName }}</div>
-              <div class="space-y-2 ee-data text-on-surface">
-                <div class="flex justify-between gap-4">
-                  <span i18n="@@itemDetail.craftedQty">Crafted qty</span
-                  ><span>{{ crafting.craftedQuantity }}</span>
-                </div>
-                <div class="flex justify-between gap-4">
-                  <span i18n="@@itemDetail.reagentCost">Reagent cost</span
-                  ><ee-currency-amount [amount]="crafting.reagentCost | copperToCurrency" />
-                </div>
-                <div class="flex justify-between gap-4">
-                  <span i18n="@@itemDetail.outputUnit">Output unit</span
-                  ><ee-currency-amount [amount]="crafting.outputUnitPrice | copperToCurrency" />
-                </div>
-                <div class="flex justify-between gap-4">
-                  <span i18n="@@crafting.column.profit">Profit</span
-                  ><ee-currency-amount [amount]="crafting.profit | copperToCurrency" />
-                </div>
-                <div class="flex justify-between gap-4">
-                  <span i18n="@@crafting.column.roi">ROI</span
-                  ><span>{{ formatRoi(crafting.roiPercent) }}</span>
-                </div>
+                  </thead>
+                  <tbody>
+                    @for (reagent of crafting.reagents; track $index) {
+                      <tr class="border-b border-white/5">
+                        <td class="py-3 pr-4 select-text">
+                          <div class="flex items-center gap-2">
+                            @if (reagent.mediaUrl) {
+                              <img class="h-6 w-6 rounded" [src]="reagent.mediaUrl" alt="" />
+                            }
+                            <span>{{ reagent.name }}</span>
+                            @if (!reagent.priced) {
+                              <span class="rounded bg-error/15 px-2 py-0.5 ee-label text-error"
+                                ><ng-container i18n="@@itemDetail.missingPrice"
+                                  >missing price</ng-container
+                                ></span
+                              >
+                            }
+                          </div>
+                        </td>
+                        <td class="py-3 pr-4 text-right tabular-nums select-text">
+                          {{ reagent.quantity }}
+                        </td>
+                        <td class="py-3 pr-4 text-right tabular-nums select-text">
+                          <ee-currency-amount
+                            class="inline-flex justify-end"
+                            [amount]="reagent.unitPrice | copperToCurrency"
+                          />
+                        </td>
+                        <td class="py-3 text-right tabular-nums select-text">
+                          <ee-currency-amount
+                            class="inline-flex justify-end"
+                            [amount]="reagent.lineTotal | copperToCurrency"
+                          />
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
               </div>
-              @if (!crafting.reagentsFullyPriced) {
-                <p class="ee-label mt-3 text-error">
-                  <ng-container i18n="@@itemDetail.profitHidden">
-                    Profit hidden until all reagents have prices.
-                  </ng-container>
-                </p>
-              }
+
+              <div class="rounded border border-white/10 bg-surface-container-high/60 p-4">
+                <div class="ee-label mb-3 text-outline">{{ crafting.recipeName }}</div>
+                <div class="space-y-2 ee-data text-on-surface">
+                  <div class="flex justify-between gap-4">
+                    <span i18n="@@itemDetail.craftedQty">Crafted qty</span
+                    ><span>{{ crafting.craftedQuantity }}</span>
+                  </div>
+                  <div class="flex justify-between gap-4">
+                    <span i18n="@@itemDetail.reagentCost">Reagent cost</span
+                    ><ee-currency-amount [amount]="crafting.reagentCost | copperToCurrency" />
+                  </div>
+                  <div class="flex justify-between gap-4">
+                    <span i18n="@@itemDetail.outputUnit">Output unit</span
+                    ><ee-currency-amount [amount]="crafting.outputUnitPrice | copperToCurrency" />
+                  </div>
+                  <div class="flex justify-between gap-4">
+                    <span i18n="@@crafting.column.profit">Profit</span
+                    ><ee-currency-amount [amount]="crafting.profit | copperToCurrency" />
+                  </div>
+                  <div class="flex justify-between gap-4">
+                    <span i18n="@@crafting.column.roi">ROI</span
+                    ><span>{{ formatRoi(crafting.roiPercent) }}</span>
+                  </div>
+                </div>
+                @if (!crafting.reagentsFullyPriced) {
+                  <p class="ee-label mt-3 text-error">
+                    <ng-container i18n="@@itemDetail.profitHidden">
+                      Profit hidden until all reagents have prices.
+                    </ng-container>
+                  </p>
+                }
+              </div>
             </div>
+          }
+        </section>
+
+        @if (analyticsLoading() || craftingAnalytics()) {
+          <ng-template
+            #craftingHeatmapTip
+            let-cell="cell"
+            let-rowLabel="rowLabel"
+            let-columnLabel="columnLabel"
+          >
+            <div class="ee-label text-outline">{{ rowLabel }} · {{ columnLabel }}:00</div>
+            <div class="font-space-mono">{{ cell.label }}</div>
+          </ng-template>
+          <div class="grid gap-4 xl:grid-cols-2">
+            <div class="min-w-0 max-w-full">
+              <ee-chart-panel
+                [eeSkeleton]="analyticsLoading()"
+                i18n-title="@@itemDetail.craftingProfitRoi"
+                title="Crafting profit / ROI"
+                i18n-rangeLabel="@@itemDetail.range14Days"
+                rangeLabel="14 days"
+                [series]="analyticsLoading() ? [] : craftingAnalyticsSeries()"
+                [options]="analyticsLoading() ? null : craftingAnalyticsChartOptions()"
+                i18n-description="@@itemDetail.craftingProfitDescription"
+                description="Daily profit and ROI for selected recipe. Missing points mean incomplete pricing."
+              />
+            </div>
+            <div class="min-w-0 max-w-full">
+              <ee-heatmap-grid
+                [eeSkeleton]="analyticsLoading()"
+                i18n-title="@@itemDetail.craftingProfitHeatmap"
+                title="Crafting profit heatmap"
+                i18n-rangeLabel="@@itemDetail.range14Days"
+                rangeLabel="14 days"
+                i18n-description="@@itemDetail.craftingProfitHeatmapDescription"
+                description="Average profit by day and hour for selected recipe."
+                [rowLabels]="heatmapRowLabels"
+                [columnLabels]="heatmapColumnLabels"
+                [cells]="analyticsLoading() ? [] : craftingHeatmapCells()"
+                [tooltipTemplate]="craftingHeatmapTip"
+              />
+            </div>
+          </div>
+        } @else if (analyticsError()) {
+          <div class="ee-glass rounded-lg border border-error/40 p-inner-padding text-error">
+            <ng-container i18n="@@itemDetail.craftingAnalyticsError">
+              Could not load crafting analytics.
+            </ng-container>
           </div>
         }
-      </section>
-
-      @if (analyticsLoading()) {
-        <section class="ee-glass rounded-lg p-inner-padding" aria-hidden="true">
-          <div class="mb-6 flex items-center justify-between gap-4">
-            <div class="h-5 w-44 rounded bg-white/10 animate-pulse"></div>
-            <div class="h-3 w-16 rounded bg-white/10 animate-pulse"></div>
-          </div>
-          <div class="relative h-64 overflow-hidden border-b border-l border-white/10">
-            <div class="absolute inset-x-5 top-1/4 h-px bg-white/10"></div>
-            <div class="absolute inset-x-5 top-1/2 h-px bg-white/10"></div>
-            <div class="absolute inset-x-5 top-3/4 h-px bg-white/10"></div>
-            <div class="absolute inset-x-6 bottom-4 flex h-36 items-end gap-2">
-              @for (bar of skeletonBars; track bar.index) {
-                <div
-                  class="w-full rounded-t bg-white/10 animate-pulse"
-                  [style.height.%]="bar.height"
-                ></div>
-              }
-            </div>
-          </div>
-        </section>
-        <section class="ee-glass rounded-lg p-inner-padding" aria-hidden="true">
-          <div class="mb-4 flex items-center justify-between gap-4">
-            <div class="h-5 w-44 rounded bg-white/10 animate-pulse"></div>
-            <div class="h-3 w-16 rounded bg-white/10 animate-pulse"></div>
-          </div>
-          <div class="grid gap-1.5" style="grid-template-columns: auto repeat(24, minmax(0, 1fr))">
-            <div class="h-5"></div>
-            @for (h of heatmapSkeletonCols; track h) {
-              <div class="h-5 rounded bg-white/10 animate-pulse"></div>
-            }
-            @for (r of heatmapSkeletonRows; track r) {
-              <div class="h-7 rounded bg-white/10 animate-pulse"></div>
-              @for (h of heatmapSkeletonCols; track h) {
-                <div class="h-7 rounded bg-white/10 animate-pulse"></div>
-              }
-            }
-          </div>
-        </section>
-      } @else if (craftingAnalytics()) {
-        <ng-template
-          #heatmapTip
-          let-cell="cell"
-          let-rowLabel="rowLabel"
-          let-columnLabel="columnLabel"
-        >
-          <div class="ee-label text-outline">{{ rowLabel }} · {{ columnLabel }}:00</div>
-          <div class="font-space-mono">{{ cell.label }}</div>
-        </ng-template>
-        <div class="grid gap-4 xl:grid-cols-2">
-          <div class="min-w-0 max-w-full">
-            <ee-chart-panel
-              i18n-title="@@itemDetail.craftingProfitRoi"
-              title="Crafting profit / ROI"
-              i18n-rangeLabel="@@itemDetail.range14Days"
-              rangeLabel="14 days"
-              [series]="craftingAnalyticsSeries()"
-              [options]="craftingAnalyticsChartOptions()"
-              i18n-description="@@itemDetail.craftingProfitDescription"
-              description="Daily profit and ROI for selected recipe. Missing points mean incomplete pricing."
-            />
-          </div>
-          <div class="min-w-0 max-w-full">
-            <ee-heatmap-grid
-              i18n-title="@@itemDetail.craftingProfitHeatmap"
-              title="Crafting profit heatmap"
-              i18n-rangeLabel="@@itemDetail.range14Days"
-              rangeLabel="14 days"
-              i18n-description="@@itemDetail.craftingProfitHeatmapDescription"
-              description="Average profit by day and hour for selected recipe."
-              [rowLabels]="heatmapRowLabels"
-              [columnLabels]="heatmapColumnLabels"
-              [cells]="craftingHeatmapCells()"
-              [tooltipTemplate]="heatmapTip"
-            />
-          </div>
-        </div>
-      } @else if (analyticsError()) {
-        <div class="ee-glass rounded-lg border border-error/40 p-inner-padding text-error">
-          <ng-container i18n="@@itemDetail.craftingAnalyticsError">
-            Could not load crafting analytics.
-          </ng-container>
-        </div>
       }
     }
   }

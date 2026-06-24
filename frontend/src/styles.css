@@ -133,3 +133,5 @@
     background: linear-gradient(135deg, #fb923c, #9a3412);
   }
 }
+
+@import '../ethereal-ui/src/lib/directives/skeleton.css' layer(components);

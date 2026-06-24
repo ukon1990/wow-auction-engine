@@ -12,4 +12,5 @@ export * from './lib/helpers/tooltip-position';
 export * from './lib/helpers/quality';
 export * from './lib/models/ui-models';
 export * from './lib/pipes';
+export * from './lib/directives';
 export * from './lib/services/tooltip-overlay.service';

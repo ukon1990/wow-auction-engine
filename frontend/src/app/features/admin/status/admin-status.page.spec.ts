@@ -209,4 +209,17 @@ describe('AdminStatusPage', () => {
 
     expect(serviceStub.setBackgroundUpdates).toHaveBeenCalledWith(true);
   });
+
+  it('shows skeleton on stat section while initial load has no status', () => {
+    serviceStub.loading.set(true);
+    serviceStub.status.set(null);
+    fixture = TestBed.createComponent(AdminStatusPage);
+    fixture.detectChanges();
+
+    const statSection = fixture.nativeElement.querySelector(
+      '[aria-label="Status metrics"]',
+    ) as HTMLElement;
+    expect(statSection.getAttribute('aria-busy')).toBe('true');
+    expect(statSection.classList.contains('ee-skeleton')).toBe(true);
+  });
 });

@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SearchInputComponent } from '@ui';
+import { SearchInputComponent, SkeletonDirective } from '@ui';
 
 import { Realm } from '@api/generated';
 import { AuthService } from '@core/services/auth.service';
@@ -17,7 +17,7 @@ import { RealmSelectionService } from '@core/services/realm-selection.service';
 
 @Component({
   selector: 'app-select-realm-page',
-  imports: [RouterLink, SearchInputComponent],
+  imports: [RouterLink, SearchInputComponent, SkeletonDirective],
   templateUrl: './select-realm.page.html',
   host: {
     class: 'flex min-h-0 flex-1 flex-col',
@@ -32,6 +32,7 @@ export class SelectRealmPage {
   protected readonly query = signal('');
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
+  protected readonly realmSkeletonRows = [0, 1, 2, 3, 4, 5, 6, 7] as const;
 
   protected readonly realms = this.selection.realms;
   protected readonly showSignIn = computed(() => this.auth.loaded() && !this.auth.user());

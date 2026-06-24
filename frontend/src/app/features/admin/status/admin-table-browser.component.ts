@@ -9,7 +9,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTreeModule } from '@angular/material/tree';
 import { AdminSqlColumn, AdminSqlIndex, AdminSqlMetadata, AdminSqlTable } from '@api/generated';
-import { SlideOverPanelComponent, SymbolIconComponent } from '@ui';
+import { SlideOverPanelComponent, SkeletonDirective, SymbolIconComponent } from '@ui';
 import { AdminSqlService, readAdminSqlError } from './admin-sql.service';
 
 type TableTreeNode = TableNode | GroupNode | DetailNode;
@@ -35,7 +35,7 @@ interface DetailNode {
 
 @Component({
   selector: 'app-admin-table-browser',
-  imports: [MatTreeModule, SlideOverPanelComponent, SymbolIconComponent],
+  imports: [MatTreeModule, SlideOverPanelComponent, SkeletonDirective, SymbolIconComponent],
   template: `
     <button
       type="button"
@@ -46,15 +46,27 @@ interface DetailNode {
     </button>
 
     <ee-slide-over [open]="open()" title="Tables" (closed)="open.set(false)">
-      @if (loading()) {
-        <p class="ee-data text-outline">Loading tables...</p>
-      } @else if (error()) {
+      @if (error()) {
         <p
           class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
           role="alert"
         >
           {{ error() }}
         </p>
+      } @else if (loading()) {
+        <div class="grid gap-1" [eeSkeleton]="true">
+          @for (row of tableSkeletonRows; track row) {
+            <button
+              type="button"
+              class="flex min-h-10 w-full items-center gap-2 rounded-md border border-white/10 bg-surface-container px-3 py-2 text-left text-on-surface"
+              tabindex="-1"
+            >
+              <ee-symbol-icon class="text-[20px]" name="chevron_right" />
+              <span class="min-w-0 flex-1 truncate font-mono text-sm">table_name</span>
+              <span class="ee-data shrink-0 text-outline">InnoDB · — rows</span>
+            </button>
+          }
+        </div>
       } @else {
         <mat-tree
           [dataSource]="treeNodes()"
@@ -117,6 +129,7 @@ export class AdminTableBrowserComponent {
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly metadata = signal<AdminSqlMetadata | null>(null);
+  protected readonly tableSkeletonRows = [0, 1, 2, 3, 4] as const;
   protected readonly treeNodes = computed(() => this.toTree(this.metadata()?.tables ?? []));
   protected readonly childrenAccessor = (node: TableTreeNode): TableTreeNode[] => childrenOf(node);
 
