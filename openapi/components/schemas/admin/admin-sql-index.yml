@@ -1,0 +1,11 @@
+type: object
+required: [name, unique, columns]
+properties:
+    name:
+        type: string
+    unique:
+        type: boolean
+    columns:
+        type: array
+        items:
+            type: string

@@ -6,6 +6,7 @@ import { AdminStatus } from '@api/generated';
 import type { AdminStatusHistoryPoint } from './admin-status.service';
 import { AdminStatusPage } from './admin-status.page';
 import { AdminStatusService } from './admin-status.service';
+import { AdminSqlService } from './admin-sql.service';
 
 const longQuery = `SELECT ${'column_name, '.repeat(30)}FROM auction WHERE item_id = 19019`;
 
@@ -109,7 +110,11 @@ describe('AdminStatusPage', () => {
 
     await TestBed.configureTestingModule({
       imports: [AdminStatusPage],
-      providers: [provideHighchartsTheme(), { provide: AdminStatusService, useValue: serviceStub }],
+      providers: [
+        provideHighchartsTheme(),
+        { provide: AdminStatusService, useValue: serviceStub },
+        { provide: AdminSqlService, useValue: { execute: vitest.fn() } },
+      ],
     }).compileComponents();
   });
 
@@ -145,6 +150,7 @@ describe('AdminStatusPage', () => {
     expect(text).toContain('CPU over time');
     expect(text).toContain('Memory over time');
     expect(text).toContain('Threads over time');
+    expect(text).toContain('SQL editor');
     expect(text).toContain('Running queries');
     expect(text).toContain('Show more');
     expect(text).toContain('Table and index sizes');
@@ -177,7 +183,7 @@ describe('AdminStatusPage', () => {
 
     const text = fixture.nativeElement.textContent as string;
     expect(text).toContain('UPDATE mailbox');
-    expect(text).not.toContain('Show more');
+    expect(text).not.toContain(longQuery);
   });
 
   it('refreshes manually', () => {

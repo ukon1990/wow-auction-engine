@@ -1,0 +1,26 @@
+type: object
+required: [mode, effectiveSql, columns, rows, rowCount, truncated, durationMs]
+properties:
+    mode:
+        type: string
+        enum: [QUERY, EXPLAIN, ANALYZE]
+    effectiveSql:
+        type: string
+    columns:
+        type: array
+        items:
+            type: string
+    rows:
+        type: array
+        items:
+            type: array
+            items:
+                type: string
+                nullable: true
+    rowCount:
+        type: integer
+    truncated:
+        type: boolean
+    durationMs:
+        type: integer
+        format: int64

@@ -96,15 +96,15 @@ describe('ExpansionsPage', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('[role="dialog"]')).toBeTruthy();
-    expect(fixture.nativeElement.textContent).toContain('Add expansion range');
-    expect(fixture.nativeElement.textContent).toContain('Create range');
+    expect(document.body.querySelector('[role="dialog"]')).toBeTruthy();
+    expect(document.body.textContent).toContain('Add expansion range');
+    expect(document.body.textContent).toContain('Create range');
 
-    const expansionSelect = fixture.nativeElement.querySelector(
+    const expansionSelect = document.body.querySelector(
       'app-expansion-range-form select',
     ) as HTMLSelectElement;
     const numberInputs = Array.from(
-      fixture.nativeElement.querySelectorAll('app-expansion-range-form input[type="number"]'),
+      document.body.querySelectorAll('app-expansion-range-form input[type="number"]'),
     ) as HTMLInputElement[];
 
     expect(expansionSelect.value).toBe('12');

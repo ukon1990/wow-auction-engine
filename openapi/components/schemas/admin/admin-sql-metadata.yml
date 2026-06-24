@@ -1,0 +1,7 @@
+type: object
+required: [tables]
+properties:
+    tables:
+        type: array
+        items:
+            $ref: "../../../openapi.yml#/components/schemas/AdminSqlTable"

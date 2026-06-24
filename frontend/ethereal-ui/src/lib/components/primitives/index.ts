@@ -1,3 +1,4 @@
+export * from './copy-button.component';
 export * from './currency-amount.component';
 export * from './dropdown.component';
 export * from './glass-panel.component';

@@ -7,7 +7,9 @@ export type SymbolIconName =
   | 'auto_stories'
   | 'chevron_left'
   | 'chevron_right'
+  | 'check'
   | 'construction'
+  | 'content_copy'
   | 'deployed_code'
   | 'diamond'
   | 'edit'
@@ -68,9 +70,16 @@ export type SymbolIconName =
         @case ('chevron_right') {
           <path d="m9 18 6-6-6-6" />
         }
+        @case ('check') {
+          <path d="m5 12.5 4 4L19 6.5" />
+        }
         @case ('construction') {
           <path d="m14.7 6.3 3 3M3 21l6-6M8.6 16.4l8.8-8.8a2.1 2.1 0 0 0-3-3L5.6 13.4l3 3Z" />
           <path d="m14 14 7 7" />
+        }
+        @case ('content_copy') {
+          <rect x="8" y="8" width="12" height="12" rx="1.5" />
+          <path d="M6 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
         }
         @case ('deployed_code') {
           <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z" />

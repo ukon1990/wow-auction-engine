@@ -26,6 +26,10 @@ paths:
     $ref: ./paths/admin.yml#/getUsers
   /admin/status:
     $ref: ./paths/admin.yml#/getStatus
+  /admin/sql/execute:
+    $ref: ./paths/admin.yml#/executeAdminSql
+  /admin/sql/metadata:
+    $ref: ./paths/admin.yml#/getAdminSqlMetadata
   /admin/expansions:
     $ref: ./paths/admin.yml#/listExpansions
   /admin/expansions/{id}:
@@ -70,6 +74,18 @@ components:
       $ref: ./components/schemas/admin/admin-running-query.yml
     AdminTableSize:
       $ref: ./components/schemas/admin/admin-table-size.yml
+    AdminSqlExecuteRequest:
+      $ref: ./components/schemas/admin/admin-sql-execute-request.yml
+    AdminSqlResult:
+      $ref: ./components/schemas/admin/admin-sql-result.yml
+    AdminSqlMetadata:
+      $ref: ./components/schemas/admin/admin-sql-metadata.yml
+    AdminSqlTable:
+      $ref: ./components/schemas/admin/admin-sql-table.yml
+    AdminSqlColumn:
+      $ref: ./components/schemas/admin/admin-sql-column.yml
+    AdminSqlIndex:
+      $ref: ./components/schemas/admin/admin-sql-index.yml
     AdminExpansion:
       $ref: ./components/schemas/admin/admin-expansion.yml
     AdminExpansionRequest:

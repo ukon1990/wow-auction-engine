@@ -14,31 +14,49 @@ describe('SlideOverPanelComponent', () => {
     await fixture.whenStable();
   });
 
-  it('renders the dialog when open', () => {
-    fixture.componentRef.setInput('open', true);
+  afterEach(() => {
+    fixture.componentRef.setInput('open', false);
     fixture.detectChanges();
-
-    expect(fixture.nativeElement.querySelector('[role="dialog"]')).toBeTruthy();
-    expect(fixture.nativeElement.textContent).toContain('Panel title');
+    document.body.classList.remove('overflow-hidden');
   });
 
-  it('emits closed when the backdrop is clicked', () => {
+  it('renders the dialog when open', async () => {
+    fixture.componentRef.setInput('open', true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(document.body.querySelector('[role="dialog"]')).toBeTruthy();
+    expect(document.body.textContent).toContain('Panel title');
+  });
+
+  it('portals the panel to document body when open', async () => {
+    fixture.componentRef.setInput('open', true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(document.body.querySelector('[role="dialog"]')).toBeTruthy();
+    expect(document.body.querySelector('.z-\\[60\\]')).toBeTruthy();
+  });
+
+  it('emits closed when the backdrop is clicked', async () => {
     const closed = vitest.fn();
     fixture.componentInstance.closed.subscribe(closed);
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
+    await fixture.whenStable();
 
-    const backdrop = fixture.nativeElement.querySelector('.fixed.inset-0') as HTMLElement;
+    const backdrop = document.body.querySelector('.fixed.inset-0') as HTMLElement;
     backdrop.click();
 
     expect(closed).toHaveBeenCalledOnce();
   });
 
-  it('emits closed when Escape is pressed', () => {
+  it('emits closed when Escape is pressed', async () => {
     const closed = vitest.fn();
     fixture.componentInstance.closed.subscribe(closed);
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
+    await fixture.whenStable();
 
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
 

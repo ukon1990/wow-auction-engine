@@ -7,10 +7,17 @@ import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.generated.model.AdminConnectionStatus
 import net.jonasmf.auctionengine.generated.model.AdminServerStatus
+import net.jonasmf.auctionengine.generated.model.AdminSqlColumn
+import net.jonasmf.auctionengine.generated.model.AdminSqlExecuteRequest
+import net.jonasmf.auctionengine.generated.model.AdminSqlIndex
+import net.jonasmf.auctionengine.generated.model.AdminSqlMetadata
+import net.jonasmf.auctionengine.generated.model.AdminSqlResult
 import net.jonasmf.auctionengine.generated.model.AdminStatus
+import net.jonasmf.auctionengine.generated.model.AdminSqlTable
 import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
+import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.junit.jupiter.api.Nested
@@ -33,8 +40,10 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.web.server.ResponseStatusException
 import java.time.OffsetDateTime
 
 @WebMvcTest(AdminController::class)
@@ -54,6 +63,9 @@ class AdminControllerTest {
 
     @MockitoBean
     private lateinit var adminStatusService: AdminStatusService
+
+    @MockitoBean
+    private lateinit var adminSqlService: AdminSqlService
 
     @MockitoBean
     private lateinit var adminExpansionService: AdminExpansionService
@@ -188,6 +200,237 @@ class AdminControllerTest {
             mockMvc
                 .perform(asyncDispatch(result))
                 .andExpect(status().isForbidden)
+        }
+    }
+
+    @Nested
+    inner class ExecuteAdminSql {
+        @Autowired
+        private lateinit var mockMvc: MockMvc
+
+        @Test
+        fun `should execute sql diagnostics if Cognito Admin group`() {
+            `when`(
+                adminSqlService.execute(
+                    AdminSqlExecuteRequest(
+                        sql = "SELECT 1",
+                        mode = AdminSqlExecuteRequest.Mode.QUERY,
+                        limitRows = true,
+                        rowLimit = 500,
+                    ),
+                ),
+            ).thenReturn(
+                AdminSqlResult(
+                    mode = AdminSqlResult.Mode.QUERY,
+                    effectiveSql = "SELECT 1 LIMIT 500",
+                    columns = listOf("1"),
+                    rows = listOf(listOf("1")),
+                    rowCount = 1,
+                    truncated = false,
+                    durationMs = 2,
+                ),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        post("/api/admin/sql/execute")
+                            .contextPath("/api")
+                            .contentType("application/json")
+                            .content(
+                                """
+                                {
+                                  "sql": "SELECT 1",
+                                  "mode": "QUERY",
+                                  "limitRows": true,
+                                  "rowLimit": 500
+                                }
+                                """.trimIndent(),
+                            ).with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.effectiveSql").value("SELECT 1 LIMIT 500"))
+        }
+
+        @Test
+        fun `should return 400 for invalid sql`() {
+            `when`(
+                adminSqlService.execute(
+                    AdminSqlExecuteRequest(
+                        sql = "DELETE FROM auction",
+                        mode = AdminSqlExecuteRequest.Mode.QUERY,
+                        limitRows = true,
+                        rowLimit = null,
+                    ),
+                ),
+            ).thenThrow(ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "DELETE statements are not allowed"))
+
+            val result =
+                mockMvc
+                    .perform(
+                        post("/api/admin/sql/execute")
+                            .contextPath("/api")
+                            .contentType("application/json")
+                            .content(
+                                """
+                                {
+                                  "sql": "DELETE FROM auction",
+                                  "mode": "QUERY",
+                                  "limitRows": true
+                                }
+                                """.trimIndent(),
+                            ).with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("$.detail").value("DELETE statements are not allowed"))
+        }
+
+        @Test
+        fun `should return sql execution error detail in body`() {
+            `when`(
+                adminSqlService.execute(
+                    AdminSqlExecuteRequest(
+                        sql = "SELECT * FROM items",
+                        mode = AdminSqlExecuteRequest.Mode.QUERY,
+                        limitRows = true,
+                        rowLimit = null,
+                    ),
+                ),
+            ).thenThrow(
+                ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Table 'dbo.items' doesn't exist",
+                ),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        post("/api/admin/sql/execute")
+                            .contextPath("/api")
+                            .contentType("application/json")
+                            .content(
+                                """
+                                {
+                                  "sql": "SELECT * FROM items",
+                                  "mode": "QUERY",
+                                  "limitRows": true
+                                }
+                                """.trimIndent(),
+                            ).with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("$.detail").value("Table 'dbo.items' doesn't exist"))
+        }
+
+        @Test
+        fun `should return 401 if unauthenticated`() {
+            mockMvc
+                .perform(
+                    post("/api/admin/sql/execute")
+                        .contextPath("/api")
+                        .contentType("application/json")
+                        .content("""{"sql":"SELECT 1","mode":"QUERY","limitRows":true}"""),
+                ).andExpect(status().isUnauthorized)
+        }
+
+        @Test
+        fun `should return 403 if authenticated but not admin`() {
+            val result =
+                mockMvc
+                    .perform(
+                        post("/api/admin/sql/execute")
+                            .contextPath("/api")
+                            .contentType("application/json")
+                            .content("""{"sql":"SELECT 1","mode":"QUERY","limitRows":true}""")
+                            .with(jwt()),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isForbidden)
+        }
+
+        @Test
+        fun `should return sql metadata if Cognito Admin group`() {
+            `when`(adminSqlService.getMetadata()).thenReturn(
+                AdminSqlMetadata(
+                    tables =
+                        listOf(
+                            AdminSqlTable(
+                                name = "auction",
+                                columns =
+                                    listOf(
+                                        AdminSqlColumn(
+                                            name = "id",
+                                            dataType = "bigint",
+                                            nullable = false,
+                                            ordinalPosition = 1,
+                                        ),
+                                    ),
+                                indexes =
+                                    listOf(
+                                        AdminSqlIndex(
+                                            name = "PRIMARY",
+                                            unique = true,
+                                            columns = listOf("id"),
+                                        ),
+                                    ),
+                                engine = "InnoDB",
+                                tableRows = 12,
+                            ),
+                        ),
+                ),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        get("/api/admin/sql/metadata")
+                            .contextPath("/api")
+                            .with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.tables[0].name").value("auction"))
+                .andExpect(jsonPath("$.tables[0].columns[0].name").value("id"))
+                .andExpect(jsonPath("$.tables[0].indexes[0].name").value("PRIMARY"))
         }
     }
 
