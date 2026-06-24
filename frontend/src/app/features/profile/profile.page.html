@@ -3,14 +3,9 @@
   title="Profile"
   i18n-eyebrow="@@profile.eyebrow"
   eyebrow="Account"
+  [loading]="loading()"
 >
-  @if (loading()) {
-    <div class="grid max-w-3xl gap-4">
-      <div class="h-24 rounded-md border border-white/10 bg-surface-container-highest"></div>
-      <div class="h-72 rounded-md border border-white/10 bg-surface-container-highest"></div>
-    </div>
-  } @else if (user()) {
-    <section class="grid max-w-3xl gap-6">
+  <section class="grid max-w-3xl gap-6" [eeSkeleton]="loading()">
       <div class="grid gap-2 rounded-md border border-white/10 bg-surface-container-highest p-5">
         <p class="ee-data uppercase text-outline" i18n="@@profile.email">Email</p>
         <p class="break-words text-lg font-semibold text-on-surface">
@@ -115,6 +110,5 @@
           </button>
         </div>
       </form>
-    </section>
-  }
+  </section>
 </ee-page-frame>
