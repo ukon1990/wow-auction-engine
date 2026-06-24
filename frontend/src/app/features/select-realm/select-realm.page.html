@@ -32,20 +32,19 @@
     (valueChanged)="onQueryChanged($event)"
   />
 
-  @if (loading()) {
-    <p class="text-center text-outline" role="status" i18n="@@realmPicker.loading">
-      Loading realms...
-    </p>
-  } @else if (error()) {
+  @if (error()) {
     <p class="text-center text-error" role="alert">{{ error() }}</p>
   } @else {
-    <div class="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden">
+    <div
+      class="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden"
+      [eeSkeleton]="loading()"
+    >
       <div class="flex items-baseline justify-between">
         <h2 class="ee-section-heading text-on-surface" i18n="@@realmPicker.realms">Realms</h2>
-        <span class="ee-data text-outline">{{ resultsLabel() }}</span>
+        <span class="ee-data text-outline">{{ loading() ? '—' : resultsLabel() }}</span>
       </div>
 
-      @if (filtered().length === 0) {
+      @if (!loading() && filtered().length === 0) {
         <p class="text-center text-outline" i18n="@@realmPicker.empty">
           No realms match your search.
         </p>
@@ -55,22 +54,39 @@
           aria-label="Available realms"
           i18n-aria-label="@@realmPicker.availableRealms"
         >
-          @for (realm of filtered(); track trackByKey($index, realm)) {
-            <li>
-              <a
-                class="flex w-full items-center justify-between rounded-lg border border-white/10 bg-surface-container-highest px-4 py-3 text-left transition hover:border-primary/40 hover:bg-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary"
-                [routerLink]="['/', realm.region, realm.slug]"
-                (click)="rememberSelection(realm)"
-              >
-                <span class="flex flex-col">
-                  <span class="font-cinzel text-base text-on-surface">{{ realm.name }}</span>
-                  <span class="ee-data text-outline"
-                    >{{ realm.category }} · {{ realm.timezone }}</span
-                  >
-                </span>
-                <span class="ee-data text-primary-container">{{ realm.region.toUpperCase() }}</span>
-              </a>
-            </li>
+          @if (loading()) {
+            @for (i of realmSkeletonRows; track i) {
+              <li>
+                <a
+                  class="flex w-full items-center justify-between rounded-lg border border-white/10 bg-surface-container-highest px-4 py-3 text-left"
+                  tabindex="-1"
+                >
+                  <span class="flex flex-col">
+                    <span class="font-cinzel text-base text-on-surface">Realm Name</span>
+                    <span class="ee-data text-outline">Category · Timezone</span>
+                  </span>
+                  <span class="ee-data text-primary-container">US</span>
+                </a>
+              </li>
+            }
+          } @else {
+            @for (realm of filtered(); track trackByKey($index, realm)) {
+              <li>
+                <a
+                  class="flex w-full items-center justify-between rounded-lg border border-white/10 bg-surface-container-highest px-4 py-3 text-left transition hover:border-primary/40 hover:bg-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary"
+                  [routerLink]="['/', realm.region, realm.slug]"
+                  (click)="rememberSelection(realm)"
+                >
+                  <span class="flex flex-col">
+                    <span class="font-cinzel text-base text-on-surface">{{ realm.name }}</span>
+                    <span class="ee-data text-outline"
+                      >{{ realm.category }} · {{ realm.timezone }}</span
+                    >
+                  </span>
+                  <span class="ee-data text-primary-container">{{ realm.region.toUpperCase() }}</span>
+                </a>
+              </li>
+            }
           }
         </ul>
       }

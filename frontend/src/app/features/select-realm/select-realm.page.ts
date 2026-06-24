@@ -32,6 +32,7 @@ export class SelectRealmPage {
   protected readonly query = signal('');
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
+  protected readonly realmSkeletonRows = [0, 1, 2, 3, 4, 5, 6, 7] as const;
 
   protected readonly realms = this.selection.realms;
   protected readonly showSignIn = computed(() => this.auth.loaded() && !this.auth.user());
