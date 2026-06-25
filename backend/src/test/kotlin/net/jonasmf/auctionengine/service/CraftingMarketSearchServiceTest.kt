@@ -37,6 +37,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 query = null,
                 professionIds = null,
                 expansionIds = null,
+                qualityIds = null,
                 minProfit = null,
                 maxProfit = null,
                 minRoiPercent = null,
@@ -86,6 +87,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 query = null,
                 professionIds = null,
                 expansionIds = null,
+                qualityIds = null,
                 minProfit = null,
                 maxProfit = null,
                 minRoiPercent = null,
@@ -125,6 +127,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 query = null,
                 professionIds = null,
                 expansionIds = null,
+                qualityIds = null,
                 minProfit = null,
                 maxProfit = null,
                 minRoiPercent = null,
@@ -165,6 +168,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 query = null,
                 professionIds = null,
                 expansionIds = null,
+                qualityIds = null,
                 minProfit = null,
                 maxProfit = null,
                 minRoiPercent = null,
@@ -203,6 +207,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 query = null,
                 professionIds = null,
                 expansionIds = null,
+                qualityIds = null,
                 minProfit = 100L,
                 maxProfit = 50L,
                 minRoiPercent = null,
@@ -230,6 +235,18 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `crafting filters include quality options in logical order`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
+
+        val result = craftingMarketSearchService.filters("eu", "argent-dawn", null)
+
+        val quality = result.filters.single { it.id == "qualityIds" }
+        assertTrue(quality.options.orEmpty().isNotEmpty())
+        assertEquals("RARE", quality.options.orEmpty().single().qualityType)
+    }
+
+    @Test
     fun `crafting search filters by expansion id`() {
         MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
         MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
@@ -247,6 +264,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 query = null,
                 professionIds = null,
                 expansionIds = listOf(1),
+                qualityIds = null,
                 minProfit = null,
                 maxProfit = null,
                 minRoiPercent = null,
@@ -273,6 +291,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 query = null,
                 professionIds = null,
                 expansionIds = listOf(2),
+                qualityIds = null,
                 minProfit = null,
                 maxProfit = null,
                 minRoiPercent = null,

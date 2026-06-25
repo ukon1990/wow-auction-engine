@@ -6,6 +6,7 @@ const qualityClasses: Record<ItemQuality, string> = {
   rare: 'text-blue-300 border-blue-500/40 bg-blue-500/10',
   epic: 'text-purple-300 border-purple-500/40 bg-purple-500/10',
   legendary: 'text-orange-300 border-orange-500/40 bg-orange-500/10',
+  artifact: 'text-amber-200 border-amber-400/40 bg-amber-400/10',
 };
 
 export function qualityToneClasses(quality: ItemQuality): string {
@@ -24,5 +25,7 @@ export function formatQuality(quality: ItemQuality): string {
       return $localize`:@@quality.epic:Epic`;
     case 'legendary':
       return $localize`:@@quality.legendary:Legendary`;
+    case 'artifact':
+      return $localize`:@@quality.artifact:Artifact`;
   }
 }
