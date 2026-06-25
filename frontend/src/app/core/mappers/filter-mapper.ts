@@ -9,8 +9,8 @@ import {
   filterType,
   selectedRangeValue,
   selectedSet,
-  toQuality,
 } from '@core/utils/filter';
+import { mapQualityFilterOptions, resolveFilterOptionQuality } from '@core/utils/quality-filter-options';
 
 export const toFilterSections = (
   filters: readonly AuctionMarketFilter[],
@@ -35,12 +35,12 @@ export const toFilterSections = (
       max: filter.max ?? undefined,
       selectedMin: selectedRangeValue(filter.id, 'min', state),
       selectedMax: selectedRangeValue(filter.id, 'max', state),
-      options: filterOptions(filter, state).map((option) => ({
+      options: mapQualityFilterOptions(filter, filterOptions(filter, state)).map((option) => ({
         id: filterOptionId(filter.id, option),
-        label: filterOptionLabel(filter.id, option.label),
+        label: filterOptionLabel(filter.id, option.label, option.qualityType),
         selected: selectedIds.has(String(option.id)),
         parentId: option.parentId ?? undefined,
-        quality: filter.id === 'qualityIds' ? toQuality(option.label) : undefined,
+        quality: filter.id === 'qualityIds' ? resolveFilterOptionQuality(option) : undefined,
       })),
     };
   });

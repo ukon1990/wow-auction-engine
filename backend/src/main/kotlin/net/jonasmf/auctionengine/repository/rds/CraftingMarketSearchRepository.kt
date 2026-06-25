@@ -24,6 +24,7 @@ data class CraftingMarketSearchRequest(
     val query: String?,
     val professionIds: List<Int>,
     val expansionIds: List<Int>,
+    val qualityIds: List<Int>,
     val minProfit: Long?,
     val maxProfit: Long?,
     val minRoiPercent: Double?,
@@ -618,6 +619,10 @@ class CraftingMarketSearchRepository(
         if (request.expansionIds.isNotEmpty()) {
             predicates.add("c.expansion_id IN (${request.expansionIds.joinToString(",") { "?" }})")
             params.addAll(request.expansionIds)
+        }
+        if (request.qualityIds.isNotEmpty()) {
+            predicates.add("c.quality_id IN (${request.qualityIds.joinToString(",") { "?" }})")
+            params.addAll(request.qualityIds)
         }
         if (request.requireCompleteReagentPricing) {
             predicates.add("c.reagents_fully_priced = 1")

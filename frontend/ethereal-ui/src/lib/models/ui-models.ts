@@ -6,7 +6,7 @@ export interface CurrencyAmount {
   readonly copper?: number;
 }
 
-export type ItemQuality = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+export type ItemQuality = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'artifact';
 
 export interface NavItem {
   readonly id: string;

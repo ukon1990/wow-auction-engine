@@ -10,3 +10,7 @@ properties:
   parentId:
     type: string
     nullable: true
+  qualityType:
+    type: string
+    nullable: true
+    description: Blizzard item quality type (for example RARE) when the option represents item quality.
