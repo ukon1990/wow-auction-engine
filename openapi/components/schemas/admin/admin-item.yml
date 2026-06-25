@@ -1,0 +1,101 @@
+type: object
+required:
+  - id
+  - hasOverride
+  - hasBase
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+    nullable: true
+  nameLocales:
+    $ref: "../game-locale.yml"
+  qualityId:
+    type: integer
+    format: int64
+    nullable: true
+  qualityType:
+    type: string
+    nullable: true
+  qualityName:
+    type: string
+    nullable: true
+  itemClassId:
+    type: integer
+    nullable: true
+  itemClassName:
+    type: string
+    nullable: true
+  itemSubclassId:
+    type: integer
+    format: int64
+    nullable: true
+  itemSubclassName:
+    type: string
+    nullable: true
+  expansionId:
+    type: integer
+    nullable: true
+  expansionName:
+    type: string
+    nullable: true
+  level:
+    type: integer
+    nullable: true
+  requiredLevel:
+    type: integer
+    nullable: true
+  maxCount:
+    type: integer
+    nullable: true
+  mediaUrl:
+    type: string
+    nullable: true
+  mediaSourceUrl:
+    type: string
+    nullable: true
+  purchasePrice:
+    type: integer
+    nullable: true
+  purchaseQuantity:
+    type: integer
+    nullable: true
+  sellPrice:
+    type: integer
+    nullable: true
+  bindingId:
+    type: integer
+    format: int64
+    nullable: true
+  inventoryTypeId:
+    type: integer
+    format: int64
+    nullable: true
+  isEquippable:
+    type: boolean
+    nullable: true
+  isStackable:
+    type: boolean
+    nullable: true
+  overrideNote:
+    type: string
+    nullable: true
+  hasOverride:
+    type: boolean
+  hasBase:
+    type: boolean
+  createdAt:
+    type: string
+    format: date-time
+    nullable: true
+  updatedAt:
+    type: string
+    format: date-time
+    nullable: true
+  base:
+    $ref: "./admin-item-override-snapshot.yml"
+    nullable: true
+  override:
+    $ref: "./admin-item-override-snapshot.yml"
+    nullable: true

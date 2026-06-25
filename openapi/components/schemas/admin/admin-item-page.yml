@@ -1,0 +1,11 @@
+type: object
+required:
+  - items
+  - page
+properties:
+  items:
+    type: array
+    items:
+      $ref: "./admin-item.yml"
+  page:
+    $ref: "../page-metadata.yml"

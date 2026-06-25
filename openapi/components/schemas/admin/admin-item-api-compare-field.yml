@@ -1,0 +1,10 @@
+type: object
+properties:
+  base:
+    nullable: true
+  override:
+    nullable: true
+  api:
+    nullable: true
+  effective:
+    nullable: true

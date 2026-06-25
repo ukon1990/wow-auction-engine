@@ -298,3 +298,231 @@ getAdminJob:
                             $ref: "../openapi.yml#/components/schemas/AdminJob"
             "404":
                 description: Job not found
+listAdminItems:
+    get:
+        tags:
+            - Admin
+        operationId: listAdminItems
+        summary: Searches items for admin management
+        parameters:
+            - name: page
+              in: query
+              required: false
+              schema:
+                  type: integer
+                  default: 0
+            - name: pageSize
+              in: query
+              required: false
+              schema:
+                  type: integer
+                  default: 50
+            - name: itemId
+              in: query
+              required: false
+              schema:
+                  type: integer
+            - name: name
+              in: query
+              required: false
+              schema:
+                  type: string
+            - name: qualityId
+              in: query
+              required: false
+              schema:
+                  type: integer
+                  format: int64
+            - name: classId
+              in: query
+              required: false
+              schema:
+                  type: integer
+            - name: subclassId
+              in: query
+              required: false
+              schema:
+                  type: integer
+            - name: expansionId
+              in: query
+              required: false
+              schema:
+                  type: integer
+            - name: hasOverride
+              in: query
+              required: false
+              schema:
+                  type: boolean
+            - name: sort
+              in: query
+              required: false
+              schema:
+                  type: string
+                  enum: [id, name, quality, expansion, updatedAt]
+                  default: id
+            - name: locale
+              in: query
+              required: false
+              schema:
+                  type: string
+        responses:
+            "200":
+                description: Paginated admin items
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminItemPage"
+    post:
+        tags:
+            - Admin
+        operationId: createAdminItem
+        summary: Creates an override-only manual item
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "../openapi.yml#/components/schemas/AdminItemCreateRequest"
+        responses:
+            "200":
+                description: Created item
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminItem"
+            "400":
+                description: Invalid item
+            "409":
+                description: Item already exists
+bulkAdminItemOverrides:
+    put:
+        tags:
+            - Admin
+        operationId: bulkAdminItemOverrides
+        summary: Bulk upserts sparse item overrides
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "../openapi.yml#/components/schemas/AdminItemBulkOverrideRequest"
+        responses:
+            "200":
+                description: Updated items
+                content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                $ref: "../openapi.yml#/components/schemas/AdminItem"
+            "400":
+                description: Invalid bulk override request
+adminItemById:
+    get:
+        tags:
+            - Admin
+        operationId: getAdminItem
+        summary: Gets an effective admin item
+        parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                  type: integer
+            - name: includeBase
+              in: query
+              required: false
+              schema:
+                  type: boolean
+                  default: false
+            - name: includeOverride
+              in: query
+              required: false
+              schema:
+                  type: boolean
+                  default: false
+            - name: locale
+              in: query
+              required: false
+              schema:
+                  type: string
+        responses:
+            "200":
+                description: Admin item
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminItem"
+            "404":
+                description: Item not found
+adminItemOverride:
+    put:
+        tags:
+            - Admin
+        operationId: upsertAdminItemOverride
+        summary: Upserts a sparse item override
+        parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                  type: integer
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "../openapi.yml#/components/schemas/AdminItemOverrideRequest"
+        responses:
+            "200":
+                description: Updated item
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminItem"
+            "400":
+                description: Invalid override
+            "404":
+                description: Item not found
+    delete:
+        tags:
+            - Admin
+        operationId: deleteAdminItemOverride
+        summary: Removes an item override
+        parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                  type: integer
+        responses:
+            "204":
+                description: Override deleted
+            "404":
+                description: Override not found
+compareAdminItemApi:
+    post:
+        tags:
+            - Admin
+        operationId: compareAdminItemApi
+        summary: Compares Blizzard API data with stored item data
+        parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                  type: integer
+            - name: locale
+              in: query
+              required: false
+              schema:
+                  type: string
+        responses:
+            "200":
+                description: Field-level API comparison
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminItemApiCompareResponse"
+            "404":
+                description: Item not found

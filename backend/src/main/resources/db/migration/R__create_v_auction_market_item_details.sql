@@ -75,7 +75,7 @@ SELECT
     reci_l.ru_ru AS recipe_name_ru_ru,
     reci_l.zh_cn AS recipe_name_zh_cn,
     reci_l.zh_tw AS recipe_name_zh_tw
-FROM item i
+FROM v_item i
          LEFT JOIN locale i_l ON i.name_id = i_l.id
          LEFT JOIN item_quality iq ON iq.internal_id = i.quality_id
          LEFT JOIN locale iq_l ON iq_l.id = iq.name_id

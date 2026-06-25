@@ -767,6 +767,7 @@ class ItemJdbcRepository(
                 """
                 INSERT INTO `item` (
                     id,
+                    is_override,
                     name_id,
                     quality_id,
                     level,
@@ -783,7 +784,7 @@ class ItemJdbcRepository(
                     is_equippable,
                     is_stackable,
                     purchase_quantity
-                ) VALUES ${chunk.joinToString(",") { "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" }}
+                ) VALUES ${chunk.joinToString(",") { "(?, FALSE, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" }}
                 ON DUPLICATE KEY UPDATE
                     name_id = VALUES(name_id),
                     quality_id = VALUES(quality_id),

@@ -44,6 +44,16 @@ paths:
     $ref: ./paths/admin.yml#/fetchMissingExpansionRangeItems
   /admin/jobs/{id}:
     $ref: ./paths/admin.yml#/getAdminJob
+  /admin/items:
+    $ref: ./paths/admin.yml#/listAdminItems
+  /admin/items/bulk-overrides:
+    $ref: ./paths/admin.yml#/bulkAdminItemOverrides
+  /admin/items/{id}:
+    $ref: ./paths/admin.yml#/adminItemById
+  /admin/items/{id}/override:
+    $ref: ./paths/admin.yml#/adminItemOverride
+  /admin/items/{id}/compare-api:
+    $ref: ./paths/admin.yml#/compareAdminItemApi
   /realms:
     $ref: ./paths/realm.yml#/listRealms
   /realms/{region}/{slug}:
@@ -98,6 +108,18 @@ components:
       $ref: ./components/schemas/admin/admin-expansion-item-range-request.yml
     AdminJob:
       $ref: ./components/schemas/admin/admin-job.yml
+    AdminItem:
+      $ref: ./components/schemas/admin/admin-item.yml
+    AdminItemOverrideRequest:
+      $ref: ./components/schemas/admin/admin-item-override-request.yml
+    AdminItemCreateRequest:
+      $ref: ./components/schemas/admin/admin-item-create-request.yml
+    AdminItemPage:
+      $ref: ./components/schemas/admin/admin-item-page.yml
+    AdminItemApiCompareResponse:
+      $ref: ./components/schemas/admin/admin-item-api-compare-response.yml
+    AdminItemBulkOverrideRequest:
+      $ref: ./components/schemas/admin/admin-item-bulk-override-request.yml
     AuctionHouseStatus:
       $ref: ./components/schemas/auction-house-status.yml
     AuctionListingKey:

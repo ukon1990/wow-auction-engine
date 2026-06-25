@@ -1,0 +1,8 @@
+type: object
+required:
+  - fields
+properties:
+  fields:
+    type: object
+    additionalProperties:
+      $ref: "./admin-item-api-compare-field.yml"

@@ -15,7 +15,11 @@ import net.jonasmf.auctionengine.generated.model.AdminSqlResult
 import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.AdminSqlTable
 import net.jonasmf.auctionengine.generated.model.User
+import net.jonasmf.auctionengine.generated.model.AdminItem
+import net.jonasmf.auctionengine.generated.model.AdminItemPage
+import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
+import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
@@ -69,6 +73,9 @@ class AdminControllerTest {
 
     @MockitoBean
     private lateinit var adminExpansionService: AdminExpansionService
+
+    @MockitoBean
+    private lateinit var adminItemService: AdminItemService
 
     @MockitoBean
     private lateinit var adminJobService: AdminJobService
@@ -512,6 +519,79 @@ class AdminControllerTest {
                 mockMvc
                     .perform(
                         get("/api/admin/expansions")
+                            .contextPath("/api")
+                            .with(jwt()),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isForbidden)
+        }
+    }
+
+    @Nested
+    inner class ItemAdmin {
+        @Autowired
+        private lateinit var mockMvc: MockMvc
+
+        @Test
+        fun `should list admin items if Cognito Admin group`() {
+            `when`(
+                adminItemService.listItems(
+                    page = 0,
+                    pageSize = 50,
+                    itemId = null,
+                    name = null,
+                    qualityId = null,
+                    classId = null,
+                    subclassId = null,
+                    expansionId = null,
+                    hasOverride = null,
+                    sort = "id",
+                    locale = null,
+                ),
+            ).thenReturn(
+                AdminItemPage(
+                    items =
+                        listOf(
+                            AdminItem(
+                                id = 19019,
+                                hasOverride = false,
+                                hasBase = true,
+                                name = "Healing Potion",
+                            ),
+                        ),
+                    page = PageMetadata(page = 0, pageSize = 50, totalItems = 1, totalPages = 1),
+                ),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        get("/api/admin/items")
+                            .contextPath("/api")
+                            .with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.items[0].id").value(19019))
+        }
+
+        @Test
+        fun `should return 403 for item admin endpoint if authenticated but not admin`() {
+            val result =
+                mockMvc
+                    .perform(
+                        get("/api/admin/items")
                             .contextPath("/api")
                             .with(jwt()),
                     ).andExpect(request().asyncStarted())

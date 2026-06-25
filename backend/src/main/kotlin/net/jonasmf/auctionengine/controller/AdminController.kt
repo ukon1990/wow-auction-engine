@@ -5,6 +5,12 @@ import net.jonasmf.auctionengine.generated.model.AdminExpansion1
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
+import net.jonasmf.auctionengine.generated.model.AdminItem
+import net.jonasmf.auctionengine.generated.model.AdminItemApiCompareResponse
+import net.jonasmf.auctionengine.generated.model.AdminItemBulkOverrideRequest
+import net.jonasmf.auctionengine.generated.model.AdminItemCreateRequest
+import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
+import net.jonasmf.auctionengine.generated.model.AdminItemPage
 import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.generated.model.AdminSqlExecuteRequest
 import net.jonasmf.auctionengine.generated.model.AdminSqlMetadata
@@ -12,6 +18,7 @@ import net.jonasmf.auctionengine.generated.model.AdminSqlResult
 import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
+import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
@@ -28,6 +35,7 @@ class AdminController(
     private val adminStatusService: AdminStatusService,
     private val adminSqlService: AdminSqlService,
     private val adminExpansionService: AdminExpansionService,
+    private val adminItemService: AdminItemService,
     private val adminJobService: AdminJobService,
 ) : AdminApi {
     @PreAuthorize("hasAuthority('admin')")
@@ -96,6 +104,70 @@ class AdminController(
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getAdminJob(id: Long): ResponseEntity<AdminJob> =
         ResponseEntity.ok(adminJobService.getJob(id))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun listAdminItems(
+        page: Int,
+        pageSize: Int,
+        itemId: Int?,
+        name: String?,
+        qualityId: Long?,
+        classId: Int?,
+        subclassId: Int?,
+        expansionId: Int?,
+        hasOverride: Boolean?,
+        sort: String,
+        locale: String?,
+    ): ResponseEntity<AdminItemPage> =
+        ResponseEntity.ok(
+            adminItemService.listItems(
+                page = page,
+                pageSize = pageSize,
+                itemId = itemId,
+                name = name,
+                qualityId = qualityId,
+                classId = classId,
+                subclassId = subclassId,
+                expansionId = expansionId,
+                hasOverride = hasOverride,
+                sort = sort,
+                locale = locale,
+            ),
+        )
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun createAdminItem(body: AdminItemCreateRequest): ResponseEntity<AdminItem> =
+        ResponseEntity.ok(adminItemService.createOverrideOnly(body))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun bulkAdminItemOverrides(body: AdminItemBulkOverrideRequest): ResponseEntity<List<AdminItem>> =
+        ResponseEntity.ok(adminItemService.bulkUpsertOverrides(body))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun getAdminItem(
+        id: Int,
+        includeBase: Boolean,
+        includeOverride: Boolean,
+        locale: String?,
+    ): ResponseEntity<AdminItem> = ResponseEntity.ok(adminItemService.getItem(id, includeBase, includeOverride, locale))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun upsertAdminItemOverride(
+        id: Int,
+        body: AdminItemOverrideRequest,
+    ): ResponseEntity<AdminItem> = ResponseEntity.ok(adminItemService.upsertOverride(id, body))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun deleteAdminItemOverride(id: Int): ResponseEntity<Unit> {
+        adminItemService.deleteOverride(id)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun compareAdminItemApi(
+        id: Int,
+        locale: String?,
+    ): ResponseEntity<AdminItemApiCompareResponse> = ResponseEntity.ok(adminItemService.compareWithApi(id, locale))
 
     // TODO: Need a paginated response - Update openApi as well
     @PreAuthorize("hasAuthority('admin')")

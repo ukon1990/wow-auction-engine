@@ -314,7 +314,7 @@ class AuctionMarketSearchRepository(
         val useItemJoin = pushesItemDimensionFiltersIntoAuctionSnapshot(request)
         val itemJoin =
             if (useItemJoin) {
-                "INNER JOIN item i ON i.id = a.item_id\n                "
+                "INNER JOIN v_item i ON i.id = a.item_id\n                "
             } else {
                 ""
             }

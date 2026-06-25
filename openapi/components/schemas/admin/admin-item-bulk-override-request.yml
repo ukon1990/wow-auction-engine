@@ -1,0 +1,8 @@
+type: object
+required:
+  - overrides
+properties:
+  overrides:
+    type: array
+    items:
+      $ref: "./admin-item-bulk-override-entry.yml"

@@ -1,0 +1,59 @@
+type: object
+properties:
+  nameLocales:
+    $ref: "../game-locale.yml"
+  qualityId:
+    type: integer
+    format: int64
+    nullable: true
+  itemClassId:
+    type: integer
+    nullable: true
+  itemSubclassId:
+    type: integer
+    format: int64
+    nullable: true
+  expansionId:
+    type: integer
+    nullable: true
+  level:
+    type: integer
+    nullable: true
+  requiredLevel:
+    type: integer
+    nullable: true
+  maxCount:
+    type: integer
+    nullable: true
+  mediaUrl:
+    type: string
+    nullable: true
+  mediaSourceUrl:
+    type: string
+    nullable: true
+  purchasePrice:
+    type: integer
+    nullable: true
+  purchaseQuantity:
+    type: integer
+    nullable: true
+  sellPrice:
+    type: integer
+    nullable: true
+  bindingId:
+    type: integer
+    format: int64
+    nullable: true
+  inventoryTypeId:
+    type: integer
+    format: int64
+    nullable: true
+  isEquippable:
+    type: boolean
+    nullable: true
+  isStackable:
+    type: boolean
+    nullable: true
+  overrideNote:
+    type: string
+    nullable: true

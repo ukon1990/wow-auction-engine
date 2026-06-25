@@ -1,0 +1,100 @@
+<ee-page-frame
+  title="Items"
+  eyebrow="Admin"
+  [loading]="loading() && items().length === 0"
+  titleId="admin-items-title"
+>
+  @if (error()) {
+    <p
+      class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+      role="alert"
+    >
+      {{ error() }}
+    </p>
+  }
+
+  <section class="grid min-h-0 flex-1 gap-4" aria-label="Item overrides">
+    <header class="flex flex-wrap items-end justify-between gap-3">
+      <div class="grid gap-1">
+        <h2 class="font-cinzel text-xl font-bold text-primary-container">Item overrides</h2>
+        <p class="ee-data text-outline">
+          Search items and manage sparse overrides that are not overwritten by Blizzard sync.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+        [disabled]="mutationLoading()"
+        (click)="openCreateForm()"
+      >
+        Create manual item
+      </button>
+    </header>
+
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <ee-search-input
+        label="Item ID"
+        [showLabel]="true"
+        placeholder="Exact item ID"
+        [ngModel]="filters().itemId"
+        (ngModelChange)="updateFilter('itemId', $event)"
+      />
+      <ee-search-input
+        label="Name"
+        [showLabel]="true"
+        placeholder="Contains name"
+        [ngModel]="filters().name"
+        (ngModelChange)="updateFilter('name', $event)"
+      />
+      <ee-select-input
+        label="Override"
+        [options]="overrideFilterOptions"
+        [ngModel]="filters().hasOverride"
+        (ngModelChange)="updateFilter('hasOverride', $event)"
+      />
+      <ee-select-input
+        label="Sort"
+        [options]="sortOptions"
+        [ngModel]="filters().sort"
+        (ngModelChange)="updateFilter('sort', $event)"
+      />
+    </div>
+
+    <ee-table
+      [columns]="columns()"
+      [data]="items()"
+      [loading]="loading()"
+      [skeletonRowCount]="10"
+      [showFooter]="true"
+      [showPagination]="true"
+      [paginationState]="paginationState()"
+      emptyMessage="No items match the current filters."
+      sectionAriaLabel="Admin items"
+      [getRowId]="itemRowId"
+      (pageChange)="onPageChange($event)"
+    />
+  </section>
+</ee-page-frame>
+
+<ee-slide-over
+  [open]="formMode() !== null"
+  [title]="formTitle()"
+  titleId="admin-item-form-title"
+  (closed)="closeForm()"
+>
+  @if (formMode(); as mode) {
+    <div class="grid gap-6">
+      <app-item-form
+        [mode]="mode"
+        [item]="editingItem()"
+        [submitting]="mutationLoading()"
+        [submitError]="formError()"
+        (submitted)="submitForm($event)"
+        (cancelled)="closeForm()"
+      />
+      @if (mode === 'edit') {
+        <app-item-api-compare [compare]="compareResult()" />
+      }
+    </div>
+  }
+</ee-slide-over>
