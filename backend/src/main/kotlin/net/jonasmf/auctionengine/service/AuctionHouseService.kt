@@ -113,7 +113,7 @@ class AuctionHouseService(
     fun updateLastDailyPriceDeleted(
         connectedRealmId: Int,
         lastDeletedTime: OffsetDateTime,
-    ) = auctionHouseEntityRepository.updateLastHistoryDeleteEvent(connectedRealmId, lastDeletedTime)
+    ) = auctionHouseEntityRepository.updateLastHistoryDeleteEvent(connectedRealmId, lastDeletedTime.toInstant())
 
     fun getReadyForUpdate(region: Region) = repository.findReadyForUpdateByRegion(region)
 
