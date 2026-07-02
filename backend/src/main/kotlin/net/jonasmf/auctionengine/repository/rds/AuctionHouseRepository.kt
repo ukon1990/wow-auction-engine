@@ -44,11 +44,24 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
         """
         UPDATE AuctionHouse a
         SET a.lastHistoryDeleteEvent = :lastHistoryDeleteEvent
-        WHERE a.connectedId = :connectedId
+        WHERE a.connectedId = :connectedRealmId
     """,
     )
     fun updateLastHistoryDeleteEvent(
         connectedRealmId: Int,
-        lastDeletedTime: OffsetDateTime,
+        lastHistoryDeleteEvent: Instant,
+    ): Int
+
+    @Modifying
+    @Query(
+        """
+        UPDATE AuctionHouse a
+        SET a.lastHistoryDeleteEventDaily = :lastHistoryDeleteEventDaily
+        WHERE a.connectedId = :connectedRealmId
+    """,
+    )
+    fun updateLastHistoryDeleteEventDaily(
+        connectedRealmId: Int,
+        lastHistoryDeleteEventDaily: Instant,
     ): Int
 }
