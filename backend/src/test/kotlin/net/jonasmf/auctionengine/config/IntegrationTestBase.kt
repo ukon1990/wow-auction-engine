@@ -12,7 +12,10 @@ import org.springframework.test.context.DynamicPropertySource
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import(StubAuthWebClientConfig::class)
+@Import(
+    StubAuthWebClientConfig::class,
+    BlizzardFixtureIntegrationConfig::class,
+)
 abstract class IntegrationTestBase {
     @Autowired
     lateinit var testDataCleaner: TestDataCleaner
@@ -27,6 +30,7 @@ abstract class IntegrationTestBase {
         @DynamicPropertySource
         fun registerMariaDbProperties(registry: DynamicPropertyRegistry) {
             SharedTestContainers.registerMariaDbProperties(registry)
+            registry.add("blizzard.base-url") { "api.blizzard.test/data/wow/" }
         }
     }
 }
