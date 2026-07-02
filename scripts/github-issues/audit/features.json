@@ -1,0 +1,93 @@
+{
+  "$schema": "./features.schema.json",
+  "features": [
+    {
+      "id": "market-browser",
+      "summary": "Auction market browser and item detail",
+      "match": { "title": ["market browser", "item search", "auction search"], "labelsAny": ["frontend"] },
+      "implementedWhen": {
+        "all": [
+          {
+            "grep": {
+              "pattern": "AuctionMarketController|AuctionMarketSearchService",
+              "paths": ["backend/src/main"]
+            }
+          },
+          {
+            "path": "frontend/src/app/features/market-browser/market-browser.page.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "crafting-browser",
+      "summary": "Crafting market browser and recipe search",
+      "match": { "title": ["crafting", "recipe search"], "labelsAny": ["frontend"] },
+      "implementedWhen": {
+        "all": [
+          {
+            "grep": {
+              "pattern": "CraftingController|CraftingMarketSearchService",
+              "paths": ["backend/src/main"]
+            }
+          },
+          {
+            "path": "frontend/src/app/features/crafting/crafting-browser.page.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "admin-status",
+      "summary": "Admin server status and SQL editor",
+      "match": { "title": ["admin", "server status", "sql editor"], "labelsAny": ["admin"] },
+      "implementedWhen": {
+        "all": [
+          {
+            "grep": {
+              "pattern": "AdminController|AdminSqlService",
+              "paths": ["backend/src/main"]
+            }
+          },
+          {
+            "path": "frontend/src/app/features/admin/status/admin-status.page.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "user-auth",
+      "summary": "User registration and login",
+      "match": { "title": ["login", "registration", "auth"], "labelsAny": ["security"] },
+      "implementedWhen": {
+        "all": [
+          {
+            "grep": {
+              "pattern": "AuthService|SecurityConfig",
+              "paths": ["backend/src/main"]
+            }
+          },
+          {
+            "path": "frontend/src/app/features/login/login.page.ts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "localization",
+      "summary": "Angular localization with XLF catalogs",
+      "match": { "title": ["localization", "i18n", "translate"], "labelsAny": ["i18n"] },
+      "implementedWhen": {
+        "all": [
+          { "path": "frontend/src/locale/messages.xlf" },
+          {
+            "grep": {
+              "pattern": "i18nMissingTranslation",
+              "paths": ["frontend/angular.json"]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

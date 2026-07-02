@@ -1,0 +1,17 @@
+{
+  "defaultFeature": ["enhancement"],
+  "deny": ["go"],
+  "splitStep": {
+    "schema": ["backend", "database"],
+    "api": ["backend"],
+    "frontend": ["frontend"],
+    "e2e": ["e2e", "testing"]
+  },
+  "topicLabelAllow": {
+    "schema": ["backend", "database", "infra", "docs"],
+    "api": ["backend", "database", "security", "search"],
+    "frontend": ["frontend", "ui", "a11y", "ux", "i18n", "seo", "SSR"],
+    "e2e": ["e2e", "testing", "frontend"]
+  },
+  "parentEpic": ["enhancement"]
+}

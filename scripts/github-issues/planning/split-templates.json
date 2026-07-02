@@ -1,0 +1,88 @@
+{
+  "templates": {
+    "full-stack": {
+      "description": "Schema → OpenAPI/backend API → frontend UI (sequential)",
+      "steps": [
+        {
+          "key": "schema",
+          "titleTemplate": "feat({feature}): database schema and migration",
+          "topic": "openapi",
+          "labels": ["backend", "database"],
+          "summaryTemplate": "Add Flyway migration and persistence layer for {feature}",
+          "blockedBy": []
+        },
+        {
+          "key": "api",
+          "titleTemplate": "feat({feature}): API endpoints and OpenAPI",
+          "topic": "{topic}",
+          "labels": ["backend"],
+          "summaryTemplate": "Implement REST API, service layer, and tests for {feature}",
+          "blockedBy": ["schema"]
+        },
+        {
+          "key": "frontend",
+          "titleTemplate": "feat({feature}): frontend UI",
+          "topic": "{topic}",
+          "labels": ["frontend"],
+          "summaryTemplate": "Wire Angular UI to generated client for {feature}",
+          "blockedBy": ["api"]
+        }
+      ]
+    },
+    "backend-only": {
+      "description": "Schema → API (no frontend step)",
+      "steps": [
+        {
+          "key": "schema",
+          "titleTemplate": "feat({feature}): database schema and migration",
+          "topic": "openapi",
+          "labels": ["backend", "database"],
+          "summaryTemplate": "Add Flyway migration for {feature}",
+          "blockedBy": []
+        },
+        {
+          "key": "api",
+          "titleTemplate": "feat({feature}): API endpoints and OpenAPI",
+          "topic": "{topic}",
+          "labels": ["backend"],
+          "summaryTemplate": "Implement API and integration tests for {feature}",
+          "blockedBy": ["schema"]
+        }
+      ]
+    },
+    "parallel-fe-be": {
+      "description": "Shared schema, then parallel API + UI (UI blocked by API)",
+      "steps": [
+        {
+          "key": "schema",
+          "titleTemplate": "feat({feature}): database schema and migration",
+          "topic": "openapi",
+          "labels": ["backend", "database"],
+          "blockedBy": []
+        },
+        {
+          "key": "api",
+          "titleTemplate": "feat({feature}): API endpoints and OpenAPI",
+          "topic": "{topic}",
+          "labels": ["backend"],
+          "blockedBy": ["schema"]
+        },
+        {
+          "key": "frontend",
+          "titleTemplate": "feat({feature}): frontend UI",
+          "topic": "{topic}",
+          "labels": ["frontend"],
+          "blockedBy": ["api"]
+        },
+        {
+          "key": "e2e",
+          "titleTemplate": "feat({feature}): e2e smoke tests",
+          "topic": "e2e",
+          "labels": ["e2e", "testing"],
+          "summaryTemplate": "Playwright smoke coverage for {feature}",
+          "blockedBy": ["frontend"]
+        }
+      ]
+    }
+  }
+}

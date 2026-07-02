@@ -1,0 +1,185 @@
+{
+  "topics": {
+    "auth": {
+      "summary": "User registration, login, sessions, Cognito integration, profile",
+      "labels": ["backend", "frontend", "security"],
+      "backend": [
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/service/AuthService.kt",
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/config/SecurityConfig.kt",
+        "openapi/paths/admin.yml"
+      ],
+      "frontend": [
+        "frontend/src/app/features/login/",
+        "frontend/src/app/features/profile/",
+        "frontend/src/server/auth/"
+      ],
+      "data": [
+        "backend/src/main/resources/db/migration/ (users, sessions)"
+      ],
+      "tests": [
+        "backend/src/test/kotlin/net/jonasmf/auctionengine/**/*Auth*"
+      ],
+      "docs": ["infra/cloudformation/auth.yaml"]
+    },
+    "auction-market": {
+      "summary": "Item search, market browser, item detail, pricing stats",
+      "labels": ["backend", "frontend"],
+      "backend": [
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/controller/AuctionMarketController.kt",
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/service/AuctionMarketSearchService.kt",
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/repository/rds/AuctionMarketSearchRepository.kt",
+        "openapi/paths/auction.yml",
+        "openapi/components/schemas/auction-market-*.yml"
+      ],
+      "frontend": [
+        "frontend/src/app/features/market-browser/",
+        "frontend/src/app/features/auctions/"
+      ],
+      "data": [
+        "backend/src/main/resources/db/migration/ (auction, stats tables)"
+      ],
+      "tests": [
+        "backend/src/test/kotlin/net/jonasmf/auctionengine/**/*Auction*",
+        "frontend/src/app/features/market-browser/**/*.spec.ts"
+      ],
+      "docs": []
+    },
+    "crafting": {
+      "summary": "Recipe search, crafting market browser, profession data",
+      "labels": ["backend", "frontend"],
+      "backend": [
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/controller/CraftingController.kt",
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/service/CraftingMarketSearchService.kt",
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/service/ProfessionRecipeBulkSyncService.kt",
+        "openapi/paths/crafting.yml",
+        "openapi/components/schemas/crafting-market-*.yml",
+        "openapi/components/schemas/auction-market-recipe.yml"
+      ],
+      "frontend": [
+        "frontend/src/app/features/crafting/"
+      ],
+      "tests": [
+        "backend/src/test/kotlin/net/jonasmf/auctionengine/**/*Crafting*",
+        "frontend/src/app/features/crafting/**/*.spec.ts"
+      ],
+      "docs": []
+    },
+    "realm": {
+      "summary": "Connected realms, auction house selection, realm metadata",
+      "labels": ["backend", "frontend"],
+      "backend": [
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/controller/RealmController.kt",
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/service/ConnectedRealmService.kt",
+        "openapi/paths/realm.yml",
+        "openapi/components/schemas/realm*.yml"
+      ],
+      "frontend": [
+        "frontend/src/app/features/select-realm/",
+        "frontend/src/app/core/services/realm-selection.service.ts"
+      ],
+      "tests": [
+        "backend/src/test/kotlin/net/jonasmf/auctionengine/**/*Realm*"
+      ],
+      "docs": []
+    },
+    "admin": {
+      "summary": "Admin UI and APIs — users, server status, SQL editor, expansions",
+      "labels": ["backend", "frontend", "security"],
+      "backend": [
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/controller/AdminController.kt",
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/controller/AdminControllerAdvice.kt",
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/service/admin/",
+        "openapi/paths/admin.yml",
+        "openapi/components/schemas/admin/"
+      ],
+      "frontend": [
+        "frontend/src/app/features/admin/"
+      ],
+      "tests": [
+        "backend/src/test/kotlin/net/jonasmf/auctionengine/controller/AdminControllerTest.kt",
+        "frontend/src/app/features/admin/**/*.spec.ts"
+      ],
+      "docs": []
+    },
+    "blizzard-integration": {
+      "summary": "Blizzard API clients, item/recipe ingestion, media fetch, schedules",
+      "labels": ["backend", "infra"],
+      "backend": [
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/integration/blizzard/",
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/schedules/",
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/service/ItemSyncService.kt"
+      ],
+      "infra": [
+        "tools/refresh-fixtures/",
+        "backend/src/test/resources/blizzard/"
+      ],
+      "tests": [
+        "backend/src/test/kotlin/net/jonasmf/auctionengine/integration/blizzard/"
+      ],
+      "docs": []
+    },
+    "frontend-ui": {
+      "summary": "Shared ethereal-ui components, layout shell, design tokens, a11y",
+      "labels": ["frontend", "ui", "a11y"],
+      "backend": [],
+      "frontend": [
+        "frontend/ethereal-ui/src/lib/components/",
+        "frontend/ethereal-ui/src/stories/",
+        "frontend/src/app/core/"
+      ],
+      "tests": [
+        "frontend/ethereal-ui/src/**/*.spec.ts"
+      ],
+      "docs": ["frontend/AGENTS.md"]
+    },
+    "i18n": {
+      "summary": "Angular XLF catalogs, locale routing, game locale API params",
+      "labels": ["frontend", "i18n"],
+      "backend": [
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/constant/Locale.kt",
+        "openapi/components/schemas/game-locale.yml"
+      ],
+      "frontend": [
+        "frontend/src/locale/messages*.xlf",
+        "frontend/src/app/core/services/locale.service.ts"
+      ],
+      "tests": [
+        "frontend/src/app/core/services/locale.service.spec.ts"
+      ],
+      "docs": [],
+      "relatedSkill": ".agents/skills/frontend-i18n/SKILL.md"
+    },
+    "openapi": {
+      "summary": "API contract changes — always touch OpenAPI + regenerate clients",
+      "labels": ["backend", "frontend", "docs"],
+      "backend": [
+        "openapi/openapi.yml",
+        "openapi/paths/",
+        "openapi/components/schemas/"
+      ],
+      "frontend": [
+        "frontend/src/app/api/generated/ (regenerated, do not hand-edit)"
+      ],
+      "commands": [
+        "bash scripts/openapi/generate-all.sh",
+        "cd frontend && bun run generate:api"
+      ],
+      "docs": []
+    },
+    "infra": {
+      "summary": "CI, Docker, CloudFormation, deployment, Flyway guardrails",
+      "labels": ["infra", "ci", "docker"],
+      "backend": [
+        "backend/src/main/kotlin/net/jonasmf/auctionengine/config/",
+        "backend/src/main/resources/application.yaml"
+      ],
+      "infra": [
+        ".github/workflows/",
+        "infra/",
+        "scripts/deploy/",
+        "scripts/ci/"
+      ],
+      "docs": []
+    }
+  }
+}

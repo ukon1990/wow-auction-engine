@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GitHub issue audit feature matchers",
+  "type": "object",
+  "required": ["features"],
+  "properties": {
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "summary", "match"],
+        "properties": {
+          "id": { "type": "string" },
+          "summary": { "type": "string" },
+          "status": { "enum": ["meta", "obsolete"] },
+          "match": {
+            "type": "object",
+            "properties": {
+              "number": { "type": "integer" },
+              "title": { "type": "array", "items": { "type": "string" } },
+              "body": { "type": "array", "items": { "type": "string" } },
+              "labelsAny": { "type": "array", "items": { "type": "string" } },
+              "labelsAll": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "implementedWhen": { "$ref": "#/$defs/checkGroup" },
+          "partialWhen": { "$ref": "#/$defs/checkGroup" },
+          "evidence": { "type": "array" },
+          "gapsIfPartial": { "type": "array", "items": { "type": "string" } },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "checkGroup": {
+      "type": "object",
+      "properties": {
+        "all": { "type": "array" },
+        "any": { "type": "array" }
+      }
+    }
+  }
+}
