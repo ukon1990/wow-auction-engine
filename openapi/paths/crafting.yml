@@ -86,6 +86,16 @@ search:
             format: int32
         style: form
         explode: true
+      - name: qualityIds
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int32
+        style: form
+        explode: true
       - name: minProfit
         in: query
         required: false
@@ -170,7 +180,7 @@ filters:
       - CraftingMarket
     operationId: filters
     summary: Return crafting search filter definitions
-    description: Returns profession options for crafting market filters.
+    description: Returns profession, expansion, and quality options for crafting market filters.
     parameters:
       - name: region
         in: query

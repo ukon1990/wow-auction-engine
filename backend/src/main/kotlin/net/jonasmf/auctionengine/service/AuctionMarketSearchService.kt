@@ -424,6 +424,7 @@ class AuctionMarketSearchService(
                 id = it.id,
                 label = it.label,
                 parentId = it.parentId,
+                qualityType = it.qualityType,
             )
         }
 
