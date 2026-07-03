@@ -44,4 +44,22 @@ class BranchDatabaseConfigTest {
             "jdbc:mariadb://localhost:59000/dbo?serverTimezone=UTC&cachePrepStmts=true".withDatabase("branch_feature"),
         )
     }
+
+    @Test
+    fun `branch database clone qualifies copied sequence DDL with target database`() {
+        assertEquals(
+            "CREATE SEQUENCE `branch_feature`.`auction_house_seq` start with 1 increment by 50",
+            "CREATE SEQUENCE `auction_house_seq` start with 1 increment by 50"
+                .qualifyCreateTableOrSequence("branch_feature", "auction_house_seq"),
+        )
+    }
+
+    @Test
+    fun `branch database clone qualifies copied table DDL with target database`() {
+        assertEquals(
+            "CREATE TABLE `branch_feature`.`auction_house` (`id` int not null)",
+            "CREATE TABLE `auction_house` (`id` int not null)"
+                .qualifyCreateTableOrSequence("branch_feature", "auction_house"),
+        )
+    }
 }

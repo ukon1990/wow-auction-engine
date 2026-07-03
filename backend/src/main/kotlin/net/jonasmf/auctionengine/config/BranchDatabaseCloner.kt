@@ -55,6 +55,27 @@ private val BOUNDED_HISTORY_TABLES =
         "auction_stats_hourly",
     )
 
+private val SEQUENCE_RESETS =
+    mapOf(
+        "auction_house_seq" to SequenceReset(tableName = "auction_house", columnName = "id"),
+        "file_reference_seq" to SequenceReset(tableName = "file_reference", columnName = "id"),
+    )
+
+private data class DatabaseObject(
+    val name: String,
+    val type: DatabaseObjectType,
+)
+
+private enum class DatabaseObjectType {
+    TABLE,
+    SEQUENCE,
+}
+
+private data class SequenceReset(
+    val tableName: String,
+    val columnName: String,
+)
+
 internal fun String.withoutDatabase(): String {
     val prefix = "jdbc:mariadb://"
     if (!startsWith(prefix)) return this
@@ -104,30 +125,33 @@ private fun Connection.cloneDatabase(
     )
     executeSql("SET FOREIGN_KEY_CHECKS = 0")
     try {
-        cloneTables(sourceDatabase = sourceDatabase, targetDatabase = targetDatabase)
+        val objects = databaseObjects(sourceDatabase)
+        cloneTablesAndSequences(sourceDatabase = sourceDatabase, targetDatabase = targetDatabase, objects = objects)
+        resetCopiedSequences(targetDatabase = targetDatabase, sequences = objects.sequences())
         cloneViews(sourceDatabase = sourceDatabase, targetDatabase = targetDatabase)
     } finally {
         executeSql("SET FOREIGN_KEY_CHECKS = 1")
     }
 }
 
-private fun Connection.cloneTables(
+private fun Connection.cloneTablesAndSequences(
     sourceDatabase: String,
     targetDatabase: String,
+    objects: List<DatabaseObject>,
 ) {
-    tableNames(sourceDatabase).forEach { tableName ->
+    objects.forEach { databaseObject ->
+        val tableName = databaseObject.name
         val createTableSql =
             showCreateTable(sourceDatabase, tableName)
-                .replaceFirst(
-                    Regex("""(?i)^CREATE TABLE\s+`${Regex.escape(tableName)}`"""),
-                    "CREATE TABLE ${quoteIdentifier(targetDatabase)}.${quoteIdentifier(tableName)}",
-                )
+                .qualifyCreateTableOrSequence(targetDatabase, tableName)
         executeSql(createTableSql)
-        cloneData(
-            sourceDatabase = sourceDatabase,
-            targetDatabase = targetDatabase,
-            tableName = tableName,
-        )
+        if (databaseObject.type == DatabaseObjectType.TABLE) {
+            cloneData(
+                sourceDatabase = sourceDatabase,
+                targetDatabase = targetDatabase,
+                tableName = tableName,
+            )
+        }
     }
 }
 
@@ -152,6 +176,41 @@ private fun Connection.cloneData(
     )
 }
 
+private fun Connection.resetCopiedSequences(
+    targetDatabase: String,
+    sequences: List<String>,
+) {
+    sequences
+        .mapNotNull { sequenceName -> SEQUENCE_RESETS[sequenceName]?.let { sequenceName to it } }
+        .forEach { (sequenceName, reset) ->
+            val nextValue =
+                maxValue(
+                    database = targetDatabase,
+                    tableName = reset.tableName,
+                    columnName = reset.columnName,
+                ) + 1
+            executeSql("DO SETVAL(${qualifiedIdentifier(targetDatabase, sequenceName)}, $nextValue, 0)")
+        }
+}
+
+private fun Connection.maxValue(
+    database: String,
+    tableName: String,
+    columnName: String,
+): Long =
+    createStatement().use { statement ->
+        statement
+            .executeQuery(
+                """
+                SELECT COALESCE(MAX(${quoteIdentifier(columnName)}), 0)
+                FROM ${qualifiedIdentifier(database, tableName)}
+                """.trimIndent(),
+            ).use { result ->
+                result.next()
+                result.getLong(1)
+            }
+    }
+
 private fun Connection.cloneViews(
     sourceDatabase: String,
     targetDatabase: String,
@@ -170,20 +229,31 @@ private fun Connection.cloneViews(
     }
 }
 
-private fun Connection.tableNames(database: String): List<String> =
+private fun Connection.databaseObjects(database: String): List<DatabaseObject> =
     prepareStatement(
         """
-        SELECT table_name
+        SELECT table_name, table_type
         FROM information_schema.tables
         WHERE table_schema = ?
-          AND table_type = 'BASE TABLE'
+          AND table_type IN ('BASE TABLE', 'SEQUENCE')
         ORDER BY table_name
         """.trimIndent(),
     ).use { statement ->
         statement.setString(1, database)
         statement.executeQuery().use { result ->
             buildList {
-                while (result.next()) add(result.getString("table_name"))
+                while (result.next()) {
+                    add(
+                        DatabaseObject(
+                            name = result.getString("table_name"),
+                            type =
+                                when (result.getString("table_type")) {
+                                    "SEQUENCE" -> DatabaseObjectType.SEQUENCE
+                                    else -> DatabaseObjectType.TABLE
+                                },
+                        ),
+                    )
+                }
             }
         }
     }
@@ -227,8 +297,25 @@ private fun Connection.showCreateView(
         }
     }
 
+internal fun String.qualifyCreateTableOrSequence(
+    database: String,
+    objectName: String,
+): String =
+    replaceFirst(
+        Regex("""(?i)^CREATE\s+(TABLE|SEQUENCE)\s+`${Regex.escape(objectName)}`"""),
+        "CREATE $1 ${qualifiedIdentifier(database, objectName)}",
+    )
+
+private fun List<DatabaseObject>.sequences(): List<String> =
+    filter { it.type == DatabaseObjectType.SEQUENCE }.map { it.name }
+
 private fun Connection.executeSql(sql: String) {
     createStatement().use { statement -> statement.execute(sql) }
 }
+
+private fun qualifiedIdentifier(
+    database: String,
+    value: String,
+): String = "${quoteIdentifier(database)}.${quoteIdentifier(value)}"
 
 private fun quoteIdentifier(value: String): String = "`${value.replace("`", "``")}`"

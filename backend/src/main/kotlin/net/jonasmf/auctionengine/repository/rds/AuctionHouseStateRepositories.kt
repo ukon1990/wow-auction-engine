@@ -5,6 +5,7 @@ import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.mapper.realm.toDomain
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
+import java.time.OffsetDateTime
 import kotlin.time.toJavaInstant
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse as AuctionHouseDomain
 import net.jonasmf.auctionengine.domain.realm.Realm as RealmDomain
@@ -35,6 +36,16 @@ class AuctionHouseStateRepositoryImpl(
                 java.time.Instant.now(),
                 PageRequest.of(0, 50),
             ).map { it.toDomain() }
+
+    override fun findAllByLastHistoryDeleteEventBefore(hourlyTTL: OffsetDateTime): List<AuctionHouseDomain> =
+        auctionHouseRepository
+            .findAllByLastHistoryDeleteEventBefore(hourlyTTL.toInstant())
+            .map { it.toDomain() }
+
+    override fun findAllByLastHistoryDeleteEventDailyBefore(dailyTTL: OffsetDateTime): List<AuctionHouseDomain> =
+        auctionHouseRepository
+            .findAllByLastHistoryDeleteEventDailyBefore(dailyTTL.toInstant())
+            .map { it.toDomain() }
 
     override fun save(auctionHouse: AuctionHouseDomain): AuctionHouseDomain {
         requireNotNull(auctionHouse.id) { "AuctionHouse.id must not be null when saving to MariaDB" }

@@ -56,7 +56,7 @@ class AuctionCleanupServiceTest {
         assertEquals(10, result.connectedRealmId)
         assertEquals(4, result.deletedRows)
         verify(exactly = 1) { auctionHouseService.updateLastDailyHistoryDeleted(10, now()) }
-        verify(exactly = 0) { auctionHouseService.updateLastHistoryDeleted(any(), any()) }
+        verify(exactly = 0) { auctionHouseService.updateLastHistoryDeleted(any<Int>(), any<OffsetDateTime>()) }
     }
 
     @Test
@@ -86,14 +86,14 @@ class AuctionCleanupServiceTest {
         assertEquals(0, result.deletedRows)
         assertTrue(result.dryRun)
         verify(exactly = 0) { repository.deleteHourlyStats(any(), any(), any()) }
-        verify(exactly = 0) { auctionHouseService.updateLastHistoryDeleted(any(), any()) }
+        verify(exactly = 0) { auctionHouseService.updateLastHistoryDeleted(any<Int>(), any<OffsetDateTime>()) }
         verify(exactly = 0) { repository.optimize(any()) }
     }
 
     @Test
     fun `optimize runs only when no due realms remain`() {
         val service = service()
-        every { auctionHouseService.getReadyForHourlyStatsCleanup(now()) } returns emptyList()
+        every { auctionHouseService.getReadyForHourlyStatsCleanup(now()) } returns emptyList<AuctionHouse>()
         justRun { repository.optimize(AuctionCleanupTarget.HOURLY_STATS) }
 
         val result = service.cleanupHourlyStats()
