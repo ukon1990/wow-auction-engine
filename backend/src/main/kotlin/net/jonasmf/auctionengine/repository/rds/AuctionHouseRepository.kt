@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
-import java.time.OffsetDateTime
 import java.util.Optional
 
 @Repository
@@ -27,6 +27,7 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
     ): List<AuctionHouse>
 
     @Modifying
+    @Transactional
     @Query(
         """
         UPDATE AuctionHouse a
@@ -40,6 +41,7 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
     ): Int
 
     @Modifying
+    @Transactional
     @Query(
         """
         UPDATE AuctionHouse a

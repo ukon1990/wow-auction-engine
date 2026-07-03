@@ -5,7 +5,6 @@ import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.mapper.realm.toDomain
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
-import java.time.OffsetDateTime
 import kotlin.time.toJavaInstant
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse as AuctionHouseDomain
 import net.jonasmf.auctionengine.domain.realm.Realm as RealmDomain
@@ -60,10 +59,6 @@ class AuctionHouseStateRepositoryImpl(
             }
 
         return saved.toDomain()
-    }
-
-    override fun findAllByLastHistoryDeleteEventBefore(hourlyTTL: OffsetDateTime): List<AuctionHouseDomain> {
-        TODO("Not yet implemented")
     }
 
     private fun resolveRealms(connectedId: Int): List<RealmDomain> {

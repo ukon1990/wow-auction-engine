@@ -6,7 +6,6 @@ import net.jonasmf.auctionengine.repository.AuctionHouseRepository
 import net.jonasmf.auctionengine.repository.rds.ConnectedRealmUpdateHistoryRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.OffsetDateTime
 import kotlin.math.min
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
@@ -110,13 +109,10 @@ class AuctionHouseService(
         )
 
     @Transactional
-    fun updateLastDailyPriceDeleted(
+    fun updateLastHistoryDeleted(
         connectedRealmId: Int,
-        lastDeletedTime: OffsetDateTime,
-    ) = auctionHouseEntityRepository.updateLastHistoryDeleteEvent(connectedRealmId, lastDeletedTime.toInstant())
+        lastDeletedTime: Instant,
+    ) = auctionHouseEntityRepository.updateLastHistoryDeleteEvent(connectedRealmId, lastDeletedTime.toJavaInstant())
 
     fun getReadyForUpdate(region: Region) = repository.findReadyForUpdateByRegion(region)
-
-    fun getReadyForHourlyStatsCleanup(hourlyTTL: OffsetDateTime) =
-        repository.findAllByLastHistoryDeleteEventBefore(hourlyTTL)
 }

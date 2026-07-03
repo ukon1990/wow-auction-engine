@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.bean.override.mockito.MockitoBean
-import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
@@ -430,19 +429,6 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
             assertEquals(6, result.first().id)
             assertEquals(4, result.last().id)
             assertEquals(3, result.size)
-        }
-    }
-
-    @Nested
-    inner class GetReadyForHourlyStatsCleanup {
-        @Test
-        fun `should only return those with older delete lastHistoryDeleteEvent`() {
-            val lastDeletedTime = OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(2)
-            val hourlyTTL = OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(1)
-            val house = auctionHouses.first()
-            auctionHouseService.updateLastDailyPriceDeleted(house.connectedId, lastDeletedTime)
-            val result = auctionHouseService.getReadyForHourlyStatsCleanup(hourlyTTL)
-            assertEquals(1, result.size)
         }
     }
 
