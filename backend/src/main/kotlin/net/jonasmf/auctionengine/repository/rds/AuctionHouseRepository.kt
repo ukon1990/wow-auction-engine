@@ -26,6 +26,10 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
         pageable: Pageable,
     ): List<AuctionHouse>
 
+    fun findAllByLastHistoryDeleteEventBefore(lastHistoryDeleteEvent: Instant): List<AuctionHouse>
+
+    fun findAllByLastHistoryDeleteEventDailyBefore(lastHistoryDeleteEventDaily: Instant): List<AuctionHouse>
+
     @Modifying
     @Transactional
     @Query(

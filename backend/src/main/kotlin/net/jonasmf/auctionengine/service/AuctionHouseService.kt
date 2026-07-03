@@ -114,5 +114,17 @@ class AuctionHouseService(
         lastDeletedTime: Instant,
     ) = auctionHouseEntityRepository.updateLastHistoryDeleteEvent(connectedRealmId, lastDeletedTime.toJavaInstant())
 
+    @Transactional
+    fun updateLastHistoryDeleted(
+        connectedRealmId: Int,
+        lastDeletedTime: OffsetDateTime,
+    ) = auctionHouseEntityRepository.updateLastHistoryDeleteEvent(connectedRealmId, lastDeletedTime.toInstant())
+
+    @Transactional
+    fun updateLastDailyHistoryDeleted(
+        connectedRealmId: Int,
+        lastDeletedTime: OffsetDateTime,
+    ) = auctionHouseEntityRepository.updateLastHistoryDeleteEventDaily(connectedRealmId, lastDeletedTime.toInstant())
+
     fun getReadyForUpdate(region: Region) = repository.findReadyForUpdateByRegion(region)
 }
