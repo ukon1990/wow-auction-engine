@@ -1,16 +1,14 @@
 package net.jonasmf.auctionengine.schedules
 
-import net.jonasmf.auctionengine.service.AuctionSnapshotPersistenceService
+import net.jonasmf.auctionengine.service.DeletedAuctionCleanupService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 
 @Component
 class DeletedAuctionCleanupSchedule(
-    private val auctionSnapshotPersistenceService: AuctionSnapshotPersistenceService,
+    private val cleanupService: DeletedAuctionCleanupService,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(DeletedAuctionCleanupSchedule::class.java)
 
@@ -18,10 +16,26 @@ class DeletedAuctionCleanupSchedule(
         cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 4 * * *}",
         zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
     )
-    fun deleteSoftDeletedAuctions() {
-        val cutoff = OffsetDateTime.now(ZoneOffset.UTC).minusDays(7)
-        // TODO: Fix just for price table instead
-        //  val deletedRows = auctionSnapshotPersistenceService.deleteSoftDeletedAuctionsOlderThan(cutoff)
-        //  logger.info("Deleted {} soft-deleted auctions older than {}", deletedRows, cutoff)
+    fun deleteOldHourlyHistory() {
+        logger.info("Starting scheduled hourly auction statistics cleanup.")
+        cleanupService.cleanupHourlyStats()
+    }
+
+    @Scheduled(
+        cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 4 * * *}",
+        zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
+    )
+    fun deleteOldDailyHistory() {
+        logger.info("Starting scheduled daily auction statistics cleanup.")
+        cleanupService.cleanupDailyStats()
+    }
+
+    @Scheduled(
+        cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 4 * * *}",
+        zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
+    )
+    fun deleteOldPriceHistory() {
+        logger.info("Starting scheduled auction price history cleanup.")
+        cleanupService.cleanupPriceHistory()
     }
 }

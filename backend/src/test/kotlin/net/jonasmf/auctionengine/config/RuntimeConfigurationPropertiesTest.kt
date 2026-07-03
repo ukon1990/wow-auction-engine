@@ -78,10 +78,36 @@ class RuntimeConfigurationPropertiesTest {
             }
     }
 
+    @Test
+    fun `binds deleted auction cleanup configuration`() {
+        contextRunner
+            .withPropertyValues(
+                "blizzard.region=Europe",
+                "app.scheduling.deleted-auction-cleanup.enabled=false",
+                "app.scheduling.deleted-auction-cleanup.hourly-retention=P21D",
+                "app.scheduling.deleted-auction-cleanup.daily-retention=P180D",
+                "app.scheduling.deleted-auction-cleanup.price-retention=P10D",
+                "app.scheduling.deleted-auction-cleanup.batch-size=500",
+                "app.scheduling.deleted-auction-cleanup.dry-run=true",
+                "app.scheduling.deleted-auction-cleanup.optimize-enabled=true",
+            ).run { context ->
+                val properties = context.getBean(DeletedAuctionCleanupProperties::class.java)
+
+                assertEquals(false, properties.enabled)
+                assertEquals(java.time.Duration.ofDays(21), properties.hourlyRetention)
+                assertEquals(java.time.Duration.ofDays(180), properties.dailyRetention)
+                assertEquals(java.time.Duration.ofDays(10), properties.priceRetention)
+                assertEquals(500, properties.batchSize)
+                assertEquals(true, properties.dryRun)
+                assertEquals(true, properties.optimizeEnabled)
+            }
+    }
+
     @Configuration
     @EnableConfigurationProperties(
         value = [
             BlizzardApiProperties::class,
+            DeletedAuctionCleanupProperties::class,
             WaeS3Properties::class,
         ],
     )

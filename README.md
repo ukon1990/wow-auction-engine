@@ -98,6 +98,26 @@ docker compose -f docker-compose-db.yml up -d
 
 The MariaDB container creates the `dbo` database automatically from [`docker/initdb/01-init-schema.sql`](docker/initdb/01-init-schema.sql).
 
+### Reset a local branch database
+
+Local non-`master` branches use their own MariaDB schema cloned from `dbo`. If a migration fails, or branch schema changes need a clean retry, drop the current branch schema and restart the backend so it is cloned again:
+
+```bash
+bun run db:branch:reset:dry-run
+bun run db:branch:reset
+```
+
+The reset script refuses to drop `dbo` and only targets the documented local MariaDB endpoint on `localhost:59000`.
+It supports both Podman Compose and Docker Compose. If both CLIs are installed and you need to force one, set `CONTAINER_CLI=podman` or `CONTAINER_CLI=docker`.
+It uses the local datasource defaults from `application.yml` (`root`/`root`). To override those for the reset tool only, use `BRANCH_DATABASE_RESET_DB_URL`, `BRANCH_DATABASE_RESET_DB_USERNAME`, or `BRANCH_DATABASE_RESET_DB_PASSWORD`.
+
+To remove schemas for branches that no longer exist:
+
+```bash
+bun run db:branch:prune:dry-run
+bun run db:branch:prune
+```
+
 ### 4. Run the application
 
 ```bash

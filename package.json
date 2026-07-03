@@ -13,6 +13,10 @@
         "format:frontend": "cd frontend && bun run format",
         "format:backend": "cd backend && ./mvnw ktlint:format",
         "mvn": "cd backend && ./mvnw",
+        "db:branch:reset": "node scripts/reset-branch-database.mjs",
+        "db:branch:reset:dry-run": "node scripts/reset-branch-database.mjs --dry-run",
+        "db:branch:prune": "node scripts/reset-branch-database.mjs --prune-dead",
+        "db:branch:prune:dry-run": "node scripts/reset-branch-database.mjs --prune-dead --dry-run",
         "refresh:fixtures": "bun tools/refresh-fixtures.mjs",
         "generate:expansion-ranges": "node tools/generate-expansion-ranges.mjs"
     },

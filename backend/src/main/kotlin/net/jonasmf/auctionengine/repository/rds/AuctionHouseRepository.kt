@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import java.util.Optional
 
@@ -25,7 +26,12 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
         pageable: Pageable,
     ): List<AuctionHouse>
 
+    fun findAllByLastHistoryDeleteEventBefore(lastHistoryDeleteEvent: Instant): List<AuctionHouse>
+
+    fun findAllByLastHistoryDeleteEventDailyBefore(lastHistoryDeleteEventDaily: Instant): List<AuctionHouse>
+
     @Modifying
+    @Transactional
     @Query(
         """
         UPDATE AuctionHouse a
@@ -36,5 +42,32 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
     fun updateLastDailyPriceUpdate(
         @Param("connectedId") connectedId: Int,
         @Param("lastDailyPriceUpdate") lastDailyPriceUpdate: Instant,
+    ): Int
+
+    @Modifying
+    @Transactional
+    @Query(
+        """
+        UPDATE AuctionHouse a
+        SET a.lastHistoryDeleteEvent = :lastHistoryDeleteEvent
+        WHERE a.connectedId = :connectedRealmId
+    """,
+    )
+    fun updateLastHistoryDeleteEvent(
+        connectedRealmId: Int,
+        lastHistoryDeleteEvent: Instant,
+    ): Int
+
+    @Modifying
+    @Query(
+        """
+        UPDATE AuctionHouse a
+        SET a.lastHistoryDeleteEventDaily = :lastHistoryDeleteEventDaily
+        WHERE a.connectedId = :connectedRealmId
+    """,
+    )
+    fun updateLastHistoryDeleteEventDaily(
+        connectedRealmId: Int,
+        lastHistoryDeleteEventDaily: Instant,
     ): Int
 }

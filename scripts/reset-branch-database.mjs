@@ -17,6 +17,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const repoRoot = resolve(__dirname, '..');
 
+const redactArg = (arg) => (arg.startsWith('-p') ? '-p[redacted]' : arg);
+
+const formatCommand = (cmd, args) => [cmd, ...args.map(redactArg)].join(' ');
+
 const run = (cmd, args, opts = {}) =>
   new Promise((resolvePromise, rejectPromise) => {
     const { capture = false, quiet = false, ...spawnOptions } = opts;
@@ -40,7 +44,7 @@ const run = (cmd, args, opts = {}) =>
     });
     child.on('close', (code) => {
       if (code === 0) resolvePromise({ stdout, stderr });
-      else rejectPromise(new Error(stderr.trim() || `${cmd} ${args.join(' ')} exited with code ${code}`));
+      else rejectPromise(new Error(stderr.trim() || `${formatCommand(cmd, args)} exited with code ${code}`));
     });
   });
 
@@ -98,41 +102,61 @@ const parseJdbcMariaDbUrl = (jdbcUrl) => {
 
 const getDatabaseConfig = () => {
   const jdbcUrl =
-    process.env.AUCTION_ENGINE_DB_URL ??
+    process.env.BRANCH_DATABASE_RESET_DB_URL ??
     process.env.SPRING_DATASOURCE_URL ??
-    'jdbc:mariadb://localhost:59000/dbo';
+    'jdbc:mariadb://localhost:59000/dbo?serverTimezone=UTC&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true';
   const parsed = parseJdbcMariaDbUrl(jdbcUrl);
 
   return {
     ...parsed,
-    user: process.env.AUCTION_ENGINE_DB_USERNAME ?? process.env.SPRING_DATASOURCE_USERNAME ?? 'root',
-    password: process.env.AUCTION_ENGINE_DB_PASSWORD ?? process.env.SPRING_DATASOURCE_PASSWORD ?? 'root',
+    user: process.env.BRANCH_DATABASE_RESET_DB_USERNAME ?? process.env.SPRING_DATASOURCE_USERNAME ?? 'root',
+    password: process.env.BRANCH_DATABASE_RESET_DB_PASSWORD ?? process.env.SPRING_DATASOURCE_PASSWORD ?? 'root',
   };
 };
 
 const getComposeCommand = async () => {
   const requestedEngine = process.env.CONTAINER_CLI;
   if (requestedEngine) {
-    await run(requestedEngine, ['compose', 'version'], { quiet: true });
-    return { cmd: requestedEngine, argsPrefix: ['compose'] };
+    const command = { cmd: requestedEngine, argsPrefix: ['compose'] };
+    await assertComposeProjectAvailable(command);
+    return command;
   }
 
-  try {
-    await run('docker', ['compose', 'version'], { quiet: true });
-    return { cmd: 'docker', argsPrefix: ['compose'] };
-  } catch (_) {
-    // no-op
+  const candidates = [
+    { cmd: 'podman', argsPrefix: ['compose'] },
+    { cmd: 'docker', argsPrefix: ['compose'] },
+    { cmd: 'docker-compose', argsPrefix: [] },
+  ];
+
+  for (const candidate of candidates) {
+    try {
+      await assertComposeProjectAvailable(candidate);
+      return candidate;
+    } catch (_) {
+      // Try the next supported compose engine.
+    }
   }
 
-  try {
-    await run('docker-compose', ['version'], { quiet: true });
-    return { cmd: 'docker-compose', argsPrefix: [] };
-  } catch (_) {
-    // no-op
-  }
+  throw new Error(
+    'Could not find a running local MariaDB compose service. Start it with docker/podman compose, or set CONTAINER_CLI=podman or CONTAINER_CLI=docker.',
+  );
+};
 
-  await run('podman', ['compose', 'version'], { quiet: true });
-  return { cmd: 'podman', argsPrefix: ['compose'] };
+const assertComposeProjectAvailable = async (composeCommand) => {
+  const { stdout } = await run(composeCommand.cmd, [
+    ...composeCommand.argsPrefix,
+    '-f',
+    'docker-compose-db.yml',
+    'ps',
+    '-q',
+    'mariadb',
+  ], {
+    cwd: repoRoot,
+    capture: true,
+  });
+  if (!stdout.trim()) {
+    throw new Error(`${composeCommand.cmd} compose project does not have a running mariadb service`);
+  }
 };
 
 const queryDatabases = async (database) => {
