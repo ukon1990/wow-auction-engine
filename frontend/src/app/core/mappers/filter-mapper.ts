@@ -10,7 +10,10 @@ import {
   selectedRangeValue,
   selectedSet,
 } from '@core/utils/filter';
-import { mapQualityFilterOptions, resolveFilterOptionQuality } from '@core/utils/quality-filter-options';
+import {
+  mapQualityFilterOptions,
+  resolveFilterOptionQuality,
+} from '@core/utils/quality-filter-options';
 
 export const toFilterSections = (
   filters: readonly AuctionMarketFilter[],

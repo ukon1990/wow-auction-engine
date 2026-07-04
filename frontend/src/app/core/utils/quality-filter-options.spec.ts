@@ -23,6 +23,7 @@ describe('quality-filter-options', () => {
       'POOR',
       'COMMON',
       'UNCOMMON',
+      'LEGENDARY',
     ]);
   });
 });

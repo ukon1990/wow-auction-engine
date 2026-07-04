@@ -175,55 +175,42 @@
         <source>Common</source>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/helpers/quality.ts</context>
-          <context context-type="linenumber">18</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quality.uncommon" datatype="html">
         <source>Uncommon</source>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/helpers/quality.ts</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">51</context>
+          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quality.rare" datatype="html">
         <source>Rare</source>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/helpers/quality.ts</context>
-          <context context-type="linenumber">22</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quality.epic" datatype="html">
         <source>Epic</source>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/helpers/quality.ts</context>
-          <context context-type="linenumber">24</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quality.legendary" datatype="html">
         <source>Legendary</source>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/helpers/quality.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">27</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="quality.artifact" datatype="html">
+        <source>Artifact</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="sourcefile">ethereal-ui/src/lib/helpers/quality.ts</context>
+          <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="route.login" datatype="html">
@@ -464,7 +451,7 @@
         <source>Price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">23</context>
+          <context context-type="linenumber">12</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
@@ -483,7 +470,7 @@
         <source>Quantity</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">25</context>
+          <context context-type="linenumber">14</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
@@ -502,7 +489,7 @@
         <source>Quality</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">16</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
@@ -521,7 +508,7 @@
         <source>Class</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">18</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
@@ -540,7 +527,7 @@
         <source>Subclass</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">20</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
@@ -559,14 +546,14 @@
         <source>Expansion</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="filters.hasRecipe" datatype="html">
         <source>Has Recipe</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.jobs.apply.running" datatype="html">
@@ -833,98 +820,98 @@
         <source>All override states</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">102</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.filter.hasOverride" datatype="html">
         <source>Has override</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">98</context>
+          <context context-type="linenumber">103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.filter.noOverride" datatype="html">
         <source>No override</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">104</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.filter.anyRecipe" datatype="html">
         <source>All recipe states</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.filter.hasRecipe" datatype="html">
         <source>Has recipe</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">103</context>
+          <context context-type="linenumber">108</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.filter.noRecipe" datatype="html">
         <source>No recipe</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="linenumber">109</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.filter.anyClass" datatype="html">
         <source>All classes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">113</context>
+          <context context-type="linenumber">118</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.filter.anySubclass" datatype="html">
         <source>All subclasses</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">117</context>
+          <context context-type="linenumber">122</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.filter.anyExpansion" datatype="html">
         <source>All expansions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">121</context>
+          <context context-type="linenumber">126</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.panel.create" datatype="html">
         <source>Create manual item</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">151</context>
+          <context context-type="linenumber">156</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.panel.compare" datatype="html">
         <source>Compare Blizzard API</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">153</context>
+          <context context-type="linenumber">158</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.panel.edit" datatype="html">
         <source>Edit item override</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">155</context>
+          <context context-type="linenumber">160</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.panel.recipe" datatype="html">
         <source>Associate recipe</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">157</context>
+          <context context-type="linenumber">162</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.deleteConfirm" datatype="html">
         <source>Delete this item override? Base item data will be inherited again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
-          <context context-type="linenumber">321</context>
+          <context context-type="linenumber">326</context>
         </context-group>
       </trans-unit>
       <trans-unit id="common.email" datatype="html">

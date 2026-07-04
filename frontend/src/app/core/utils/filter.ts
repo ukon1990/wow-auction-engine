@@ -1,4 +1,4 @@
-import { FilterSection, ItemQuality } from '@ui';
+import { FilterSection, ItemQuality, formatQuality } from '@ui';
 import { AuctionMarketFilter } from '@api/generated';
 import { CraftingBrowserQueryState } from '@core/models/crafting-browser.models';
 import { MarketBrowserQueryState } from '@core/models/market-browser.models';
@@ -27,25 +27,16 @@ export const filterLabel = (filter: AuctionMarketFilter): string => {
   }
 };
 
-export const filterOptionLabel = (filterId: string, label: string, qualityType?: string | null): string => {
+export const filterOptionLabel = (
+  filterId: string,
+  label: string,
+  qualityType?: string | null,
+): string => {
   if (filterId !== 'qualityIds') return label;
   return qualityLabel(toQuality(qualityType ?? label));
 };
 
-export const qualityLabel = (quality: ItemQuality): string => {
-  switch (quality) {
-    case 'common':
-      return $localize`:@@quality.common:Common`;
-    case 'uncommon':
-      return $localize`:@@quality.uncommon:Uncommon`;
-    case 'rare':
-      return $localize`:@@quality.rare:Rare`;
-    case 'epic':
-      return $localize`:@@quality.epic:Epic`;
-    case 'legendary':
-      return $localize`:@@quality.legendary:Legendary`;
-  }
-};
+export const qualityLabel = (quality: ItemQuality): string => formatQuality(quality);
 
 export const filterType = (filter: AuctionMarketFilter): FilterSection['type'] => {
   if (filter.id === 'itemClassIds' || filter.id === 'itemSubclassIds') return 'select';
@@ -259,7 +250,11 @@ export const CRAFTING_RANGE_SECTION_KEYS = {
   readonly [keyof CraftingBrowserQueryState, keyof CraftingBrowserQueryState]
 >;
 
-export const CRAFTING_MULTI_SELECT_KEYS = new Set<string>(['professionIds', 'expansionIds', 'qualityIds']);
+export const CRAFTING_MULTI_SELECT_KEYS = new Set<string>([
+  'professionIds',
+  'expansionIds',
+  'qualityIds',
+]);
 
 export const craftingSelectedSet = (
   filterId: string,

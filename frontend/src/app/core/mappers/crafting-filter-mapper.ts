@@ -1,7 +1,14 @@
 import { AuctionMarketFilter } from '@api/generated';
 import { CraftingBrowserQueryState } from '@core/models/crafting-browser.models';
-import { craftingSelectedRangeValue, craftingSelectedSet, filterOptionLabel } from '@core/utils/filter';
-import { mapQualityFilterOptions, resolveFilterOptionQuality } from '@core/utils/quality-filter-options';
+import {
+  craftingSelectedRangeValue,
+  craftingSelectedSet,
+  filterOptionLabel,
+} from '@core/utils/filter';
+import {
+  mapQualityFilterOptions,
+  resolveFilterOptionQuality,
+} from '@core/utils/quality-filter-options';
 import { FilterSection } from '@ui';
 
 export const toCraftingFilterSections = (
