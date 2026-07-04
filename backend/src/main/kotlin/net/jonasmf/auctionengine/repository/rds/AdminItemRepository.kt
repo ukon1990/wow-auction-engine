@@ -8,6 +8,7 @@ import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemReference
 import net.jonasmf.auctionengine.generated.model.AdminItemRecipe
+import net.jonasmf.auctionengine.generated.model.AdminRecipeSearchResult
 import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.mapper.toGameLocale
@@ -98,6 +99,20 @@ interface AdminItemRepositoryPort {
     )
 
     fun deleteOverride(id: Int): Boolean
+
+    fun recipeExists(recipeId: Int): Boolean
+
+    fun searchRecipes(
+        query: String?,
+        limit: Int,
+        localeColumnSuffix: String,
+    ): List<AdminRecipeSearchResult>
+
+    fun updateRecipeCraftedItem(
+        recipeId: Int,
+        craftedItemId: Int?,
+        craftedQuantity: Int?,
+    ): Boolean
 }
 
 @Repository
@@ -350,6 +365,78 @@ class AdminItemRepository(
     override fun deleteOverride(id: Int): Boolean =
         jdbcTemplate.update("DELETE FROM `item` WHERE id = ? AND is_override = TRUE", id) > 0
 
+    override fun recipeExists(recipeId: Int): Boolean =
+        jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM recipe WHERE id = ?",
+            Long::class.java,
+            recipeId,
+        )!! > 0
+
+    override fun searchRecipes(
+        query: String?,
+        limit: Int,
+        localeColumnSuffix: String,
+    ): List<AdminRecipeSearchResult> {
+        val params = mutableListOf<Any?>()
+        val whereSql = recipeSearchWhereSql(query, localeColumnSuffix, params)
+        params += limit
+        return jdbcTemplate.query(
+            """
+            SELECT
+                r.id AS recipe_id,
+                COALESCE(r_l.$localeColumnSuffix, r_l.en_gb, r_l.en_us, CAST(r.id AS CHAR)) AS recipe_name,
+                COALESCE(p_l.$localeColumnSuffix, p_l.en_gb, p_l.en_us, CAST(p.id AS CHAR), 'Unknown profession') AS profession_name,
+                COALESCE(st_l.$localeColumnSuffix, st_l.en_gb, st_l.en_us, CAST(st.id AS CHAR), 'Unknown skill tier') AS skill_tier_name,
+                COALESCE(pc_l.$localeColumnSuffix, pc_l.en_gb, pc_l.en_us, CAST(pc.internal_id AS CHAR), 'Unknown category') AS profession_category_name,
+                r.crafted_item_id,
+                COALESCE(item_l.$localeColumnSuffix, item_l.en_gb, item_l.en_us, CAST(r.crafted_item_id AS CHAR)) AS crafted_item_name,
+                r.crafted_quantity
+            FROM recipe r
+                LEFT JOIN locale r_l ON r_l.id = r.name_id
+                LEFT JOIN profession_category pc ON pc.internal_id = r.profession_category_id
+                LEFT JOIN locale pc_l ON pc_l.id = pc.name_id
+                LEFT JOIN skill_tier st ON st.id = pc.skill_tier_id
+                LEFT JOIN locale st_l ON st_l.id = st.name_id
+                LEFT JOIN profession p ON p.id = st.profession_id
+                LEFT JOIN locale p_l ON p_l.id = p.name_id
+                LEFT JOIN v_item crafted_item ON crafted_item.id = r.crafted_item_id
+                LEFT JOIN locale item_l ON item_l.id = crafted_item.name_id
+            $whereSql
+            ORDER BY profession_name, skill_tier_name, profession_category_name, recipe_name, r.id
+            LIMIT ?
+            """.trimIndent(),
+            { rs, _ ->
+                AdminRecipeSearchResult(
+                    recipeId = rs.getInt("recipe_id"),
+                    name = rs.getString("recipe_name"),
+                    professionName = rs.getString("profession_name"),
+                    skillTierName = rs.getString("skill_tier_name"),
+                    professionCategoryName = rs.getString("profession_category_name"),
+                    craftedItemId = rs.nullableInt("crafted_item_id"),
+                    craftedItemName = rs.getString("crafted_item_name"),
+                    craftedQuantity = rs.nullableInt("crafted_quantity"),
+                )
+            },
+            *params.toTypedArray(),
+        )
+    }
+
+    override fun updateRecipeCraftedItem(
+        recipeId: Int,
+        craftedItemId: Int?,
+        craftedQuantity: Int?,
+    ): Boolean =
+        jdbcTemplate.update(
+            """
+            UPDATE recipe
+            SET crafted_item_id = ?, crafted_quantity = ?
+            WHERE id = ?
+            """.trimIndent(),
+            craftedItemId,
+            craftedQuantity,
+            recipeId,
+        ) > 0
+
     private fun lookupIdByType(
         tableName: String,
         type: String,
@@ -457,6 +544,30 @@ class AdminItemRepository(
             clauses += if (hasOverride) "override_item.id IS NOT NULL" else "override_item.id IS NULL"
         }
         return if (clauses.isEmpty()) "" else "WHERE ${clauses.joinToString(" AND ")}"
+    }
+
+    private fun recipeSearchWhereSql(
+        query: String?,
+        localeColumnSuffix: String,
+        params: MutableList<Any?>,
+    ): String {
+        val normalizedQuery = query?.trim().orEmpty()
+        if (normalizedQuery.isEmpty()) return ""
+        normalizedQuery.toIntOrNull()?.let { recipeId ->
+            params += recipeId
+            return "WHERE r.id = ?"
+        }
+        val likeQuery = "%$normalizedQuery%"
+        params += likeQuery
+        params += likeQuery
+        params += likeQuery
+        return """
+            WHERE (
+                r_l.$localeColumnSuffix LIKE ?
+                OR r_l.en_gb LIKE ?
+                OR r_l.en_us LIKE ?
+            )
+        """.trimIndent()
     }
 
     private fun itemSelectSql(

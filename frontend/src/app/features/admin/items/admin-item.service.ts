@@ -6,6 +6,8 @@ import {
   AdminItemCompareResponse,
   AdminItemCreateRequest,
   AdminItemOverrideRequest,
+  AdminRecipeAssociationRequest,
+  AdminRecipeSearchResult,
   PageMetadata,
 } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
@@ -120,6 +122,33 @@ export class AdminItemService {
       switchMap(() => this.loadItem(id)),
       map(() => undefined),
     );
+  }
+
+  searchRecipes(query: string, limit = 20): Observable<readonly AdminRecipeSearchResult[]> {
+    const locale = this.localeService.apiLocaleOverride();
+    return this.api.searchAdminRecipes(query, locale, limit).pipe(
+      catchError((error: unknown) => {
+        this.toast.error(
+          readHttpErrorMessage(
+            error,
+            $localize`:@@admin.items.recipeSearchError:Unable to search recipes.`,
+          ),
+        );
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  upsertRecipeAssociation(
+    id: number,
+    recipeId: number,
+    request: AdminRecipeAssociationRequest,
+    filters: AdminItemFilterState,
+  ): Observable<AdminItem1> {
+    return this.mutate(
+      () => this.api.upsertAdminItemRecipeAssociation(id, recipeId, request),
+      filters,
+    ).pipe(switchMap(() => this.loadItem(id)));
   }
 
   compareWithApi(id: number): Observable<AdminItemCompareResponse> {

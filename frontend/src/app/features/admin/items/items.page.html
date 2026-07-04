@@ -141,5 +141,27 @@
       [loading]="compareLoading()"
       [error]="compareError()"
     />
+  } @else if (panelMode() === 'recipe') {
+    @if (detailLoading()) {
+      <p class="ee-data text-outline" role="status">Loading item details...</p>
+    } @else if (selectedItem(); as item) {
+      <app-admin-item-recipe-association-panel
+        [item]="item"
+        [results]="recipeResults()"
+        [searching]="recipeSearching()"
+        [submitting]="mutationLoading()"
+        [submitError]="formError() || detailError()"
+        (search)="searchRecipes($event)"
+        (submitted)="submitRecipeAssociation($event)"
+        (cancelled)="closePanel()"
+      />
+    } @else if (detailError()) {
+      <p
+        class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+        role="alert"
+      >
+        {{ detailError() }}
+      </p>
+    }
   }
 </ee-slide-over>

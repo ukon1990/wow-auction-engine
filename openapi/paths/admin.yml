@@ -461,6 +461,40 @@ adminItemOverride:
                 description: Override deleted
             "404":
                 description: Override not found
+adminItemRecipeAssociation:
+    put:
+        tags:
+            - Admin
+        operationId: upsertAdminItemRecipeAssociation
+        summary: Associates a recipe with an item by updating recipe crafted output fields
+        parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                  type: integer
+            - name: recipeId
+              in: path
+              required: true
+              schema:
+                  type: integer
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "../openapi.yml#/components/schemas/AdminRecipeAssociationRequest"
+        responses:
+            "200":
+                description: Updated admin item
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminItem"
+            "400":
+                description: Invalid recipe association
+            "404":
+                description: Item or recipe not found
 adminItemCompareApi:
     post:
         tags:
@@ -507,3 +541,41 @@ adminItemBulkOverrides:
                 description: Invalid bulk override request
             "404":
                 description: One or more base items were not found
+adminRecipes:
+    get:
+        tags:
+            - Admin
+        operationId: searchAdminRecipes
+        summary: Searches recipes for admin item association
+        parameters:
+            - name: query
+              in: query
+              required: false
+              schema:
+                  type: string
+              description: Optional search text matched against recipe id and localized recipe names.
+            - name: locale
+              in: query
+              required: false
+              schema:
+                  type: string
+              description: Optional locale override for resolved labels.
+            - name: limit
+              in: query
+              required: false
+              schema:
+                  type: integer
+                  minimum: 1
+                  maximum: 50
+                  default: 20
+        responses:
+            "200":
+                description: Matching recipes
+                content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                $ref: "../openapi.yml#/components/schemas/AdminRecipeSearchResult"
+            "400":
+                description: Invalid search request

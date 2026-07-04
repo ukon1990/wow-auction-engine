@@ -12,6 +12,8 @@ import net.jonasmf.auctionengine.generated.model.AdminItemCreateRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemPage
 import net.jonasmf.auctionengine.generated.model.AdminJob
+import net.jonasmf.auctionengine.generated.model.AdminRecipeAssociationRequest
+import net.jonasmf.auctionengine.generated.model.AdminRecipeSearchResult
 import net.jonasmf.auctionengine.generated.model.AdminSqlExecuteRequest
 import net.jonasmf.auctionengine.generated.model.AdminSqlMetadata
 import net.jonasmf.auctionengine.generated.model.AdminSqlResult
@@ -126,10 +128,25 @@ class AdminController(
         ResponseEntity.ok(adminItemService.getItem(id, locale, includeBase, includeOverride))
 
     @PreAuthorize("hasAuthority('admin')")
+    override suspend fun searchAdminRecipes(
+        query: String?,
+        locale: String?,
+        limit: Int,
+    ): ResponseEntity<List<AdminRecipeSearchResult>> =
+        ResponseEntity.ok(adminItemService.searchRecipes(query, locale, limit))
+
+    @PreAuthorize("hasAuthority('admin')")
     override suspend fun upsertAdminItemOverride(
         id: Int,
         body: AdminItemOverrideRequest,
     ): ResponseEntity<AdminItem1> = ResponseEntity.ok(adminItemService.upsertOverride(id, body))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun upsertAdminItemRecipeAssociation(
+        id: Int,
+        recipeId: Int,
+        body: AdminRecipeAssociationRequest,
+    ): ResponseEntity<AdminItem1> = ResponseEntity.ok(adminItemService.upsertRecipeAssociation(id, recipeId, body))
 
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun deleteAdminItemOverride(id: Int): ResponseEntity<Unit> {

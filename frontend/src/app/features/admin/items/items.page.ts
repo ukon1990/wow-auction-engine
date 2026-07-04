@@ -10,10 +10,17 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { AdminItem1, AdminItemCreateRequest, AdminItemOverrideRequest } from '@api/generated';
+import {
+  AdminItem1,
+  AdminItemCreateRequest,
+  AdminItemOverrideRequest,
+  AdminRecipeAssociationRequest,
+  AdminRecipeSearchResult,
+} from '@api/generated';
 import { AdminItemComparePanelComponent } from './admin-item-compare-panel.component';
 import { AdminItemCreateFormComponent } from './admin-item-create-form.component';
 import { AdminItemOverrideFormComponent } from './admin-item-override-form.component';
+import { AdminItemRecipeAssociationPanelComponent } from './admin-item-recipe-association-panel.component';
 import { AdminItemService } from './admin-item.service';
 import { createAdminItemColumns } from './admin-items-table.columns';
 import { AdminItemFilterState, defaultAdminItemFilters } from './item-filters';
@@ -28,7 +35,7 @@ import {
 } from '@ui';
 import { firstValueFrom, fromEvent, map, startWith } from 'rxjs';
 
-type PanelMode = 'edit' | 'create' | 'compare';
+type PanelMode = 'edit' | 'create' | 'compare' | 'recipe';
 
 const DEFAULT_VIEWPORT_WIDTH = 1280;
 const MOBILE_CARD_VIEW_MAX_WIDTH = 767;
@@ -40,6 +47,7 @@ const MOBILE_CARD_VIEW_MAX_WIDTH = 767;
     AdminItemComparePanelComponent,
     AdminItemCreateFormComponent,
     AdminItemOverrideFormComponent,
+    AdminItemRecipeAssociationPanelComponent,
     PageFrameComponent,
     SearchInputComponent,
     SelectInputComponent,
@@ -55,6 +63,7 @@ export class ItemsPage {
   private readonly expansionService = inject(AdminExpansionService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
+  private recipeSearchSequence = 0;
 
   protected readonly loading = this.service.loading.asReadonly();
   protected readonly mutationLoading = this.service.mutationLoading.asReadonly();
@@ -72,6 +81,8 @@ export class ItemsPage {
   protected readonly filters = signal<AdminItemFilterState>(defaultAdminItemFilters());
   protected readonly panelMode = signal<PanelMode | null>(null);
   protected readonly formError = signal<string | null>(null);
+  protected readonly recipeResults = signal<readonly AdminRecipeSearchResult[]>([]);
+  protected readonly recipeSearching = signal(false);
   protected readonly viewportWidth = signal(DEFAULT_VIEWPORT_WIDTH);
   protected readonly cardView = computed(() => this.viewportWidth() <= MOBILE_CARD_VIEW_MAX_WIDTH);
 
@@ -91,6 +102,7 @@ export class ItemsPage {
   protected readonly columns = signal(
     createAdminItemColumns({
       onEdit: (item) => void this.openEditPanel(item),
+      onAssociateRecipe: (item) => void this.openRecipePanel(item),
       onCompare: (item) => void this.openComparePanel(item),
       onDeleteOverride: (item) => void this.deleteOverride(item),
     }),
@@ -114,6 +126,8 @@ export class ItemsPage {
         return $localize`:@@admin.items.panel.compare:Compare Blizzard API`;
       case 'edit':
         return $localize`:@@admin.items.panel.edit:Edit item override`;
+      case 'recipe':
+        return $localize`:@@admin.items.panel.recipe:Associate recipe`;
       default:
         return '';
     }
@@ -187,9 +201,17 @@ export class ItemsPage {
     await firstValueFrom(this.service.compareWithApi(item.id)).catch(() => undefined);
   }
 
+  protected async openRecipePanel(item: AdminItem1): Promise<void> {
+    this.formError.set(null);
+    this.recipeResults.set([]);
+    this.panelMode.set('recipe');
+    await this.loadItem(item.id);
+  }
+
   protected closePanel(): void {
     this.panelMode.set(null);
     this.formError.set(null);
+    this.recipeResults.set([]);
     this.service.clearSelection();
   }
 
@@ -214,6 +236,47 @@ export class ItemsPage {
       .catch((error: unknown) => {
         this.formError.set(error instanceof Error ? error.message : 'Unable to create item.');
       });
+  }
+
+  protected async searchRecipes(query: string): Promise<void> {
+    const normalized = query.trim();
+    const sequence = ++this.recipeSearchSequence;
+    if (normalized.length < 2) {
+      this.recipeResults.set([]);
+      this.recipeSearching.set(false);
+      return;
+    }
+    this.recipeSearching.set(true);
+    await firstValueFrom(this.service.searchRecipes(normalized))
+      .then((recipes) => {
+        if (sequence === this.recipeSearchSequence) {
+          this.recipeResults.set(recipes);
+        }
+      })
+      .catch(() => {
+        if (sequence === this.recipeSearchSequence) {
+          this.recipeResults.set([]);
+        }
+      })
+      .finally(() => {
+        if (sequence === this.recipeSearchSequence) {
+          this.recipeSearching.set(false);
+        }
+      });
+  }
+
+  protected async submitRecipeAssociation(event: {
+    recipeId: number;
+    request: AdminRecipeAssociationRequest;
+  }): Promise<void> {
+    const item = this.selectedItem();
+    if (!item) return;
+    this.formError.set(null);
+    await firstValueFrom(
+      this.service.upsertRecipeAssociation(item.id, event.recipeId, event.request, this.filters()),
+    ).catch((error: unknown) => {
+      this.formError.set(error instanceof Error ? error.message : 'Unable to update recipe.');
+    });
   }
 
   protected async deleteOverride(item: AdminItem1): Promise<void> {

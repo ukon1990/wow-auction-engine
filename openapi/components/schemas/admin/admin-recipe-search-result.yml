@@ -1,0 +1,27 @@
+type: object
+required:
+    - recipeId
+    - name
+    - professionName
+    - skillTierName
+    - professionCategoryName
+properties:
+    recipeId:
+        type: integer
+    name:
+        type: string
+    professionName:
+        type: string
+    skillTierName:
+        type: string
+    professionCategoryName:
+        type: string
+    craftedItemId:
+        type: integer
+        nullable: true
+    craftedItemName:
+        type: string
+        nullable: true
+    craftedQuantity:
+        type: integer
+        nullable: true

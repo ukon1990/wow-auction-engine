@@ -50,10 +50,14 @@ paths:
     $ref: ./paths/admin.yml#/adminItemById
   /admin/items/{id}/override:
     $ref: ./paths/admin.yml#/adminItemOverride
+  /admin/items/{id}/recipes/{recipeId}:
+    $ref: ./paths/admin.yml#/adminItemRecipeAssociation
   /admin/items/{id}/compare-api:
     $ref: ./paths/admin.yml#/adminItemCompareApi
   /admin/items/bulk-overrides:
     $ref: ./paths/admin.yml#/adminItemBulkOverrides
+  /admin/recipes:
+    $ref: ./paths/admin.yml#/adminRecipes
   /realms:
     $ref: ./paths/realm.yml#/listRealms
   /realms/{region}/{slug}:
@@ -128,6 +132,10 @@ components:
       $ref: ./components/schemas/admin/admin-item-reference.yml
     AdminItemRecipe:
       $ref: ./components/schemas/admin/admin-item-recipe.yml
+    AdminRecipeAssociationRequest:
+      $ref: ./components/schemas/admin/admin-recipe-association-request.yml
+    AdminRecipeSearchResult:
+      $ref: ./components/schemas/admin/admin-recipe-search-result.yml
     AdminItemOverrideRequest:
       $ref: ./components/schemas/admin/admin-item-override-request.yml
     AuctionHouseStatus:

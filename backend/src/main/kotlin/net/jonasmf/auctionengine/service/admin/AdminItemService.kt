@@ -9,6 +9,8 @@ import net.jonasmf.auctionengine.generated.model.AdminItemCreateRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemPage
+import net.jonasmf.auctionengine.generated.model.AdminRecipeAssociationRequest
+import net.jonasmf.auctionengine.generated.model.AdminRecipeSearchResult
 import net.jonasmf.auctionengine.integration.blizzard.ItemApiLookup
 import net.jonasmf.auctionengine.mapper.hasEnglishName
 import net.jonasmf.auctionengine.mapper.toGameLocale
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 
 private const val MAX_ADMIN_ITEM_PAGE_SIZE = 100
+private const val MAX_ADMIN_RECIPE_SEARCH_LIMIT = 50
 
 @Service
 class AdminItemService(
@@ -60,6 +63,21 @@ class AdminItemService(
         findItem(id, locale)
             .toAdminItem(includeBase = includeBase, includeOverride = includeOverride)
 
+    fun searchRecipes(
+        query: String?,
+        locale: String?,
+        limit: Int,
+    ): List<AdminRecipeSearchResult> {
+        if (limit !in 1..MAX_ADMIN_RECIPE_SEARCH_LIMIT) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "limit must be between 1 and 50")
+        }
+        return adminItemRepository.searchRecipes(
+            query = query,
+            limit = limit,
+            localeColumnSuffix = AdminExpansionRepository.resolveLocaleColumnSuffix(locale),
+        )
+    }
+
     @Transactional
     fun upsertOverride(
         id: Int,
@@ -74,6 +92,38 @@ class AdminItemService(
         }
         val subclassInternalId = resolveOverrideSubclassId(request)
         adminItemRepository.upsertOverride(id, request, subclassInternalId)
+        return getItem(id, locale = null, includeBase = true, includeOverride = true)
+    }
+
+    @Transactional
+    fun upsertRecipeAssociation(
+        id: Int,
+        recipeId: Int,
+        request: AdminRecipeAssociationRequest,
+    ): AdminItem1 {
+        if (!adminItemRepository.hasAnyItemRow(id)) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found: $id")
+        }
+        if (!adminItemRepository.recipeExists(recipeId)) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found: $recipeId")
+        }
+
+        val craftedItemId = request.craftedItemId
+        if (craftedItemId != null && craftedItemId != id) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "craftedItemId must match path item id")
+        }
+        if (craftedItemId == null) {
+            adminItemRepository.updateRecipeCraftedItem(recipeId, craftedItemId = null, craftedQuantity = null)
+        } else {
+            val craftedQuantity =
+                request.craftedQuantity
+                    ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "craftedQuantity is required")
+            if (craftedQuantity < 1) {
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "craftedQuantity must be at least 1")
+            }
+            adminItemRepository.updateRecipeCraftedItem(recipeId, craftedItemId = id, craftedQuantity = craftedQuantity)
+        }
+
         return getItem(id, locale = null, includeBase = true, includeOverride = true)
     }
 

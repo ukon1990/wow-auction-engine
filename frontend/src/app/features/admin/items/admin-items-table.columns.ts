@@ -15,6 +15,7 @@ type AdminItemColumnMeta = {
 
 export type AdminItemTableActions = {
   readonly onEdit: (item: AdminItem1) => void;
+  readonly onAssociateRecipe: (item: AdminItem1) => void;
   readonly onCompare: (item: AdminItem1) => void;
   readonly onDeleteOverride: (item: AdminItem1) => void;
 };
@@ -92,7 +93,7 @@ export const createAdminItemColumns = (actions: AdminItemTableActions) => {
       header: $localize`:@@admin.items.table.actions:Actions`,
       meta: {
         align: 'right',
-        gridTrack: 'minmax(9rem, 0.8fr)',
+        gridTrack: 'minmax(11rem, 0.9fr)',
         ...actions,
       } satisfies AdminItemColumnMeta,
       cell: () => flexRenderComponent(AdminItemActionsCellComponent),

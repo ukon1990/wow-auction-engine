@@ -47,6 +47,8 @@ describe('AdminItemService', () => {
     getAdminItem: ReturnType<typeof vitest.fn>;
     upsertAdminItemOverride: ReturnType<typeof vitest.fn>;
     deleteAdminItemOverride: ReturnType<typeof vitest.fn>;
+    searchAdminRecipes: ReturnType<typeof vitest.fn>;
+    upsertAdminItemRecipeAssociation: ReturnType<typeof vitest.fn>;
     createAdminItem: ReturnType<typeof vitest.fn>;
     compareAdminItemWithApi: ReturnType<typeof vitest.fn>;
   };
@@ -58,6 +60,21 @@ describe('AdminItemService', () => {
       getAdminItem: vitest.fn().mockReturnValue(of(itemFixture)),
       upsertAdminItemOverride: vitest.fn().mockReturnValue(of(itemFixture)),
       deleteAdminItemOverride: vitest.fn().mockReturnValue(of(undefined)),
+      searchAdminRecipes: vitest.fn().mockReturnValue(
+        of([
+          {
+            recipeId: 338995,
+            name: 'Craft Thunderfury',
+            professionName: 'Blacksmithing',
+            skillTierName: 'Classic',
+            professionCategoryName: 'Weapons',
+            craftedItemId: null,
+            craftedItemName: null,
+            craftedQuantity: null,
+          },
+        ]),
+      ),
+      upsertAdminItemRecipeAssociation: vitest.fn().mockReturnValue(of(itemFixture)),
       createAdminItem: vitest.fn().mockReturnValue(of(itemFixture)),
       compareAdminItemWithApi: vitest.fn().mockReturnValue(of({ itemId: 19019, fields: {} })),
     };
@@ -107,6 +124,22 @@ describe('AdminItemService', () => {
     service.upsertOverride(19019, request, defaultAdminItemFilters()).subscribe();
 
     expect(api.upsertAdminItemOverride).toHaveBeenCalledWith(19019, request);
+    expect(api.searchAdminItems).toHaveBeenCalledOnce();
+    expect(api.getAdminItem).toHaveBeenCalledWith(19019, 'en_US', true, true);
+  });
+
+  it('searches recipes with locale and limit', () => {
+    service.searchRecipes('craft thunder', 10).subscribe();
+
+    expect(api.searchAdminRecipes).toHaveBeenCalledWith('craft thunder', 'en_US', 10);
+  });
+
+  it('associates a recipe and reloads the item', () => {
+    const request = { craftedItemId: 19019, craftedQuantity: 2 };
+
+    service.upsertRecipeAssociation(19019, 338995, request, defaultAdminItemFilters()).subscribe();
+
+    expect(api.upsertAdminItemRecipeAssociation).toHaveBeenCalledWith(19019, 338995, request);
     expect(api.searchAdminItems).toHaveBeenCalledOnce();
     expect(api.getAdminItem).toHaveBeenCalledWith(19019, 'en_US', true, true);
   });

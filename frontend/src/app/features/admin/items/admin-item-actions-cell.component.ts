@@ -6,6 +6,7 @@ import { IconButtonComponent } from '@ui';
 
 type AdminItemActionsMeta = {
   readonly onEdit?: (item: AdminItem1) => void;
+  readonly onAssociateRecipe?: (item: AdminItem1) => void;
   readonly onCompare?: (item: AdminItem1) => void;
   readonly onDeleteOverride?: (item: AdminItem1) => void;
 };
@@ -20,6 +21,12 @@ type AdminItemActionsMeta = {
         label="Edit item override"
         tooltip="Open the item override editor for this item."
         (pressed)="edit()"
+      />
+      <ee-icon-button
+        icon="restaurant"
+        label="Associate recipe"
+        tooltip="Associate a profession recipe with this item as its crafted output."
+        (pressed)="associateRecipe()"
       />
       <ee-icon-button
         icon="import_export"
@@ -47,6 +54,10 @@ export class AdminItemActionsCellComponent {
 
   protected edit(): void {
     this.actions()?.onEdit?.(this.item());
+  }
+
+  protected associateRecipe(): void {
+    this.actions()?.onAssociateRecipe?.(this.item());
   }
 
   protected compare(): void {
