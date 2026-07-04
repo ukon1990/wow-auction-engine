@@ -28,7 +28,9 @@ export class AdminSqlService {
 export function readAdminSqlError(error: unknown): string {
   if (error instanceof HttpErrorResponse) {
     const payload = error.error as
-      { readonly detail?: string; readonly message?: string } | string | null;
+      | { readonly detail?: string; readonly message?: string }
+      | string
+      | null;
     if (typeof payload === 'string' && payload.trim()) {
       return payload;
     }

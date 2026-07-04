@@ -16,11 +16,10 @@ export const TO_QUERY_PARAMS_MAPPER = new InjectionToken<
 });
 
 export type Region = 'eu' | 'us' | 'kr' | 'tw';
-@Injectable(
-  /*{
+@Injectable()
+/*{
   providedIn: 'root',
 }*/
-)
 export class QueryService<QueryParam> {
   readonly region = signal<Region>('eu');
   readonly realmSlug = signal<string | undefined>(undefined);
