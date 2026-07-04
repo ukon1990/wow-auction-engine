@@ -49,6 +49,11 @@ properties:
     nullable: true
   expansion:
     $ref: "../../../openapi.yml#/components/schemas/AdminExpansion"
+  recipes:
+    type: array
+    items:
+      $ref: "../../../openapi.yml#/components/schemas/AdminItemRecipe"
+    default: []
   overrideNote:
     type: string
     nullable: true

@@ -1,6 +1,7 @@
 import { ColumnDef, createColumnHelper, flexRenderComponent } from '@tanstack/angular-table';
 import { AdminItem1 } from '@api/generated';
 import { AdminItemActionsCellComponent } from './admin-item-actions-cell.component';
+import { AdminItemNameCellComponent } from './admin-item-name-cell.component';
 import { AdminItemQualityCellComponent } from './admin-item-quality-cell.component';
 import { AdminItemStateCellComponent } from './admin-item-state-cell.component';
 
@@ -41,6 +42,7 @@ export const createAdminItemColumns = (actions: AdminItemTableActions) => {
         cardPriority: 0,
         ...actions,
       } satisfies AdminItemColumnMeta,
+      cell: () => flexRenderComponent(AdminItemNameCellComponent),
     }),
     helper.display({
       id: 'quality',

@@ -126,6 +126,8 @@ components:
       $ref: ./components/schemas/admin/admin-item-page.yml
     AdminItemReference:
       $ref: ./components/schemas/admin/admin-item-reference.yml
+    AdminItemRecipe:
+      $ref: ./components/schemas/admin/admin-item-recipe.yml
     AdminItemOverrideRequest:
       $ref: ./components/schemas/admin/admin-item-override-request.yml
     AuctionHouseStatus:

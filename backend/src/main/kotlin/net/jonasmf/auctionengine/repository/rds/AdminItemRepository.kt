@@ -7,6 +7,7 @@ import net.jonasmf.auctionengine.generated.model.AdminItemCreateRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemReference
+import net.jonasmf.auctionengine.generated.model.AdminItemRecipe
 import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.mapper.toGameLocale
@@ -150,7 +151,10 @@ class AdminItemRepository(
                 },
                 *itemParams.toTypedArray(),
             )
-        return AdminItemSearchResult(items = items, totalItems = count)
+        return AdminItemSearchResult(
+            items = items.withRecipes(localeColumnSuffix),
+            totalItems = count,
+        )
     }
 
     override fun pageMetadata(
@@ -169,7 +173,10 @@ class AdminItemRepository(
         id: Int,
         localeColumnSuffix: String,
     ): AdminItemRows? {
-        val effective = findFields("v_item", "i.id = ?", localeColumnSuffix, id) ?: return null
+        val effective =
+            findFields("v_item", "i.id = ?", localeColumnSuffix, id)
+                ?.withRecipes(localeColumnSuffix)
+                ?: return null
         return AdminItemRows(
             effective = effective,
             base = findFields("`item`", "i.id = ? AND i.is_override = FALSE", localeColumnSuffix, id),
@@ -367,8 +374,53 @@ class AdminItemRepository(
                 WHERE $whereSql
                 """.trimIndent(),
                 { rs, _ -> rs.toAdminItemFields() },
-                *params,
-            ).firstOrNull()
+            *params,
+        ).firstOrNull()
+
+    private fun AdminItemFields.withRecipes(localeColumnSuffix: String): AdminItemFields =
+        copy(recipes = recipesByItemId(listOf(id ?: return this), localeColumnSuffix)[id].orEmpty())
+
+    private fun List<AdminItem1>.withRecipes(localeColumnSuffix: String): List<AdminItem1> {
+        val recipesByItemId = recipesByItemId(map { it.id }, localeColumnSuffix)
+        return map { item ->
+            item.copy(effective = item.effective.copy(recipes = recipesByItemId[item.id].orEmpty()))
+        }
+    }
+
+    private fun recipesByItemId(
+        itemIds: List<Int>,
+        localeColumnSuffix: String,
+    ): Map<Int, List<AdminItemRecipe>> {
+        if (itemIds.isEmpty()) return emptyMap()
+        val placeholders = itemIds.joinToString(",") { "?" }
+        return jdbcTemplate
+            .query(
+                """
+                SELECT
+                    r.crafted_item_id,
+                    r.id AS recipe_id,
+                    COALESCE(r_l.$localeColumnSuffix, r_l.en_gb, r_l.en_us, CAST(r.id AS CHAR)) AS recipe_name,
+                    COALESCE(p_l.$localeColumnSuffix, p_l.en_gb, p_l.en_us, CAST(p.id AS CHAR), 'Unknown profession') AS profession_name
+                FROM recipe r
+                    LEFT JOIN locale r_l ON r_l.id = r.name_id
+                    LEFT JOIN profession_category pc ON pc.internal_id = r.profession_category_id
+                    LEFT JOIN skill_tier st ON st.id = pc.skill_tier_id
+                    LEFT JOIN profession p ON p.id = st.profession_id
+                    LEFT JOIN locale p_l ON p_l.id = p.name_id
+                WHERE r.crafted_item_id IN ($placeholders)
+                ORDER BY r.crafted_item_id, profession_name, recipe_name, r.id
+                """.trimIndent(),
+                { rs, _ ->
+                    rs.getInt("crafted_item_id") to
+                        AdminItemRecipe(
+                            recipeId = rs.getInt("recipe_id"),
+                            name = rs.getString("recipe_name"),
+                            professionName = rs.getString("profession_name"),
+                        )
+                },
+                *itemIds.toTypedArray(),
+            ).groupBy({ it.first }, { it.second })
+    }
 
     private fun itemSearchWhereSql(
         query: String?,
