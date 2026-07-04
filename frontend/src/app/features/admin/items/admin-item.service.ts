@@ -56,6 +56,8 @@ export class AdminItemService {
         params.hasOverride,
         params.itemClassId,
         params.itemSubclassId,
+        params.expansionId,
+        params.hasRecipe,
         params.page,
         params.pageSize,
       )

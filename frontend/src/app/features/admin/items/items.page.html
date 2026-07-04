@@ -31,63 +31,85 @@
       </button>
     </div>
 
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_12rem_12rem_14rem_8rem_auto_auto]">
-      <ee-search-input
-        label="Name"
-        [showLabel]="true"
-        placeholder="Search localized names"
-        [ngModel]="filters().name"
-        (ngModelChange)="updateFilter('name', $event)"
-      />
-      <ee-search-input
-        label="Item ID"
-        [showLabel]="true"
-        placeholder="Exact or partial item ID"
-        [ngModel]="filters().itemId"
-        (ngModelChange)="updateFilter('itemId', $event)"
-      />
-      <ee-select-input
-        label="Class"
-        [options]="itemClassOptions"
-        [ngModel]="filters().classId"
-        (ngModelChange)="updateClassFilter($event)"
-      />
-      <ee-select-input
-        label="Subclass"
-        [options]="itemSubclassOptions()"
-        [disabled]="filters().classId === ''"
-        [ngModel]="filters().subclassId"
-        (ngModelChange)="updateFilter('subclassId', $event)"
-      />
-      <ee-select-input
-        label="Override state"
-        [options]="hasOverrideOptions"
-        [ngModel]="filters().hasOverride"
-        (ngModelChange)="updateFilter('hasOverride', $event)"
-      />
-      <ee-select-input
-        label="Page size"
-        [options]="pageSizeOptions"
-        [ngModel]="pageSizeValue()"
-        (ngModelChange)="updatePageSize($event)"
-      />
-      <button
-        type="button"
-        class="h-12 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70 md:self-end"
-        [disabled]="loading()"
-        (click)="applyFilters()"
-        type="submit"
-      >
-        Apply
-      </button>
-      <button
-        type="button"
-        class="h-12 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container md:self-end"
-        (click)="resetFilters()"
-      >
-        Reset
-      </button>
-    </div>
+    <form class="grid gap-4" (ngSubmit)="applyFilters()">
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <ee-search-input
+          label="Name"
+          [showLabel]="true"
+          placeholder="Search localized names"
+          [ngModel]="filters().name"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('name', $event)"
+        />
+        <ee-search-input
+          label="Item ID"
+          [showLabel]="true"
+          placeholder="Exact or partial item ID"
+          [ngModel]="filters().itemId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('itemId', $event)"
+        />
+        <ee-select-input
+          label="Class"
+          [options]="itemClassOptions"
+          [ngModel]="filters().classId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateClassFilter($event)"
+        />
+        <ee-select-input
+          label="Subclass"
+          [options]="itemSubclassOptions()"
+          [disabled]="filters().classId === ''"
+          [ngModel]="filters().subclassId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('subclassId', $event)"
+        />
+        <ee-select-input
+          label="Expansion"
+          [options]="expansionOptions()"
+          [ngModel]="filters().expansionId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('expansionId', $event)"
+        />
+        <ee-select-input
+          label="Recipe association"
+          [options]="hasRecipeOptions"
+          [ngModel]="filters().hasRecipe"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('hasRecipe', $event)"
+        />
+        <ee-select-input
+          label="Override state"
+          [options]="hasOverrideOptions"
+          [ngModel]="filters().hasOverride"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('hasOverride', $event)"
+        />
+        <ee-select-input
+          label="Page size"
+          [options]="pageSizeOptions"
+          [ngModel]="pageSizeValue()"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updatePageSize($event)"
+        />
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <button
+          type="submit"
+          class="h-12 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+          [disabled]="loading()"
+        >
+          Apply
+        </button>
+        <button
+          type="button"
+          class="h-12 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
+          (click)="resetFilters()"
+        >
+          Reset
+        </button>
+      </div>
+    </form>
   </section>
 
   <section class="grid min-h-0 flex-1 gap-4" aria-label="Admin item results">

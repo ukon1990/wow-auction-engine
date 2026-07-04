@@ -158,7 +158,7 @@ class AdminItemServiceTest {
     fun `search items accepts class and subclass filters without reference lookup`() {
         repository.itemSubclassExists = false
 
-        val result = service.searchItems(null, null, null, null, 1, 1, 1, 25)
+        val result = service.searchItems(null, null, null, null, 1, 1, null, null, 1, 25)
 
         assertEquals(0, result.items.size)
         assertEquals(1, repository.lastSearch?.itemClassId)
@@ -169,7 +169,7 @@ class AdminItemServiceTest {
     fun `search items requires class when subclass filter is set`() {
         val error =
             assertThrows(ResponseStatusException::class.java) {
-                service.searchItems(null, null, null, null, null, 1, 1, 25)
+                service.searchItems(null, null, null, null, null, 1, null, null, 1, 25)
             }
 
         assertEquals(400, error.statusCode.value())
@@ -225,6 +225,8 @@ private data class AdminItemSearchCall(
     val hasOverride: Boolean?,
     val itemClassId: Int?,
     val itemSubclassId: Int?,
+    val expansionId: Int?,
+    val hasRecipe: Boolean?,
     val page: Int,
     val pageSize: Int,
     val localeColumnSuffix: String,
@@ -253,6 +255,8 @@ private class FakeAdminItemRepository : AdminItemRepositoryPort {
         hasOverride: Boolean?,
         itemClassId: Int?,
         itemSubclassId: Int?,
+        expansionId: Int?,
+        hasRecipe: Boolean?,
         page: Int,
         pageSize: Int,
         localeColumnSuffix: String,
@@ -264,6 +268,8 @@ private class FakeAdminItemRepository : AdminItemRepositoryPort {
                 hasOverride = hasOverride,
                 itemClassId = itemClassId,
                 itemSubclassId = itemSubclassId,
+                expansionId = expansionId,
+                hasRecipe = hasRecipe,
                 page = page,
                 pageSize = pageSize,
                 localeColumnSuffix = localeColumnSuffix,

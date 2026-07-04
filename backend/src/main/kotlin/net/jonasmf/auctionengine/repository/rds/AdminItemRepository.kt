@@ -52,6 +52,8 @@ interface AdminItemRepositoryPort {
         hasOverride: Boolean?,
         itemClassId: Int?,
         itemSubclassId: Int?,
+        expansionId: Int?,
+        hasRecipe: Boolean?,
         page: Int,
         pageSize: Int,
         localeColumnSuffix: String,
@@ -128,13 +130,25 @@ class AdminItemRepository(
         hasOverride: Boolean?,
         itemClassId: Int?,
         itemSubclassId: Int?,
+        expansionId: Int?,
+        hasRecipe: Boolean?,
         page: Int,
         pageSize: Int,
         localeColumnSuffix: String,
     ): AdminItemSearchResult {
         val params = mutableListOf<Any?>()
         val whereSql =
-            itemSearchWhereSql(query, hasBase, hasOverride, itemClassId, itemSubclassId, localeColumnSuffix, params)
+            itemSearchWhereSql(
+                query,
+                hasBase,
+                hasOverride,
+                itemClassId,
+                itemSubclassId,
+                expansionId,
+                hasRecipe,
+                localeColumnSuffix,
+                params,
+            )
         val count =
             jdbcTemplate.queryForObject(
                 """
@@ -520,6 +534,8 @@ class AdminItemRepository(
         hasOverride: Boolean?,
         itemClassId: Int?,
         itemSubclassId: Int?,
+        expansionId: Int?,
+        hasRecipe: Boolean?,
         localeColumnSuffix: String,
         params: MutableList<Any?>,
     ): String {
@@ -566,6 +582,18 @@ class AdminItemRepository(
                 )
                 """.trimIndent()
             params += it
+        }
+        expansionId?.let {
+            clauses += "i.expansion_id = ?"
+            params += it
+        }
+        if (hasRecipe != null) {
+            clauses +=
+                if (hasRecipe) {
+                    "EXISTS (SELECT 1 FROM recipe r WHERE r.crafted_item_id = i.id)"
+                } else {
+                    "NOT EXISTS (SELECT 1 FROM recipe r WHERE r.crafted_item_id = i.id)"
+                }
         }
         return if (clauses.isEmpty()) "" else "WHERE ${clauses.joinToString(" AND ")}"
     }

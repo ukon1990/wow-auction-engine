@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   AdminItem1,
   AdminItemCreateRequest,
@@ -24,7 +25,12 @@ import { ITEM_CLASS_OPTIONS, ITEM_SUBCLASS_OPTIONS } from './admin-item-override
 import { AdminItemRecipeAssociationPanelComponent } from './admin-item-recipe-association-panel.component';
 import { AdminItemService } from './admin-item.service';
 import { createAdminItemColumns } from './admin-items-table.columns';
-import { AdminItemFilterState, defaultAdminItemFilters } from './item-filters';
+import {
+  AdminItemFilterState,
+  defaultAdminItemFilters,
+  readAdminItemFilters,
+  toAdminItemQueryParams,
+} from './item-filters';
 import { AdminExpansionService } from '@features/admin/expansions/admin-expansion.service';
 import {
   PageFrameComponent,
@@ -41,6 +47,7 @@ type PanelMode = 'edit' | 'create' | 'compare' | 'recipe';
 
 const DEFAULT_VIEWPORT_WIDTH = 1280;
 const MOBILE_CARD_VIEW_MAX_WIDTH = 767;
+const standaloneModel = { standalone: true };
 
 @Component({
   selector: 'app-admin-items-page',
@@ -63,6 +70,8 @@ const MOBILE_CARD_VIEW_MAX_WIDTH = 767;
 export class ItemsPage {
   private readonly service = inject(AdminItemService);
   private readonly expansionService = inject(AdminExpansionService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
   private recipeSearchSequence = 0;
@@ -87,11 +96,17 @@ export class ItemsPage {
   protected readonly recipeSearching = signal(false);
   protected readonly viewportWidth = signal(DEFAULT_VIEWPORT_WIDTH);
   protected readonly cardView = computed(() => this.viewportWidth() <= MOBILE_CARD_VIEW_MAX_WIDTH);
+  protected readonly standaloneModel = standaloneModel;
 
   protected readonly hasOverrideOptions = [
     { id: '', label: $localize`:@@admin.items.filter.anyOverride:All override states` },
     { id: 'true', label: $localize`:@@admin.items.filter.hasOverride:Has override` },
     { id: 'false', label: $localize`:@@admin.items.filter.noOverride:No override` },
+  ];
+  protected readonly hasRecipeOptions = [
+    { id: '', label: $localize`:@@admin.items.filter.anyRecipe:All recipe states` },
+    { id: 'true', label: $localize`:@@admin.items.filter.hasRecipe:Has recipe` },
+    { id: 'false', label: $localize`:@@admin.items.filter.noRecipe:No recipe` },
   ];
 
   protected readonly pageSizeOptions = [
@@ -106,6 +121,13 @@ export class ItemsPage {
   protected readonly itemSubclassOptions = computed<readonly SelectInputOption[]>(() => [
     { id: '', label: $localize`:@@admin.items.filter.anySubclass:All subclasses` },
     ...(ITEM_SUBCLASS_OPTIONS[this.filters().classId] ?? []),
+  ]);
+  protected readonly expansionOptions = computed<readonly SelectInputOption[]>(() => [
+    { id: '', label: $localize`:@@admin.items.filter.anyExpansion:All expansions` },
+    ...this.expansions().map((expansion) => ({
+      id: String(expansion.id),
+      label: expansion.name,
+    })),
   ]);
   protected readonly rowId = (item: AdminItem1): string => String(item.id);
 
@@ -156,7 +178,11 @@ export class ItemsPage {
         });
     }
 
-    void this.reload();
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((paramMap) => {
+      this.filters.set(readAdminItemFilters(paramMap));
+      void this.reload();
+    });
+
     void firstValueFrom(this.expansionService.load()).catch(() => undefined);
   }
 
@@ -169,12 +195,11 @@ export class ItemsPage {
 
   protected updatePageSize(value: string): void {
     const pageSize = Number.parseInt(value, 10);
-    this.filters.update((current) => ({
-      ...current,
+    this.syncFilters({
+      ...this.filters(),
       page: 0,
       pageSize: Number.isFinite(pageSize) ? pageSize : 25,
-    }));
-    void this.reload();
+    });
   }
 
   protected updateClassFilter(value: string): void {
@@ -187,18 +212,15 @@ export class ItemsPage {
   }
 
   protected applyFilters(): void {
-    this.filters.update((current) => ({ ...current, page: 0 }));
-    void this.reload();
+    this.syncFilters({ ...this.filters(), page: 0 });
   }
 
   protected resetFilters(): void {
-    this.filters.set(defaultAdminItemFilters());
-    void this.reload();
+    this.syncFilters(defaultAdminItemFilters());
   }
 
   protected onPageChange(page: number): void {
-    this.filters.update((current) => ({ ...current, page }));
-    void this.reload();
+    this.syncFilters({ ...this.filters(), page });
   }
 
   protected async openEditPanel(item: AdminItem1): Promise<void> {
@@ -312,6 +334,14 @@ export class ItemsPage {
 
   protected pageSizeValue(): string {
     return String(this.filters().pageSize);
+  }
+
+  private syncFilters(filters: AdminItemFilterState): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: toAdminItemQueryParams(filters),
+      replaceUrl: true,
+    });
   }
 
   private async reload(): Promise<void> {

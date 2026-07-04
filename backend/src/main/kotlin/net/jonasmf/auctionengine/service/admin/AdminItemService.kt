@@ -37,6 +37,8 @@ class AdminItemService(
         hasOverride: Boolean?,
         itemClassId: Int?,
         itemSubclassId: Int?,
+        expansionId: Int?,
+        hasRecipe: Boolean?,
         page: Int,
         pageSize: Int,
     ): AdminItemPage {
@@ -44,6 +46,7 @@ class AdminItemService(
         if (itemSubclassId != null && itemClassId == null) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "itemClassId is required when itemSubclassId is set")
         }
+        expansionId?.let { requireExpansion(it) }
         val result =
             adminItemRepository.searchItems(
                 query = query,
@@ -51,6 +54,8 @@ class AdminItemService(
                 hasOverride = hasOverride,
                 itemClassId = itemClassId,
                 itemSubclassId = itemSubclassId,
+                expansionId = expansionId,
+                hasRecipe = hasRecipe,
                 page = page,
                 pageSize = pageSize,
                 localeColumnSuffix = AdminExpansionRepository.resolveLocaleColumnSuffix(locale),

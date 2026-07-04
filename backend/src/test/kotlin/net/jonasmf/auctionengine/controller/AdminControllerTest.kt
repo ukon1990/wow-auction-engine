@@ -541,7 +541,7 @@ class AdminControllerTest {
 
         @Test
         fun `should search admin items if Cognito Admin group`() {
-            `when`(adminItemService.searchItems("cloth", null, null, true, 7, 1, 1, 25)).thenReturn(
+            `when`(adminItemService.searchItems("cloth", null, null, true, 7, 1, null, null, 1, 25)).thenReturn(
                 AdminItemPage(
                     items =
                         listOf(

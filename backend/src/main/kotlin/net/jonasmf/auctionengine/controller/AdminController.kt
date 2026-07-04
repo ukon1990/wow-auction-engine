@@ -115,11 +115,24 @@ class AdminController(
         hasOverride: Boolean?,
         itemClassId: Int?,
         itemSubclassId: Int?,
+        expansionId: Int?,
+        hasRecipe: Boolean?,
         page: Int,
         pageSize: Int,
     ): ResponseEntity<AdminItemPage> =
         ResponseEntity.ok(
-            adminItemService.searchItems(query, locale, hasBase, hasOverride, itemClassId, itemSubclassId, page, pageSize),
+            adminItemService.searchItems(
+                query,
+                locale,
+                hasBase,
+                hasOverride,
+                itemClassId,
+                itemSubclassId,
+                expansionId,
+                hasRecipe,
+                page,
+                pageSize,
+            ),
         )
 
     @PreAuthorize("hasAuthority('admin')")

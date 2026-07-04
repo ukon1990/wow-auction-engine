@@ -1770,6 +1770,23 @@
         <source>No override</source>
         <target>No override</target>
       </trans-unit>
+
+      <trans-unit id="admin.items.filter.anyRecipe" datatype="html">
+        <source>All recipe states</source>
+        <target>All recipe states</target>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.hasRecipe" datatype="html">
+        <source>Has recipe</source>
+        <target>Has recipe</target>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.noRecipe" datatype="html">
+        <source>No recipe</source>
+        <target>No recipe</target>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.anyExpansion" datatype="html">
+        <source>All expansions</source>
+        <target>All expansions</target>
+      </trans-unit>
       <trans-unit id="admin.items.panel.create" datatype="html">
         <source>Create manual item</source>
         <target>Create manual item</target>

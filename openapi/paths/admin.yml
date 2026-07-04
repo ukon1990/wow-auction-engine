@@ -341,6 +341,18 @@ adminItems:
               schema:
                   type: integer
               description: Filter to an item subclass id within the selected/effective class.
+            - name: expansionId
+              in: query
+              required: false
+              schema:
+                  type: integer
+              description: Filter to an expansion id.
+            - name: hasRecipe
+              in: query
+              required: false
+              schema:
+                  type: boolean
+              description: Filter to items with or without an associated crafting recipe.
             - name: page
               in: query
               required: false
