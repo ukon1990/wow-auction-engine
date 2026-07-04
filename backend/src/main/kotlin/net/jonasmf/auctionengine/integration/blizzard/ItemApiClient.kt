@@ -14,13 +14,17 @@ private val ITEM_API_RETRY_BACKOFF: Duration = Duration.ofSeconds(2)
 
 const val ITEM_BASE_PATH = "/data/wow/item"
 
+interface ItemApiLookup {
+    fun getById(id: Int): Item
+}
+
 @Component
 class ItemApiClient(
     private val blizzardApiSupport: BlizzardApiSupport,
-) {
+) : ItemApiLookup {
     private val logger: Logger = LoggerFactory.getLogger(ItemApiClient::class.java)
 
-    fun getById(id: Int): Item = getById(id, blizzardApiSupport.defaultRegion())
+    override fun getById(id: Int): Item = getById(id, blizzardApiSupport.defaultRegion())
 
     fun getById(
         id: Int,

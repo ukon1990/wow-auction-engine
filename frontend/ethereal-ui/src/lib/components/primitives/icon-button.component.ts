@@ -12,7 +12,7 @@ import { SymbolIconComponent, SymbolIconName } from './symbol-icon.component';
       type="button"
       class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/0 text-primary transition hover:bg-white/5 hover:text-on-surface disabled:cursor-not-allowed disabled:opacity-45"
       [attr.aria-label]="label()"
-      [attr.title]="label()"
+      [attr.title]="tooltip() || label()"
       [disabled]="disabled()"
       (click)="pressed.emit()"
     >
@@ -24,6 +24,7 @@ import { SymbolIconComponent, SymbolIconName } from './symbol-icon.component';
 export class IconButtonComponent {
   readonly icon = input.required<SymbolIconName | string>();
   readonly label = input.required<string>();
+  readonly tooltip = input('');
   readonly disabled = input(false);
   readonly pressed = output<void>();
 }

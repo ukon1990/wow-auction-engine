@@ -1801,6 +1801,72 @@
           <context context-type="linenumber">78</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="route.admin.items" datatype="html">
+        <source>Items</source>
+      </trans-unit>
+      <trans-unit id="admin.items.loadError" datatype="html">
+        <source>Unable to load items.</source>
+      </trans-unit>
+      <trans-unit id="admin.items.detailError" datatype="html">
+        <source>Unable to load item details.</source>
+      </trans-unit>
+      <trans-unit id="admin.items.compareError" datatype="html">
+        <source>Unable to compare item with Blizzard API.</source>
+      </trans-unit>
+      <trans-unit id="admin.items.mutationError" datatype="html">
+        <source>Item request failed.</source>
+      </trans-unit>
+      <trans-unit id="admin.items.create.englishRequired" datatype="html">
+        <source>English (US) or English (GB) name is required.</source>
+      </trans-unit>
+      <trans-unit id="admin.items.table.id" datatype="html">
+        <source>Item ID</source>
+      </trans-unit>
+      <trans-unit id="admin.items.unnamed" datatype="html">
+        <source>Unnamed item</source>
+      </trans-unit>
+      <trans-unit id="admin.items.table.name" datatype="html">
+        <source>Name</source>
+      </trans-unit>
+      <trans-unit id="admin.items.table.quality" datatype="html">
+        <source>Quality</source>
+      </trans-unit>
+      <trans-unit id="admin.items.table.class" datatype="html">
+        <source>Class</source>
+      </trans-unit>
+      <trans-unit id="admin.items.table.expansion" datatype="html">
+        <source>Expansion</source>
+      </trans-unit>
+      <trans-unit id="admin.items.table.state" datatype="html">
+        <source>State</source>
+      </trans-unit>
+      <trans-unit id="admin.items.table.actions" datatype="html">
+        <source>Actions</source>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.anyOverride" datatype="html">
+        <source>All override states</source>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.hasOverride" datatype="html">
+        <source>Has override</source>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.noOverride" datatype="html">
+        <source>No override</source>
+      </trans-unit>
+      <trans-unit id="admin.items.panel.create" datatype="html">
+        <source>Create manual item</source>
+      </trans-unit>
+      <trans-unit id="admin.items.panel.compare" datatype="html">
+        <source>Compare Blizzard API</source>
+      </trans-unit>
+      <trans-unit id="admin.items.panel.edit" datatype="html">
+        <source>Edit item override</source>
+      </trans-unit>
+      <trans-unit id="admin.items.deleteConfirm" datatype="html">
+        <source>Delete this item override? Base item data will be inherited again.</source>
+      </trans-unit>
+      <trans-unit id="admin.items.form.classSubclassRequired" datatype="html">
+        <source>Class ID and subclass ID are required together.</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1,0 +1,145 @@
+<ee-page-frame
+  title="Items"
+  eyebrow="Admin"
+  [loading]="loading() && items().length === 0"
+  titleId="admin-items-title"
+>
+  @if (error()) {
+    <p
+      class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+      role="alert"
+    >
+      {{ error() }}
+    </p>
+  }
+
+  <section class="grid gap-4" aria-label="Item search filters">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <div class="grid gap-1">
+        <h2 class="font-cinzel text-xl font-bold text-primary-container">Item overrides</h2>
+        <p class="ee-data text-outline">
+          Search effective item rows and manage sparse admin overrides.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+        [disabled]="mutationLoading()"
+        (click)="openCreatePanel()"
+      >
+        Create manual item
+      </button>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_14rem_8rem_auto_auto]">
+      <ee-search-input
+        label="Name"
+        [showLabel]="true"
+        placeholder="Search localized names"
+        [ngModel]="filters().name"
+        (ngModelChange)="updateFilter('name', $event)"
+      />
+      <ee-search-input
+        label="Item ID"
+        [showLabel]="true"
+        placeholder="Exact or partial item ID"
+        [ngModel]="filters().itemId"
+        (ngModelChange)="updateFilter('itemId', $event)"
+      />
+      <ee-select-input
+        label="Override state"
+        [options]="hasOverrideOptions"
+        [ngModel]="filters().hasOverride"
+        (ngModelChange)="updateFilter('hasOverride', $event)"
+      />
+      <ee-select-input
+        label="Page size"
+        [options]="pageSizeOptions"
+        [ngModel]="pageSizeValue()"
+        (ngModelChange)="updatePageSize($event)"
+      />
+      <button
+        type="button"
+        class="h-12 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70 md:self-end"
+        [disabled]="loading()"
+        (click)="applyFilters()"
+      >
+        Apply
+      </button>
+      <button
+        type="button"
+        class="h-12 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container md:self-end"
+        (click)="resetFilters()"
+      >
+        Reset
+      </button>
+    </div>
+  </section>
+
+  <section class="grid min-h-0 flex-1 gap-4" aria-label="Admin item results">
+    <ee-table
+      [columns]="columns()"
+      [data]="items()"
+      [loading]="loading()"
+      [skeletonRowCount]="10"
+      [showFooter]="true"
+      [showPagination]="true"
+      [paginationState]="paginationState()"
+      [cardView]="cardView()"
+      [getRowId]="rowId"
+      emptyMessage="No items match the current filters."
+      sectionAriaLabel="Admin items"
+      paginationRowLabel="items"
+      (pageChange)="onPageChange($event)"
+    />
+  </section>
+</ee-page-frame>
+
+<ee-slide-over
+  [open]="panelMode() !== null"
+  [title]="panelTitle()"
+  titleId="admin-item-panel-title"
+  (closed)="closePanel()"
+>
+  @if (panelMode() === 'create') {
+    @if (formError()) {
+      <p
+        class="mb-4 rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+        role="alert"
+      >
+        {{ formError() }}
+      </p>
+    }
+    <app-admin-item-create-form
+      [submitting]="mutationLoading()"
+      (submitted)="submitCreate($event)"
+      (cancelled)="closePanel()"
+    />
+  } @else if (panelMode() === 'edit') {
+    @if (detailLoading()) {
+      <p class="ee-data text-outline" role="status">Loading item details...</p>
+    } @else if (selectedItem(); as item) {
+      <app-admin-item-override-form
+        [item]="item"
+        [expansions]="expansions()"
+        [submitting]="mutationLoading()"
+        [submitError]="formError() || detailError()"
+        (submitted)="submitOverride($event)"
+        (cancelled)="closePanel()"
+      />
+    } @else if (detailError()) {
+      <p
+        class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+        role="alert"
+      >
+        {{ detailError() }}
+      </p>
+    }
+  } @else if (panelMode() === 'compare') {
+    <app-admin-item-compare-panel
+      [compare]="compare()"
+      [loading]="compareLoading()"
+      [error]="compareError()"
+    />
+  }
+</ee-slide-over>

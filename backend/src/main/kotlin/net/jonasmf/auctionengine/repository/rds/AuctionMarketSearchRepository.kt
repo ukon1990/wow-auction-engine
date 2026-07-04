@@ -297,7 +297,7 @@ class AuctionMarketSearchRepository(
     }
 
     /**
-     * When set, quality/class/subclass/recipe filters are applied inside this subquery (via `item`)
+     * When set, quality/class/subclass/recipe filters are applied inside this subquery (via `v_item`)
      * so ranking touches fewer auction rows before joining the heavy view.
      */
     private fun pushesItemDimensionFiltersIntoAuctionSnapshot(request: AuctionMarketSearchRequest): Boolean =
@@ -314,7 +314,7 @@ class AuctionMarketSearchRepository(
         val useItemJoin = pushesItemDimensionFiltersIntoAuctionSnapshot(request)
         val itemJoin =
             if (useItemJoin) {
-                "INNER JOIN item i ON i.id = a.item_id\n                "
+                "INNER JOIN v_item i ON i.id = a.item_id\n                "
             } else {
                 ""
             }

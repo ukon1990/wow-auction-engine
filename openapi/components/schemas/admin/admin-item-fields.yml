@@ -1,0 +1,62 @@
+type: object
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+    nullable: true
+  nameLocales:
+    $ref: "../../../openapi.yml#/components/schemas/GameLocale"
+  quality:
+    $ref: "../../../openapi.yml#/components/schemas/AdminItemReference"
+  level:
+    type: integer
+    nullable: true
+  requiredLevel:
+    type: integer
+    nullable: true
+  mediaUrl:
+    type: string
+    nullable: true
+  mediaSourceUrl:
+    type: string
+    nullable: true
+  itemClass:
+    $ref: "../../../openapi.yml#/components/schemas/AdminItemReference"
+  itemSubclass:
+    $ref: "../../../openapi.yml#/components/schemas/AdminItemReference"
+  inventoryType:
+    $ref: "../../../openapi.yml#/components/schemas/AdminItemReference"
+  binding:
+    $ref: "../../../openapi.yml#/components/schemas/AdminItemReference"
+  purchasePrice:
+    type: integer
+    nullable: true
+  sellPrice:
+    type: integer
+    nullable: true
+  maxCount:
+    type: integer
+    nullable: true
+  isEquippable:
+    type: boolean
+    nullable: true
+  isStackable:
+    type: boolean
+    nullable: true
+  purchaseQuantity:
+    type: integer
+    nullable: true
+  expansion:
+    $ref: "../../../openapi.yml#/components/schemas/AdminExpansion"
+  overrideNote:
+    type: string
+    nullable: true
+  createdAt:
+    type: string
+    format: date-time
+    nullable: true
+  updatedAt:
+    type: string
+    format: date-time
+    nullable: true

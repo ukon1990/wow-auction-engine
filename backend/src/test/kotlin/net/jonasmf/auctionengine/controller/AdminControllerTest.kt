@@ -7,6 +7,10 @@ import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.generated.model.AdminConnectionStatus
 import net.jonasmf.auctionengine.generated.model.AdminServerStatus
+import net.jonasmf.auctionengine.generated.model.AdminItem1
+import net.jonasmf.auctionengine.generated.model.AdminItemFields
+import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
+import net.jonasmf.auctionengine.generated.model.AdminItemPage
 import net.jonasmf.auctionengine.generated.model.AdminSqlColumn
 import net.jonasmf.auctionengine.generated.model.AdminSqlExecuteRequest
 import net.jonasmf.auctionengine.generated.model.AdminSqlIndex
@@ -14,8 +18,10 @@ import net.jonasmf.auctionengine.generated.model.AdminSqlMetadata
 import net.jonasmf.auctionengine.generated.model.AdminSqlResult
 import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.AdminSqlTable
+import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
+import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
@@ -38,8 +44,10 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -72,6 +80,9 @@ class AdminControllerTest {
 
     @MockitoBean
     private lateinit var adminJobService: AdminJobService
+
+    @MockitoBean
+    private lateinit var adminItemService: AdminItemService
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder
@@ -520,6 +531,115 @@ class AdminControllerTest {
             mockMvc
                 .perform(asyncDispatch(result))
                 .andExpect(status().isForbidden)
+        }
+    }
+
+    @Nested
+    inner class ItemAdmin {
+        @Autowired
+        private lateinit var mockMvc: MockMvc
+
+        @Test
+        fun `should search admin items if Cognito Admin group`() {
+            `when`(adminItemService.searchItems("cloth", null, null, true, 1, 25)).thenReturn(
+                AdminItemPage(
+                    items =
+                        listOf(
+                            AdminItem1(
+                                id = 171374,
+                                hasBase = true,
+                                hasOverride = true,
+                                effective =
+                                    AdminItemFields(
+                                        id = 171374,
+                                        name = "Override cloth",
+                                    ),
+                            ),
+                        ),
+                    page = PageMetadata(page = 1, pageSize = 25, totalItems = 1, totalPages = 1),
+                ),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        get("/api/admin/items")
+                            .contextPath("/api")
+                            .param("query", "cloth")
+                            .param("hasOverride", "true")
+                            .with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.items[0].id").value(171374))
+                .andExpect(jsonPath("$.items[0].hasOverride").value(true))
+        }
+
+        @Test
+        fun `should upsert sparse item override if Cognito Admin group`() {
+            val response =
+                AdminItem1(
+                    id = 171374,
+                    hasBase = true,
+                    hasOverride = true,
+                    effective = AdminItemFields(id = 171374, mediaUrl = "https://example.test/icon.png"),
+                )
+            `when`(
+                adminItemService.upsertOverride(
+                    171374,
+                    AdminItemOverrideRequest(mediaUrl = "https://example.test/icon.png"),
+                ),
+            ).thenReturn(response)
+
+            val result =
+                mockMvc
+                    .perform(
+                        put("/api/admin/items/171374/override")
+                            .contextPath("/api")
+                            .contentType("application/json")
+                            .content("""{"mediaUrl":"https://example.test/icon.png"}""")
+                            .with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.effective.mediaUrl").value("https://example.test/icon.png"))
+        }
+
+        @Test
+        fun `should delete item override if Cognito Admin group`() {
+            val result =
+                mockMvc
+                    .perform(
+                        delete("/api/admin/items/171374/override")
+                            .contextPath("/api")
+                            .with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isNoContent)
         }
     }
 }

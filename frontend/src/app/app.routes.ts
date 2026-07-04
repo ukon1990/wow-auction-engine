@@ -81,6 +81,13 @@ export const routes: TitledRoutes = [
             (module) => module.ExpansionsPage,
           ),
       },
+      {
+        path: 'items',
+        title: $localize`:@@route.admin.items:Items`,
+        icon: 'inventory_2',
+        loadComponent: () =>
+          import('@features/admin/items/items.page').then((module) => module.ItemsPage),
+      },
     ],
   },
   {

@@ -1,0 +1,62 @@
+type: object
+required:
+  - id
+  - nameLocales
+  - qualityType
+  - level
+  - requiredLevel
+  - mediaUrl
+  - itemClassId
+  - itemSubclassId
+  - inventoryType
+  - purchasePrice
+  - sellPrice
+  - maxCount
+  - isEquippable
+  - isStackable
+  - purchaseQuantity
+properties:
+  id:
+    type: integer
+    minimum: 1
+  nameLocales:
+    $ref: "../../../openapi.yml#/components/schemas/GameLocale"
+  qualityType:
+    type: string
+  level:
+    type: integer
+  requiredLevel:
+    type: integer
+  mediaUrl:
+    type: string
+  mediaSourceUrl:
+    type: string
+    nullable: true
+  itemClassId:
+    type: integer
+  itemSubclassId:
+    type: integer
+  inventoryType:
+    type: string
+  bindingType:
+    type: string
+    nullable: true
+  purchasePrice:
+    type: integer
+  sellPrice:
+    type: integer
+  maxCount:
+    type: integer
+  isEquippable:
+    type: boolean
+  isStackable:
+    type: boolean
+  purchaseQuantity:
+    type: integer
+  expansionId:
+    type: integer
+    nullable: true
+  overrideNote:
+    type: string
+    nullable: true
+    maxLength: 512

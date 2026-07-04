@@ -1,0 +1,9 @@
+type: object
+required: [items, page]
+properties:
+  items:
+    type: array
+    items:
+      $ref: "../../../openapi.yml#/components/schemas/AdminItem"
+  page:
+    $ref: "../../../openapi.yml#/components/schemas/PageMetadata"
