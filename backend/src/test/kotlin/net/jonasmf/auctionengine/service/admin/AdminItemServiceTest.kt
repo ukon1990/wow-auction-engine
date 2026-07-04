@@ -10,6 +10,8 @@ import net.jonasmf.auctionengine.generated.model.AdminItemCreateRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemReference
+import net.jonasmf.auctionengine.generated.model.AdminRecipeAssociationRequest
+import net.jonasmf.auctionengine.generated.model.AdminRecipeSearchResult
 import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.integration.blizzard.ItemApiLookup
@@ -133,6 +135,48 @@ class AdminItemServiceTest {
         assertEquals("https://example.test/base.png", result.fields.getValue("mediaUrl").effective)
     }
 
+    @Test
+    fun `recipe association updates crafted item and quantity`() {
+        repository.itemRows[171374] =
+            AdminItemRows(
+                base = AdminItemFields(id = 171374),
+                override = null,
+                effective = AdminItemFields(id = 171374),
+            )
+        repository.recipeIds += 338995
+
+        service.upsertRecipeAssociation(
+            171374,
+            338995,
+            AdminRecipeAssociationRequest(craftedItemId = 171374, craftedQuantity = 2),
+        )
+
+        assertEquals(Triple(338995, 171374, 2), repository.lastRecipeCraftedItemUpdate)
+    }
+
+    @Test
+    fun `recipe association rejects mismatched crafted item id`() {
+        repository.itemRows[171374] =
+            AdminItemRows(
+                base = AdminItemFields(id = 171374),
+                override = null,
+                effective = AdminItemFields(id = 171374),
+            )
+        repository.recipeIds += 338995
+
+        val error =
+            assertThrows(ResponseStatusException::class.java) {
+                service.upsertRecipeAssociation(
+                    171374,
+                    338995,
+                    AdminRecipeAssociationRequest(craftedItemId = 19019, craftedQuantity = 1),
+                )
+            }
+
+        assertEquals(400, error.statusCode.value())
+        assertEquals("craftedItemId must match path item id", error.reason)
+    }
+
     private fun item(id: Int) =
         Item(
             id = id,
@@ -162,7 +206,11 @@ private class FakeItemApiLookup : ItemApiLookup {
 private class FakeAdminItemRepository : AdminItemRepositoryPort {
     val baseItemIds = mutableSetOf<Int>()
     val itemRows = mutableMapOf<Int, AdminItemRows>()
+    val recipeIds = mutableSetOf<Int>()
+    val recipeSearchResults = mutableListOf<AdminRecipeSearchResult>()
     var lastUpsert: Pair<Int, AdminItemOverrideRequest>? = null
+    var lastRecipeSearch: Triple<String?, Int, String>? = null
+    var lastRecipeCraftedItemUpdate: Triple<Int, Int?, Int?>? = null
 
     override fun searchItems(
         query: String?,
@@ -219,4 +267,24 @@ private class FakeAdminItemRepository : AdminItemRepositoryPort {
     ) = Unit
 
     override fun deleteOverride(id: Int): Boolean = itemRows.remove(id) != null
+
+    override fun recipeExists(recipeId: Int): Boolean = recipeId in recipeIds
+
+    override fun searchRecipes(
+        query: String?,
+        limit: Int,
+        localeColumnSuffix: String,
+    ): List<AdminRecipeSearchResult> {
+        lastRecipeSearch = Triple(query, limit, localeColumnSuffix)
+        return recipeSearchResults
+    }
+
+    override fun updateRecipeCraftedItem(
+        recipeId: Int,
+        craftedItemId: Int?,
+        craftedQuantity: Int?,
+    ): Boolean {
+        lastRecipeCraftedItemUpdate = Triple(recipeId, craftedItemId, craftedQuantity)
+        return recipeId in recipeIds
+    }
 }
