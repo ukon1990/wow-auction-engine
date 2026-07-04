@@ -1722,6 +1722,11 @@
         <source>Item request failed.</source>
         <target>Item request failed.</target>
       </trans-unit>
+
+      <trans-unit id="admin.items.recipeSearchError" datatype="html">
+        <source>Unable to search recipes.</source>
+        <target>Unable to search recipes.</target>
+      </trans-unit>
       <trans-unit id="admin.items.create.englishRequired" datatype="html">
         <source>English (US) or English (GB) name is required.</source>
         <target>English (US) or English (GB) name is required.</target>
@@ -1787,6 +1792,15 @@
         <source>All expansions</source>
         <target>All expansions</target>
       </trans-unit>
+
+      <trans-unit id="admin.items.filter.anyClass" datatype="html">
+        <source>All classes</source>
+        <target>All classes</target>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.anySubclass" datatype="html">
+        <source>All subclasses</source>
+        <target>All subclasses</target>
+      </trans-unit>
       <trans-unit id="admin.items.panel.create" datatype="html">
         <source>Create manual item</source>
         <target>Create manual item</target>
@@ -1798,6 +1812,11 @@
       <trans-unit id="admin.items.panel.edit" datatype="html">
         <source>Edit item override</source>
         <target>Edit item override</target>
+      </trans-unit>
+
+      <trans-unit id="admin.items.panel.recipe" datatype="html">
+        <source>Associate recipe</source>
+        <target>Associate recipe</target>
       </trans-unit>
       <trans-unit id="admin.items.deleteConfirm" datatype="html">
         <source>Delete this item override? Base item data will be inherited again.</source>
