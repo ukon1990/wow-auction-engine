@@ -17,13 +17,18 @@ class BranchDatabaseCloner {
     ) {
         if (!selectedDatabase.shouldCloneFromTemplate) return
 
+        val startedAt = System.nanoTime()
         DriverManager.getConnection(jdbcUrl.withoutDatabase(), username, password).use { connection ->
             connection.autoCommit = false
             try {
                 connection.lockBranchDatabase(selectedDatabase.name)
                 if (connection.databaseExists(selectedDatabase.name)) {
                     connection.commit()
-                    logger.info("Using existing local dev database {}", selectedDatabase.name)
+                    logger.info(
+                        "Using existing local dev database {} after {} ms",
+                        selectedDatabase.name,
+                        elapsedMillis(startedAt),
+                    )
                     return
                 }
 
@@ -41,13 +46,40 @@ class BranchDatabaseCloner {
                     targetDatabase = selectedDatabase.name,
                 )
                 connection.commit()
+                logger.info(
+                    "Created local dev database {} from {} in {} ms",
+                    selectedDatabase.name,
+                    selectedDatabase.cloneSourceDatabase,
+                    elapsedMillis(startedAt),
+                )
             } catch (ex: Exception) {
                 connection.rollback()
+                logger.warn(
+                    "Failed preparing local dev database {} from {} after {} ms",
+                    selectedDatabase.name,
+                    selectedDatabase.cloneSourceDatabase,
+                    elapsedMillis(startedAt),
+                )
                 throw ex
             }
         }
     }
 }
+
+private fun elapsedMillis(startedAt: Long): Long = (System.nanoTime() - startedAt) / 1_000_000
+
+private val SKIP_DATA_TABLES =
+    setOf(
+        "admin_job",
+        "auction",
+        "auction_house_file_log",
+        "auction_update_history",
+        "auction_price",
+        "blizzard_media_fetch_failure",
+        "connected_realm_update_history",
+        "file_reference",
+        "item_fetch_failure",
+    )
 
 private val BOUNDED_HISTORY_TABLES =
     setOf(
@@ -140,16 +172,18 @@ private fun Connection.cloneTablesAndSequences(
     objects: List<DatabaseObject>,
 ) {
     objects.forEach { databaseObject ->
-        val tableName = databaseObject.name
-        val createTableSql =
-            showCreateTable(sourceDatabase, tableName)
-                .qualifyCreateTableOrSequence(targetDatabase, tableName)
-        executeSql(createTableSql)
+        val objectName = databaseObject.name
+        val createObjectSql =
+            when (databaseObject.type) {
+                DatabaseObjectType.SEQUENCE -> showCreateSequence(sourceDatabase, objectName)
+                DatabaseObjectType.TABLE -> showCreateTable(sourceDatabase, objectName)
+            }.qualifyCreateTableOrSequence(targetDatabase, objectName)
+        executeSql(createObjectSql)
         if (databaseObject.type == DatabaseObjectType.TABLE) {
             cloneData(
                 sourceDatabase = sourceDatabase,
                 targetDatabase = targetDatabase,
-                tableName = tableName,
+                tableName = objectName,
             )
         }
     }
@@ -160,20 +194,32 @@ private fun Connection.cloneData(
     targetDatabase: String,
     tableName: String,
 ) {
-    val datePredicate =
-        if (tableName in BOUNDED_HISTORY_TABLES) {
-            " WHERE `date` >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)"
-        } else {
-            ""
-        }
-    executeSql(
+    dataCopySql(
+        sourceDatabase = sourceDatabase,
+        targetDatabase = targetDatabase,
+        tableName = tableName,
+    )?.let(::executeSql)
+}
+
+internal fun dataCopySql(
+    sourceDatabase: String,
+    targetDatabase: String,
+    tableName: String,
+): String? {
+    if (tableName in SKIP_DATA_TABLES) return null
+
+    val sql =
         """
         INSERT INTO ${quoteIdentifier(targetDatabase)}.${quoteIdentifier(tableName)}
         SELECT *
         FROM ${quoteIdentifier(sourceDatabase)}.${quoteIdentifier(tableName)}
-        $datePredicate
-        """.trimIndent(),
-    )
+        """.trimIndent()
+
+    return if (tableName in BOUNDED_HISTORY_TABLES) {
+        "$sql\nWHERE `date` >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)"
+    } else {
+        sql
+    }
 }
 
 private fun Connection.resetCopiedSequences(
@@ -286,6 +332,17 @@ private fun Connection.showCreateTable(
         }
     }
 
+private fun Connection.showCreateSequence(
+    database: String,
+    sequenceName: String,
+): String =
+    createStatement().use { statement ->
+        statement.executeQuery("SHOW CREATE SEQUENCE ${quoteIdentifier(database)}.${quoteIdentifier(sequenceName)}").use { result ->
+            result.next()
+            result.getString(2)
+        }
+    }
+
 private fun Connection.showCreateView(
     database: String,
     viewName: String,
@@ -302,7 +359,7 @@ internal fun String.qualifyCreateTableOrSequence(
     objectName: String,
 ): String =
     replaceFirst(
-        Regex("""(?i)^CREATE\s+(TABLE|SEQUENCE)\s+`${Regex.escape(objectName)}`"""),
+        Regex("""(?i)^CREATE\s+((?:OR\s+REPLACE\s+)?(?:TABLE|SEQUENCE))\s+(?:`[^`]+`\.)?`${Regex.escape(objectName)}`"""),
         "CREATE $1 ${qualifiedIdentifier(database, objectName)}",
     )
 
