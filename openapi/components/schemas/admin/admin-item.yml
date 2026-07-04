@@ -1,0 +1,15 @@
+type: object
+required: [id, hasBase, hasOverride, effective]
+properties:
+  id:
+    type: integer
+  hasBase:
+    type: boolean
+  hasOverride:
+    type: boolean
+  effective:
+    $ref: "../../../openapi.yml#/components/schemas/AdminItemFields"
+  base:
+    $ref: "../../../openapi.yml#/components/schemas/AdminItemFields"
+  override:
+    $ref: "../../../openapi.yml#/components/schemas/AdminItemFields"

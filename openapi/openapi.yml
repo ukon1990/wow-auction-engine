@@ -44,6 +44,20 @@ paths:
     $ref: ./paths/admin.yml#/fetchMissingExpansionRangeItems
   /admin/jobs/{id}:
     $ref: ./paths/admin.yml#/getAdminJob
+  /admin/items:
+    $ref: ./paths/admin.yml#/adminItems
+  /admin/items/{id}:
+    $ref: ./paths/admin.yml#/adminItemById
+  /admin/items/{id}/override:
+    $ref: ./paths/admin.yml#/adminItemOverride
+  /admin/items/{id}/recipes/{recipeId}:
+    $ref: ./paths/admin.yml#/adminItemRecipeAssociation
+  /admin/items/{id}/compare-api:
+    $ref: ./paths/admin.yml#/adminItemCompareApi
+  /admin/items/bulk-overrides:
+    $ref: ./paths/admin.yml#/adminItemBulkOverrides
+  /admin/recipes:
+    $ref: ./paths/admin.yml#/adminRecipes
   /realms:
     $ref: ./paths/realm.yml#/listRealms
   /realms/{region}/{slug}:
@@ -98,6 +112,32 @@ components:
       $ref: ./components/schemas/admin/admin-expansion-item-range-request.yml
     AdminJob:
       $ref: ./components/schemas/admin/admin-job.yml
+    AdminItem:
+      $ref: ./components/schemas/admin/admin-item.yml
+    AdminItemBulkOverride:
+      $ref: ./components/schemas/admin/admin-item-bulk-override.yml
+    AdminItemBulkOverrideRequest:
+      $ref: ./components/schemas/admin/admin-item-bulk-override-request.yml
+    AdminItemCompareField:
+      $ref: ./components/schemas/admin/admin-item-compare-field.yml
+    AdminItemCompareResponse:
+      $ref: ./components/schemas/admin/admin-item-compare-response.yml
+    AdminItemCreateRequest:
+      $ref: ./components/schemas/admin/admin-item-create-request.yml
+    AdminItemFields:
+      $ref: ./components/schemas/admin/admin-item-fields.yml
+    AdminItemPage:
+      $ref: ./components/schemas/admin/admin-item-page.yml
+    AdminItemReference:
+      $ref: ./components/schemas/admin/admin-item-reference.yml
+    AdminItemRecipe:
+      $ref: ./components/schemas/admin/admin-item-recipe.yml
+    AdminRecipeAssociationRequest:
+      $ref: ./components/schemas/admin/admin-recipe-association-request.yml
+    AdminRecipeSearchResult:
+      $ref: ./components/schemas/admin/admin-recipe-search-result.yml
+    AdminItemOverrideRequest:
+      $ref: ./components/schemas/admin/admin-item-override-request.yml
     AuctionHouseStatus:
       $ref: ./components/schemas/auction-house-status.yml
     AuctionListingKey:

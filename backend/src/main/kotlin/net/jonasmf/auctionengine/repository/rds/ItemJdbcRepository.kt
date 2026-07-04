@@ -239,9 +239,12 @@ class ItemJdbcRepository(
                     aggregated.from_auction,
                     aggregated.from_crafted,
                     aggregated.from_reagent,
-                    CASE WHEN item.id IS NULL THEN 1 ELSE 0 END AS is_missing
+                    CASE WHEN existing_item.id IS NULL THEN 1 ELSE 0 END AS is_missing
                 FROM aggregated
-                LEFT JOIN `item` item ON item.id = aggregated.item_id
+                LEFT JOIN (
+                    SELECT DISTINCT id
+                    FROM `item`
+                ) existing_item ON existing_item.id = aggregated.item_id
             ),
             summary AS (
                 SELECT
@@ -319,7 +322,7 @@ class ItemJdbcRepository(
             .chunked(ITEM_JDBC_CHUNK_SIZE)
             .flatMap { chunk ->
                 jdbcTemplate.query(
-                    "SELECT id FROM `item` WHERE id IN (${placeholders(chunk.size)})",
+                    "SELECT DISTINCT id FROM `item` WHERE id IN (${placeholders(chunk.size)})",
                     { rs, _ -> rs.getInt("id") },
                     *chunk.toTypedArray(),
                 )
@@ -767,6 +770,7 @@ class ItemJdbcRepository(
                 """
                 INSERT INTO `item` (
                     id,
+                    is_override,
                     name_id,
                     quality_id,
                     level,
@@ -783,7 +787,7 @@ class ItemJdbcRepository(
                     is_equippable,
                     is_stackable,
                     purchase_quantity
-                ) VALUES ${chunk.joinToString(",") { "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" }}
+                ) VALUES ${chunk.joinToString(",") { "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" }}
                 ON DUPLICATE KEY UPDATE
                     name_id = VALUES(name_id),
                     quality_id = VALUES(quality_id),
@@ -806,6 +810,7 @@ class ItemJdbcRepository(
                 chunk.flatMap { item ->
                     listOf<Any?>(
                         item.id,
+                        false,
                         localeIds.getValue(LocaleNaturalKey(LocaleSourceType.ITEM, localeSourceKey(item.id), "name")),
                         qualityIds.getValue(item.quality.type),
                         item.level,

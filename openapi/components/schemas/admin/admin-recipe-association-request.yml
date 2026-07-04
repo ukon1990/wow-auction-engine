@@ -1,0 +1,11 @@
+type: object
+properties:
+    craftedItemId:
+        type: integer
+        nullable: true
+        description: Item id to set as recipe.crafted_item_id. Null clears the association.
+    craftedQuantity:
+        type: integer
+        minimum: 1
+        nullable: true
+        description: Quantity produced by the recipe. Required when craftedItemId is set.

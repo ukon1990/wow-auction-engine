@@ -1,0 +1,9 @@
+type: object
+required: [recipeId, name, professionName]
+properties:
+    recipeId:
+        type: integer
+    name:
+        type: string
+    professionName:
+        type: string

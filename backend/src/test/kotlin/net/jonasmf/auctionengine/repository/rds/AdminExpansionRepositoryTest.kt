@@ -116,6 +116,14 @@ class AdminExpansionRepositoryTest : IntegrationTestBase() {
     @Test
     fun `applyEnabledRanges updates matched items and reports conflicts`() {
         itemJdbcRepository.syncItems(listOf(loadItem(171374), loadItem(171391)))
+        jdbcTemplate.update(
+            """
+            INSERT INTO `item` (id, is_override, override_note)
+            VALUES (?, TRUE, ?)
+            """.trimIndent(),
+            171374,
+            "manual override",
+        )
         adminExpansionRepository.createRange(rangeRequest(expansionId = 1, startItemId = 171374, endItemId = 171374))
         adminExpansionRepository.createRange(rangeRequest(expansionId = 2, startItemId = 171391, endItemId = 171391))
         adminExpansionRepository.createRange(rangeRequest(expansionId = 3, startItemId = 171391, endItemId = 171391))
@@ -124,18 +132,23 @@ class AdminExpansionRepositoryTest : IntegrationTestBase() {
 
         assertEquals(1, summary.matchedItemCount)
         assertEquals(1, summary.conflictItemCount)
-        assertEquals(1, itemExpansionId(171374))
-        assertEquals(null, itemExpansionId(171391))
+        assertEquals(1, itemExpansionId(171374, isOverride = false))
+        assertEquals(null, itemExpansionId(171374, isOverride = true))
+        assertEquals(null, itemExpansionId(171391, isOverride = false))
     }
 
     private fun loadItem(itemId: Int) =
         mapper.readValue<ItemDTO>(loadFixture(this, "/blizzard/item/$itemId-response.json")).toDomain()
 
-    private fun itemExpansionId(itemId: Int): Int? =
+    private fun itemExpansionId(
+        itemId: Int,
+        isOverride: Boolean,
+    ): Int? =
         jdbcTemplate.queryForObject(
-            "SELECT expansion_id FROM `item` WHERE id = ?",
+            "SELECT expansion_id FROM `item` WHERE id = ? AND is_override = ?",
             Int::class.java,
             itemId,
+            isOverride,
         )
 
     @Test

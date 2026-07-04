@@ -186,6 +186,82 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `findExistingItemIds treats override only rows as existing`() {
+        jdbcTemplate.update(
+            """
+            INSERT INTO `item` (id, is_override, override_note)
+            VALUES (?, TRUE, ?)
+            """.trimIndent(),
+            999999,
+            "placeholder override",
+        )
+
+        val existingIds = itemJdbcRepository.findExistingItemIds(listOf(999999, 1000000))
+
+        assertEquals(setOf(999999), existingIds)
+    }
+
+    @Test
+    fun `v_item returns sparse override values over base item and sync only updates base row`() {
+        val item = loadItem(171374)
+        itemJdbcRepository.syncItems(listOf(item))
+        val overrideNameId =
+            insertLocale(
+                id = 900001,
+                enGb = "Corrected Laestrite Ore",
+                deDe = "Korrigiertes Laestriterz",
+                sourceType = "item_override",
+                sourceKey = "171374",
+                sourceField = "name",
+            )
+        jdbcTemplate.update(
+            """
+            INSERT INTO `item` (id, is_override, name_id, media_url, override_note)
+            VALUES (?, TRUE, ?, ?, ?)
+            """.trimIndent(),
+            171374,
+            overrideNameId,
+            "https://media.example/corrected.png",
+            "manual correction",
+        )
+
+        val effective =
+            jdbcTemplate.queryForMap(
+                """
+                SELECT
+                    v.media_url,
+                    v.quality_id,
+                    l.en_gb AS item_name
+                FROM v_item v
+                    LEFT JOIN locale l ON l.id = v.name_id
+                WHERE v.id = ?
+                """.trimIndent(),
+                171374,
+            )
+        val marketDetail =
+            jdbcTemplate.queryForMap(
+                """
+                SELECT item_media_url, item_name_en_gb, quality_id
+                FROM v_auction_market_item_details
+                WHERE item_id = ?
+                """.trimIndent(),
+                171374,
+            )
+
+        assertEquals("Corrected Laestrite Ore", effective["item_name"])
+        assertEquals("https://media.example/corrected.png", effective["media_url"])
+        assertEquals(baseItemQualityId(171374), effective["quality_id"])
+        assertEquals("Corrected Laestrite Ore", marketDetail["item_name_en_gb"])
+        assertEquals("https://media.example/corrected.png", marketDetail["item_media_url"])
+        assertEquals(baseItemQualityId(171374), marketDetail["quality_id"])
+
+        itemJdbcRepository.syncItems(listOf(item.copy(mediaUrl = "https://media.example/base-updated.png")))
+
+        assertEquals("https://media.example/base-updated.png", itemMediaUrl(171374, isOverride = false))
+        assertEquals("https://media.example/corrected.png", itemMediaUrl(171374, isOverride = true))
+    }
+
+    @Test
     fun `findMissingItemIdsForEnabledExpansionRanges returns missing ids covered by ranges`() {
         itemJdbcRepository.syncItems(listOf(loadItem(171374)))
         ensureExpansionExists(
@@ -263,4 +339,46 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
         tableName: String,
         condition: String,
     ): Int = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM $tableName WHERE $condition", Int::class.java)!!
+
+    private fun insertLocale(
+        id: Long,
+        enGb: String,
+        deDe: String,
+        sourceType: String,
+        sourceKey: String,
+        sourceField: String,
+    ): Long {
+        jdbcTemplate.update(
+            """
+            INSERT INTO locale (id, en_gb, en_us, de_de, source_type, source_key, source_field)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """.trimIndent(),
+            id,
+            enGb,
+            enGb,
+            deDe,
+            sourceType,
+            sourceKey,
+            sourceField,
+        )
+        return id
+    }
+
+    private fun baseItemQualityId(itemId: Int): Long? =
+        jdbcTemplate.queryForObject(
+            "SELECT quality_id FROM `item` WHERE id = ? AND is_override = FALSE",
+            Long::class.java,
+            itemId,
+        )
+
+    private fun itemMediaUrl(
+        itemId: Int,
+        isOverride: Boolean,
+    ): String? =
+        jdbcTemplate.queryForObject(
+            "SELECT media_url FROM `item` WHERE id = ? AND is_override = ?",
+            String::class.java,
+            itemId,
+            isOverride,
+        )
 }

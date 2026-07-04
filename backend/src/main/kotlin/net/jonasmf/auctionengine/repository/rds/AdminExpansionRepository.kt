@@ -282,6 +282,7 @@ class AdminExpansionRepository(
                         INNER JOIN expansion_item_range r
                             ON r.enabled = TRUE
                             AND i.id BETWEEN r.start_item_id AND r.end_item_id
+                    WHERE i.is_override = FALSE
                     GROUP BY i.id
                     HAVING COUNT(DISTINCT r.expansion_id) > 1
                 ) conflicts
@@ -298,6 +299,7 @@ class AdminExpansionRepository(
                         INNER JOIN expansion_item_range r
                             ON r.enabled = TRUE
                             AND i.id BETWEEN r.start_item_id AND r.end_item_id
+                    WHERE i.is_override = FALSE
                     GROUP BY i.id
                     HAVING COUNT(DISTINCT r.expansion_id) = 1
                 ) matched
@@ -314,9 +316,11 @@ class AdminExpansionRepository(
                             INNER JOIN expansion_item_range r
                                 ON r.enabled = TRUE
                                 AND i2.id BETWEEN r.start_item_id AND r.end_item_id
+                        WHERE i2.is_override = FALSE
                         GROUP BY i2.id
                         HAVING COUNT(DISTINCT r.expansion_id) = 1
                     ) matched ON matched.item_id = i.id
+                        AND i.is_override = FALSE
                 SET i.expansion_id = matched.expansion_id
                 """.trimIndent(),
             )

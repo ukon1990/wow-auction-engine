@@ -6,14 +6,14 @@
         <source>Search</source>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/components/forms/search-input.component.ts</context>
-          <context context-type="linenumber">71</context>
+          <context context-type="linenumber">82</context>
         </context-group>
       </trans-unit>
       <trans-unit id="search.placeholder" datatype="html">
         <source>Search items, reagents, or recipes...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/components/forms/search-input.component.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="filters.aria" datatype="html">
@@ -76,14 +76,14 @@
         <source> <x id="INTERPOLATION" equiv-text="{{ eyebrow() }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/components/shell/page-frame.component.ts</context>
-          <context context-type="linenumber">24,26</context>
+          <context context-type="linenumber">23,25</context>
         </context-group>
       </trans-unit>
       <trans-unit id="pageFrame.title" datatype="html">
         <source> <x id="INTERPOLATION" equiv-text="{{ title() }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/components/shell/page-frame.component.ts</context>
-          <context context-type="linenumber">31,32</context>
+          <context context-type="linenumber">30,32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="topNav.openNavigation" datatype="html">
@@ -164,11 +164,11 @@
         <source> <x id="INTERPOLATION" equiv-text="{{ emptyMessage() }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/components/table/table.component.ts</context>
-          <context context-type="linenumber">214,215</context>
+          <context context-type="linenumber">215,216</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/components/table/table.component.ts</context>
-          <context context-type="linenumber">318,319</context>
+          <context context-type="linenumber">319,320</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quality.common" datatype="html">
@@ -179,7 +179,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quality.uncommon" datatype="html">
@@ -190,7 +190,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quality.rare" datatype="html">
@@ -201,7 +201,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">51</context>
+          <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quality.epic" datatype="html">
@@ -212,7 +212,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="quality.legendary" datatype="html">
@@ -223,7 +223,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="route.login" datatype="html">
@@ -265,34 +265,41 @@
           <context context-type="linenumber">77</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="route.admin.items" datatype="html">
+        <source>Items</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.routes.ts</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="route.auctions" datatype="html">
         <source>Auctions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.routes.ts</context>
-          <context context-type="linenumber">95</context>
+          <context context-type="linenumber">104</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.routes.ts</context>
-          <context context-type="linenumber">123</context>
+          <context context-type="linenumber">132</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">182</context>
+          <context context-type="linenumber">167</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">309</context>
+          <context context-type="linenumber">294</context>
         </context-group>
       </trans-unit>
       <trans-unit id="route.crafting" datatype="html">
         <source>Crafting</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.routes.ts</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">143</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.routes.ts</context>
-          <context context-type="linenumber">162</context>
+          <context context-type="linenumber">171</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
@@ -300,7 +307,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">291,292</context>
+          <context context-type="linenumber">259,260</context>
         </context-group>
       </trans-unit>
       <trans-unit id="app.fallbackCharacter.name" datatype="html">
@@ -332,7 +339,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">72</context>
+          <context context-type="linenumber">130</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/user-administration/user-administration-table.columns.ts</context>
@@ -559,7 +566,7 @@
         <source>Has Recipe</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.jobs.apply.running" datatype="html">
@@ -591,7 +598,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.jobs.generic" datatype="html">
-        <source>Admin item job</source>
+        <source>Admin job</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-job-summary.ts</context>
           <context context-type="linenumber">18</context>
@@ -608,63 +615,71 @@
         <source>Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.catalog.slug" datatype="html">
         <source>Slug</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.catalog.majorVersion" datatype="html">
         <source>Major version</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">23</context>
+          <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.catalog.displayOrder" datatype="html">
         <source>Display order</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.ranges.expansion" datatype="html">
         <source>Expansion</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">79</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.ranges.startItemId" datatype="html">
         <source>Start item ID</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.ranges.endItemId" datatype="html">
         <source>End item ID</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.ranges.source" datatype="html">
         <source>Source</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="common.yes" datatype="html">
         <source>Yes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">64</context>
+          <context context-type="linenumber">118</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item-create-form.component.ts</context>
+          <context context-type="linenumber">206</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item-override-form.component.ts</context>
+          <context context-type="linenumber">385</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/user-administration/user-administration-table.columns.ts</context>
@@ -675,7 +690,15 @@
         <source>No</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">64</context>
+          <context context-type="linenumber">118</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item-create-form.component.ts</context>
+          <context context-type="linenumber">207</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item-override-form.component.ts</context>
+          <context context-type="linenumber">386</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/user-administration/user-administration-table.columns.ts</context>
@@ -686,7 +709,222 @@
         <source>Note</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/expansions/expansion-ranges-table.columns.ts</context>
-          <context context-type="linenumber">67</context>
+          <context context-type="linenumber">121</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.create.englishRequired" datatype="html">
+        <source>English (US) or English (GB) name is required.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item-create-form.component.ts</context>
+          <context context-type="linenumber">241</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.unnamed" datatype="html">
+        <source>Unnamed item</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item-override-form.component.ts</context>
+          <context context-type="linenumber">488</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-items-table.columns.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.form.classSubclassRequired" datatype="html">
+        <source>Class ID and subclass ID are required together.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item-override-form.component.ts</context>
+          <context context-type="linenumber">517</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.loadError" datatype="html">
+        <source>Unable to load items.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item.service.ts</context>
+          <context context-type="linenumber">73</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.detailError" datatype="html">
+        <source>Unable to load item details.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item.service.ts</context>
+          <context context-type="linenumber">95</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.recipeSearchError" datatype="html">
+        <source>Unable to search recipes.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item.service.ts</context>
+          <context context-type="linenumber">138</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.compareError" datatype="html">
+        <source>Unable to compare item with Blizzard API.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item.service.ts</context>
+          <context context-type="linenumber">169</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.mutationError" datatype="html">
+        <source>Item request failed.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-item.service.ts</context>
+          <context context-type="linenumber">192</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.table.id" datatype="html">
+        <source>Item ID</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-items-table.columns.ts</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-items-table.columns.ts</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.table.name" datatype="html">
+        <source>Name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-items-table.columns.ts</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.table.quality" datatype="html">
+        <source>Quality</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-items-table.columns.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-items-table.columns.ts</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.table.class" datatype="html">
+        <source>Class</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-items-table.columns.ts</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.table.expansion" datatype="html">
+        <source>Expansion</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-items-table.columns.ts</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.table.state" datatype="html">
+        <source>State</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-items-table.columns.ts</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.table.actions" datatype="html">
+        <source>Actions</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/admin-items-table.columns.ts</context>
+          <context context-type="linenumber">93</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.anyOverride" datatype="html">
+        <source>All override states</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.hasOverride" datatype="html">
+        <source>Has override</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">98</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.noOverride" datatype="html">
+        <source>No override</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">99</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.anyRecipe" datatype="html">
+        <source>All recipe states</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">102</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.hasRecipe" datatype="html">
+        <source>Has recipe</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">103</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.noRecipe" datatype="html">
+        <source>No recipe</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">104</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.anyClass" datatype="html">
+        <source>All classes</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">113</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.anySubclass" datatype="html">
+        <source>All subclasses</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">117</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.anyExpansion" datatype="html">
+        <source>All expansions</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">121</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.panel.create" datatype="html">
+        <source>Create manual item</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">151</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.panel.compare" datatype="html">
+        <source>Compare Blizzard API</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">153</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.panel.edit" datatype="html">
+        <source>Edit item override</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">155</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.panel.recipe" datatype="html">
+        <source>Associate recipe</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">157</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.items.deleteConfirm" datatype="html">
+        <source>Delete this item override? Base item data will be inherited again.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/items/items.page.ts</context>
+          <context context-type="linenumber">321</context>
         </context-group>
       </trans-unit>
       <trans-unit id="common.email" datatype="html">
@@ -818,7 +1056,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">394,395</context>
+          <context context-type="linenumber">362,363</context>
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.column.roi" datatype="html">
@@ -837,7 +1075,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">398,399</context>
+          <context context-type="linenumber">366,367</context>
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.column.trend" datatype="html">
@@ -1200,7 +1438,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">639</context>
+          <context context-type="linenumber">624</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.heatmapAvgPrice" datatype="html">
@@ -1210,437 +1448,437 @@
           <context context-type="linenumber">358</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="itemDetail.loadError" datatype="html">
+        <source> Could not load this item. Try again from the market browser. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
+          <context context-type="linenumber">10,12</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="itemDetail.breadcrumb" datatype="html">
         <source>Breadcrumb</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">17,18</context>
+          <context context-type="linenumber">16,17</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.chartDataScope" datatype="html">
         <source>Chart data scope</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">65,66</context>
+          <context context-type="linenumber">61,62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.realmScope" datatype="html">
         <source>Realm</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">77,79</context>
+          <context context-type="linenumber">73,74</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">669</context>
+          <context context-type="linenumber">654</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.regionScope" datatype="html">
         <source>Region</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">88,90</context>
+          <context context-type="linenumber">84,85</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">668</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="itemDetail.loadError" datatype="html">
-        <source> Could not load this item. Try again from the market browser. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">134,136</context>
+          <context context-type="linenumber">653</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.noDayValues" datatype="html">
         <source>No values for this day</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">144,147</context>
+          <context context-type="linenumber">98,100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.noHourValues" datatype="html">
         <source>No values for this hour</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">154,157</context>
+          <context context-type="linenumber">110,112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.dailyMarket" datatype="html">
         <source>Daily market</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">191,192</context>
+          <context context-type="linenumber">153,154</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.range14Days" datatype="html">
         <source>14 days</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">194</context>
+          <context context-type="linenumber">156</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">208</context>
+          <context context-type="linenumber">171</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">222</context>
+          <context context-type="linenumber">186</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">469</context>
+          <context context-type="linenumber">400</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">481</context>
+          <context context-type="linenumber">413</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.dailyMarketDescription" datatype="html">
         <source>Average quantity per hour as bars; buyout spread and average as lines.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">198,202</context>
+          <context context-type="linenumber">160,164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.hourlyMarket" datatype="html">
         <source>Hourly market</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">205,206</context>
+          <context context-type="linenumber">168,169</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.hourlyMarketDescription" datatype="html">
         <source>Listed quantity per hour over 14 days as bars; buyout spread and average as lines.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">212,216</context>
+          <context context-type="linenumber">175,179</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.hourlyPriceHeatmap" datatype="html">
         <source>Hourly price heatmap</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">219,220</context>
+          <context context-type="linenumber">183,184</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.hourlyPriceHeatmapDescription" datatype="html">
         <source>Average market unit price by day and hour.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">223,225</context>
+          <context context-type="linenumber">187,189</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.currentListings" datatype="html">
         <source>Current listings</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">237,239</context>
+          <context context-type="linenumber">204,206</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.listingsCount" datatype="html">
         <source>listings</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">241,243</context>
+          <context context-type="linenumber">208,210</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">153</context>
+          <context context-type="linenumber">139</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.unitPrice" datatype="html">
         <source>Unit price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">250,251</context>
+          <context context-type="linenumber">217,218</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">335,336</context>
+          <context context-type="linenumber">303,304</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.quantity" datatype="html">
         <source>Quantity</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">251,253</context>
+          <context context-type="linenumber">218,220</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.noCurrentListings" datatype="html">
         <source> No current listings for this item. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">280,283</context>
+          <context context-type="linenumber">247,250</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">154</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.loadingRecipeAnalytics" datatype="html">
         <source> Loading recipe analytics... </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">295,298</context>
+          <context context-type="linenumber">263,265</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.recipes" datatype="html">
         <source>Recipes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">305</context>
+          <context context-type="linenumber">273</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.reagent" datatype="html">
         <source>Reagent</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">333,334</context>
+          <context context-type="linenumber">301,302</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.quantityShort" datatype="html">
         <source>Qty</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">335</context>
+          <context context-type="linenumber">303</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.lineTotal" datatype="html">
         <source>Line total</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">336,338</context>
+          <context context-type="linenumber">304,306</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.missingPrice" datatype="html">
         <source>missing price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">351,352</context>
+          <context context-type="linenumber">319,320</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftedQty" datatype="html">
         <source>Crafted qty</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">382,383</context>
+          <context context-type="linenumber">350,351</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.reagentCost" datatype="html">
         <source>Reagent cost</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">386,387</context>
+          <context context-type="linenumber">354,355</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.outputUnit" datatype="html">
         <source>Output unit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">390,391</context>
+          <context context-type="linenumber">358,359</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.profitHidden" datatype="html">
         <source> Profit hidden until all reagents have prices. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">405,406</context>
+          <context context-type="linenumber">373,374</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftingProfitRoi" datatype="html">
         <source>Crafting profit / ROI</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">466,467</context>
+          <context context-type="linenumber">397,398</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftingProfitDescription" datatype="html">
         <source>Daily profit and ROI for selected recipe. Missing points mean incomplete pricing.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">472,475</context>
+          <context context-type="linenumber">403,406</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftingProfitHeatmap" datatype="html">
         <source>Crafting profit heatmap</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">478,479</context>
+          <context context-type="linenumber">410,411</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftingProfitHeatmapDescription" datatype="html">
         <source>Average profit by day and hour for selected recipe.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">482,484</context>
+          <context context-type="linenumber">414,416</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftingAnalyticsError" datatype="html">
         <source> Could not load crafting analytics. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">493,495</context>
+          <context context-type="linenumber">425,427</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.eyebrow" datatype="html">
         <source>Item Codex</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">157</context>
+          <context context-type="linenumber">143</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.heatmapProfit" datatype="html">
         <source>profit <x id="PH" equiv-text="formatCopperCurrency(cell.profit)"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">244</context>
+          <context context-type="linenumber">229</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.heatmapPrice" datatype="html">
         <source>price <x id="PH" equiv-text="formatCopperCurrency(cell.outputUnitPrice)"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">245</context>
+          <context context-type="linenumber">230</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.heatmapRoi" datatype="html">
         <source>ROI <x id="PH" equiv-text="this.formatRoi(cell.roiPercent)"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">246</context>
+          <context context-type="linenumber">231</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.backToMarket" datatype="html">
         <source>Back to market</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">397</context>
+          <context context-type="linenumber">382</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.dayLabel" datatype="html">
         <source>Day <x id="PH" equiv-text="Math.round(x) + 1"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">555</context>
+          <context context-type="linenumber">540</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.date" datatype="html">
         <source>date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">562</context>
+          <context context-type="linenumber">547</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.avgQuantity" datatype="html">
         <source>avg quantity</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">564</context>
+          <context context-type="linenumber">549</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.minQuantity" datatype="html">
         <source>min quantity</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">568</context>
+          <context context-type="linenumber">553</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.maxQuantity" datatype="html">
         <source>max quantity</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">572</context>
+          <context context-type="linenumber">557</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.minPrice" datatype="html">
         <source>min price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">576</context>
+          <context context-type="linenumber">561</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">622</context>
+          <context context-type="linenumber">607</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.p25Price" datatype="html">
         <source>p25 price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">580</context>
+          <context context-type="linenumber">565</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.avgPrice" datatype="html">
         <source>avg price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">584</context>
+          <context context-type="linenumber">569</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">626</context>
+          <context context-type="linenumber">611</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.p75Price" datatype="html">
         <source>p75 price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">588</context>
+          <context context-type="linenumber">573</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.maxPrice" datatype="html">
         <source>max price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">592</context>
+          <context context-type="linenumber">577</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">630</context>
+          <context context-type="linenumber">615</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.hour" datatype="html">
         <source>hour</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">610</context>
+          <context context-type="linenumber">595</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.timestamp" datatype="html">
         <source>timestamp</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">614</context>
+          <context context-type="linenumber">599</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.tooltip.quantityPerHour" datatype="html">
         <source>quantity / hour</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">618</context>
+          <context context-type="linenumber">603</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.vsCommodity" datatype="html">
         <source><x id="PH" equiv-text="sign"/><x id="PH_1" equiv-text="this.formatDecimal(pct, &apos;1.1-1&apos;)"/>% vs commodity</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">645</context>
+          <context context-type="linenumber">630</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.scopePrice" datatype="html">
         <source><x id="PH" equiv-text="scope"/> price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">674</context>
+          <context context-type="linenumber">659</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.scopeQuantity" datatype="html">
         <source><x id="PH" equiv-text="scope"/> quantity</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.ts</context>
-          <context context-type="linenumber">679</context>
+          <context context-type="linenumber">664</context>
         </context-group>
       </trans-unit>
       <trans-unit id="profile.eyebrow" datatype="html">
@@ -1654,28 +1892,28 @@
         <source>Email</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/profile.page.html</context>
-          <context context-type="linenumber">15,16</context>
+          <context context-type="linenumber">10,11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="profile.changePassword" datatype="html">
         <source> Change password </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/profile.page.html</context>
-          <context context-type="linenumber">30,32</context>
+          <context context-type="linenumber">25,27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="profile.updatePassword" datatype="html">
         <source>Update password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/profile.page.html</context>
-          <context context-type="linenumber">107,109</context>
+          <context context-type="linenumber">102,104</context>
         </context-group>
       </trans-unit>
       <trans-unit id="profile.signOut" datatype="html">
         <source>Sign out</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/profile.page.html</context>
-          <context context-type="linenumber">114,115</context>
+          <context context-type="linenumber">109,110</context>
         </context-group>
       </trans-unit>
       <trans-unit id="profile.currentPassword" datatype="html">
@@ -1752,53 +1990,46 @@
           <context context-type="linenumber">30,32</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="realmPicker.loading" datatype="html">
-        <source> Loading realms... </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/select-realm/select-realm.page.html</context>
-          <context context-type="linenumber">37,39</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="realmPicker.realms" datatype="html">
         <source>Realms</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/select-realm/select-realm.page.html</context>
-          <context context-type="linenumber">44,45</context>
+          <context context-type="linenumber">40,41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="realmPicker.empty" datatype="html">
         <source> No realms match your search. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/select-realm/select-realm.page.html</context>
-          <context context-type="linenumber">50,52</context>
+          <context context-type="linenumber">46,48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="realmPicker.availableRealms" datatype="html">
         <source>Available realms</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/select-realm/select-realm.page.html</context>
-          <context context-type="linenumber">55,56</context>
+          <context context-type="linenumber">51,52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="realmPicker.resultsPartial" datatype="html">
         <source>Showing <x id="PH" equiv-text="shown"/> of <x id="PH_1" equiv-text="total"/> realms</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/select-realm/select-realm.page.ts</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="realmPicker.resultsTotal" datatype="html">
         <source><x id="PH" equiv-text="total"/> realms</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/select-realm/select-realm.page.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">59</context>
         </context-group>
       </trans-unit>
       <trans-unit id="realmPicker.loadError" datatype="html">
         <source>Could not load realm list. Please try again later.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/select-realm/select-realm.page.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">79</context>
         </context-group>
       </trans-unit>
     </body>

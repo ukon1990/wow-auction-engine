@@ -1702,6 +1702,130 @@
           <context context-type="linenumber">78</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="route.admin.items" datatype="html">
+        <source>Items</source>
+        <target>Items</target>
+      </trans-unit>
+      <trans-unit id="admin.items.loadError" datatype="html">
+        <source>Unable to load items.</source>
+        <target>Unable to load items.</target>
+      </trans-unit>
+      <trans-unit id="admin.items.detailError" datatype="html">
+        <source>Unable to load item details.</source>
+        <target>Unable to load item details.</target>
+      </trans-unit>
+      <trans-unit id="admin.items.compareError" datatype="html">
+        <source>Unable to compare item with Blizzard API.</source>
+        <target>Unable to compare item with Blizzard API.</target>
+      </trans-unit>
+      <trans-unit id="admin.items.mutationError" datatype="html">
+        <source>Item request failed.</source>
+        <target>Item request failed.</target>
+      </trans-unit>
+
+      <trans-unit id="admin.items.recipeSearchError" datatype="html">
+        <source>Unable to search recipes.</source>
+        <target>Unable to search recipes.</target>
+      </trans-unit>
+      <trans-unit id="admin.items.create.englishRequired" datatype="html">
+        <source>English (US) or English (GB) name is required.</source>
+        <target>English (US) or English (GB) name is required.</target>
+      </trans-unit>
+      <trans-unit id="admin.items.table.id" datatype="html">
+        <source>Item ID</source>
+        <target>Item ID</target>
+      </trans-unit>
+      <trans-unit id="admin.items.unnamed" datatype="html">
+        <source>Unnamed item</source>
+        <target>Unnamed item</target>
+      </trans-unit>
+      <trans-unit id="admin.items.table.name" datatype="html">
+        <source>Name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="admin.items.table.quality" datatype="html">
+        <source>Quality</source>
+        <target>Quality</target>
+      </trans-unit>
+      <trans-unit id="admin.items.table.class" datatype="html">
+        <source>Class</source>
+        <target>Class</target>
+      </trans-unit>
+      <trans-unit id="admin.items.table.expansion" datatype="html">
+        <source>Expansion</source>
+        <target>Expansion</target>
+      </trans-unit>
+      <trans-unit id="admin.items.table.state" datatype="html">
+        <source>State</source>
+        <target>State</target>
+      </trans-unit>
+      <trans-unit id="admin.items.table.actions" datatype="html">
+        <source>Actions</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.anyOverride" datatype="html">
+        <source>All override states</source>
+        <target>All override states</target>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.hasOverride" datatype="html">
+        <source>Has override</source>
+        <target>Has override</target>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.noOverride" datatype="html">
+        <source>No override</source>
+        <target>No override</target>
+      </trans-unit>
+
+      <trans-unit id="admin.items.filter.anyRecipe" datatype="html">
+        <source>All recipe states</source>
+        <target>All recipe states</target>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.hasRecipe" datatype="html">
+        <source>Has recipe</source>
+        <target>Has recipe</target>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.noRecipe" datatype="html">
+        <source>No recipe</source>
+        <target>No recipe</target>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.anyExpansion" datatype="html">
+        <source>All expansions</source>
+        <target>All expansions</target>
+      </trans-unit>
+
+      <trans-unit id="admin.items.filter.anyClass" datatype="html">
+        <source>All classes</source>
+        <target>All classes</target>
+      </trans-unit>
+      <trans-unit id="admin.items.filter.anySubclass" datatype="html">
+        <source>All subclasses</source>
+        <target>All subclasses</target>
+      </trans-unit>
+      <trans-unit id="admin.items.panel.create" datatype="html">
+        <source>Create manual item</source>
+        <target>Create manual item</target>
+      </trans-unit>
+      <trans-unit id="admin.items.panel.compare" datatype="html">
+        <source>Compare Blizzard API</source>
+        <target>Compare Blizzard API</target>
+      </trans-unit>
+      <trans-unit id="admin.items.panel.edit" datatype="html">
+        <source>Edit item override</source>
+        <target>Edit item override</target>
+      </trans-unit>
+
+      <trans-unit id="admin.items.panel.recipe" datatype="html">
+        <source>Associate recipe</source>
+        <target>Associate recipe</target>
+      </trans-unit>
+      <trans-unit id="admin.items.deleteConfirm" datatype="html">
+        <source>Delete this item override? Base item data will be inherited again.</source>
+        <target>Delete this item override? Base item data will be inherited again.</target>
+      </trans-unit>
+      <trans-unit id="admin.items.form.classSubclassRequired" datatype="html">
+        <source>Class ID and subclass ID are required together.</source>
+        <target>Class ID and subclass ID are required together.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

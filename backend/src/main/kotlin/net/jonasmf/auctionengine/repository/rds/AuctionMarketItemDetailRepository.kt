@@ -276,7 +276,7 @@ class AuctionMarketItemDetailRepository(
                 CASE WHEN rp.price IS NULL THEN NULL ELSE rp.price * rr.quantity END AS line_total
             FROM recipe_reagent rr
             LEFT JOIN reagent_price rp ON rp.item_id = rr.item_id
-            LEFT JOIN item i ON i.id = rr.item_id
+            LEFT JOIN v_item i ON i.id = rr.item_id
             LEFT JOIN locale i_l ON i_l.id = i.name_id
             WHERE rr.recipe_id IN ($placeholders)
             ORDER BY rr.recipe_id, name, rr.item_id
