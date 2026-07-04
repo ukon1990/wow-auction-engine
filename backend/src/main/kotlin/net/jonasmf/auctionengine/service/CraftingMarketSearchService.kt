@@ -11,6 +11,7 @@ import net.jonasmf.auctionengine.generated.model.AuctionMarketSort
 import net.jonasmf.auctionengine.generated.model.CraftingMarketSearchPage
 import net.jonasmf.auctionengine.generated.model.CraftingMarketSearchRow
 import net.jonasmf.auctionengine.generated.model.PageMetadata
+import net.jonasmf.auctionengine.repository.rds.AuctionMarketSearchRepository
 import net.jonasmf.auctionengine.repository.rds.CraftingMarketSearchRepository
 import net.jonasmf.auctionengine.repository.rds.CraftingMarketSearchRequest
 import net.jonasmf.auctionengine.repository.rds.CraftingMarketSqlRow
@@ -21,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 class CraftingMarketSearchService(
     private val auctionMarketContextService: AuctionMarketContextService,
+    private val auctionMarketSearchRepository: AuctionMarketSearchRepository,
     private val craftingMarketSearchRepository: CraftingMarketSearchRepository,
 ) {
     private val allowedSorts =
@@ -48,6 +50,7 @@ class CraftingMarketSearchService(
         query: String?,
         professionIds: List<Int>?,
         expansionIds: List<Int>?,
+        qualityIds: List<Int>?,
         minProfit: Long?,
         maxProfit: Long?,
         minRoiPercent: Double?,
@@ -91,6 +94,7 @@ class CraftingMarketSearchService(
                 query = query,
                 professionIds = professionIds.orEmpty().distinct(),
                 expansionIds = expansionIds.orEmpty().distinct(),
+                qualityIds = qualityIds.orEmpty().distinct(),
                 minProfit = minProfit,
                 maxProfit = maxProfit,
                 minRoiPercent = minRoiPercent,
@@ -221,6 +225,17 @@ class CraftingMarketSearchService(
                         parentId = it.parentId,
                     )
                 }
+        val qualityOptions =
+            auctionMarketSearchRepository
+                .qualityOptions(context.localeColumnSuffix)
+                .map {
+                    AuctionMarketFilterOption(
+                        id = it.id,
+                        label = it.label,
+                        parentId = it.parentId,
+                        qualityType = it.qualityType,
+                    )
+                }
         return AuctionMarketFilterResponse(
             filters =
                 listOf(
@@ -235,6 +250,12 @@ class CraftingMarketSearchService(
                         label = "Expansion",
                         type = AuctionMarketFilter.Type.MULTI_SELECT,
                         options = expansionOptions,
+                    ),
+                    AuctionMarketFilter(
+                        id = "qualityIds",
+                        label = "Quality",
+                        type = AuctionMarketFilter.Type.MULTI_SELECT,
+                        options = qualityOptions,
                     ),
                     AuctionMarketFilter(
                         id = "profit",

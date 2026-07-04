@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.repository.rds
 
+import net.jonasmf.auctionengine.utility.ItemQualityOrder
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.jdbc.core.JdbcTemplate
@@ -68,6 +69,7 @@ data class AuctionMarketFilterOptionRow(
     val id: String,
     val label: String,
     val parentId: String? = null,
+    val qualityType: String? = null,
 )
 
 @Repository
@@ -128,18 +130,31 @@ class AuctionMarketSearchRepository(
     }
 
     fun qualityOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
-        jdbcTemplate.query(
-            """
-            SELECT
-                CAST(iq.internal_id AS CHAR) AS id,
-                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, iq.type, CAST(iq.internal_id AS CHAR)) AS label,
-                NULL AS parent_id
-            FROM item_quality iq
-                LEFT JOIN locale l ON l.id = iq.name_id
-            ORDER BY label
-            """.trimIndent(),
-            filterOptionRowMapper,
-        )
+        qualityOptions(request.localeColumnSuffix)
+
+    fun qualityOptions(localeColumnSuffix: String): List<AuctionMarketFilterOptionRow> {
+        val qualityOrderSql = ItemQualityOrder.sqlOrderByCase("iq.type")
+        val rows =
+            jdbcTemplate.query(
+                """
+                SELECT
+                    CAST(iq.internal_id AS CHAR) AS id,
+                    COALESCE(l.$localeColumnSuffix, l.en_gb, l.en_us, iq.type, CAST(iq.internal_id AS CHAR)) AS label,
+                    NULL AS parent_id,
+                    iq.type AS quality_type
+                FROM item_quality iq
+                    LEFT JOIN locale l ON l.id = iq.name_id
+                WHERE iq.type IS NOT NULL
+                ORDER BY $qualityOrderSql, iq.internal_id
+                """.trimIndent(),
+                qualityFilterOptionRowMapper,
+            )
+        return rows
+            .groupBy { it.qualityType?.uppercase() }
+            .values
+            .mapNotNull { group -> group.minByOrNull { ItemQualityOrder.rank(it.qualityType) } }
+            .sortedBy { ItemQualityOrder.rank(it.qualityType) }
+    }
 
     fun itemClassOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
         jdbcTemplate.query(
@@ -544,6 +559,16 @@ class AuctionMarketSearchRepository(
             row to totalItems
         }
 
+    private val qualityFilterOptionRowMapper =
+        RowMapper { rs: ResultSet, _: Int ->
+            AuctionMarketFilterOptionRow(
+                id = rs.getString("id"),
+                label = rs.getString("label") ?: rs.getString("id"),
+                parentId = rs.getString("parent_id"),
+                qualityType = rs.getString("quality_type"),
+            )
+        }
+
     private val filterOptionRowMapper =
         RowMapper { rs: ResultSet, _: Int ->
             AuctionMarketFilterOptionRow(
@@ -579,19 +604,23 @@ class AuctionMarketSearchRepository(
         )
     }
 
-    internal fun buildQualityOptionsSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> =
-        Pair(
+    internal fun buildQualityOptionsSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> {
+        val qualityOrderSql = ItemQualityOrder.sqlOrderByCase("iq.type")
+        return Pair(
             """
             SELECT
                 CAST(iq.internal_id AS CHAR) AS id,
                 COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, iq.type, CAST(iq.internal_id AS CHAR)) AS label,
-                NULL AS parent_id
+                NULL AS parent_id,
+                iq.type AS quality_type
             FROM item_quality iq
                 LEFT JOIN locale l ON l.id = iq.name_id
-            ORDER BY label ASC
+            WHERE iq.type IS NOT NULL
+            ORDER BY $qualityOrderSql, iq.internal_id ASC
             """.trimIndent(),
             emptyArray(),
         )
+    }
 
     internal fun buildItemClassOptionsSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> =
         Pair(

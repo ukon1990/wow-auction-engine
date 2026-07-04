@@ -1,6 +1,14 @@
 import { AuctionMarketFilter } from '@api/generated';
 import { CraftingBrowserQueryState } from '@core/models/crafting-browser.models';
-import { craftingSelectedRangeValue, craftingSelectedSet } from '@core/utils/filter';
+import {
+  craftingSelectedRangeValue,
+  craftingSelectedSet,
+  filterOptionLabel,
+} from '@core/utils/filter';
+import {
+  mapQualityFilterOptions,
+  resolveFilterOptionQuality,
+} from '@core/utils/quality-filter-options';
 import { FilterSection } from '@ui';
 
 export const toCraftingFilterSections = (
@@ -31,11 +39,12 @@ export const toCraftingFilterSections = (
       max: filter.max ?? undefined,
       selectedMin: craftingSelectedRangeValue(filter.id, 'min', state),
       selectedMax: craftingSelectedRangeValue(filter.id, 'max', state),
-      options: (filter.options ?? []).map((option) => ({
+      options: mapQualityFilterOptions(filter, filter.options ?? []).map((option) => ({
         id: `${filter.id}:${option.id}`,
-        label: option.label,
+        label: filterOptionLabel(filter.id, option.label, option.qualityType),
         selected: selectedIds.has(option.id),
         parentId: option.parentId ?? undefined,
+        quality: filter.id === 'qualityIds' ? resolveFilterOptionQuality(option) : undefined,
       })),
     };
   });

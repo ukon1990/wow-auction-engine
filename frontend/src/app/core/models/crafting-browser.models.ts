@@ -14,6 +14,7 @@ export interface CraftingBrowserQueryState {
   readonly query: string;
   readonly professionIds: readonly number[];
   readonly expansionIds: readonly number[];
+  readonly qualityIds: readonly number[];
   readonly minProfit: number | null;
   readonly maxProfit: number | null;
   readonly minRoiPercent: number | null;

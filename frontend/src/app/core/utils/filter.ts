@@ -1,21 +1,10 @@
-import { FilterSection, ItemQuality } from '@ui';
+import { FilterSection, ItemQuality, formatQuality } from '@ui';
 import { AuctionMarketFilter } from '@api/generated';
 import { CraftingBrowserQueryState } from '@core/models/crafting-browser.models';
 import { MarketBrowserQueryState } from '@core/models/market-browser.models';
+import { toQuality } from '@core/utils/quality-order';
 
-export const toQuality = (value: string | undefined): ItemQuality => {
-  const normalized = value?.toLowerCase();
-  if (
-    normalized === 'common' ||
-    normalized === 'uncommon' ||
-    normalized === 'rare' ||
-    normalized === 'epic' ||
-    normalized === 'legendary'
-  ) {
-    return normalized;
-  }
-  return 'common';
-};
+export { toQuality } from '@core/utils/quality-order';
 
 export const filterLabel = (filter: AuctionMarketFilter): string => {
   switch (filter.id) {
@@ -38,25 +27,16 @@ export const filterLabel = (filter: AuctionMarketFilter): string => {
   }
 };
 
-export const filterOptionLabel = (filterId: string, label: string): string => {
+export const filterOptionLabel = (
+  filterId: string,
+  label: string,
+  qualityType?: string | null,
+): string => {
   if (filterId !== 'qualityIds') return label;
-  return qualityLabel(toQuality(label));
+  return qualityLabel(toQuality(qualityType ?? label));
 };
 
-export const qualityLabel = (quality: ItemQuality): string => {
-  switch (quality) {
-    case 'common':
-      return $localize`:@@quality.common:Common`;
-    case 'uncommon':
-      return $localize`:@@quality.uncommon:Uncommon`;
-    case 'rare':
-      return $localize`:@@quality.rare:Rare`;
-    case 'epic':
-      return $localize`:@@quality.epic:Epic`;
-    case 'legendary':
-      return $localize`:@@quality.legendary:Legendary`;
-  }
-};
+export const qualityLabel = (quality: ItemQuality): string => formatQuality(quality);
 
 export const filterType = (filter: AuctionMarketFilter): FilterSection['type'] => {
   if (filter.id === 'itemClassIds' || filter.id === 'itemSubclassIds') return 'select';
@@ -270,7 +250,11 @@ export const CRAFTING_RANGE_SECTION_KEYS = {
   readonly [keyof CraftingBrowserQueryState, keyof CraftingBrowserQueryState]
 >;
 
-export const CRAFTING_MULTI_SELECT_KEYS = new Set<string>(['professionIds', 'expansionIds']);
+export const CRAFTING_MULTI_SELECT_KEYS = new Set<string>([
+  'professionIds',
+  'expansionIds',
+  'qualityIds',
+]);
 
 export const craftingSelectedSet = (
   filterId: string,
@@ -278,6 +262,7 @@ export const craftingSelectedSet = (
 ): Set<string> => {
   if (filterId === 'professionIds') return new Set(state.professionIds.map(String));
   if (filterId === 'expansionIds') return new Set(state.expansionIds.map(String));
+  if (filterId === 'qualityIds') return new Set(state.qualityIds.map(String));
   return new Set();
 };
 
@@ -316,7 +301,7 @@ export function applyCraftingFilterToggle(
   const parsed = parseFilterOptionId(optionId);
   if (!parsed || !CRAFTING_MULTI_SELECT_KEYS.has(parsed.filterId)) return state;
 
-  const key = parsed.filterId as 'professionIds' | 'expansionIds';
+  const key = parsed.filterId as 'professionIds' | 'expansionIds' | 'qualityIds';
   return {
     ...state,
     [key]: toggleNumberInList([...state[key]], parsed.value),

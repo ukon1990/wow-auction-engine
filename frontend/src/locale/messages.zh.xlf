@@ -54,6 +54,10 @@
         <source>Legendary</source>
         <target>传说</target>
       </trans-unit>
+      <trans-unit id="quality.artifact" datatype="html">
+        <source>Artifact</source>
+        <target>神器</target>
+      </trans-unit>
       <trans-unit id="filters.hasRecipe" datatype="html">
         <source>Has Recipe</source>
         <target>有配方</target>

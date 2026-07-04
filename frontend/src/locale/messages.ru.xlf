@@ -54,6 +54,10 @@
         <source>Legendary</source>
         <target>Легендарный</target>
       </trans-unit>
+      <trans-unit id="quality.artifact" datatype="html">
+        <source>Artifact</source>
+        <target>Артефакт</target>
+      </trans-unit>
       <trans-unit id="filters.hasRecipe" datatype="html">
         <source>Has Recipe</source>
         <target>Есть рецепт</target>

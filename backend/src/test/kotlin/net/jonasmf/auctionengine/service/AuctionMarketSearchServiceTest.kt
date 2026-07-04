@@ -378,6 +378,32 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `quality filter options are sorted from common to artifact without duplicates`() {
+        seedMarketSearchData()
+        val commonName = insertLocale(30, "Common", "Gewoehnlich", "ITEM_QUALITY", "COMMON", "name")
+        val uncommonName = insertLocale(31, "Uncommon", "Ungewoehnlich", "ITEM_QUALITY", "UNCOMMON", "name")
+        val epicName = insertLocale(32, "Epic", "Episch", "ITEM_QUALITY", "EPIC", "name")
+        val legendaryName = insertLocale(33, "Legendary", "Legendär", "ITEM_QUALITY", "LEGENDARY", "name")
+        val artifactName = insertLocale(34, "Artifact", "Artefakt", "ITEM_QUALITY", "ARTIFACT", "name")
+        jdbcTemplate.update("INSERT INTO item_quality (internal_id, type, name_id) VALUES (1, 'COMMON', ?)", commonName)
+        jdbcTemplate.update("INSERT INTO item_quality (internal_id, type, name_id) VALUES (2, 'UNCOMMON', ?)", uncommonName)
+        jdbcTemplate.update("INSERT INTO item_quality (internal_id, type, name_id) VALUES (4, 'EPIC', ?)", epicName)
+        jdbcTemplate.update("INSERT INTO item_quality (internal_id, type, name_id) VALUES (5, 'LEGENDARY', ?)", legendaryName)
+        jdbcTemplate.update("INSERT INTO item_quality (internal_id, type, name_id) VALUES (6, 'ARTIFACT', ?)", artifactName)
+
+        val result = service.filters("eu", "argent-dawn", null)
+        val quality = result.filters.single { it.id == "qualityIds" }
+        val options = quality.options.orEmpty()
+
+        assertEquals(listOf("1", "2", "3", "4", "5", "6"), options.map { it.id })
+        assertEquals(
+            listOf("COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY", "ARTIFACT"),
+            options.map { it.qualityType },
+        )
+        assertEquals(options.map { it.qualityType }.toSet().size, options.size)
+    }
+
+    @Test
     fun `filters include lookup values not present in current market result set`() {
         seedMarketSearchData()
         val extraQualityName = insertLocale(20, "Epic", "Episch", "ITEM_QUALITY", "EPIC", "name")
