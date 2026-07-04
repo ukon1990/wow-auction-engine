@@ -31,7 +31,7 @@
       </button>
     </div>
 
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_14rem_8rem_auto_auto]">
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_12rem_12rem_14rem_8rem_auto_auto]">
       <ee-search-input
         label="Name"
         [showLabel]="true"
@@ -45,6 +45,19 @@
         placeholder="Exact or partial item ID"
         [ngModel]="filters().itemId"
         (ngModelChange)="updateFilter('itemId', $event)"
+      />
+      <ee-select-input
+        label="Class"
+        [options]="itemClassOptions"
+        [ngModel]="filters().classId"
+        (ngModelChange)="updateClassFilter($event)"
+      />
+      <ee-select-input
+        label="Subclass"
+        [options]="itemSubclassOptions()"
+        [disabled]="filters().classId === ''"
+        [ngModel]="filters().subclassId"
+        (ngModelChange)="updateFilter('subclassId', $event)"
       />
       <ee-select-input
         label="Override state"
@@ -63,6 +76,7 @@
         class="h-12 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70 md:self-end"
         [disabled]="loading()"
         (click)="applyFilters()"
+        type="submit"
       >
         Apply
       </button>

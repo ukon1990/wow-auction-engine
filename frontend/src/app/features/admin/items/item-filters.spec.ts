@@ -8,11 +8,15 @@ describe('admin item filters', () => {
       pageSize: 50,
       name: 'potion',
       hasOverride: 'true',
+      classId: '7',
+      subclassId: '1',
     };
 
     expect(toAdminItemSearchParams(filters)).toEqual({
       query: 'potion',
       hasOverride: true,
+      itemClassId: 7,
+      itemSubclassId: 1,
       page: 3,
       pageSize: 50,
     });
@@ -29,6 +33,25 @@ describe('admin item filters', () => {
     expect(toAdminItemSearchParams(filters)).toEqual({
       query: '19019',
       hasOverride: undefined,
+      itemClassId: undefined,
+      itemSubclassId: undefined,
+      page: 1,
+      pageSize: 25,
+    });
+  });
+
+  it('preserves consumable class id zero', () => {
+    const filters = {
+      ...defaultAdminItemFilters(),
+      classId: '0',
+      subclassId: '1',
+    };
+
+    expect(toAdminItemSearchParams(filters)).toEqual({
+      query: undefined,
+      hasOverride: undefined,
+      itemClassId: 0,
+      itemSubclassId: 1,
       page: 1,
       pageSize: 25,
     });

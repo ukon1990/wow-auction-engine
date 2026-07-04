@@ -20,6 +20,7 @@ import {
 import { AdminItemComparePanelComponent } from './admin-item-compare-panel.component';
 import { AdminItemCreateFormComponent } from './admin-item-create-form.component';
 import { AdminItemOverrideFormComponent } from './admin-item-override-form.component';
+import { ITEM_CLASS_OPTIONS, ITEM_SUBCLASS_OPTIONS } from './admin-item-override-form.component';
 import { AdminItemRecipeAssociationPanelComponent } from './admin-item-recipe-association-panel.component';
 import { AdminItemService } from './admin-item.service';
 import { createAdminItemColumns } from './admin-items-table.columns';
@@ -30,6 +31,7 @@ import {
   PaginationState,
   SearchInputComponent,
   SelectInputComponent,
+  SelectInputOption,
   SlideOverPanelComponent,
   TableComponent,
 } from '@ui';
@@ -97,6 +99,14 @@ export class ItemsPage {
     { id: '50', label: '50' },
     { id: '100', label: '100' },
   ];
+  protected readonly itemClassOptions: readonly SelectInputOption[] = [
+    { id: '', label: $localize`:@@admin.items.filter.anyClass:All classes` },
+    ...ITEM_CLASS_OPTIONS,
+  ];
+  protected readonly itemSubclassOptions = computed<readonly SelectInputOption[]>(() => [
+    { id: '', label: $localize`:@@admin.items.filter.anySubclass:All subclasses` },
+    ...(ITEM_SUBCLASS_OPTIONS[this.filters().classId] ?? []),
+  ]);
   protected readonly rowId = (item: AdminItem1): string => String(item.id);
 
   protected readonly columns = signal(
@@ -165,6 +175,15 @@ export class ItemsPage {
       pageSize: Number.isFinite(pageSize) ? pageSize : 25,
     }));
     void this.reload();
+  }
+
+  protected updateClassFilter(value: string): void {
+    this.filters.update((current) => ({
+      ...current,
+      classId: value,
+      subclassId: '',
+      page: 0,
+    }));
   }
 
   protected applyFilters(): void {

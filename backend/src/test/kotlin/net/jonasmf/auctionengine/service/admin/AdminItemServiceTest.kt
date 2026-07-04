@@ -155,6 +155,28 @@ class AdminItemServiceTest {
     }
 
     @Test
+    fun `search items accepts class and subclass filters without reference lookup`() {
+        repository.itemSubclassExists = false
+
+        val result = service.searchItems(null, null, null, null, 1, 1, 1, 25)
+
+        assertEquals(0, result.items.size)
+        assertEquals(1, repository.lastSearch?.itemClassId)
+        assertEquals(1, repository.lastSearch?.itemSubclassId)
+    }
+
+    @Test
+    fun `search items requires class when subclass filter is set`() {
+        val error =
+            assertThrows(ResponseStatusException::class.java) {
+                service.searchItems(null, null, null, null, null, 1, 1, 25)
+            }
+
+        assertEquals(400, error.statusCode.value())
+        assertEquals("itemClassId is required when itemSubclassId is set", error.reason)
+    }
+
+    @Test
     fun `recipe association rejects mismatched crafted item id`() {
         repository.itemRows[171374] =
             AdminItemRows(
@@ -197,6 +219,17 @@ class AdminItemServiceTest {
         )
 }
 
+private data class AdminItemSearchCall(
+    val query: String?,
+    val hasBase: Boolean?,
+    val hasOverride: Boolean?,
+    val itemClassId: Int?,
+    val itemSubclassId: Int?,
+    val page: Int,
+    val pageSize: Int,
+    val localeColumnSuffix: String,
+)
+
 private class FakeItemApiLookup : ItemApiLookup {
     val items = mutableMapOf<Int, Item>()
 
@@ -211,15 +244,32 @@ private class FakeAdminItemRepository : AdminItemRepositoryPort {
     var lastUpsert: Pair<Int, AdminItemOverrideRequest>? = null
     var lastRecipeSearch: Triple<String?, Int, String>? = null
     var lastRecipeCraftedItemUpdate: Triple<Int, Int?, Int?>? = null
+    var lastSearch: AdminItemSearchCall? = null
+    var itemSubclassExists = true
 
     override fun searchItems(
         query: String?,
         hasBase: Boolean?,
         hasOverride: Boolean?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
         page: Int,
         pageSize: Int,
         localeColumnSuffix: String,
-    ): AdminItemSearchResult = AdminItemSearchResult(items = emptyList(), totalItems = 0)
+    ): AdminItemSearchResult {
+        lastSearch =
+            AdminItemSearchCall(
+                query = query,
+                hasBase = hasBase,
+                hasOverride = hasOverride,
+                itemClassId = itemClassId,
+                itemSubclassId = itemSubclassId,
+                page = page,
+                pageSize = pageSize,
+                localeColumnSuffix = localeColumnSuffix,
+            )
+        return AdminItemSearchResult(items = emptyList(), totalItems = 0)
+    }
 
     override fun pageMetadata(
         page: Int,
@@ -249,7 +299,7 @@ private class FakeAdminItemRepository : AdminItemRepositoryPort {
     override fun itemSubclassInternalId(
         classId: Int,
         subclassId: Int,
-    ): Long? = 1
+    ): Long? = if (itemSubclassExists) 1 else null
 
     override fun expansionExists(expansionId: Int): Boolean = true
 

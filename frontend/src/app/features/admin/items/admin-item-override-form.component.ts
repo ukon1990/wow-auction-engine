@@ -704,7 +704,7 @@ function expansionReferencesToOptions(
     .map((expansion) => option(expansion.id, expansion.name));
 }
 
-const ITEM_CLASS_OPTIONS: readonly SelectInputOption[] = [
+export const ITEM_CLASS_OPTIONS: readonly SelectInputOption[] = [
   option(0, 'Consumable'),
   option(1, 'Container'),
   option(2, 'Weapon'),
@@ -723,7 +723,7 @@ const ITEM_CLASS_OPTIONS: readonly SelectInputOption[] = [
   option(19, 'WoW Token'),
 ];
 
-const ITEM_SUBCLASS_OPTIONS: Record<string, readonly SelectInputOption[]> = {
+export const ITEM_SUBCLASS_OPTIONS: Record<string, readonly SelectInputOption[]> = {
   '0': [
     option(0, 'Consumable'),
     option(1, 'Potion'),

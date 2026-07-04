@@ -113,10 +113,14 @@ class AdminController(
         locale: String?,
         hasBase: Boolean?,
         hasOverride: Boolean?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
         page: Int,
         pageSize: Int,
     ): ResponseEntity<AdminItemPage> =
-        ResponseEntity.ok(adminItemService.searchItems(query, locale, hasBase, hasOverride, page, pageSize))
+        ResponseEntity.ok(
+            adminItemService.searchItems(query, locale, hasBase, hasOverride, itemClassId, itemSubclassId, page, pageSize),
+        )
 
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getAdminItem(

@@ -35,15 +35,22 @@ class AdminItemService(
         locale: String?,
         hasBase: Boolean?,
         hasOverride: Boolean?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
         page: Int,
         pageSize: Int,
     ): AdminItemPage {
         validatePagination(page, pageSize)
+        if (itemSubclassId != null && itemClassId == null) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "itemClassId is required when itemSubclassId is set")
+        }
         val result =
             adminItemRepository.searchItems(
                 query = query,
                 hasBase = hasBase,
                 hasOverride = hasOverride,
+                itemClassId = itemClassId,
+                itemSubclassId = itemSubclassId,
                 page = page,
                 pageSize = pageSize,
                 localeColumnSuffix = AdminExpansionRepository.resolveLocaleColumnSuffix(locale),

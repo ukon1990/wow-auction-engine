@@ -54,6 +54,8 @@ export class AdminItemService {
         locale,
         undefined,
         params.hasOverride,
+        params.itemClassId,
+        params.itemSubclassId,
         params.page,
         params.pageSize,
       )

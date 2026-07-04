@@ -329,6 +329,18 @@ adminItems:
               schema:
                   type: boolean
               description: Filter to items with or without an admin override row.
+            - name: itemClassId
+              in: query
+              required: false
+              schema:
+                  type: integer
+              description: Filter to an item class id.
+            - name: itemSubclassId
+              in: query
+              required: false
+              schema:
+                  type: integer
+              description: Filter to an item subclass id within the selected/effective class.
             - name: page
               in: query
               required: false

@@ -100,7 +100,16 @@ describe('AdminItemService', () => {
       })
       .subscribe();
 
-    expect(api.searchAdminItems).toHaveBeenCalledWith('thunder', 'en_US', undefined, true, 1, 25);
+    expect(api.searchAdminItems).toHaveBeenCalledWith(
+      'thunder',
+      'en_US',
+      undefined,
+      true,
+      undefined,
+      undefined,
+      1,
+      25,
+    );
     expect(service.items()).toEqual([itemFixture]);
     expect(service.page()).toEqual(pageFixture.page);
   });

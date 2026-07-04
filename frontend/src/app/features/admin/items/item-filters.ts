@@ -14,6 +14,8 @@ export type AdminItemFilterState = {
 export type AdminItemSearchParams = {
   readonly query?: string;
   readonly hasOverride?: boolean;
+  readonly itemClassId?: number;
+  readonly itemSubclassId?: number;
   readonly page: number;
   readonly pageSize: number;
 };
@@ -39,9 +41,18 @@ export function toAdminItemSearchParams(filters: AdminItemFilterState): AdminIte
   return {
     query: query.length > 0 ? query : undefined,
     hasOverride: parseBooleanFilter(filters.hasOverride),
+    itemClassId: parseOptionalInt(filters.classId),
+    itemSubclassId: parseOptionalInt(filters.subclassId),
     page: filters.page + 1,
     pageSize: filters.pageSize,
   };
+}
+
+function parseOptionalInt(value: string): number | undefined {
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  const parsed = Number.parseInt(trimmed, 10);
+  return Number.isFinite(parsed) ? parsed : undefined;
 }
 
 function parseBooleanFilter(value: string): boolean | undefined {

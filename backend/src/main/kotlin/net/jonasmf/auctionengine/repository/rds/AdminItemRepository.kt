@@ -50,6 +50,8 @@ interface AdminItemRepositoryPort {
         query: String?,
         hasBase: Boolean?,
         hasOverride: Boolean?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
         page: Int,
         pageSize: Int,
         localeColumnSuffix: String,
@@ -124,12 +126,15 @@ class AdminItemRepository(
         query: String?,
         hasBase: Boolean?,
         hasOverride: Boolean?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
         page: Int,
         pageSize: Int,
         localeColumnSuffix: String,
     ): AdminItemSearchResult {
         val params = mutableListOf<Any?>()
-        val whereSql = itemSearchWhereSql(query, hasBase, hasOverride, localeColumnSuffix, params)
+        val whereSql =
+            itemSearchWhereSql(query, hasBase, hasOverride, itemClassId, itemSubclassId, localeColumnSuffix, params)
         val count =
             jdbcTemplate.queryForObject(
                 """
@@ -513,6 +518,8 @@ class AdminItemRepository(
         query: String?,
         hasBase: Boolean?,
         hasOverride: Boolean?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
         localeColumnSuffix: String,
         params: MutableList<Any?>,
     ): String {
@@ -542,6 +549,23 @@ class AdminItemRepository(
         }
         if (hasOverride != null) {
             clauses += if (hasOverride) "override_item.id IS NOT NULL" else "override_item.id IS NULL"
+        }
+        itemClassId?.let {
+            clauses += "i.item_class_id = ?"
+            params += it
+        }
+        itemSubclassId?.let {
+            clauses +=
+                """
+                EXISTS (
+                    SELECT 1
+                    FROM item_subclass isc
+                    WHERE isc.internal_id = i.item_subclass_id
+                      AND isc.class_id <=> i.item_class_id
+                      AND isc.subclass_id = ?
+                )
+                """.trimIndent()
+            params += it
         }
         return if (clauses.isEmpty()) "" else "WHERE ${clauses.joinToString(" AND ")}"
     }
