@@ -161,7 +161,7 @@ class ProfessionRecipeJdbcRepository(
         val existingDescriptionId =
             jdbcTemplate
                 .query(
-                    "SELECT description_id FROM recipe WHERE id = ?",
+                    "SELECT description_id FROM recipe WHERE id = ? AND is_override = FALSE",
                     { rs, _ -> rs.getLong("description_id").takeIf { !rs.wasNull() } },
                     recipe.id,
                 ).firstOrNull()
@@ -227,7 +227,7 @@ class ProfessionRecipeJdbcRepository(
         recipeId: Int,
         reagents: List<RecipeReagent>,
     ) {
-        jdbcTemplate.update("DELETE FROM recipe_reagent WHERE recipe_id = ?", recipeId)
+        jdbcTemplate.update("DELETE FROM recipe_reagent WHERE recipe_id = ? AND is_override = FALSE", recipeId)
         reagents.forEachIndexed { index, reagent ->
             val localeId =
                 upsertLocale(
@@ -237,11 +237,15 @@ class ProfessionRecipeJdbcRepository(
                     reagent.name,
                 )
             jdbcTemplate.update(
-                "INSERT INTO recipe_reagent (item_id, name_id, quantity, recipe_id) VALUES (?, ?, ?, ?)",
+                """
+                INSERT INTO recipe_reagent (item_id, name_id, quantity, recipe_id, sort_order, is_override)
+                VALUES (?, ?, ?, ?, ?, FALSE)
+                """.trimIndent(),
                 reagent.itemId,
                 localeId,
                 reagent.quantity,
                 recipeId,
+                index,
             )
         }
     }
@@ -335,7 +339,7 @@ class ProfessionRecipeJdbcRepository(
             val localeIds = mutableSetOf<Long>()
             localeIds +=
                 jdbcTemplate.query(
-                    "SELECT name_id FROM recipe_reagent WHERE recipe_id IN ($placeholders)",
+                    "SELECT name_id FROM recipe_reagent WHERE recipe_id IN ($placeholders) AND is_override = FALSE",
                     { rs, _ -> rs.getLong("name_id") },
                     *chunk.toTypedArray(),
                 )
@@ -362,13 +366,18 @@ class ProfessionRecipeJdbcRepository(
             }
             localeIds +=
                 jdbcTemplate.query(
-                    "SELECT name_id FROM recipe WHERE id IN ($placeholders)",
+                    "SELECT name_id FROM recipe WHERE id IN ($placeholders) AND is_override = FALSE",
                     { rs, _ -> rs.getLong("name_id") },
                     *chunk.toTypedArray(),
                 )
             localeIds +=
                 jdbcTemplate.query(
-                    "SELECT description_id FROM recipe WHERE id IN ($placeholders) AND description_id IS NOT NULL",
+                    """
+                    SELECT description_id FROM recipe
+                    WHERE id IN ($placeholders)
+                      AND is_override = FALSE
+                      AND description_id IS NOT NULL
+                    """.trimIndent(),
                     { rs, _ -> rs.getLong("description_id") },
                     *chunk.toTypedArray(),
                 )
@@ -376,8 +385,14 @@ class ProfessionRecipeJdbcRepository(
                 "DELETE FROM modified_crafting_slot WHERE recipe_id IN ($placeholders)",
                 *chunk.toTypedArray(),
             )
-            jdbcTemplate.update("DELETE FROM recipe_reagent WHERE recipe_id IN ($placeholders)", *chunk.toTypedArray())
-            jdbcTemplate.update("DELETE FROM recipe WHERE id IN ($placeholders)", *chunk.toTypedArray())
+            jdbcTemplate.update(
+                "DELETE FROM recipe_reagent WHERE recipe_id IN ($placeholders) AND is_override = FALSE",
+                *chunk.toTypedArray(),
+            )
+            jdbcTemplate.update(
+                "DELETE FROM recipe WHERE id IN ($placeholders) AND is_override = FALSE",
+                *chunk.toTypedArray(),
+            )
             deleteLocaleIds(localeIds)
         }
     }

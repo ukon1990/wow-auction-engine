@@ -116,4 +116,30 @@ class BranchDatabaseConfigTest {
             ),
         )
     }
+
+    @Test
+    fun `branch database clone orders dependent views after their dependencies`() {
+        assertEquals(
+            listOf("v_item", "v_auction_market_item_details"),
+            orderedViewNames(
+                mapOf(
+                    "v_auction_market_item_details" to "SELECT * FROM v_item",
+                    "v_item" to "SELECT * FROM item",
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun `branch database clone does not treat partial view name matches as dependencies`() {
+        assertEquals(
+            listOf("v_item", "v_item_detail"),
+            orderedViewNames(
+                mapOf(
+                    "v_item" to "SELECT * FROM item",
+                    "v_item_detail" to "SELECT * FROM item_detail",
+                ),
+            ),
+        )
+    }
 }

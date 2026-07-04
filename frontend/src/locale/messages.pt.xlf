@@ -1830,6 +1830,82 @@
         <source>Class ID and subclass ID are required together.</source>
         <target>Class ID and subclass ID are required together.</target>
       </trans-unit>
+      <trans-unit id="route.admin.recipes" datatype="html">
+        <source>Recipes</source>
+        <target>Recipes</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.loadError" datatype="html">
+        <source>Unable to load recipes.</source>
+        <target>Unable to load recipes.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.detailError" datatype="html">
+        <source>Unable to load recipe details.</source>
+        <target>Unable to load recipe details.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compareError" datatype="html">
+        <source>Unable to compare recipe with Blizzard API.</source>
+        <target>Unable to compare recipe with Blizzard API.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.mutationError" datatype="html">
+        <source>Recipe request failed.</source>
+        <target>Recipe request failed.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.id" datatype="html">
+        <source>Recipe ID</source>
+        <target>Recipe ID</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.unnamed" datatype="html">
+        <source>Unnamed recipe</source>
+        <target>Unnamed recipe</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.name" datatype="html">
+        <source>Name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.profession" datatype="html">
+        <source>Profession</source>
+        <target>Profession</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.outputs" datatype="html">
+        <source>Outputs</source>
+        <target>Outputs</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.reagents" datatype="html">
+        <source>Reagents</source>
+        <target>Reagents</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.state" datatype="html">
+        <source>State</source>
+        <target>State</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.actions" datatype="html">
+        <source>Actions</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.anyOverride" datatype="html">
+        <source>All override states</source>
+        <target>All override states</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.hasOverride" datatype="html">
+        <source>Has override</source>
+        <target>Has override</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.noOverride" datatype="html">
+        <source>No override</source>
+        <target>No override</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.panel.compare" datatype="html">
+        <source>Compare Blizzard API</source>
+        <target>Compare Blizzard API</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.panel.edit" datatype="html">
+        <source>Edit recipe override</source>
+        <target>Edit recipe override</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.formError" datatype="html">
+        <source>Unable to save recipe override.</source>
+        <target>Unable to save recipe override.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

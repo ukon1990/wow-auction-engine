@@ -22,7 +22,14 @@ class BranchDatabaseCloner {
             connection.autoCommit = false
             try {
                 connection.lockBranchDatabase(selectedDatabase.name)
+                require(connection.databaseExists(selectedDatabase.cloneSourceDatabase)) {
+                    "Template database '${selectedDatabase.cloneSourceDatabase}' does not exist"
+                }
                 if (connection.databaseExists(selectedDatabase.name)) {
+                    connection.cloneViews(
+                        sourceDatabase = selectedDatabase.cloneSourceDatabase,
+                        targetDatabase = selectedDatabase.name,
+                    )
                     connection.commit()
                     logger.info(
                         "Using existing local dev database {} after {} ms",
@@ -30,10 +37,6 @@ class BranchDatabaseCloner {
                         elapsedMillis(startedAt),
                     )
                     return
-                }
-
-                require(connection.databaseExists(selectedDatabase.cloneSourceDatabase)) {
-                    "Template database '${selectedDatabase.cloneSourceDatabase}' does not exist"
                 }
 
                 logger.info(
@@ -96,6 +99,11 @@ private val SEQUENCE_RESETS =
 private data class DatabaseObject(
     val name: String,
     val type: DatabaseObjectType,
+)
+
+private data class DatabaseView(
+    val name: String,
+    val definition: String,
 )
 
 private enum class DatabaseObjectType {
@@ -261,12 +269,13 @@ private fun Connection.cloneViews(
     sourceDatabase: String,
     targetDatabase: String,
 ) {
-    viewNames(sourceDatabase).forEach { viewName ->
+    views(sourceDatabase).dependencyOrdered().forEach { view ->
+        val viewName = view.name
         val createViewSql =
             showCreateView(sourceDatabase, viewName)
                 .replaceFirst(
                     Regex("""(?i)^CREATE(?:\s+ALGORITHM=\S+)?\s+DEFINER=`[^`]+`@`[^`]+`\s+SQL SECURITY \S+\s+VIEW\s+`${Regex.escape(viewName)}`"""),
-                    "CREATE VIEW ${quoteIdentifier(targetDatabase)}.${quoteIdentifier(viewName)}",
+                    "CREATE OR REPLACE VIEW ${quoteIdentifier(targetDatabase)}.${quoteIdentifier(viewName)}",
                 ).replace(
                     Regex("""`${Regex.escape(sourceDatabase)}`\."""),
                     "${quoteIdentifier(targetDatabase)}.",
@@ -304,10 +313,43 @@ private fun Connection.databaseObjects(database: String): List<DatabaseObject> =
         }
     }
 
-private fun Connection.viewNames(database: String): List<String> =
+private fun List<DatabaseView>.dependencyOrdered(): List<DatabaseView> {
+    val orderedNames = orderedViewNames(associate { it.name to it.definition })
+    val viewsByName = associateBy { it.name }
+    return orderedNames.map(viewsByName::getValue)
+}
+
+internal fun orderedViewNames(viewDefinitions: Map<String, String>): List<String> {
+    val dependenciesByName =
+        viewDefinitions.mapValues { (viewName, definition) ->
+            viewDefinitions.keys
+                .filter { dependency -> dependency != viewName && definition.containsViewReference(dependency) }
+                .toSet()
+        }
+    val ordered = mutableListOf<String>()
+    val remaining = viewDefinitions.keys.toMutableSet()
+
+    while (remaining.isNotEmpty()) {
+        val ready = remaining.filter { name -> dependenciesByName.getValue(name).none(remaining::contains) }
+        if (ready.isEmpty()) {
+            return viewDefinitions.keys.sorted()
+        }
+        ready.sorted().forEach { name ->
+            ordered += name
+            remaining -= name
+        }
+    }
+
+    return ordered
+}
+
+private fun String.containsViewReference(viewName: String): Boolean =
+    Regex("""(?i)(?:^|[^A-Za-z0-9_])`?${Regex.escape(viewName)}`?(?:$|[^A-Za-z0-9_])""").containsMatchIn(this)
+
+private fun Connection.views(database: String): List<DatabaseView> =
     prepareStatement(
         """
-        SELECT table_name
+        SELECT table_name, view_definition
         FROM information_schema.views
         WHERE table_schema = ?
         ORDER BY table_name
@@ -316,7 +358,14 @@ private fun Connection.viewNames(database: String): List<String> =
         statement.setString(1, database)
         statement.executeQuery().use { result ->
             buildList {
-                while (result.next()) add(result.getString("table_name"))
+                while (result.next()) {
+                    add(
+                        DatabaseView(
+                            name = result.getString("table_name"),
+                            definition = result.getString("view_definition"),
+                        ),
+                    )
+                }
             }
         }
     }

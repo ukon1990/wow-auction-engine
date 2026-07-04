@@ -88,6 +88,13 @@ export const routes: TitledRoutes = [
         loadComponent: () =>
           import('@features/admin/items/items.page').then((module) => module.ItemsPage),
       },
+      {
+        path: 'recipes',
+        title: $localize`:@@route.admin.recipes:Recipes`,
+        icon: 'menu_book',
+        loadComponent: () =>
+          import('@features/admin/recipes/recipes.page').then((module) => module.RecipesPage),
+      },
     ],
   },
   {

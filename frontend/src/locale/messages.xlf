@@ -2019,6 +2019,63 @@
           <context context-type="linenumber">79</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="route.admin.recipes" datatype="html">
+        <source>Recipes</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.loadError" datatype="html">
+        <source>Unable to load recipes.</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.detailError" datatype="html">
+        <source>Unable to load recipe details.</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compareError" datatype="html">
+        <source>Unable to compare recipe with Blizzard API.</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.mutationError" datatype="html">
+        <source>Recipe request failed.</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.id" datatype="html">
+        <source>Recipe ID</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.unnamed" datatype="html">
+        <source>Unnamed recipe</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.name" datatype="html">
+        <source>Name</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.profession" datatype="html">
+        <source>Profession</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.outputs" datatype="html">
+        <source>Outputs</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.reagents" datatype="html">
+        <source>Reagents</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.state" datatype="html">
+        <source>State</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.actions" datatype="html">
+        <source>Actions</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.anyOverride" datatype="html">
+        <source>All override states</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.hasOverride" datatype="html">
+        <source>Has override</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.noOverride" datatype="html">
+        <source>No override</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.panel.compare" datatype="html">
+        <source>Compare Blizzard API</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.panel.edit" datatype="html">
+        <source>Edit recipe override</source>
+      </trans-unit>
+      <trans-unit id="admin.recipes.formError" datatype="html">
+        <source>Unable to save recipe override.</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

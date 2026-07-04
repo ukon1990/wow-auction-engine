@@ -444,7 +444,7 @@ class AuctionMarketSearchRepository(
             parts.add("i.expansion_id IN (${request.expansionIds.joinToString(",") { "?" }})")
         }
         if (request.recipeOnly == true) {
-            parts.add("EXISTS (SELECT 1 FROM recipe r WHERE r.crafted_item_id = i.id)")
+            parts.add("EXISTS (SELECT 1 FROM v_recipe_crafted_output r WHERE r.crafted_item_id = i.id)")
         }
         return if (parts.isEmpty()) "" else "  AND " + parts.joinToString(" AND ")
     }

@@ -234,7 +234,7 @@ class AuctionMarketItemDetailRepository(
                 WHERE ash.connected_realm_id = ?
                   AND ash.date = ?
                   AND ash.price$hourSuffix IS NOT NULL
-                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr WHERE rr.recipe_id IN ($placeholders))
+                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM v_recipe_reagent rr WHERE rr.recipe_id IN ($placeholders))
             ),
             reagent_sel_ranked AS (
                 SELECT item_id, price,
@@ -250,7 +250,7 @@ class AuctionMarketItemDetailRepository(
                 WHERE ash.connected_realm_id = ?
                   AND ash.date = ?
                   AND ash.price$commodityHourSuffix IS NOT NULL
-                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr WHERE rr.recipe_id IN ($placeholders))
+                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM v_recipe_reagent rr WHERE rr.recipe_id IN ($placeholders))
             ),
             reagent_com_ranked AS (
                 SELECT item_id, price,
@@ -262,7 +262,7 @@ class AuctionMarketItemDetailRepository(
             ),
             reagent_price AS (
                 SELECT items.item_id, COALESCE(rs.price, rc.price) AS price
-                FROM (SELECT DISTINCT item_id FROM recipe_reagent WHERE recipe_id IN ($placeholders)) items
+                FROM (SELECT DISTINCT item_id FROM v_recipe_reagent WHERE recipe_id IN ($placeholders)) items
                 LEFT JOIN reagent_sel rs ON rs.item_id = items.item_id
                 LEFT JOIN reagent_com rc ON rc.item_id = items.item_id
             )
@@ -274,7 +274,7 @@ class AuctionMarketItemDetailRepository(
                 rr.quantity,
                 rp.price AS unit_price,
                 CASE WHEN rp.price IS NULL THEN NULL ELSE rp.price * rr.quantity END AS line_total
-            FROM recipe_reagent rr
+            FROM v_recipe_reagent rr
             LEFT JOIN reagent_price rp ON rp.item_id = rr.item_id
             LEFT JOIN v_item i ON i.id = rr.item_id
             LEFT JOIN locale i_l ON i_l.id = i.name_id
@@ -405,8 +405,8 @@ class AuctionMarketItemDetailRepository(
         )
 
     /**
-     * Returns true when the given recipe exists and produces the given crafted item. Used to enforce
-     * the contract on `GET .../auction-market-item-crafting-analytics`, which requires the recipe and
+     * Returns true when the given v_recipe exists and produces the given crafted item. Used to enforce
+     * the contract on `GET .../auction-market-item-crafting-analytics`, which requires the v_recipe and
      * item to be a valid pair so the analytics can return 404 instead of an empty 200 payload.
      */
     fun recipeProducesItem(
@@ -414,7 +414,7 @@ class AuctionMarketItemDetailRepository(
         itemId: Int,
     ): Boolean =
         jdbcTemplate.queryForObject(
-            "SELECT EXISTS (SELECT 1 FROM recipe WHERE id = ? AND crafted_item_id = ?)",
+            "SELECT EXISTS (SELECT 1 FROM v_recipe WHERE id = ? AND crafted_item_id = ?)",
             Boolean::class.java,
             recipeId,
             itemId,
@@ -451,7 +451,7 @@ class AuctionMarketItemDetailRepository(
                   ON ash.connected_realm_id = ?
                  AND ash.date = ds.stat_date
                  AND ash.price$hourSuffix IS NOT NULL
-                 AND ash.item_id IN (SELECT item_id FROM recipe_reagent WHERE recipe_id = ?)
+                 AND ash.item_id IN (SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?)
             ),
             reagent_sel_ranked AS (
                 SELECT stat_date, item_id, price,
@@ -468,7 +468,7 @@ class AuctionMarketItemDetailRepository(
                   ON ash.connected_realm_id = ?
                  AND ash.date = ds.stat_date
                  AND ash.price$commodityHourSuffix IS NOT NULL
-                 AND ash.item_id IN (SELECT item_id FROM recipe_reagent WHERE recipe_id = ?)
+                 AND ash.item_id IN (SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?)
             ),
             reagent_com_ranked AS (
                 SELECT stat_date, item_id, price,
@@ -481,7 +481,7 @@ class AuctionMarketItemDetailRepository(
             reagent_price AS (
                 SELECT ds.stat_date, rr.item_id, COALESCE(rs.price, rc.price) AS price
                 FROM date_spine ds
-                CROSS JOIN (SELECT DISTINCT item_id FROM recipe_reagent WHERE recipe_id = ?) rr
+                CROSS JOIN (SELECT DISTINCT item_id FROM v_recipe_reagent WHERE recipe_id = ?) rr
                 LEFT JOIN reagent_sel rs ON rs.stat_date = ds.stat_date AND rs.item_id = rr.item_id
                 LEFT JOIN reagent_com rc ON rc.stat_date = ds.stat_date AND rc.item_id = rr.item_id
             ),
@@ -490,7 +490,7 @@ class AuctionMarketItemDetailRepository(
                        SUM(CASE WHEN rp.price IS NULL THEN 1 ELSE 0 END) AS missing_reagents,
                        SUM(COALESCE(rp.price, 0) * rr.quantity) AS partial_cost
                 FROM date_spine ds
-                JOIN recipe_reagent rr ON rr.recipe_id = ?
+                JOIN v_recipe_reagent rr ON rr.recipe_id = ?
                 LEFT JOIN reagent_price rp ON rp.stat_date = ds.stat_date AND rp.item_id = rr.item_id
                 GROUP BY ds.stat_date
             ),
@@ -537,7 +537,7 @@ class AuctionMarketItemDetailRepository(
                 LEFT JOIN output_com oc ON oc.stat_date = ds.stat_date
             ),
             recipe_dim AS (
-                SELECT COALESCE(NULLIF(crafted_quantity, 0), 1) AS crafted_quantity FROM recipe WHERE id = ? AND crafted_item_id = ?
+                SELECT COALESCE(NULLIF(crafted_quantity, 0), 1) AS crafted_quantity FROM v_recipe WHERE id = ? AND crafted_item_id = ?
             )
             SELECT ds.stat_date,
                    CASE WHEN rc.missing_reagents = 0 THEN rc.partial_cost ELSE NULL END AS reagent_cost,
@@ -619,7 +619,7 @@ class AuctionMarketItemDetailRepository(
                 JOIN auction_stats_hourly ash
                   ON ash.connected_realm_id = ?
                  AND ash.date BETWEEN ? AND ?
-                 AND ash.item_id IN (SELECT item_id FROM recipe_reagent WHERE recipe_id = ?)
+                 AND ash.item_id IN (SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?)
                 HAVING price IS NOT NULL
             ),
             reagent_sel_ranked AS (
@@ -641,7 +641,7 @@ class AuctionMarketItemDetailRepository(
                 JOIN auction_stats_hourly ash
                   ON ash.connected_realm_id = ?
                  AND ash.date BETWEEN ? AND ?
-                 AND ash.item_id IN (SELECT item_id FROM recipe_reagent WHERE recipe_id = ?)
+                 AND ash.item_id IN (SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?)
                 HAVING price IS NOT NULL
             ),
             reagent_com_ranked AS (
@@ -660,7 +660,7 @@ class AuctionMarketItemDetailRepository(
                        COALESCE(rs.price, rc.price) AS price
                 FROM date_spine ds
                 CROSS JOIN hours_t h
-                CROSS JOIN (SELECT DISTINCT item_id FROM recipe_reagent WHERE recipe_id = ?) rr
+                CROSS JOIN (SELECT DISTINCT item_id FROM v_recipe_reagent WHERE recipe_id = ?) rr
                 LEFT JOIN reagent_sel rs
                        ON rs.stat_date = ds.stat_date AND rs.hour_of_day = h.hour_of_day AND rs.item_id = rr.item_id
                 LEFT JOIN reagent_com rc
@@ -672,7 +672,7 @@ class AuctionMarketItemDetailRepository(
                        SUM(COALESCE(rp.price, 0) * rr.quantity) AS partial_cost
                 FROM date_spine ds
                 CROSS JOIN hours_t h
-                JOIN recipe_reagent rr ON rr.recipe_id = ?
+                JOIN v_recipe_reagent rr ON rr.recipe_id = ?
                 LEFT JOIN reagent_price rp
                        ON rp.stat_date = ds.stat_date AND rp.hour_of_day = h.hour_of_day AND rp.item_id = rr.item_id
                 GROUP BY ds.stat_date, h.hour_of_day
@@ -733,7 +733,7 @@ class AuctionMarketItemDetailRepository(
             ),
             recipe_dim AS (
                 SELECT COALESCE(NULLIF(crafted_quantity, 0), 1) AS crafted_quantity
-                FROM recipe WHERE id = ? AND crafted_item_id = ?
+                FROM v_recipe WHERE id = ? AND crafted_item_id = ?
             ),
             cells AS (
                 SELECT WEEKDAY(ds.stat_date) AS day_of_week,

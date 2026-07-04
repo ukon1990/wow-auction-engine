@@ -1,0 +1,9 @@
+type: object
+required: [overrides]
+properties:
+  overrides:
+    type: array
+    minItems: 1
+    maxItems: 100
+    items:
+      $ref: "../../../openapi.yml#/components/schemas/AdminRecipeBulkOverride"

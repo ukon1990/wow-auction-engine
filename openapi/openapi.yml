@@ -58,6 +58,14 @@ paths:
     $ref: ./paths/admin.yml#/adminItemBulkOverrides
   /admin/recipes:
     $ref: ./paths/admin.yml#/adminRecipes
+  /admin/recipes/{id}:
+    $ref: ./paths/admin.yml#/adminRecipeById
+  /admin/recipes/{id}/override:
+    $ref: ./paths/admin.yml#/adminRecipeOverride
+  /admin/recipes/{id}/compare-api:
+    $ref: ./paths/admin.yml#/adminRecipeCompareApi
+  /admin/recipes/bulk-overrides:
+    $ref: ./paths/admin.yml#/adminRecipeBulkOverrides
   /realms:
     $ref: ./paths/realm.yml#/listRealms
   /realms/{region}/{slug}:
@@ -136,6 +144,28 @@ components:
       $ref: ./components/schemas/admin/admin-recipe-association-request.yml
     AdminRecipeSearchResult:
       $ref: ./components/schemas/admin/admin-recipe-search-result.yml
+    AdminRecipe:
+      $ref: ./components/schemas/admin/admin-recipe.yml
+    AdminRecipeBulkOverride:
+      $ref: ./components/schemas/admin/admin-recipe-bulk-override.yml
+    AdminRecipeBulkOverrideRequest:
+      $ref: ./components/schemas/admin/admin-recipe-bulk-override-request.yml
+    AdminRecipeCollectionOverrideRequest:
+      $ref: ./components/schemas/admin/admin-recipe-collection-override-request.yml
+    AdminRecipeCompareResponse:
+      $ref: ./components/schemas/admin/admin-recipe-compare-response.yml
+    AdminRecipeFields:
+      $ref: ./components/schemas/admin/admin-recipe-fields.yml
+    AdminRecipeOutput:
+      $ref: ./components/schemas/admin/admin-recipe-output.yml
+    AdminRecipeOverrideRequest:
+      $ref: ./components/schemas/admin/admin-recipe-override-request.yml
+    AdminRecipePage:
+      $ref: ./components/schemas/admin/admin-recipe-page.yml
+    AdminRecipeReagent:
+      $ref: ./components/schemas/admin/admin-recipe-reagent.yml
+    AdminRecipeReagentRank:
+      $ref: ./components/schemas/admin/admin-recipe-reagent-rank.yml
     AdminItemOverrideRequest:
       $ref: ./components/schemas/admin/admin-item-override-request.yml
     AuctionHouseStatus:

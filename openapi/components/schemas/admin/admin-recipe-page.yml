@@ -1,0 +1,9 @@
+type: object
+required: [recipes, page]
+properties:
+  recipes:
+    type: array
+    items:
+      $ref: "../../../openapi.yml#/components/schemas/AdminRecipe"
+  page:
+    $ref: "../../../openapi.yml#/components/schemas/PageMetadata"

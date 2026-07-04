@@ -207,13 +207,13 @@ class ItemJdbcRepository(
             ),
             crafted_source AS (
                 SELECT crafted_item_id AS item_id
-                FROM recipe
+                FROM v_recipe_crafted_output
                 WHERE crafted_item_id IS NOT NULL
                 GROUP BY crafted_item_id
             ),
             reagent_source AS (
                 SELECT item_id
-                FROM recipe_reagent
+                FROM v_recipe_reagent
                 WHERE item_id IS NOT NULL
                 GROUP BY item_id
             ),

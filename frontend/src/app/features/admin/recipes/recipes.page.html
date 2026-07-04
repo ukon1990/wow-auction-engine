@@ -1,0 +1,340 @@
+<ee-page-frame
+  title="Recipes"
+  eyebrow="Admin"
+  [loading]="loading() && recipes().length === 0"
+  titleId="admin-recipes-title"
+>
+  @if (error()) {
+    <p
+      class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+      role="alert"
+    >
+      {{ error() }}
+    </p>
+  }
+
+  <section class="grid gap-4" aria-label="Recipe search filters">
+    <div class="grid gap-1">
+      <h2 class="font-cinzel text-xl font-bold text-primary-container">Recipe overrides</h2>
+      <p class="ee-data text-outline">
+        Search effective recipe rows and manage admin overrides that survive Blizzard sync.
+      </p>
+    </div>
+
+    <form class="grid gap-4" (ngSubmit)="applyFilters()">
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <ee-search-input
+          label="Name"
+          [showLabel]="true"
+          placeholder="Search localized names"
+          [ngModel]="filters().name"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('name', $event)"
+        />
+        <ee-search-input
+          label="Recipe ID"
+          [showLabel]="true"
+          placeholder="Exact or partial recipe ID"
+          [ngModel]="filters().recipeId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('recipeId', $event)"
+        />
+        <ee-search-input
+          label="Crafted item ID"
+          [showLabel]="true"
+          placeholder="Output item ID"
+          [ngModel]="filters().craftedItemId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('craftedItemId', $event)"
+        />
+        <ee-select-input
+          label="Override state"
+          [options]="hasOverrideOptions"
+          [ngModel]="filters().hasOverride"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('hasOverride', $event)"
+        />
+        <ee-select-input
+          label="Page size"
+          [options]="pageSizeOptions"
+          [ngModel]="pageSizeValue()"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updatePageSize($event)"
+        />
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <button type="submit" class="admin-primary-button" [disabled]="loading()">Apply</button>
+        <button type="button" class="admin-secondary-button" (click)="resetFilters()">Reset</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="grid min-h-0 flex-1 gap-4" aria-label="Admin recipe results">
+    <ee-table
+      [columns]="columns()"
+      [data]="recipes()"
+      [loading]="loading()"
+      [skeletonRowCount]="10"
+      [showFooter]="true"
+      [showPagination]="true"
+      [paginationState]="paginationState()"
+      [cardView]="cardView()"
+      [getRowId]="rowId"
+      emptyMessage="No recipes match the current filters."
+      sectionAriaLabel="Admin recipes"
+      paginationRowLabel="recipes"
+      (pageChange)="onPageChange($event)"
+    />
+  </section>
+</ee-page-frame>
+
+<ee-slide-over
+  [open]="panelMode() !== null"
+  [title]="panelTitle()"
+  titleId="admin-recipe-panel-title"
+  (closed)="closePanel()"
+>
+  @if (panelMode() === 'edit') {
+    @if (detailLoading()) {
+      <p class="ee-data text-outline" role="status">Loading recipe details...</p>
+    } @else if (selectedRecipe(); as recipe) {
+      @if (formError() || detailError()) {
+        <p
+          class="mb-4 rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+          role="alert"
+        >
+          {{ formError() || detailError() }}
+        </p>
+      }
+
+      <form class="grid gap-6" (ngSubmit)="submitOverride()">
+        <header class="grid gap-1">
+          <p class="ee-label text-outline">#{{ recipe.id }}</p>
+          <h3 class="font-cinzel text-xl font-bold text-on-surface">
+            {{ recipe.effective.name || 'Unnamed recipe' }}
+          </h3>
+          <p class="ee-data text-outline">
+            {{ recipe.effective.professionName }} · {{ recipe.effective.skillTierName }} ·
+            {{ recipe.effective.professionCategoryName }}
+          </p>
+        </header>
+
+        <section class="grid gap-3" aria-label="Scalar recipe override fields">
+          <h4 class="font-semibold text-primary-container">Scalar overrides</h4>
+          <div class="grid gap-3 md:grid-cols-2">
+            <label class="admin-field">
+              <span>Crafted item ID</span>
+              <input
+                type="number"
+                min="1"
+                [ngModel]="overrideDraft().craftedItemId"
+                [ngModelOptions]="standaloneModel"
+                (ngModelChange)="updateDraft('craftedItemId', $event)"
+              />
+            </label>
+            <label class="admin-field">
+              <span>Crafted quantity</span>
+              <input
+                type="number"
+                min="1"
+                [ngModel]="overrideDraft().craftedQuantity"
+                [ngModelOptions]="standaloneModel"
+                (ngModelChange)="updateDraft('craftedQuantity', $event)"
+              />
+            </label>
+            <label class="admin-field">
+              <span>Rank</span>
+              <input
+                type="number"
+                min="0"
+                [ngModel]="overrideDraft().rank"
+                [ngModelOptions]="standaloneModel"
+                (ngModelChange)="updateDraft('rank', $event)"
+              />
+            </label>
+            <label class="admin-field">
+              <span>Required skill level</span>
+              <input
+                type="number"
+                min="0"
+                [ngModel]="overrideDraft().requiredSkillLevel"
+                [ngModelOptions]="standaloneModel"
+                (ngModelChange)="updateDraft('requiredSkillLevel', $event)"
+              />
+            </label>
+          </div>
+          <label class="admin-field">
+            <span>Override note</span>
+            <textarea
+              rows="3"
+              [ngModel]="overrideDraft().overrideNote"
+              [ngModelOptions]="standaloneModel"
+              (ngModelChange)="updateDraft('overrideNote', $event)"
+            ></textarea>
+          </label>
+        </section>
+
+        <section class="grid gap-3" aria-label="Recipe crafted output overrides">
+          <div class="flex items-center justify-between gap-3">
+            <h4 class="font-semibold text-primary-container">Crafted outputs</h4>
+            <button type="button" class="admin-secondary-button" (click)="addOutput()">
+              Add output
+            </button>
+          </div>
+          @for (output of outputsDraft(); track $index) {
+            <div class="admin-row-grid">
+              <label class="admin-field">
+                <span>Item ID</span>
+                <input
+                  type="number"
+                  min="1"
+                  [ngModel]="output.craftedItemId"
+                  [ngModelOptions]="standaloneModel"
+                  (ngModelChange)="updateOutput($index, { craftedItemId: $event })"
+                />
+              </label>
+              <label class="admin-field">
+                <span>Quantity</span>
+                <input
+                  type="number"
+                  min="1"
+                  [ngModel]="output.craftedQuantity"
+                  [ngModelOptions]="standaloneModel"
+                  (ngModelChange)="updateOutput($index, { craftedQuantity: $event })"
+                />
+              </label>
+              <label class="admin-field">
+                <span>Skill</span>
+                <input
+                  type="number"
+                  min="0"
+                  [ngModel]="output.requiredSkillLevel"
+                  [ngModelOptions]="standaloneModel"
+                  (ngModelChange)="updateOutput($index, { requiredSkillLevel: $event })"
+                />
+              </label>
+              <button
+                type="button"
+                class="admin-secondary-button self-end"
+                (click)="removeOutput($index)"
+              >
+                Remove
+              </button>
+            </div>
+          } @empty {
+            <p class="ee-data text-outline">
+              No output overrides. The base crafted item is inherited.
+            </p>
+          }
+        </section>
+
+        <section class="grid gap-3" aria-label="Recipe reagent overrides">
+          <div class="flex items-center justify-between gap-3">
+            <h4 class="font-semibold text-primary-container">Reagents</h4>
+            <button type="button" class="admin-secondary-button" (click)="addReagent()">
+              Add reagent
+            </button>
+          </div>
+          @for (reagent of reagentsDraft(); track $index) {
+            <div class="admin-row-grid">
+              <label class="admin-field">
+                <span>Item ID</span>
+                <input
+                  type="number"
+                  min="1"
+                  [ngModel]="reagent.itemId"
+                  [ngModelOptions]="standaloneModel"
+                  (ngModelChange)="updateReagent($index, { itemId: $event })"
+                />
+              </label>
+              <label class="admin-field">
+                <span>Quantity</span>
+                <input
+                  type="number"
+                  min="1"
+                  [ngModel]="reagent.quantity"
+                  [ngModelOptions]="standaloneModel"
+                  (ngModelChange)="updateReagent($index, { quantity: $event })"
+                />
+              </label>
+              <label class="admin-field">
+                <span>Sort order</span>
+                <input
+                  type="number"
+                  min="0"
+                  [ngModel]="reagent.sortOrder"
+                  [ngModelOptions]="standaloneModel"
+                  (ngModelChange)="updateReagent($index, { sortOrder: $event })"
+                />
+              </label>
+              <button
+                type="button"
+                class="admin-secondary-button self-end"
+                (click)="removeReagent($index)"
+              >
+                Remove
+              </button>
+            </div>
+          } @empty {
+            <p class="ee-data text-outline">No reagent overrides. Base reagents are inherited.</p>
+          }
+        </section>
+
+        <div class="flex flex-wrap justify-end gap-3">
+          <button type="button" class="admin-secondary-button" (click)="closePanel()">
+            Cancel
+          </button>
+          <button type="submit" class="admin-primary-button" [disabled]="mutationLoading()">
+            Save override
+          </button>
+        </div>
+      </form>
+    } @else if (detailError()) {
+      <p
+        class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+        role="alert"
+      >
+        {{ detailError() }}
+      </p>
+    }
+  } @else if (panelMode() === 'compare') {
+    @if (compareLoading()) {
+      <p class="ee-data text-outline" role="status">Comparing with Blizzard API...</p>
+    } @else if (compareError()) {
+      <p
+        class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+        role="alert"
+      >
+        {{ compareError() }}
+      </p>
+    } @else if (compare(); as result) {
+      <p class="ee-data text-outline"><span>Recipe</span> #{{ result.recipeId }}</p>
+      <div class="overflow-x-auto rounded-md border border-white/10">
+        <table class="min-w-full divide-y divide-white/10 text-sm">
+          <thead class="bg-surface-container-high text-left ee-label text-outline">
+            <tr>
+              <th class="px-3 py-2">Field</th>
+              <th class="px-3 py-2">Base</th>
+              <th class="px-3 py-2">Override</th>
+              <th class="px-3 py-2">API</th>
+              <th class="px-3 py-2">Effective</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            @for (row of compareRows(); track row.key) {
+              <tr>
+                <th class="px-3 py-2 text-left font-semibold text-on-surface">{{ row.key }}</th>
+                <td class="px-3 py-2 text-outline">{{ formatCompare(row.value.base) }}</td>
+                <td class="px-3 py-2 text-outline">{{ formatCompare(row.value.override) }}</td>
+                <td class="px-3 py-2 text-outline">{{ formatCompare(row.value.api) }}</td>
+                <td class="px-3 py-2 text-on-surface">{{ formatCompare(row.value.effective) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="ee-data text-outline">Run compare to inspect Blizzard API differences.</p>
+    }
+  }
+</ee-slide-over>
