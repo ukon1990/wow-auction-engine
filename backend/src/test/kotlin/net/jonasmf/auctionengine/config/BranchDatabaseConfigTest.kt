@@ -1,6 +1,7 @@
 package net.jonasmf.auctionengine.config
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 class BranchDatabaseConfigTest {
@@ -60,6 +61,50 @@ class BranchDatabaseConfigTest {
             "CREATE TABLE `branch_feature`.`auction_house` (`id` int not null)",
             "CREATE TABLE `auction_house` (`id` int not null)"
                 .qualifyCreateTableOrSequence("branch_feature", "auction_house"),
+        )
+    }
+
+    @Test
+    fun `branch database clone skips volatile runtime table data`() {
+        assertNull(
+            dataCopySql(
+                sourceDatabase = "dbo",
+                targetDatabase = "branch_feature",
+                tableName = "auction_price",
+            ),
+        )
+    }
+
+    @Test
+    fun `branch database clone bounds historical stats data`() {
+        assertEquals(
+            """
+            INSERT INTO `branch_feature`.`auction_stats_hourly`
+            SELECT *
+            FROM `dbo`.`auction_stats_hourly`
+            WHERE `date` >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+            """.trimIndent(),
+            dataCopySql(
+                sourceDatabase = "dbo",
+                targetDatabase = "branch_feature",
+                tableName = "auction_stats_hourly",
+            ),
+        )
+    }
+
+    @Test
+    fun `branch database clone keeps reference data`() {
+        assertEquals(
+            """
+            INSERT INTO `branch_feature`.`item`
+            SELECT *
+            FROM `dbo`.`item`
+            """.trimIndent(),
+            dataCopySql(
+                sourceDatabase = "dbo",
+                targetDatabase = "branch_feature",
+                tableName = "item",
+            ),
         )
     }
 }

@@ -49,6 +49,19 @@ class BranchDatabaseCloner {
     }
 }
 
+private val SKIP_DATA_TABLES =
+    setOf(
+        "admin_job",
+        "auction",
+        "auction_house_file_log",
+        "auction_update_history",
+        "auction_price",
+        "blizzard_media_fetch_failure",
+        "connected_realm_update_history",
+        "file_reference",
+        "item_fetch_failure",
+    )
+
 private val BOUNDED_HISTORY_TABLES =
     setOf(
         "auction_stats_daily",
@@ -160,20 +173,32 @@ private fun Connection.cloneData(
     targetDatabase: String,
     tableName: String,
 ) {
-    val datePredicate =
-        if (tableName in BOUNDED_HISTORY_TABLES) {
-            " WHERE `date` >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)"
-        } else {
-            ""
-        }
-    executeSql(
+    dataCopySql(
+        sourceDatabase = sourceDatabase,
+        targetDatabase = targetDatabase,
+        tableName = tableName,
+    )?.let(::executeSql)
+}
+
+internal fun dataCopySql(
+    sourceDatabase: String,
+    targetDatabase: String,
+    tableName: String,
+): String? {
+    if (tableName in SKIP_DATA_TABLES) return null
+
+    val sql =
         """
         INSERT INTO ${quoteIdentifier(targetDatabase)}.${quoteIdentifier(tableName)}
         SELECT *
         FROM ${quoteIdentifier(sourceDatabase)}.${quoteIdentifier(tableName)}
-        $datePredicate
-        """.trimIndent(),
-    )
+        """.trimIndent()
+
+    return if (tableName in BOUNDED_HISTORY_TABLES) {
+        "$sql\nWHERE `date` >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)"
+    } else {
+        sql
+    }
 }
 
 private fun Connection.resetCopiedSequences(
