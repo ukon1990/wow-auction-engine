@@ -13,47 +13,50 @@ class DeletedAuctionCleanupRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) {
     fun findNextHourlyCleanupRealm(cutoff: LocalDate): Int? =
-        jdbcTemplate.queryForList(
-            """
-            SELECT connected_realm_id
-            FROM auction_stats_hourly
-            WHERE date < ?
-            GROUP BY connected_realm_id
-            ORDER BY connected_realm_id
-            LIMIT 1
-            """.trimIndent(),
-            Int::class.java,
-            Date.valueOf(cutoff),
-        ).firstOrNull()
+        jdbcTemplate
+            .queryForList(
+                """
+                SELECT connected_id
+                FROM auction_house
+                WHERE last_history_delete_event IS NULL OR last_history_delete_event < ?
+                GROUP BY connected_id
+                ORDER BY last_history_delete_event
+                LIMIT 1
+                """.trimIndent(),
+                Int::class.java,
+                Date.valueOf(cutoff),
+            ).firstOrNull()
 
     fun findNextDailyCleanupRealm(cutoff: LocalDate): Int? =
-        jdbcTemplate.queryForList(
-            """
-            SELECT connected_realm_id
-            FROM auction_stats_daily
-            WHERE date < ?
-            GROUP BY connected_realm_id
-            ORDER BY connected_realm_id
-            LIMIT 1
-            """.trimIndent(),
-            Int::class.java,
-            Date.valueOf(cutoff),
-        ).firstOrNull()
+        jdbcTemplate
+            .queryForList(
+                """
+                SELECT connected_id
+                FROM auction_house
+                WHERE last_history_delete_event_daily IS NULL OR last_history_delete_event_daily < ?
+                GROUP BY connected_id
+                ORDER BY last_history_delete_event_daily
+                LIMIT 1
+                """.trimIndent(),
+                Int::class.java,
+                Date.valueOf(cutoff),
+            ).firstOrNull()
 
     fun findNextPriceCleanupRealm(cutoff: Instant): Int? =
-        jdbcTemplate.queryForList(
-            """
-            SELECT a.connected_realm_id
-            FROM auction_price ap
-            INNER JOIN auction a ON a.id = ap.auction_id
-            WHERE ap.last_modified < ?
-            GROUP BY a.connected_realm_id
-            ORDER BY a.connected_realm_id
-            LIMIT 1
-            """.trimIndent(),
-            Int::class.java,
-            Timestamp.from(cutoff),
-        ).firstOrNull()
+        jdbcTemplate
+            .queryForList(
+                """
+                SELECT a.connected_realm_id
+                FROM auction_price ap
+                INNER JOIN auction a ON a.id = ap.auction_id
+                WHERE ap.last_modified < ?
+                GROUP BY a.connected_realm_id
+                ORDER BY a.connected_realm_id
+                LIMIT 1
+                """.trimIndent(),
+                Int::class.java,
+                Timestamp.from(cutoff),
+            ).firstOrNull()
 
     fun countHourlyCleanupCandidates(
         connectedRealmId: Int,

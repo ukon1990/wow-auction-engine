@@ -65,6 +65,7 @@ class DeletedAuctionCleanupService(
             findRealm = cleanupRepository::findNextPriceCleanupRealm,
             countCandidates = cleanupRepository::countPriceCleanupCandidates,
             deleteBatch = cleanupRepository::deletePriceBatch,
+            // TODO: Wrong update column - Needs it's own column
             updateMarker = auctionHouseRepository::updateLastHistoryDeleteEvent,
         )
 
