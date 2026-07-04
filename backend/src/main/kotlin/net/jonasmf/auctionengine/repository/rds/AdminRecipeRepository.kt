@@ -40,11 +40,43 @@ data class AdminRecipeRows(
         )
 }
 
+interface AdminRecipeRepositoryPort {
+    fun searchRecipes(
+        query: String?,
+        hasOverride: Boolean?,
+        professionId: Int?,
+        craftedItemId: Int?,
+        page: Int,
+        pageSize: Int,
+        localeColumnSuffix: String,
+    ): AdminRecipeSearchRows
+
+    fun pageMetadata(
+        page: Int,
+        pageSize: Int,
+        totalItems: Long,
+    ): PageMetadata
+
+    fun findRecipeRows(
+        id: Int,
+        localeColumnSuffix: String,
+    ): AdminRecipeRows?
+
+    fun hasBaseRecipe(id: Int): Boolean
+
+    fun upsertOverride(
+        id: Int,
+        request: AdminRecipeOverrideRequest,
+    )
+
+    fun deleteOverride(id: Int): Boolean
+}
+
 @Repository
 class AdminRecipeRepository(
     private val jdbcTemplate: JdbcTemplate,
-) {
-    fun searchRecipes(
+) : AdminRecipeRepositoryPort {
+    override fun searchRecipes(
         query: String?,
         hasOverride: Boolean?,
         professionId: Int?,
@@ -91,7 +123,7 @@ class AdminRecipeRepository(
         return AdminRecipeSearchRows(rows, totalItems)
     }
 
-    fun pageMetadata(
+    override fun pageMetadata(
         page: Int,
         pageSize: Int,
         totalItems: Long,
@@ -103,7 +135,7 @@ class AdminRecipeRepository(
             totalPages = if (totalItems == 0L) 0 else ceil(totalItems.toDouble() / pageSize).toInt(),
         )
 
-    fun findRecipeRows(
+    override fun findRecipeRows(
         id: Int,
         localeColumnSuffix: String,
     ): AdminRecipeRows? {
@@ -122,7 +154,7 @@ class AdminRecipeRepository(
         )
     }
 
-    fun hasBaseRecipe(id: Int): Boolean =
+    override fun hasBaseRecipe(id: Int): Boolean =
         jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM recipe WHERE id = ? AND is_override = FALSE",
             Long::class.java,
@@ -136,7 +168,7 @@ class AdminRecipeRepository(
             id,
         )!! > 0
 
-    fun upsertOverride(
+    override fun upsertOverride(
         id: Int,
         request: AdminRecipeOverrideRequest,
     ) {
@@ -169,7 +201,7 @@ class AdminRecipeRepository(
         request.reagents?.let { replaceReagents(id, it) }
     }
 
-    fun deleteOverride(id: Int): Boolean {
+    override fun deleteOverride(id: Int): Boolean {
         val deletedOutputs = jdbcTemplate.update("DELETE FROM recipe_crafted_output WHERE recipe_id = ? AND is_override = TRUE", id)
         val deletedReagents = jdbcTemplate.update("DELETE FROM recipe_reagent WHERE recipe_id = ? AND is_override = TRUE", id)
         val deletedRecipe = jdbcTemplate.update("DELETE FROM recipe WHERE id = ? AND is_override = TRUE", id)

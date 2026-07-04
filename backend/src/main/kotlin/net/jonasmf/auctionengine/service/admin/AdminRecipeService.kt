@@ -7,9 +7,9 @@ import net.jonasmf.auctionengine.generated.model.AdminRecipeCompareResponse
 import net.jonasmf.auctionengine.generated.model.AdminRecipeFields
 import net.jonasmf.auctionengine.generated.model.AdminRecipeOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminRecipePage
-import net.jonasmf.auctionengine.integration.blizzard.RecipeApiClient
+import net.jonasmf.auctionengine.integration.blizzard.RecipeApiLookup
 import net.jonasmf.auctionengine.repository.rds.AdminExpansionRepository
-import net.jonasmf.auctionengine.repository.rds.AdminRecipeRepository
+import net.jonasmf.auctionengine.repository.rds.AdminRecipeRepositoryPort
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,8 +19,8 @@ private const val MAX_ADMIN_RECIPE_PAGE_SIZE = 100
 
 @Service
 class AdminRecipeService(
-    private val adminRecipeRepository: AdminRecipeRepository,
-    private val recipeApiClient: RecipeApiClient,
+    private val adminRecipeRepository: AdminRecipeRepositoryPort,
+    private val recipeApiClient: RecipeApiLookup,
 ) {
     fun searchRecipes(
         query: String?,

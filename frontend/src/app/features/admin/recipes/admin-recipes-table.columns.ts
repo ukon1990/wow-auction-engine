@@ -17,6 +17,8 @@ export type AdminRecipeTableActions = {
 };
 
 export const createAdminRecipeColumns = (actions: AdminRecipeTableActions) => {
+  const stateOverrideLabel = $localize`:@@admin.recipes.table.stateOverride:Override`;
+  const stateBaseLabel = $localize`:@@admin.recipes.table.stateBase:Base`;
   const helper = createColumnHelper<AdminRecipe1>();
   return [
     helper.accessor('id', {
@@ -64,7 +66,7 @@ export const createAdminRecipeColumns = (actions: AdminRecipeTableActions) => {
         ...actions,
       } satisfies AdminRecipeColumnMeta,
     }),
-    helper.accessor((row) => (row.hasOverride ? 'Override' : 'Base'), {
+    helper.accessor((row) => (row.hasOverride ? stateOverrideLabel : stateBaseLabel), {
       id: 'state',
       header: $localize`:@@admin.recipes.table.state:State`,
       meta: { align: 'left', gridTrack: 'minmax(7rem, 0.6fr)', cardRole: 'detail', ...actions },

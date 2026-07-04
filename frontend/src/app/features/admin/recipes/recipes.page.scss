@@ -21,37 +21,3 @@
   color: var(--color-on-surface);
   transition: background-color 150ms ease;
 }
-
-.admin-field {
-  display: grid;
-  gap: 0.25rem;
-  color: var(--color-outline);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.admin-field input,
-.admin-field textarea {
-  min-height: 2.75rem;
-  border: 1px solid rgb(255 255 255 / 0.1);
-  border-radius: 0.375rem;
-  background: var(--color-surface-container);
-  padding: 0.5rem 0.75rem;
-  color: var(--color-on-surface);
-  outline: none;
-}
-
-.admin-row-grid {
-  display: grid;
-  gap: 0.75rem;
-  border: 1px solid rgb(255 255 255 / 0.1);
-  border-radius: 0.375rem;
-  background: color-mix(in srgb, var(--color-surface-container) 40%, transparent);
-  padding: 0.75rem;
-}
-
-@media (min-width: 768px) {
-  .admin-row-grid {
-    grid-template-columns: 1fr 0.7fr 0.7fr auto;
-  }
-}

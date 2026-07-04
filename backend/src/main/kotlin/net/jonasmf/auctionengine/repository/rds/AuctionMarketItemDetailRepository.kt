@@ -414,7 +414,7 @@ class AuctionMarketItemDetailRepository(
         itemId: Int,
     ): Boolean =
         jdbcTemplate.queryForObject(
-            "SELECT EXISTS (SELECT 1 FROM v_recipe WHERE id = ? AND crafted_item_id = ?)",
+            "SELECT EXISTS (SELECT 1 FROM v_recipe_crafted_output WHERE recipe_id = ? AND crafted_item_id = ?)",
             Boolean::class.java,
             recipeId,
             itemId,
@@ -537,7 +537,7 @@ class AuctionMarketItemDetailRepository(
                 LEFT JOIN output_com oc ON oc.stat_date = ds.stat_date
             ),
             recipe_dim AS (
-                SELECT COALESCE(NULLIF(crafted_quantity, 0), 1) AS crafted_quantity FROM v_recipe WHERE id = ? AND crafted_item_id = ?
+                SELECT COALESCE(NULLIF(crafted_quantity, 0), 1) AS crafted_quantity FROM v_recipe_crafted_output WHERE recipe_id = ? AND crafted_item_id = ?
             )
             SELECT ds.stat_date,
                    CASE WHEN rc.missing_reagents = 0 THEN rc.partial_cost ELSE NULL END AS reagent_cost,
@@ -733,7 +733,7 @@ class AuctionMarketItemDetailRepository(
             ),
             recipe_dim AS (
                 SELECT COALESCE(NULLIF(crafted_quantity, 0), 1) AS crafted_quantity
-                FROM v_recipe WHERE id = ? AND crafted_item_id = ?
+                FROM v_recipe_crafted_output WHERE recipe_id = ? AND crafted_item_id = ?
             ),
             cells AS (
                 SELECT WEEKDAY(ds.stat_date) AS day_of_week,

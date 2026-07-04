@@ -11,23 +11,19 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  AdminItemCompareField,
-  AdminRecipe1,
-  AdminRecipeOutput,
-  AdminRecipeOverrideRequest,
-  AdminRecipeReagent,
-} from '@api/generated';
+import { AdminRecipe1, AdminRecipeOverrideRequest } from '@api/generated';
+import { AdminModalComponent } from '@features/admin/shared/admin-modal.component';
 import {
   PageFrameComponent,
   PaginationState,
   SearchInputComponent,
   SelectInputComponent,
   SelectInputOption,
-  SlideOverPanelComponent,
   TableComponent,
 } from '@ui';
 import { firstValueFrom, fromEvent, map, startWith } from 'rxjs';
+import { AdminRecipeComparePanelComponent } from './admin-recipe-compare-panel.component';
+import { AdminRecipeOverrideFormComponent } from './admin-recipe-override-form.component';
 import { AdminRecipeService } from './admin-recipe.service';
 import { createAdminRecipeColumns } from './admin-recipes-table.columns';
 import {
@@ -38,10 +34,6 @@ import {
 } from './recipe-filters';
 
 type PanelMode = 'edit' | 'compare';
-type CompareRow = {
-  readonly key: string;
-  readonly value: AdminItemCompareField;
-};
 
 const DEFAULT_VIEWPORT_WIDTH = 1280;
 const MOBILE_CARD_VIEW_MAX_WIDTH = 767;
@@ -51,10 +43,12 @@ const standaloneModel = { standalone: true };
   selector: 'app-admin-recipes-page',
   imports: [
     FormsModule,
+    AdminModalComponent,
+    AdminRecipeComparePanelComponent,
+    AdminRecipeOverrideFormComponent,
     PageFrameComponent,
     SearchInputComponent,
     SelectInputComponent,
-    SlideOverPanelComponent,
     TableComponent,
   ],
   templateUrl: './recipes.page.html',
@@ -83,12 +77,28 @@ export class RecipesPage {
   protected readonly filters = signal<AdminRecipeFilterState>(defaultAdminRecipeFilters());
   protected readonly panelMode = signal<PanelMode | null>(null);
   protected readonly formError = signal<string | null>(null);
-  protected readonly overrideDraft = signal<AdminRecipeOverrideRequest>({});
-  protected readonly outputsDraft = signal<AdminRecipeOutput[]>([]);
-  protected readonly reagentsDraft = signal<AdminRecipeReagent[]>([]);
   protected readonly viewportWidth = signal(DEFAULT_VIEWPORT_WIDTH);
   protected readonly cardView = computed(() => this.viewportWidth() <= MOBILE_CARD_VIEW_MAX_WIDTH);
   protected readonly standaloneModel = standaloneModel;
+
+  protected readonly pageTitle = $localize`:@@route.admin.recipes:Recipes`;
+  protected readonly pageEyebrow = $localize`:@@route.admin.title:Admin`;
+  protected readonly pageHeading = $localize`:@@admin.recipes.page.heading:Recipe overrides`;
+  protected readonly pageDescription = $localize`:@@admin.recipes.page.description:Search effective recipe rows and manage admin overrides that survive Blizzard sync.`;
+  protected readonly filterNameLabel = $localize`:@@admin.recipes.filter.name:Name`;
+  protected readonly filterNamePlaceholder = $localize`:@@admin.recipes.filter.namePlaceholder:Search localized names`;
+  protected readonly filterRecipeIdLabel = $localize`:@@admin.recipes.table.id:Recipe ID`;
+  protected readonly filterRecipeIdPlaceholder = $localize`:@@admin.recipes.filter.recipeIdPlaceholder:Exact or partial recipe ID`;
+  protected readonly filterCraftedItemIdLabel = $localize`:@@admin.recipes.filter.craftedItemId:Crafted item ID`;
+  protected readonly filterCraftedItemIdPlaceholder = $localize`:@@admin.recipes.filter.craftedItemIdPlaceholder:Output item ID`;
+  protected readonly filterOverrideStateLabel = $localize`:@@admin.recipes.filter.overrideState:Override state`;
+  protected readonly filterPageSizeLabel = $localize`:@@admin.recipes.filter.pageSize:Page size`;
+  protected readonly applyFiltersLabel = $localize`:@@admin.recipes.filter.apply:Apply`;
+  protected readonly resetFiltersLabel = $localize`:@@admin.recipes.filter.reset:Reset`;
+  protected readonly emptyTableMessage = $localize`:@@admin.recipes.table.empty:No recipes match the current filters.`;
+  protected readonly tableSectionAriaLabel = $localize`:@@admin.recipes.table.sectionAria:Admin recipes`;
+  protected readonly paginationRowLabel = $localize`:@@admin.recipes.table.paginationLabel:recipes`;
+  protected readonly loadingDetailsLabel = $localize`:@@admin.recipes.form.loading:Loading recipe details...`;
 
   protected readonly hasOverrideOptions: readonly SelectInputOption[] = [
     { id: '', label: $localize`:@@admin.recipes.filter.anyOverride:All override states` },
@@ -128,13 +138,6 @@ export class RecipesPage {
       default:
         return '';
     }
-  });
-
-  protected readonly compareRows = computed<CompareRow[]>(() => {
-    const fields = this.compare()?.fields ?? {};
-    return Object.entries(fields)
-      .map(([key, value]) => ({ key, value }))
-      .sort((left, right) => left.key.localeCompare(right.key));
   });
 
   constructor() {
@@ -185,17 +188,7 @@ export class RecipesPage {
   protected async openEditPanel(recipe: AdminRecipe1): Promise<void> {
     this.formError.set(null);
     this.panelMode.set('edit');
-    const loaded = await this.loadRecipe(recipe.id);
-    if (!loaded) return;
-    this.overrideDraft.set({
-      craftedItemId: loaded.override?.craftedItemId ?? null,
-      craftedQuantity: loaded.override?.craftedQuantity ?? null,
-      rank: loaded.override?.rank ?? null,
-      requiredSkillLevel: loaded.override?.requiredSkillLevel ?? null,
-      overrideNote: loaded.override?.overrideNote ?? null,
-    });
-    this.outputsDraft.set([...(loaded.override?.outputs ?? loaded.effective.outputs ?? [])]);
-    this.reagentsDraft.set([...(loaded.override?.reagents ?? loaded.effective.reagents ?? [])]);
+    await this.loadRecipe(recipe.id);
   }
 
   protected async openComparePanel(recipe: AdminRecipe1): Promise<void> {
@@ -209,77 +202,13 @@ export class RecipesPage {
     this.panelMode.set(null);
     this.formError.set(null);
     this.service.clearSelection();
-    this.overrideDraft.set({});
-    this.outputsDraft.set([]);
-    this.reagentsDraft.set([]);
   }
 
-  protected updateDraft<K extends keyof AdminRecipeOverrideRequest>(
-    key: K,
-    value: AdminRecipeOverrideRequest[K],
-  ): void {
-    this.overrideDraft.update((current) => ({ ...current, [key]: value }));
-  }
-
-  protected addOutput(): void {
-    this.outputsDraft.update((outputs) => [
-      ...outputs,
-      { craftedItemId: 0, craftedQuantity: 1, sortOrder: outputs.length },
-    ]);
-  }
-
-  protected updateOutput(index: number, patch: Partial<AdminRecipeOutput>): void {
-    this.outputsDraft.update((outputs) =>
-      outputs.map((output, outputIndex) =>
-        outputIndex === index ? { ...output, ...patch } : output,
-      ),
-    );
-  }
-
-  protected removeOutput(index: number): void {
-    this.outputsDraft.update((outputs) =>
-      outputs.filter((_, outputIndex) => outputIndex !== index),
-    );
-  }
-
-  protected addReagent(): void {
-    this.reagentsDraft.update((reagents) => [
-      ...reagents,
-      { itemId: 0, quantity: 1, sortOrder: reagents.length, ranks: [] },
-    ]);
-  }
-
-  protected updateReagent(index: number, patch: Partial<AdminRecipeReagent>): void {
-    this.reagentsDraft.update((reagents) =>
-      reagents.map((reagent, reagentIndex) =>
-        reagentIndex === index ? { ...reagent, ...patch } : reagent,
-      ),
-    );
-  }
-
-  protected removeReagent(index: number): void {
-    this.reagentsDraft.update((reagents) =>
-      reagents.filter((_, reagentIndex) => reagentIndex !== index),
-    );
-  }
-
-  protected submitOverride(): void {
+  protected submitOverride(request: AdminRecipeOverrideRequest): void {
     const recipe = this.selectedRecipe();
     if (!recipe) return;
-    const request: AdminRecipeOverrideRequest = {
-      ...this.overrideDraft(),
-      outputs: this.outputsDraft().map((output, index) => ({
-        ...output,
-        sortOrder: output.sortOrder ?? index,
-      })),
-      reagents: this.reagentsDraft().map((reagent, index) => ({
-        ...reagent,
-        sortOrder: reagent.sortOrder ?? index,
-      })),
-    };
-    firstValueFrom(
-      this.service.upsertOverride(recipe.id, normalizeRequest(request), this.filters()),
-    )
+
+    firstValueFrom(this.service.upsertOverride(recipe.id, request, this.filters()))
       .then(() => this.closePanel())
       .catch((error: unknown) => {
         this.formError.set(
@@ -292,6 +221,11 @@ export class RecipesPage {
 
   protected async deleteOverride(recipe: AdminRecipe1): Promise<void> {
     if (!recipe.hasOverride) return;
+    const confirmed = window.confirm(
+      $localize`:@@admin.recipes.deleteConfirm:Delete this recipe override? Base recipe data will be inherited again.`,
+    );
+    if (!confirmed) return;
+
     await firstValueFrom(this.service.deleteOverride(recipe.id, this.filters())).catch(
       () => undefined,
     );
@@ -299,13 +233,6 @@ export class RecipesPage {
 
   protected pageSizeValue(): string {
     return String(this.filters().pageSize);
-  }
-
-  protected formatCompare(value: object | null | undefined): string {
-    if (value === undefined || value === null) return '—';
-    if (typeof value === 'string') return value;
-    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
-    return JSON.stringify(value);
   }
 
   private syncFilters(filters: AdminRecipeFilterState): void {
@@ -324,23 +251,4 @@ export class RecipesPage {
   private loadRecipe(id: number): Promise<AdminRecipe1 | undefined> {
     return firstValueFrom(this.service.loadRecipe(id)).catch(() => undefined);
   }
-}
-
-function normalizeRequest(request: AdminRecipeOverrideRequest): AdminRecipeOverrideRequest {
-  return {
-    craftedItemId: toNullableInt(request.craftedItemId),
-    craftedQuantity: toNullableInt(request.craftedQuantity),
-    rank: toNullableInt(request.rank),
-    requiredSkillLevel: toNullableInt(request.requiredSkillLevel),
-    overrideNote: request.overrideNote?.trim() || null,
-    outputs: request.outputs?.filter(
-      (output) => output.craftedItemId > 0 && output.craftedQuantity > 0,
-    ),
-    reagents: request.reagents?.filter((reagent) => reagent.itemId > 0 && reagent.quantity > 0),
-  };
-}
-
-function toNullableInt(value: number | null | undefined): number | null {
-  if (value === null || value === undefined || !Number.isFinite(Number(value))) return null;
-  return Number(value);
 }

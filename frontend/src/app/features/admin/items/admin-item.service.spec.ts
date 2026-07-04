@@ -61,18 +61,29 @@ describe('AdminItemService', () => {
       upsertAdminItemOverride: vitest.fn().mockReturnValue(of(itemFixture)),
       deleteAdminItemOverride: vitest.fn().mockReturnValue(of(undefined)),
       searchAdminRecipes: vitest.fn().mockReturnValue(
-        of([
-          {
-            recipeId: 338995,
-            name: 'Craft Thunderfury',
-            professionName: 'Blacksmithing',
-            skillTierName: 'Classic',
-            professionCategoryName: 'Weapons',
-            craftedItemId: null,
-            craftedItemName: null,
-            craftedQuantity: null,
+        of({
+          recipes: [
+            {
+              id: 338995,
+              hasBase: true,
+              hasOverride: false,
+              effective: {
+                name: 'Craft Thunderfury',
+                professionName: 'Blacksmithing',
+                skillTierName: 'Classic',
+                professionCategoryName: 'Weapons',
+                outputs: [],
+                reagents: [],
+              },
+            },
+          ],
+          page: {
+            page: 1,
+            pageSize: 10,
+            totalItems: 1,
+            totalPages: 1,
           },
-        ]),
+        }),
       ),
       upsertAdminItemRecipeAssociation: vitest.fn().mockReturnValue(of(itemFixture)),
       createAdminItem: vitest.fn().mockReturnValue(of(itemFixture)),
@@ -142,7 +153,15 @@ describe('AdminItemService', () => {
   it('searches recipes with locale and limit', () => {
     service.searchRecipes('craft thunder', 10).subscribe();
 
-    expect(api.searchAdminRecipes).toHaveBeenCalledWith('craft thunder', 'en_US', 10);
+    expect(api.searchAdminRecipes).toHaveBeenCalledWith(
+      'craft thunder',
+      'en_US',
+      undefined,
+      undefined,
+      undefined,
+      1,
+      10,
+    );
   });
 
   it('associates a recipe and reloads the item', () => {
