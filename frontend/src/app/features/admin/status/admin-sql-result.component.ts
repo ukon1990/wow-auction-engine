@@ -32,8 +32,7 @@ const pageSizes = [25, 50, 100, 250] as const;
             </div>
             <pre
               class="max-h-40 overflow-auto whitespace-pre-wrap rounded-md border border-white/10 bg-surface-container p-3 font-mono text-xs text-on-surface"
-              >{{ result.effectiveSql }}</pre
-            >
+              >{{ result.effectiveSql }}</pre>
           </div>
         }
 
@@ -45,8 +44,7 @@ const pageSizes = [25, 50, 100, 250] as const;
             </div>
             <pre
               class="max-h-[28rem] overflow-auto whitespace-pre-wrap rounded-md border border-white/10 bg-surface-container p-3 font-mono text-xs text-on-surface"
-              >{{ json }}</pre
-            >
+              >{{ json }}</pre>
           </div>
         } @else if (result.columns.length > 0) {
           <div class="grid gap-3">
