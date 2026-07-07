@@ -59,7 +59,7 @@ app:
     profession-recipe-sync-startup-delay: PT30S
     profession-recipe-sync-startup-repeat-delay: P3650D
 
-    deleted-auction-cleanup-cron: "0 0 4 * * *"
+    deleted-auction-cleanup-cron: "0 * * * * *"
     deleted-auction-cleanup-zone: GMT+1
     deleted-auction-cleanup:
       enabled: ${WAE_DELETED_AUCTION_CLEANUP_ENABLED:true}
