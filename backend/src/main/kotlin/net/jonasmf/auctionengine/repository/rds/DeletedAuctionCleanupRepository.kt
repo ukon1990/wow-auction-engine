@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.queryForList
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.sql.Date
-import java.sql.Timestamp
 import java.time.Instant
 import java.time.LocalDate
 
@@ -13,7 +12,7 @@ import java.time.LocalDate
 class DeletedAuctionCleanupRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) {
-    fun findNextHourlyCleanupRealms(cutoff: LocalDate): List<Int?> =
+    fun findNextHourlyCleanupRealms(): List<Int?> =
         jdbcTemplate
             .queryForList<Int>(
                 """
@@ -23,10 +22,9 @@ class DeletedAuctionCleanupRepository(
                 GROUP BY last_history_delete_event
                 ORDER BY last_history_delete_event
                 """.trimIndent(),
-                Date.valueOf(cutoff),
             )
 
-    fun findNextDailyCleanupRealms(cutoff: LocalDate): List<Int?> =
+    fun findNextDailyCleanupRealms(): List<Int?> =
         jdbcTemplate
             .queryForList<Int>(
                 """
@@ -38,7 +36,7 @@ class DeletedAuctionCleanupRepository(
                 """.trimIndent(),
             )
 
-    fun findNextPriceCleanupRealm(cutoff: Instant): List<Int?> =
+    fun findNextPriceCleanupRealms(): List<Int?> =
         jdbcTemplate
             .queryForList<Int>(
                 """
@@ -50,116 +48,62 @@ class DeletedAuctionCleanupRepository(
                 """.trimIndent(),
             )
 
-    fun countHourlyCleanupCandidates(
-        connectedRealmId: Int,
-        cutoff: LocalDate,
-    ): Long =
-        jdbcTemplate.queryForObject(
-            """
-            SELECT COUNT(*)
-            FROM auction_stats_hourly
-            WHERE connected_realm_id = ?
-              AND date < ?
-            """.trimIndent(),
-            Long::class.java,
-            connectedRealmId,
-            Date.valueOf(cutoff),
-        ) ?: 0L
-
-    fun countDailyCleanupCandidates(
-        connectedRealmId: Int,
-        cutoff: LocalDate,
-    ): Long =
-        jdbcTemplate.queryForObject(
-            """
-            SELECT COUNT(*)
-            FROM auction_stats_daily
-            WHERE connected_realm_id = ?
-              AND date < ?
-            """.trimIndent(),
-            Long::class.java,
-            connectedRealmId,
-            Date.valueOf(cutoff),
-        ) ?: 0L
-
-    fun countPriceCleanupCandidates(
+    @Transactional
+    fun deleteHourlyBeforeOrEqualToCutoff(
         connectedRealmId: Int,
         cutoff: Instant,
-    ): Long =
-        jdbcTemplate.queryForObject(
-            """
-            SELECT COUNT(*)
-            FROM auction_price ap
-            INNER JOIN auction a ON a.id = ap.auction_id
-            WHERE a.connected_realm_id = ?
-              AND ap.last_modified < ?
-            """.trimIndent(),
-            Long::class.java,
-            connectedRealmId,
-            Timestamp.from(cutoff),
-        ) ?: 0L
-
-    @Transactional
-    fun deleteHourlyBatch(
-        connectedRealmId: Int,
-        cutoff: LocalDate,
-        batchSize: Int,
     ): Int =
         jdbcTemplate.update(
             """
             DELETE FROM auction_stats_hourly
             WHERE connected_realm_id = ?
               AND date < ?
-            LIMIT ?
             """.trimIndent(),
             connectedRealmId,
-            Date.valueOf(cutoff),
-            batchSize,
+            cutoff,
         )
 
     @Transactional
-    fun deleteDailyBatch(
+    fun deleteDailyBeforeOrEqualToCutoff(
         connectedRealmId: Int,
-        cutoff: LocalDate,
-        batchSize: Int,
+        cutoff: Instant,
     ): Int =
         jdbcTemplate.update(
             """
             DELETE FROM auction_stats_daily
             WHERE connected_realm_id = ?
               AND date < ?
-            LIMIT ?
             """.trimIndent(),
             connectedRealmId,
-            Date.valueOf(cutoff),
-            batchSize,
+            cutoff,
         )
 
     @Transactional
-    fun deletePriceBatch(
+    fun deletePriceForRealmBeforeOrEqualToCutoff(
         connectedRealmId: Int,
         cutoff: Instant,
-        batchSize: Int,
-    ): Int =
-        jdbcTemplate.update(
-            """
-            DELETE FROM auction_price
-            WHERE id IN (
+    ): Int {
+        val logIds =
+            jdbcTemplate.queryForList<Int>(
+                """
                 SELECT id
-                FROM (
-                    SELECT ap.id
-                    FROM auction_price ap
-                    INNER JOIN auction a ON a.id = ap.auction_id
-                    WHERE a.connected_realm_id = ?
-                      AND ap.last_modified < ?
-                    LIMIT ?
-                ) batch
+                FROM connected_realm_update_history
+                WHERE connected_realm_id = ?
+                    AND last_modified <= ?
+                """.trimIndent(),
+                connectedRealmId,
+                cutoff,
             )
-            """.trimIndent(),
-            connectedRealmId,
-            Timestamp.from(cutoff),
-            batchSize,
-        )
+        val deletedCount =
+            jdbcTemplate.update(
+                """
+                DELETE FROM auction_price
+                WHERE update_history_id IN ?
+                """.trimIndent(),
+                logIds,
+            )
+        return deletedCount
+    }
 
     fun optimizeTable(tableName: String) {
         require(tableName in OPTIMIZABLE_TABLES) { "Unsupported cleanup table: $tableName" }
