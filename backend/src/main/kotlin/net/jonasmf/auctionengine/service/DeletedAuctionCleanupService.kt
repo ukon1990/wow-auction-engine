@@ -42,7 +42,7 @@ class DeletedAuctionCleanupService(
         cleanupStats(
             type = DeletedAuctionCleanupType.HOURLY_STATS,
             cutoff = clock.instant().minus(properties.hourlyRetention),
-            findRealm = cleanupRepository::findNextHourlyCleanupRealm,
+            findRealms = cleanupRepository::findNextHourlyCleanupRealm,
             countCandidates = cleanupRepository::countHourlyCleanupCandidates,
             deleteBatch = cleanupRepository::deleteHourlyBatch,
             updateMarker = auctionHouseRepository::updateLastHistoryDeleteEvent,
@@ -52,7 +52,7 @@ class DeletedAuctionCleanupService(
         cleanupStats(
             type = DeletedAuctionCleanupType.DAILY_STATS,
             cutoff = clock.instant().minus(properties.dailyRetention),
-            findRealm = cleanupRepository::findNextDailyCleanupRealm,
+            findRealm = cleanupRepository::findNextDailyCleanupRealms,
             countCandidates = cleanupRepository::countDailyCleanupCandidates,
             deleteBatch = cleanupRepository::deleteDailyBatch,
             updateMarker = auctionHouseRepository::updateLastHistoryDeleteEventDaily,
@@ -72,7 +72,7 @@ class DeletedAuctionCleanupService(
     private fun cleanupStats(
         type: DeletedAuctionCleanupType,
         cutoff: Instant,
-        findRealm: (LocalDate) -> Int?,
+        findRealms: (LocalDate) -> Int?,
         countCandidates: (Int, LocalDate) -> Long,
         deleteBatch: (Int, LocalDate, Int) -> Int,
         updateMarker: (Int, Instant) -> Int,
