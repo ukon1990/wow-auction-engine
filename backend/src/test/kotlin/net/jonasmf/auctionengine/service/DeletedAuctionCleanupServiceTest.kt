@@ -64,6 +64,14 @@ class DeletedAuctionCleanupServiceTest : IntegrationTestBase() {
     sealed class CleanupOfDailyAuctionStatistics {
         @Test
         fun `Should successfully delete daily stats and update only for old data`() {
+            jdbcTemplate.update(
+                """
+                INSERT INTO auction (id, connected_realm_id, update_history_id,)
+                VALUES (
+
+                )
+                """.trimIndent(),
+            )
             val result = auctionStatsDailyRepository.getForConnectedRealm(2)
         }
     }
