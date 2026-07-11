@@ -596,12 +596,37 @@ adminRecipes:
               schema:
                   type: boolean
               description: Filter to recipes with or without an admin override row.
-            - name: craftedItemId
+            - name: itemClassId
               in: query
               required: false
               schema:
                   type: integer
-              description: Filter to recipes with an effective crafted output for the item id.
+              description: Filter by the class of an associated crafted output or reagent.
+            - name: itemSubclassId
+              in: query
+              required: false
+              schema:
+                  type: integer
+              description: Filter by the subclass of an associated crafted output or reagent.
+            - name: expansionId
+              in: query
+              required: false
+              schema:
+                  type: integer
+              description: Filter by the expansion of an associated crafted output or reagent.
+            - name: associatedItemId
+              in: query
+              required: false
+              schema:
+                  type: integer
+              description: Filter to recipes associated with this item as an output or reagent.
+            - name: associationType
+              in: query
+              required: false
+              schema:
+                  type: string
+                  enum: [crafted, reagent]
+              description: Restrict associated item filters to crafted outputs or reagents; omit for either.
             - name: page
               in: query
               required: false

@@ -47,9 +47,13 @@ export class AdminRecipeService {
       .searchAdminRecipes(
         params.query,
         locale,
-        params.professionId,
+        undefined,
         params.hasOverride,
-        params.craftedItemId,
+        params.itemClassId,
+        params.itemSubclassId,
+        params.expansionId,
+        params.associatedItemId,
+        params.associationType,
         params.page,
         params.pageSize,
       )

@@ -2154,6 +2154,54 @@
         <source>Rank alternatives for reagent {$INTERPOLATION}</source>
         <target>Rank alternatives for reagent {$INTERPOLATION}</target>
       </trans-unit>
+      <trans-unit id="admin.recipes.itemTypeahead.empty" datatype="html">
+        <source>No items found</source>
+        <target>未找到物品</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.itemSearchPlaceholder" datatype="html">
+        <source>Search items by name or ID</source>
+        <target>按名称或 ID 搜索物品</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.associatedItem" datatype="html">
+        <source>Associated item</source>
+        <target>关联物品</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.associatedItemPlaceholder" datatype="html">
+        <source>Search crafted items or reagents</source>
+        <target>搜索制造物品或材料</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.class" datatype="html">
+        <source>Class</source>
+        <target>类别</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.subclass" datatype="html">
+        <source>Subclass</source>
+        <target>子类别</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.expansion" datatype="html">
+        <source>Expansion</source>
+        <target>资料片</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.associationType" datatype="html">
+        <source>Item association</source>
+        <target>物品关联</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.anyAssociation" datatype="html">
+        <source>Crafted or reagent</source>
+        <target>制造品或材料</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.craftedAssociation" datatype="html">
+        <source>Crafted output</source>
+        <target>制造产物</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.reagentAssociation" datatype="html">
+        <source>Reagent</source>
+        <target>材料</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.itemTypeahead.rank" datatype="html">
+        <source>Rank</source>
+        <target>等级</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

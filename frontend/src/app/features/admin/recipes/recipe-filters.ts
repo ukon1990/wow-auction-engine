@@ -9,15 +9,21 @@ export type AdminRecipeFilterState = {
   readonly pageSize: number;
   readonly recipeId: string;
   readonly name: string;
-  readonly professionId: string;
-  readonly craftedItemId: string;
+  readonly classId: string;
+  readonly subclassId: string;
+  readonly expansionId: string;
+  readonly associatedItemId: number | null;
+  readonly associationType: string;
   readonly hasOverride: string;
 };
 
 export type AdminRecipeSearchParams = {
   readonly query?: string;
-  readonly professionId?: number;
-  readonly craftedItemId?: number;
+  readonly itemClassId?: number;
+  readonly itemSubclassId?: number;
+  readonly expansionId?: number;
+  readonly associatedItemId?: number;
+  readonly associationType?: 'crafted' | 'reagent';
   readonly hasOverride?: boolean;
   readonly page: number;
   readonly pageSize: number;
@@ -28,8 +34,11 @@ export const defaultAdminRecipeFilters = (): AdminRecipeFilterState => ({
   pageSize: DEFAULT_PAGE_SIZE,
   recipeId: '',
   name: '',
-  professionId: '',
-  craftedItemId: '',
+  classId: '',
+  subclassId: '',
+  expansionId: '',
+  associatedItemId: null,
+  associationType: '',
   hasOverride: '',
 });
 
@@ -42,8 +51,14 @@ export function toAdminRecipeSearchParams(
 
   return {
     query: query.length > 0 ? query : undefined,
-    professionId: parseOptionalInt(filters.professionId),
-    craftedItemId: parseOptionalInt(filters.craftedItemId),
+    itemClassId: parseOptionalInt(filters.classId),
+    itemSubclassId: parseOptionalInt(filters.subclassId),
+    expansionId: parseOptionalInt(filters.expansionId),
+    associatedItemId: filters.associatedItemId ?? undefined,
+    associationType:
+      filters.associationType === 'crafted' || filters.associationType === 'reagent'
+        ? filters.associationType
+        : undefined,
     hasOverride: parseBooleanFilter(filters.hasOverride),
     page: filters.page + 1,
     pageSize: filters.pageSize,
@@ -58,8 +73,13 @@ export function readAdminRecipeFilters(queryParamMap: ParamMap): AdminRecipeFilt
     pageSize: clampPageSize(nullableNumber(queryParamMap.get('pageSize'))),
     recipeId: queryParamMap.get('recipeId') ?? '',
     name: queryParamMap.get('name') ?? '',
-    professionId: readOptionalQueryString(queryParamMap.get('professionId')),
-    craftedItemId: queryParamMap.get('craftedItemId') ?? '',
+    classId: readOptionalQueryString(queryParamMap.get('classId')),
+    subclassId: readOptionalQueryString(queryParamMap.get('subclassId')),
+    expansionId: readOptionalQueryString(queryParamMap.get('expansionId')),
+    associatedItemId: parseOptionalInt(queryParamMap.get('associatedItemId') ?? '') ?? null,
+    associationType: ['crafted', 'reagent'].includes(queryParamMap.get('associationType') ?? '')
+      ? (queryParamMap.get('associationType') ?? '')
+      : '',
     hasOverride: hasOverride === 'true' || hasOverride === 'false' ? hasOverride : '',
   };
 }
@@ -68,8 +88,11 @@ export function toAdminRecipeQueryParams(filters: AdminRecipeFilterState): Param
   return {
     recipeId: trimmedOrNull(filters.recipeId),
     name: trimmedOrNull(filters.name),
-    professionId: filters.professionId !== '' ? filters.professionId : null,
-    craftedItemId: trimmedOrNull(filters.craftedItemId),
+    classId: filters.classId || null,
+    subclassId: filters.subclassId || null,
+    expansionId: filters.expansionId || null,
+    associatedItemId: filters.associatedItemId,
+    associationType: filters.associationType || null,
     hasOverride:
       filters.hasOverride === 'true' || filters.hasOverride === 'false'
         ? filters.hasOverride

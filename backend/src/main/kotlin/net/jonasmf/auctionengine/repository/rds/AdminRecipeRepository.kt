@@ -45,7 +45,11 @@ interface AdminRecipeRepositoryPort {
         query: String?,
         hasOverride: Boolean?,
         professionId: Int?,
-        craftedItemId: Int?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
+        expansionId: Int?,
+        associatedItemId: Int?,
+        associationType: String?,
         page: Int,
         pageSize: Int,
         localeColumnSuffix: String,
@@ -80,13 +84,29 @@ class AdminRecipeRepository(
         query: String?,
         hasOverride: Boolean?,
         professionId: Int?,
-        craftedItemId: Int?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
+        expansionId: Int?,
+        associatedItemId: Int?,
+        associationType: String?,
         page: Int,
         pageSize: Int,
         localeColumnSuffix: String,
     ): AdminRecipeSearchRows {
         val params = mutableListOf<Any?>()
-        val whereSql = recipeWhereSql(query, hasOverride, professionId, craftedItemId, localeColumnSuffix, params)
+        val whereSql =
+            recipeWhereSql(
+                query,
+                hasOverride,
+                professionId,
+                itemClassId,
+                itemSubclassId,
+                expansionId,
+                associatedItemId,
+                associationType,
+                localeColumnSuffix,
+                params,
+            )
         val totalItems =
             jdbcTemplate.queryForObject(
                 """
@@ -449,7 +469,11 @@ private fun recipeWhereSql(
     query: String?,
     hasOverride: Boolean?,
     professionId: Int?,
-    craftedItemId: Int?,
+    itemClassId: Int?,
+    itemSubclassId: Int?,
+    expansionId: Int?,
+    associatedItemId: Int?,
+    associationType: String?,
     localeColumnSuffix: String,
     params: MutableList<Any?>,
 ): String {
@@ -474,9 +498,39 @@ private fun recipeWhereSql(
         clauses += "st.profession_id = ?"
         params += it
     }
-    craftedItemId?.let {
-        clauses += "EXISTS (SELECT 1 FROM v_recipe_crafted_output o WHERE o.recipe_id = r.id AND o.crafted_item_id = ?)"
-        params += it
+    if (
+        itemClassId != null ||
+            itemSubclassId != null ||
+            expansionId != null ||
+            associatedItemId != null ||
+            associationType != null
+    ) {
+        val associationTypes = associationType?.let(::listOf) ?: listOf("crafted", "reagent")
+        val associationClauses =
+            associationTypes.map { type ->
+                val itemIdExpression = if (type == "crafted") "association.crafted_item_id" else "association.item_id"
+                val source = if (type == "crafted") "v_recipe_crafted_output" else "v_recipe_reagent"
+                val predicates = mutableListOf("association.recipe_id = r.id")
+                associatedItemId?.let {
+                    predicates += "$itemIdExpression = ?"
+                    params += it
+                }
+                itemClassId?.let {
+                    predicates += "associated_item.item_class_id = ?"
+                    params += it
+                }
+                itemSubclassId?.let {
+                    predicates +=
+                        "EXISTS (SELECT 1 FROM item_subclass associated_subclass WHERE associated_subclass.internal_id = associated_item.item_subclass_id AND associated_subclass.subclass_id = ?)"
+                    params += it
+                }
+                expansionId?.let {
+                    predicates += "associated_item.expansion_id = ?"
+                    params += it
+                }
+                "EXISTS (SELECT 1 FROM $source association JOIN v_item associated_item ON associated_item.id = $itemIdExpression WHERE ${predicates.joinToString(" AND ")})"
+            }
+        clauses += "(${associationClauses.joinToString(" OR ")})"
     }
     return if (clauses.isEmpty()) "" else clauses.joinToString(prefix = "WHERE ", separator = "\n  AND ")
 }

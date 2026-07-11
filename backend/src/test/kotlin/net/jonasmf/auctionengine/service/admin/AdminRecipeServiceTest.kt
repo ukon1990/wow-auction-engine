@@ -25,6 +25,28 @@ class AdminRecipeServiceTest {
     private val service = AdminRecipeService(repository, recipeApiClient)
 
     @Test
+    fun `search rejects subclass without class`() {
+        val error =
+            assertThrows(ResponseStatusException::class.java) {
+                service.searchRecipes(null, null, null, null, null, 7, null, null, null, 1, 25)
+            }
+
+        assertEquals(400, error.statusCode.value())
+        assertEquals("itemClassId is required when itemSubclassId is set", error.reason)
+    }
+
+    @Test
+    fun `search rejects unsupported association type`() {
+        val error =
+            assertThrows(ResponseStatusException::class.java) {
+                service.searchRecipes(null, null, null, null, null, null, null, null, "ingredient", 1, 25)
+            }
+
+        assertEquals(400, error.statusCode.value())
+        assertEquals("associationType must be crafted or reagent", error.reason)
+    }
+
+    @Test
     fun `upsert override rejects missing base recipe`() {
         val error =
             assertThrows(ResponseStatusException::class.java) {
@@ -195,7 +217,11 @@ private class FakeAdminRecipeRepository : AdminRecipeRepositoryPort {
         query: String?,
         hasOverride: Boolean?,
         professionId: Int?,
-        craftedItemId: Int?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
+        expansionId: Int?,
+        associatedItemId: Int?,
+        associationType: String?,
         page: Int,
         pageSize: Int,
         localeColumnSuffix: String,

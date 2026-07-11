@@ -16,8 +16,9 @@ SELECT
     COALESCE(override_recipe.created_at, base_recipe.created_at) AS created_at,
     COALESCE(override_recipe.updated_at, base_recipe.updated_at) AS updated_at
 FROM (
-    SELECT DISTINCT id
+    SELECT id
     FROM recipe
+    WHERE is_override = FALSE
 ) recipe_ids
     LEFT JOIN recipe base_recipe
         ON base_recipe.id = recipe_ids.id

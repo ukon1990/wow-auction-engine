@@ -2154,6 +2154,54 @@
         <source>Rank alternatives for reagent {$INTERPOLATION}</source>
         <target>Rank alternatives for reagent {$INTERPOLATION}</target>
       </trans-unit>
+      <trans-unit id="admin.recipes.itemTypeahead.empty" datatype="html">
+        <source>No items found</source>
+        <target>Keine Gegenstände gefunden</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.itemSearchPlaceholder" datatype="html">
+        <source>Search items by name or ID</source>
+        <target>Gegenstände nach Name oder ID suchen</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.associatedItem" datatype="html">
+        <source>Associated item</source>
+        <target>Zugeordneter Gegenstand</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.associatedItemPlaceholder" datatype="html">
+        <source>Search crafted items or reagents</source>
+        <target>Hergestellte Gegenstände oder Reagenzien suchen</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.class" datatype="html">
+        <source>Class</source>
+        <target>Klasse</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.subclass" datatype="html">
+        <source>Subclass</source>
+        <target>Unterklasse</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.expansion" datatype="html">
+        <source>Expansion</source>
+        <target>Erweiterung</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.associationType" datatype="html">
+        <source>Item association</source>
+        <target>Gegenstandszuordnung</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.anyAssociation" datatype="html">
+        <source>Crafted or reagent</source>
+        <target>Hergestellt oder Reagenz</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.craftedAssociation" datatype="html">
+        <source>Crafted output</source>
+        <target>Hergestelltes Ergebnis</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.reagentAssociation" datatype="html">
+        <source>Reagent</source>
+        <target>Reagenz</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.itemTypeahead.rank" datatype="html">
+        <source>Rank</source>
+        <target>Rang</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

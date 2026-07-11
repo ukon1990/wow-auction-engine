@@ -20,7 +20,7 @@
     </div>
 
     <form class="grid gap-4" (ngSubmit)="applyFilters()">
-      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <ee-search-input
           [label]="filterNameLabel"
           [showLabel]="true"
@@ -37,13 +37,40 @@
           [ngModelOptions]="standaloneModel"
           (ngModelChange)="updateFilter('recipeId', $event)"
         />
-        <ee-search-input
-          [label]="filterCraftedItemIdLabel"
-          [showLabel]="true"
-          [placeholder]="filterCraftedItemIdPlaceholder"
-          [ngModel]="filters().craftedItemId"
+        <ee-select-input
+          [label]="filterClassLabel"
+          [options]="itemClassOptions"
+          [ngModel]="filters().classId"
           [ngModelOptions]="standaloneModel"
-          (ngModelChange)="updateFilter('craftedItemId', $event)"
+          (ngModelChange)="updateClassFilter($event)"
+        />
+        <ee-select-input
+          [label]="filterSubclassLabel"
+          [options]="itemSubclassOptions()"
+          [disabled]="filters().classId === ''"
+          [ngModel]="filters().subclassId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('subclassId', $event)"
+        />
+        <ee-select-input
+          [label]="filterExpansionLabel"
+          [options]="expansionOptions()"
+          [ngModel]="filters().expansionId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('expansionId', $event)"
+        />
+        <ee-select-input
+          [label]="filterAssociationTypeLabel"
+          [options]="associationTypeOptions"
+          [ngModel]="filters().associationType"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('associationType', $event)"
+        />
+        <app-admin-item-typeahead
+          [label]="filterAssociatedItemLabel"
+          [placeholder]="filterAssociatedItemPlaceholder"
+          [itemId]="filters().associatedItemId"
+          (itemIdChange)="updateFilter('associatedItemId', $event)"
         />
         <ee-select-input
           [label]="filterOverrideStateLabel"

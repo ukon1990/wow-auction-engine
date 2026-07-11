@@ -13,6 +13,12 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminRecipe1, AdminRecipeOverrideRequest } from '@api/generated';
 import { AdminModalComponent } from '@features/admin/shared/admin-modal.component';
+import { AdminItemTypeaheadComponent } from '@features/admin/shared/admin-item-typeahead.component';
+import { AdminExpansionService } from '@features/admin/expansions/admin-expansion.service';
+import {
+  ITEM_CLASS_OPTIONS,
+  ITEM_SUBCLASS_OPTIONS,
+} from '@features/admin/items/admin-item-override-form.component';
 import {
   PageFrameComponent,
   PaginationState,
@@ -44,6 +50,7 @@ const standaloneModel = { standalone: true };
   imports: [
     FormsModule,
     AdminModalComponent,
+    AdminItemTypeaheadComponent,
     AdminRecipeComparePanelComponent,
     AdminRecipeOverrideFormComponent,
     PageFrameComponent,
@@ -57,6 +64,7 @@ const standaloneModel = { standalone: true };
 })
 export class RecipesPage {
   private readonly service = inject(AdminRecipeService);
+  private readonly expansionService = inject(AdminExpansionService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -73,6 +81,7 @@ export class RecipesPage {
   protected readonly error = this.service.error.asReadonly();
   protected readonly detailError = this.service.detailError.asReadonly();
   protected readonly compareError = this.service.compareError.asReadonly();
+  protected readonly expansions = this.expansionService.expansions.asReadonly();
 
   protected readonly filters = signal<AdminRecipeFilterState>(defaultAdminRecipeFilters());
   protected readonly panelMode = signal<PanelMode | null>(null);
@@ -89,8 +98,12 @@ export class RecipesPage {
   protected readonly filterNamePlaceholder = $localize`:@@admin.recipes.filter.namePlaceholder:Search localized names`;
   protected readonly filterRecipeIdLabel = $localize`:@@admin.recipes.table.id:Recipe ID`;
   protected readonly filterRecipeIdPlaceholder = $localize`:@@admin.recipes.filter.recipeIdPlaceholder:Exact or partial recipe ID`;
-  protected readonly filterCraftedItemIdLabel = $localize`:@@admin.recipes.filter.craftedItemId:Crafted item ID`;
-  protected readonly filterCraftedItemIdPlaceholder = $localize`:@@admin.recipes.filter.craftedItemIdPlaceholder:Output item ID`;
+  protected readonly filterAssociatedItemLabel = $localize`:@@admin.recipes.filter.associatedItem:Associated item`;
+  protected readonly filterAssociatedItemPlaceholder = $localize`:@@admin.recipes.filter.associatedItemPlaceholder:Search crafted items or reagents`;
+  protected readonly filterClassLabel = $localize`:@@admin.recipes.filter.class:Class`;
+  protected readonly filterSubclassLabel = $localize`:@@admin.recipes.filter.subclass:Subclass`;
+  protected readonly filterExpansionLabel = $localize`:@@admin.recipes.filter.expansion:Expansion`;
+  protected readonly filterAssociationTypeLabel = $localize`:@@admin.recipes.filter.associationType:Item association`;
   protected readonly filterOverrideStateLabel = $localize`:@@admin.recipes.filter.overrideState:Override state`;
   protected readonly filterPageSizeLabel = $localize`:@@admin.recipes.filter.pageSize:Page size`;
   protected readonly applyFiltersLabel = $localize`:@@admin.recipes.filter.apply:Apply`;
@@ -105,6 +118,23 @@ export class RecipesPage {
     { id: 'true', label: $localize`:@@admin.recipes.filter.hasOverride:Has override` },
     { id: 'false', label: $localize`:@@admin.recipes.filter.noOverride:No override` },
   ];
+  protected readonly associationTypeOptions: readonly SelectInputOption[] = [
+    { id: '', label: $localize`:@@admin.recipes.filter.anyAssociation:Crafted or reagent` },
+    { id: 'crafted', label: $localize`:@@admin.recipes.filter.craftedAssociation:Crafted output` },
+    { id: 'reagent', label: $localize`:@@admin.recipes.filter.reagentAssociation:Reagent` },
+  ];
+  protected readonly itemClassOptions: readonly SelectInputOption[] = [
+    { id: '', label: $localize`:@@admin.items.filter.anyClass:All classes` },
+    ...ITEM_CLASS_OPTIONS,
+  ];
+  protected readonly itemSubclassOptions = computed<readonly SelectInputOption[]>(() => [
+    { id: '', label: $localize`:@@admin.items.filter.anySubclass:All subclasses` },
+    ...(ITEM_SUBCLASS_OPTIONS[this.filters().classId] ?? []),
+  ]);
+  protected readonly expansionOptions = computed<readonly SelectInputOption[]>(() => [
+    { id: '', label: $localize`:@@admin.items.filter.anyExpansion:All expansions` },
+    ...this.expansions().map((expansion) => ({ id: String(expansion.id), label: expansion.name })),
+  ]);
   protected readonly pageSizeOptions: readonly SelectInputOption[] = [
     { id: '25', label: '25' },
     { id: '50', label: '50' },
@@ -155,6 +185,7 @@ export class RecipesPage {
       this.filters.set(readAdminRecipeFilters(paramMap));
       void this.reload();
     });
+    void firstValueFrom(this.expansionService.load()).catch(() => undefined);
   }
 
   protected updateFilter<K extends keyof AdminRecipeFilterState>(
@@ -171,6 +202,10 @@ export class RecipesPage {
       page: 0,
       pageSize: Number.isFinite(pageSize) ? pageSize : 25,
     });
+  }
+
+  protected updateClassFilter(value: string): void {
+    this.filters.update((current) => ({ ...current, classId: value, subclassId: '', page: 0 }));
   }
 
   protected applyFilters(): void {

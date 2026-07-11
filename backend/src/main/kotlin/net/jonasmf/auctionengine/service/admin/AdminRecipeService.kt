@@ -27,17 +27,31 @@ class AdminRecipeService(
         locale: String?,
         professionId: Int?,
         hasOverride: Boolean?,
-        craftedItemId: Int?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
+        expansionId: Int?,
+        associatedItemId: Int?,
+        associationType: String?,
         page: Int,
         pageSize: Int,
     ): AdminRecipePage {
         validatePagination(page, pageSize)
+        if (itemSubclassId != null && itemClassId == null) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "itemClassId is required when itemSubclassId is set")
+        }
+        if (associationType != null && associationType !in setOf("crafted", "reagent")) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "associationType must be crafted or reagent")
+        }
         val result =
             adminRecipeRepository.searchRecipes(
                 query = query,
                 hasOverride = hasOverride,
                 professionId = professionId,
-                craftedItemId = craftedItemId,
+                itemClassId = itemClassId,
+                itemSubclassId = itemSubclassId,
+                expansionId = expansionId,
+                associatedItemId = associatedItemId,
+                associationType = associationType,
                 page = page,
                 pageSize = pageSize,
                 localeColumnSuffix = AdminExpansionRepository.resolveLocaleColumnSuffix(locale),

@@ -131,7 +131,19 @@ export class AdminItemService {
   searchRecipes(query: string, limit = 20): Observable<readonly AdminRecipeSearchResult[]> {
     const locale = this.localeService.apiLocaleOverride();
     return this.api
-      .searchAdminRecipes(query, locale, undefined, undefined, undefined, 1, limit)
+      .searchAdminRecipes(
+        query,
+        locale,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        1,
+        limit,
+      )
       .pipe(
         map((page) =>
           page.recipes.map((recipe) => ({

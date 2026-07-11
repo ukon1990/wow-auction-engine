@@ -157,12 +157,28 @@ class AdminController(
         locale: String?,
         professionId: Int?,
         hasOverride: Boolean?,
-        craftedItemId: Int?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
+        expansionId: Int?,
+        associatedItemId: Int?,
+        associationType: String?,
         page: Int,
         pageSize: Int,
     ): ResponseEntity<AdminRecipePage> =
         ResponseEntity.ok(
-            adminRecipeService.searchRecipes(query, locale, professionId, hasOverride, craftedItemId, page, pageSize),
+            adminRecipeService.searchRecipes(
+                query,
+                locale,
+                professionId,
+                hasOverride,
+                itemClassId,
+                itemSubclassId,
+                expansionId,
+                associatedItemId,
+                associationType,
+                page,
+                pageSize,
+            ),
         )
 
     @PreAuthorize("hasAuthority('admin')")

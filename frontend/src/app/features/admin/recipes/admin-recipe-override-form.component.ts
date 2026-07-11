@@ -7,13 +7,14 @@ import {
   AdminRecipeReagent,
   AdminRecipeReagentRank,
 } from '@api/generated';
+import { AdminItemTypeaheadComponent } from '@features/admin/shared/admin-item-typeahead.component';
 
 const standaloneModel = { standalone: true };
 const REAGENT_RANKS = [1, 2, 3] as const;
 
 @Component({
   selector: 'app-admin-recipe-override-form',
-  imports: [FormsModule],
+  imports: [FormsModule, AdminItemTypeaheadComponent],
   template: `
     <form class="grid gap-6" (submit)="onSubmit($event)">
       @if (recipe(); as currentRecipe) {
@@ -32,16 +33,12 @@ const REAGENT_RANKS = [1, 2, 3] as const;
         <section class="grid gap-3" [attr.aria-label]="scalarSectionLabel">
           <h4 class="font-semibold text-primary-container">{{ scalarSectionLabel }}</h4>
           <div class="grid gap-3 md:grid-cols-2">
-            <label class="admin-field">
-              <span>{{ craftedItemIdLabel }}</span>
-              <input
-                type="number"
-                min="1"
-                [ngModel]="craftedItemId()"
-                [ngModelOptions]="standaloneModel"
-                (ngModelChange)="craftedItemId.set($event)"
-              />
-            </label>
+            <app-admin-item-typeahead
+              [label]="craftedItemIdLabel"
+              [placeholder]="itemSearchPlaceholder"
+              [itemId]="craftedItemId()"
+              (itemIdChange)="craftedItemId.set($event)"
+            />
             <label class="admin-field">
               <span>{{ craftedQuantityLabel }}</span>
               <input
@@ -93,16 +90,12 @@ const REAGENT_RANKS = [1, 2, 3] as const;
           </div>
           @for (output of outputs(); track $index) {
             <div class="admin-row-grid">
-              <label class="admin-field">
-                <span>{{ outputItemIdLabel }}</span>
-                <input
-                  type="number"
-                  min="1"
-                  [ngModel]="output.craftedItemId"
-                  [ngModelOptions]="standaloneModel"
-                  (ngModelChange)="updateOutput($index, { craftedItemId: $event })"
-                />
-              </label>
+              <app-admin-item-typeahead
+                [label]="outputItemIdLabel"
+                [placeholder]="itemSearchPlaceholder"
+                [itemId]="output.craftedItemId"
+                (itemIdChange)="updateOutput($index, { craftedItemId: $event || 0 })"
+              />
               <label class="admin-field">
                 <span>{{ outputQuantityLabel }}</span>
                 <input
@@ -146,16 +139,12 @@ const REAGENT_RANKS = [1, 2, 3] as const;
           </div>
           @for (reagent of reagents(); track $index) {
             <div class="admin-row-grid">
-              <label class="admin-field">
-                <span>{{ reagentItemIdLabel }}</span>
-                <input
-                  type="number"
-                  min="1"
-                  [ngModel]="reagent.itemId"
-                  [ngModelOptions]="standaloneModel"
-                  (ngModelChange)="updateReagent($index, { itemId: $event })"
-                />
-              </label>
+              <app-admin-item-typeahead
+                [label]="reagentItemIdLabel"
+                [placeholder]="itemSearchPlaceholder"
+                [itemId]="reagent.itemId"
+                (itemIdChange)="updateReagent($index, { itemId: $event || 0 })"
+              />
               <label class="admin-field">
                 <span>{{ reagentQuantityLabel }}</span>
                 <input
@@ -201,16 +190,14 @@ const REAGENT_RANKS = [1, 2, 3] as const;
                       <p class="ee-label self-center text-outline">
                         {{ rankNumberLabel(rankValue) }}
                       </p>
-                      <label class="admin-field">
-                        <span>{{ rankItemIdLabel }}</span>
-                        <input
-                          type="number"
-                          min="1"
-                          [ngModel]="rankField($index, rankValue, 'itemId')"
-                          [ngModelOptions]="standaloneModel"
-                          (ngModelChange)="updateReagentRank($index, rankValue, { itemId: $event })"
-                        />
-                      </label>
+                      <app-admin-item-typeahead
+                        [label]="rankItemIdLabel"
+                        [placeholder]="itemSearchPlaceholder"
+                        [itemId]="rankItemId($index, rankValue)"
+                        (itemIdChange)="
+                          updateReagentRank($index, rankValue, { itemId: $event || 0 })
+                        "
+                      />
                       <label class="admin-field">
                         <span>{{ skillPointsLabel }}</span>
                         <input
@@ -258,6 +245,7 @@ const REAGENT_RANKS = [1, 2, 3] as const;
 })
 export class AdminRecipeOverrideFormComponent {
   protected readonly standaloneModel = standaloneModel;
+  protected readonly itemSearchPlaceholder = $localize`:@@admin.recipes.form.itemSearchPlaceholder:Search items by name or ID`;
   protected readonly reagentRanks = REAGENT_RANKS;
 
   readonly recipe = input.required<AdminRecipe1>();
@@ -406,6 +394,11 @@ export class AdminRecipeOverrideFormComponent {
       return entry.itemId;
     }
     return entry.skillPoints ?? '';
+  }
+
+  protected rankItemId(reagentIndex: number, rank: number): number | null {
+    const value = this.rankField(reagentIndex, rank, 'itemId');
+    return typeof value === 'number' && value > 0 ? value : null;
   }
 
   protected updateReagentRank(
