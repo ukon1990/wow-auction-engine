@@ -45,6 +45,7 @@ data class CraftingMarketSearchResult(
 
 data class CraftingMarketSqlRow(
     val recipeId: Int,
+    val recipeRank: Int?,
     val craftedItemId: Int,
     val bonusKey: String,
     val modifierKey: String,
@@ -410,6 +411,7 @@ class CraftingMarketSearchRepository(
                     ro.crafted_item_id,
                     ro.crafted_qty AS crafted_quantity,
                     reci.media_url AS recipe_media_url,
+                    reci.rank AS recipe_rank,
                     COALESCE(reci_l.$loc, reci_l.en_gb, reci_l.en_us) AS recipe_name,
                     p.id AS profession_id,
                     COALESCE(p_l.$loc, p_l.en_gb, p_l.en_us) AS profession_name,
@@ -459,6 +461,7 @@ class CraftingMarketSearchRepository(
                     END AS prev_profit_copper,
                     rd.recipe_name,
                     rd.recipe_media_url,
+                    rd.recipe_rank,
                     rd.profession_id,
                     rd.profession_name,
                     rd.skill_tier_name,
@@ -531,6 +534,7 @@ class CraftingMarketSearchRepository(
             wrapped.reagents_fully_priced,
             wrapped.recipe_name,
             wrapped.recipe_media_url,
+            wrapped.recipe_rank,
             wrapped.profession_id,
             wrapped.profession_name,
             wrapped.skill_tier_name,
@@ -565,6 +569,7 @@ class CraftingMarketSearchRepository(
                 c.reagents_fully_priced,
                 c.recipe_name,
                 c.recipe_media_url,
+                c.recipe_rank,
                 c.profession_id,
                 c.profession_name,
                 c.skill_tier_name,
@@ -692,6 +697,7 @@ class CraftingMarketSearchRepository(
         RowMapper { rs: ResultSet, _: Int ->
             CraftingMarketSqlRow(
                 recipeId = rs.getInt("recipe_id"),
+                recipeRank = rs.getNullableInt("recipe_rank"),
                 craftedItemId = rs.getInt("crafted_item_id"),
                 bonusKey = rs.getString("bonus_key") ?: "",
                 modifierKey = rs.getString("modifier_key") ?: "",

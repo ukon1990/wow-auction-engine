@@ -29,6 +29,7 @@ class BranchDatabaseCloner {
                     connection.cloneViews(
                         sourceDatabase = selectedDatabase.cloneSourceDatabase,
                         targetDatabase = selectedDatabase.name,
+                        replaceExisting = false,
                     )
                     connection.commit()
                     logger.info(
@@ -268,20 +269,60 @@ private fun Connection.maxValue(
 private fun Connection.cloneViews(
     sourceDatabase: String,
     targetDatabase: String,
+    replaceExisting: Boolean = true,
 ) {
-    views(sourceDatabase).dependencyOrdered().forEach { view ->
-        val viewName = view.name
-        val createViewSql =
-            showCreateView(sourceDatabase, viewName)
-                .replaceFirst(
-                    Regex("""(?i)^CREATE(?:\s+ALGORITHM=\S+)?\s+DEFINER=`[^`]+`@`[^`]+`\s+SQL SECURITY \S+\s+VIEW\s+`${Regex.escape(viewName)}`"""),
-                    "CREATE OR REPLACE VIEW ${quoteIdentifier(targetDatabase)}.${quoteIdentifier(viewName)}",
-                ).replace(
-                    Regex("""`${Regex.escape(sourceDatabase)}`\."""),
-                    "${quoteIdentifier(targetDatabase)}.",
+    val sourceViews = views(sourceDatabase)
+    val viewNamesToClone =
+        if (replaceExisting) {
+            sourceViews.mapTo(mutableSetOf(), DatabaseView::name)
+        } else {
+            missingViewNames(
+                sourceViewNames = sourceViews.mapTo(mutableSetOf(), DatabaseView::name),
+                targetViewNames = views(targetDatabase).mapTo(mutableSetOf(), DatabaseView::name),
+            )
+        }
+    sourceViews
+        .filter { it.name in viewNamesToClone }
+        .dependencyOrdered()
+        .forEach { view ->
+            val viewName = view.name
+            val createViewSql =
+                cloneViewSql(
+                    createViewSql = showCreateView(sourceDatabase, viewName),
+                    sourceDatabase = sourceDatabase,
+                    targetDatabase = targetDatabase,
+                    viewName = viewName,
                 )
-        executeSql(createViewSql)
+            executeSql(createViewSql)
+        }
+}
+
+internal fun missingViewNames(
+    sourceViewNames: Set<String>,
+    targetViewNames: Set<String>,
+): Set<String> = sourceViewNames - targetViewNames
+
+internal fun cloneViewSql(
+    createViewSql: String,
+    sourceDatabase: String,
+    targetDatabase: String,
+    viewName: String,
+): String {
+    val createPrefix =
+        Regex(
+            """(?is)^CREATE\s+(?:OR\s+REPLACE\s+)?(?:ALGORITHM\s*=\s*\S+\s+)?(?:DEFINER\s*=\s*(?:`[^`]+`@`[^`]+`|\S+)\s+)?(?:SQL\s+SECURITY\s+\S+\s+)?VIEW\s+(?:`${Regex.escape(sourceDatabase)}`\.)?`${Regex.escape(viewName)}`""",
+        )
+    require(createPrefix.containsMatchIn(createViewSql)) {
+        "Unsupported CREATE VIEW statement for '$viewName'"
     }
+    return createViewSql
+        .replaceFirst(
+            createPrefix,
+            "CREATE OR REPLACE VIEW ${quoteIdentifier(targetDatabase)}.${quoteIdentifier(viewName)}",
+        ).replace(
+            Regex("""`${Regex.escape(sourceDatabase)}`\."""),
+            "${quoteIdentifier(targetDatabase)}.",
+        )
 }
 
 private fun Connection.databaseObjects(database: String): List<DatabaseObject> =

@@ -28,6 +28,7 @@ class AuctionMarketItemDetailRepository(
                     d.item_subclass_id,
                     COALESCE(d.item_subclass_name_$localeColumnSuffix, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
                     d.recipe_id,
+                    d.recipe_rank,
                     COALESCE(d.recipe_name_$localeColumnSuffix, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
                     d.recipe_media_url
                 FROM v_auction_market_item_details d

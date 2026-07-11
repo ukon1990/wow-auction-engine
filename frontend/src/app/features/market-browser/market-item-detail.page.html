@@ -287,6 +287,9 @@
                   (click)="selectRecipe(recipe.recipeId)"
                 >
                   {{ recipe.recipeName }}
+                  @if (recipe.recipeRank; as rank) {
+                    <span i18n="@@admin.recipes.form.rankNumber">Rank {{ rank }}</span>
+                  }
                 </button>
               }
             </div>
@@ -344,7 +347,12 @@
               </div>
 
               <div class="rounded border border-white/10 bg-surface-container-high/60 p-4">
-                <div class="ee-label mb-3 text-outline">{{ crafting.recipeName }}</div>
+                <div class="ee-label mb-3 text-outline">
+                  {{ crafting.recipeName }}
+                  @if (crafting.recipeRank; as rank) {
+                    <span i18n="@@admin.recipes.form.rankNumber">Rank {{ rank }}</span>
+                  }
+                </div>
                 <div class="space-y-2 ee-data text-on-surface">
                   <div class="flex justify-between gap-4">
                     <span i18n="@@itemDetail.craftedQty">Crafted qty</span

@@ -171,6 +171,7 @@ class AuctionMarketSearchService(
                                                 id = it,
                                                 name = row.recipeName.orEmpty(),
                                                 mediaUrl = row.recipeMediaUrl,
+                                                rank = row.recipeRank,
                                             )
                                         },
                                 ),

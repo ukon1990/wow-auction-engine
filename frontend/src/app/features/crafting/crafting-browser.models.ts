@@ -6,6 +6,7 @@ export interface CraftingTableRow {
   readonly craftedItemId: number;
   readonly craftedItemName: string;
   readonly recipeName: string;
+  readonly recipeRank?: number | null;
   readonly professionName: string;
   readonly variantSummary: string;
   readonly listingKey: MarketListingKey;

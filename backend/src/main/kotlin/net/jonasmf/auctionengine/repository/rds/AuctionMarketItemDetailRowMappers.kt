@@ -20,6 +20,7 @@ internal object AuctionMarketItemDetailRowMappers {
                 itemSubclassId = rs.getNullableInt("item_subclass_id"),
                 itemSubclassName = rs.getString("item_subclass_name"),
                 recipeId = rs.getNullableInt("recipe_id"),
+                recipeRank = rs.getNullableInt("recipe_rank"),
                 recipeName = rs.getString("recipe_name"),
                 recipeMediaUrl = rs.getString("recipe_media_url"),
             )
@@ -83,6 +84,7 @@ internal object AuctionMarketItemDetailRowMappers {
         RowMapper { rs: ResultSet, _: Int ->
             AuctionMarketItemCraftingRow(
                 recipeId = rs.getInt("recipe_id"),
+                recipeRank = rs.getNullableInt("recipe_rank"),
                 recipeName = rs.getString("recipe_name") ?: "",
                 recipeMediaUrl = rs.getString("recipe_media_url"),
                 craftedQuantity = rs.getInt("crafted_quantity"),

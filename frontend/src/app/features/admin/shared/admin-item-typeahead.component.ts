@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { AdminApiService, AdminItem1 } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
 import { firstValueFrom } from 'rxjs';

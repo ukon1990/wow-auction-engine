@@ -142,4 +142,57 @@ class BranchDatabaseConfigTest {
             ),
         )
     }
+
+    @Test
+    fun `branch database clone makes plain view creation idempotent`() {
+        assertEquals(
+            "CREATE OR REPLACE VIEW `branch_feature`.`v_auction_house_daily_prices` AS SELECT * FROM `branch_feature`.`auction_stats_daily`",
+            cloneViewSql(
+                createViewSql =
+                    "CREATE VIEW `v_auction_house_daily_prices` AS SELECT * FROM `dbo`.`auction_stats_daily`",
+                sourceDatabase = "dbo",
+                targetDatabase = "branch_feature",
+                viewName = "v_auction_house_daily_prices",
+            ),
+        )
+    }
+
+    @Test
+    fun `branch database clone normalizes MariaDB show create view output`() {
+        assertEquals(
+            "CREATE OR REPLACE VIEW `branch_feature`.`v_auction_house_daily_prices` AS SELECT 1 AS `value`",
+            cloneViewSql(
+                createViewSql =
+                    "CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `v_auction_house_daily_prices` AS SELECT 1 AS `value`",
+                sourceDatabase = "dbo",
+                targetDatabase = "branch_feature",
+                viewName = "v_auction_house_daily_prices",
+            ),
+        )
+    }
+
+    @Test
+    fun `branch database clone preserves idempotent qualified view creation`() {
+        assertEquals(
+            "CREATE OR REPLACE VIEW `branch_feature`.`v_auction_house_daily_prices` AS SELECT 1 AS `value`",
+            cloneViewSql(
+                createViewSql =
+                    "CREATE OR REPLACE VIEW `dbo`.`v_auction_house_daily_prices` AS SELECT 1 AS `value`",
+                sourceDatabase = "dbo",
+                targetDatabase = "branch_feature",
+                viewName = "v_auction_house_daily_prices",
+            ),
+        )
+    }
+
+    @Test
+    fun `existing branch database only clones missing views`() {
+        assertEquals(
+            setOf("v_recipe"),
+            missingViewNames(
+                sourceViewNames = setOf("v_auction_house_daily_prices", "v_recipe"),
+                targetViewNames = setOf("v_auction_house_daily_prices"),
+            ),
+        )
+    }
 }

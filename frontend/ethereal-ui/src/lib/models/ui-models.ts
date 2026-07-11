@@ -71,6 +71,7 @@ export interface MarketItemRow {
   readonly listingKey?: MarketListingKey;
   readonly itemClassName?: string;
   readonly itemSubclassName?: string;
+  readonly recipeRank?: number;
   readonly quality: ItemQuality;
   /** Raw copper for server-aligned sort; mirrors unified listing price. */
   readonly listingPriceCopper?: number;

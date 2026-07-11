@@ -7,6 +7,9 @@ properties:
         format: int32
     recipeName:
         type: string
+    recipeRank:
+        type: integer
+        nullable: true
     reagentCost:
         type: integer
         format: int64

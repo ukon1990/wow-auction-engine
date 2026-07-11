@@ -12,6 +12,7 @@ export function toCraftingRow(row: CraftingMarketSearchRow): CraftingTableRow {
     craftedItemId: row.item?.id ?? 0,
     craftedItemName: row.item?.name ?? '',
     recipeName: row.recipe?.name ?? '',
+    recipeRank: row.recipe?.rank ?? null,
     professionName: row.professionName ?? '—',
     variantSummary: variantSummary(lk),
     listingKey: {
