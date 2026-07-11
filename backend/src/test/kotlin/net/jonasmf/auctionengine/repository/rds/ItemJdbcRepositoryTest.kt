@@ -159,10 +159,11 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
             171374,
         )
         jdbcTemplate.update(
-            "INSERT INTO recipe_reagent (internal_id, item_id, quantity) VALUES (?, ?, ?)",
+            "INSERT INTO recipe_reagent (internal_id, item_id, quantity, recipe_id) VALUES (?, ?, ?, ?)",
             7001,
             4001,
             2,
+            5001,
         )
         itemJdbcRepository.syncItems(listOf(loadItem(171374)))
 
