@@ -7,7 +7,10 @@ import {
   AdminRecipeReagent,
   AdminRecipeReagentRank,
 } from '@api/generated';
-import { AdminItemTypeaheadComponent } from '@features/admin/shared/admin-item-typeahead.component';
+import {
+  AdminItemSelection,
+  AdminItemTypeaheadComponent,
+} from '@features/admin/shared/admin-item-typeahead.component';
 
 const standaloneModel = { standalone: true };
 const REAGENT_RANKS = [1, 2, 3] as const;
@@ -37,7 +40,7 @@ const REAGENT_RANKS = [1, 2, 3] as const;
               [label]="craftedItemIdLabel"
               [placeholder]="itemSearchPlaceholder"
               [itemId]="craftedItemId()"
-              (itemIdChange)="craftedItemId.set($event)"
+              (itemChange)="selectCraftedItem($event)"
             />
             <label class="admin-field">
               <span>{{ craftedQuantityLabel }}</span>
@@ -94,7 +97,8 @@ const REAGENT_RANKS = [1, 2, 3] as const;
                 [label]="outputItemIdLabel"
                 [placeholder]="itemSearchPlaceholder"
                 [itemId]="output.craftedItemId"
-                (itemIdChange)="updateOutput($index, { craftedItemId: $event || 0 })"
+                [itemName]="output.craftedItemName ?? null"
+                (itemChange)="selectOutputItem($index, $event)"
               />
               <label class="admin-field">
                 <span>{{ outputQuantityLabel }}</span>
@@ -143,7 +147,8 @@ const REAGENT_RANKS = [1, 2, 3] as const;
                 [label]="reagentItemIdLabel"
                 [placeholder]="itemSearchPlaceholder"
                 [itemId]="reagent.itemId"
-                (itemIdChange)="updateReagent($index, { itemId: $event || 0 })"
+                [itemName]="reagent.itemName ?? null"
+                (itemChange)="selectReagentItem($index, $event)"
               />
               <label class="admin-field">
                 <span>{{ reagentQuantityLabel }}</span>
@@ -194,9 +199,7 @@ const REAGENT_RANKS = [1, 2, 3] as const;
                         [label]="rankItemIdLabel"
                         [placeholder]="itemSearchPlaceholder"
                         [itemId]="rankItemId($index, rankValue)"
-                        (itemIdChange)="
-                          updateReagentRank($index, rankValue, { itemId: $event || 0 })
-                        "
+                        (itemChange)="selectRankItem($index, rankValue, $event)"
                       />
                       <label class="admin-field">
                         <span>{{ skillPointsLabel }}</span>
@@ -337,6 +340,17 @@ export class AdminRecipeOverrideFormComponent {
     ]);
   }
 
+  protected selectCraftedItem(selection: AdminItemSelection | null): void {
+    this.craftedItemId.set(selection?.id ?? null);
+  }
+
+  protected selectOutputItem(index: number, selection: AdminItemSelection | null): void {
+    this.updateOutput(index, {
+      craftedItemId: selection?.id ?? 0,
+      craftedItemName: selection?.name ?? null,
+    });
+  }
+
   protected updateOutput(index: number, patch: Partial<AdminRecipeOutput>): void {
     this.outputs.update((outputs) =>
       outputs.map((output, outputIndex) =>
@@ -354,6 +368,21 @@ export class AdminRecipeOverrideFormComponent {
       ...reagents,
       { itemId: 0, quantity: 1, sortOrder: reagents.length, ranks: [] },
     ]);
+  }
+
+  protected selectReagentItem(index: number, selection: AdminItemSelection | null): void {
+    this.updateReagent(index, {
+      itemId: selection?.id ?? 0,
+      itemName: selection?.name ?? null,
+    });
+  }
+
+  protected selectRankItem(
+    reagentIndex: number,
+    rank: number,
+    selection: AdminItemSelection | null,
+  ): void {
+    this.updateReagentRank(reagentIndex, rank, { itemId: selection?.id ?? 0 });
   }
 
   protected updateReagent(index: number, patch: Partial<AdminRecipeReagent>): void {
@@ -462,13 +491,22 @@ export class AdminRecipeOverrideFormComponent {
       requiredSkillLevel: this.requiredSkillLevel(),
       overrideNote: this.overrideNote().trim() || null,
       outputs: this.outputs().map((output, index) => ({
-        ...output,
+        craftedItemId: output.craftedItemId,
+        craftedQuantity: output.craftedQuantity,
+        requiredSkillLevel: output.requiredSkillLevel,
         sortOrder: output.sortOrder ?? index,
       })),
       reagents: this.reagents().map((reagent, index) => ({
-        ...reagent,
+        itemId: reagent.itemId,
+        quantity: reagent.quantity,
         sortOrder: reagent.sortOrder ?? index,
-        ranks: (reagent.ranks ?? []).filter((entry) => entry.itemId > 0),
+        ranks: (reagent.ranks ?? [])
+          .filter((entry) => entry.itemId > 0)
+          .map((entry) => ({
+            rank: entry.rank,
+            itemId: entry.itemId,
+            skillPoints: entry.skillPoints,
+          })),
       })),
     };
   }

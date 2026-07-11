@@ -11,6 +11,11 @@ import { AdminApiService, AdminItem1 } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
 import { firstValueFrom } from 'rxjs';
 
+export type AdminItemSelection = {
+  readonly id: number;
+  readonly name: string | null;
+};
+
 @Component({
   selector: 'app-admin-item-typeahead',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,7 +73,8 @@ export class AdminItemTypeaheadComponent {
   readonly label = input.required<string>();
   readonly placeholder = input('');
   readonly itemId = input<number | null>(null);
-  readonly itemIdChange = output<number | null>();
+  readonly itemName = input<string | null>(null);
+  readonly itemChange = output<AdminItemSelection | null>();
 
   protected readonly query = signal('');
   protected readonly results = signal<readonly AdminItem1[]>([]);
@@ -81,21 +87,28 @@ export class AdminItemTypeaheadComponent {
   private readonly locale = inject(LocaleService);
   private searchSequence = 0;
   private selectedId: number | null = null;
+  private selectedName: string | null = null;
 
   constructor() {
     effect(() => {
       const itemId = this.itemId();
-      if (itemId === this.selectedId) return;
+      const itemName = this.itemName();
+      if (itemId === this.selectedId && itemName === this.selectedName) return;
       this.selectedId = itemId;
-      this.query.set(itemId ? `#${itemId}` : '');
+      this.selectedName = itemName;
+      this.query.set(itemName?.trim() || '');
+      if (itemId && !itemName?.trim()) void this.resolveItemName(itemId);
     });
   }
 
   protected onInput(event: Event): void {
     const query = (event.target as HTMLInputElement).value;
     this.query.set(query);
-    this.selectedId = null;
-    this.itemIdChange.emit(null);
+    if (query.trim().length === 0) {
+      this.selectedId = null;
+      this.selectedName = null;
+      this.itemChange.emit(null);
+    }
     const sequence = ++this.searchSequence;
     if (query.trim().length < 2) {
       this.results.set([]);
@@ -107,8 +120,9 @@ export class AdminItemTypeaheadComponent {
 
   protected select(item: AdminItem1): void {
     this.selectedId = item.id;
-    this.query.set(item.effective.name ? `${item.effective.name} (#${item.id})` : `#${item.id}`);
-    this.itemIdChange.emit(item.id);
+    this.selectedName = item.effective.name ?? null;
+    this.query.set(this.selectedName || `#${item.id}`);
+    this.itemChange.emit({ id: item.id, name: this.selectedName });
     this.open.set(false);
   }
 
@@ -131,6 +145,15 @@ export class AdminItemTypeaheadComponent {
     if (!result || sequence !== this.searchSequence) return;
     this.results.set(result.items);
     this.open.set(true);
+  }
+
+  private async resolveItemName(itemId: number): Promise<void> {
+    const item = await firstValueFrom(
+      this.api.getAdminItem(itemId, this.locale.apiLocaleOverride(), false, false),
+    ).catch(() => null);
+    if (!item || this.selectedId !== itemId || this.query().trim().length > 0) return;
+    this.selectedName = item.effective.name ?? null;
+    this.query.set(this.selectedName || `#${itemId}`);
   }
 }
 

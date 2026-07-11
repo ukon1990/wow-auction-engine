@@ -70,7 +70,7 @@
           [label]="filterAssociatedItemLabel"
           [placeholder]="filterAssociatedItemPlaceholder"
           [itemId]="filters().associatedItemId"
-          (itemIdChange)="updateFilter('associatedItemId', $event)"
+          (itemChange)="updateFilter('associatedItemId', $event?.id ?? null)"
         />
         <ee-select-input
           [label]="filterOverrideStateLabel"
