@@ -1,15 +1,27 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   effect,
   inject,
   input,
   output,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AdminApiService, AdminItem1 } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
-import { firstValueFrom } from 'rxjs';
+import {
+  catchError,
+  debounce,
+  distinctUntilChanged,
+  firstValueFrom,
+  map,
+  of,
+  Subject,
+  switchMap,
+  timer,
+} from 'rxjs';
 
 export type AdminItemSelection = {
   readonly id: number;
@@ -51,7 +63,22 @@ export type AdminItemSelection = {
                   role="option"
                   (click)="select(item)"
                 >
-                  <span class="truncate">{{ item.effective.name || item.id }}</span>
+                  <span class="flex min-w-0 items-center gap-2">
+                    @if (item.effective.mediaUrl; as mediaUrl) {
+                      <img
+                        class="h-8 w-8 shrink-0 rounded border border-white/10 object-cover"
+                        [src]="mediaUrl"
+                        alt=""
+                        loading="lazy"
+                      />
+                    } @else {
+                      <span
+                        class="h-8 w-8 shrink-0 rounded border border-white/10 bg-surface-container"
+                        aria-hidden="true"
+                      ></span>
+                    }
+                    <span class="truncate">{{ item.effective.name || item.id }}</span>
+                  </span>
                   <span class="ee-data shrink-0 text-outline">
                     #{{ item.id }}
                     @if (item.effective.rank; as rank) {
@@ -74,6 +101,7 @@ export class AdminItemTypeaheadComponent {
   readonly placeholder = input('');
   readonly itemId = input<number | null>(null);
   readonly itemName = input<string | null>(null);
+  readonly debounceWait = input(200);
   readonly itemChange = output<AdminItemSelection | null>();
 
   protected readonly query = signal('');
@@ -85,11 +113,42 @@ export class AdminItemTypeaheadComponent {
 
   private readonly api = inject(AdminApiService);
   private readonly locale = inject(LocaleService);
-  private searchSequence = 0;
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly searchQueries = new Subject<string>();
   private selectedId: number | null = null;
   private selectedName: string | null = null;
 
   constructor() {
+    this.searchQueries
+      .pipe(
+        debounce(() => timer(this.debounceWait())),
+        distinctUntilChanged(),
+        switchMap((query) =>
+          this.api
+            .searchAdminItems(
+              query,
+              this.locale.apiLocaleOverride(),
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              1,
+              20,
+            )
+            .pipe(
+              map((result) => result.items),
+              catchError(() => of([] as readonly AdminItem1[])),
+            ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((items) => {
+        this.results.set(items);
+        this.open.set(true);
+      });
+
     effect(() => {
       const itemId = this.itemId();
       const itemName = this.itemName();
@@ -104,18 +163,18 @@ export class AdminItemTypeaheadComponent {
   protected onInput(event: Event): void {
     const query = (event.target as HTMLInputElement).value;
     this.query.set(query);
-    if (query.trim().length === 0) {
+    const normalizedQuery = query.trim();
+    if (normalizedQuery.length === 0) {
       this.selectedId = null;
       this.selectedName = null;
       this.itemChange.emit(null);
     }
-    const sequence = ++this.searchSequence;
-    if (query.trim().length < 2) {
+    if (!this.isSearchable(normalizedQuery)) {
       this.results.set([]);
       this.open.set(false);
       return;
     }
-    window.setTimeout(() => void this.search(query, sequence), 200);
+    this.searchQueries.next(normalizedQuery);
   }
 
   protected select(item: AdminItem1): void {
@@ -126,25 +185,8 @@ export class AdminItemTypeaheadComponent {
     this.open.set(false);
   }
 
-  private async search(query: string, sequence: number): Promise<void> {
-    if (sequence !== this.searchSequence) return;
-    const result = await firstValueFrom(
-      this.api.searchAdminItems(
-        query,
-        this.locale.apiLocaleOverride(),
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        1,
-        20,
-      ),
-    ).catch(() => null);
-    if (!result || sequence !== this.searchSequence) return;
-    this.results.set(result.items);
-    this.open.set(true);
+  private isSearchable(query: string): boolean {
+    return /^\d+$/.test(query) || query.length >= 2;
   }
 
   private async resolveItemName(itemId: number): Promise<void> {

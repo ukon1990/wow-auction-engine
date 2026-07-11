@@ -1,3 +1,4 @@
+-- Refresh after V18 adds item.rank so cloned databases rebuild the view projection.
 CREATE OR REPLACE VIEW v_item AS
 SELECT
     item_ids.id,

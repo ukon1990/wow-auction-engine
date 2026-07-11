@@ -493,7 +493,9 @@ export class AdminRecipeOverrideFormComponent {
       outputs: this.outputs().map((output, index) => ({
         craftedItemId: output.craftedItemId,
         craftedQuantity: output.craftedQuantity,
-        requiredSkillLevel: output.requiredSkillLevel,
+        ...(output.requiredSkillLevel == null
+          ? {}
+          : { requiredSkillLevel: output.requiredSkillLevel }),
         sortOrder: output.sortOrder ?? index,
       })),
       reagents: this.reagents().map((reagent, index) => ({
@@ -539,10 +541,22 @@ export function normalizeRequest(request: AdminRecipeOverrideRequest): AdminReci
     rank: toNullableInt(request.rank),
     requiredSkillLevel: toNullableInt(request.requiredSkillLevel),
     overrideNote: request.overrideNote?.trim() || null,
-    outputs: request.outputs?.filter(
-      (output) => output.craftedItemId > 0 && output.craftedQuantity > 0,
-    ),
-    reagents: request.reagents?.filter((reagent) => reagent.itemId > 0 && reagent.quantity > 0),
+    outputs: request.outputs
+      ?.filter((output) => output.craftedItemId > 0 && output.craftedQuantity > 0)
+      .map((output) => ({
+        craftedItemId: output.craftedItemId,
+        craftedQuantity: output.craftedQuantity,
+        requiredSkillLevel: output.requiredSkillLevel,
+        sortOrder: output.sortOrder,
+      })),
+    reagents: request.reagents
+      ?.filter((reagent) => reagent.itemId > 0 && reagent.quantity > 0)
+      .map((reagent) => ({
+        itemId: reagent.itemId,
+        quantity: reagent.quantity,
+        sortOrder: reagent.sortOrder,
+        ranks: reagent.ranks,
+      })),
   };
 }
 

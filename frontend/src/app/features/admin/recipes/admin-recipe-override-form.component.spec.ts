@@ -93,14 +93,19 @@ describe('normalizeRequest', () => {
     expect(
       normalizeRequest({
         outputs: [
-          { craftedItemId: 0, craftedQuantity: 1, sortOrder: 0 },
-          { craftedItemId: 123, craftedQuantity: 0, sortOrder: 1 },
-          { craftedItemId: 456, craftedQuantity: 2, sortOrder: 2 },
+          { craftedItemId: 0, craftedItemName: 'Invalid', craftedQuantity: 1, sortOrder: 0 },
+          {
+            craftedItemId: 123,
+            craftedItemName: 'Invalid quantity',
+            craftedQuantity: 0,
+            sortOrder: 1,
+          },
+          { craftedItemId: 456, craftedItemName: 'Display only', craftedQuantity: 2, sortOrder: 2 },
         ],
         reagents: [
-          { itemId: 0, quantity: 2, sortOrder: 0, ranks: [] },
-          { itemId: 789, quantity: 0, sortOrder: 1, ranks: [] },
-          { itemId: 321, quantity: 3, sortOrder: 2, ranks: [] },
+          { itemId: 0, itemName: 'Invalid', quantity: 2, sortOrder: 0, ranks: [] },
+          { itemId: 789, itemName: 'Invalid quantity', quantity: 0, sortOrder: 1, ranks: [] },
+          { itemId: 321, itemName: 'Display only', quantity: 3, sortOrder: 2, ranks: [] },
         ],
       }),
     ).toEqual({
