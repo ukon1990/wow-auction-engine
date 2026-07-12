@@ -1,6 +1,7 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { AdminApiService, AdminJob } from '@api/generated';
-import { Subject, of } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi, vitest } from 'vitest';
 import { APPLY_EXPANSION_RANGES_OPERATION, AdminJobService } from './admin-job.service';
 
@@ -59,5 +60,45 @@ describe('AdminJobService', () => {
 
     expect(service.activeJob()).toEqual(completedJob);
     expect(api.getAdminJob).toHaveBeenCalledWith(7);
+  });
+
+  it('continues polling after a transient status request failure', () => {
+    vi.useFakeTimers();
+    api.getAdminJob
+      .mockReturnValueOnce(throwError(() => new Error('temporary network error')))
+      .mockReturnValueOnce(of(completedJob));
+
+    service.trackJob(runningJob);
+    vi.advanceTimersByTime(4000);
+
+    expect(api.getAdminJob).toHaveBeenCalledTimes(2);
+    expect(service.activeJob()).toEqual(completedJob);
+  });
+
+  it.each([403, 404])(
+    'stops polling and unblocks the job after a terminal %i response',
+    (status) => {
+      vi.useFakeTimers();
+      api.getAdminJob.mockReturnValue(throwError(() => new HttpErrorResponse({ status })));
+
+      service.trackJob(runningJob);
+      vi.advanceTimersByTime(4000);
+
+      expect(api.getAdminJob).toHaveBeenCalledOnce();
+      expect(service.activeJob()).toBeNull();
+      expect(service.pollingError()).toBeTruthy();
+    },
+  );
+
+  it('stops polling and unblocks the job after retry attempts are exhausted', () => {
+    vi.useFakeTimers();
+    api.getAdminJob.mockReturnValue(throwError(() => new Error('temporary network error')));
+
+    service.trackJob(runningJob);
+    vi.advanceTimersByTime(8000);
+
+    expect(api.getAdminJob).toHaveBeenCalledTimes(3);
+    expect(service.activeJob()).toBeNull();
+    expect(service.pollingError()).toBeTruthy();
   });
 });

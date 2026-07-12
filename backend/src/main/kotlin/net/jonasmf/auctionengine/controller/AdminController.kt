@@ -27,6 +27,7 @@ import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
+import net.jonasmf.auctionengine.service.admin.AdminProfessionSyncService
 import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
@@ -44,6 +45,7 @@ class AdminController(
     private val adminSqlService: AdminSqlService,
     private val adminExpansionService: AdminExpansionService,
     private val adminJobService: AdminJobService,
+    private val adminProfessionSyncService: AdminProfessionSyncService,
     private val adminItemService: AdminItemService,
     private val adminRecipeService: AdminRecipeService,
 ) : AdminApi {
@@ -109,6 +111,16 @@ class AdminController(
         ResponseEntity
             .status(HttpStatus.ACCEPTED)
             .body(adminExpansionService.fetchMissingExpansionRangeItems(requestedBy()))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun syncProfessionRecipes(): ResponseEntity<AdminJob> =
+        ResponseEntity
+            .status(HttpStatus.ACCEPTED)
+            .body(adminProfessionSyncService.syncProfessionRecipes(requestedBy()))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun getActiveProfessionSyncJob(): ResponseEntity<AdminJob> =
+        ResponseEntity.ok(adminJobService.getActiveProfessionSyncJob())
 
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getAdminJob(id: Long): ResponseEntity<AdminJob> =

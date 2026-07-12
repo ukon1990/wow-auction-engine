@@ -2202,6 +2202,23 @@
         <source>Rank</source>
         <target>등급</target>
       </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.heading" datatype="html"><source>Profession sync</source><target>전문 기술 동기화</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.description" datatype="html"><source>Start an asynchronous sync of professions, skill tiers, recipes, and reagents.</source><target>전문 기술, 숙련 단계, 조제법 및 재료의 비동기 동기화를 시작합니다.</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.start" datatype="html"><source>Sync professions and recipes</source><target>전문 기술 및 조제법 동기화</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.dismiss" datatype="html"><source>Dismiss</source><target>닫기</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.conflict" datatype="html"><source>A profession sync is already running.</source><target>전문 기술 동기화가 이미 실행 중입니다.</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.startError" datatype="html"><source>Unable to start the profession sync.</source><target>전문 기술 동기화를 시작할 수 없습니다.</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.running" datatype="html"><source>Profession sync is running…</source><target>전문 기술 동기화가 실행 중입니다…</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.failed" datatype="html"><source>Profession sync failed</source><target>전문 기술 동기화에 실패했습니다</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.completed" datatype="html"><source>Profession sync completed</source><target>전문 기술 동기화가 완료되었습니다</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.runningDescription" datatype="html"><source>You can continue browsing recipes while it finishes.</source><target>동기화가 완료되는 동안 조제법을 계속 탐색할 수 있습니다.</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.failedDescription" datatype="html"><source>The profession sync could not be completed.</source><target>전문 기술 동기화를 완료할 수 없습니다.</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.professions" datatype="html"><source>Professions</source><target>전문 기술</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.tiers" datatype="html"><source>Skill tiers</source><target>숙련 단계</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.recipes" datatype="html"><source>Recipes</source><target>조제법</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.reagents" datatype="html"><source>Reagents</source><target>재료</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.failures" datatype="html"><source>Recipe failures</source><target>조제법 실패</target></trans-unit>
+      <trans-unit id="admin.jobs.pollingError" datatype="html"><source>Unable to monitor the admin job. You can try starting it again.</source><target>관리자 작업을 모니터링할 수 없습니다. 다시 시작해 보세요.</target></trans-unit>
     </body>
   </file>
 </xliff>

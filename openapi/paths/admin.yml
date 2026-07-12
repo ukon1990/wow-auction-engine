@@ -276,6 +276,36 @@ fetchMissingExpansionRangeItems:
                             $ref: "../openapi.yml#/components/schemas/AdminJob"
             "409":
                 description: A job of this type is already running
+syncProfessionRecipes:
+    post:
+        tags:
+            - Admin
+        operationId: syncProfessionRecipes
+        summary: Starts a profession and recipe synchronization job
+        responses:
+            "202":
+                description: Job accepted
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminJob"
+            "409":
+                description: A profession and recipe synchronization is already running
+getActiveProfessionSyncJob:
+    get:
+        tags:
+            - Admin
+        operationId: getActiveProfessionSyncJob
+        summary: Gets the running profession and recipe synchronization job
+        responses:
+            "200":
+                description: Running profession and recipe synchronization job
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AdminJob"
+            "404":
+                description: No profession and recipe synchronization job is running
 getAdminJob:
     get:
         tags:

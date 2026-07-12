@@ -17,6 +17,7 @@ object AdminJobDomain {
 object AdminJobOperations {
     const val APPLY_EXPANSION_RANGES = "apply-expansion-ranges"
     const val FETCH_EXPANSION_RANGE_ITEMS = "fetch-expansion-range-items"
+    const val SYNC_PROFESSIONS = "sync-professions"
 }
 
 @Service
@@ -26,4 +27,8 @@ class AdminJobService(
     fun getJob(id: Long): AdminJob =
         adminJobRepository.findJob(id)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Admin job not found: $id")
+
+    fun getActiveProfessionSyncJob(): AdminJob =
+        adminJobRepository.findRunningJob(AdminJobDomain.PROFESSION, AdminJobOperations.SYNC_PROFESSIONS)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No profession/recipe sync job is running")
 }

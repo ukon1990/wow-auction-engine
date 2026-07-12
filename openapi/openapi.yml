@@ -42,6 +42,10 @@ paths:
     $ref: ./paths/admin.yml#/applyExpansionRanges
   /admin/expansion-ranges/fetch-missing-items:
     $ref: ./paths/admin.yml#/fetchMissingExpansionRangeItems
+  /admin/professions/sync:
+    $ref: ./paths/admin.yml#/syncProfessionRecipes
+  /admin/professions/sync/active:
+    $ref: ./paths/admin.yml#/getActiveProfessionSyncJob
   /admin/jobs/{id}:
     $ref: ./paths/admin.yml#/getAdminJob
   /admin/items:

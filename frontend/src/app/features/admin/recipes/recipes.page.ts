@@ -1,9 +1,11 @@
 import { isPlatformBrowser } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
+  effect,
   inject,
   PLATFORM_ID,
   signal,
@@ -11,10 +13,15 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AdminRecipe1, AdminRecipeOverrideRequest } from '@api/generated';
+import { AdminJob, AdminRecipe1, AdminRecipeOverrideRequest } from '@api/generated';
 import { AdminModalComponent } from '@features/admin/shared/admin-modal.component';
 import { AdminItemTypeaheadComponent } from '@features/admin/shared/admin-item-typeahead.component';
 import { AdminExpansionService } from '@features/admin/expansions/admin-expansion.service';
+import {
+  ADMIN_JOB_DOMAIN_PROFESSION,
+  AdminJobService,
+  SYNC_PROFESSIONS_OPERATION,
+} from '@features/admin/shared/admin-job.service';
 import {
   ITEM_CLASS_OPTIONS,
   ITEM_SUBCLASS_OPTIONS,
@@ -32,6 +39,7 @@ import { AdminRecipeComparePanelComponent } from './admin-recipe-compare-panel.c
 import { AdminRecipeOverrideFormComponent } from './admin-recipe-override-form.component';
 import { AdminRecipeService } from './admin-recipe.service';
 import { createAdminRecipeColumns } from './admin-recipes-table.columns';
+import { professionSyncJobSummary, professionSyncJobTitle } from './profession-sync-job-summary';
 import {
   AdminRecipeFilterState,
   defaultAdminRecipeFilters,
@@ -65,6 +73,7 @@ const standaloneModel = { standalone: true };
 export class RecipesPage {
   private readonly service = inject(AdminRecipeService);
   private readonly expansionService = inject(AdminExpansionService);
+  private readonly jobService = inject(AdminJobService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -82,10 +91,15 @@ export class RecipesPage {
   protected readonly detailError = this.service.detailError.asReadonly();
   protected readonly compareError = this.service.compareError.asReadonly();
   protected readonly expansions = this.expansionService.expansions.asReadonly();
+  protected readonly activeJob = this.jobService.activeJob.asReadonly();
+  protected readonly jobDismissed = this.jobService.dismissed.asReadonly();
+  protected readonly pollingError = this.jobService.pollingError.asReadonly();
 
   protected readonly filters = signal<AdminRecipeFilterState>(defaultAdminRecipeFilters());
   protected readonly panelMode = signal<PanelMode | null>(null);
   protected readonly formError = signal<string | null>(null);
+  protected readonly syncStarting = signal(false);
+  protected readonly syncError = signal<string | null>(null);
   protected readonly viewportWidth = signal(DEFAULT_VIEWPORT_WIDTH);
   protected readonly cardView = computed(() => this.viewportWidth() <= MOBILE_CARD_VIEW_MAX_WIDTH);
   protected readonly standaloneModel = standaloneModel;
@@ -112,6 +126,10 @@ export class RecipesPage {
   protected readonly tableSectionAriaLabel = $localize`:@@admin.recipes.table.sectionAria:Admin recipes`;
   protected readonly paginationRowLabel = $localize`:@@admin.recipes.table.paginationLabel:recipes`;
   protected readonly loadingDetailsLabel = $localize`:@@admin.recipes.form.loading:Loading recipe details...`;
+  protected readonly professionSyncHeading = $localize`:@@admin.recipes.professionSync.heading:Profession sync`;
+  protected readonly professionSyncDescription = $localize`:@@admin.recipes.professionSync.description:Start an asynchronous sync of professions, skill tiers, recipes, and reagents.`;
+  protected readonly startProfessionSyncLabel = $localize`:@@admin.recipes.professionSync.start:Sync professions and recipes`;
+  protected readonly dismissProfessionSyncLabel = $localize`:@@admin.recipes.professionSync.dismiss:Dismiss`;
 
   protected readonly hasOverrideOptions: readonly SelectInputOption[] = [
     { id: '', label: $localize`:@@admin.recipes.filter.anyOverride:All override states` },
@@ -159,6 +177,34 @@ export class RecipesPage {
     };
   });
 
+  protected readonly professionJob = computed(() => {
+    const job = this.activeJob();
+    return job?.domain === ADMIN_JOB_DOMAIN_PROFESSION &&
+      job.operation === SYNC_PROFESSIONS_OPERATION
+      ? job
+      : null;
+  });
+  protected readonly showProfessionJob = computed(
+    () => this.professionJob() !== null && !this.jobDismissed(),
+  );
+  protected readonly professionJobTitle = computed(() => {
+    const job = this.professionJob();
+    return job ? professionSyncJobTitle(job) : '';
+  });
+  protected readonly professionJobSummary = computed(() => {
+    const job = this.professionJob();
+    return job ? professionSyncJobSummary(job) : null;
+  });
+  protected readonly professionJobRunning = computed(
+    () => this.professionJob()?.status === AdminJob.StatusEnum.Running,
+  );
+  protected readonly professionJobFailed = computed(
+    () => this.professionJob()?.status === AdminJob.StatusEnum.Failed,
+  );
+  protected readonly professionSyncBusy = computed(
+    () => this.syncStarting() || this.professionJobRunning(),
+  );
+
   protected readonly panelTitle = computed(() => {
     switch (this.panelMode()) {
       case 'compare':
@@ -171,6 +217,17 @@ export class RecipesPage {
   });
 
   constructor() {
+    let refreshedJobId: number | null = null;
+    effect(() => {
+      const job = this.professionJob();
+      if (job?.status === AdminJob.StatusEnum.Completed && refreshedJobId !== job.id) {
+        refreshedJobId = job.id;
+        void this.reload();
+      }
+    });
+
+    this.destroyRef.onDestroy(() => this.jobService.stopPolling());
+
     if (isPlatformBrowser(this.platformId)) {
       fromEvent(window, 'resize')
         .pipe(
@@ -186,6 +243,7 @@ export class RecipesPage {
       void this.reload();
     });
     void firstValueFrom(this.expansionService.load()).catch(() => undefined);
+    void this.rehydrateProfessionSync();
   }
 
   protected updateFilter<K extends keyof AdminRecipeFilterState>(
@@ -264,6 +322,41 @@ export class RecipesPage {
     await firstValueFrom(this.service.deleteOverride(recipe.id, this.filters())).catch(
       () => undefined,
     );
+  }
+
+  protected async syncProfessionRecipes(): Promise<void> {
+    if (this.professionSyncBusy()) {
+      return;
+    }
+
+    this.syncStarting.set(true);
+    this.syncError.set(null);
+    try {
+      const job = await firstValueFrom(this.service.syncProfessionRecipes());
+      this.jobService.trackJob(job);
+    } catch (error: unknown) {
+      this.syncError.set(
+        error instanceof HttpErrorResponse && error.status === 409
+          ? $localize`:@@admin.recipes.professionSync.conflict:A profession sync is already running.`
+          : $localize`:@@admin.recipes.professionSync.startError:Unable to start the profession sync.`,
+      );
+    } finally {
+      this.syncStarting.set(false);
+    }
+  }
+
+  protected dismissProfessionSync(): void {
+    this.syncError.set(null);
+    this.jobService.dismiss();
+  }
+
+  private async rehydrateProfessionSync(): Promise<void> {
+    const job = await firstValueFrom(
+      this.service.getActiveProfessionSyncJob().pipe(takeUntilDestroyed(this.destroyRef)),
+    ).catch(() => null);
+    if (job) {
+      this.jobService.trackJob(job);
+    }
   }
 
   protected pageSizeValue(): string {

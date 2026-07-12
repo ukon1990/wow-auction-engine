@@ -19,6 +19,64 @@
       <p class="ee-data text-outline">{{ pageDescription }}</p>
     </div>
 
+    <section
+      class="grid gap-3 rounded-md border border-primary/30 bg-primary/10 px-4 py-3"
+      [attr.aria-busy]="professionSyncBusy()"
+      [attr.aria-label]="professionSyncHeading"
+    >
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="grid gap-1">
+          <h3 class="font-semibold text-on-surface">{{ professionSyncHeading }}</h3>
+          <p class="ee-data text-outline">{{ professionSyncDescription }}</p>
+        </div>
+        <button
+          type="button"
+          class="admin-primary-button"
+          [disabled]="professionSyncBusy()"
+          (click)="syncProfessionRecipes()"
+        >
+          {{ startProfessionSyncLabel }}
+        </button>
+      </div>
+
+      @if (syncError()) {
+        <p class="ee-data text-error" role="alert">{{ syncError() }}</p>
+      }
+      @if (pollingError()) {
+        <p class="ee-data text-error" role="alert">{{ pollingError() }}</p>
+      }
+
+      @if (showProfessionJob()) {
+        <div
+          class="flex flex-wrap items-start justify-between gap-3 rounded-md border px-3 py-2"
+          [class]="
+            professionJobFailed()
+              ? 'border-error/30 bg-error/10'
+              : 'border-primary/30 bg-surface/20'
+          "
+          [attr.aria-busy]="professionJobRunning()"
+          [attr.aria-live]="professionJobRunning() ? 'polite' : null"
+          [attr.role]="professionJobFailed() ? 'alert' : 'status'"
+        >
+          <div class="grid gap-1">
+            <p class="font-semibold text-on-surface">{{ professionJobTitle() }}</p>
+            @if (professionJobSummary()) {
+              <p class="ee-data text-outline">{{ professionJobSummary() }}</p>
+            }
+          </div>
+          @if (!professionJobRunning()) {
+            <button
+              type="button"
+              class="admin-secondary-button h-11 px-3 text-sm"
+              (click)="dismissProfessionSync()"
+            >
+              {{ dismissProfessionSyncLabel }}
+            </button>
+          }
+        </div>
+      }
+    </section>
+
     <form class="grid gap-4" (ngSubmit)="applyFilters()">
       <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <ee-search-input

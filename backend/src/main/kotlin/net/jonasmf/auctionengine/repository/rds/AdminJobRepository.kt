@@ -55,6 +55,11 @@ class AdminJobRepository(
     fun failJob(
         id: Long,
         error: Throwable,
+    ) = failJob(id, error.message?.take(1024) ?: error.javaClass.simpleName)
+
+    fun failJob(
+        id: Long,
+        errorMessage: String,
     ) {
         jdbcTemplate.update(
             """
@@ -64,7 +69,7 @@ class AdminJobRepository(
                 error_message = ?
             WHERE id = ?
             """.trimIndent(),
-            error.message?.take(1024) ?: error.javaClass.simpleName,
+            errorMessage.take(1024),
             id,
         )
     }
@@ -79,6 +84,24 @@ class AdminJobRepository(
                 """.trimIndent(),
                 { rs, _ -> rs.toAdminJob(objectMapper) },
                 id,
+            ).firstOrNull()
+
+    fun findRunningJob(
+        domain: String,
+        operation: String,
+    ): AdminJob? =
+        jdbcTemplate
+            .query(
+                """
+                SELECT id, domain, operation, status, requested_by, started_at, finished_at, summary_json, error_message
+                FROM admin_job
+                WHERE domain = ? AND operation = ? AND status = 'running'
+                ORDER BY started_at DESC, id DESC
+                LIMIT 1
+                """.trimIndent(),
+                { rs, _ -> rs.toAdminJob(objectMapper) },
+                domain,
+                operation,
             ).firstOrNull()
 }
 

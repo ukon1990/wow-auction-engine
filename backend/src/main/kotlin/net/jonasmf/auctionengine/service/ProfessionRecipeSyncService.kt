@@ -46,9 +46,13 @@ class ProfessionRecipeSyncService(
 
     fun syncAllConfiguredRegions(): List<ProfessionRecipeSyncResult> = listOf(syncConfiguredStaticDataRegion())
 
-    fun syncConfiguredStaticDataRegion(): ProfessionRecipeSyncResult = syncRegion(properties.staticDataRegion)
+    fun syncConfiguredStaticDataRegion(lockCheck: () -> Unit = {}): ProfessionRecipeSyncResult =
+        syncRegion(properties.staticDataRegion, lockCheck)
 
-    fun syncRegion(region: Region): ProfessionRecipeSyncResult {
+    fun syncRegion(
+        region: Region,
+        lockCheck: () -> Unit = {},
+    ): ProfessionRecipeSyncResult {
         val startTime = System.currentTimeMillis()
         log.info("Starting profession/recipe sync for region {}", region)
 
@@ -71,6 +75,7 @@ class ProfessionRecipeSyncService(
             System.currentTimeMillis() - modifiedCraftingSlotFetchStartTime,
         )
         val metadataPersistStartTime = System.currentTimeMillis()
+        lockCheck()
         professionRecipeBulkSyncService.syncModifiedCraftingMetadata(modifiedCraftingCategories, modifiedCraftingSlots)
         log.info(
             "Persisted modified crafting metadata for region {} categories={} slots={} in {}ms",
@@ -188,6 +193,7 @@ class ProfessionRecipeSyncService(
                     return@forEachIndexed
                 }
 
+                lockCheck()
                 val persistenceStartTime = System.currentTimeMillis()
                 val tierSummary =
                     professionRecipeBulkSyncService.syncProfessionSkillTier(

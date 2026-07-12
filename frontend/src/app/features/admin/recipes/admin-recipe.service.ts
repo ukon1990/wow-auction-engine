@@ -5,11 +5,12 @@ import {
   AdminRecipe1,
   AdminRecipeCompareResponse,
   AdminRecipeOverrideRequest,
+  AdminJob,
   PageMetadata,
 } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
 import { ToastService } from '@core/services/toast.service';
-import { catchError, finalize, map, Observable, switchMap, tap, throwError } from 'rxjs';
+import { catchError, finalize, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { AdminRecipeFilterState, toAdminRecipeSearchParams } from './recipe-filters';
 
 const EMPTY_PAGE: PageMetadata = {
@@ -133,6 +134,21 @@ export class AdminRecipeService {
         },
       }),
       finalize(() => this.compareLoading.set(false)),
+    );
+  }
+
+  syncProfessionRecipes(): Observable<AdminJob> {
+    return this.api.syncProfessionRecipes();
+  }
+
+  getActiveProfessionSyncJob(): Observable<AdminJob | null> {
+    return this.api.getActiveProfessionSyncJob().pipe(
+      catchError((error: unknown) => {
+        if (error instanceof HttpErrorResponse && error.status === 404) {
+          return of(null);
+        }
+        return throwError(() => error);
+      }),
     );
   }
 

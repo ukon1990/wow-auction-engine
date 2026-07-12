@@ -2202,6 +2202,23 @@
         <source>Rank</source>
         <target>Rang</target>
       </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.heading" datatype="html"><source>Profession sync</source><target>Berufssynchronisierung</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.description" datatype="html"><source>Start an asynchronous sync of professions, skill tiers, recipes, and reagents.</source><target>Starten Sie eine asynchrone Synchronisierung von Berufen, Fertigkeitsstufen, Rezepten und Reagenzien.</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.start" datatype="html"><source>Sync professions and recipes</source><target>Berufe und Rezepte synchronisieren</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.dismiss" datatype="html"><source>Dismiss</source><target>Schließen</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.conflict" datatype="html"><source>A profession sync is already running.</source><target>Eine Berufssynchronisierung läuft bereits.</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.startError" datatype="html"><source>Unable to start the profession sync.</source><target>Die Berufssynchronisierung konnte nicht gestartet werden.</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.running" datatype="html"><source>Profession sync is running…</source><target>Die Berufssynchronisierung läuft…</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.failed" datatype="html"><source>Profession sync failed</source><target>Berufssynchronisierung fehlgeschlagen</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.completed" datatype="html"><source>Profession sync completed</source><target>Berufssynchronisierung abgeschlossen</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.runningDescription" datatype="html"><source>You can continue browsing recipes while it finishes.</source><target>Sie können weiterhin Rezepte durchsuchen, während die Synchronisierung abgeschlossen wird.</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.failedDescription" datatype="html"><source>The profession sync could not be completed.</source><target>Die Berufssynchronisierung konnte nicht abgeschlossen werden.</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.professions" datatype="html"><source>Professions</source><target>Berufe</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.tiers" datatype="html"><source>Skill tiers</source><target>Fertigkeitsstufen</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.recipes" datatype="html"><source>Recipes</source><target>Rezepte</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.reagents" datatype="html"><source>Reagents</source><target>Reagenzien</target></trans-unit>
+      <trans-unit id="admin.recipes.professionSync.failures" datatype="html"><source>Recipe failures</source><target>Rezeptfehler</target></trans-unit>
+      <trans-unit id="admin.jobs.pollingError" datatype="html"><source>Unable to monitor the admin job. You can try starting it again.</source><target>Die Überwachung des Admin-Jobs ist nicht möglich. Du kannst versuchen, ihn erneut zu starten.</target></trans-unit>
     </body>
   </file>
 </xliff>

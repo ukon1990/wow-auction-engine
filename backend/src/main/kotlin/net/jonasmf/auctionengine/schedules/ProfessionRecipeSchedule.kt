@@ -1,22 +1,22 @@
 package net.jonasmf.auctionengine.schedules
 
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
+import net.jonasmf.auctionengine.service.ProfessionRecipeSyncGuard
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.util.concurrent.atomic.AtomicBoolean
 
 @Component
 class ProfessionRecipeSchedule(
     private val properties: BlizzardApiProperties,
     private val professionRecipeSyncService: ProfessionRecipeSyncService,
+    private val professionRecipeSyncGuard: ProfessionRecipeSyncGuard,
     @Value("\${app.scheduling.static-data-sync-enabled:true}")
     private val staticDataSyncEnabled: Boolean,
 ) {
     private val log = LoggerFactory.getLogger(ProfessionRecipeSchedule::class.java)
-    private val syncRunning = AtomicBoolean(false)
 
     @Scheduled(
         cron = "\${app.scheduling.profession-recipe-sync-cron:0 0 8 ? * WED}",
@@ -58,7 +58,8 @@ class ProfessionRecipeSchedule(
     }
 
     private fun runSync(trigger: String) {
-        if (!syncRunning.compareAndSet(false, true)) {
+        val syncLock = professionRecipeSyncGuard.tryAcquire()
+        if (syncLock == null) {
             log.info("Skipping {} profession/recipe sync because sync already running.", trigger)
             return
         }
@@ -70,7 +71,8 @@ class ProfessionRecipeSchedule(
                 properties.staticDataRegion,
                 properties.configuredRegions,
             )
-            professionRecipeSyncService.syncConfiguredStaticDataRegion()
+            professionRecipeSyncService.syncConfiguredStaticDataRegion(syncLock::ensureActive)
+            syncLock.ensureActive()
             log.info(
                 "Completed {} profession/recipe sync for region {} (configured regions={})",
                 trigger,
@@ -78,7 +80,7 @@ class ProfessionRecipeSchedule(
                 properties.configuredRegions,
             )
         } finally {
-            syncRunning.set(false)
+            professionRecipeSyncGuard.release(syncLock)
         }
     }
 }

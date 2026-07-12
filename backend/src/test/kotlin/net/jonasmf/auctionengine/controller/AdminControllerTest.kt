@@ -23,6 +23,7 @@ import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
+import net.jonasmf.auctionengine.service.admin.AdminProfessionSyncService
 import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
@@ -37,6 +38,7 @@ import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSec
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.core.convert.converter.Converter
+import org.springframework.http.HttpStatus
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
@@ -81,6 +83,9 @@ class AdminControllerTest {
 
     @MockitoBean
     private lateinit var adminJobService: AdminJobService
+
+    @MockitoBean
+    private lateinit var adminProfessionSyncService: AdminProfessionSyncService
 
     @MockitoBean
     private lateinit var adminItemService: AdminItemService
@@ -519,6 +524,121 @@ class AdminControllerTest {
             mockMvc
                 .perform(asyncDispatch(result))
                 .andExpect(status().isAccepted)
+        }
+
+        @Test
+        fun `should start profession sync job if Cognito Admin group`() {
+            `when`(adminProfessionSyncService.syncProfessionRecipes("user")).thenReturn(
+                AdminJob(
+                    id = 2,
+                    domain = AdminJob.Domain.PROFESSION,
+                    operation = "sync-professions",
+                    status = AdminJob.Status.RUNNING,
+                    startedAt = OffsetDateTime.parse("2026-06-23T08:00:00Z"),
+                    requestedBy = "user",
+                ),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        post("/api/admin/professions/sync")
+                            .contextPath("/api")
+                            .with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.subject("user")
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isAccepted)
+                .andExpect(jsonPath("$.operation").value("sync-professions"))
+        }
+
+        @Test
+        fun `should reject profession sync job for authenticated non-admin`() {
+            val result =
+                mockMvc
+                    .perform(
+                        post("/api/admin/professions/sync")
+                            .contextPath("/api")
+                            .with(jwt()),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isForbidden)
+        }
+
+        @Test
+        fun `should reject profession sync job when unauthenticated`() {
+            mockMvc
+                .perform(post("/api/admin/professions/sync").contextPath("/api"))
+                .andExpect(status().isUnauthorized)
+        }
+
+        @Test
+        fun `should return conflict when profession sync is already running`() {
+            `when`(adminProfessionSyncService.syncProfessionRecipes("user")).thenThrow(
+                ResponseStatusException(HttpStatus.CONFLICT, "Profession/recipe sync is already running"),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        post("/api/admin/professions/sync")
+                            .contextPath("/api")
+                            .with(
+                                jwt()
+                                    .jwt { token ->
+                                        token.subject("user")
+                                        token.claim("cognito:groups", listOf("admin"))
+                                    }.authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isConflict)
+                .andExpect(jsonPath("$.detail").value("Profession/recipe sync is already running"))
+        }
+
+        @Test
+        fun `should return active profession sync job for Cognito Admin group`() {
+            `when`(adminJobService.getActiveProfessionSyncJob()).thenReturn(
+                AdminJob(
+                    id = 2,
+                    domain = AdminJob.Domain.PROFESSION,
+                    operation = "sync-professions",
+                    status = AdminJob.Status.RUNNING,
+                    startedAt = OffsetDateTime.parse("2026-06-23T08:00:00Z"),
+                ),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        get("/api/admin/professions/sync/active")
+                            .contextPath("/api")
+                            .with(
+                                jwt()
+                                    .jwt { token -> token.claim("cognito:groups", listOf("admin")) }
+                                    .authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.id").value(2))
         }
 
         @Test

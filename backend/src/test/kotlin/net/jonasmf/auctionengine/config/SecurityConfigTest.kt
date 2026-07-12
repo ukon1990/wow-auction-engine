@@ -7,6 +7,7 @@ import net.jonasmf.auctionengine.service.RuntimeHealthTracker
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
+import net.jonasmf.auctionengine.service.admin.AdminProfessionSyncService
 import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
@@ -66,6 +67,9 @@ class SecurityConfigTest {
 
     @MockitoBean
     private lateinit var adminJobService: AdminJobService
+
+    @MockitoBean
+    private lateinit var adminProfessionSyncService: AdminProfessionSyncService
 
     @MockitoBean
     private lateinit var adminItemService: AdminItemService
