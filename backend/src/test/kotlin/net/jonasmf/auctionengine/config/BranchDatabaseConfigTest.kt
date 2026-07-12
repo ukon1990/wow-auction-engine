@@ -116,4 +116,83 @@ class BranchDatabaseConfigTest {
             ),
         )
     }
+
+    @Test
+    fun `branch database clone orders dependent views after their dependencies`() {
+        assertEquals(
+            listOf("v_item", "v_auction_market_item_details"),
+            orderedViewNames(
+                mapOf(
+                    "v_auction_market_item_details" to "SELECT * FROM v_item",
+                    "v_item" to "SELECT * FROM item",
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun `branch database clone does not treat partial view name matches as dependencies`() {
+        assertEquals(
+            listOf("v_item", "v_item_detail"),
+            orderedViewNames(
+                mapOf(
+                    "v_item" to "SELECT * FROM item",
+                    "v_item_detail" to "SELECT * FROM item_detail",
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun `branch database clone makes plain view creation idempotent`() {
+        assertEquals(
+            "CREATE OR REPLACE VIEW `branch_feature`.`v_auction_house_daily_prices` AS SELECT * FROM `branch_feature`.`auction_stats_daily`",
+            cloneViewSql(
+                createViewSql =
+                    "CREATE VIEW `v_auction_house_daily_prices` AS SELECT * FROM `dbo`.`auction_stats_daily`",
+                sourceDatabase = "dbo",
+                targetDatabase = "branch_feature",
+                viewName = "v_auction_house_daily_prices",
+            ),
+        )
+    }
+
+    @Test
+    fun `branch database clone normalizes MariaDB show create view output`() {
+        assertEquals(
+            "CREATE OR REPLACE VIEW `branch_feature`.`v_auction_house_daily_prices` AS SELECT 1 AS `value`",
+            cloneViewSql(
+                createViewSql =
+                    "CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `v_auction_house_daily_prices` AS SELECT 1 AS `value`",
+                sourceDatabase = "dbo",
+                targetDatabase = "branch_feature",
+                viewName = "v_auction_house_daily_prices",
+            ),
+        )
+    }
+
+    @Test
+    fun `branch database clone preserves idempotent qualified view creation`() {
+        assertEquals(
+            "CREATE OR REPLACE VIEW `branch_feature`.`v_auction_house_daily_prices` AS SELECT 1 AS `value`",
+            cloneViewSql(
+                createViewSql =
+                    "CREATE OR REPLACE VIEW `dbo`.`v_auction_house_daily_prices` AS SELECT 1 AS `value`",
+                sourceDatabase = "dbo",
+                targetDatabase = "branch_feature",
+                viewName = "v_auction_house_daily_prices",
+            ),
+        )
+    }
+
+    @Test
+    fun `existing branch database only clones missing views`() {
+        assertEquals(
+            setOf("v_recipe"),
+            missingViewNames(
+                sourceViewNames = setOf("v_auction_house_daily_prices", "v_recipe"),
+                targetViewNames = setOf("v_auction_house_daily_prices"),
+            ),
+        )
+    }
 }

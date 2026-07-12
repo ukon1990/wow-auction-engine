@@ -45,6 +45,7 @@ data class AuctionMarketItemHeaderRow(
     val itemSubclassId: Int?,
     val itemSubclassName: String?,
     val recipeId: Int?,
+    val recipeRank: Int?,
     val recipeName: String?,
     val recipeMediaUrl: String?,
 )
@@ -56,6 +57,7 @@ data class AuctionMarketItemCurrentListingRow(
 
 data class AuctionMarketItemCraftingRow(
     val recipeId: Int,
+    val recipeRank: Int?,
     val recipeName: String,
     val recipeMediaUrl: String?,
     val craftedQuantity: Int,

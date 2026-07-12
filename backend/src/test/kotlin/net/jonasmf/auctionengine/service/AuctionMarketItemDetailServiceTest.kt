@@ -42,6 +42,8 @@ class AuctionMarketItemDetailServiceTest : IntegrationTestBase() {
 
         assertEquals(2, detail.craftings.size)
         assertEquals(7001, detail.craftings.first().recipeId)
+        assertEquals(listOf(1, 2), detail.craftings.map { it.recipeRank }.sortedBy { it })
+        assertEquals(1, detail.item.recipe?.rank)
 
         val base = detail.craftings.single { it.recipeId == 7001 }
         assertEquals(1, base.craftedQuantity)
@@ -418,8 +420,8 @@ class AuctionMarketItemDetailServiceTest : IntegrationTestBase() {
         val recipeName = insertLocale(1100, "Recipe: Bulk Healing Potion", "Rezept: Viele Heiltränke", "RECIPE", "7004", "name")
         jdbcTemplate.update(
             """
-            INSERT INTO recipe (id, crafted_item_id, crafted_quantity, media_url, name_id)
-            VALUES (7004, 19019, 2, 'https://media.example/recipe7004.png', ?)
+            INSERT INTO recipe (id, crafted_item_id, crafted_quantity, media_url, name_id, rank)
+            VALUES (7004, 19019, 2, 'https://media.example/recipe7004.png', ?, 2)
             """.trimIndent(),
             recipeName,
         )

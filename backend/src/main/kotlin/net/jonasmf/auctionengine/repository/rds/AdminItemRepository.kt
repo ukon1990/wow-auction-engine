@@ -410,7 +410,7 @@ class AdminItemRepository(
                 r.crafted_item_id,
                 COALESCE(item_l.$localeColumnSuffix, item_l.en_gb, item_l.en_us, CAST(r.crafted_item_id AS CHAR)) AS crafted_item_name,
                 r.crafted_quantity
-            FROM recipe r
+            FROM v_recipe r
                 LEFT JOIN locale r_l ON r_l.id = r.name_id
                 LEFT JOIN profession_category pc ON pc.internal_id = r.profession_category_id
                 LEFT JOIN locale pc_l ON pc_l.id = pc.name_id
@@ -449,7 +449,7 @@ class AdminItemRepository(
             """
             UPDATE recipe
             SET crafted_item_id = ?, crafted_quantity = ?
-            WHERE id = ?
+            WHERE id = ? AND is_override = FALSE
             """.trimIndent(),
             craftedItemId,
             craftedQuantity,
@@ -503,18 +503,19 @@ class AdminItemRepository(
             .query(
                 """
                 SELECT
-                    r.crafted_item_id,
+                    o.crafted_item_id,
                     r.id AS recipe_id,
                     COALESCE(r_l.$localeColumnSuffix, r_l.en_gb, r_l.en_us, CAST(r.id AS CHAR)) AS recipe_name,
                     COALESCE(p_l.$localeColumnSuffix, p_l.en_gb, p_l.en_us, CAST(p.id AS CHAR), 'Unknown profession') AS profession_name
-                FROM recipe r
+                FROM v_recipe r
+                    INNER JOIN v_recipe_crafted_output o ON o.recipe_id = r.id
                     LEFT JOIN locale r_l ON r_l.id = r.name_id
                     LEFT JOIN profession_category pc ON pc.internal_id = r.profession_category_id
                     LEFT JOIN skill_tier st ON st.id = pc.skill_tier_id
                     LEFT JOIN profession p ON p.id = st.profession_id
                     LEFT JOIN locale p_l ON p_l.id = p.name_id
-                WHERE r.crafted_item_id IN ($placeholders)
-                ORDER BY r.crafted_item_id, profession_name, recipe_name, r.id
+                WHERE o.crafted_item_id IN ($placeholders)
+                ORDER BY o.crafted_item_id, profession_name, recipe_name, r.id
                 """.trimIndent(),
                 { rs, _ ->
                     rs.getInt("crafted_item_id") to
@@ -590,9 +591,9 @@ class AdminItemRepository(
         if (hasRecipe != null) {
             clauses +=
                 if (hasRecipe) {
-                    "EXISTS (SELECT 1 FROM recipe r WHERE r.crafted_item_id = i.id)"
+                    "EXISTS (SELECT 1 FROM v_recipe_crafted_output r WHERE r.crafted_item_id = i.id)"
                 } else {
-                    "NOT EXISTS (SELECT 1 FROM recipe r WHERE r.crafted_item_id = i.id)"
+                    "NOT EXISTS (SELECT 1 FROM v_recipe_crafted_output r WHERE r.crafted_item_id = i.id)"
                 }
         }
         return if (clauses.isEmpty()) "" else "WHERE ${clauses.joinToString(" AND ")}"
@@ -650,6 +651,7 @@ class AdminItemRepository(
             q.type AS quality_type,
             COALESCE(q_l.$localeColumnSuffix, q_l.en_gb, q_l.en_us, q.type) AS quality_name,
             i.level,
+            i.rank,
             i.required_level,
             i.media_url,
             i.media_source_url,
@@ -719,6 +721,7 @@ private fun ResultSet.toAdminItemFields(): AdminItemFields =
         nameLocales = nullableLong("name_id")?.let { toLocaleDTO().toGameLocale() },
         quality = reference("quality_id", "quality_name", "quality_type"),
         level = nullableInt("level"),
+        rank = nullableInt("rank"),
         requiredLevel = nullableInt("required_level"),
         mediaUrl = getString("media_url"),
         mediaSourceUrl = getString("media_source_url"),

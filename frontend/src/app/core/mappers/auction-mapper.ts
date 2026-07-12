@@ -42,6 +42,7 @@ export const toMarketRow = (row: AuctionMarketSearchRow): MarketItemRow => {
       : undefined,
     itemClassName: nonemptyName(row.item.itemClass?.name),
     itemSubclassName: nonemptyName(row.item.itemSubclass?.name),
+    recipeRank: row.item.recipe?.rank ?? undefined,
     quality: toQuality(row.item.quality?.type ?? row.item.quality?.name),
     iconUrl: row.item.mediaUrl ?? undefined,
     minBuyout: mergedCurrency,

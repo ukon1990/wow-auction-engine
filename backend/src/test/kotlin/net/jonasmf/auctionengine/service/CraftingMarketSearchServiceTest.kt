@@ -54,6 +54,8 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
         assertEquals(1L, result.page.totalItems)
         val row = result.items.single()
         assertEquals(7001, row.recipeId)
+        assertEquals(1, row.recipe?.rank)
+        assertEquals(1, row.item?.recipe?.rank)
         assertEquals("Healing Potion", row.item?.name)
         assertEquals(1_000L, row.outputPriceCopper)
         assertEquals(950L, row.outputP25PriceCopper)
@@ -67,6 +69,18 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
         assertTrue(row.reagentsFullyPriced)
         assertEquals("Alchemy", row.professionName)
         assertTrue(row.outputPriced)
+    }
+
+    @Test
+    fun `crafting search keeps recipes with different ranks distinct`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
+        addRankTwoHealingPotionRecipe()
+
+        val result = search()
+
+        assertEquals(listOf(1, 2), result.items.mapNotNull { it.recipe?.rank }.sorted())
+        assertEquals(listOf(7001, 7004), result.items.map { it.recipeId }.sorted())
     }
 
     @Test
@@ -305,5 +319,48 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
                 requireCompleteReagentPricing = false,
             )
         assertEquals(0L, nonMatching.page.totalItems)
+    }
+
+    private fun search() =
+        craftingMarketSearchService.search(
+            regionCode = "eu",
+            realmSlug = "argent-dawn",
+            localeOverride = null,
+            page = 0,
+            pageSize = 10,
+            sortBy = "itemName",
+            sortDirection = "asc",
+            query = null,
+            professionIds = null,
+            expansionIds = null,
+            qualityIds = null,
+            minProfit = null,
+            maxProfit = null,
+            minRoiPercent = null,
+            maxRoiPercent = null,
+            minReagentCost = null,
+            maxReagentCost = null,
+            minOutputPrice = null,
+            maxOutputPrice = null,
+            minOutputPriceChangePercent = null,
+            maxOutputPriceChangePercent = null,
+            requireCompleteReagentPricing = false,
+        )
+
+    private fun addRankTwoHealingPotionRecipe() {
+        jdbcTemplate.update(
+            """
+            INSERT INTO locale (id, en_gb, en_us, de_de, source_type, source_key, source_field)
+            VALUES (1100, 'Recipe: Greater Healing Potion', 'Recipe: Greater Healing Potion',
+                    'Rezept: Großer Heiltrank', 'RECIPE', '7004', 'name')
+            """.trimIndent(),
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO recipe (id, crafted_item_id, crafted_quantity, media_url, name_id, rank)
+            VALUES (7004, 19019, 2, 'https://media.example/recipe7004.png', 1100, 2)
+            """.trimIndent(),
+        )
+        jdbcTemplate.update("INSERT INTO recipe_reagent (item_id, quantity, recipe_id) VALUES (19050, 1, 7004)")
     }
 }

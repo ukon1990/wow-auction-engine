@@ -492,6 +492,7 @@ class AuctionMarketItemDetailService(
                         id = it,
                         name = recipeName.orEmpty(),
                         mediaUrl = recipeMediaUrl,
+                        rank = recipeRank,
                     )
                 },
         )
@@ -601,6 +602,7 @@ class AuctionMarketItemDetailService(
         if (reagentCost == null || outputUnitPrice == null) return null
         return AuctionMarketItemCrafting(
             recipeId = recipeId,
+            recipeRank = recipeRank,
             recipeName = recipeName,
             reagentCost = reagentCost,
             buyout = outputUnitPrice,
@@ -612,6 +614,7 @@ class AuctionMarketItemDetailService(
     private fun AuctionMarketItemCraftingRow.toCraftingDetailDto(reagents: List<AuctionMarketItemCraftingReagentRow>): AuctionMarketItemCraftingDetail =
         AuctionMarketItemCraftingDetail(
             recipeId = recipeId,
+            recipeRank = recipeRank,
             recipeName = recipeName,
             recipeMediaUrl = recipeMediaUrl,
             craftedQuantity = craftedQuantity,

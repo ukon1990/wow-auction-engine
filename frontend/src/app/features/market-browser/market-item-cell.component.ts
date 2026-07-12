@@ -28,14 +28,19 @@ import { MarketItemRow, qualityToneClasses, SymbolIconComponent } from '@ui';
           <ee-symbol-icon class="text-[18px]" name="deployed_code" />
         }
       </div>
-      <span
-        appWowheadItemTooltip
-        [itemId]="itemId()"
-        linkType="item"
-        [currentBuyout]="row().minBuyout"
-        [class]="nameClass()"
-        >{{ row().name }}</span
-      >
+      <span class="flex min-w-0 flex-col">
+        <span
+          appWowheadItemTooltip
+          [itemId]="itemId()"
+          linkType="item"
+          [currentBuyout]="row().minBuyout"
+          [class]="nameClass()"
+          >{{ row().name }}</span
+        >
+        @if (row().recipeRank; as rank) {
+          <span class="ee-label text-outline">{{ rankLabel(rank) }}</span>
+        }
+      </span>
     </a>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -84,5 +89,9 @@ export class MarketItemCellComponent {
 
   protected nameClass(): string {
     return `truncate text-sm font-semibold ${qualityToneClasses(this.row().quality).split(' ')[0]}`;
+  }
+
+  protected rankLabel(rank: number): string {
+    return $localize`:@@admin.recipes.form.rankNumber:Rank ${rank}:INTERPOLATION:`;
   }
 }

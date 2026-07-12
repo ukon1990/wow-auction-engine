@@ -12,6 +12,9 @@ properties:
   level:
     type: integer
     nullable: true
+  rank:
+    type: integer
+    nullable: true
   requiredLevel:
     type: integer
     nullable: true

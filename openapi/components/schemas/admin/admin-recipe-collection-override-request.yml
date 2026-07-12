@@ -1,0 +1,12 @@
+type: object
+properties:
+  outputs:
+    type: array
+    nullable: true
+    items:
+      $ref: "../../../openapi.yml#/components/schemas/AdminRecipeOutput"
+  reagents:
+    type: array
+    nullable: true
+    items:
+      $ref: "../../../openapi.yml#/components/schemas/AdminRecipeReagent"

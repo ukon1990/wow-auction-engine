@@ -1,3 +1,4 @@
+-- Refresh after V18 adds item.rank so cloned databases rebuild the view projection.
 CREATE OR REPLACE VIEW v_item AS
 SELECT
     item_ids.id,
@@ -5,6 +6,7 @@ SELECT
     COALESCE(override_item.is_equippable, base_item.is_equippable) AS is_equippable,
     COALESCE(override_item.is_stackable, base_item.is_stackable) AS is_stackable,
     COALESCE(override_item.level, base_item.level) AS level,
+    COALESCE(override_item.rank, base_item.rank) AS rank,
     COALESCE(override_item.max_count, base_item.max_count) AS max_count,
     COALESCE(override_item.media_url, base_item.media_url) AS media_url,
     COALESCE(override_item.media_source_url, base_item.media_source_url) AS media_source_url,

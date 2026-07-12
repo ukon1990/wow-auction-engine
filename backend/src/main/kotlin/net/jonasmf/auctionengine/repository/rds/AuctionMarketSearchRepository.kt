@@ -50,6 +50,7 @@ data class AuctionMarketRow(
     val itemSubclassId: Int?,
     val itemSubclassName: String?,
     val recipeId: Int?,
+    val recipeRank: Int?,
     val recipeName: String?,
     val recipeMediaUrl: String?,
     val selectedBonusKey: String,
@@ -218,6 +219,7 @@ class AuctionMarketSearchRepository(
             wrapped.item_subclass_id,
             wrapped.item_subclass_name,
             wrapped.recipe_id,
+            wrapped.recipe_rank,
             wrapped.recipe_name,
             wrapped.recipe_media_url,
             wrapped.selected_bonus_key,
@@ -247,6 +249,7 @@ class AuctionMarketSearchRepository(
                 d.item_subclass_id,
                 COALESCE(d.item_subclass_name_${request.localeColumnSuffix}, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
                 d.recipe_id,
+                d.recipe_rank,
                 COALESCE(d.recipe_name_${request.localeColumnSuffix}, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
                 d.recipe_media_url,
                 p.selected_bonus_key,
@@ -444,7 +447,7 @@ class AuctionMarketSearchRepository(
             parts.add("i.expansion_id IN (${request.expansionIds.joinToString(",") { "?" }})")
         }
         if (request.recipeOnly == true) {
-            parts.add("EXISTS (SELECT 1 FROM recipe r WHERE r.crafted_item_id = i.id)")
+            parts.add("EXISTS (SELECT 1 FROM v_recipe_crafted_output r WHERE r.crafted_item_id = i.id)")
         }
         return if (parts.isEmpty()) "" else "  AND " + parts.joinToString(" AND ")
     }
@@ -536,6 +539,7 @@ class AuctionMarketSearchRepository(
                 itemSubclassId = rs.getNullableInt("item_subclass_id"),
                 itemSubclassName = rs.getString("item_subclass_name"),
                 recipeId = rs.getNullableInt("recipe_id"),
+                recipeRank = rs.getNullableInt("recipe_rank"),
                 recipeName = rs.getString("recipe_name"),
                 recipeMediaUrl = rs.getString("recipe_media_url"),
                 selectedBonusKey = rs.getString("selected_bonus_key") ?: "",

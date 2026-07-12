@@ -1,0 +1,58 @@
+type: object
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+    nullable: true
+  professionName:
+    type: string
+    nullable: true
+  skillTierName:
+    type: string
+    nullable: true
+  professionCategoryName:
+    type: string
+    nullable: true
+  craftedItemId:
+    type: integer
+    nullable: true
+  craftedItemName:
+    type: string
+    nullable: true
+  craftedQuantity:
+    type: integer
+    nullable: true
+  rank:
+    type: integer
+    nullable: true
+  requiredSkillLevel:
+    type: integer
+    nullable: true
+  mediaUrl:
+    type: string
+    nullable: true
+  mediaSourceUrl:
+    type: string
+    nullable: true
+  outputs:
+    type: array
+    items:
+      $ref: "../../../openapi.yml#/components/schemas/AdminRecipeOutput"
+    default: []
+  reagents:
+    type: array
+    items:
+      $ref: "../../../openapi.yml#/components/schemas/AdminRecipeReagent"
+    default: []
+  overrideNote:
+    type: string
+    nullable: true
+  createdAt:
+    type: string
+    format: date-time
+    nullable: true
+  updatedAt:
+    type: string
+    format: date-time
+    nullable: true

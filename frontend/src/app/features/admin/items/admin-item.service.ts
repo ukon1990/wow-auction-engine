@@ -130,17 +130,43 @@ export class AdminItemService {
 
   searchRecipes(query: string, limit = 20): Observable<readonly AdminRecipeSearchResult[]> {
     const locale = this.localeService.apiLocaleOverride();
-    return this.api.searchAdminRecipes(query, locale, limit).pipe(
-      catchError((error: unknown) => {
-        this.toast.error(
-          readHttpErrorMessage(
-            error,
-            $localize`:@@admin.items.recipeSearchError:Unable to search recipes.`,
-          ),
-        );
-        return throwError(() => error);
-      }),
-    );
+    return this.api
+      .searchAdminRecipes(
+        query,
+        locale,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        1,
+        limit,
+      )
+      .pipe(
+        map((page) =>
+          page.recipes.map((recipe) => ({
+            recipeId: recipe.id,
+            name: recipe.effective.name ?? String(recipe.id),
+            professionName: recipe.effective.professionName ?? '',
+            skillTierName: recipe.effective.skillTierName ?? '',
+            professionCategoryName: recipe.effective.professionCategoryName ?? '',
+            craftedItemId: recipe.effective.craftedItemId,
+            craftedItemName: recipe.effective.craftedItemName,
+            craftedQuantity: recipe.effective.craftedQuantity,
+          })),
+        ),
+        catchError((error: unknown) => {
+          this.toast.error(
+            readHttpErrorMessage(
+              error,
+              $localize`:@@admin.items.recipeSearchError:Unable to search recipes.`,
+            ),
+          );
+          return throwError(() => error);
+        }),
+      );
   }
 
   upsertRecipeAssociation(

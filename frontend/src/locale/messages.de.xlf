@@ -1830,6 +1830,378 @@
         <source>Class ID and subclass ID are required together.</source>
         <target>Class ID and subclass ID are required together.</target>
       </trans-unit>
+      <trans-unit id="route.admin.recipes" datatype="html">
+        <source>Recipes</source>
+        <target>Recipes</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.loadError" datatype="html">
+        <source>Unable to load recipes.</source>
+        <target>Unable to load recipes.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.detailError" datatype="html">
+        <source>Unable to load recipe details.</source>
+        <target>Unable to load recipe details.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compareError" datatype="html">
+        <source>Unable to compare recipe with Blizzard API.</source>
+        <target>Unable to compare recipe with Blizzard API.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.mutationError" datatype="html">
+        <source>Recipe request failed.</source>
+        <target>Recipe request failed.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.id" datatype="html">
+        <source>Recipe ID</source>
+        <target>Recipe ID</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.unnamed" datatype="html">
+        <source>Unnamed recipe</source>
+        <target>Unnamed recipe</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.name" datatype="html">
+        <source>Name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.profession" datatype="html">
+        <source>Profession</source>
+        <target>Profession</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.outputs" datatype="html">
+        <source>Outputs</source>
+        <target>Outputs</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.reagents" datatype="html">
+        <source>Reagents</source>
+        <target>Reagents</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.state" datatype="html">
+        <source>State</source>
+        <target>State</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.actions" datatype="html">
+        <source>Actions</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.anyOverride" datatype="html">
+        <source>All override states</source>
+        <target>All override states</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.hasOverride" datatype="html">
+        <source>Has override</source>
+        <target>Has override</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.noOverride" datatype="html">
+        <source>No override</source>
+        <target>No override</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.panel.compare" datatype="html">
+        <source>Compare Blizzard API</source>
+        <target>Compare Blizzard API</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.panel.edit" datatype="html">
+        <source>Edit recipe override</source>
+        <target>Edit recipe override</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.formError" datatype="html">
+        <source>Unable to save recipe override.</source>
+        <target>Unable to save recipe override.</target>
+      </trans-unit>
+      <trans-unit id="admin.modal.close" datatype="html">
+        <source>Close dialog</source>
+        <target>Close dialog</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.page.heading" datatype="html">
+        <source>Recipe overrides</source>
+        <target>Recipe overrides</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.page.description" datatype="html">
+        <source>Search effective recipe rows and manage admin overrides that survive Blizzard sync.</source>
+        <target>Search effective recipe rows and manage admin overrides that survive Blizzard sync.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.name" datatype="html">
+        <source>Name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.namePlaceholder" datatype="html">
+        <source>Search localized names</source>
+        <target>Search localized names</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.recipeIdPlaceholder" datatype="html">
+        <source>Exact or partial recipe ID</source>
+        <target>Exact or partial recipe ID</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.craftedItemId" datatype="html">
+        <source>Crafted item ID</source>
+        <target>Crafted item ID</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.craftedItemIdPlaceholder" datatype="html">
+        <source>Output item ID</source>
+        <target>Output item ID</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.overrideState" datatype="html">
+        <source>Override state</source>
+        <target>Override state</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.pageSize" datatype="html">
+        <source>Page size</source>
+        <target>Page size</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.apply" datatype="html">
+        <source>Apply</source>
+        <target>Apply</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.reset" datatype="html">
+        <source>Reset</source>
+        <target>Reset</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.empty" datatype="html">
+        <source>No recipes match the current filters.</source>
+        <target>No recipes match the current filters.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.sectionAria" datatype="html">
+        <source>Admin recipes</source>
+        <target>Admin recipes</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.paginationLabel" datatype="html">
+        <source>recipes</source>
+        <target>recipes</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.loading" datatype="html">
+        <source>Loading recipe details...</source>
+        <target>Loading recipe details...</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compare.loading" datatype="html">
+        <source>Comparing with Blizzard API...</source>
+        <target>Comparing with Blizzard API...</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compare.recipeLabel" datatype="html">
+        <source>Recipe</source>
+        <target>Recipe</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compare.field" datatype="html">
+        <source>Field</source>
+        <target>Field</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compare.base" datatype="html">
+        <source>Base</source>
+        <target>Base</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compare.override" datatype="html">
+        <source>Override</source>
+        <target>Override</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compare.api" datatype="html">
+        <source>API</source>
+        <target>API</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compare.effective" datatype="html">
+        <source>Effective</source>
+        <target>Effective</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compare.noFields" datatype="html">
+        <source>No comparable fields returned.</source>
+        <target>No comparable fields returned.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.compare.prompt" datatype="html">
+        <source>Run compare to inspect Blizzard API differences.</source>
+        <target>Run compare to inspect Blizzard API differences.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.scalarOverrides" datatype="html">
+        <source>Scalar overrides</source>
+        <target>Scalar overrides</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.craftedItemId" datatype="html">
+        <source>Crafted item ID</source>
+        <target>Crafted item ID</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.craftedQuantity" datatype="html">
+        <source>Crafted quantity</source>
+        <target>Crafted quantity</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.rank" datatype="html">
+        <source>Rank</source>
+        <target>Rank</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.requiredSkillLevel" datatype="html">
+        <source>Required skill level</source>
+        <target>Required skill level</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.overrideNote" datatype="html">
+        <source>Override note</source>
+        <target>Override note</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.outputs" datatype="html">
+        <source>Crafted outputs</source>
+        <target>Crafted outputs</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.addOutput" datatype="html">
+        <source>Add output</source>
+        <target>Add output</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.outputItemId" datatype="html">
+        <source>Item ID</source>
+        <target>Item ID</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.outputQuantity" datatype="html">
+        <source>Quantity</source>
+        <target>Quantity</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.outputSkill" datatype="html">
+        <source>Skill</source>
+        <target>Skill</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.remove" datatype="html">
+        <source>Remove</source>
+        <target>Remove</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.noOutputs" datatype="html">
+        <source>No output overrides. The base crafted item is inherited.</source>
+        <target>No output overrides. The base crafted item is inherited.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.reagents" datatype="html">
+        <source>Reagents</source>
+        <target>Reagents</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.addReagent" datatype="html">
+        <source>Add reagent</source>
+        <target>Add reagent</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.reagentItemId" datatype="html">
+        <source>Item ID</source>
+        <target>Item ID</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.reagentQuantity" datatype="html">
+        <source>Quantity</source>
+        <target>Quantity</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.sortOrder" datatype="html">
+        <source>Sort order</source>
+        <target>Sort order</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.noReagents" datatype="html">
+        <source>No reagent overrides. Base reagents are inherited.</source>
+        <target>No reagent overrides. Base reagents are inherited.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.rankAlternatives" datatype="html">
+        <source>Rank alternatives (1–3)</source>
+        <target>Rank alternatives (1–3)</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.rankNumber" datatype="html">
+        <source>Rank <x id="INTERPOLATION" equiv-text="rank"/></source>
+        <target>Rank <x id="INTERPOLATION" equiv-text="rank"/></target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.rankItemId" datatype="html">
+        <source>Item ID</source>
+        <target>Item ID</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.skillPoints" datatype="html">
+        <source>Skill points</source>
+        <target>Skill points</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.save" datatype="html">
+        <source>Save override</source>
+        <target>Save override</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.cancel" datatype="html">
+        <source>Cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.actions.edit" datatype="html">
+        <source>Edit recipe override</source>
+        <target>Edit recipe override</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.actions.editTooltip" datatype="html">
+        <source>Open the recipe override editor.</source>
+        <target>Open the recipe override editor.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.actions.compare" datatype="html">
+        <source>Compare Blizzard API</source>
+        <target>Compare Blizzard API</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.actions.compareTooltip" datatype="html">
+        <source>Compare the local recipe data with the current Blizzard API response.</source>
+        <target>Compare the local recipe data with the current Blizzard API response.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.actions.delete" datatype="html">
+        <source>Delete override</source>
+        <target>Delete override</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.actions.deleteTooltip" datatype="html">
+        <source>Remove this recipe override and inherit base recipe data again.</source>
+        <target>Remove this recipe override and inherit base recipe data again.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.stateOverride" datatype="html">
+        <source>Override</source>
+        <target>Override</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.table.stateBase" datatype="html">
+        <source>Base</source>
+        <target>Base</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.deleteConfirm" datatype="html">
+        <source>Delete this recipe override? Base recipe data will be inherited again.</source>
+        <target>Delete this recipe override? Base recipe data will be inherited again.</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.removeOutput" datatype="html">
+        <source>Remove output {$INTERPOLATION}</source>
+        <target>Remove output {$INTERPOLATION}</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.removeReagent" datatype="html">
+        <source>Remove reagent {$INTERPOLATION}</source>
+        <target>Remove reagent {$INTERPOLATION}</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.rankAlternativesFor" datatype="html">
+        <source>Rank alternatives for reagent {$INTERPOLATION}</source>
+        <target>Rank alternatives for reagent {$INTERPOLATION}</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.itemTypeahead.empty" datatype="html">
+        <source>No items found</source>
+        <target>Keine Gegenstände gefunden</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.form.itemSearchPlaceholder" datatype="html">
+        <source>Search items by name or ID</source>
+        <target>Gegenstände nach Name oder ID suchen</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.associatedItem" datatype="html">
+        <source>Associated item</source>
+        <target>Zugeordneter Gegenstand</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.associatedItemPlaceholder" datatype="html">
+        <source>Search crafted items or reagents</source>
+        <target>Hergestellte Gegenstände oder Reagenzien suchen</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.class" datatype="html">
+        <source>Class</source>
+        <target>Klasse</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.subclass" datatype="html">
+        <source>Subclass</source>
+        <target>Unterklasse</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.expansion" datatype="html">
+        <source>Expansion</source>
+        <target>Erweiterung</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.associationType" datatype="html">
+        <source>Item association</source>
+        <target>Gegenstandszuordnung</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.anyAssociation" datatype="html">
+        <source>Crafted or reagent</source>
+        <target>Hergestellt oder Reagenz</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.craftedAssociation" datatype="html">
+        <source>Crafted output</source>
+        <target>Hergestelltes Ergebnis</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.filter.reagentAssociation" datatype="html">
+        <source>Reagent</source>
+        <target>Reagenz</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.itemTypeahead.rank" datatype="html">
+        <source>Rank</source>
+        <target>Rang</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -15,13 +15,17 @@ private val RECIPE_API_RETRY_BACKOFF: Duration = Duration.ofSeconds(2)
 
 const val RECIPE_BASE_PATH = "/data/wow/recipe"
 
+interface RecipeApiLookup {
+    fun getById(id: Int): Recipe
+}
+
 @Component
 class RecipeApiClient(
     private val blizzardApiSupport: BlizzardApiSupport,
-) {
+) : RecipeApiLookup {
     private val logger: Logger = LoggerFactory.getLogger(RecipeApiClient::class.java)
 
-    fun getById(id: Int): Recipe = getById(id, blizzardApiSupport.defaultRegion())
+    override fun getById(id: Int): Recipe = getById(id, blizzardApiSupport.defaultRegion())
 
     fun getById(
         id: Int,

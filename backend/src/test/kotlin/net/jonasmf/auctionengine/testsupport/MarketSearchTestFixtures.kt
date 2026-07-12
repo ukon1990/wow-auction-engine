@@ -62,8 +62,8 @@ object MarketSearchTestFixtures {
         )
         jdbcTemplate.update(
             """
-            INSERT INTO recipe (id, crafted_item_id, crafted_quantity, media_url, name_id)
-            VALUES (7001, 19019, 1, 'https://media.example/recipe.png', ?)
+            INSERT INTO recipe (id, crafted_item_id, crafted_quantity, media_url, name_id, rank)
+            VALUES (7001, 19019, 1, 'https://media.example/recipe.png', ?, 1)
             """.trimIndent(),
             recipeName,
         )

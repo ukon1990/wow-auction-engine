@@ -1,3 +1,4 @@
+-- Keep this effective market projection owned by Flyway; branch cloning must not overwrite it.
 CREATE OR REPLACE VIEW v_auction_market_item_details AS
 SELECT
     i.id AS item_id,
@@ -60,7 +61,8 @@ SELECT
     isc_l.ru_ru AS item_subclass_name_ru_ru,
     isc_l.zh_cn AS item_subclass_name_zh_cn,
     isc_l.zh_tw AS item_subclass_name_zh_tw,
-    reci.id AS recipe_id,
+    reci.recipe_id AS recipe_id,
+    reci.rank AS recipe_rank,
     reci.media_url AS recipe_media_url,
     reci_l.de_de AS recipe_name_de_de,
     reci_l.en_gb AS recipe_name_en_gb,
@@ -84,5 +86,14 @@ FROM v_item i
          LEFT JOIN item_subclass isc ON
             isc.internal_id = i.item_subclass_id AND isc.class_id = i.item_class_id
          LEFT JOIN locale isc_l ON isc.display_name_id = isc_l.id
-         LEFT JOIN recipe reci ON reci.crafted_item_id = i.id
+         LEFT JOIN (
+            SELECT
+                output.recipe_id,
+                output.crafted_item_id,
+                recipe.media_url,
+                recipe.rank,
+                recipe.name_id
+            FROM v_recipe_crafted_output output
+                INNER JOIN v_recipe recipe ON recipe.id = output.recipe_id
+         ) reci ON reci.crafted_item_id = i.id
          LEFT JOIN locale reci_l ON reci.name_id = reci_l.id;

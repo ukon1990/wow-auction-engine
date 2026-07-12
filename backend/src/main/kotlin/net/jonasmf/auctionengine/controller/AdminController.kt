@@ -13,6 +13,11 @@ import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemPage
 import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.generated.model.AdminRecipeAssociationRequest
+import net.jonasmf.auctionengine.generated.model.AdminRecipe1
+import net.jonasmf.auctionengine.generated.model.AdminRecipeBulkOverrideRequest
+import net.jonasmf.auctionengine.generated.model.AdminRecipeCompareResponse
+import net.jonasmf.auctionengine.generated.model.AdminRecipeOverrideRequest
+import net.jonasmf.auctionengine.generated.model.AdminRecipePage
 import net.jonasmf.auctionengine.generated.model.AdminRecipeSearchResult
 import net.jonasmf.auctionengine.generated.model.AdminSqlExecuteRequest
 import net.jonasmf.auctionengine.generated.model.AdminSqlMetadata
@@ -22,6 +27,7 @@ import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
+import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
 import net.jonasmf.auctionengine.service.admin.UserService
@@ -39,6 +45,7 @@ class AdminController(
     private val adminExpansionService: AdminExpansionService,
     private val adminJobService: AdminJobService,
     private val adminItemService: AdminItemService,
+    private val adminRecipeService: AdminRecipeService,
 ) : AdminApi {
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getAdminStatus(): ResponseEntity<AdminStatus> = ResponseEntity.ok(adminStatusService.getStatus())
@@ -148,9 +155,62 @@ class AdminController(
     override suspend fun searchAdminRecipes(
         query: String?,
         locale: String?,
-        limit: Int,
-    ): ResponseEntity<List<AdminRecipeSearchResult>> =
-        ResponseEntity.ok(adminItemService.searchRecipes(query, locale, limit))
+        professionId: Int?,
+        hasOverride: Boolean?,
+        itemClassId: Int?,
+        itemSubclassId: Int?,
+        expansionId: Int?,
+        associatedItemId: Int?,
+        associationType: String?,
+        page: Int,
+        pageSize: Int,
+    ): ResponseEntity<AdminRecipePage> =
+        ResponseEntity.ok(
+            adminRecipeService.searchRecipes(
+                query,
+                locale,
+                professionId,
+                hasOverride,
+                itemClassId,
+                itemSubclassId,
+                expansionId,
+                associatedItemId,
+                associationType,
+                page,
+                pageSize,
+            ),
+        )
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun getAdminRecipe(
+        id: Int,
+        locale: String?,
+        includeBase: Boolean,
+        includeOverride: Boolean,
+    ): ResponseEntity<AdminRecipe1> =
+        ResponseEntity.ok(adminRecipeService.getRecipe(id, locale, includeBase, includeOverride))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun upsertAdminRecipeOverride(
+        id: Int,
+        body: AdminRecipeOverrideRequest,
+    ): ResponseEntity<AdminRecipe1> = ResponseEntity.ok(adminRecipeService.upsertOverride(id, body))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun deleteAdminRecipeOverride(id: Int): ResponseEntity<Unit> {
+        adminRecipeService.deleteOverride(id)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun compareAdminRecipeWithApi(id: Int): ResponseEntity<AdminRecipeCompareResponse> =
+        ResponseEntity.ok(adminRecipeService.compareWithApi(id))
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun bulkUpsertAdminRecipeOverrides(
+        body: AdminRecipeBulkOverrideRequest,
+    ): ResponseEntity<List<AdminRecipe1>> =
+        ResponseEntity.ok(adminRecipeService.bulkUpsertOverrides(body))
 
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun upsertAdminItemOverride(

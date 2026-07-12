@@ -1,0 +1,21 @@
+type: object
+required: [craftedItemId, craftedQuantity, sortOrder]
+properties:
+  id:
+    type: integer
+    format: int64
+    nullable: true
+  craftedItemId:
+    type: integer
+  craftedItemName:
+    type: string
+    nullable: true
+  craftedQuantity:
+    type: integer
+    minimum: 1
+  requiredSkillLevel:
+    type: integer
+    nullable: true
+  sortOrder:
+    type: integer
+    minimum: 0

@@ -75,6 +75,7 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
                 .item.recipe
                 ?.id,
         )
+        assertEquals(1, result.items.single().item.recipe?.rank)
         assertEquals(
             1084,
             result.items

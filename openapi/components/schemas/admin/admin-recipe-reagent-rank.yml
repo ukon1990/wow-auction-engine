@@ -1,0 +1,12 @@
+type: object
+required: [rank, itemId]
+properties:
+  rank:
+    type: integer
+    minimum: 1
+    maximum: 3
+  itemId:
+    type: integer
+  skillPoints:
+    type: integer
+    nullable: true

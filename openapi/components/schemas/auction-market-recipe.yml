@@ -10,3 +10,6 @@ properties:
   mediaUrl:
     type: string
     nullable: true
+  rank:
+    type: integer
+    nullable: true

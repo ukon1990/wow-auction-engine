@@ -71,7 +71,14 @@ export function createCraftingBrowserTableColumns(): ColumnDef<CraftingTableRow,
         cardLabel: $localize`:@@crafting.column.recipe:Recipe`,
         cardPriority: 10,
       } satisfies ColumnMeta,
-      cell: (info) => textCell(info.getValue()),
+      cell: (info) => {
+        const row = info.row.original;
+        const name = textCell(info.getValue());
+        const rank = row.recipeRank;
+        return rank == null
+          ? name
+          : `${name} · ${$localize`:@@admin.recipes.form.rankNumber:Rank ${rank}:INTERPOLATION:`}`;
+      },
     },
     {
       id: 'professionName',

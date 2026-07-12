@@ -1,0 +1,152 @@
+<ee-page-frame
+  [title]="pageTitle"
+  [eyebrow]="pageEyebrow"
+  [loading]="loading() && recipes().length === 0"
+  titleId="admin-recipes-title"
+>
+  @if (error()) {
+    <p
+      class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+      role="alert"
+    >
+      {{ error() }}
+    </p>
+  }
+
+  <section class="grid gap-4" [attr.aria-label]="pageHeading">
+    <div class="grid gap-1">
+      <h2 class="font-cinzel text-xl font-bold text-primary-container">{{ pageHeading }}</h2>
+      <p class="ee-data text-outline">{{ pageDescription }}</p>
+    </div>
+
+    <form class="grid gap-4" (ngSubmit)="applyFilters()">
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <ee-search-input
+          [label]="filterNameLabel"
+          [showLabel]="true"
+          [placeholder]="filterNamePlaceholder"
+          [ngModel]="filters().name"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('name', $event)"
+        />
+        <ee-search-input
+          [label]="filterRecipeIdLabel"
+          [showLabel]="true"
+          [placeholder]="filterRecipeIdPlaceholder"
+          [ngModel]="filters().recipeId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('recipeId', $event)"
+        />
+        <ee-select-input
+          [label]="filterClassLabel"
+          [options]="itemClassOptions"
+          [ngModel]="filters().classId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateClassFilter($event)"
+        />
+        <ee-select-input
+          [label]="filterSubclassLabel"
+          [options]="itemSubclassOptions()"
+          [disabled]="filters().classId === ''"
+          [ngModel]="filters().subclassId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('subclassId', $event)"
+        />
+        <ee-select-input
+          [label]="filterExpansionLabel"
+          [options]="expansionOptions()"
+          [ngModel]="filters().expansionId"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('expansionId', $event)"
+        />
+        <ee-select-input
+          [label]="filterAssociationTypeLabel"
+          [options]="associationTypeOptions"
+          [ngModel]="filters().associationType"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('associationType', $event)"
+        />
+        <app-admin-item-typeahead
+          [label]="filterAssociatedItemLabel"
+          [placeholder]="filterAssociatedItemPlaceholder"
+          [itemId]="filters().associatedItemId"
+          (itemChange)="updateFilter('associatedItemId', $event?.id ?? null)"
+        />
+        <ee-select-input
+          [label]="filterOverrideStateLabel"
+          [options]="hasOverrideOptions"
+          [ngModel]="filters().hasOverride"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updateFilter('hasOverride', $event)"
+        />
+        <ee-select-input
+          [label]="filterPageSizeLabel"
+          [options]="pageSizeOptions"
+          [ngModel]="pageSizeValue()"
+          [ngModelOptions]="standaloneModel"
+          (ngModelChange)="updatePageSize($event)"
+        />
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <button type="submit" class="admin-primary-button" [disabled]="loading()">
+          {{ applyFiltersLabel }}
+        </button>
+        <button type="button" class="admin-secondary-button" (click)="resetFilters()">
+          {{ resetFiltersLabel }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="grid min-h-0 flex-1 gap-4" [attr.aria-label]="tableSectionAriaLabel">
+    <ee-table
+      [columns]="columns()"
+      [data]="recipes()"
+      [loading]="loading()"
+      [skeletonRowCount]="10"
+      [showFooter]="true"
+      [showPagination]="true"
+      [paginationState]="paginationState()"
+      [cardView]="cardView()"
+      [getRowId]="rowId"
+      [emptyMessage]="emptyTableMessage"
+      [sectionAriaLabel]="tableSectionAriaLabel"
+      [paginationRowLabel]="paginationRowLabel"
+      (pageChange)="onPageChange($event)"
+    />
+  </section>
+</ee-page-frame>
+
+<app-admin-modal
+  [open]="panelMode() !== null"
+  [title]="panelTitle()"
+  titleId="admin-recipe-panel-title"
+  (closed)="closePanel()"
+>
+  @if (panelMode() === 'edit') {
+    @if (detailLoading()) {
+      <p class="ee-data text-outline" role="status">{{ loadingDetailsLabel }}</p>
+    } @else if (selectedRecipe(); as recipe) {
+      <app-admin-recipe-override-form
+        [recipe]="recipe"
+        [submitting]="mutationLoading()"
+        [submitError]="formError() || detailError()"
+        (submitted)="submitOverride($event)"
+        (cancelled)="closePanel()"
+      />
+    } @else if (detailError()) {
+      <p
+        class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+        role="alert"
+      >
+        {{ detailError() }}
+      </p>
+    }
+  } @else if (panelMode() === 'compare') {
+    <app-admin-recipe-compare-panel
+      [compare]="compare()"
+      [loading]="compareLoading()"
+      [error]="compareError()"
+    />
+  }
+</app-admin-modal>

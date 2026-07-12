@@ -1,0 +1,20 @@
+allOf:
+  - $ref: "../../../openapi.yml#/components/schemas/AdminRecipeCollectionOverrideRequest"
+  - type: object
+    properties:
+      craftedItemId:
+        type: integer
+        nullable: true
+      craftedQuantity:
+        type: integer
+        nullable: true
+      rank:
+        type: integer
+        nullable: true
+      requiredSkillLevel:
+        type: integer
+        nullable: true
+      overrideNote:
+        type: string
+        nullable: true
+        maxLength: 512

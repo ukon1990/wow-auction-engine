@@ -207,13 +207,13 @@ class ItemJdbcRepository(
             ),
             crafted_source AS (
                 SELECT crafted_item_id AS item_id
-                FROM recipe
+                FROM v_recipe_crafted_output
                 WHERE crafted_item_id IS NOT NULL
                 GROUP BY crafted_item_id
             ),
             reagent_source AS (
                 SELECT item_id
-                FROM recipe_reagent
+                FROM v_recipe_reagent
                 WHERE item_id IS NOT NULL
                 GROUP BY item_id
             ),
@@ -401,6 +401,7 @@ class ItemJdbcRepository(
             bindingIds = bindingIds,
             itemSubclassIds = itemSubclassIds,
         )
+        refreshItemRanks()
         upsertItemAppearanceLinks(groupedItems)
 
         return ItemPersistenceSummary(
@@ -850,6 +851,30 @@ class ItemJdbcRepository(
             val params = chunk.flatMap { (itemId, appearanceRefId) -> listOf(itemId, appearanceRefId) }
             jdbcTemplate.update(sql, *params.toTypedArray())
         }
+    }
+
+    private fun refreshItemRanks() {
+        jdbcTemplate.update(
+            """
+            UPDATE item ranked_item
+            JOIN (
+                SELECT
+                    i.id,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY LOWER(TRIM(COALESCE(
+                            l.en_us, l.en_gb, l.de_de, l.es_es, l.fr_fr,
+                            l.it_it, l.ko_kr, l.pt_br, l.ru_ru, l.zh_cn
+                        )))
+                        ORDER BY i.id
+                    ) AS item_rank
+                FROM item i
+                JOIN locale l ON l.id = i.name_id
+                WHERE i.is_override = FALSE
+            ) ranks ON ranks.id = ranked_item.id
+            SET ranked_item.rank = ranks.item_rank
+            WHERE ranked_item.is_override = FALSE
+            """.trimIndent(),
+        )
     }
 
     private fun findNaturalIds(

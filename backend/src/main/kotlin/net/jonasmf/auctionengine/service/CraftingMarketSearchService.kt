@@ -125,6 +125,7 @@ class CraftingMarketSearchService(
                                 id = row.recipeId,
                                 name = row.recipeName.orEmpty(),
                                 mediaUrl = row.recipeMediaUrl,
+                                rank = row.recipeRank,
                             ),
                         item =
                             AuctionMarketItem(
@@ -158,6 +159,7 @@ class CraftingMarketSearchService(
                                         id = row.recipeId,
                                         name = row.recipeName.orEmpty(),
                                         mediaUrl = row.recipeMediaUrl,
+                                        rank = row.recipeRank,
                                     ),
                             ),
                         listingKey =

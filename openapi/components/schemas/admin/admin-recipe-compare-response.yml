@@ -1,0 +1,9 @@
+type: object
+required: [recipeId, fields]
+properties:
+  recipeId:
+    type: integer
+  fields:
+    type: object
+    additionalProperties:
+      $ref: "../../../openapi.yml#/components/schemas/AdminItemCompareField"

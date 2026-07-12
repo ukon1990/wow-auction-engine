@@ -45,6 +45,7 @@ data class CraftingMarketSearchResult(
 
 data class CraftingMarketSqlRow(
     val recipeId: Int,
+    val recipeRank: Int?,
     val craftedItemId: Int,
     val bonusKey: String,
     val modifierKey: String,
@@ -197,7 +198,7 @@ class CraftingMarketSearchRepository(
                     INNER JOIN sel_latest_history lh ON lh.update_history_id = a.update_history_id
                 WHERE a.connected_realm_id = ?
                   AND a.buyout IS NOT NULL
-                  AND a.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr)
+                  AND a.item_id IN (SELECT DISTINCT rr.item_id FROM v_recipe_reagent rr)
             ),
             reagent_sel_ranked AS (
                 SELECT
@@ -223,7 +224,7 @@ class CraftingMarketSearchRepository(
                     INNER JOIN com_latest_history lh ON lh.update_history_id = a.update_history_id
                 WHERE a.connected_realm_id = ?
                   AND a.buyout IS NOT NULL
-                  AND a.item_id IN (SELECT DISTINCT rr.item_id FROM recipe_reagent rr)
+                  AND a.item_id IN (SELECT DISTINCT rr.item_id FROM v_recipe_reagent rr)
             ),
             reagent_com_ranked AS (
                 SELECT
@@ -239,7 +240,7 @@ class CraftingMarketSearchRepository(
                 SELECT item_id, price FROM reagent_com_ranked WHERE rn = 1
             ),
             reagent_items AS (
-                SELECT DISTINCT item_id FROM recipe_reagent
+                SELECT DISTINCT item_id FROM v_recipe_reagent
             ),
             reagent_unit AS (
                 SELECT
@@ -248,6 +249,13 @@ class CraftingMarketSearchRepository(
                 FROM reagent_items i
                     LEFT JOIN reagent_sel rs ON rs.item_id = i.item_id
                     LEFT JOIN reagent_com rc ON rc.item_id = i.item_id
+            ),
+            recipe_outputs AS (
+                SELECT
+                    ro.recipe_id,
+                    ro.crafted_item_id,
+                    COALESCE(NULLIF(ro.crafted_quantity, 0), 1) AS crafted_qty
+                FROM v_recipe_crafted_output ro
             ),
             recipe_reagent_agg AS (
                 SELECT
@@ -265,10 +273,10 @@ class CraftingMarketSearchRepository(
                             ELSE COALESCE(ru.price, 0) * rr.quantity
                         END
                     ) AS reagent_cost_partial
-                FROM recipe r
-                    LEFT JOIN recipe_reagent rr ON rr.recipe_id = r.id
+                FROM v_recipe r
+                    INNER JOIN recipe_outputs ro ON ro.recipe_id = r.id
+                    LEFT JOIN v_recipe_reagent rr ON rr.recipe_id = r.id
                     LEFT JOIN reagent_unit ru ON ru.item_id = rr.item_id
-                WHERE r.crafted_item_id IS NOT NULL
                 GROUP BY r.id
             ),
             recipe_reagent_cost AS (
@@ -280,9 +288,9 @@ class CraftingMarketSearchRepository(
             ),
             realm_outputs AS (
                 SELECT
-                    r.id AS recipe_id,
-                    r.crafted_item_id,
-                    COALESCE(NULLIF(r.crafted_quantity, 0), 1) AS crafted_qty,
+                    ro.recipe_id,
+                    ro.crafted_item_id,
+                    ro.crafted_qty,
                     a.bonus_key,
                     a.modifier_key,
                     COALESCE(a.pet_species_id, -1) AS pet_species_id,
@@ -290,19 +298,18 @@ class CraftingMarketSearchRepository(
                     a.p25 AS output_p25_price,
                     a.p75 AS output_p75_price,
                     a.quantity AS listing_quantity
-                FROM recipe r
+                FROM recipe_outputs ro
                     INNER JOIN auction a
-                        ON a.item_id = r.crafted_item_id
+                        ON a.item_id = ro.crafted_item_id
                         AND a.connected_realm_id = ?
                         AND a.buyout IS NOT NULL
                     INNER JOIN sel_latest_history lh ON lh.update_history_id = a.update_history_id
-                WHERE r.crafted_item_id IS NOT NULL
             ),
             com_outputs AS (
                 SELECT
-                    r.id AS recipe_id,
-                    r.crafted_item_id,
-                    COALESCE(NULLIF(r.crafted_quantity, 0), 1) AS crafted_qty,
+                    ro.recipe_id,
+                    ro.crafted_item_id,
+                    ro.crafted_qty,
                     a.bonus_key,
                     a.modifier_key,
                     COALESCE(a.pet_species_id, -1) AS pet_species_id,
@@ -310,13 +317,12 @@ class CraftingMarketSearchRepository(
                     a.p25 AS output_p25_price,
                     a.p75 AS output_p75_price,
                     a.quantity AS listing_quantity
-                FROM recipe r
+                FROM recipe_outputs ro
                     INNER JOIN auction a
-                        ON a.item_id = r.crafted_item_id
+                        ON a.item_id = ro.crafted_item_id
                         AND a.connected_realm_id = ?
                         AND a.buyout IS NOT NULL
                     INNER JOIN com_latest_history lh ON lh.update_history_id = a.update_history_id
-                WHERE r.crafted_item_id IS NOT NULL
             ),
             listed_outputs AS (
                 SELECT * FROM realm_outputs
@@ -337,9 +343,9 @@ class CraftingMarketSearchRepository(
             ),
             unlisted_outputs AS (
                 SELECT
-                    r.id AS recipe_id,
-                    r.crafted_item_id,
-                    COALESCE(NULLIF(r.crafted_quantity, 0), 1) AS crafted_qty,
+                    ro.recipe_id,
+                    ro.crafted_item_id,
+                    ro.crafted_qty,
                     '' AS bonus_key,
                     '' AS modifier_key,
                     0 AS pet_species_id,
@@ -347,9 +353,8 @@ class CraftingMarketSearchRepository(
                     CAST(NULL AS UNSIGNED) AS output_p25_price,
                     CAST(NULL AS UNSIGNED) AS output_p75_price,
                     CAST(NULL AS SIGNED) AS listing_quantity
-                FROM recipe r
-                WHERE r.crafted_item_id IS NOT NULL
-                  AND r.id NOT IN (SELECT recipe_id FROM recipes_with_listing)
+                FROM recipe_outputs ro
+                WHERE ro.recipe_id NOT IN (SELECT recipe_id FROM recipes_with_listing)
             ),
             crafted_current AS (
                 SELECT * FROM listed_outputs
@@ -358,42 +363,43 @@ class CraftingMarketSearchRepository(
             ),
             prev_realm AS (
                 SELECT
-                    r.id AS recipe_id,
+                    ro.recipe_id,
+                    ro.crafted_item_id,
                     ash.bonus_key,
                     ash.modifier_key,
                     ash.pet_species_id,
                     ash.$priceSel AS prev_unit_price
-                FROM recipe r
+                FROM recipe_outputs ro
                     INNER JOIN auction_stats_hourly ash
-                        ON ash.item_id = r.crafted_item_id
+                        ON ash.item_id = ro.crafted_item_id
                         AND ash.connected_realm_id = ?
                         AND ash.date = ?
                         AND ash.$priceSel IS NOT NULL
-                WHERE r.crafted_item_id IS NOT NULL
             ),
             prev_com AS (
                 SELECT
-                    r.id AS recipe_id,
+                    ro.recipe_id,
+                    ro.crafted_item_id,
                     ash.bonus_key,
                     ash.modifier_key,
                     ash.pet_species_id,
                     ash.$priceCom AS prev_unit_price
-                FROM recipe r
+                FROM recipe_outputs ro
                     INNER JOIN auction_stats_hourly ash
-                        ON ash.item_id = r.crafted_item_id
+                        ON ash.item_id = ro.crafted_item_id
                         AND ash.connected_realm_id = ?
                         AND ash.date = ?
                         AND ash.$priceCom IS NOT NULL
-                WHERE r.crafted_item_id IS NOT NULL
             ),
             crafted_prev AS (
-                SELECT recipe_id, bonus_key, modifier_key, pet_species_id, prev_unit_price FROM prev_realm
+                SELECT recipe_id, crafted_item_id, bonus_key, modifier_key, pet_species_id, prev_unit_price FROM prev_realm
                 UNION ALL
-                SELECT c.recipe_id, c.bonus_key, c.modifier_key, c.pet_species_id, c.prev_unit_price
+                SELECT c.recipe_id, c.crafted_item_id, c.bonus_key, c.modifier_key, c.pet_species_id, c.prev_unit_price
                 FROM prev_com c
                 WHERE NOT EXISTS (
                     SELECT 1 FROM prev_realm pr
                     WHERE pr.recipe_id = c.recipe_id
+                      AND pr.crafted_item_id <=> c.crafted_item_id
                       AND pr.bonus_key <=> c.bonus_key
                       AND pr.modifier_key <=> c.modifier_key
                       AND pr.pet_species_id <=> c.pet_species_id
@@ -401,16 +407,18 @@ class CraftingMarketSearchRepository(
             ),
             recipe_dim AS (
                 SELECT
-                    reci.id AS recipe_id,
-                    reci.crafted_item_id,
-                    COALESCE(NULLIF(reci.crafted_quantity, 0), 1) AS crafted_quantity,
+                    ro.recipe_id,
+                    ro.crafted_item_id,
+                    ro.crafted_qty AS crafted_quantity,
                     reci.media_url AS recipe_media_url,
+                    reci.rank AS recipe_rank,
                     COALESCE(reci_l.$loc, reci_l.en_gb, reci_l.en_us) AS recipe_name,
                     p.id AS profession_id,
                     COALESCE(p_l.$loc, p_l.en_gb, p_l.en_us) AS profession_name,
                     COALESCE(st_l.$loc, st_l.en_gb, st_l.en_us) AS skill_tier_name,
                     COALESCE(pc_l.$loc, pc_l.en_gb, pc_l.en_us) AS profession_category_name
-                FROM recipe reci
+                FROM recipe_outputs ro
+                    INNER JOIN v_recipe reci ON reci.id = ro.recipe_id
                     LEFT JOIN profession_category pc ON pc.internal_id = reci.profession_category_id
                     LEFT JOIN locale pc_l ON pc_l.id = pc.name_id
                     LEFT JOIN skill_tier st ON st.id = pc.skill_tier_id
@@ -418,7 +426,6 @@ class CraftingMarketSearchRepository(
                     LEFT JOIN profession p ON p.id = st.profession_id
                     LEFT JOIN locale p_l ON p_l.id = p.name_id
                     LEFT JOIN locale reci_l ON reci_l.id = reci.name_id
-                WHERE reci.crafted_item_id IS NOT NULL
             ),
             base AS (
                 SELECT
@@ -454,6 +461,7 @@ class CraftingMarketSearchRepository(
                     END AS prev_profit_copper,
                     rd.recipe_name,
                     rd.recipe_media_url,
+                    rd.recipe_rank,
                     rd.profession_id,
                     rd.profession_name,
                     rd.skill_tier_name,
@@ -474,10 +482,13 @@ class CraftingMarketSearchRepository(
                     COALESCE(d.item_subclass_name_$loc, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
                     d.expansion_id
                 FROM crafted_current cc
-                    INNER JOIN recipe_dim rd ON rd.recipe_id = cc.recipe_id
+                    INNER JOIN recipe_dim rd
+                        ON rd.recipe_id = cc.recipe_id
+                        AND rd.crafted_item_id = cc.crafted_item_id
                     LEFT JOIN recipe_reagent_cost rrc ON rrc.recipe_id = cc.recipe_id
                     LEFT JOIN crafted_prev cp
                         ON cp.recipe_id = cc.recipe_id
+                        AND cp.crafted_item_id <=> cc.crafted_item_id
                         AND cp.bonus_key <=> cc.bonus_key
                         AND cp.modifier_key <=> cc.modifier_key
                         AND cp.pet_species_id <=> cc.pet_species_id
@@ -523,6 +534,7 @@ class CraftingMarketSearchRepository(
             wrapped.reagents_fully_priced,
             wrapped.recipe_name,
             wrapped.recipe_media_url,
+            wrapped.recipe_rank,
             wrapped.profession_id,
             wrapped.profession_name,
             wrapped.skill_tier_name,
@@ -557,6 +569,7 @@ class CraftingMarketSearchRepository(
                 c.reagents_fully_priced,
                 c.recipe_name,
                 c.recipe_media_url,
+                c.recipe_rank,
                 c.profession_id,
                 c.profession_name,
                 c.skill_tier_name,
@@ -684,6 +697,7 @@ class CraftingMarketSearchRepository(
         RowMapper { rs: ResultSet, _: Int ->
             CraftingMarketSqlRow(
                 recipeId = rs.getInt("recipe_id"),
+                recipeRank = rs.getNullableInt("recipe_rank"),
                 craftedItemId = rs.getInt("crafted_item_id"),
                 bonusKey = rs.getString("bonus_key") ?: "",
                 modifierKey = rs.getString("modifier_key") ?: "",
