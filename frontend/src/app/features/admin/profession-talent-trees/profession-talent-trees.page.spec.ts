@@ -2,7 +2,7 @@ import {
   MAX_FILE_SIZE_BYTES,
   MAX_TOTAL_FILE_SIZE_BYTES,
   savedVariablesInspectionError,
-  selectedFilesForUpload,
+  selectedFilesForProcessing,
   selectSavedVariablesFiles,
 } from './profession-talent-trees.page';
 
@@ -23,7 +23,7 @@ describe('SavedVariables folder selection', () => {
     ).toBe('Each SavedVariables file must be at most 64 MiB');
   });
 
-  it('keeps only recognized files and uploads only those files', () => {
+  it('keeps only recognized files for local processing', () => {
     const auctionHelper = file('AuctionHelper.lua');
     const professions = file('AuctionHelper_Professions.lua');
     const selection = selectSavedVariablesFiles([
@@ -37,17 +37,17 @@ describe('SavedVariables folder selection', () => {
     expect(selection.files.ignoredCount).toBe(2);
     expect(selection.files.auctionHelper).toBe(auctionHelper);
     expect(selection.files.professions).toBe(professions);
-    expect(selectedFilesForUpload(selection.files)).toEqual([auctionHelper, professions]);
+    expect(selectedFilesForProcessing(selection.files)).toEqual([auctionHelper, professions]);
   });
 
-  it('allows a missing source and uploads the recognized source that was selected', () => {
+  it('allows a missing source and processes the recognized source that was selected', () => {
     const professions = file('AuctionHelper_Professions.lua');
     const selection = selectSavedVariablesFiles([professions]);
 
     expect(selection.error).toBeNull();
     expect(selection.files.auctionHelper).toBeNull();
     expect(selection.files.professions).toBe(professions);
-    expect(selectedFilesForUpload(selection.files)).toEqual([professions]);
+    expect(selectedFilesForProcessing(selection.files)).toEqual([professions]);
   });
 
   it('rejects duplicate recognized files', () => {
@@ -57,7 +57,7 @@ describe('SavedVariables folder selection', () => {
     ]);
 
     expect(selection.error).toBe('duplicate');
-    expect(selectedFilesForUpload(selection.files)).toEqual([]);
+    expect(selectedFilesForProcessing(selection.files)).toEqual([]);
   });
 
   it('rejects files that exceed the per-file upload limit', () => {
@@ -66,7 +66,7 @@ describe('SavedVariables folder selection', () => {
     ]);
 
     expect(selection.error).toBe('fileSize');
-    expect(selectedFilesForUpload(selection.files)).toEqual([]);
+    expect(selectedFilesForProcessing(selection.files)).toEqual([]);
   });
 
   it('allows two files at the combined upload limit', () => {
@@ -76,6 +76,6 @@ describe('SavedVariables folder selection', () => {
     ]);
 
     expect(selection.error).toBeNull();
-    expect(selectedFilesForUpload(selection.files)).toHaveLength(2);
+    expect(selectedFilesForProcessing(selection.files)).toHaveLength(2);
   });
 });

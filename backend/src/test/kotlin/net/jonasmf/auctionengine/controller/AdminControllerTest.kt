@@ -20,6 +20,7 @@ import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.AdminSqlTable
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.User
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
@@ -28,13 +29,12 @@ import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
 import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
-import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeLuaImportService
-import net.jonasmf.auctionengine.service.admin.AuctionHelperSavedVariablesInspectionService
+import net.jonasmf.auctionengine.service.admin.NormalizedAuctionHelperProfessionInspectionService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
-import org.mockito.ArgumentMatchers.anyList
+import org.mockito.ArgumentMatchers.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
@@ -55,20 +55,25 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delet
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.server.ResponseStatusException
 import java.time.OffsetDateTime
-import java.time.Instant
-import net.jonasmf.auctionengine.domain.profession.AuctionHelperImportDiagnostic
-import net.jonasmf.auctionengine.domain.profession.AuctionHelperImportDiagnosticCode
-import net.jonasmf.auctionengine.domain.profession.AuctionHelperTalentTreeLuaImportResult
-import net.jonasmf.auctionengine.domain.profession.AuctionHelperSavedVariablesInspection
-import net.jonasmf.auctionengine.domain.profession.AuctionHelperSavedVariablesSource
-import net.jonasmf.auctionengine.domain.profession.AuctionHelperSavedVariablesSourceStatus
-import org.springframework.mock.web.MockMultipartFile
+
+private val normalizedProfessionJson =
+    """
+    {
+      "contractVersion": 1,
+      "source": {
+        "addon": "AuctionHelper",
+        "processorVersion": "1.0.0",
+        "files": [{"fileName": "AuctionHelper_Professions.lua", "sha256": "${"a".repeat(64)}"}]
+      },
+      "characters": []
+    }
+    """.trimIndent()
 
 @WebMvcTest(AdminController::class)
 @ImportAutoConfiguration(
@@ -113,10 +118,7 @@ class AdminControllerTest {
     private lateinit var professionTalentTreeImportService: ProfessionTalentTreeImportService
 
     @MockitoBean
-    private lateinit var professionTalentTreeLuaImportService: ProfessionTalentTreeLuaImportService
-
-    @MockitoBean
-    private lateinit var auctionHelperSavedVariablesInspectionService: AuctionHelperSavedVariablesInspectionService
+    private lateinit var normalizedAuctionHelperProfessionInspectionService: NormalizedAuctionHelperProfessionInspectionService
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder
@@ -195,39 +197,21 @@ class AdminControllerTest {
     }
 
     @Nested
-    inner class InspectProfessionTalentTreeLua {
+    inner class InspectNormalizedAuctionHelperProfessionData {
         @Test
-        fun `returns a diagnostic without importing for an administrator`() {
-            `when`(professionTalentTreeLuaImportService.inspect("AuctionHelperProfessionsDB = {}".toByteArray())).thenReturn(
-                AuctionHelperTalentTreeLuaImportResult(
-                    contentHash = "a".repeat(64),
-                    importedAt = Instant.parse("2026-07-13T10:00:00Z"),
-                    charactersFound = 0,
-                    professionsFound = 0,
-                    recipesFound = 0,
-                    diagnostics =
-                        listOf(
-                            AuctionHelperImportDiagnostic(
-                                AuctionHelperImportDiagnosticCode.TALENT_DATA_MISSING,
-                                "No specialization tree data is present",
-                            ),
-                        ),
-                ),
+        fun `returns a preview without importing for an administrator`() {
+            `when`(normalizedAuctionHelperProfessionInspectionService.inspect(any())).thenReturn(
+                NormalizedAuctionHelperProfessionInspection(false, 1, 1, 1, 1, 0, 0, 0, emptyList()),
             )
 
             val result =
                 mockMvc
                     .perform(
-                        multipart("/api/admin/profession-talent-trees/import-lua")
+                        post("/api/admin/profession-talent-trees/inspect-normalized")
                             .contextPath("/api")
-                            .file(
-                                MockMultipartFile(
-                                    "file",
-                                    "AuctionHelper_Professions.lua",
-                                    "text/plain",
-                                    "AuctionHelperProfessionsDB = {}".toByteArray(),
-                                ),
-                            ).with(
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(normalizedProfessionJson)
+                            .with(
                                 jwt()
                                     .jwt { token -> token.claim("cognito:groups", listOf("admin")) }
                                     .authorities(cognitoGroupsGrantedAuthoritiesConverter),
@@ -239,28 +223,30 @@ class AdminControllerTest {
                 .perform(asyncDispatch(result))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.imported").value(false))
-                .andExpect(jsonPath("$.charactersFound").value(0))
-                .andExpect(jsonPath("$.diagnostics[0].code").value("TALENT_DATA_MISSING"))
+                .andExpect(jsonPath("$.charactersFound").value(1))
+                .andExpect(jsonPath("$.recipesWithOutputItemFound").value(1))
         }
 
         @Test
-        fun `rejects an unauthenticated upload`() {
+        fun `rejects an unauthenticated preview`() {
             mockMvc
                 .perform(
-                    multipart("/api/admin/profession-talent-trees/import-lua")
+                    post("/api/admin/profession-talent-trees/inspect-normalized")
                         .contextPath("/api")
-                        .file(MockMultipartFile("file", "AuctionHelper_Professions.lua", "text/plain", "{}".toByteArray())),
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(normalizedProfessionJson),
                 ).andExpect(status().isUnauthorized)
         }
 
         @Test
-        fun `rejects a non administrator upload`() {
+        fun `rejects a non administrator preview`() {
             val result =
                 mockMvc
                     .perform(
-                        multipart("/api/admin/profession-talent-trees/import-lua")
+                        post("/api/admin/profession-talent-trees/inspect-normalized")
                             .contextPath("/api")
-                            .file(MockMultipartFile("file", "AuctionHelper_Professions.lua", "text/plain", "{}".toByteArray()))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(normalizedProfessionJson)
                             .with(jwt()),
                     ).andExpect(request().asyncStarted())
                     .andReturn()
@@ -268,45 +254,6 @@ class AdminControllerTest {
             mockMvc
                 .perform(asyncDispatch(result))
                 .andExpect(status().isForbidden)
-        }
-    }
-
-    @Nested
-    inner class InspectAuctionHelperSavedVariables {
-        @Test
-        fun `inspects a selected SavedVariables file for an administrator`() {
-            `when`(auctionHelperSavedVariablesInspectionService.inspect(anyList())).thenReturn(
-                AuctionHelperSavedVariablesInspection(
-                    inspectedAt = Instant.parse("2026-07-13T10:00:00Z"),
-                    sources = listOf(
-                        AuctionHelperSavedVariablesSource("AuctionHelper.lua", AuctionHelperSavedVariablesSourceStatus.MISSING, null),
-                        AuctionHelperSavedVariablesSource("AuctionHelper_Professions.lua", AuctionHelperSavedVariablesSourceStatus.FOUND, "a".repeat(64)),
-                    ),
-                    charactersFound = 1,
-                    professionsFound = 2,
-                    recipesFound = 3,
-                    talentExport = null,
-                    diagnostics = emptyList(),
-                ),
-            )
-
-            val result =
-                mockMvc.perform(
-                    multipart("/api/admin/profession-talent-trees/inspect-saved-variables")
-                        .contextPath("/api")
-                        .file(MockMultipartFile("files", "AuctionHelper_Professions.lua", "text/plain", "AuctionHelperProfessionsDB = {}".toByteArray()))
-                        .with(
-                            jwt()
-                                .jwt { token -> token.claim("cognito:groups", listOf("admin")) }
-                                .authorities(cognitoGroupsGrantedAuthoritiesConverter),
-                        ),
-                ).andExpect(request().asyncStarted()).andReturn()
-
-            mockMvc.perform(asyncDispatch(result))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.sources[0].status").value("MISSING"))
-                .andExpect(jsonPath("$.sources[1].status").value("FOUND"))
-                .andExpect(jsonPath("$.recipesFound").value(3))
         }
     }
 

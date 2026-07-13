@@ -1,0 +1,6 @@
+type: object
+additionalProperties: false
+required: [entryId]
+properties:
+  entryId: { type: integer, minimum: 1 }
+  rankLimit: { type: integer, minimum: 1 }

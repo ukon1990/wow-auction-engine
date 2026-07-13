@@ -1,0 +1,7 @@
+type: object
+additionalProperties: false
+required: [nodeId, entryId, rank]
+properties:
+  nodeId: { type: integer, minimum: 1 }
+  entryId: { type: integer, minimum: 1 }
+  rank: { type: integer, minimum: 0 }

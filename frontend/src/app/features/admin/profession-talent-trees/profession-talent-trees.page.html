@@ -11,11 +11,11 @@
         class="font-cinzel text-2xl font-bold text-primary-container"
         i18n="@@professionTalentTrees.uploadTitle"
       >
-        Inspect AuctionHelper SavedVariables
+        Process AuctionHelper SavedVariables locally
       </h1>
       <p class="mt-1 text-sm text-outline" i18n="@@professionTalentTrees.uploadHint">
-        Select your SavedVariables folder. We find AuctionHelper.lua and
-        AuctionHelper_Professions.lua, then ignore everything else.
+        Select your SavedVariables folder. The browser finds AuctionHelper.lua and
+        AuctionHelper_Professions.lua, then processes only those matching files on this device.
       </p>
     </header>
 
@@ -24,8 +24,8 @@
       role="note"
     >
       <p i18n="@@professionTalentTrees.privacyHint">
-        Files are read only to inspect the two selected AuctionHelper SavedVariables files. Other
-        files in the folder are not uploaded.
+        Raw Lua never leaves this device. Other files in the folder are ignored without being read,
+        and only normalized JSON is sent after you review and submit it.
       </p>
     </div>
 
@@ -37,12 +37,40 @@
         Replacing talent-tree definitions is destructive
       </p>
       <p class="mt-1 text-outline" i18n="@@professionTalentTrees.destructiveHint">
-        This inspection only reports the available SavedVariables data. It does not import or
+        Local processing and server validation only report available data. They do not import or
         replace shared talent-tree definitions.
       </p>
     </div>
 
     <div class="grid gap-5 rounded-lg border border-white/10 bg-surface-container-highest p-5">
+      <div class="grid gap-2">
+        <label
+          class="text-sm font-semibold text-on-surface"
+          for="talent-tree-region"
+          i18n="@@professionTalentTrees.region"
+        >
+          Region
+        </label>
+        <input
+          id="talent-tree-region"
+          type="text"
+          required
+          maxlength="16"
+          autocomplete="off"
+          class="block w-full rounded-md border border-white/20 bg-surface px-3 py-2 text-sm text-on-surface"
+          [value]="region()"
+          (input)="onRegionInput($event)"
+          aria-describedby="talent-tree-region-hint"
+        />
+        <p
+          id="talent-tree-region-hint"
+          class="text-sm text-outline"
+          i18n="@@professionTalentTrees.regionHint"
+        >
+          SavedVariables does not contain a reliable region. Enter it so identical character names
+          on different regions stay separate.
+        </p>
+      </div>
       <div class="grid gap-2">
         <label
           class="text-sm font-semibold text-on-surface"
@@ -139,7 +167,7 @@
         </p>
         @if (files().ignoredCount > 0) {
           <p class="text-outline" i18n="@@professionTalentTrees.ignoredFiles">
-            {{ files().ignoredCount }} other file(s) ignored and will not be uploaded.
+            {{ files().ignoredCount }} other file(s) ignored and will not be read.
           </p>
         }
       </section>
@@ -148,21 +176,24 @@
         <button
           type="button"
           class="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
-          [disabled]="!hasSelection() || importing()"
-          (click)="inspectUpload()"
+          [disabled]="!hasSelection() || processing() || submitting()"
+          [attr.aria-busy]="processing()"
+          (click)="processLocally()"
         >
-          @if (importing()) {
-            <ng-container i18n="@@professionTalentTrees.inspecting">Inspecting…</ng-container>
+          @if (processing()) {
+            <ng-container i18n="@@professionTalentTrees.inspecting"
+              >Processing locally…</ng-container
+            >
           } @else {
             <ng-container i18n="@@professionTalentTrees.inspect"
-              >Inspect SavedVariables</ng-container
+              >Process files locally</ng-container
             >
           }
         </button>
         <button
           type="button"
           class="min-h-11 rounded-md border border-white/20 px-4 font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
-          [disabled]="!hasSelection() || importing()"
+          [disabled]="!hasSelection() || processing() || submitting()"
           (click)="clearSelection()"
           i18n="@@professionTalentTrees.clearSelection"
         >
@@ -180,72 +211,133 @@
       </p>
     }
 
-    @if (result(); as importResult) {
+    @if (preview(); as localPreview) {
       <section
         class="grid gap-3 rounded-lg border border-white/10 bg-surface-container-highest p-5"
         aria-labelledby="inspection-result-title"
+        aria-live="polite"
       >
         <h2
           id="inspection-result-title"
           class="font-cinzel text-lg font-bold text-primary-container"
           i18n="@@professionTalentTrees.resultTitle"
         >
-          Inspection result
+          Local processing result
         </h2>
         <dl class="grid gap-2 text-sm sm:grid-cols-3">
           <div>
             <dt class="text-outline" i18n="@@professionTalentTrees.characters">Characters</dt>
-            <dd class="font-semibold">{{ importResult.charactersFound }}</dd>
+            <dd class="font-semibold">{{ localPreview.charactersFound }}</dd>
           </div>
           <div>
             <dt class="text-outline" i18n="@@professionTalentTrees.professions">Professions</dt>
-            <dd class="font-semibold">{{ importResult.professionsFound }}</dd>
+            <dd class="font-semibold">{{ localPreview.professionsFound }}</dd>
           </div>
           <div>
             <dt class="text-outline" i18n="@@professionTalentTrees.recipes">Recipes</dt>
-            <dd class="font-semibold">{{ importResult.recipesFound }}</dd>
+            <dd class="font-semibold">{{ localPreview.recipesFound }}</dd>
           </div>
         </dl>
-        <section class="grid gap-2 text-sm" aria-labelledby="source-result-title">
-          <h3
-            id="source-result-title"
-            class="font-semibold text-on-surface"
-            i18n="@@professionTalentTrees.sourceResults"
+        <div
+          class="grid gap-3"
+          aria-label="Normalized data samples"
+          i18n-aria-label="@@professionTalentTrees.previewSamplesAria"
+        >
+          @for (
+            character of localPreview.payload.characters.slice(0, 5);
+            track character.characterKey
+          ) {
+            <article class="rounded-md border border-white/10 bg-surface p-3 text-sm">
+              <h3 class="font-semibold text-on-surface">
+                {{ character.name }} — {{ character.realm }} ({{ character.region }})
+              </h3>
+              @for (
+                profession of character.professions.slice(0, 5);
+                track profession.professionId
+              ) {
+                <div class="mt-2 border-l-2 border-white/10 pl-3">
+                  <p class="font-medium">
+                    {{ profession.name }} · {{ profession.recipes.length }}
+                    <span i18n="@@professionTalentTrees.previewRecipesLabel">recipes</span>
+                  </p>
+                  <ul class="mt-1 grid gap-1 text-outline">
+                    @for (recipe of profession.recipes.slice(0, 3); track recipe.recipeId) {
+                      <li>
+                        {{ recipe.name }} (#{{ recipe.recipeId }}) ·
+                        <span i18n="@@professionTalentTrees.previewOutputLabel">output</span>
+                        {{ recipe.craftedItemId ?? '—' }} · {{ recipe.reagentSlots.length }}
+                        <span i18n="@@professionTalentTrees.previewReagentSlotsLabel"
+                          >reagent slots</span
+                        >
+                        @if (recipe.baseDifficulty !== undefined) {
+                          ·
+                          <span i18n="@@professionTalentTrees.previewDifficultyLabel"
+                            >difficulty</span
+                          >
+                          {{ recipe.baseDifficulty }}
+                        }
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            </article>
+          }
+        </div>
+        @if (localPreview.diagnostics.length > 0) {
+          <ul
+            class="grid gap-2"
+            aria-label="Local processing diagnostics"
+            i18n-aria-label="@@professionTalentTrees.importDiagnosticsAria"
           >
-            Source results
-          </h3>
-          <ul class="grid gap-2">
-            @for (source of importResult.sources; track source.fileName) {
-              <li class="rounded-md border border-white/10 bg-surface p-3">
-                <p class="font-semibold text-on-surface">{{ source.fileName }}</p>
-                <p class="mt-1 text-outline">
-                  <ng-container i18n="@@professionTalentTrees.sourceStatus"
-                    >Status: {{ source.status }}</ng-container
-                  >
-                </p>
+            @for (diagnostic of localPreview.diagnostics; track $index) {
+              <li class="rounded-md border border-white/10 bg-surface p-3 text-sm">
+                <p class="font-semibold text-on-surface">{{ diagnostic.code }}</p>
+                <p class="mt-1 text-outline">{{ diagnosticDetail(diagnostic.code) }}</p>
               </li>
             }
           </ul>
-        </section>
-        @if (importResult.talentExport; as talentExport) {
-          <p class="rounded-md border border-white/10 bg-surface p-3 text-sm text-outline">
-            <ng-container i18n="@@professionTalentTrees.talentExportResult">
-              Talent export: {{ talentExport.format }} · scope {{ talentExport.scope ?? 'unknown' }}
-            </ng-container>
-          </p>
         }
-        <ul
-          class="grid gap-2"
-          aria-label="Import diagnostics"
-          i18n-aria-label="@@professionTalentTrees.importDiagnosticsAria"
+        <p class="text-sm text-outline" i18n="@@professionTalentTrees.normalizedOnlyHint">
+          Submit only the normalized character, profession, recipe, crafted-item, reagent, and
+          crafting-skill fields shown in this summary. No Lua source is included.
+        </p>
+        <button
+          type="button"
+          class="min-h-11 justify-self-start rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+          [disabled]="submitting() || processing()"
+          [attr.aria-busy]="submitting()"
+          (click)="submitNormalizedData()"
         >
-          @for (diagnostic of importResult.diagnostics; track diagnostic.code) {
-            <li class="rounded-md border border-white/10 bg-surface p-3 text-sm">
-              <p class="font-semibold text-on-surface">{{ diagnostic.code }}</p>
-              <p class="mt-1 text-outline">{{ diagnostic.detail }}</p>
-            </li>
+          @if (submitting()) {
+            <ng-container i18n="@@professionTalentTrees.submitting">Submitting…</ng-container>
+          } @else {
+            <ng-container i18n="@@professionTalentTrees.submitNormalized"
+              >Submit normalized data</ng-container
+            >
           }
-        </ul>
+        </button>
+      </section>
+    }
+
+    @if (result(); as serverResult) {
+      <section
+        class="grid gap-2 rounded-lg border border-primary/30 bg-primary/10 p-5 text-sm"
+        aria-live="polite"
+        aria-labelledby="server-validation-title"
+      >
+        <h2
+          id="server-validation-title"
+          class="font-semibold text-on-surface"
+          i18n="@@professionTalentTrees.serverValidationTitle"
+        >
+          Server validation complete
+        </h2>
+        <p i18n="@@professionTalentTrees.serverValidationSummary">
+          Validated {{ serverResult.charactersFound }} character(s),
+          {{ serverResult.professionsFound }} profession(s), and
+          {{ serverResult.recipesFound }} recipe(s). No raw Lua was sent.
+        </p>
       </section>
     }
   </section>

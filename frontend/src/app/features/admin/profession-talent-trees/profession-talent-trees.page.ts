@@ -9,8 +9,12 @@ import {
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
-import { AdminApiService, AuctionHelperSavedVariablesInspection } from '@api/generated';
+import { AdminApiService, NormalizedAuctionHelperProfessionInspection } from '@api/generated';
 import { PageFrameComponent } from '@ui';
+import {
+  AuctionHelperLocalPreview,
+  processAuctionHelperFilesInWorker,
+} from '../../../utilities/process';
 
 export const MAX_FILE_SIZE_BYTES = 64 * 1024 * 1024;
 export const MAX_TOTAL_FILE_SIZE_BYTES = 128 * 1024 * 1024;
@@ -42,9 +46,12 @@ export class ProfessionTalentTreesPage {
   private readonly professionsInput = viewChild<ElementRef<HTMLInputElement>>('professionsInput');
 
   protected readonly files = signal<SavedVariablesFiles>(emptySelection());
-  protected readonly importing = signal(false);
+  protected readonly processing = signal(false);
+  protected readonly region = signal('eu');
+  protected readonly submitting = signal(false);
   protected readonly error = signal<string | null>(null);
-  protected readonly result = signal<AuctionHelperSavedVariablesInspection | null>(null);
+  protected readonly preview = signal<AuctionHelperLocalPreview | null>(null);
+  protected readonly result = signal<NormalizedAuctionHelperProfessionInspection | null>(null);
 
   protected onFolderSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -70,43 +77,68 @@ export class ProfessionTalentTreesPage {
     if (professionsInput) professionsInput.nativeElement.value = '';
     this.files.set(emptySelection());
     this.error.set(null);
+    this.preview.set(null);
     this.result.set(null);
   }
 
   protected hasSelection(): boolean {
     const files = this.files();
-    return files.auctionHelper !== null || files.professions !== null;
+    return files.professions !== null && this.region().length > 0;
   }
 
-  protected async inspectUpload(): Promise<void> {
-    const { auctionHelper, professions } = this.files();
-    if (!auctionHelper && !professions) {
+  protected onRegionInput(event: Event): void {
+    this.region.set((event.target as HTMLInputElement).value.trim().toLowerCase());
+    this.preview.set(null);
+    this.result.set(null);
+  }
+
+  protected async processLocally(): Promise<void> {
+    const { professions } = this.files();
+    if (!professions) {
       this.error.set(
-        $localize`:@@professionTalentTrees.error.fileRequired:Choose the SavedVariables folder or at least one recognized file first.`,
+        $localize`:@@professionTalentTrees.error.fileRequired:Choose a folder containing AuctionHelper_Professions.lua first.`,
       );
       return;
     }
 
-    this.importing.set(true);
+    this.processing.set(true);
     this.error.set(null);
+    this.preview.set(null);
     this.result.set(null);
     try {
-      const result = await firstValueFrom(
-        this.adminApi.inspectAuctionHelperSavedVariables(selectedFilesForUpload(this.files())),
+      this.preview.set(
+        await processAuctionHelperFilesInWorker(
+          selectedFilesForProcessing(this.files()),
+          this.region(),
+        ),
       );
-      this.result.set(result);
-    } catch (cause) {
-      const result = savedVariablesInspection(cause);
-      if (result) {
-        this.result.set(result);
-      } else {
-        this.error.set(
-          savedVariablesInspectionError(cause) ??
-            $localize`:@@professionTalentTrees.error.inspect:Unable to inspect these SavedVariables files. Try again with AuctionHelper.lua and AuctionHelper_Professions.lua.`,
-        );
-      }
+    } catch {
+      this.error.set(
+        $localize`:@@professionTalentTrees.error.inspect:Unable to process these SavedVariables files locally. Check the region and choose a valid AuctionHelper_Professions.lua file, then try again.`,
+      );
     } finally {
-      this.importing.set(false);
+      this.processing.set(false);
+    }
+  }
+
+  protected async submitNormalizedData(): Promise<void> {
+    const preview = this.preview();
+    if (!preview) return;
+    this.submitting.set(true);
+    this.error.set(null);
+    try {
+      this.result.set(
+        await firstValueFrom(
+          this.adminApi.inspectNormalizedAuctionHelperProfessionData(preview.payload),
+        ),
+      );
+    } catch (cause) {
+      this.error.set(
+        savedVariablesInspectionError(cause) ??
+          $localize`:@@professionTalentTrees.error.submit:Unable to submit the normalized profession data. The selected files remain available to retry.`,
+      );
+    } finally {
+      this.submitting.set(false);
     }
   }
 
@@ -115,9 +147,25 @@ export class ProfessionTalentTreesPage {
     return `${(file.size / (1024 * 1024)).toFixed(1)} MiB`;
   }
 
+  protected diagnosticDetail(code: string): string {
+    switch (code) {
+      case 'CRAFTED_ITEM_MISSING':
+        return $localize`:@@professionTalentTrees.diagnostic.craftedItemMissing:One or more item-producing recipes do not include a crafted item ID.`;
+      case 'CRAFTING_SKILL_DATA_MISSING':
+        return $localize`:@@professionTalentTrees.diagnostic.craftingSkillMissing:One or more quality recipes do not include crafting difficulty or skill data.`;
+      case 'TALENT_SCOPE_UNSUPPORTED':
+        return $localize`:@@professionTalentTrees.diagnostic.talentScopeUnsupported:The saved export does not contain a supported profession talent scope.`;
+      case 'TALENT_EXPORT_INVALID':
+        return $localize`:@@professionTalentTrees.diagnostic.talentExportInvalid:The saved profession talent export could not be decoded safely.`;
+      default:
+        return $localize`:@@professionTalentTrees.diagnostic.generic:Some addon data could not be associated safely and was omitted.`;
+    }
+  }
+
   private selectFiles(files: Iterable<File | null>): void {
     const selection = selectSavedVariablesFiles(files);
     this.files.set(selection.files);
+    this.preview.set(null);
     this.result.set(null);
 
     if (selection.error === 'duplicate') {
@@ -176,18 +224,8 @@ export function selectSavedVariablesFiles(files: Iterable<File | null>): SavedVa
   };
 }
 
-export function selectedFilesForUpload(files: SavedVariablesFiles): File[] {
+export function selectedFilesForProcessing(files: SavedVariablesFiles): File[] {
   return [files.auctionHelper, files.professions].filter((file): file is File => file !== null);
-}
-
-function savedVariablesInspection(cause: unknown): AuctionHelperSavedVariablesInspection | null {
-  if (!(cause instanceof HttpErrorResponse) || !cause.error || typeof cause.error !== 'object') {
-    return null;
-  }
-  const candidate = cause.error as Partial<AuctionHelperSavedVariablesInspection>;
-  return Array.isArray(candidate.diagnostics) && Array.isArray(candidate.sources)
-    ? (candidate as AuctionHelperSavedVariablesInspection)
-    : null;
 }
 
 export function savedVariablesInspectionError(cause: unknown): string | null {

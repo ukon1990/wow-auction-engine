@@ -50,10 +50,8 @@ paths:
     $ref: ./paths/admin.yml#/getActiveProfessionSyncJob
   /admin/profession-talent-trees/import:
     $ref: ./paths/admin.yml#/importProfessionTalentTrees
-  /admin/profession-talent-trees/import-lua:
-    $ref: ./paths/admin.yml#/inspectProfessionTalentTreeLua
-  /admin/profession-talent-trees/inspect-saved-variables:
-    $ref: ./paths/admin.yml#/inspectAuctionHelperSavedVariables
+  /admin/profession-talent-trees/inspect-normalized:
+    $ref: ./paths/admin.yml#/inspectNormalizedAuctionHelperProfessionData
   /admin/jobs/{id}:
     $ref: ./paths/admin.yml#/getAdminJob
   /admin/items:
@@ -144,10 +142,10 @@ components:
       $ref: ./components/schemas/admin/admin-job.yml
     ProfessionTalentTreeImportRequest:
       $ref: ./components/schemas/admin/profession-talent-tree-import-request.yml
-    AuctionHelperTalentTreeLuaImportResult:
-      $ref: ./components/schemas/admin/auction-helper-talent-tree-lua-import-result.yml
-    AuctionHelperSavedVariablesInspection:
-      $ref: ./components/schemas/admin/auction-helper-saved-variables-inspection.yml
+    NormalizedAuctionHelperProfessionData:
+      $ref: ./components/schemas/admin/normalized-auction-helper-profession-data.yml
+    NormalizedAuctionHelperProfessionInspection:
+      $ref: ./components/schemas/admin/normalized-auction-helper-profession-inspection.yml
     AdminItem:
       $ref: ./components/schemas/admin/admin-item.yml
     AdminItemBulkOverride:

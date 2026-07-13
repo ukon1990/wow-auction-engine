@@ -24,11 +24,8 @@ import net.jonasmf.auctionengine.generated.model.AdminSqlExecuteRequest
 import net.jonasmf.auctionengine.generated.model.AdminSqlMetadata
 import net.jonasmf.auctionengine.generated.model.AdminSqlResult
 import net.jonasmf.auctionengine.generated.model.AdminStatus
-import net.jonasmf.auctionengine.generated.model.AuctionHelperTalentTreeLuaImportResult
-import net.jonasmf.auctionengine.generated.model.AuctionHelperTalentTreeLuaImportResultDiagnosticsInner
-import net.jonasmf.auctionengine.generated.model.AuctionHelperSavedVariablesInspection
-import net.jonasmf.auctionengine.generated.model.AuctionHelperSavedVariablesInspectionSourcesInner
-import net.jonasmf.auctionengine.generated.model.AuctionHelperSavedVariablesInspectionTalentExport
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
 import net.jonasmf.auctionengine.generated.model.ProfessionTalentTreeImportRequest
 import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
@@ -39,16 +36,13 @@ import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
 import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
-import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeLuaImportService
-import net.jonasmf.auctionengine.service.admin.AuctionHelperSavedVariablesInspectionService
-import net.jonasmf.auctionengine.service.MAX_AUCTION_HELPER_IMPORT_BYTES
+import net.jonasmf.auctionengine.service.admin.NormalizedAuctionHelperProfessionInspectionService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.multipart.MultipartFile
 
 @RestController
 class AdminController(
@@ -61,8 +55,7 @@ class AdminController(
     private val adminItemService: AdminItemService,
     private val adminRecipeService: AdminRecipeService,
     private val professionTalentTreeImportService: ProfessionTalentTreeImportService,
-    private val professionTalentTreeLuaImportService: ProfessionTalentTreeLuaImportService,
-    private val auctionHelperSavedVariablesInspectionService: AuctionHelperSavedVariablesInspectionService,
+    private val normalizedAuctionHelperProfessionInspectionService: NormalizedAuctionHelperProfessionInspectionService,
 ) : AdminApi {
     private val objectMapper = jacksonObjectMapper()
     @PreAuthorize("hasAuthority('admin')")
@@ -145,20 +138,10 @@ class AdminController(
     }
 
     @PreAuthorize("hasAuthority('admin')")
-    override suspend fun inspectProfessionTalentTreeLua(file: MultipartFile): ResponseEntity<AuctionHelperTalentTreeLuaImportResult> =
-        ResponseEntity.ok(
-            (if (file.size > MAX_AUCTION_HELPER_IMPORT_BYTES) {
-                professionTalentTreeLuaImportService.oversizedResult()
-            } else {
-                professionTalentTreeLuaImportService.inspect(file.bytes)
-            }).toApiResult(),
-        )
-
-    @PreAuthorize("hasAuthority('admin')")
-    override suspend fun inspectAuctionHelperSavedVariables(
-        files: Array<MultipartFile>,
-    ): ResponseEntity<AuctionHelperSavedVariablesInspection> =
-        ResponseEntity.ok(auctionHelperSavedVariablesInspectionService.inspect(files.toList()).toApiResult())
+    override suspend fun inspectNormalizedAuctionHelperProfessionData(
+        body: NormalizedAuctionHelperProfessionData,
+    ): ResponseEntity<NormalizedAuctionHelperProfessionInspection> =
+        ResponseEntity.ok(normalizedAuctionHelperProfessionInspectionService.inspect(body))
 
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getAdminJob(id: Long): ResponseEntity<AdminJob> =
@@ -299,53 +282,3 @@ class AdminController(
 
     private fun requestedBy(): String? = SecurityContextHolder.getContext().authentication?.name
 }
-
-private fun net.jonasmf.auctionengine.domain.profession.AuctionHelperTalentTreeLuaImportResult.toApiResult() =
-    AuctionHelperTalentTreeLuaImportResult(
-        imported = imported,
-        contentHash = contentHash,
-        importedAt = importedAt.atOffset(java.time.ZoneOffset.UTC),
-        charactersFound = charactersFound,
-        professionsFound = professionsFound,
-        recipesFound = recipesFound,
-        diagnostics =
-            diagnostics.map { diagnostic ->
-                AuctionHelperTalentTreeLuaImportResultDiagnosticsInner(
-                    code = AuctionHelperTalentTreeLuaImportResultDiagnosticsInner.Code.valueOf(diagnostic.code.name),
-                    detail = diagnostic.detail,
-                )
-            },
-    )
-
-private fun net.jonasmf.auctionengine.domain.profession.AuctionHelperSavedVariablesInspection.toApiResult() =
-    AuctionHelperSavedVariablesInspection(
-        imported = imported,
-        inspectedAt = inspectedAt.atOffset(java.time.ZoneOffset.UTC),
-        sources = sources.map { source ->
-            AuctionHelperSavedVariablesInspectionSourcesInner(
-                fileName = AuctionHelperSavedVariablesInspectionSourcesInner.FileName.forValue(source.fileName),
-                status = AuctionHelperSavedVariablesInspectionSourcesInner.Status.valueOf(source.status.name),
-                contentHash = source.contentHash,
-            )
-        },
-        charactersFound = charactersFound,
-        professionsFound = professionsFound,
-        recipesFound = recipesFound,
-        diagnostics = diagnostics.map { diagnostic ->
-            AuctionHelperTalentTreeLuaImportResultDiagnosticsInner(
-                code = AuctionHelperTalentTreeLuaImportResultDiagnosticsInner.Code.valueOf(diagnostic.code.name),
-                detail = diagnostic.detail,
-            )
-        },
-        talentExport = talentExport?.let { export ->
-            AuctionHelperSavedVariablesInspectionTalentExport(
-                format = export.format,
-                decodedBytes = export.decodedBytes,
-                validTalentScope = export.validTalentScope,
-                scope = export.scope,
-                module = export.module,
-                characterKey = export.characterKey,
-                professionIdentifier = export.professionIdentifier,
-            )
-        },
-    )

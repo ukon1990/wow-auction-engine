@@ -1,0 +1,14 @@
+type: object
+additionalProperties: false
+required: [professionId, name, recipes]
+properties:
+  professionId: { type: integer, minimum: 1 }
+  skillLineId: { type: integer, minimum: 1 }
+  name: { type: string, minLength: 1, maxLength: 128 }
+  skillLevel: { type: integer, minimum: 0 }
+  maxSkillLevel: { type: integer, minimum: 0 }
+  recipes:
+    type: array
+    maxItems: 100000
+    items: { $ref: ./normalized-auction-helper-recipe.yml }
+  talents: { $ref: ./normalized-auction-helper-talents.yml }

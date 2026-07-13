@@ -35,17 +35,13 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${WAE_COGNITO_ISSUER_URI:}
-  servlet:
-    multipart:
-      max-file-size: 64MB
-      max-request-size: 130MB
-      file-size-threshold: 1MB
-
 server:
   servlet:
     context-path: /api
 
 app:
+  import:
+    normalized-profession-max-request-bytes: 33554432
   scheduling:
     enabled: true
     static-data-sync-enabled: ${WAE_STATIC_DATA_SYNC_ENABLED:true}
