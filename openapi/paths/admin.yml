@@ -352,6 +352,40 @@ inspectProfessionTalentTreeLua:
                         schema:
                             $ref: "../openapi.yml#/components/schemas/AuctionHelperTalentTreeLuaImportResult"
             "403": { description: Administrator role required. }
+inspectAuctionHelperSavedVariables:
+    post:
+        tags: [Admin]
+        operationId: inspectAuctionHelperSavedVariables
+        summary: Inspect AuctionHelper SavedVariables selected from a folder
+        description: >-
+            Accepts only AuctionHelper.lua and AuctionHelper_Professions.lua selected from a
+            SavedVariables folder. Each file is limited to 64 MiB and selected file content to 128 MiB.
+            The inspection decodes AHCBOR1 exports only within bounded limits and never changes shared
+            talent definitions or character profiles.
+        requestBody:
+            required: true
+            content:
+                multipart/form-data:
+                    schema:
+                        type: object
+                        required: [files]
+                        properties:
+                            files:
+                                type: array
+                                minItems: 1
+                                maxItems: 2
+                                items:
+                                    type: string
+                                    format: binary
+        responses:
+            "200":
+                description: SavedVariables inspection result. `imported` is always false.
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AuctionHelperSavedVariablesInspection"
+            "400": { description: Unsupported file name, duplicate, or file size limit exceeded. }
+            "403": { description: Administrator role required. }
 getAdminJob:
     get:
         tags:

@@ -29,10 +29,12 @@ import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
 import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
 import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeLuaImportService
+import net.jonasmf.auctionengine.service.admin.AuctionHelperSavedVariablesInspectionService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
+import org.mockito.ArgumentMatchers.anyList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
@@ -63,6 +65,9 @@ import java.time.Instant
 import net.jonasmf.auctionengine.domain.profession.AuctionHelperImportDiagnostic
 import net.jonasmf.auctionengine.domain.profession.AuctionHelperImportDiagnosticCode
 import net.jonasmf.auctionengine.domain.profession.AuctionHelperTalentTreeLuaImportResult
+import net.jonasmf.auctionengine.domain.profession.AuctionHelperSavedVariablesInspection
+import net.jonasmf.auctionengine.domain.profession.AuctionHelperSavedVariablesSource
+import net.jonasmf.auctionengine.domain.profession.AuctionHelperSavedVariablesSourceStatus
 import org.springframework.mock.web.MockMultipartFile
 
 @WebMvcTest(AdminController::class)
@@ -109,6 +114,9 @@ class AdminControllerTest {
 
     @MockitoBean
     private lateinit var professionTalentTreeLuaImportService: ProfessionTalentTreeLuaImportService
+
+    @MockitoBean
+    private lateinit var auctionHelperSavedVariablesInspectionService: AuctionHelperSavedVariablesInspectionService
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder
@@ -260,6 +268,45 @@ class AdminControllerTest {
             mockMvc
                 .perform(asyncDispatch(result))
                 .andExpect(status().isForbidden)
+        }
+    }
+
+    @Nested
+    inner class InspectAuctionHelperSavedVariables {
+        @Test
+        fun `inspects a selected SavedVariables file for an administrator`() {
+            `when`(auctionHelperSavedVariablesInspectionService.inspect(anyList())).thenReturn(
+                AuctionHelperSavedVariablesInspection(
+                    inspectedAt = Instant.parse("2026-07-13T10:00:00Z"),
+                    sources = listOf(
+                        AuctionHelperSavedVariablesSource("AuctionHelper.lua", AuctionHelperSavedVariablesSourceStatus.MISSING, null),
+                        AuctionHelperSavedVariablesSource("AuctionHelper_Professions.lua", AuctionHelperSavedVariablesSourceStatus.FOUND, "a".repeat(64)),
+                    ),
+                    charactersFound = 1,
+                    professionsFound = 2,
+                    recipesFound = 3,
+                    talentExport = null,
+                    diagnostics = emptyList(),
+                ),
+            )
+
+            val result =
+                mockMvc.perform(
+                    multipart("/api/admin/profession-talent-trees/inspect-saved-variables")
+                        .contextPath("/api")
+                        .file(MockMultipartFile("files", "AuctionHelper_Professions.lua", "text/plain", "AuctionHelperProfessionsDB = {}".toByteArray()))
+                        .with(
+                            jwt()
+                                .jwt { token -> token.claim("cognito:groups", listOf("admin")) }
+                                .authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                        ),
+                ).andExpect(request().asyncStarted()).andReturn()
+
+            mockMvc.perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.sources[0].status").value("MISSING"))
+                .andExpect(jsonPath("$.sources[1].status").value("FOUND"))
+                .andExpect(jsonPath("$.recipesFound").value(3))
         }
     }
 

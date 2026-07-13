@@ -34,8 +34,7 @@ class AuctionHelperProfessionImportParser(
         }
 
         return runCatching {
-            val root = LuaSavedVariablesParser(input.toString(StandardCharsets.UTF_8)).parseAssignment("AuctionHelperProfessionsDB")
-            root.toAuctionHelperImport(contentHash, importedAt)
+            LuaProfessionSnapshotParser(input.toString(StandardCharsets.UTF_8)).parse(contentHash, importedAt)
         }.getOrElse { exception ->
             emptyImport(
                 contentHash,
@@ -148,6 +147,211 @@ private fun LuaTable.int(key: String): Int? = (values[key] as? LuaValue.NumberVa
 private fun LuaTable.boolean(key: String): Boolean? = (values[key] as? LuaValue.BooleanValue)?.value
 
 private fun ByteArray.sha256(): String = MessageDigest.getInstance("SHA-256").digest(this).joinToString("") { "%02x".format(it) }
+
+/**
+ * Selective SavedVariables parser. It traverses the entire Lua document but only materializes the
+ * compact import snapshot; recipe schematics and other large nested payloads are skipped.
+ */
+private class LuaProfessionSnapshotParser(
+    private val input: String,
+) {
+    private var position = 0
+    private var totalEntries = 0
+
+    fun parse(contentHash: String, importedAt: Instant): AuctionHelperProfessionImport {
+        skipWhitespace()
+        require(readIdentifier() == "AuctionHelperProfessionsDB") { "Expected AuctionHelperProfessionsDB assignment" }
+        skipWhitespace()
+        require(read() == '=') { "Expected assignment" }
+        skipWhitespace()
+        var addonVersion: String? = null
+        val characters = mutableListOf<AuctionHelperCharacter>()
+        parseTable { key ->
+            when (key) {
+                "addonVersion" -> addonVersion = readStringValue()
+                "characters" -> parseCharacters(characters)
+                else -> skipValue(0)
+            }
+        }
+        skipWhitespace()
+        require(position == input.length) { "Unexpected trailing input" }
+        return AuctionHelperProfessionImport(
+            addonVersion,
+            characters,
+            contentHash,
+            importedAt,
+            listOf(talentDataMissingDiagnostic()),
+        )
+    }
+
+    private fun parseCharacters(characters: MutableList<AuctionHelperCharacter>) =
+        parseTable { _ ->
+            require(characters.size < MAX_SNAPSHOT_CHARACTERS) { "Character import limit exceeded" }
+            characters += parseCharacter()
+        }
+
+    private fun parseCharacter(): AuctionHelperCharacter {
+        var name: String? = null
+        var realm: String? = null
+        var guid: String? = null
+        var schemaVersion: Int? = null
+        var build: AuctionHelperBuild? = null
+        val professions = mutableListOf<AuctionHelperCharacterProfession>()
+        parseTable { key ->
+            when (key) {
+                "meta" -> parseTable { metaKey ->
+                    when (metaKey) {
+                        "name" -> name = readStringValue()
+                        "realm" -> realm = readStringValue()
+                        "guid" -> guid = readStringValue()
+                        "build" -> build = parseBuild()
+                        else -> skipValue(1)
+                    }
+                }
+                "schemaVersion" -> schemaVersion = readIntValue()
+                "professions" -> parseProfessions(professions)
+                else -> skipValue(1)
+            }
+        }
+        requireNotNull(name) { "Character name is required" }
+        requireNotNull(realm) { "Character realm is required" }
+        return AuctionHelperCharacter(name!!, realm!!, guid, schemaVersion, build, professions)
+    }
+
+    private fun parseBuild(): AuctionHelperBuild {
+        var version: String? = null
+        var build: String? = null
+        var interfaceVersion: Int? = null
+        parseTable { key ->
+            when (key) {
+                "version" -> version = readStringValue()
+                "build" -> build = readStringValue()
+                "interfaceVersion" -> interfaceVersion = readIntValue()
+                else -> skipValue(2)
+            }
+        }
+        return AuctionHelperBuild(version, build, interfaceVersion)
+    }
+
+    private fun parseProfessions(professions: MutableList<AuctionHelperCharacterProfession>) =
+        parseTable { _ ->
+            require(professions.size < MAX_SNAPSHOT_PROFESSIONS) { "Profession import limit exceeded" }
+            professions += parseProfession()
+        }
+
+    private fun parseProfession(): AuctionHelperCharacterProfession {
+        var skillLineId: Int? = null
+        var currentLevelName: String? = null
+        var skillLevel: Int? = null
+        val recipes = mutableListOf<AuctionHelperRecipe>()
+        parseTable { key ->
+            when (key) {
+                "skillLineID" -> skillLineId = readIntValue()
+                "currentLevelName" -> currentLevelName = readStringValue()
+                "skillLevel" -> skillLevel = readIntValue()
+                "recipes" -> parseRecipes(recipes)
+                else -> skipValue(2)
+            }
+        }
+        requireNotNull(skillLineId) { "Profession skillLineID is required" }
+        return AuctionHelperCharacterProfession(skillLineId!!, currentLevelName, skillLevel, recipes)
+    }
+
+    private fun parseRecipes(recipes: MutableList<AuctionHelperRecipe>) =
+        parseTable { _ ->
+            require(recipes.size < MAX_SNAPSHOT_RECIPES) { "Recipe import limit exceeded" }
+            parseRecipe()?.let(recipes::add)
+        }
+
+    private fun parseRecipe(): AuctionHelperRecipe? {
+        var recipeId: Int? = null
+        var name: String? = null
+        var categoryId: Int? = null
+        var learned: Boolean? = null
+        val qualityVariants = mutableListOf<Int>()
+        parseTable { key ->
+            when (key) {
+                "info" -> parseTable { infoKey ->
+                    when (infoKey) {
+                        "recipeID" -> recipeId = readIntValue()
+                        "name" -> name = readStringValue()
+                        "categoryID" -> categoryId = readIntValue()
+                        "learned" -> learned = readBooleanValue()
+                        else -> skipValue(3)
+                    }
+                }
+                "outputs" -> parseOutputs(qualityVariants)
+                else -> skipValue(3)
+            }
+        }
+        return recipeId?.let { AuctionHelperRecipe(it, name, categoryId, learned, qualityVariants) }
+    }
+
+    private fun parseOutputs(qualityVariants: MutableList<Int>) =
+        parseTable { key ->
+            if (key == "qualityVariants") {
+                parseTable { _ ->
+                    parseTable { variantKey ->
+                        if (variantKey == "itemID") readIntValue()?.let(qualityVariants::add) else skipValue(4)
+                    }
+                }
+            } else {
+                skipValue(3)
+            }
+        }
+
+    private fun parseTable(entry: (String) -> Unit) {
+        require(read() == '{') { "Expected table" }
+        var arrayIndex = 1
+        skipWhitespace()
+        while (peek() != '}') {
+            require(totalEntries++ < MAX_SNAPSHOT_TABLE_ENTRIES) { "Lua table entry limit exceeded" }
+            val key = readKey(arrayIndex).also { if (it == arrayIndex.toString()) arrayIndex++ }
+            skipWhitespace()
+            entry(key)
+            skipWhitespace()
+            if (peek() == ',' || peek() == ';') { read(); skipWhitespace() } else require(peek() == '}') { "Expected table separator" }
+        }
+        read()
+    }
+
+    private fun readKey(arrayIndex: Int): String {
+        return if (peek() == '[') {
+            read(); skipWhitespace()
+            val key = if (peek() == '"') readString() else readNumber().toString()
+            skipWhitespace(); require(read() == ']') { "Expected closing table key bracket" }; skipWhitespace(); require(read() == '=') { "Expected table key assignment" }; key
+        } else if (isIdentifierStart(peek()) && lookAheadHasAssignment()) {
+            readIdentifier().also { skipWhitespace(); require(read() == '=') }
+        } else arrayIndex.toString()
+    }
+
+    private fun skipValue(depth: Int) {
+        require(depth <= MAX_LUA_NESTING) { "Lua nesting limit exceeded" }
+        when (peek()) {
+            '{' -> parseTable { skipValue(depth + 1) }
+            '"' -> readString()
+            '-', in '0'..'9' -> readNumber()
+            else -> require(readIdentifier() in setOf("true", "false", "nil")) { "Unsupported Lua value" }
+        }
+    }
+
+    private fun readStringValue(): String? = if (peek() == '"') readString() else { skipValue(0); null }
+    private fun readIntValue(): Int? = if (peek() == '-' || peek().isDigit()) readNumber().toInt() else { skipValue(0); null }
+    private fun readBooleanValue(): Boolean? = when (readIdentifier()) { "true" -> true; "false" -> false; else -> null }
+    private fun skipWhitespace() { while (position < input.length && input[position].isWhitespace()) position++ }
+    private fun peek(): Char = input.getOrElse(position) { error("Unexpected end of input") }
+    private fun read(): Char = peek().also { position++ }
+    private fun readIdentifier(): String { val start = position; require(isIdentifierStart(peek())) { "Expected identifier" }; position++; while (position < input.length && (input[position].isLetterOrDigit() || input[position] == '_')) position++; return input.substring(start, position) }
+    private fun readNumber(): Long { val start = position; if (peek() == '-') position++; while (position < input.length && input[position].isDigit()) position++; return input.substring(start, position).toLong() }
+    private fun readString(): String { require(read() == '"'); val value = StringBuilder(); while (peek() != '"') { val next = read(); if (next == '\\') value.append(read()) else value.append(next) }; read(); return value.toString() }
+    private fun lookAheadHasAssignment(): Boolean { var cursor = position; while (cursor < input.length && (input[cursor].isLetterOrDigit() || input[cursor] == '_')) cursor++; while (cursor < input.length && input[cursor].isWhitespace()) cursor++; return input.getOrNull(cursor) == '=' }
+    private fun isIdentifierStart(value: Char): Boolean = value.isLetter() || value == '_'
+}
+
+private const val MAX_SNAPSHOT_TABLE_ENTRIES = 2_000_000
+private const val MAX_SNAPSHOT_CHARACTERS = 100
+private const val MAX_SNAPSHOT_PROFESSIONS = 300
+private const val MAX_SNAPSHOT_RECIPES = 100_000
 
 private sealed interface LuaValue {
     data class StringValue(val value: String) : LuaValue

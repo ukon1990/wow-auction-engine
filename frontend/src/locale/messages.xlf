@@ -2708,18 +2708,18 @@
       <trans-unit id="professionProfiles.manageTalentTrees" datatype="html"><source>Manage profession talent trees</source></trans-unit>
       <trans-unit id="professionTalentTrees.title" datatype="html"><source>Profession talent trees</source></trans-unit>
       <trans-unit id="professionTalentTrees.eyebrow" datatype="html"><source>Admin</source></trans-unit>
-      <trans-unit id="professionTalentTrees.uploadTitle" datatype="html"><source>Inspect an AuctionHelper export</source></trans-unit>
-      <trans-unit id="professionTalentTrees.uploadHint" datatype="html"><source>Upload AuctionHelper_Professions.lua to inspect its character, profession, and recipe data.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.uploadTitle" datatype="html"><source>Inspect AuctionHelper SavedVariables</source></trans-unit>
+      <trans-unit id="professionTalentTrees.uploadHint" datatype="html"><source>Select your SavedVariables folder. We find AuctionHelper.lua and AuctionHelper_Professions.lua, then ignore everything else.</source></trans-unit>
       <trans-unit id="professionTalentTrees.destructiveTitle" datatype="html"><source>Replacing talent-tree definitions is destructive</source></trans-unit>
-      <trans-unit id="professionTalentTrees.destructiveHint" datatype="html"><source>A versioned tree-definition import replaces shared definitions and clears profile references. This Lua inspection does not modify definitions because AuctionHelper exports do not contain specialization ranks.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.destructiveHint" datatype="html"><source>This inspection only reports the available SavedVariables data. It does not import or replace shared talent-tree definitions.</source></trans-unit>
       <trans-unit id="professionTalentTrees.file" datatype="html"><source>AuctionHelper Lua file</source></trans-unit>
       <trans-unit id="professionTalentTrees.selectedFile" datatype="html"><source>Selected: {$INTERPOLATION} ({$INTERPOLATION_1})</source></trans-unit>
-      <trans-unit id="professionTalentTrees.inspect" datatype="html"><source>Inspect file</source></trans-unit>
+      <trans-unit id="professionTalentTrees.inspect" datatype="html"><source>Inspect SavedVariables</source></trans-unit>
       <trans-unit id="professionTalentTrees.inspecting" datatype="html"><source>Inspecting…</source></trans-unit>
       <trans-unit id="professionTalentTrees.error.fileType" datatype="html"><source>Choose an AuctionHelper .lua file.</source></trans-unit>
-      <trans-unit id="professionTalentTrees.error.fileSize" datatype="html"><source>Choose a file smaller than 64 MiB.</source></trans-unit>
-      <trans-unit id="professionTalentTrees.error.fileRequired" datatype="html"><source>Choose a Lua file first.</source></trans-unit>
-      <trans-unit id="professionTalentTrees.error.inspect" datatype="html"><source>Unable to inspect this Lua file. Try again with AuctionHelper_Professions.lua.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.error.fileSize" datatype="html"><source>Choose files smaller than 64 MiB.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.error.fileRequired" datatype="html"><source>Choose the SavedVariables folder or at least one recognized file first.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.error.inspect" datatype="html"><source>Unable to inspect these SavedVariables files. Try again with AuctionHelper.lua and AuctionHelper_Professions.lua.</source></trans-unit>
       <trans-unit id="professionTalentTrees.resultTitle" datatype="html"><source>Inspection result</source></trans-unit>
       <trans-unit id="professionTalentTrees.characters" datatype="html"><source>Characters</source></trans-unit>
       <trans-unit id="professionTalentTrees.professions" datatype="html"><source>Professions</source></trans-unit>
@@ -2727,6 +2727,24 @@
       <trans-unit id="route.admin.professionTalentTrees" datatype="html"><source>Profession talent trees</source></trans-unit>
       <trans-unit id="professionProfiles.importedProfessionsAria" datatype="html"><source>Imported professions</source></trans-unit>
       <trans-unit id="professionTalentTrees.importDiagnosticsAria" datatype="html"><source>Import diagnostics</source></trans-unit>
+      <trans-unit id="professionTalentTrees.privacyHint" datatype="html"><source>Files are read only to inspect the two selected AuctionHelper SavedVariables files. Other files in the folder are not uploaded.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.folder" datatype="html"><source>SavedVariables folder</source></trans-unit>
+      <trans-unit id="professionTalentTrees.folderHint" datatype="html"><source>Choose the SavedVariables directory itself. Only the two required filenames are selected.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.fallbackTitle" datatype="html"><source>Can’t select a folder?</source></trans-unit>
+      <trans-unit id="professionTalentTrees.fallbackHint" datatype="html"><source>Choose the two files individually instead.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.auctionHelperFile" datatype="html"><source>AuctionHelper.lua</source></trans-unit>
+      <trans-unit id="professionTalentTrees.professionsFile" datatype="html"><source>AuctionHelper_Professions.lua</source></trans-unit>
+      <trans-unit id="professionTalentTrees.detectedFiles" datatype="html"><source>Detected files</source></trans-unit>
+      <trans-unit id="professionTalentTrees.fileFound" datatype="html"><source>Found: {$INTERPOLATION} ({$INTERPOLATION_1})</source></trans-unit>
+      <trans-unit id="professionTalentTrees.fileMissingAuctionHelper" datatype="html"><source>Not found: AuctionHelper.lua</source></trans-unit>
+      <trans-unit id="professionTalentTrees.fileMissingProfessions" datatype="html"><source>Not found: AuctionHelper_Professions.lua</source></trans-unit>
+      <trans-unit id="professionTalentTrees.ignoredFiles" datatype="html"><source>{$INTERPOLATION} other file(s) ignored and will not be uploaded.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.clearSelection" datatype="html"><source>Clear selection</source></trans-unit>
+      <trans-unit id="professionTalentTrees.error.duplicateFiles" datatype="html"><source>Choose only one copy of each required SavedVariables file.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.error.totalFileSize" datatype="html"><source>Choose SavedVariables files smaller than 128 MiB in total.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.sourceResults" datatype="html"><source>Source results</source></trans-unit>
+      <trans-unit id="professionTalentTrees.sourceStatus" datatype="html"><source>Status: {$INTERPOLATION}</source></trans-unit>
+      <trans-unit id="professionTalentTrees.talentExportResult" datatype="html"><source>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</source></trans-unit>
     </body>
   </file>
 </xliff>

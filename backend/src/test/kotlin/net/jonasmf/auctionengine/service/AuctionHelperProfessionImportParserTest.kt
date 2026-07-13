@@ -64,12 +64,10 @@ class AuctionHelperProfessionImportParserTest {
     }
 
     @Test
-    fun `bounds total table entries across nested tables`() {
-        val result = parser.parse(nestedTableEntryLimitFixture().toByteArray())
+    fun `parses high volume SavedVariables without materializing ignored tables`() {
+        val result = parser.parse(highVolumeFixture().toByteArray())
 
-        assertThat(result.characters).isEmpty()
-        assertThat(result.diagnostics.single().code).isEqualTo(AuctionHelperImportDiagnosticCode.MALFORMED_INPUT)
-        assertThat(result.diagnostics.single().detail).contains("Lua table entry limit exceeded")
+        assertThat(result.characters.single().name).isEqualTo("Snapshot")
     }
 
     @Test
@@ -80,13 +78,11 @@ class AuctionHelperProfessionImportParserTest {
         assertThat(result?.diagnostics?.single()?.code).isEqualTo(AuctionHelperImportDiagnosticCode.TALENT_DATA_MISSING)
     }
 
-    private fun nestedTableEntryLimitFixture(): String =
+    private fun highVolumeFixture(): String =
         buildString {
-            append("AuctionHelperProfessionsDB = { [\"first\"] = {")
-            repeat(50_000) { index -> append("[").append(index).append("] = true,") }
-            append("}, [\"second\"] = {")
-            repeat(50_000) { index -> append("[").append(index).append("] = true,") }
-            append("} }")
+            append("AuctionHelperProfessionsDB = {")
+            repeat(120_000) { index -> append("[\"ignored").append(index).append("\"] = true,") }
+            append("[\"characters\"] = { [\"snapshot\"] = { [\"meta\"] = { [\"name\"] = \"Snapshot\", [\"realm\"] = \"Draenor\" }, [\"professions\"] = {} } } }")
         }
 
     private val fixture =

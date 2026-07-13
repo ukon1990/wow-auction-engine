@@ -1,0 +1,72 @@
+type: object
+required: [imported, inspectedAt, sources, charactersFound, professionsFound, recipesFound, diagnostics]
+properties:
+  imported:
+    type: boolean
+    enum: [false]
+    description: Inspection only; this endpoint never persists imported data.
+  inspectedAt:
+    type: string
+    format: date-time
+  sources:
+    type: array
+    minItems: 2
+    maxItems: 2
+    items:
+      type: object
+      required: [fileName, status]
+      properties:
+        fileName:
+          type: string
+          enum: [AuctionHelper.lua, AuctionHelper_Professions.lua]
+        status:
+          type: string
+          enum: [FOUND, MISSING, INVALID]
+        contentHash:
+          type: string
+          nullable: true
+          description: SHA-256 when the source was found.
+  charactersFound:
+    type: integer
+    minimum: 0
+  professionsFound:
+    type: integer
+    minimum: 0
+  recipesFound:
+    type: integer
+    minimum: 0
+  talentExport:
+    type: object
+    nullable: true
+    required: [format, decodedBytes, validTalentScope]
+    properties:
+      format:
+        type: string
+      scope:
+        type: string
+        nullable: true
+      module:
+        type: string
+        nullable: true
+      characterKey:
+        type: string
+        nullable: true
+      professionIdentifier:
+        type: string
+        nullable: true
+      decodedBytes:
+        type: integer
+        minimum: 0
+      validTalentScope:
+        type: boolean
+  diagnostics:
+    type: array
+    items:
+      type: object
+      required: [code, detail]
+      properties:
+        code:
+          type: string
+          enum: [TALENT_DATA_MISSING, UNSUPPORTED_TALENT_EXPORT, INPUT_LIMIT_EXCEEDED, MALFORMED_INPUT]
+        detail:
+          type: string

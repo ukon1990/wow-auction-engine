@@ -2288,18 +2288,18 @@
       <trans-unit id="professionProfiles.manageTalentTrees" datatype="html"><source>Manage profession talent trees</source><target>Manage profession talent trees</target></trans-unit>
       <trans-unit id="professionTalentTrees.title" datatype="html"><source>Profession talent trees</source><target>Profession talent trees</target></trans-unit>
       <trans-unit id="professionTalentTrees.eyebrow" datatype="html"><source>Admin</source><target>Admin</target></trans-unit>
-      <trans-unit id="professionTalentTrees.uploadTitle" datatype="html"><source>Inspect an AuctionHelper export</source><target>Inspect an AuctionHelper export</target></trans-unit>
-      <trans-unit id="professionTalentTrees.uploadHint" datatype="html"><source>Upload AuctionHelper_Professions.lua to inspect its character, profession, and recipe data.</source><target>Upload AuctionHelper_Professions.lua to inspect its character, profession, and recipe data.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.uploadTitle" datatype="html"><source>Inspect AuctionHelper SavedVariables</source><target>Inspect AuctionHelper SavedVariables</target></trans-unit>
+      <trans-unit id="professionTalentTrees.uploadHint" datatype="html"><source>Select your SavedVariables folder. We find AuctionHelper.lua and AuctionHelper_Professions.lua, then ignore everything else.</source><target>Select your SavedVariables folder. We find AuctionHelper.lua and AuctionHelper_Professions.lua, then ignore everything else.</target></trans-unit>
       <trans-unit id="professionTalentTrees.destructiveTitle" datatype="html"><source>Replacing talent-tree definitions is destructive</source><target>Replacing talent-tree definitions is destructive</target></trans-unit>
-      <trans-unit id="professionTalentTrees.destructiveHint" datatype="html"><source>A versioned tree-definition import replaces shared definitions and clears profile references. This Lua inspection does not modify definitions because AuctionHelper exports do not contain specialization ranks.</source><target>A versioned tree-definition import replaces shared definitions and clears profile references. This Lua inspection does not modify definitions because AuctionHelper exports do not contain specialization ranks.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.destructiveHint" datatype="html"><source>This inspection only reports the available SavedVariables data. It does not import or replace shared talent-tree definitions.</source><target>This inspection only reports the available SavedVariables data. It does not import or replace shared talent-tree definitions.</target></trans-unit>
       <trans-unit id="professionTalentTrees.file" datatype="html"><source>AuctionHelper Lua file</source><target>AuctionHelper Lua file</target></trans-unit>
       <trans-unit id="professionTalentTrees.selectedFile" datatype="html"><source>Selected: {$INTERPOLATION} ({$INTERPOLATION_1})</source><target>Selected: {$INTERPOLATION} ({$INTERPOLATION_1})</target></trans-unit>
-      <trans-unit id="professionTalentTrees.inspect" datatype="html"><source>Inspect file</source><target>Inspect file</target></trans-unit>
+      <trans-unit id="professionTalentTrees.inspect" datatype="html"><source>Inspect SavedVariables</source><target>Inspect SavedVariables</target></trans-unit>
       <trans-unit id="professionTalentTrees.inspecting" datatype="html"><source>Inspecting…</source><target>Inspecting…</target></trans-unit>
       <trans-unit id="professionTalentTrees.error.fileType" datatype="html"><source>Choose an AuctionHelper .lua file.</source><target>Choose an AuctionHelper .lua file.</target></trans-unit>
-      <trans-unit id="professionTalentTrees.error.fileSize" datatype="html"><source>Choose a file smaller than 64 MiB.</source><target>Choose a file smaller than 64 MiB.</target></trans-unit>
-      <trans-unit id="professionTalentTrees.error.fileRequired" datatype="html"><source>Choose a Lua file first.</source><target>Choose a Lua file first.</target></trans-unit>
-      <trans-unit id="professionTalentTrees.error.inspect" datatype="html"><source>Unable to inspect this Lua file. Try again with AuctionHelper_Professions.lua.</source><target>Unable to inspect this Lua file. Try again with AuctionHelper_Professions.lua.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.fileSize" datatype="html"><source>Choose files smaller than 64 MiB.</source><target>Choose files smaller than 64 MiB.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.fileRequired" datatype="html"><source>Choose the SavedVariables folder or at least one recognized file first.</source><target>Choose the SavedVariables folder or at least one recognized file first.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.inspect" datatype="html"><source>Unable to inspect these SavedVariables files. Try again with AuctionHelper.lua and AuctionHelper_Professions.lua.</source><target>Unable to inspect these SavedVariables files. Try again with AuctionHelper.lua and AuctionHelper_Professions.lua.</target></trans-unit>
       <trans-unit id="professionTalentTrees.resultTitle" datatype="html"><source>Inspection result</source><target>Inspection result</target></trans-unit>
       <trans-unit id="professionTalentTrees.characters" datatype="html"><source>Characters</source><target>Characters</target></trans-unit>
       <trans-unit id="professionTalentTrees.professions" datatype="html"><source>Professions</source><target>Professions</target></trans-unit>
@@ -2307,6 +2307,24 @@
       <trans-unit id="route.admin.professionTalentTrees" datatype="html"><source>Profession talent trees</source><target>Profession talent trees</target></trans-unit>
 +      <trans-unit id="professionProfiles.importedProfessionsAria" datatype="html"><source>Imported professions</source><target>Imported professions</target></trans-unit>
       <trans-unit id="professionTalentTrees.importDiagnosticsAria" datatype="html"><source>Import diagnostics</source><target>Import diagnostics</target></trans-unit>
+      <trans-unit id="professionTalentTrees.privacyHint" datatype="html"><source>Files are read only to inspect the two selected AuctionHelper SavedVariables files. Other files in the folder are not uploaded.</source><target>Files are read only to inspect the two selected AuctionHelper SavedVariables files. Other files in the folder are not uploaded.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.folder" datatype="html"><source>SavedVariables folder</source><target>SavedVariables folder</target></trans-unit>
+      <trans-unit id="professionTalentTrees.folderHint" datatype="html"><source>Choose the SavedVariables directory itself. Only the two required filenames are selected.</source><target>Choose the SavedVariables directory itself. Only the two required filenames are selected.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.fallbackTitle" datatype="html"><source>Can’t select a folder?</source><target>Can’t select a folder?</target></trans-unit>
+      <trans-unit id="professionTalentTrees.fallbackHint" datatype="html"><source>Choose the two files individually instead.</source><target>Choose the two files individually instead.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.auctionHelperFile" datatype="html"><source>AuctionHelper.lua</source><target>AuctionHelper.lua</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professionsFile" datatype="html"><source>AuctionHelper_Professions.lua</source><target>AuctionHelper_Professions.lua</target></trans-unit>
+      <trans-unit id="professionTalentTrees.detectedFiles" datatype="html"><source>Detected files</source><target>Detected files</target></trans-unit>
+      <trans-unit id="professionTalentTrees.fileFound" datatype="html"><source>Found: {$INTERPOLATION} ({$INTERPOLATION_1})</source><target>Found: {$INTERPOLATION} ({$INTERPOLATION_1})</target></trans-unit>
+      <trans-unit id="professionTalentTrees.fileMissingAuctionHelper" datatype="html"><source>Not found: AuctionHelper.lua</source><target>Not found: AuctionHelper.lua</target></trans-unit>
+      <trans-unit id="professionTalentTrees.fileMissingProfessions" datatype="html"><source>Not found: AuctionHelper_Professions.lua</source><target>Not found: AuctionHelper_Professions.lua</target></trans-unit>
+      <trans-unit id="professionTalentTrees.ignoredFiles" datatype="html"><source>{$INTERPOLATION} other file(s) ignored and will not be uploaded.</source><target>{$INTERPOLATION} other file(s) ignored and will not be uploaded.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.clearSelection" datatype="html"><source>Clear selection</source><target>Clear selection</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.duplicateFiles" datatype="html"><source>Choose only one copy of each required SavedVariables file.</source><target>Choose only one copy of each required SavedVariables file.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.sourceResults" datatype="html"><source>Source results</source><target>Source results</target></trans-unit>
+      <trans-unit id="professionTalentTrees.sourceStatus" datatype="html"><source>Status: {$INTERPOLATION}</source><target>Status: {$INTERPOLATION}</target></trans-unit>
+      <trans-unit id="professionTalentTrees.talentExportResult" datatype="html"><source>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</source><target>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.totalFileSize" datatype="html"><source>Choose SavedVariables files smaller than 128 MiB in total.</source><target>Choose SavedVariables files smaller than 128 MiB in total.</target></trans-unit>
     </body>
   </file>
 </xliff>

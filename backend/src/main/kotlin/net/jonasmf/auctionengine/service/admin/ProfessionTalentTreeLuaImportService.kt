@@ -19,7 +19,7 @@ class ProfessionTalentTreeLuaImportService(
      * required by the JSON import contract, so it is always returned as a diagnostic result.
      */
     fun inspect(input: ByteArray): AuctionHelperTalentTreeLuaImportResult {
-        val import = parser.missingTalentDataDiagnostic(input) ?: parser.parse(input)
+        val import = parser.parse(input)
         return AuctionHelperTalentTreeLuaImportResult(
             contentHash = import.contentHash,
             importedAt = import.importedAt,

@@ -26,6 +26,9 @@ import net.jonasmf.auctionengine.generated.model.AdminSqlResult
 import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.AuctionHelperTalentTreeLuaImportResult
 import net.jonasmf.auctionengine.generated.model.AuctionHelperTalentTreeLuaImportResultDiagnosticsInner
+import net.jonasmf.auctionengine.generated.model.AuctionHelperSavedVariablesInspection
+import net.jonasmf.auctionengine.generated.model.AuctionHelperSavedVariablesInspectionSourcesInner
+import net.jonasmf.auctionengine.generated.model.AuctionHelperSavedVariablesInspectionTalentExport
 import net.jonasmf.auctionengine.generated.model.ProfessionTalentTreeImportRequest
 import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
@@ -37,6 +40,7 @@ import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
 import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
 import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeLuaImportService
+import net.jonasmf.auctionengine.service.admin.AuctionHelperSavedVariablesInspectionService
 import net.jonasmf.auctionengine.service.MAX_AUCTION_HELPER_IMPORT_BYTES
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.springframework.http.HttpStatus
@@ -58,6 +62,7 @@ class AdminController(
     private val adminRecipeService: AdminRecipeService,
     private val professionTalentTreeImportService: ProfessionTalentTreeImportService,
     private val professionTalentTreeLuaImportService: ProfessionTalentTreeLuaImportService,
+    private val auctionHelperSavedVariablesInspectionService: AuctionHelperSavedVariablesInspectionService,
 ) : AdminApi {
     private val objectMapper = jacksonObjectMapper()
     @PreAuthorize("hasAuthority('admin')")
@@ -148,6 +153,12 @@ class AdminController(
                 professionTalentTreeLuaImportService.inspect(file.bytes)
             }).toApiResult(),
         )
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun inspectAuctionHelperSavedVariables(
+        files: Array<MultipartFile>,
+    ): ResponseEntity<AuctionHelperSavedVariablesInspection> =
+        ResponseEntity.ok(auctionHelperSavedVariablesInspectionService.inspect(files.toList()).toApiResult())
 
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getAdminJob(id: Long): ResponseEntity<AdminJob> =
@@ -304,4 +315,37 @@ private fun net.jonasmf.auctionengine.domain.profession.AuctionHelperTalentTreeL
                     detail = diagnostic.detail,
                 )
             },
+    )
+
+private fun net.jonasmf.auctionengine.domain.profession.AuctionHelperSavedVariablesInspection.toApiResult() =
+    AuctionHelperSavedVariablesInspection(
+        imported = imported,
+        inspectedAt = inspectedAt.atOffset(java.time.ZoneOffset.UTC),
+        sources = sources.map { source ->
+            AuctionHelperSavedVariablesInspectionSourcesInner(
+                fileName = AuctionHelperSavedVariablesInspectionSourcesInner.FileName.forValue(source.fileName),
+                status = AuctionHelperSavedVariablesInspectionSourcesInner.Status.valueOf(source.status.name),
+                contentHash = source.contentHash,
+            )
+        },
+        charactersFound = charactersFound,
+        professionsFound = professionsFound,
+        recipesFound = recipesFound,
+        diagnostics = diagnostics.map { diagnostic ->
+            AuctionHelperTalentTreeLuaImportResultDiagnosticsInner(
+                code = AuctionHelperTalentTreeLuaImportResultDiagnosticsInner.Code.valueOf(diagnostic.code.name),
+                detail = diagnostic.detail,
+            )
+        },
+        talentExport = talentExport?.let { export ->
+            AuctionHelperSavedVariablesInspectionTalentExport(
+                format = export.format,
+                decodedBytes = export.decodedBytes,
+                validTalentScope = export.validTalentScope,
+                scope = export.scope,
+                module = export.module,
+                characterKey = export.characterKey,
+                professionIdentifier = export.professionIdentifier,
+            )
+        },
     )

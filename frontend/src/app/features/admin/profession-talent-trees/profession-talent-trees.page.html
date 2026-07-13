@@ -11,12 +11,23 @@
         class="font-cinzel text-2xl font-bold text-primary-container"
         i18n="@@professionTalentTrees.uploadTitle"
       >
-        Inspect an AuctionHelper export
+        Inspect AuctionHelper SavedVariables
       </h1>
       <p class="mt-1 text-sm text-outline" i18n="@@professionTalentTrees.uploadHint">
-        Upload AuctionHelper_Professions.lua to inspect its character, profession, and recipe data.
+        Select your SavedVariables folder. We find AuctionHelper.lua and
+        AuctionHelper_Professions.lua, then ignore everything else.
       </p>
     </header>
+
+    <div
+      class="rounded-lg border border-white/10 bg-surface-container-highest p-4 text-sm text-outline"
+      role="note"
+    >
+      <p i18n="@@professionTalentTrees.privacyHint">
+        Files are read only to inspect the two selected AuctionHelper SavedVariables files. Other
+        files in the folder are not uploaded.
+      </p>
+    </div>
 
     <div
       class="rounded-lg border border-error/30 bg-error/10 p-4 text-sm text-on-surface"
@@ -26,42 +37,138 @@
         Replacing talent-tree definitions is destructive
       </p>
       <p class="mt-1 text-outline" i18n="@@professionTalentTrees.destructiveHint">
-        A versioned tree-definition import replaces shared definitions and clears profile
-        references. This Lua inspection does not modify definitions because AuctionHelper exports do
-        not contain specialization ranks.
+        This inspection only reports the available SavedVariables data. It does not import or
+        replace shared talent-tree definitions.
       </p>
     </div>
 
-    <div class="grid gap-3 rounded-lg border border-white/10 bg-surface-container-highest p-5">
-      <label class="grid gap-2 text-sm font-semibold text-on-surface" for="talent-tree-lua-file">
-        <span i18n="@@professionTalentTrees.file">AuctionHelper Lua file</span>
+    <div class="grid gap-5 rounded-lg border border-white/10 bg-surface-container-highest p-5">
+      <div class="grid gap-2">
+        <label
+          class="text-sm font-semibold text-on-surface"
+          for="talent-tree-saved-variables-folder"
+          i18n="@@professionTalentTrees.folder"
+        >
+          SavedVariables folder
+        </label>
         <input
-          id="talent-tree-lua-file"
+          #folderInput
+          id="talent-tree-saved-variables-folder"
           type="file"
-          accept=".lua,text/plain"
+          multiple
+          [attr.webkitdirectory]="''"
+          [attr.directory]="''"
           class="block w-full rounded-md border border-white/20 bg-surface px-3 py-2 text-sm text-on-surface file:mr-4 file:rounded file:border-0 file:bg-primary file:px-3 file:py-2 file:font-semibold file:text-on-primary"
-          (change)="onFileSelected($event)"
+          (change)="onFolderSelected($event)"
         />
-      </label>
-      @if (file(); as selectedFile) {
-        <p class="text-sm text-outline" role="status">
-          <ng-container i18n="@@professionTalentTrees.selectedFile"
-            >Selected: {{ selectedFile.name }} ({{ fileSize(selectedFile) }})</ng-container
-          >
+        <p class="text-sm text-outline" i18n="@@professionTalentTrees.folderHint">
+          Choose the SavedVariables directory itself. Only the two required filenames are selected.
         </p>
-      }
-      <button
-        type="button"
-        class="min-h-11 justify-self-start rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
-        [disabled]="!file() || importing()"
-        (click)="inspectUpload()"
+      </div>
+
+      <fieldset class="grid gap-3 border-t border-white/10 pt-5">
+        <legend
+          class="px-0 text-sm font-semibold text-on-surface"
+          i18n="@@professionTalentTrees.fallbackTitle"
+        >
+          Can’t select a folder?
+        </legend>
+        <p class="text-sm text-outline" i18n="@@professionTalentTrees.fallbackHint">
+          Choose the two files individually instead.
+        </p>
+        <label class="grid gap-2 text-sm text-on-surface" for="talent-tree-auction-helper-file">
+          <span i18n="@@professionTalentTrees.auctionHelperFile">AuctionHelper.lua</span>
+          <input
+            #auctionHelperInput
+            id="talent-tree-auction-helper-file"
+            type="file"
+            accept=".lua,text/plain"
+            class="block w-full rounded-md border border-white/20 bg-surface px-3 py-2 text-sm text-on-surface file:mr-4 file:rounded file:border-0 file:bg-primary file:px-3 file:py-2 file:font-semibold file:text-on-primary"
+            (change)="onFallbackFileSelected('auctionHelper', $event)"
+          />
+        </label>
+        <label class="grid gap-2 text-sm text-on-surface" for="talent-tree-professions-file">
+          <span i18n="@@professionTalentTrees.professionsFile">AuctionHelper_Professions.lua</span>
+          <input
+            #professionsInput
+            id="talent-tree-professions-file"
+            type="file"
+            accept=".lua,text/plain"
+            class="block w-full rounded-md border border-white/20 bg-surface px-3 py-2 text-sm text-on-surface file:mr-4 file:rounded file:border-0 file:bg-primary file:px-3 file:py-2 file:font-semibold file:text-on-primary"
+            (change)="onFallbackFileSelected('professions', $event)"
+          />
+        </label>
+      </fieldset>
+
+      <section
+        class="grid gap-2 text-sm"
+        aria-live="polite"
+        aria-labelledby="saved-variables-files-title"
       >
-        @if (importing()) {
-          <ng-container i18n="@@professionTalentTrees.inspecting">Inspecting…</ng-container>
-        } @else {
-          <ng-container i18n="@@professionTalentTrees.inspect">Inspect file</ng-container>
+        <h2
+          id="saved-variables-files-title"
+          class="font-semibold text-on-surface"
+          i18n="@@professionTalentTrees.detectedFiles"
+        >
+          Detected files
+        </h2>
+        <p
+          [class.text-primary]="files().auctionHelper"
+          [class.text-outline]="!files().auctionHelper"
+        >
+          @if (files().auctionHelper; as file) {
+            <ng-container i18n="@@professionTalentTrees.fileFound"
+              >Found: {{ file.name }} ({{ fileSize(file) }})</ng-container
+            >
+          } @else {
+            <ng-container i18n="@@professionTalentTrees.fileMissingAuctionHelper"
+              >Not found: AuctionHelper.lua</ng-container
+            >
+          }
+        </p>
+        <p [class.text-primary]="files().professions" [class.text-outline]="!files().professions">
+          @if (files().professions; as file) {
+            <ng-container i18n="@@professionTalentTrees.fileFound"
+              >Found: {{ file.name }} ({{ fileSize(file) }})</ng-container
+            >
+          } @else {
+            <ng-container i18n="@@professionTalentTrees.fileMissingProfessions"
+              >Not found: AuctionHelper_Professions.lua</ng-container
+            >
+          }
+        </p>
+        @if (files().ignoredCount > 0) {
+          <p class="text-outline" i18n="@@professionTalentTrees.ignoredFiles">
+            {{ files().ignoredCount }} other file(s) ignored and will not be uploaded.
+          </p>
         }
-      </button>
+      </section>
+
+      <div class="flex flex-wrap gap-3">
+        <button
+          type="button"
+          class="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+          [disabled]="!hasSelection() || importing()"
+          (click)="inspectUpload()"
+        >
+          @if (importing()) {
+            <ng-container i18n="@@professionTalentTrees.inspecting">Inspecting…</ng-container>
+          } @else {
+            <ng-container i18n="@@professionTalentTrees.inspect"
+              >Inspect SavedVariables</ng-container
+            >
+          }
+        </button>
+        <button
+          type="button"
+          class="min-h-11 rounded-md border border-white/20 px-4 font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+          [disabled]="!hasSelection() || importing()"
+          (click)="clearSelection()"
+          i18n="@@professionTalentTrees.clearSelection"
+        >
+          Clear selection
+        </button>
+      </div>
     </div>
 
     @if (error()) {
@@ -99,6 +206,34 @@
             <dd class="font-semibold">{{ importResult.recipesFound }}</dd>
           </div>
         </dl>
+        <section class="grid gap-2 text-sm" aria-labelledby="source-result-title">
+          <h3
+            id="source-result-title"
+            class="font-semibold text-on-surface"
+            i18n="@@professionTalentTrees.sourceResults"
+          >
+            Source results
+          </h3>
+          <ul class="grid gap-2">
+            @for (source of importResult.sources; track source.fileName) {
+              <li class="rounded-md border border-white/10 bg-surface p-3">
+                <p class="font-semibold text-on-surface">{{ source.fileName }}</p>
+                <p class="mt-1 text-outline">
+                  <ng-container i18n="@@professionTalentTrees.sourceStatus"
+                    >Status: {{ source.status }}</ng-container
+                  >
+                </p>
+              </li>
+            }
+          </ul>
+        </section>
+        @if (importResult.talentExport; as talentExport) {
+          <p class="rounded-md border border-white/10 bg-surface p-3 text-sm text-outline">
+            <ng-container i18n="@@professionTalentTrees.talentExportResult">
+              Talent export: {{ talentExport.format }} · scope {{ talentExport.scope ?? 'unknown' }}
+            </ng-container>
+          </p>
+        }
         <ul
           class="grid gap-2"
           aria-label="Import diagnostics"
