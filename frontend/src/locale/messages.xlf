@@ -2717,7 +2717,6 @@
       <trans-unit id="professionTalentTrees.inspect" datatype="html"><source>Process files locally</source></trans-unit>
       <trans-unit id="professionTalentTrees.inspecting" datatype="html"><source>Processing locally…</source></trans-unit>
       <trans-unit id="professionTalentTrees.error.fileType" datatype="html"><source>Choose an AuctionHelper .lua file.</source></trans-unit>
-      <trans-unit id="professionTalentTrees.error.fileSize" datatype="html"><source>Choose files smaller than 64 MiB.</source></trans-unit>
       <trans-unit id="professionTalentTrees.error.fileRequired" datatype="html"><source>Choose a folder containing AuctionHelper_Professions.lua first.</source></trans-unit>
       <trans-unit id="professionTalentTrees.error.inspect" datatype="html"><source>Unable to process these SavedVariables files locally. Check the region and choose a valid AuctionHelper_Professions.lua file, then try again.</source></trans-unit>
       <trans-unit id="professionTalentTrees.diagnostic.craftedItemMissing" datatype="html"><source>One or more item-producing recipes do not include a crafted item ID.</source></trans-unit>
@@ -2774,7 +2773,6 @@
       <trans-unit id="professionTalentTrees.ignoredFiles" datatype="html"><source>{$INTERPOLATION} other file(s) ignored and will not be read.</source></trans-unit>
       <trans-unit id="professionTalentTrees.clearSelection" datatype="html"><source>Clear selection</source></trans-unit>
       <trans-unit id="professionTalentTrees.error.duplicateFiles" datatype="html"><source>Choose only one copy of each required SavedVariables file.</source></trans-unit>
-      <trans-unit id="professionTalentTrees.error.totalFileSize" datatype="html"><source>Choose SavedVariables files smaller than 128 MiB in total.</source></trans-unit>
       <trans-unit id="professionTalentTrees.sourceResults" datatype="html"><source>Source results</source></trans-unit>
       <trans-unit id="professionTalentTrees.sourceStatus" datatype="html"><source>Status: {$INTERPOLATION}</source></trans-unit>
       <trans-unit id="professionTalentTrees.talentExportResult" datatype="html"><source>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</source></trans-unit>

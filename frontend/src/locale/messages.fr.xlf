@@ -2297,7 +2297,6 @@
       <trans-unit id="professionTalentTrees.inspect" datatype="html"><source>Process files locally</source><target>Process files locally</target></trans-unit>
       <trans-unit id="professionTalentTrees.inspecting" datatype="html"><source>Processing locally…</source><target>Processing locally…</target></trans-unit>
       <trans-unit id="professionTalentTrees.error.fileType" datatype="html"><source>Choose an AuctionHelper .lua file.</source><target>Choose an AuctionHelper .lua file.</target></trans-unit>
-      <trans-unit id="professionTalentTrees.error.fileSize" datatype="html"><source>Choose files smaller than 64 MiB.</source><target>Choose files smaller than 64 MiB.</target></trans-unit>
       <trans-unit id="professionTalentTrees.error.fileRequired" datatype="html"><source>Choose a folder containing AuctionHelper_Professions.lua first.</source><target>Choose a folder containing AuctionHelper_Professions.lua first.</target></trans-unit>
       <trans-unit id="professionTalentTrees.error.inspect" datatype="html"><source>Unable to process these SavedVariables files locally. Check the region and choose a valid AuctionHelper_Professions.lua file, then try again.</source><target>Unable to process these SavedVariables files locally. Check the region and choose a valid AuctionHelper_Professions.lua file, then try again.</target></trans-unit>
       <trans-unit id="professionTalentTrees.diagnostic.craftedItemMissing" datatype="html"><source>One or more item-producing recipes do not include a crafted item ID.</source><target>One or more item-producing recipes do not include a crafted item ID.</target></trans-unit>
@@ -2357,7 +2356,6 @@
       <trans-unit id="professionTalentTrees.sourceResults" datatype="html"><source>Source results</source><target>Source results</target></trans-unit>
       <trans-unit id="professionTalentTrees.sourceStatus" datatype="html"><source>Status: {$INTERPOLATION}</source><target>Status: {$INTERPOLATION}</target></trans-unit>
       <trans-unit id="professionTalentTrees.talentExportResult" datatype="html"><source>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</source><target>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</target></trans-unit>
-      <trans-unit id="professionTalentTrees.error.totalFileSize" datatype="html"><source>Choose SavedVariables files smaller than 128 MiB in total.</source><target>Choose SavedVariables files smaller than 128 MiB in total.</target></trans-unit>
       <trans-unit id="professionTalentTrees.professionSection.aria" datatype="html"><source>Profession data</source><target>Données de métier</target></trans-unit>
       <trans-unit id="professionTalentTrees.professionSection.recipes" datatype="html"><source>Recipes</source><target>Recettes</target></trans-unit>
       <trans-unit id="professionTalentTrees.professionSection.skillTree" datatype="html"><source>Skill tree</source><target>Arbre de compétences</target></trans-unit>

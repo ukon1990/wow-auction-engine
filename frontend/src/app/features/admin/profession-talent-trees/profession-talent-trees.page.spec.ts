@@ -1,6 +1,4 @@
 import {
-  MAX_FILE_SIZE_BYTES,
-  MAX_TOTAL_FILE_SIZE_BYTES,
   ProfessionTalentTreesPage,
   canProcessSelection,
   buildProfessionRecipeOverview,
@@ -334,19 +332,19 @@ describe('SavedVariables folder selection', () => {
     expect(selectedFilesForProcessing(selection.files)).toEqual([]);
   });
 
-  it('rejects files that exceed the per-file upload limit', () => {
+  it('accepts large SavedVariables files for local processing', () => {
     const selection = selectSavedVariablesFiles([
-      file('AuctionHelper_Professions.lua', MAX_FILE_SIZE_BYTES + 1),
+      file('AuctionHelper_Professions.lua', 256 * 1024 * 1024),
     ]);
 
-    expect(selection.error).toBe('fileSize');
-    expect(selectedFilesForProcessing(selection.files)).toEqual([]);
+    expect(selection.error).toBeNull();
+    expect(selectedFilesForProcessing(selection.files)).toHaveLength(1);
   });
 
-  it('allows two files at the combined upload limit', () => {
+  it('accepts large files without a combined size cap', () => {
     const selection = selectSavedVariablesFiles([
-      file('AuctionHelper.lua', MAX_TOTAL_FILE_SIZE_BYTES / 2),
-      file('AuctionHelper_Professions.lua', MAX_TOTAL_FILE_SIZE_BYTES / 2),
+      file('AuctionHelper.lua', 256 * 1024 * 1024),
+      file('AuctionHelper_Professions.lua', 256 * 1024 * 1024),
     ]);
 
     expect(selection.error).toBeNull();

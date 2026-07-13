@@ -14,9 +14,6 @@ import {
 } from './auction-helper-lua-adapters';
 import { decodeAuctionHelperTalentExport } from './auction-helper-talent-decoder';
 
-export const MAX_AUCTION_HELPER_FILE_BYTES = 64 * 1024 * 1024;
-export const MAX_AUCTION_HELPER_TOTAL_BYTES = 128 * 1024 * 1024;
-
 export type AuctionHelperLocalPreview = Readonly<{
   payload: NormalizedAuctionHelperProfessionData;
   diagnostics: readonly ProcessingDiagnostic[];
@@ -33,12 +30,6 @@ export async function processAuctionHelperFiles(
     throw new Error('AuctionHelper_Professions.lua is required to create a profession import.');
   }
   if (!region.trim()) throw new Error('Region is required.');
-  if (files.some((file) => file.size > MAX_AUCTION_HELPER_FILE_BYTES)) {
-    throw new Error('A selected file exceeds the 64 MiB local processing limit.');
-  }
-  if (files.reduce((total, file) => total + file.size, 0) > MAX_AUCTION_HELPER_TOTAL_BYTES) {
-    throw new Error('Selected files exceed the 128 MiB combined local processing limit.');
-  }
   const processed: Array<{ file: File; source: string; sha256: string }> = [];
   for (const file of files) {
     const bytes = await file.arrayBuffer();

@@ -7,13 +7,12 @@ export type LuaAssignments = Readonly<Record<string, LuaValue>>;
 export type LuaProcessingLimits = Readonly<{
   maxDepth: number;
   maxNodes: number;
-  maxSourceCharacters: number;
+  maxSourceCharacters?: number;
 }>;
 
 const DEFAULT_LIMITS: LuaProcessingLimits = {
   maxDepth: 64,
   maxNodes: 8_000_000,
-  maxSourceCharacters: 64 * 1024 * 1024,
 };
 
 type AstNode = {
@@ -45,7 +44,7 @@ export function processLuaAssignments(
   source: string,
   limits: LuaProcessingLimits = DEFAULT_LIMITS,
 ): LuaAssignments {
-  if (source.length > limits.maxSourceCharacters) {
+  if (limits.maxSourceCharacters !== undefined && source.length > limits.maxSourceCharacters) {
     throw new LuaProcessingError('INPUT_LIMIT_EXCEEDED', 'Lua source exceeds the local limit.');
   }
 

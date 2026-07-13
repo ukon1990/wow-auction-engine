@@ -22,8 +22,6 @@ import {
   ProfessionRecipeRow,
 } from './profession-recipe-table.columns';
 
-export const MAX_FILE_SIZE_BYTES = 64 * 1024 * 1024;
-export const MAX_TOTAL_FILE_SIZE_BYTES = 128 * 1024 * 1024;
 const AUCTION_HELPER_FILE = 'auctionhelper.lua';
 const PROFESSIONS_FILE = 'auctionhelper_professions.lua';
 const RECIPE_PAGE_SIZE = 50;
@@ -35,8 +33,7 @@ export type SavedVariablesFiles = {
 };
 
 type SavedVariablesSelection =
-  | { files: SavedVariablesFiles; error: null }
-  | { files: SavedVariablesFiles; error: 'duplicate' | 'fileSize' | 'totalFileSize' };
+  { files: SavedVariablesFiles; error: null } | { files: SavedVariablesFiles; error: 'duplicate' };
 
 export type ProfessionRecipeOverview = Readonly<{
   professionId: number;
@@ -309,18 +306,6 @@ export class ProfessionTalentTreesPage {
       );
       return false;
     }
-    if (selection.error === 'fileSize') {
-      this.error.set(
-        $localize`:@@professionTalentTrees.error.fileSize:Choose files smaller than 64 MiB.`,
-      );
-      return false;
-    }
-    if (selection.error === 'totalFileSize') {
-      this.error.set(
-        $localize`:@@professionTalentTrees.error.totalFileSize:Choose SavedVariables files smaller than 128 MiB in total.`,
-      );
-      return false;
-    }
     this.error.set(null);
     return canProcessSelection(selection.files, this.region());
   }
@@ -338,16 +323,6 @@ export function selectSavedVariablesFiles(files: Iterable<File | null>): SavedVa
 
   if (auctionHelper.length > 1 || professions.length > 1) {
     return { files: emptySelection(), error: 'duplicate' };
-  }
-
-  const selectedFiles = [auctionHelper[0], professions[0]].filter(
-    (file): file is File => file !== undefined,
-  );
-  if (selectedFiles.some((file) => file.size > MAX_FILE_SIZE_BYTES)) {
-    return { files: emptySelection(), error: 'fileSize' };
-  }
-  if (selectedFiles.reduce((total, file) => total + file.size, 0) > MAX_TOTAL_FILE_SIZE_BYTES) {
-    return { files: emptySelection(), error: 'totalFileSize' };
   }
 
   return {
