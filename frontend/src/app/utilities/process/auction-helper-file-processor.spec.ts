@@ -62,4 +62,22 @@ describe('processAuctionHelperFiles', () => {
     expect(recipe?.reagentSlots).toEqual([]);
     expect(recipe?.maxQualityRequiredReagents).toEqual([]);
   });
+
+  it('omits addon quality zero from unranked reagents', async () => {
+    const sourceWithUnrankedReagent = professionsSource.replace(
+      '{ ["itemID"] = 210221, ["quality"] = 1 }',
+      '{ ["itemID"] = 210221, ["quality"] = 0 }',
+    );
+    const file = new File([sourceWithUnrankedReagent], 'AuctionHelper_Professions.lua');
+
+    const preview = await processAuctionHelperFiles([file], 'eu');
+    const recipe = preview.payload.characters[0]?.professions[0]?.recipes.find(
+      (candidate) => candidate.recipeId === 450216,
+    );
+    const unrankedReagent = recipe?.reagentSlots[0]?.reagents.find(
+      (reagent) => reagent.itemId === 210221,
+    );
+
+    expect(unrankedReagent).toEqual({ itemId: 210221, quantity: 3 });
+  });
 });

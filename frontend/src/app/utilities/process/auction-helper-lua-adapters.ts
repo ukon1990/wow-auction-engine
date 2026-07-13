@@ -174,7 +174,7 @@ function normalizeRecipe(
   const outputQualityItemIds = values(outputs['qualityVariants'])
     .map(record)
     .map((variant) => ({
-      quality: integer(variant['qualityIndex']) ?? integer(variant['quality']),
+      quality: craftingQuality(variant['qualityIndex']) ?? craftingQuality(variant['quality']),
       itemId: integer(variant['itemID']),
     }))
     .filter(
@@ -280,7 +280,7 @@ function normalizeReagents(
     .forEach((reagentValue) => {
       const reagent = record(reagentValue);
       const itemId = integer(reagent['itemID']);
-      const quality = integer(reagent['quality']) ?? integer(record(reagent['item'])['quality']);
+      const quality = craftingQuality(reagent['quality']);
       if (itemId !== null && quality !== null) qualityByItemId.set(itemId, quality);
     });
   values(schematic['reagentSlotSchematics']).forEach((slotValue, slotOffset) => {
@@ -291,7 +291,7 @@ function normalizeReagents(
       if (itemId === null) return;
       result.push({
         itemId,
-        quality: integer(reagent['quality']) ?? qualityByItemId.get(itemId) ?? null,
+        quality: craftingQuality(reagent['quality']) ?? qualityByItemId.get(itemId) ?? null,
         quantity: integer(reagent['quantityRequired']) ?? integer(slot['quantityRequired']),
         slotIndex: integer(slot['slotIndex']) ?? slotOffset + 1,
         dataSlotIndex: integer(slot['dataSlotIndex']),
@@ -331,6 +331,11 @@ function number(value: LuaValue | undefined): number | null {
 function integer(value: LuaValue | undefined): number | null {
   const result = number(value);
   return result !== null && Number.isInteger(result) ? result : null;
+}
+
+function craftingQuality(value: LuaValue | undefined): number | null {
+  const result = integer(value);
+  return result !== null && result >= 1 && result <= 10 ? result : null;
 }
 
 function boolean(value: LuaValue | undefined): boolean | null {
