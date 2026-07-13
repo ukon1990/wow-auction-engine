@@ -37,7 +37,7 @@ class NormalizedProfessionImportRepository(
                 payload = VALUES(payload)
             """.trimIndent(),
             contentHash,
-            payload.contractVersion,
+            payload.contractVersion.value,
             payload.source.addon.value,
             payload.source.addonVersion,
             payload.source.processorVersion,
