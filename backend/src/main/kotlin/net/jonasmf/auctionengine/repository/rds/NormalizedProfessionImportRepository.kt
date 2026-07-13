@@ -54,7 +54,8 @@ class NormalizedProfessionImportRepository(
                 """INSERT INTO user_character (owner_subject, region, realm_name, character_name, source_guid)
                     VALUES (?, ?, ?, ?, ?)
                     ON DUPLICATE KEY UPDATE region = VALUES(region), realm_name = VALUES(realm_name),
-                        character_name = VALUES(character_name), updated_at = CURRENT_TIMESTAMP""".trimIndent(),
+                        character_name = VALUES(character_name), source_guid = VALUES(source_guid),
+                        updated_at = CURRENT_TIMESTAMP""".trimIndent(),
                 ownerSubject,
                 character.region.lowercase(),
                 character.realm,
@@ -63,10 +64,13 @@ class NormalizedProfessionImportRepository(
             )
             val characterId =
                 jdbcTemplate.queryForObject(
-                    "SELECT id FROM user_character WHERE owner_subject = ? AND source_guid = ?",
+                    """SELECT id FROM user_character
+                        WHERE owner_subject = ? AND region = ? AND realm_name = ? AND character_name = ?""".trimIndent(),
                     Long::class.java,
                     ownerSubject,
-                    character.characterKey,
+                    character.region.lowercase(),
+                    character.realm,
+                    character.name,
                 )!!
             character.professions.forEach professionLoop@{ profession ->
                 if (!exists("profession", profession.professionId)) return@professionLoop

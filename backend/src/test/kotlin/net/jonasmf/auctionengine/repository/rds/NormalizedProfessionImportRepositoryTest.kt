@@ -61,6 +61,23 @@ class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
         assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM profession_skill_tree", Int::class.java)).isZero()
     }
 
+    @Test
+    fun `save attaches source guid to an existing character matched by location and name`() {
+        jdbcTemplate.update(
+            """INSERT INTO user_character (owner_subject, region, realm_name, character_name)
+                VALUES ('admin-subject', 'eu', 'Realm', 'Character')""".trimIndent(),
+        )
+        val existingId = jdbcTemplate.queryForObject("SELECT id FROM user_character", Long::class.java)
+        val character = NormalizedAuctionHelperCharacter("eu-realm-character", "Character", "Realm", "EU", emptyList())
+
+        repository.save(payload().copy(characters = listOf(character)), 0, 0, "admin-subject")
+
+        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM user_character", Int::class.java)).isEqualTo(1)
+        assertThat(jdbcTemplate.queryForMap("SELECT id, source_guid FROM user_character"))
+            .containsEntry("id", existingId)
+            .containsEntry("source_guid", "eu-realm-character")
+    }
+
     private fun payload() =
         NormalizedAuctionHelperProfessionData(
             contractVersion = NormalizedAuctionHelperProfessionData.ContractVersion._1,
