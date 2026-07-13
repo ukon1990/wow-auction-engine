@@ -75,6 +75,15 @@ class NormalizedAuctionHelperProfessionInspectionService(
         if (missingProfessionIds.isNotEmpty()) {
             badRequest("Profession IDs are missing from the catalog: ${missingProfessionIds.sorted().joinToString()}")
         }
+        val talentTrees = professions.flatMap { it.talents?.trees.orEmpty() }
+        val missingSkillLineIds = repository.missingSkillLineIds(talentTrees.map { it.skillLineId }.toSet())
+        if (missingSkillLineIds.isNotEmpty()) {
+            badRequest("Profession skill-line IDs are missing from the catalog: ${missingSkillLineIds.sorted().joinToString()}")
+        }
+        val missingExpansionIds = repository.missingExpansionIds(talentTrees.map { it.expansionId }.toSet())
+        if (missingExpansionIds.isNotEmpty()) {
+            badRequest("Expansion IDs are missing from the catalog: ${missingExpansionIds.sorted().joinToString()}")
+        }
 
         val diagnostics = linkedMapOf<NormalizedAuctionHelperProfessionDiagnostic.Code, DiagnosticAccumulator>()
         var recipesFound = 0
@@ -115,7 +124,7 @@ class NormalizedAuctionHelperProfessionInspectionService(
                 }
             }
             profession.talents?.let { talents ->
-                val nodes = talents.trees.flatMap { it.nodes }.associateBy { it.nodeId }
+                val nodes = talents.trees.flatMap { tree -> tree.tabs.flatMap { it.nodes } }.associateBy { it.nodeId }
                 talents.allocations.forEach { allocation ->
                     val node = nodes[allocation.nodeId]
                     if (node == null) {
@@ -164,7 +173,7 @@ private fun validateCollectionLimits(professions: List<NormalizedAuctionHelperPr
     if (professions.sumOf { profession -> profession.recipes.sumOf { it.maxQualityRequiredReagents.size } } > MAX_TOTAL_MAX_QUALITY_REAGENTS) {
         badRequest("Normalized payload exceeds the max-quality reagent association limit")
     }
-    if (professions.sumOf { profession -> profession.talents?.trees?.sumOf { it.nodes.size } ?: 0 } > MAX_TOTAL_TALENT_NODES) {
+    if (professions.sumOf { profession -> profession.talents?.trees?.sumOf { tree -> tree.tabs.sumOf { it.nodes.size } } ?: 0 } > MAX_TOTAL_TALENT_NODES) {
         badRequest("Normalized payload exceeds the talent node limit")
     }
     if (professions.sumOf { it.talents?.allocations?.size ?: 0 } > MAX_TOTAL_TALENT_ALLOCATIONS) {
@@ -181,9 +190,11 @@ private fun validateProfession(profession: NormalizedAuctionHelperProfession) {
         badRequest("Profession ${profession.professionId} skill level exceeds its maximum")
     }
     profession.talents?.trees?.forEach { tree ->
-        val nodeIds = tree.nodes.map { it.nodeId }
+        val tabIds = tree.tabs.map { it.tabId }
+        if (tabIds.distinct().size != tabIds.size) badRequest("Talent tab IDs must be unique within config ${tree.treeId}")
+        val nodeIds = tree.tabs.flatMap { it.nodes }.map { it.nodeId }
         if (nodeIds.distinct().size != nodeIds.size) badRequest("Talent node IDs must be unique within tree ${tree.treeId}")
-        tree.nodes.forEach { node ->
+        tree.tabs.flatMap { it.nodes }.forEach { node ->
             val entryIds = node.propertyEntries.map { it.entryId }
             if (entryIds.distinct().size != entryIds.size) badRequest("Talent entry IDs must be unique within node ${node.nodeId}")
         }

@@ -406,62 +406,71 @@
                           }
                           #{{ tree.treeId }}
                         </h4>
-                        <div class="grid gap-3 md:grid-cols-2">
-                          @for (node of tree.nodes; track node.nodeId) {
-                            <section
-                              class="rounded-md border border-white/10 bg-surface-container p-3"
-                            >
-                              <div class="flex flex-wrap items-center justify-between gap-2">
-                                <h5 class="font-semibold">
-                                  <span i18n="@@professionTalentTrees.skillTree.node">Node</span>
-                                  #{{ node.nodeId }}
-                                </h5>
-                                @if (node.maxRanks !== undefined) {
-                                  <span class="text-sm text-outline"
-                                    ><span i18n="@@professionTalentTrees.skillTree.maxRanks"
-                                      >Max ranks</span
-                                    >: {{ node.maxRanks }}</span
-                                  >
-                                }
-                              </div>
-                              <ul class="mt-2 grid gap-1 text-sm">
-                                @for (entry of node.entries; track entry.entryId) {
-                                  <li>
-                                    <span i18n="@@professionTalentTrees.skillTree.entry"
-                                      >Entry</span
-                                    >
-                                    #{{ entry.entryId }}
-                                    @if (entry.rankLimit !== undefined) {
-                                      ·
-                                      <span i18n="@@professionTalentTrees.skillTree.rankLimit"
-                                        >rank limit</span
+                        @for (tab of tree.tabs; track tab.tabId) {
+                          <section class="grid gap-3">
+                            <h5 class="font-semibold text-on-surface">
+                              {{ tab.name || '#' + tab.tabId }}
+                            </h5>
+                            <div class="grid gap-3 md:grid-cols-2">
+                              @for (node of tab.nodes; track node.nodeId) {
+                                <section
+                                  class="rounded-md border border-white/10 bg-surface-container p-3"
+                                >
+                                  <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <h5 class="font-semibold">
+                                      <span i18n="@@professionTalentTrees.skillTree.node"
+                                        >Node</span
                                       >
-                                      {{ entry.rankLimit }}
+                                      #{{ node.nodeId }}
+                                    </h5>
+                                    @if (node.maxRanks !== undefined) {
+                                      <span class="text-sm text-outline"
+                                        ><span i18n="@@professionTalentTrees.skillTree.maxRanks"
+                                          >Max ranks</span
+                                        >: {{ node.maxRanks }}</span
+                                      >
                                     }
-                                    @for (
-                                      allocation of talents.allocations;
-                                      track allocation.nodeId + ':' + allocation.entryId
-                                    ) {
-                                      @if (
-                                        allocation.nodeId === node.nodeId &&
-                                        allocation.entryId === entry.entryId
-                                      ) {
-                                        ·
-                                        <strong
-                                          ><span
-                                            i18n="@@professionTalentTrees.skillTree.currentRank"
-                                            >current rank</span
-                                          >
-                                          {{ allocation.rank }}</strong
+                                  </div>
+                                  <ul class="mt-2 grid gap-1 text-sm">
+                                    @for (entry of node.entries; track entry.entryId) {
+                                      <li>
+                                        <span i18n="@@professionTalentTrees.skillTree.entry"
+                                          >Entry</span
                                         >
-                                      }
+                                        #{{ entry.entryId }}
+                                        @if (entry.rankLimit !== undefined) {
+                                          ·
+                                          <span i18n="@@professionTalentTrees.skillTree.rankLimit"
+                                            >rank limit</span
+                                          >
+                                          {{ entry.rankLimit }}
+                                        }
+                                        @for (
+                                          allocation of talents.allocations;
+                                          track allocation.nodeId + ':' + allocation.entryId
+                                        ) {
+                                          @if (
+                                            allocation.nodeId === node.nodeId &&
+                                            allocation.entryId === entry.entryId
+                                          ) {
+                                            ·
+                                            <strong
+                                              ><span
+                                                i18n="@@professionTalentTrees.skillTree.currentRank"
+                                                >current rank</span
+                                              >
+                                              {{ allocation.rank }}</strong
+                                            >
+                                          }
+                                        }
+                                      </li>
                                     }
-                                  </li>
-                                }
-                              </ul>
-                            </section>
-                          }
-                        </div>
+                                  </ul>
+                                </section>
+                              }
+                            </div>
+                          </section>
+                        }
                       </article>
                     }
                   </div>

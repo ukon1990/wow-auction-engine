@@ -1,10 +1,12 @@
 type: object
 additionalProperties: false
-required: [treeId, nodes]
+required: [treeId, skillLineId, expansionId, tabs]
 properties:
-  treeId: { type: integer, minimum: 1 }
+  treeId: { type: integer, minimum: 1, description: C_Traits configuration ID for this expansion-tier specialization. }
+  skillLineId: { type: integer, minimum: 1, description: Expansion-tier profession skill line ID. }
+  expansionId: { type: integer, minimum: 1, description: Auction Engine expansion ID when authoritatively known. }
   name: { type: string, maxLength: 128 }
-  nodes:
+  tabs:
     type: array
-    maxItems: 1000
-    items: { $ref: ./normalized-auction-helper-talent-node.yml }
+    maxItems: 32
+    items: { $ref: ./normalized-auction-helper-talent-tab.yml }

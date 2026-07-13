@@ -4,6 +4,7 @@ required: [professionId, name, recipes]
 properties:
   professionId: { type: integer, minimum: 1 }
   skillLineId: { type: integer, minimum: 1 }
+  activeSkillLineId: { type: integer, minimum: 1, description: Expansion-tier skill line currently active for this character. }
   name: { type: string, minLength: 1, maxLength: 128 }
   skillLevel: { type: integer, minimum: 0 }
   maxSkillLevel: { type: integer, minimum: 0 }

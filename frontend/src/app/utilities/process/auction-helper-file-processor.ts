@@ -90,6 +90,9 @@ export async function processAuctionHelperFiles(
       professions: character.professions.map((profession) => ({
         professionId: profession.skillLineId,
         skillLineId: profession.skillLineId,
+        ...(profession.activeSkillLineId !== null
+          ? { activeSkillLineId: profession.activeSkillLineId }
+          : {}),
         name: profession.name ?? String(profession.skillLineId),
         ...(profession.skillLevel !== null ? { skillLevel: profession.skillLevel } : {}),
         recipes: profession.recipes.map(toApiRecipe),
@@ -227,13 +230,23 @@ function talentsForProfession(
     talents: {
       trees: profession.trees.map((tree) => ({
         treeId: tree.treeId,
+        skillLineId: tree.skillLineId,
+        expansionId: tree.expansionId,
         ...(tree.name ? { name: tree.name } : {}),
-        nodes: tree.nodes.map((node) => ({
-          nodeId: node.nodeId,
-          ...(node.maxRanks !== null ? { maxRanks: node.maxRanks } : {}),
-          entries: node.entries.map((entry) => ({
-            entryId: entry.entryId,
-            ...(entry.rankLimit !== null ? { rankLimit: entry.rankLimit } : {}),
+        tabs: tree.tabs.map((tab) => ({
+          tabId: tab.tabId,
+          ...(tab.name ? { name: tab.name } : {}),
+          ...(tab.description ? { description: tab.description } : {}),
+          nodes: tab.nodes.map((node) => ({
+            nodeId: node.nodeId,
+            ...(node.maxRanks !== null ? { maxRanks: node.maxRanks } : {}),
+            ...(node.requiredRank !== null ? { requiredRank: node.requiredRank } : {}),
+            ...(node.description ? { description: node.description } : {}),
+            entries: node.entries.map((entry) => ({
+              entryId: entry.entryId,
+              ...(entry.rankLimit !== null ? { rankLimit: entry.rankLimit } : {}),
+              ...(entry.description ? { description: entry.description } : {}),
+            })),
           })),
         })),
       })),

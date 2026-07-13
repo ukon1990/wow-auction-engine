@@ -22,11 +22,24 @@ export type DecodedProfessionTalents = Readonly<{
     name: string | null;
     trees: ReadonlyArray<{
       treeId: number;
+      skillLineId: number;
+      expansionId: number;
       name: string | null;
-      nodes: ReadonlyArray<{
-        nodeId: number;
-        maxRanks: number | null;
-        entries: ReadonlyArray<{ entryId: number; rankLimit: number | null }>;
+      tabs: ReadonlyArray<{
+        tabId: number;
+        name: string | null;
+        description: string | null;
+        nodes: ReadonlyArray<{
+          nodeId: number;
+          maxRanks: number | null;
+          requiredRank: number | null;
+          description: string | null;
+          entries: ReadonlyArray<{
+            entryId: number;
+            rankLimit: number | null;
+            description: string | null;
+          }>;
+        }>;
       }>;
     }>;
     allocations: ReadonlyArray<{ nodeId: number; entryId: number; rank: number }>;
@@ -109,20 +122,43 @@ function normalizeProfession(
   const profession = object(value);
   const skillLineId = integer(profession['skillLineID']);
   if (skillLineId === null) return null;
-  const specialization = object(profession['specializationTree']);
-  const tabs = collection(specialization['tabs']);
-  const trees = tabs
-    .map((tabValue) => {
+  const specializations = collection(profession['specializationTrees']);
+  const primary = object(profession['specializationTree']);
+  if (specializations.length === 0 && Object.keys(primary).length > 0)
+    specializations.push(primary);
+  const trees = specializations.flatMap((specializationValue) => {
+    const specialization = object(specializationValue);
+    const configId = integer(specialization['configID']);
+    const tierSkillLineId = integer(specialization['skillLineID']);
+    const expansionId = normalizedExpansionId(specialization);
+    if (configId === null || tierSkillLineId === null || expansionId === null) return [];
+    const tabs = collection(specialization['tabs']).flatMap((tabValue) => {
       const tab = object(tabValue);
-      return {
-        treeId: integer(tab['treeID']) ?? 0,
-        name: string(object(tab['tabInfo'])['name']),
-        nodes: collection(tab['nodes']).map(normalizeNode).filter(isPresent),
-      };
-    })
-    .filter((tree) => tree.treeId > 0);
-  const allocations = tabs.flatMap((tabValue) =>
-    collection(object(tabValue)['nodes']).map(allocationFromNode).filter(isPresent),
+      const tabId = integer(tab['treeID']);
+      if (tabId === null) return [];
+      return [
+        {
+          tabId,
+          name: string(object(tab['tabInfo'])['name']),
+          description: string(object(tab['tabInfo'])['description']),
+          nodes: collection(tab['nodes']).map(normalizeNode).filter(isPresent),
+        },
+      ];
+    });
+    return [
+      {
+        treeId: configId,
+        skillLineId: tierSkillLineId,
+        expansionId,
+        name: string(specialization['tierName']),
+        tabs,
+      },
+    ];
+  });
+  const allocations = specializations.flatMap((specializationValue) =>
+    collection(object(specializationValue)['tabs']).flatMap((tabValue) =>
+      collection(object(tabValue)['nodes']).map(allocationFromNode).filter(isPresent),
+    ),
   );
   return {
     skillLineId,
@@ -134,7 +170,9 @@ function normalizeProfession(
 
 function normalizeNode(
   value: unknown,
-): DecodedProfessionTalents['professions'][number]['trees'][number]['nodes'][number] | null {
+):
+  | DecodedProfessionTalents['professions'][number]['trees'][number]['tabs'][number]['nodes'][number]
+  | null {
   const node = object(value);
   const nodeId = integer(node['nodeID']);
   if (nodeId === null) return null;
@@ -142,6 +180,8 @@ function normalizeNode(
   return {
     nodeId,
     maxRanks: integer(nodeInfo['maxRanks']),
+    requiredRank: integer(node['unlockRank']),
+    description: string(node['pathDescription']),
     entries: collection(node['entries'])
       .map((entryValue) => {
         const entry = object(entryValue);
@@ -150,10 +190,21 @@ function normalizeNode(
           rankLimit:
             integer(object(entry['entryInfo'])['maxRanks']) ??
             integer(object(entry['definitionInfo'])['maxRanks']),
+          description: string(object(entry['definitionInfo'])['overrideDescription']),
         };
       })
       .filter((entry) => entry.entryId > 0),
   };
+}
+
+function normalizedExpansionId(specialization: Record<string, unknown>): number | null {
+  const wowExpansionId = integer(specialization['expansionID']);
+  if (wowExpansionId !== null) return wowExpansionId + 1;
+  const tierName = string(specialization['tierName'])?.toLowerCase();
+  if (tierName?.includes('midnight')) return 12;
+  if (tierName?.includes('khaz algar')) return 11;
+  if (tierName?.includes('dragon isles')) return 10;
+  return null;
 }
 
 function allocationFromNode(

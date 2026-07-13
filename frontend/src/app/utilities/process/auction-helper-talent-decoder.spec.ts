@@ -12,6 +12,10 @@ describe('decodeAuctionHelperTalentExport', () => {
         skillLineID: 2872,
         professionName: 'Blacksmithing',
         specializationTree: {
+          configID: 123,
+          skillLineID: 2872,
+          expansionID: 10,
+          tierName: 'Khaz Algar Blacksmithing',
           tabs: [
             {
               treeID: 999,
@@ -40,8 +44,17 @@ describe('decodeAuctionHelperTalentExport', () => {
           skillLineId: 2872,
           trees: [
             {
-              treeId: 999,
-              nodes: [{ nodeId: 101, maxRanks: 13, entries: [{ entryId: 201, rankLimit: 30 }] }],
+              treeId: 123,
+              skillLineId: 2872,
+              expansionId: 11,
+              tabs: [
+                {
+                  tabId: 999,
+                  nodes: [
+                    { nodeId: 101, maxRanks: 13, entries: [{ entryId: 201, rankLimit: 30 }] },
+                  ],
+                },
+              ],
             },
           ],
           allocations: [{ nodeId: 101, entryId: 201, rank: 12 }],
@@ -97,6 +110,10 @@ describe('decodeAuctionHelperTalentExport', () => {
               skillLineID: 2872,
               professionName: 'Blacksmithing',
               specializationTree: {
+                configID: 123,
+                skillLineID: 2872,
+                expansionID: 10,
+                tierName: 'Khaz Algar Blacksmithing',
                 tabs: [{ treeID: 999, tabInfo: { name: 'Weaponsmithing' }, nodes: [] }],
               },
             },
@@ -113,7 +130,15 @@ describe('decodeAuctionHelperTalentExport', () => {
         {
           skillLineId: 2872,
           name: 'Blacksmithing',
-          trees: [{ treeId: 999, name: 'Weaponsmithing' }],
+          trees: [
+            {
+              treeId: 123,
+              skillLineId: 2872,
+              expansionId: 11,
+              name: 'Khaz Algar Blacksmithing',
+              tabs: [{ tabId: 999, name: 'Weaponsmithing' }],
+            },
+          ],
         },
       ],
     });

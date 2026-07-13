@@ -89,8 +89,16 @@ describe('SavedVariables folder selection', () => {
       trees: [
         {
           treeId: 10,
+          skillLineId: 2872,
+          expansionId: 11,
           name: 'Weaponsmithing',
-          nodes: [{ nodeId: 20, maxRanks: 30, entries: [{ entryId: 21, rankLimit: 30 }] }],
+          tabs: [
+            {
+              tabId: 11,
+              name: 'Weaponsmithing',
+              nodes: [{ nodeId: 20, maxRanks: 30, entries: [{ entryId: 21, rankLimit: 30 }] }],
+            },
+          ],
         },
       ],
       allocations: [{ nodeId: 20, entryId: 21, rank: 7 }],
@@ -161,8 +169,16 @@ describe('SavedVariables folder selection', () => {
       trees: [
         {
           treeId: 10,
+          skillLineId: 2872,
+          expansionId: 11,
           name: 'Weaponsmithing',
-          nodes: [{ nodeId: 20, maxRanks: 30, entries: [{ entryId: 21, rankLimit: 30 }] }],
+          tabs: [
+            {
+              tabId: 11,
+              name: 'Weaponsmithing',
+              nodes: [{ nodeId: 20, maxRanks: 30, entries: [{ entryId: 21, rankLimit: 30 }] }],
+            },
+          ],
         },
       ],
       allocations: [{ nodeId: 20, entryId: 21, rank: 7 }],

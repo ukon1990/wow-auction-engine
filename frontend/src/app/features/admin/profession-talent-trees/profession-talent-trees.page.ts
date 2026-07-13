@@ -10,7 +10,11 @@ import {
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
-import { AdminApiService, NormalizedAuctionHelperProfessionInspection } from '@api/generated';
+import {
+  AdminApiService,
+  NormalizedAuctionHelperProfessionInspection,
+  NormalizedAuctionHelperTalents,
+} from '@api/generated';
 import { ToastService } from '@core/services/toast.service';
 import { PageFrameComponent, PaginationState, SearchInputComponent, TableComponent } from '@ui';
 import {
@@ -40,18 +44,7 @@ export type ProfessionRecipeOverview = Readonly<{
   name: string;
   characterCount: number;
   recipeCount: number;
-  talents: Readonly<{
-    trees: readonly Readonly<{
-      treeId: number;
-      name?: string;
-      nodes: readonly Readonly<{
-        nodeId: number;
-        maxRanks?: number;
-        entries: readonly Readonly<{ entryId: number; rankLimit?: number }>[];
-      }>[];
-    }>[];
-    allocations: readonly Readonly<{ nodeId: number; entryId: number; rank: number }>[];
-  }> | null;
+  talents: NormalizedAuctionHelperTalents | null;
   recipes: readonly Readonly<{
     recipeId: number;
     name: string;
@@ -128,7 +121,10 @@ export class ProfessionTalentTreesPage {
   protected readonly recipeRowId = (recipe: ProfessionRecipeRow): string => String(recipe.recipeId);
 
   protected talentNodeCount(talents: NonNullable<ProfessionRecipeOverview['talents']>): number {
-    return talents.trees.reduce((count, tree) => count + tree.nodes.length, 0);
+    return talents.trees.reduce(
+      (count, tree) => count + tree.tabs.reduce((tabCount, tab) => tabCount + tab.nodes.length, 0),
+      0,
+    );
   }
 
   protected onFolderSelected(event: Event): void {

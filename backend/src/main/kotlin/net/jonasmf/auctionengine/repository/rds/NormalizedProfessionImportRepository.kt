@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.repository.rds
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTree
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.security.MessageDigest
@@ -49,6 +50,15 @@ class NormalizedProfessionImportRepository(
             payloadJson,
         )
         val importId = jdbcTemplate.queryForObject("SELECT id FROM normalized_profession_import WHERE content_hash = ?", Long::class.java, contentHash)!!
+        val treeImportId = saveTreeImport(payload, contentHash)
+        val persistedTrees =
+            payload.characters
+                .flatMap { it.professions }
+                .flatMap { it.talents?.trees.orEmpty().map { tree -> it.professionId to tree } }
+                .distinctBy { (professionId, tree) -> professionId to tree.treeId }
+                .associate { (professionId, tree) ->
+                    (professionId to tree.treeId) to saveTreeDefinition(professionId, tree, treeImportId)
+                }
         payload.characters.forEach { character ->
             jdbcTemplate.update(
                 """INSERT INTO user_character (owner_subject, region, realm_name, character_name, source_guid)
@@ -74,14 +84,35 @@ class NormalizedProfessionImportRepository(
                 )!!
             character.professions.forEach professionLoop@{ profession ->
                 if (!exists("profession", profession.professionId)) return@professionLoop
-                jdbcTemplate.update(
-                    """INSERT INTO user_character_profession_profile (character_id, profession_id, skill_level)
-                        VALUES (?, ?, ?)
-                        ON DUPLICATE KEY UPDATE skill_level = VALUES(skill_level), updated_at = CURRENT_TIMESTAMP""".trimIndent(),
-                    characterId,
-                    profession.professionId,
-                    profession.skillLevel,
-                )
+                val selectedTree =
+                    profession.talents
+                        ?.trees
+                        ?.filter { profession.activeSkillLineId == null || it.skillLineId == profession.activeSkillLineId }
+                        ?.maxByOrNull { it.expansionId }
+                val selectedTreeId = selectedTree?.let { persistedTrees[profession.professionId to it.treeId] }
+                if (selectedTreeId == null) {
+                    jdbcTemplate.update(
+                        """INSERT INTO user_character_profession_profile (character_id, profession_id, skill_level)
+                            VALUES (?, ?, ?)
+                            ON DUPLICATE KEY UPDATE skill_level = VALUES(skill_level), updated_at = CURRENT_TIMESTAMP""".trimIndent(),
+                        characterId,
+                        profession.professionId,
+                        profession.skillLevel,
+                    )
+                } else {
+                    jdbcTemplate.update(
+                        """INSERT INTO user_character_profession_profile
+                                (character_id, profession_id, skill_level, tree_id, source_import_id)
+                            VALUES (?, ?, ?, ?, ?)
+                            ON DUPLICATE KEY UPDATE skill_level = VALUES(skill_level), tree_id = VALUES(tree_id),
+                                source_import_id = VALUES(source_import_id), updated_at = CURRENT_TIMESTAMP""".trimIndent(),
+                        characterId,
+                        profession.professionId,
+                        profession.skillLevel,
+                        selectedTreeId,
+                        treeImportId,
+                    )
+                }
                 val profileId =
                     jdbcTemplate.queryForObject(
                         "SELECT id FROM user_character_profession_profile WHERE character_id = ? AND profession_id = ?",
@@ -103,7 +134,123 @@ class NormalizedProfessionImportRepository(
                         importId,
                     )
                 }
+                if (selectedTree != null && selectedTreeId != null) {
+                    jdbcTemplate.update("DELETE FROM user_character_profession_allocation WHERE profile_id = ?", profileId)
+                    saveAllocations(profileId, selectedTreeId, profession.talents.allocations)
+                }
             }
+        }
+    }
+
+    private fun saveTreeImport(
+        payload: NormalizedAuctionHelperProfessionData,
+        contentHash: String,
+    ): Long {
+        jdbcTemplate.update(
+            """INSERT INTO profession_tree_import
+                    (source_type, source_version, addon_version, schema_version, content_hash)
+                VALUES ('AuctionHelper-normalized', ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id), imported_at = CURRENT_TIMESTAMP""".trimIndent(),
+            payload.source.processorVersion,
+            payload.source.addonVersion,
+            payload.contractVersion.value,
+            contentHash,
+        )
+        return jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long::class.java)!!
+    }
+
+    private fun saveTreeDefinition(
+        professionId: Int,
+        tree: NormalizedAuctionHelperTalentTree,
+        importId: Long,
+    ): Long {
+        jdbcTemplate.update(
+            """INSERT INTO profession_skill_tree
+                    (expansion_id, profession_id, skill_line_id, config_id, external_tree_id, name, import_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id), expansion_id = VALUES(expansion_id),
+                    skill_line_id = VALUES(skill_line_id), external_tree_id = VALUES(external_tree_id),
+                    name = VALUES(name), import_id = VALUES(import_id)""".trimIndent(),
+            tree.expansionId,
+            professionId,
+            tree.skillLineId,
+            tree.treeId.toLong(),
+            tree.treeId,
+            tree.name ?: "Profession $professionId specialization ${tree.treeId}",
+            importId,
+        )
+        val databaseTreeId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long::class.java)!!
+        tree.tabs.forEachIndexed { tabOrder, tab ->
+            jdbcTemplate.update(
+                """INSERT INTO profession_skill_tree_tab
+                        (tree_id, external_tab_id, name, description, display_order)
+                    VALUES (?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id), name = VALUES(name),
+                        description = VALUES(description), display_order = VALUES(display_order)""".trimIndent(),
+                databaseTreeId,
+                tab.tabId,
+                tab.name ?: "Specialization ${tab.tabId}",
+                tab.description,
+                tabOrder,
+            )
+            val databaseTabId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long::class.java)!!
+            tab.nodes.forEachIndexed { nodeOrder, node ->
+                jdbcTemplate.update(
+                    """INSERT INTO profession_skill_tree_node
+                            (tree_id, tab_id, external_node_id, name, description, max_ranks, required_rank, display_order)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id), tab_id = VALUES(tab_id), name = VALUES(name),
+                            description = VALUES(description), max_ranks = VALUES(max_ranks),
+                            required_rank = VALUES(required_rank), display_order = VALUES(display_order)""".trimIndent(),
+                    databaseTreeId,
+                    databaseTabId,
+                    node.nodeId,
+                    node.name ?: "Node ${node.nodeId}",
+                    node.description,
+                    node.maxRanks ?: 1,
+                    node.requiredRank ?: 0,
+                    nodeOrder,
+                )
+                val databaseNodeId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long::class.java)!!
+                node.propertyEntries.forEachIndexed { entryOrder, entry ->
+                    jdbcTemplate.update(
+                        """INSERT INTO profession_skill_tree_entry
+                                (node_id, external_entry_id, name, description, rank_limit, display_order)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                            ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id), name = VALUES(name),
+                                description = VALUES(description), rank_limit = VALUES(rank_limit),
+                                display_order = VALUES(display_order)""".trimIndent(),
+                        databaseNodeId,
+                        entry.entryId,
+                        entry.name ?: "Entry ${entry.entryId}",
+                        entry.description,
+                        entry.rankLimit ?: node.maxRanks ?: 1,
+                        entryOrder,
+                    )
+                }
+            }
+        }
+        return databaseTreeId
+    }
+
+    private fun saveAllocations(
+        profileId: Long,
+        treeId: Long,
+        allocations: List<net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentAllocation>,
+    ) {
+        allocations.filter { it.rank > 0 }.forEach { allocation ->
+            jdbcTemplate.update(
+                """INSERT INTO user_character_profession_allocation (profile_id, entry_id, rank)
+                    SELECT ?, e.id, ?
+                    FROM profession_skill_tree_entry e
+                    JOIN profession_skill_tree_node n ON n.id = e.node_id
+                    WHERE n.tree_id = ? AND n.external_node_id = ? AND e.external_entry_id = ?""".trimIndent(),
+                profileId,
+                allocation.rank,
+                treeId,
+                allocation.nodeId,
+                allocation.entryId,
+            )
         }
     }
 
@@ -111,6 +258,10 @@ class NormalizedProfessionImportRepository(
         jdbcTemplate.queryForObject("SELECT EXISTS(SELECT 1 FROM $table WHERE id = ?)", Boolean::class.java, id) == true
 
     fun missingProfessionIds(professionIds: Set<Int>): Set<Int> = professionIds.filterNot { exists("profession", it) }.toSet()
+
+    fun missingSkillLineIds(skillLineIds: Set<Int>): Set<Int> = skillLineIds.filterNot { exists("skill_tier", it) }.toSet()
+
+    fun missingExpansionIds(expansionIds: Set<Int>): Set<Int> = expansionIds.filterNot { exists("expansion", it) }.toSet()
 }
 
 private fun String.sha256(): String =

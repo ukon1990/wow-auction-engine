@@ -4,6 +4,9 @@ required: [nodeId, entries]
 properties:
   nodeId: { type: integer, minimum: 1 }
   maxRanks: { type: integer, minimum: 1 }
+  requiredRank: { type: integer, minimum: 0, description: Knowledge points required to unlock this node. }
+  name: { type: string, maxLength: 128 }
+  description: { type: string, maxLength: 4096 }
   entries:
     type: array
     maxItems: 32
