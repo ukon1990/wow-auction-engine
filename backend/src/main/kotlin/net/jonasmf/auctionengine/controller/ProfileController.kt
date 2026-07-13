@@ -4,6 +4,7 @@ import net.jonasmf.auctionengine.generated.api.ProfileApi
 import net.jonasmf.auctionengine.generated.model.ProfessionProfile
 import net.jonasmf.auctionengine.generated.model.ProfessionProfileRequest
 import net.jonasmf.auctionengine.generated.model.ProfessionSkillTree
+import net.jonasmf.auctionengine.generated.model.CharacterProfessionPreview
 import net.jonasmf.auctionengine.generated.model.ProfileCharacter
 import net.jonasmf.auctionengine.generated.model.ProfileCharacterRequest
 import net.jonasmf.auctionengine.service.ProfileService
@@ -17,6 +18,13 @@ import org.springframework.web.bind.annotation.RestController
 class ProfileController(
     private val profileService: ProfileService,
 ) : ProfileApi {
+    override suspend fun getCharacterProfessionPreview(
+        region: String,
+        realmSlug: String,
+        characterName: String,
+    ): ResponseEntity<CharacterProfessionPreview> =
+        ResponseEntity.ok(profileService.getCharacterProfessionPreview(region, realmSlug, characterName))
+
     override suspend fun listProfileCharacters(): ResponseEntity<List<ProfileCharacter>> = ResponseEntity.ok(profileService.listCharacters(subject()))
 
     override suspend fun createProfileCharacter(body: ProfileCharacterRequest): ResponseEntity<ProfileCharacter> = ResponseEntity.status(HttpStatus.CREATED).body(profileService.createCharacter(subject(), body))

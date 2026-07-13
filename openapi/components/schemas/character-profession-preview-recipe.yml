@@ -1,0 +1,5 @@
+type: object
+required: [recipeId, recipeName]
+properties:
+  recipeId: { type: integer, format: int32 }
+  recipeName: { type: string }

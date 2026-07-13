@@ -1,0 +1,117 @@
+<ee-page-frame
+  i18n-title="@@professionTalentTrees.title"
+  title="Profession talent trees"
+  i18n-eyebrow="@@professionTalentTrees.eyebrow"
+  eyebrow="Admin"
+>
+  <section class="grid max-w-3xl gap-5" aria-labelledby="talent-tree-import-title">
+    <header>
+      <h1
+        id="talent-tree-import-title"
+        class="font-cinzel text-2xl font-bold text-primary-container"
+        i18n="@@professionTalentTrees.uploadTitle"
+      >
+        Inspect an AuctionHelper export
+      </h1>
+      <p class="mt-1 text-sm text-outline" i18n="@@professionTalentTrees.uploadHint">
+        Upload AuctionHelper_Professions.lua to inspect its character, profession, and recipe data.
+      </p>
+    </header>
+
+    <div
+      class="rounded-lg border border-error/30 bg-error/10 p-4 text-sm text-on-surface"
+      role="note"
+    >
+      <p class="font-semibold" i18n="@@professionTalentTrees.destructiveTitle">
+        Replacing talent-tree definitions is destructive
+      </p>
+      <p class="mt-1 text-outline" i18n="@@professionTalentTrees.destructiveHint">
+        A versioned tree-definition import replaces shared definitions and clears profile
+        references. This Lua inspection does not modify definitions because AuctionHelper exports do
+        not contain specialization ranks.
+      </p>
+    </div>
+
+    <div class="grid gap-3 rounded-lg border border-white/10 bg-surface-container-highest p-5">
+      <label class="grid gap-2 text-sm font-semibold text-on-surface" for="talent-tree-lua-file">
+        <span i18n="@@professionTalentTrees.file">AuctionHelper Lua file</span>
+        <input
+          id="talent-tree-lua-file"
+          type="file"
+          accept=".lua,text/plain"
+          class="block w-full rounded-md border border-white/20 bg-surface px-3 py-2 text-sm text-on-surface file:mr-4 file:rounded file:border-0 file:bg-primary file:px-3 file:py-2 file:font-semibold file:text-on-primary"
+          (change)="onFileSelected($event)"
+        />
+      </label>
+      @if (file(); as selectedFile) {
+        <p class="text-sm text-outline" role="status">
+          <ng-container i18n="@@professionTalentTrees.selectedFile"
+            >Selected: {{ selectedFile.name }} ({{ fileSize(selectedFile) }})</ng-container
+          >
+        </p>
+      }
+      <button
+        type="button"
+        class="min-h-11 justify-self-start rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+        [disabled]="!file() || importing()"
+        (click)="inspectUpload()"
+      >
+        @if (importing()) {
+          <ng-container i18n="@@professionTalentTrees.inspecting">Inspecting…</ng-container>
+        } @else {
+          <ng-container i18n="@@professionTalentTrees.inspect">Inspect file</ng-container>
+        }
+      </button>
+    </div>
+
+    @if (error()) {
+      <p
+        class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+        role="alert"
+      >
+        {{ error() }}
+      </p>
+    }
+
+    @if (result(); as importResult) {
+      <section
+        class="grid gap-3 rounded-lg border border-white/10 bg-surface-container-highest p-5"
+        aria-labelledby="inspection-result-title"
+      >
+        <h2
+          id="inspection-result-title"
+          class="font-cinzel text-lg font-bold text-primary-container"
+          i18n="@@professionTalentTrees.resultTitle"
+        >
+          Inspection result
+        </h2>
+        <dl class="grid gap-2 text-sm sm:grid-cols-3">
+          <div>
+            <dt class="text-outline" i18n="@@professionTalentTrees.characters">Characters</dt>
+            <dd class="font-semibold">{{ importResult.charactersFound }}</dd>
+          </div>
+          <div>
+            <dt class="text-outline" i18n="@@professionTalentTrees.professions">Professions</dt>
+            <dd class="font-semibold">{{ importResult.professionsFound }}</dd>
+          </div>
+          <div>
+            <dt class="text-outline" i18n="@@professionTalentTrees.recipes">Recipes</dt>
+            <dd class="font-semibold">{{ importResult.recipesFound }}</dd>
+          </div>
+        </dl>
+        <ul
+          class="grid gap-2"
+          aria-label="Import diagnostics"
+          i18n-aria-label="@@professionTalentTrees.importDiagnosticsAria"
+        >
+          @for (diagnostic of importResult.diagnostics; track diagnostic.code) {
+            <li class="rounded-md border border-white/10 bg-surface p-3 text-sm">
+              <p class="font-semibold text-on-surface">{{ diagnostic.code }}</p>
+              <p class="mt-1 text-outline">{{ diagnostic.detail }}</p>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  </section>
+</ee-page-frame>

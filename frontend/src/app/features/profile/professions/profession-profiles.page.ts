@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import {
@@ -11,8 +12,12 @@ import {
   ProfileApiService,
   ProfileCharacter,
   ProfileCharacterRequest,
+  CharacterProfessionPreview,
 } from '@api/generated';
 import { PageFrameComponent, SelectInputComponent, TextInputComponent } from '@ui';
+import { UserRole } from '@api/auth/auth.model';
+import { AuthService } from '@core/services/auth.service';
+import { CharacterProfessionPreviewStorageService } from './character-profession-preview-storage.service';
 
 const midnightExpansionId = 12;
 const professions = [
@@ -31,13 +36,15 @@ const professions = [
 
 @Component({
   selector: 'app-profession-profiles-page',
-  imports: [FormsModule, PageFrameComponent, SelectInputComponent, TextInputComponent],
+  imports: [FormsModule, RouterLink, PageFrameComponent, SelectInputComponent, TextInputComponent],
   templateUrl: './profession-profiles.page.html',
   host: { class: 'flex min-h-0 flex-1 flex-col' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfessionProfilesPage {
   private readonly profileApi = inject(ProfileApiService);
+  private readonly previewStorage = inject(CharacterProfessionPreviewStorageService);
+  private readonly auth = inject(AuthService);
 
   protected readonly characters = signal<readonly ProfileCharacter[]>([]);
   protected readonly selectedCharacterId = signal<number | null>(null);
@@ -49,11 +56,13 @@ export class ProfessionProfilesPage {
   protected readonly loadingTree = signal(false);
   protected readonly saving = signal(false);
   protected readonly addingCharacter = signal(false);
+  protected readonly lookingUpCharacter = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly status = signal<string | null>(null);
   protected readonly characterRegion = signal('eu');
-  protected readonly characterRealmName = signal('');
+  protected readonly characterRealmSlug = signal('');
   protected readonly characterName = signal('');
+  protected readonly preview = signal<CharacterProfessionPreview | null>(null);
   private readonly savedAllocations = signal<ReadonlyMap<number, number>>(new Map());
   private readonly savedTreeId = signal<number | null>(null);
 
@@ -73,6 +82,9 @@ export class ProfessionProfilesPage {
   );
   protected readonly selectedTree = computed(
     () => this.trees().find((tree) => tree.id === this.selectedTreeId()) ?? null,
+  );
+  protected readonly isAdmin = computed(
+    () => this.auth.user()?.roles.includes(UserRole.Admin) ?? false,
   );
   protected readonly hasUnsavedChanges = computed(
     () =>
@@ -101,8 +113,88 @@ export class ProfessionProfilesPage {
   }
 
   protected async addCharacter(): Promise<void> {
+    const preview = this.preview();
+    if (!preview) {
+      this.error.set(
+        $localize`:@@professionProfiles.error.lookupRequired:Look up the character with Blizzard first.`,
+      );
+      return;
+    }
+
+    this.addingCharacter.set(true);
+    this.error.set(null);
+    try {
+      const request: ProfileCharacterRequest = {
+        region: preview.region,
+        realmName: preview.realmSlug,
+        characterName: preview.characterName,
+      };
+      const character = await firstValueFrom(this.profileApi.createProfileCharacter(request));
+      this.characters.update((characters) => {
+        const withoutExisting = characters.filter((candidate) => candidate.id !== character.id);
+        return [...withoutExisting, character];
+      });
+      this.selectedCharacterId.set(character.id);
+      this.preview.set(null);
+      this.status.set($localize`:@@professionProfiles.status.characterAdded:Character added.`);
+      await this.loadProfileAndTrees();
+    } catch {
+      this.error.set(
+        $localize`:@@professionProfiles.error.addCharacter:Unable to add this character. Check the details and try again.`,
+      );
+    } finally {
+      this.addingCharacter.set(false);
+    }
+  }
+
+  protected async lookupCharacter(): Promise<void> {
     const region = this.characterRegion().trim().toLowerCase();
-    const realmName = this.characterRealmName().trim();
+    const realmSlug = this.characterRealmSlug().trim().toLowerCase();
+    const characterName = this.characterName().trim();
+    if (!isBlizzardRegion(region) || !realmSlug || !characterName) {
+      this.error.set(
+        $localize`:@@professionProfiles.error.characterRequired:Enter a region, realm, and character name.`,
+      );
+      return;
+    }
+
+    this.lookingUpCharacter.set(true);
+    this.error.set(null);
+    this.status.set(null);
+    try {
+      const preview = await firstValueFrom(
+        this.profileApi.getCharacterProfessionPreview(region, realmSlug, characterName),
+      );
+      this.preview.set(preview);
+      this.previewStorage.save(preview);
+      this.status.set(
+        $localize`:@@professionProfiles.status.characterFound:Character profession data loaded. Review it, then add the character.`,
+      );
+    } catch {
+      const cached = this.previewStorage.get(region, realmSlug, characterName);
+      if (cached) {
+        this.preview.set(cached);
+        this.status.set(
+          $localize`:@@professionProfiles.status.cachedCharacter:Blizzard is unavailable, so the last saved profession preview is shown.`,
+        );
+      } else {
+        this.preview.set(null);
+        this.error.set(
+          $localize`:@@professionProfiles.error.lookupCharacter:Unable to load professions from Blizzard. Check the realm slug and character name, then try again.`,
+        );
+      }
+    } finally {
+      this.lookingUpCharacter.set(false);
+    }
+  }
+
+  protected clearPreview(): void {
+    this.preview.set(null);
+  }
+
+  protected async addCharacterManually(): Promise<void> {
+    const region = this.characterRegion().trim().toLowerCase();
+    const realmName = this.characterRealmSlug().trim();
     const characterName = this.characterName().trim();
     if (!region || !realmName || !characterName) {
       this.error.set(
@@ -114,12 +206,12 @@ export class ProfessionProfilesPage {
     this.addingCharacter.set(true);
     this.error.set(null);
     try {
-      const request: ProfileCharacterRequest = { region, realmName, characterName };
-      const character = await firstValueFrom(this.profileApi.createProfileCharacter(request));
+      const character = await firstValueFrom(
+        this.profileApi.createProfileCharacter({ region, realmName, characterName }),
+      );
       this.characters.update((characters) => [...characters, character]);
       this.selectedCharacterId.set(character.id);
-      this.characterRealmName.set('');
-      this.characterName.set('');
+      this.preview.set(null);
       this.status.set($localize`:@@professionProfiles.status.characterAdded:Character added.`);
       await this.loadProfileAndTrees();
     } catch {
@@ -129,6 +221,21 @@ export class ProfessionProfilesPage {
     } finally {
       this.addingCharacter.set(false);
     }
+  }
+
+  protected knownRecipeCount(preview: CharacterProfessionPreview): number {
+    return preview.professions.reduce(
+      (total, profession) =>
+        total +
+        profession.tiers.reduce((tierTotal, tier) => tierTotal + tier.knownRecipes.length, 0),
+      0,
+    );
+  }
+
+  protected knownRecipeCountForProfession(
+    profession: CharacterProfessionPreview['professions'][number],
+  ): number {
+    return profession.tiers.reduce((total, tier) => total + tier.knownRecipes.length, 0);
   }
 
   protected rankFor(entryId: number): number {
@@ -290,4 +397,8 @@ function sameAllocations(
 ): boolean {
   if (left.size !== right.size) return false;
   return [...left].every(([entryId, rank]) => right.get(entryId) === rank);
+}
+
+function isBlizzardRegion(region: string): region is CharacterProfessionPreview['region'] {
+  return region === 'us' || region === 'eu' || region === 'kr' || region === 'tw';
 }

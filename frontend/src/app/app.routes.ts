@@ -107,6 +107,15 @@ export const routes: TitledRoutes = [
         loadComponent: () =>
           import('@features/admin/recipes/recipes.page').then((module) => module.RecipesPage),
       },
+      {
+        path: 'profession-talent-trees',
+        title: $localize`:@@route.admin.professionTalentTrees:Profession talent trees`,
+        icon: 'account_tree',
+        loadComponent: () =>
+          import('@features/admin/profession-talent-trees/profession-talent-trees.page').then(
+            (module) => module.ProfessionTalentTreesPage,
+          ),
+      },
     ],
   },
   {

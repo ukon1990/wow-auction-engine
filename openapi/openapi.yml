@@ -50,6 +50,8 @@ paths:
     $ref: ./paths/admin.yml#/getActiveProfessionSyncJob
   /admin/profession-talent-trees/import:
     $ref: ./paths/admin.yml#/importProfessionTalentTrees
+  /admin/profession-talent-trees/import-lua:
+    $ref: ./paths/admin.yml#/inspectProfessionTalentTreeLua
   /admin/jobs/{id}:
     $ref: ./paths/admin.yml#/getAdminJob
   /admin/items:
@@ -94,6 +96,8 @@ paths:
     $ref: ./paths/profile.yml#/listProfessionTrees
   /profile/characters:
     $ref: ./paths/profile.yml#/characters
+  /profile/characters/professions-preview:
+    $ref: ./paths/profile.yml#/characterProfessionPreview
   /profile/characters/{characterId}:
     $ref: ./paths/profile.yml#/characterById
   /profile/characters/{characterId}/professions/{professionId}:
@@ -138,6 +142,8 @@ components:
       $ref: ./components/schemas/admin/admin-job.yml
     ProfessionTalentTreeImportRequest:
       $ref: ./components/schemas/admin/profession-talent-tree-import-request.yml
+    AuctionHelperTalentTreeLuaImportResult:
+      $ref: ./components/schemas/admin/auction-helper-talent-tree-lua-import-result.yml
     AdminItem:
       $ref: ./components/schemas/admin/admin-item.yml
     AdminItemBulkOverride:
@@ -256,6 +262,14 @@ components:
       $ref: ./components/schemas/profile-character.yml
     ProfileCharacterRequest:
       $ref: ./components/schemas/profile-character-request.yml
+    CharacterProfessionPreview:
+      $ref: ./components/schemas/character-profession-preview.yml
+    CharacterProfessionPreviewProfession:
+      $ref: ./components/schemas/character-profession-preview-profession.yml
+    CharacterProfessionPreviewTier:
+      $ref: ./components/schemas/character-profession-preview-tier.yml
+    CharacterProfessionPreviewRecipe:
+      $ref: ./components/schemas/character-profession-preview-recipe.yml
     ProfessionProfile:
       $ref: ./components/schemas/profession-profile.yml
     ProfessionProfileRequest:

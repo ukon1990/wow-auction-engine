@@ -3,8 +3,14 @@ package net.jonasmf.auctionengine.service
 import net.jonasmf.auctionengine.generated.model.ProfessionProfile
 import net.jonasmf.auctionengine.generated.model.ProfessionProfileRequest
 import net.jonasmf.auctionengine.generated.model.ProfessionSkillTree
+import net.jonasmf.auctionengine.generated.model.CharacterProfessionPreview
+import net.jonasmf.auctionengine.generated.model.CharacterProfessionPreviewProfession
+import net.jonasmf.auctionengine.generated.model.CharacterProfessionPreviewRecipe
+import net.jonasmf.auctionengine.generated.model.CharacterProfessionPreviewTier
 import net.jonasmf.auctionengine.generated.model.ProfileCharacter
 import net.jonasmf.auctionengine.generated.model.ProfileCharacterRequest
+import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.integration.blizzard.CharacterProfessionApiClient
 import net.jonasmf.auctionengine.repository.rds.ProfileRepository
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
@@ -14,8 +20,47 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 class ProfileService(
     private val profileRepository: ProfileRepository,
+    private val characterProfessionApiClient: CharacterProfessionApiClient,
 ) {
     fun listCharacters(subject: String): List<ProfileCharacter> = profileRepository.listCharacters(subject)
+
+    fun getCharacterProfessionPreview(
+        region: String,
+        realmSlug: String,
+        characterName: String,
+    ): CharacterProfessionPreview {
+        val normalizedRealmSlug = realmSlug.trim().lowercase()
+        val normalizedCharacterName = characterName.trim()
+        if (normalizedRealmSlug.length !in 1..MAX_CHARACTER_LOOKUP_VALUE_LENGTH) badRequest("realmSlug must be between 1 and $MAX_CHARACTER_LOOKUP_VALUE_LENGTH characters")
+        if (normalizedCharacterName.length !in 1..MAX_CHARACTER_LOOKUP_VALUE_LENGTH) badRequest("characterName must be between 1 and $MAX_CHARACTER_LOOKUP_VALUE_LENGTH characters")
+        if (!REALM_SLUG_PATTERN.matches(normalizedRealmSlug)) badRequest("realmSlug must be a Blizzard realm slug")
+        if (!CHARACTER_NAME_PATTERN.matches(normalizedCharacterName)) badRequest("characterName must contain only letters")
+        val blizzardRegion = runCatching { Region.fromString(region) }.getOrElse { badRequest("region must be one of us, eu, kr, or tw") }
+        val professions = characterProfessionApiClient.getProfessions(blizzardRegion, normalizedRealmSlug, normalizedCharacterName)
+
+        return CharacterProfessionPreview(
+            region = CharacterProfessionPreview.Region.forValue(blizzardRegion.code),
+            realmSlug = normalizedRealmSlug,
+            characterName = normalizedCharacterName,
+            professions =
+                (professions.primaries + professions.secondaries).map { profession ->
+                    CharacterProfessionPreviewProfession(
+                        professionId = profession.profession.id,
+                        professionName = profession.profession.name,
+                        tiers =
+                            profession.tiers.map { tier ->
+                                CharacterProfessionPreviewTier(
+                                    skillTierId = tier.tier.id,
+                                    skillTierName = tier.tier.name,
+                                    skillPoints = tier.skillPoints,
+                                    maxSkillPoints = tier.maxSkillPoints,
+                                    knownRecipes = tier.knownRecipes.map { recipe -> CharacterProfessionPreviewRecipe(recipe.id, recipe.name) },
+                                )
+                            },
+                    )
+                },
+        )
+    }
 
     fun createCharacter(subject: String, request: ProfileCharacterRequest): ProfileCharacter {
         if (request.region.isBlank() || request.realmName.isBlank() || request.characterName.isBlank()) badRequest("region, realmName, and characterName are required")
@@ -77,6 +122,10 @@ class ProfileService(
         }
     }
 }
+
+private val REALM_SLUG_PATTERN = Regex("^[a-z0-9]+(?:-[a-z0-9]+)*$")
+private val CHARACTER_NAME_PATTERN = Regex("^\\p{L}+$")
+private const val MAX_CHARACTER_LOOKUP_VALUE_LENGTH = 255
 
 private fun badRequest(detail: String): Nothing = throw ResponseStatusException(HttpStatus.BAD_REQUEST, detail)
 private fun notFound(detail: String): Nothing = throw ResponseStatusException(HttpStatus.NOT_FOUND, detail)

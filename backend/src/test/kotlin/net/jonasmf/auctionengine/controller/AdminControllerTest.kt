@@ -27,6 +27,8 @@ import net.jonasmf.auctionengine.service.admin.AdminProfessionSyncService
 import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
+import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
+import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeLuaImportService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -51,11 +53,17 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delet
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.server.ResponseStatusException
 import java.time.OffsetDateTime
+import java.time.Instant
+import net.jonasmf.auctionengine.domain.profession.AuctionHelperImportDiagnostic
+import net.jonasmf.auctionengine.domain.profession.AuctionHelperImportDiagnosticCode
+import net.jonasmf.auctionengine.domain.profession.AuctionHelperTalentTreeLuaImportResult
+import org.springframework.mock.web.MockMultipartFile
 
 @WebMvcTest(AdminController::class)
 @ImportAutoConfiguration(
@@ -69,6 +77,9 @@ import java.time.OffsetDateTime
     ],
 )
 class AdminControllerTest {
+    @Autowired
+    private lateinit var mockMvc: MockMvc
+
     @MockitoBean
     private lateinit var userService: UserService
 
@@ -92,6 +103,12 @@ class AdminControllerTest {
 
     @MockitoBean
     private lateinit var adminRecipeService: AdminRecipeService
+
+    @MockitoBean
+    private lateinit var professionTalentTreeImportService: ProfessionTalentTreeImportService
+
+    @MockitoBean
+    private lateinit var professionTalentTreeLuaImportService: ProfessionTalentTreeLuaImportService
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder
@@ -159,6 +176,83 @@ class AdminControllerTest {
                     .perform(
                         get("/api/admin/status")
                             .contextPath("/api")
+                            .with(jwt()),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isForbidden)
+        }
+    }
+
+    @Nested
+    inner class InspectProfessionTalentTreeLua {
+        @Test
+        fun `returns a diagnostic without importing for an administrator`() {
+            `when`(professionTalentTreeLuaImportService.inspect("AuctionHelperProfessionsDB = {}".toByteArray())).thenReturn(
+                AuctionHelperTalentTreeLuaImportResult(
+                    contentHash = "a".repeat(64),
+                    importedAt = Instant.parse("2026-07-13T10:00:00Z"),
+                    charactersFound = 0,
+                    professionsFound = 0,
+                    recipesFound = 0,
+                    diagnostics =
+                        listOf(
+                            AuctionHelperImportDiagnostic(
+                                AuctionHelperImportDiagnosticCode.TALENT_DATA_MISSING,
+                                "No specialization tree data is present",
+                            ),
+                        ),
+                ),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        multipart("/api/admin/profession-talent-trees/import-lua")
+                            .contextPath("/api")
+                            .file(
+                                MockMultipartFile(
+                                    "file",
+                                    "AuctionHelper_Professions.lua",
+                                    "text/plain",
+                                    "AuctionHelperProfessionsDB = {}".toByteArray(),
+                                ),
+                            ).with(
+                                jwt()
+                                    .jwt { token -> token.claim("cognito:groups", listOf("admin")) }
+                                    .authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.imported").value(false))
+                .andExpect(jsonPath("$.charactersFound").value(0))
+                .andExpect(jsonPath("$.diagnostics[0].code").value("TALENT_DATA_MISSING"))
+        }
+
+        @Test
+        fun `rejects an unauthenticated upload`() {
+            mockMvc
+                .perform(
+                    multipart("/api/admin/profession-talent-trees/import-lua")
+                        .contextPath("/api")
+                        .file(MockMultipartFile("file", "AuctionHelper_Professions.lua", "text/plain", "{}".toByteArray())),
+                ).andExpect(status().isUnauthorized)
+        }
+
+        @Test
+        fun `rejects a non administrator upload`() {
+            val result =
+                mockMvc
+                    .perform(
+                        multipart("/api/admin/profession-talent-trees/import-lua")
+                            .contextPath("/api")
+                            .file(MockMultipartFile("file", "AuctionHelper_Professions.lua", "text/plain", "{}".toByteArray()))
                             .with(jwt()),
                     ).andExpect(request().asyncStarted())
                     .andReturn()

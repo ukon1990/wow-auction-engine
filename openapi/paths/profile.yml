@@ -43,6 +43,32 @@ characters:
       "401": { description: Authentication required. }
       "409": { description: Duplicate owned character or source GUID. }
 
+characterProfessionPreview:
+  get:
+    tags: [Profile]
+    operationId: getCharacterProfessionPreview
+    summary: Preview a character's professions from Blizzard
+    description: Fetches public character profession data from Blizzard. The response is not persisted by this endpoint.
+    parameters:
+      - name: region
+        in: query
+        required: true
+        schema: { type: string, enum: [us, eu, kr, tw] }
+      - name: realmSlug
+        in: query
+        required: true
+        schema: { type: string, minLength: 1, maxLength: 255 }
+      - name: characterName
+        in: query
+        required: true
+        schema: { type: string, minLength: 1, maxLength: 255 }
+    responses:
+      "200":
+        description: Current professions, tiers, and known recipes for the requested character.
+        content: { application/json: { schema: { $ref: "../openapi.yml#/components/schemas/CharacterProfessionPreview" } } }
+      "400": { description: Invalid region, realm slug, or character name. }
+      "401": { description: Authentication required. }
+
 characterById:
   delete:
     tags: [Profile]

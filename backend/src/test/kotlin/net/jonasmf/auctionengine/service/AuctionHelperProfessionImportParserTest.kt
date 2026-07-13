@@ -54,6 +54,41 @@ class AuctionHelperProfessionImportParserTest {
         assertThat(result.diagnostics.single().code).isEqualTo(AuctionHelperImportDiagnosticCode.MALFORMED_INPUT)
     }
 
+    @Test
+    fun `bounds oversized SavedVariables input at 64 MiB`() {
+        val result = parser.parse(ByteArray(64 * 1024 * 1024 + 1))
+
+        assertThat(result.characters).isEmpty()
+        assertThat(result.diagnostics.single().code).isEqualTo(AuctionHelperImportDiagnosticCode.INPUT_LIMIT_EXCEEDED)
+        assertThat(result.diagnostics.single().detail).contains("64 MiB")
+    }
+
+    @Test
+    fun `bounds total table entries across nested tables`() {
+        val result = parser.parse(nestedTableEntryLimitFixture().toByteArray())
+
+        assertThat(result.characters).isEmpty()
+        assertThat(result.diagnostics.single().code).isEqualTo(AuctionHelperImportDiagnosticCode.MALFORMED_INPUT)
+        assertThat(result.diagnostics.single().detail).contains("Lua table entry limit exceeded")
+    }
+
+    @Test
+    fun `reports missing talent data without parsing a recipe only SavedVariables tree`() {
+        val result = parser.missingTalentDataDiagnostic("AuctionHelperProfessionsDB = { [\"recipes\"] = {} }".toByteArray())
+
+        assertThat(result?.characters).isEmpty()
+        assertThat(result?.diagnostics?.single()?.code).isEqualTo(AuctionHelperImportDiagnosticCode.TALENT_DATA_MISSING)
+    }
+
+    private fun nestedTableEntryLimitFixture(): String =
+        buildString {
+            append("AuctionHelperProfessionsDB = { [\"first\"] = {")
+            repeat(50_000) { index -> append("[").append(index).append("] = true,") }
+            append("}, [\"second\"] = {")
+            repeat(50_000) { index -> append("[").append(index).append("] = true,") }
+            append("} }")
+        }
+
     private val fixture =
         """
         AuctionHelperProfessionsDB = {

@@ -33,25 +33,28 @@
 
       <form
         class="grid gap-3 border-t border-white/10 pt-5"
-        (submit)="$event.preventDefault(); addCharacter()"
+        (submit)="$event.preventDefault(); lookupCharacter()"
       >
-        <h3 class="font-semibold text-on-surface" i18n="@@professionProfiles.addCharacter">
-          Add character
+        <h3 class="font-semibold text-on-surface" i18n="@@professionProfiles.importCharacter">
+          Import from Blizzard
         </h3>
+        <p class="text-sm text-outline" i18n="@@professionProfiles.importCharacterHint">
+          Look up the character's professions and known recipes before adding it to your profile.
+        </p>
         <ee-text-input
           i18n-label="@@professionProfiles.region"
           label="Region"
           name="region"
           [value]="characterRegion()"
-          (valueChanged)="characterRegion.set($event)"
+          (valueChanged)="characterRegion.set($event); clearPreview()"
           [required]="true"
         />
         <ee-text-input
-          i18n-label="@@professionProfiles.realm"
-          label="Realm"
-          name="realm"
-          [value]="characterRealmName()"
-          (valueChanged)="characterRealmName.set($event)"
+          i18n-label="@@professionProfiles.realmSlug"
+          label="Realm slug"
+          name="realmSlug"
+          [value]="characterRealmSlug()"
+          (valueChanged)="characterRealmSlug.set($event); clearPreview()"
           [required]="true"
         />
         <ee-text-input
@@ -59,17 +62,90 @@
           label="Character name"
           name="characterName"
           [value]="characterName()"
-          (valueChanged)="characterName.set($event)"
+          (valueChanged)="characterName.set($event); clearPreview()"
           [required]="true"
         />
         <button
           type="submit"
           class="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
-          [disabled]="addingCharacter()"
+          [disabled]="lookingUpCharacter()"
         >
-          <ng-container i18n="@@professionProfiles.add">Add character</ng-container>
+          @if (lookingUpCharacter()) {
+            <ng-container i18n="@@professionProfiles.lookingUp">Looking up…</ng-container>
+          } @else {
+            <ng-container i18n="@@professionProfiles.lookup">Look up character</ng-container>
+          }
         </button>
       </form>
+
+      @if (preview(); as characterPreview) {
+        <section
+          class="grid gap-3 rounded-md border border-primary/30 bg-primary/10 p-3"
+          aria-labelledby="character-preview-title"
+        >
+          <div>
+            <h3
+              id="character-preview-title"
+              class="font-semibold text-primary-container"
+              i18n="@@professionProfiles.previewTitle"
+            >
+              Profession preview
+            </h3>
+            <p class="mt-1 text-sm text-outline">
+              <ng-container i18n="@@professionProfiles.previewSummary"
+                >{{ characterPreview.professions.length }} professions and
+                {{ knownRecipeCount(characterPreview) }} known recipes found.</ng-container
+              >
+            </p>
+          </div>
+          <ul
+            class="grid gap-2 text-sm"
+            aria-label="Imported professions"
+            i18n-aria-label="@@professionProfiles.importedProfessionsAria"
+          >
+            @for (profession of characterPreview.professions; track profession.professionId) {
+              <li class="rounded border border-white/10 bg-surface px-3 py-2">
+                <p class="font-medium text-on-surface">{{ profession.professionName }}</p>
+                <p class="text-outline">
+                  <ng-container i18n="@@professionProfiles.tierSummary"
+                    >{{ profession.tiers.length }} tiers ·
+                    {{ knownRecipeCountForProfession(profession) }} known recipes</ng-container
+                  >
+                </p>
+              </li>
+            }
+          </ul>
+          <button
+            type="button"
+            class="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+            [disabled]="addingCharacter()"
+            (click)="addCharacter()"
+          >
+            <ng-container i18n="@@professionProfiles.addImported">Add character</ng-container>
+          </button>
+        </section>
+      }
+
+      <details class="border-t border-white/10 pt-4">
+        <summary
+          class="cursor-pointer font-semibold text-on-surface"
+          i18n="@@professionProfiles.manualAdd"
+        >
+          Add manually instead
+        </summary>
+        <p class="mt-2 text-sm text-outline" i18n="@@professionProfiles.manualAddHint">
+          Use this only when Blizzard's profile API is unavailable. Profession and recipe data will
+          not be imported.
+        </p>
+        <button
+          type="button"
+          class="mt-3 min-h-11 rounded-md border border-white/20 px-4 font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+          [disabled]="addingCharacter()"
+          (click)="addCharacterManually()"
+        >
+          <ng-container i18n="@@professionProfiles.addManual">Add manually</ng-container>
+        </button>
+      </details>
     </aside>
 
     <section class="grid content-start gap-5">
@@ -141,9 +217,16 @@
             Skill tree unavailable
           </h2>
           <p class="mt-2 text-sm text-outline" i18n="@@professionProfiles.treeUnavailableHint">
-            No imported tree is available for this profession yet. Importing is not available from
-            this page.
+            No imported tree is available for this profession yet.
           </p>
+          @if (isAdmin()) {
+            <a
+              class="mt-4 inline-flex min-h-11 items-center rounded-md border border-white/20 px-4 font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container"
+              routerLink="/admin/profession-talent-trees"
+              i18n="@@professionProfiles.manageTalentTrees"
+              >Manage profession talent trees</a
+            >
+          }
         </div>
       } @else {
         @for (tab of selectedTree()!.tabs; track tab.id) {

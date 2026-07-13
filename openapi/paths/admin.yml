@@ -321,6 +321,37 @@ importProfessionTalentTrees:
             "204": { description: Imported. }
             "400": { description: Unsupported or malformed versioned talent export. }
             "403": { description: Administrator role required. }
+inspectProfessionTalentTreeLua:
+    post:
+        tags: [Admin]
+        operationId: inspectProfessionTalentTreeLua
+        summary: Inspect an AuctionHelper SavedVariables Lua upload for profession talent tree data
+        description: >-
+            Accepts AuctionHelper_Professions.lua up to 64 MiB and reports its safe, bounded parse
+            result. The currently supported SavedVariables format has character and recipe metadata
+            but no talent tree allocations, so this endpoint returns an `imported: false` diagnostic
+            and does not modify shared
+            talent tree definitions. Use the versioned JSON import endpoint to replace tree data.
+        requestBody:
+            required: true
+            content:
+                multipart/form-data:
+                    schema:
+                        type: object
+                        required: [file]
+                        properties:
+                            file:
+                                type: string
+                                format: binary
+                                description: AuctionHelper_Professions.lua SavedVariables file.
+        responses:
+            "200":
+                description: Upload inspection result. `imported` is always false because this is not a tree import endpoint.
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AuctionHelperTalentTreeLuaImportResult"
+            "403": { description: Administrator role required. }
 getAdminJob:
     get:
         tags:

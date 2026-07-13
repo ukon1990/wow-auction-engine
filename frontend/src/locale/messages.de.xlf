@@ -2269,6 +2269,44 @@
       <trans-unit id="professionProfiles.confirmDiscard" datatype="html"><source>Discard unsaved skill-tree changes?</source><target>Discard unsaved skill-tree changes?</target></trans-unit>
       <trans-unit id="professionProfiles.error.loadCharacters" datatype="html"><source>Unable to load your characters.</source><target>Unable to load your characters.</target></trans-unit>
       <trans-unit id="professionProfiles.error.loadProfile" datatype="html"><source>Unable to load this profession profile.</source><target>Unable to load this profession profile.</target></trans-unit>
++      <trans-unit id="professionProfiles.importCharacter" datatype="html"><source>Import from Blizzard</source><target>Import from Blizzard</target></trans-unit>
+      <trans-unit id="professionProfiles.importCharacterHint" datatype="html"><source>Look up the character's professions and known recipes before adding it to your profile.</source><target>Look up the character's professions and known recipes before adding it to your profile.</target></trans-unit>
+      <trans-unit id="professionProfiles.realmSlug" datatype="html"><source>Realm slug</source><target>Realm slug</target></trans-unit>
+      <trans-unit id="professionProfiles.lookingUp" datatype="html"><source>Looking up…</source><target>Looking up…</target></trans-unit>
+      <trans-unit id="professionProfiles.lookup" datatype="html"><source>Look up character</source><target>Look up character</target></trans-unit>
+      <trans-unit id="professionProfiles.previewTitle" datatype="html"><source>Profession preview</source><target>Profession preview</target></trans-unit>
+      <trans-unit id="professionProfiles.previewSummary" datatype="html"><source>{$INTERPOLATION} professions and {$INTERPOLATION_1} known recipes found.</source><target>{$INTERPOLATION} professions and {$INTERPOLATION_1} known recipes found.</target></trans-unit>
+      <trans-unit id="professionProfiles.tierSummary" datatype="html"><source>{$INTERPOLATION} tiers · {$INTERPOLATION_1} known recipes</source><target>{$INTERPOLATION} tiers · {$INTERPOLATION_1} known recipes</target></trans-unit>
+      <trans-unit id="professionProfiles.addImported" datatype="html"><source>Add character</source><target>Add character</target></trans-unit>
+      <trans-unit id="professionProfiles.manualAdd" datatype="html"><source>Add manually instead</source><target>Add manually instead</target></trans-unit>
+      <trans-unit id="professionProfiles.manualAddHint" datatype="html"><source>Use this only when Blizzard's profile API is unavailable. Profession and recipe data will not be imported.</source><target>Use this only when Blizzard's profile API is unavailable. Profession and recipe data will not be imported.</target></trans-unit>
+      <trans-unit id="professionProfiles.addManual" datatype="html"><source>Add manually</source><target>Add manually</target></trans-unit>
+      <trans-unit id="professionProfiles.error.lookupRequired" datatype="html"><source>Look up the character with Blizzard first.</source><target>Look up the character with Blizzard first.</target></trans-unit>
+      <trans-unit id="professionProfiles.status.characterFound" datatype="html"><source>Character profession data loaded. Review it, then add the character.</source><target>Character profession data loaded. Review it, then add the character.</target></trans-unit>
+      <trans-unit id="professionProfiles.status.cachedCharacter" datatype="html"><source>Blizzard is unavailable, so the last saved profession preview is shown.</source><target>Blizzard is unavailable, so the last saved profession preview is shown.</target></trans-unit>
+      <trans-unit id="professionProfiles.error.lookupCharacter" datatype="html"><source>Unable to load professions from Blizzard. Check the realm slug and character name, then try again.</source><target>Unable to load professions from Blizzard. Check the realm slug and character name, then try again.</target></trans-unit>
+      <trans-unit id="professionProfiles.manageTalentTrees" datatype="html"><source>Manage profession talent trees</source><target>Manage profession talent trees</target></trans-unit>
+      <trans-unit id="professionTalentTrees.title" datatype="html"><source>Profession talent trees</source><target>Profession talent trees</target></trans-unit>
+      <trans-unit id="professionTalentTrees.eyebrow" datatype="html"><source>Admin</source><target>Admin</target></trans-unit>
+      <trans-unit id="professionTalentTrees.uploadTitle" datatype="html"><source>Inspect an AuctionHelper export</source><target>Inspect an AuctionHelper export</target></trans-unit>
+      <trans-unit id="professionTalentTrees.uploadHint" datatype="html"><source>Upload AuctionHelper_Professions.lua to inspect its character, profession, and recipe data.</source><target>Upload AuctionHelper_Professions.lua to inspect its character, profession, and recipe data.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.destructiveTitle" datatype="html"><source>Replacing talent-tree definitions is destructive</source><target>Replacing talent-tree definitions is destructive</target></trans-unit>
+      <trans-unit id="professionTalentTrees.destructiveHint" datatype="html"><source>A versioned tree-definition import replaces shared definitions and clears profile references. This Lua inspection does not modify definitions because AuctionHelper exports do not contain specialization ranks.</source><target>A versioned tree-definition import replaces shared definitions and clears profile references. This Lua inspection does not modify definitions because AuctionHelper exports do not contain specialization ranks.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.file" datatype="html"><source>AuctionHelper Lua file</source><target>AuctionHelper Lua file</target></trans-unit>
+      <trans-unit id="professionTalentTrees.selectedFile" datatype="html"><source>Selected: {$INTERPOLATION} ({$INTERPOLATION_1})</source><target>Selected: {$INTERPOLATION} ({$INTERPOLATION_1})</target></trans-unit>
+      <trans-unit id="professionTalentTrees.inspect" datatype="html"><source>Inspect file</source><target>Inspect file</target></trans-unit>
+      <trans-unit id="professionTalentTrees.inspecting" datatype="html"><source>Inspecting…</source><target>Inspecting…</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.fileType" datatype="html"><source>Choose an AuctionHelper .lua file.</source><target>Choose an AuctionHelper .lua file.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.fileSize" datatype="html"><source>Choose a file smaller than 64 MiB.</source><target>Choose a file smaller than 64 MiB.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.fileRequired" datatype="html"><source>Choose a Lua file first.</source><target>Choose a Lua file first.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.inspect" datatype="html"><source>Unable to inspect this Lua file. Try again with AuctionHelper_Professions.lua.</source><target>Unable to inspect this Lua file. Try again with AuctionHelper_Professions.lua.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.resultTitle" datatype="html"><source>Inspection result</source><target>Inspection result</target></trans-unit>
+      <trans-unit id="professionTalentTrees.characters" datatype="html"><source>Characters</source><target>Characters</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professions" datatype="html"><source>Professions</source><target>Professions</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipes" datatype="html"><source>Recipes</source><target>Recipes</target></trans-unit>
+      <trans-unit id="route.admin.professionTalentTrees" datatype="html"><source>Profession talent trees</source><target>Profession talent trees</target></trans-unit>
++      <trans-unit id="professionProfiles.importedProfessionsAria" datatype="html"><source>Imported professions</source><target>Imported professions</target></trans-unit>
+      <trans-unit id="professionTalentTrees.importDiagnosticsAria" datatype="html"><source>Import diagnostics</source><target>Import diagnostics</target></trans-unit>
     </body>
   </file>
 </xliff>

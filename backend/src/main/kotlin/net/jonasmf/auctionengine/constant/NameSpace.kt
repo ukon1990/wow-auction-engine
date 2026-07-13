@@ -13,6 +13,10 @@ enum class NameSpace(
     STATIC_EU("static-eu"),
     STATIC_KR("static-kr"),
     STATIC_TW("static-tw"),
+    PROFILE_US("profile-us"),
+    PROFILE_EU("profile-eu"),
+    PROFILE_KR("profile-kr"),
+    PROFILE_TW("profile-tw"),
     ;
 
     companion object {
@@ -30,6 +34,14 @@ enum class NameSpace(
                 Region.Europe -> STATIC_EU
                 Region.Korea -> STATIC_KR
                 Region.Taiwan -> STATIC_TW
+            }
+
+        fun getProfileForRegion(region: Region): NameSpace =
+            when (region) {
+                Region.NorthAmerica -> PROFILE_US
+                Region.Europe -> PROFILE_EU
+                Region.Korea -> PROFILE_KR
+                Region.Taiwan -> PROFILE_TW
             }
     }
 }

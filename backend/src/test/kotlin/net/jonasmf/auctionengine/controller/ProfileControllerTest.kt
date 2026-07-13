@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.controller
 
 import net.jonasmf.auctionengine.config.SecurityConfig
 import net.jonasmf.auctionengine.generated.model.ProfessionProfile
+import net.jonasmf.auctionengine.generated.model.CharacterProfessionPreview
 import net.jonasmf.auctionengine.generated.model.ProfileCharacter
 import net.jonasmf.auctionengine.service.ProfileService
 import org.junit.jupiter.api.Test
@@ -51,6 +52,22 @@ class ProfileControllerTest {
         )
 
         val result = mockMvc.get("/profile/characters") { with(jwt().jwt { it.subject("user-a") }) }.andExpect { request { asyncStarted() } }.andReturn()
+
+        mockMvc.perform(asyncDispatch(result)).andExpect(status().isOk)
+    }
+
+    @Test
+    fun `returns a Blizzard character profession preview for an authenticated caller`() {
+        `when`(profileService.getCharacterProfessionPreview(anyString(), anyString(), anyString())).thenReturn(
+            CharacterProfessionPreview(CharacterProfessionPreview.Region.EU, "draenor", "Owner", emptyList()),
+        )
+
+        val result =
+            mockMvc
+                .get("/profile/characters/professions-preview?region=eu&realmSlug=draenor&characterName=Owner") {
+                    with(jwt().jwt { it.subject("user-a") })
+                }.andExpect { request { asyncStarted() } }
+                .andReturn()
 
         mockMvc.perform(asyncDispatch(result)).andExpect(status().isOk)
     }

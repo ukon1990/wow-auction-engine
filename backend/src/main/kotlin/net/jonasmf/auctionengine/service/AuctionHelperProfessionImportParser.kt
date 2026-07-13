@@ -14,7 +14,7 @@ import java.security.MessageDigest
 import java.time.Clock
 import java.time.Instant
 
-private const val MAX_AUCTION_HELPER_IMPORT_BYTES = 10 * 1024 * 1024
+const val MAX_AUCTION_HELPER_IMPORT_BYTES = 64 * 1024 * 1024
 private const val MAX_LUA_NESTING = 100
 private const val MAX_LUA_TABLE_ENTRIES = 100_000
 
@@ -29,7 +29,7 @@ class AuctionHelperProfessionImportParser(
             return emptyImport(
                 contentHash,
                 importedAt,
-                AuctionHelperImportDiagnostic(AuctionHelperImportDiagnosticCode.INPUT_LIMIT_EXCEEDED, "SavedVariables input exceeds 10 MiB"),
+                AuctionHelperImportDiagnostic(AuctionHelperImportDiagnosticCode.INPUT_LIMIT_EXCEEDED, "SavedVariables input exceeds 64 MiB"),
             )
         }
 
@@ -43,6 +43,25 @@ class AuctionHelperProfessionImportParser(
                 AuctionHelperImportDiagnostic(AuctionHelperImportDiagnosticCode.MALFORMED_INPUT, exception.message ?: "Unable to parse SavedVariables input"),
             )
         }
+    }
+
+    /**
+     * Avoids materializing a large recipe-only SavedVariables tree when the file cannot possibly
+     * contain the separately versioned professions_talents export required for tree imports.
+     */
+    fun missingTalentDataDiagnostic(input: ByteArray): AuctionHelperProfessionImport? {
+        val content = input.toString(StandardCharsets.UTF_8)
+        if (!content.trimStart().startsWith("AuctionHelperProfessionsDB") || content.contains("professions_talents")) {
+            return null
+        }
+
+        return AuctionHelperProfessionImport(
+            addonVersion = null,
+            characters = emptyList(),
+            contentHash = input.sha256(),
+            importedAt = clock.instant(),
+            diagnostics = listOf(talentDataMissingDiagnostic()),
+        )
     }
 
     /**
@@ -74,14 +93,15 @@ private fun LuaValue.toAuctionHelperImport(
         characters = characters,
         contentHash = contentHash,
         importedAt = importedAt,
-        diagnostics = listOf(
-            AuctionHelperImportDiagnostic(
-                AuctionHelperImportDiagnosticCode.TALENT_DATA_MISSING,
-                "AuctionHelper_Professions.lua has character and recipe metadata but no specialization tree, node, entry, rank, or config data",
-            ),
-        ),
+        diagnostics = listOf(talentDataMissingDiagnostic()),
     )
 }
+
+private fun talentDataMissingDiagnostic() =
+    AuctionHelperImportDiagnostic(
+        AuctionHelperImportDiagnosticCode.TALENT_DATA_MISSING,
+        "AuctionHelper_Professions.lua has character and recipe metadata but no specialization tree, node, entry, rank, or config data",
+    )
 
 private fun LuaValue.toCharacter(): AuctionHelperCharacter? {
     val table = asTable()
@@ -151,6 +171,7 @@ private class LuaSavedVariablesParser(
     private val input: String,
 ) {
     private var position = 0
+    private var totalTableEntries = 0
 
     fun parseAssignment(expectedName: String): LuaValue {
         skipWhitespace()
@@ -186,7 +207,8 @@ private class LuaSavedVariablesParser(
         var arrayIndex = 1
         skipWhitespace()
         while (peek() != '}') {
-            require(values.size < MAX_LUA_TABLE_ENTRIES) { "Lua table entry limit exceeded" }
+            require(totalTableEntries < MAX_LUA_TABLE_ENTRIES) { "Lua table entry limit exceeded" }
+            totalTableEntries++
             val key =
                 if (peek() == '[') {
                     read()
