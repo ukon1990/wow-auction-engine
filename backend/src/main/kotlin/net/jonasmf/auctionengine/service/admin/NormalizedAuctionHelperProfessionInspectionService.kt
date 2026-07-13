@@ -30,9 +30,12 @@ class NormalizedAuctionHelperProfessionInspectionService(
     private val log = LoggerFactory.getLogger(NormalizedAuctionHelperProfessionInspectionService::class.java)
 
     @Transactional
-    fun inspect(payload: NormalizedAuctionHelperProfessionData): NormalizedAuctionHelperProfessionInspection {
+    fun inspect(
+        payload: NormalizedAuctionHelperProfessionData,
+        ownerSubject: String = "admin",
+    ): NormalizedAuctionHelperProfessionInspection {
         try {
-            return inspectValidated(payload)
+            return inspectValidated(payload, ownerSubject)
         } catch (error: ResponseStatusException) {
             log.warn(
                 "Normalized profession data rejected (characters={} professions={} recipes={})",
@@ -44,7 +47,10 @@ class NormalizedAuctionHelperProfessionInspectionService(
         }
     }
 
-    private fun inspectValidated(payload: NormalizedAuctionHelperProfessionData): NormalizedAuctionHelperProfessionInspection {
+    private fun inspectValidated(
+        payload: NormalizedAuctionHelperProfessionData,
+        ownerSubject: String,
+    ): NormalizedAuctionHelperProfessionInspection {
         val violations = validator.validate(payload)
         if (violations.isNotEmpty()) {
             log.warn(
@@ -65,6 +71,10 @@ class NormalizedAuctionHelperProfessionInspectionService(
 
         val professions = payload.characters.flatMap { it.professions }
         validateCollectionLimits(professions)
+        val missingProfessionIds = repository.missingProfessionIds(professions.map { it.professionId }.toSet())
+        if (missingProfessionIds.isNotEmpty()) {
+            badRequest("Profession IDs are missing from the catalog: ${missingProfessionIds.sorted().joinToString()}")
+        }
 
         val diagnostics = linkedMapOf<NormalizedAuctionHelperProfessionDiagnostic.Code, DiagnosticAccumulator>()
         var recipesFound = 0
@@ -75,6 +85,9 @@ class NormalizedAuctionHelperProfessionInspectionService(
 
         professions.forEach { profession ->
             validateProfession(profession)
+            if (profession.talents == null || profession.talents.trees.isEmpty()) {
+                diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_DATA_MISSING)
+            }
             profession.recipes.forEach { recipe ->
                 recipesFound++
                 validateRecipe(recipe)
@@ -120,7 +133,7 @@ class NormalizedAuctionHelperProfessionInspectionService(
             }
         }
 
-        repository.save(payload, professions.size, recipesFound)
+        repository.save(payload, professions.size, recipesFound, ownerSubject)
 
         return NormalizedAuctionHelperProfessionInspection(
             imported = true,
@@ -262,6 +275,7 @@ private val DIAGNOSTIC_DETAILS =
         NormalizedAuctionHelperProfessionDiagnostic.Code.REAGENT_ITEM_MISSING to "Recipe reagent slots have no item association.",
         NormalizedAuctionHelperProfessionDiagnostic.Code.CRAFTING_SKILL_DATA_MISSING to "Recipes using quality or crafting operations have no skill or difficulty data.",
         NormalizedAuctionHelperProfessionDiagnostic.Code.MAX_QUALITY_REAGENT_ASSOCIATION_INCOMPLETE to "Maximum-quality reagent metadata could not be matched to an exported recipe slot.",
+        NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_DATA_MISSING to "No specialization tree definitions were exported for a profession; shared talent-tree tables were not changed.",
         NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_ALLOCATION_MISSING_NODE to "Talent allocations reference nodes absent from their profession trees.",
         NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_ALLOCATION_MISSING_ENTRY to "Talent allocations reference entries absent from their nodes.",
     )

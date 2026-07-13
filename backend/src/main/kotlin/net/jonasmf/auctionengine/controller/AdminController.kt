@@ -141,7 +141,7 @@ class AdminController(
     override suspend fun inspectNormalizedAuctionHelperProfessionData(
         body: NormalizedAuctionHelperProfessionData,
     ): ResponseEntity<NormalizedAuctionHelperProfessionInspection> =
-        ResponseEntity.ok(normalizedAuctionHelperProfessionInspectionService.inspect(body))
+        ResponseEntity.ok(normalizedAuctionHelperProfessionInspectionService.inspect(body, requestedBy() ?: "admin"))
 
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getAdminJob(id: Long): ResponseEntity<AdminJob> =

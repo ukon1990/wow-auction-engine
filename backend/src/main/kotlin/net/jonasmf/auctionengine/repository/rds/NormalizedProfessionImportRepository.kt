@@ -16,6 +16,7 @@ class NormalizedProfessionImportRepository(
         payload: NormalizedAuctionHelperProfessionData,
         professionCount: Int,
         recipeCount: Int,
+        ownerSubject: String = "admin",
     ) {
         val payloadJson = objectMapper.writeValueAsString(payload)
         val sourceFilesJson = objectMapper.writeValueAsString(payload.source.files)
@@ -47,7 +48,65 @@ class NormalizedProfessionImportRepository(
             recipeCount,
             payloadJson,
         )
+        val importId = jdbcTemplate.queryForObject("SELECT id FROM normalized_profession_import WHERE content_hash = ?", Long::class.java, contentHash)!!
+        payload.characters.forEach { character ->
+            jdbcTemplate.update(
+                """INSERT INTO user_character (owner_subject, region, realm_name, character_name, source_guid)
+                    VALUES (?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE region = VALUES(region), realm_name = VALUES(realm_name),
+                        character_name = VALUES(character_name), updated_at = CURRENT_TIMESTAMP""".trimIndent(),
+                ownerSubject,
+                character.region.lowercase(),
+                character.realm,
+                character.name,
+                character.characterKey,
+            )
+            val characterId =
+                jdbcTemplate.queryForObject(
+                    "SELECT id FROM user_character WHERE owner_subject = ? AND source_guid = ?",
+                    Long::class.java,
+                    ownerSubject,
+                    character.characterKey,
+                )!!
+            character.professions.forEach professionLoop@{ profession ->
+                if (!exists("profession", profession.professionId)) return@professionLoop
+                jdbcTemplate.update(
+                    """INSERT INTO user_character_profession_profile (character_id, profession_id, skill_level)
+                        VALUES (?, ?, ?)
+                        ON DUPLICATE KEY UPDATE skill_level = VALUES(skill_level), updated_at = CURRENT_TIMESTAMP""".trimIndent(),
+                    characterId,
+                    profession.professionId,
+                    profession.skillLevel,
+                )
+                val profileId =
+                    jdbcTemplate.queryForObject(
+                        "SELECT id FROM user_character_profession_profile WHERE character_id = ? AND profession_id = ?",
+                        Long::class.java,
+                        characterId,
+                        profession.professionId,
+                    )!!
+                profession.recipes.forEach { recipe ->
+                    jdbcTemplate.update(
+                        """INSERT INTO user_character_profession_recipe
+                            (profile_id, recipe_id, recipe_name, learned, source_import_id)
+                            VALUES (?, ?, ?, ?, ?)
+                            ON DUPLICATE KEY UPDATE recipe_name = VALUES(recipe_name), learned = VALUES(learned),
+                                source_import_id = VALUES(source_import_id), updated_at = CURRENT_TIMESTAMP""".trimIndent(),
+                        profileId,
+                        recipe.recipeId,
+                        recipe.name,
+                        recipe.learned,
+                        importId,
+                    )
+                }
+            }
+        }
     }
+
+    private fun exists(table: String, id: Int): Boolean =
+        jdbcTemplate.queryForObject("SELECT EXISTS(SELECT 1 FROM $table WHERE id = ?)", Boolean::class.java, id) == true
+
+    fun missingProfessionIds(professionIds: Set<Int>): Set<Int> = professionIds.filterNot { exists("profession", it) }.toSet()
 }
 
 private fun String.sha256(): String =

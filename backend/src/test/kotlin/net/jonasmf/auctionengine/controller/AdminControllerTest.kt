@@ -200,7 +200,7 @@ class AdminControllerTest {
     inner class InspectNormalizedAuctionHelperProfessionData {
         @Test
         fun `returns a persisted import result for an administrator`() {
-            `when`(normalizedAuctionHelperProfessionInspectionService.inspect(anyNonNull())).thenReturn(
+            `when`(normalizedAuctionHelperProfessionInspectionService.inspect(anyNonNull(), anyNonNull())).thenReturn(
                 NormalizedAuctionHelperProfessionInspection(true, 1, 1, 1, 1, 0, 0, 0, emptyList()),
             )
 

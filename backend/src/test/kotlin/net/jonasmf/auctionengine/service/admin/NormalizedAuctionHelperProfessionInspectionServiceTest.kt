@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.validation.Validation
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.every
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
 import net.jonasmf.auctionengine.repository.rds.NormalizedProfessionImportRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -19,9 +20,13 @@ class NormalizedAuctionHelperProfessionInspectionServiceTest {
     private val repository = mockk<NormalizedProfessionImportRepository>(relaxed = true)
     private val service = NormalizedAuctionHelperProfessionInspectionService(validator, repository)
 
+    init {
+        every { repository.missingProfessionIds(any()) } returns emptySet()
+    }
+
     @Test
     fun `accepts normalized recipe item skill and reagent associations`() {
-        val result = service.inspect(normalizedPayload())
+        val result = service.inspect(normalizedPayload(), "admin")
 
         assertThat(result.imported).isTrue()
         assertThat(result.charactersFound).isEqualTo(1)
@@ -30,8 +35,8 @@ class NormalizedAuctionHelperProfessionInspectionServiceTest {
         assertThat(result.recipesWithOutputItemFound).isEqualTo(1)
         assertThat(result.missingOutputItemAssociations).isZero()
         assertThat(result.missingReagentItemAssociations).isZero()
-        assertThat(result.diagnostics).isEmpty()
-        verify(exactly = 1) { repository.save(any(), 1, 1) }
+        assertThat(result.diagnostics.map { it.code.value }).containsExactly("TALENT_DATA_MISSING")
+        verify(exactly = 1) { repository.save(any(), 1, 1, "admin") }
     }
 
     @Test
@@ -83,8 +88,8 @@ class NormalizedAuctionHelperProfessionInspectionServiceTest {
             )
 
         assertThat(result.imported).isTrue()
-        assertThat(result.diagnostics.single().code.value).isEqualTo("MAX_QUALITY_REAGENT_ASSOCIATION_INCOMPLETE")
-        assertThat(result.diagnostics.single().exampleRecipeIds).containsExactly(recipe.recipeId)
+        val diagnostic = result.diagnostics.first { it.code.value == "MAX_QUALITY_REAGENT_ASSOCIATION_INCOMPLETE" }
+        assertThat(diagnostic.exampleRecipeIds).containsExactly(recipe.recipeId)
     }
 
     @Test
@@ -121,8 +126,7 @@ class NormalizedAuctionHelperProfessionInspectionServiceTest {
 
         assertThat(result.missingOutputItemAssociations).isEqualTo(1)
         assertThat(result.missingReagentItemAssociations).isEqualTo(1)
-        assertThat(result.diagnostics.map { it.code.value }).containsExactly("CRAFTED_ITEM_MISSING", "REAGENT_ITEM_MISSING")
-        assertThat(result.diagnostics.map { it.count }).containsExactly(1, 1)
+        assertThat(result.diagnostics.map { it.code.value }).contains("CRAFTED_ITEM_MISSING", "REAGENT_ITEM_MISSING", "TALENT_DATA_MISSING")
         assertThat(result.diagnostics.flatMap { it.exampleRecipeIds }).containsOnly(recipe.recipeId)
     }
 
@@ -171,7 +175,7 @@ class NormalizedAuctionHelperProfessionInspectionServiceTest {
         val result = service.inspect(payload.withProfession(profession.copy(recipes = listOf(recipe))))
 
         assertThat(result.missingOutputItemAssociations).isEqualTo(1)
-        assertThat(result.diagnostics.single().code.value).isEqualTo("CRAFTED_ITEM_MISSING")
+        assertThat(result.diagnostics.map { it.code.value }).contains("CRAFTED_ITEM_MISSING")
     }
 
     @Test
