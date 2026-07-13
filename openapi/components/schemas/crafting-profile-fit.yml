@@ -1,0 +1,28 @@
+type: object
+required: [state, craftable, diagnostic, alternatives]
+description: |
+  Personal crafting context for the authenticated caller only. Recipe requirement and talent-effect
+  data are not yet imported, so craftable is deliberately null and candidate ranking is heuristic.
+properties:
+  state:
+    type: string
+    enum: [configured, default]
+  craftable:
+    type: boolean
+    nullable: true
+    description: Null when the imported recipe data has no requirement or talent-effect rules.
+  diagnostic:
+    type: string
+    enum:
+      - anonymous_default
+      - no_matching_profile_default
+      - recipe_rules_unavailable_heuristic_ranking
+  bestCandidate:
+    allOf:
+      - $ref: "../../openapi.yml#/components/schemas/CraftingProfileCandidate"
+    nullable: true
+  alternatives:
+    type: array
+    description: Other matching user-owned candidates in deterministic heuristic order.
+    items:
+      $ref: "../../openapi.yml#/components/schemas/CraftingProfileCandidate"

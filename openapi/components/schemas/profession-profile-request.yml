@@ -1,0 +1,9 @@
+type: object
+required: [treeId, allocations]
+properties:
+  treeId: { type: integer, format: int64, minimum: 1 }
+  skillLevel: { type: integer, format: int32, nullable: true, minimum: 0 }
+  allocations:
+    type: array
+    maxItems: 500
+    items: { $ref: "../../openapi.yml#/components/schemas/ProfessionAllocation" }

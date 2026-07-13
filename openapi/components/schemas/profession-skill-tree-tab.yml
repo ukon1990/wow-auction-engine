@@ -1,0 +1,9 @@
+type: object
+required: [id, externalTabId, name, displayOrder, nodes]
+properties:
+  id: { type: integer, format: int64 }
+  externalTabId: { type: integer, format: int32 }
+  name: { type: string }
+  description: { type: string, nullable: true }
+  displayOrder: { type: integer, format: int32 }
+  nodes: { type: array, items: { $ref: "../../openapi.yml#/components/schemas/ProfessionSkillTreeNode" } }

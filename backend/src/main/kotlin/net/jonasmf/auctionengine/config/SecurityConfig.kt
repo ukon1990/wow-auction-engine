@@ -48,6 +48,8 @@ class SecurityConfig(
                 requests
                     .requestMatchers("/admin/**")
                     .authenticated()
+                    .requestMatchers("/profile/**")
+                    .authenticated()
                     .anyRequest()
                     .permitAll()
             }

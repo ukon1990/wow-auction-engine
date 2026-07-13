@@ -1,0 +1,7 @@
+type: object
+required: [region, realmName, characterName]
+properties:
+  region: { type: string, minLength: 1, maxLength: 32 }
+  realmName: { type: string, minLength: 1, maxLength: 255 }
+  characterName: { type: string, minLength: 1, maxLength: 255 }
+  sourceGuid: { type: string, nullable: true, maxLength: 64 }

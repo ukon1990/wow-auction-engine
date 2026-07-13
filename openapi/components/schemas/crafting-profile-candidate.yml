@@ -1,0 +1,19 @@
+type: object
+required:
+  - characterId
+  - characterName
+  - region
+  - realmName
+  - professionId
+  - allocationCount
+properties:
+  characterId: { type: integer, format: int64 }
+  characterName: { type: string }
+  region: { type: string }
+  realmName: { type: string }
+  professionId: { type: integer, format: int32 }
+  skillLevel: { type: integer, format: int32, nullable: true }
+  allocationCount:
+    type: integer
+    format: int32
+    description: Number of configured skill-tree entries. This is used only for deterministic heuristic ranking.

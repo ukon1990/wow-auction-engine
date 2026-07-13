@@ -10,11 +10,15 @@ import net.jonasmf.auctionengine.generated.model.AuctionMarketRecipe
 import net.jonasmf.auctionengine.generated.model.AuctionMarketSort
 import net.jonasmf.auctionengine.generated.model.CraftingMarketSearchPage
 import net.jonasmf.auctionengine.generated.model.CraftingMarketSearchRow
+import net.jonasmf.auctionengine.generated.model.CraftingProfileCandidate
+import net.jonasmf.auctionengine.generated.model.CraftingProfileFit
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketSearchRepository
 import net.jonasmf.auctionengine.repository.rds.CraftingMarketSearchRepository
 import net.jonasmf.auctionengine.repository.rds.CraftingMarketSearchRequest
 import net.jonasmf.auctionengine.repository.rds.CraftingMarketSqlRow
+import net.jonasmf.auctionengine.repository.rds.CraftingProfileCandidate as StoredCraftingProfileCandidate
+import net.jonasmf.auctionengine.repository.rds.ProfileRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -24,6 +28,7 @@ class CraftingMarketSearchService(
     private val auctionMarketContextService: AuctionMarketContextService,
     private val auctionMarketSearchRepository: AuctionMarketSearchRepository,
     private val craftingMarketSearchRepository: CraftingMarketSearchRepository,
+    private val profileRepository: ProfileRepository,
 ) {
     private val allowedSorts =
         setOf(
@@ -62,6 +67,7 @@ class CraftingMarketSearchService(
         minOutputPriceChangePercent: Double?,
         maxOutputPriceChangePercent: Double?,
         requireCompleteReagentPricing: Boolean,
+        actorSubject: String? = null,
     ): CraftingMarketSearchPage {
         validateLongRange("profit", minProfit, maxProfit)
         validateLongRange("reagentCost", minReagentCost, maxReagentCost)
@@ -108,6 +114,13 @@ class CraftingMarketSearchService(
                 requireCompleteReagentPricing = requireCompleteReagentPricing,
             )
         val result = craftingMarketSearchRepository.search(request)
+        val candidatesByRecipeProfession =
+            actorSubject
+                ?.let { subject ->
+                    profileRepository
+                        .findCraftingCandidates(subject, result.rows.mapNotNull(CraftingMarketSqlRow::professionId).toSet())
+                        .groupBy { candidate -> candidate.professionId to candidate.expansionId }
+                }.orEmpty()
         val totalPages =
             if (result.totalItems == 0L) {
                 0
@@ -184,6 +197,7 @@ class CraftingMarketSearchService(
                         profitChangePercent = row.profitChangePercent,
                         reagentsFullyPriced = row.reagentsFullyPriced,
                         outputPriced = row.outputUnitPrice != null,
+                        profileFit = row.profileFit(candidatesByRecipeProfession, actorSubject != null),
                     )
                 },
             page =
@@ -198,6 +212,35 @@ class CraftingMarketSearchService(
                     sortBy = normalizedSortBy,
                     sortDirection = AuctionMarketSort.SortDirection.forValue(normalizedSortDirection),
                 ),
+        )
+    }
+
+    private fun CraftingMarketSqlRow.profileFit(
+        candidatesByRecipeProfession: Map<Pair<Int, Int>, List<StoredCraftingProfileCandidate>>,
+        authenticated: Boolean,
+    ): CraftingProfileFit? {
+        if (!authenticated) return null
+        val candidates =
+            if (professionId == null || expansionId == null) {
+                emptyList()
+            } else {
+                candidatesByRecipeProfession[professionId to expansionId].orEmpty().sortedWith(craftingCandidateOrder)
+            }
+        if (candidates.isEmpty()) {
+            return CraftingProfileFit(
+                state = CraftingProfileFit.State.DEFAULT,
+                craftable = null,
+                diagnostic = CraftingProfileFit.Diagnostic.NO_MATCHING_PROFILE_DEFAULT,
+                alternatives = emptyList(),
+            )
+        }
+        val rankedCandidates = candidates.map(StoredCraftingProfileCandidate::toApi)
+        return CraftingProfileFit(
+            state = CraftingProfileFit.State.CONFIGURED,
+            craftable = null,
+            diagnostic = CraftingProfileFit.Diagnostic.RECIPE_RULES_UNAVAILABLE_HEURISTIC_RANKING,
+            bestCandidate = rankedCandidates.first(),
+            alternatives = rankedCandidates.drop(1),
         )
     }
 
@@ -326,3 +369,20 @@ class CraftingMarketSearchService(
         }
     }
 }
+
+private val craftingCandidateOrder =
+    compareByDescending<StoredCraftingProfileCandidate> { it.skillLevel ?: -1 }
+        .thenByDescending { it.allocationCount }
+        .thenBy { it.characterName.lowercase() }
+        .thenBy { it.characterId }
+
+private fun StoredCraftingProfileCandidate.toApi() =
+    CraftingProfileCandidate(
+        characterId = characterId,
+        characterName = characterName,
+        region = region,
+        realmName = realmName,
+        professionId = professionId,
+        allocationCount = allocationCount,
+        skillLevel = skillLevel,
+    )

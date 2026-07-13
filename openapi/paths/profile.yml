@@ -1,0 +1,113 @@
+listProfessionTrees:
+  get:
+    tags: [Profile]
+    operationId: listProfessionTrees
+    summary: List imported profession skill trees
+    parameters:
+      - name: expansionId
+        in: query
+        required: true
+        schema: { type: integer, format: int32, minimum: 1 }
+      - name: professionId
+        in: query
+        required: true
+        schema: { type: integer, format: int32, minimum: 1 }
+    responses:
+      "200":
+        description: Imported trees for the requested expansion and profession.
+        content: { application/json: { schema: { type: array, items: { $ref: "../openapi.yml#/components/schemas/ProfessionSkillTree" } } } }
+      "401": { description: Authentication required. }
+
+characters:
+  get:
+    tags: [Profile]
+    operationId: listProfileCharacters
+    summary: List the authenticated user's characters
+    responses:
+      "200":
+        description: User-owned characters only.
+        content: { application/json: { schema: { type: array, items: { $ref: "../openapi.yml#/components/schemas/ProfileCharacter" } } } }
+      "401": { description: Authentication required. }
+  post:
+    tags: [Profile]
+    operationId: createProfileCharacter
+    summary: Create an authenticated user's character
+    requestBody:
+      required: true
+      content: { application/json: { schema: { $ref: "../openapi.yml#/components/schemas/ProfileCharacterRequest" } } }
+    responses:
+      "201":
+        description: Created character.
+        content: { application/json: { schema: { $ref: "../openapi.yml#/components/schemas/ProfileCharacter" } } }
+      "400": { description: Invalid character data. }
+      "401": { description: Authentication required. }
+      "409": { description: Duplicate owned character or source GUID. }
+
+characterById:
+  delete:
+    tags: [Profile]
+    operationId: deleteProfileCharacter
+    summary: Delete an authenticated user's character and allocations
+    parameters:
+      - $ref: "#/components/parameters/CharacterId"
+    responses:
+      "204": { description: Deleted. }
+      "401": { description: Authentication required. }
+      "404": { description: Character is missing or not owned by the caller. }
+
+characterProfessionProfile:
+  get:
+    tags: [Profile]
+    operationId: getProfessionProfile
+    summary: Get a character profession allocation
+    description: Returns an empty default allocation when the owned character has no saved profile for the profession.
+    parameters:
+      - $ref: "#/components/parameters/CharacterId"
+      - $ref: "#/components/parameters/ProfessionId"
+    responses:
+      "200":
+        description: Saved or empty default allocation.
+        content: { application/json: { schema: { $ref: "../openapi.yml#/components/schemas/ProfessionProfile" } } }
+      "401": { description: Authentication required. }
+      "404": { description: Character is missing or not owned by the caller. }
+  put:
+    tags: [Profile]
+    operationId: putProfessionProfile
+    summary: Create or replace a character profession allocation
+    parameters:
+      - $ref: "#/components/parameters/CharacterId"
+      - $ref: "#/components/parameters/ProfessionId"
+    requestBody:
+      required: true
+      content: { application/json: { schema: { $ref: "../openapi.yml#/components/schemas/ProfessionProfileRequest" } } }
+    responses:
+      "200":
+        description: Saved allocation.
+        content: { application/json: { schema: { $ref: "../openapi.yml#/components/schemas/ProfessionProfile" } } }
+      "400": { description: Invalid ranks or unmet prerequisites. }
+      "401": { description: Authentication required. }
+      "404": { description: Character is missing or not owned by the caller. }
+  delete:
+    tags: [Profile]
+    operationId: deleteProfessionProfile
+    summary: Delete a character profession allocation
+    parameters:
+      - $ref: "#/components/parameters/CharacterId"
+      - $ref: "#/components/parameters/ProfessionId"
+    responses:
+      "204": { description: Deleted. }
+      "401": { description: Authentication required. }
+      "404": { description: Character is missing or not owned by the caller. }
+
+components:
+  parameters:
+    CharacterId:
+      name: characterId
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    ProfessionId:
+      name: professionId
+      in: path
+      required: true
+      schema: { type: integer, format: int32, minimum: 1 }

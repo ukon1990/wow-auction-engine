@@ -306,6 +306,21 @@ getActiveProfessionSyncJob:
                             $ref: "../openapi.yml#/components/schemas/AdminJob"
             "404":
                 description: No profession and recipe synchronization job is running
+importProfessionTalentTrees:
+    post:
+        tags: [Admin]
+        operationId: importProfessionTalentTrees
+        summary: Replace versioned profession talent tree definitions
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "../openapi.yml#/components/schemas/ProfessionTalentTreeImportRequest"
+        responses:
+            "204": { description: Imported. }
+            "400": { description: Unsupported or malformed versioned talent export. }
+            "403": { description: Administrator role required. }
 getAdminJob:
     get:
         tags:

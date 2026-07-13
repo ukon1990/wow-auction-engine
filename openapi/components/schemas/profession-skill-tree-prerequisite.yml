@@ -1,0 +1,5 @@
+type: object
+required: [parentNodeId, requiredParentRanks]
+properties:
+  parentNodeId: { type: integer, format: int64 }
+  requiredParentRanks: { type: integer, format: int32 }

@@ -1,0 +1,5 @@
+type: object
+required: [entryId, rank]
+properties:
+  entryId: { type: integer, format: int64, minimum: 1 }
+  rank: { type: integer, format: int32, minimum: 1 }

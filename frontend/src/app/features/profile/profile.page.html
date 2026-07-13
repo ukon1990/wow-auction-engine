@@ -6,6 +6,17 @@
   [loading]="loading()"
 >
   <section class="grid max-w-3xl gap-6" [eeSkeleton]="loading()">
+    <a
+      routerLink="/profile/professions"
+      class="rounded-md border border-primary/30 bg-primary/10 p-5 text-primary-container transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary-container"
+    >
+      <span class="font-cinzel text-xl font-bold" i18n="@@profile.professionProfiles"
+        >Profession profiles</span
+      >
+      <span class="mt-1 block text-sm text-on-surface" i18n="@@profile.professionProfilesHint"
+        >Configure your characters’ crafting skill trees.</span
+      >
+    </a>
     <div class="grid gap-2 rounded-md border border-white/10 bg-surface-container-highest p-5">
       <p class="ee-data uppercase text-outline" i18n="@@profile.email">Email</p>
       <p class="break-words text-lg font-semibold text-on-surface">

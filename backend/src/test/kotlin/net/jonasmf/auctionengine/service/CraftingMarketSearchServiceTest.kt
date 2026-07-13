@@ -69,6 +69,39 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
         assertTrue(row.reagentsFullyPriced)
         assertEquals("Alchemy", row.professionName)
         assertTrue(row.outputPriced)
+        assertNull(row.profileFit)
+    }
+
+    @Test
+    fun `authenticated crafting search returns documented default when no profile matches`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
+
+        val row = search(actorSubject = "user-without-profiles").items.single()
+
+        assertEquals("default", row.profileFit?.state?.value)
+        assertEquals("no_matching_profile_default", row.profileFit?.diagnostic?.value)
+        assertNull(row.profileFit?.craftable)
+        assertNull(row.profileFit?.bestCandidate)
+    }
+
+    @Test
+    fun `authenticated crafting search ranks only matching owned profiles and keeps craftability unknown`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
+        jdbcTemplate.update("UPDATE item SET expansion_id = 1 WHERE id = 19019")
+        val treeId = createProfessionTree()
+        createCraftingProfile("owner", "Lower Skill", treeId, skillLevel = 50, allocationCount = 2)
+        createCraftingProfile("owner", "Higher Skill", treeId, skillLevel = 100, allocationCount = 1)
+        createCraftingProfile("other-user", "Not Yours", treeId, skillLevel = 999, allocationCount = 4)
+
+        val fit = search(actorSubject = "owner").items.single().profileFit
+
+        assertEquals("configured", fit?.state?.value)
+        assertEquals("recipe_rules_unavailable_heuristic_ranking", fit?.diagnostic?.value)
+        assertNull(fit?.craftable)
+        assertEquals("Higher Skill", fit?.bestCandidate?.characterName)
+        assertEquals(listOf("Lower Skill"), fit?.alternatives?.map { it.characterName })
     }
 
     @Test
@@ -321,7 +354,7 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
         assertEquals(0L, nonMatching.page.totalItems)
     }
 
-    private fun search() =
+    private fun search(actorSubject: String? = null) =
         craftingMarketSearchService.search(
             regionCode = "eu",
             realmSlug = "argent-dawn",
@@ -345,7 +378,47 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
             minOutputPriceChangePercent = null,
             maxOutputPriceChangePercent = null,
             requireCompleteReagentPricing = false,
+            actorSubject = actorSubject,
         )
+
+    private fun createProfessionTree(): Long {
+        jdbcTemplate.update(
+            "INSERT INTO profession_tree_import (source_type, content_hash) VALUES ('test', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')",
+        )
+        jdbcTemplate.update(
+            "INSERT INTO profession_skill_tree (expansion_id, profession_id, external_tree_id, name, import_id) VALUES (1, 50, 1, 'Alchemy', 1)",
+        )
+        return jdbcTemplate.queryForObject("SELECT id FROM profession_skill_tree WHERE external_tree_id = 1", Long::class.java)!!
+    }
+
+    private fun createCraftingProfile(
+        subject: String,
+        characterName: String,
+        treeId: Long,
+        skillLevel: Int,
+        allocationCount: Int,
+    ) {
+        jdbcTemplate.update(
+            "INSERT INTO user_character (owner_subject, region, realm_name, character_name) VALUES (?, 'eu', 'Argent Dawn', ?)",
+            subject,
+            characterName,
+        )
+        val characterId = jdbcTemplate.queryForObject("SELECT id FROM user_character WHERE owner_subject = ? AND character_name = ?", Long::class.java, subject, characterName)!!
+        jdbcTemplate.update(
+            "INSERT INTO user_character_profession_profile (character_id, profession_id, tree_id, skill_level) VALUES (?, 50, ?, ?)",
+            characterId,
+            treeId,
+            skillLevel,
+        )
+        val profileId = jdbcTemplate.queryForObject("SELECT id FROM user_character_profession_profile WHERE character_id = ?", Long::class.java, characterId)!!
+        repeat(allocationCount) { index ->
+            val nodeId = 1000L + characterId * 10 + index
+            val entryId = 2000L + characterId * 10 + index
+            jdbcTemplate.update("INSERT INTO profession_skill_tree_node (id, tree_id, external_node_id, name, max_ranks, display_order) VALUES (?, ?, ?, 'Node', 1, ?)", nodeId, treeId, nodeId, index)
+            jdbcTemplate.update("INSERT INTO profession_skill_tree_entry (id, node_id, external_entry_id, name, rank_limit, display_order) VALUES (?, ?, ?, 'Entry', 1, ?)", entryId, nodeId, entryId, index)
+            jdbcTemplate.update("INSERT INTO user_character_profession_allocation (profile_id, entry_id, rank) VALUES (?, ?, 1)", profileId, entryId)
+        }
+    }
 
     private fun addRankTwoHealingPotionRecipe() {
         jdbcTemplate.update(

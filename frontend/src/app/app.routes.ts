@@ -18,6 +18,8 @@ import { AuctionItemService } from '@core/services/auction-item.service';
 import { CraftingItemService } from '@core/services/crafting-item.service';
 import { UserRole } from '@api/auth/auth.model';
 import { userHasRoleGuard } from '@core/guards/user-has-role-guard';
+import { authenticatedGuard } from '@core/guards/authenticated.guard';
+import { pendingProfessionProfileChangesGuard } from '@features/profile/professions/profession-profiles.guard';
 
 export type TitledRoutes = (Route & {
   icon?: string;
@@ -35,6 +37,16 @@ export const routes: TitledRoutes = [
     path: 'login',
     title: $localize`:@@route.login:Login`,
     loadComponent: () => import('./features/login/login.page').then((module) => module.LoginPage),
+  },
+  {
+    path: 'profile/professions',
+    title: $localize`:@@professionProfiles.title:Profession profiles`,
+    canActivate: [authenticatedGuard],
+    canDeactivate: [pendingProfessionProfileChangesGuard],
+    loadComponent: () =>
+      import('./features/profile/professions/profession-profiles.page').then(
+        (module) => module.ProfessionProfilesPage,
+      ),
   },
   {
     path: 'profile',

@@ -2639,6 +2639,56 @@
       <trans-unit id="admin.recipes.professionSync.reagents" datatype="html"><source>Reagents</source></trans-unit>
       <trans-unit id="admin.recipes.professionSync.failures" datatype="html"><source>Recipe failures</source></trans-unit>
       <trans-unit id="admin.jobs.pollingError" datatype="html"><source>Unable to monitor the admin job. You can try starting it again.</source></trans-unit>
+      <trans-unit id="crafting.profileFit.rulesUnavailable" datatype="html"><source>Crafting rules are unavailable; ranking is heuristic.</source></trans-unit>
+      <trans-unit id="crafting.profileFit.bestCrafter" datatype="html"><source>Best crafter: {$INTERPOLATION}.</source></trans-unit>
+      <trans-unit id="crafting.profileFit.heuristicBestCrafter" datatype="html"><source>Heuristic best crafter: {$INTERPOLATION}. Crafting rules are unavailable.</source></trans-unit>
+      <trans-unit id="crafting.profileFit.noMatch" datatype="html"><source>No matching character profile.</source></trans-unit>
+      <trans-unit id="profile.professionProfiles" datatype="html"><source>Profession profiles</source></trans-unit>
+      <trans-unit id="profile.professionProfilesHint" datatype="html"><source>Configure your characters’ crafting skill trees.</source></trans-unit>
+      <trans-unit id="professionProfiles.title" datatype="html"><source>Profession profiles</source></trans-unit>
+      <trans-unit id="professionProfiles.eyebrow" datatype="html"><source>Character crafting</source></trans-unit>
+      <trans-unit id="professionProfiles.characters" datatype="html"><source>Characters</source></trans-unit>
+      <trans-unit id="professionProfiles.charactersHint" datatype="html"><source>Add the characters whose profession builds you want to compare.</source></trans-unit>
+      <trans-unit id="professionProfiles.character" datatype="html"><source>Character</source></trans-unit>
+      <trans-unit id="professionProfiles.selectCharacter" datatype="html"><source>Select a character</source></trans-unit>
+      <trans-unit id="professionProfiles.addCharacter" datatype="html"><source>Add character</source></trans-unit>
+      <trans-unit id="professionProfiles.region" datatype="html"><source>Region</source></trans-unit>
+      <trans-unit id="professionProfiles.realm" datatype="html"><source>Realm</source></trans-unit>
+      <trans-unit id="professionProfiles.characterName" datatype="html"><source>Character name</source></trans-unit>
+      <trans-unit id="professionProfiles.add" datatype="html"><source>Add character</source></trans-unit>
+      <trans-unit id="professionProfiles.editorTitle" datatype="html"><source>Profession skill tree</source></trans-unit>
+      <trans-unit id="professionProfiles.editorHint" datatype="html"><source>Choose a profession and record its ranks. Changes are saved per character.</source></trans-unit>
+      <trans-unit id="professionProfiles.unsaved" datatype="html"><source>Unsaved changes</source></trans-unit>
+      <trans-unit id="professionProfiles.profession" datatype="html"><source>Profession</source></trans-unit>
+      <trans-unit id="professionProfiles.emptyCharacters" datatype="html"><source>Add a character to configure a profession profile.</source></trans-unit>
+      <trans-unit id="professionProfiles.loadingTree" datatype="html"><source>Loading skill tree…</source></trans-unit>
+      <trans-unit id="professionProfiles.treeUnavailable" datatype="html"><source>Skill tree unavailable</source></trans-unit>
+      <trans-unit id="professionProfiles.treeUnavailableHint" datatype="html"><source>No imported tree is available for this profession yet. Importing is not available from this page.</source></trans-unit>
+      <trans-unit id="professionProfiles.save" datatype="html"><source>Save profile</source></trans-unit>
+      <trans-unit id="professionProfiles.profession.blacksmithing" datatype="html"><source>Blacksmithing</source></trans-unit>
+      <trans-unit id="professionProfiles.profession.leatherworking" datatype="html"><source>Leatherworking</source></trans-unit>
+      <trans-unit id="professionProfiles.profession.alchemy" datatype="html"><source>Alchemy</source></trans-unit>
+      <trans-unit id="professionProfiles.profession.herbalism" datatype="html"><source>Herbalism</source></trans-unit>
+      <trans-unit id="professionProfiles.profession.mining" datatype="html"><source>Mining</source></trans-unit>
+      <trans-unit id="professionProfiles.profession.tailoring" datatype="html"><source>Tailoring</source></trans-unit>
+      <trans-unit id="professionProfiles.profession.engineering" datatype="html"><source>Engineering</source></trans-unit>
+      <trans-unit id="professionProfiles.profession.enchanting" datatype="html"><source>Enchanting</source></trans-unit>
+      <trans-unit id="professionProfiles.profession.skinning" datatype="html"><source>Skinning</source></trans-unit>
+      <trans-unit id="professionProfiles.profession.jewelcrafting" datatype="html"><source>Jewelcrafting</source></trans-unit>
+      <trans-unit id="professionProfiles.profession.inscription" datatype="html"><source>Inscription</source></trans-unit>
+      <trans-unit id="professionProfiles.error.characterRequired" datatype="html"><source>Enter a region, realm, and character name.</source></trans-unit>
+      <trans-unit id="professionProfiles.status.characterAdded" datatype="html"><source>Character added.</source></trans-unit>
+      <trans-unit id="professionProfiles.error.addCharacter" datatype="html"><source>Unable to add this character. Check the details and try again.</source></trans-unit>
+      <trans-unit id="professionProfiles.noPrerequisites" datatype="html"><source>No prerequisites</source></trans-unit>
+      <trans-unit id="professionProfiles.prerequisite" datatype="html"><source>Required node {$INTERPOLATION} at rank {$INTERPOLATION_1}.</source></trans-unit>
+      <trans-unit id="professionProfiles.rankLabel" datatype="html"><source>{$INTERPOLATION} rank</source></trans-unit>
+      <trans-unit id="professionProfiles.decreaseRank" datatype="html"><source>Decrease {$INTERPOLATION} rank</source></trans-unit>
+      <trans-unit id="professionProfiles.increaseRank" datatype="html"><source>Increase {$INTERPOLATION} rank</source></trans-unit>
+      <trans-unit id="professionProfiles.status.saved" datatype="html"><source>Skill-tree profile saved.</source></trans-unit>
+      <trans-unit id="professionProfiles.error.save" datatype="html"><source>Unable to save your skill-tree profile. Your edits are still here.</source></trans-unit>
+      <trans-unit id="professionProfiles.confirmDiscard" datatype="html"><source>Discard unsaved skill-tree changes?</source></trans-unit>
+      <trans-unit id="professionProfiles.error.loadCharacters" datatype="html"><source>Unable to load your characters.</source></trans-unit>
+      <trans-unit id="professionProfiles.error.loadProfile" datatype="html"><source>Unable to load this profession profile.</source></trans-unit>
     </body>
   </file>
 </xliff>

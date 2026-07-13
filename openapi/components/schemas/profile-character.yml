@@ -1,0 +1,8 @@
+type: object
+required: [id, region, realmName, characterName]
+properties:
+  id: { type: integer, format: int64 }
+  region: { type: string }
+  realmName: { type: string }
+  characterName: { type: string }
+  sourceGuid: { type: string, nullable: true }

@@ -1,4 +1,5 @@
 import type { ItemQuality, MarketListingKey } from '@ui';
+import type { CraftingProfileFit } from '@api/generated';
 
 export interface CraftingTableRow {
   readonly rowId: string;
@@ -21,4 +22,5 @@ export interface CraftingTableRow {
   readonly outputPriceChangePercent: number | null;
   readonly listingQuantity: number | null;
   readonly minBuyoutCopper: number | null;
+  readonly profileFit: CraftingProfileFit | null;
 }
