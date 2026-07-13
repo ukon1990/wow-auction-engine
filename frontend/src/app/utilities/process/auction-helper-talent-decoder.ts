@@ -5,7 +5,12 @@ import { LuaProcessingError } from './lua-assignment-processor';
 
 const MAX_COMPRESSED_TALENT_BYTES = 16 * 1024 * 1024;
 const MAX_INFLATED_TALENT_BYTES = 32 * 1024 * 1024;
-const SUPPORTED_SCOPES = new Set(['profession', 'profession_talents', 'professions_talents']);
+const SUPPORTED_SCOPES = new Set([
+  'character',
+  'profession',
+  'profession_talents',
+  'professions_talents',
+]);
 const DANGEROUS_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 const cborDecoder = new Decoder({ mapsAsObjects: false });
 
@@ -79,11 +84,14 @@ export function decodeAuctionHelperTalentExport(
       'AuctionHelperLastExport scope does not match decoded meta.scope.',
     );
   }
-  const characterValue = object(root['character']);
+  const characterRoot = object(root['character']);
+  const characterValue = scope === 'character' ? object(characterRoot['meta']) : characterRoot;
   const professions =
-    scope === 'profession_talents' || scope === 'profession'
-      ? [root['profession']]
-      : collection(root['professions']);
+    scope === 'character'
+      ? collection(characterRoot['professions'])
+      : scope === 'profession_talents' || scope === 'profession'
+        ? [root['profession']]
+        : collection(root['professions']);
   return {
     scope,
     character: {

@@ -86,6 +86,39 @@ describe('decodeAuctionHelperTalentExport', () => {
     });
   });
 
+  it('supports the full character dump wrapper shape', () => {
+    const result = decodeAuctionHelperTalentExport(
+      packagePayload({
+        meta: { scope: 'character', characterKey: 'Player-Realm' },
+        character: {
+          meta: { name: 'Player', realm: 'Realm' },
+          professions: {
+            '2872': {
+              skillLineID: 2872,
+              professionName: 'Blacksmithing',
+              specializationTree: {
+                tabs: [{ treeID: 999, tabInfo: { name: 'Weaponsmithing' }, nodes: [] }],
+              },
+            },
+          },
+        },
+      }),
+      'character',
+    );
+
+    expect(result).toMatchObject({
+      scope: 'character',
+      character: { key: 'Player-Realm', name: 'Player', realm: 'Realm' },
+      professions: [
+        {
+          skillLineId: 2872,
+          name: 'Blacksmithing',
+          trees: [{ treeId: 999, name: 'Weaponsmithing' }],
+        },
+      ],
+    });
+  });
+
   it('rejects malformed, oversized, and dangerous decoded data', () => {
     expect(() => decodeAuctionHelperTalentExport('AHCBOR1:not-base64!', null)).toThrowError();
     const unsafe = new Map<unknown, unknown>([
