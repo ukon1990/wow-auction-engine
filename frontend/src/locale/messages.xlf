@@ -2720,6 +2720,7 @@
       <trans-unit id="professionTalentTrees.error.fileSize" datatype="html"><source>Choose files smaller than 64 MiB.</source></trans-unit>
       <trans-unit id="professionTalentTrees.error.fileRequired" datatype="html"><source>Choose the SavedVariables folder or at least one recognized file first.</source></trans-unit>
       <trans-unit id="professionTalentTrees.error.inspect" datatype="html"><source>Unable to inspect these SavedVariables files. Try again with AuctionHelper.lua and AuctionHelper_Professions.lua.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.error.apiUnavailable" datatype="html"><source>The local API could not be reached. Start the backend, then try again.</source></trans-unit>
       <trans-unit id="professionTalentTrees.resultTitle" datatype="html"><source>Inspection result</source></trans-unit>
       <trans-unit id="professionTalentTrees.characters" datatype="html"><source>Characters</source></trans-unit>
       <trans-unit id="professionTalentTrees.professions" datatype="html"><source>Professions</source></trans-unit>

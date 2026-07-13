@@ -1,6 +1,7 @@
 import {
   MAX_FILE_SIZE_BYTES,
   MAX_TOTAL_FILE_SIZE_BYTES,
+  savedVariablesInspectionError,
   selectedFilesForUpload,
   selectSavedVariablesFiles,
 } from './profession-talent-trees.page';
@@ -10,6 +11,18 @@ function file(name: string, size = 1): File {
 }
 
 describe('SavedVariables folder selection', () => {
+  it('shows the backend response detail instead of a generic upload error', async () => {
+    const { HttpErrorResponse } = await import('@angular/common/http');
+    expect(
+      savedVariablesInspectionError(
+        new HttpErrorResponse({
+          error: { detail: 'Each SavedVariables file must be at most 64 MiB' },
+          status: 400,
+        }),
+      ),
+    ).toBe('Each SavedVariables file must be at most 64 MiB');
+  });
+
   it('keeps only recognized files and uploads only those files', () => {
     const auctionHelper = file('AuctionHelper.lua');
     const professions = file('AuctionHelper_Professions.lua');

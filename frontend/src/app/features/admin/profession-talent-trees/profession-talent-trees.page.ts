@@ -101,7 +101,8 @@ export class ProfessionTalentTreesPage {
         this.result.set(result);
       } else {
         this.error.set(
-          $localize`:@@professionTalentTrees.error.inspect:Unable to inspect these SavedVariables files. Try again with AuctionHelper.lua and AuctionHelper_Professions.lua.`,
+          savedVariablesInspectionError(cause) ??
+            $localize`:@@professionTalentTrees.error.inspect:Unable to inspect these SavedVariables files. Try again with AuctionHelper.lua and AuctionHelper_Professions.lua.`,
         );
       }
     } finally {
@@ -187,4 +188,14 @@ function savedVariablesInspection(cause: unknown): AuctionHelperSavedVariablesIn
   return Array.isArray(candidate.diagnostics) && Array.isArray(candidate.sources)
     ? (candidate as AuctionHelperSavedVariablesInspection)
     : null;
+}
+
+export function savedVariablesInspectionError(cause: unknown): string | null {
+  if (!(cause instanceof HttpErrorResponse)) return null;
+  if (cause.status === 0) {
+    return $localize`:@@professionTalentTrees.error.apiUnavailable:The local API could not be reached. Start the backend, then try again.`;
+  }
+  if (!cause.error || typeof cause.error !== 'object') return null;
+  const detail = (cause.error as { detail?: unknown }).detail;
+  return typeof detail === 'string' && detail.trim() ? detail : null;
 }
