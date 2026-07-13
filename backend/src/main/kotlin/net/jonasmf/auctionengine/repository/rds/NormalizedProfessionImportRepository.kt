@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -9,8 +9,9 @@ import java.security.MessageDigest
 @Repository
 class NormalizedProfessionImportRepository(
     private val jdbcTemplate: JdbcTemplate,
-    private val objectMapper: ObjectMapper,
 ) {
+    private val objectMapper = jacksonObjectMapper()
+
     fun save(
         payload: NormalizedAuctionHelperProfessionData,
         professionCount: Int,

@@ -11,6 +11,8 @@ import net.jonasmf.auctionengine.service.admin.AdminProfessionSyncService
 import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
+import net.jonasmf.auctionengine.service.admin.NormalizedAuctionHelperProfessionInspectionService
+import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyLong
@@ -76,6 +78,12 @@ class SecurityConfigTest {
 
     @MockitoBean
     private lateinit var adminRecipeService: AdminRecipeService
+
+    @MockitoBean
+    private lateinit var professionTalentTreeImportService: ProfessionTalentTreeImportService
+
+    @MockitoBean
+    private lateinit var normalizedAuctionHelperProfessionInspectionService: NormalizedAuctionHelperProfessionInspectionService
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder
