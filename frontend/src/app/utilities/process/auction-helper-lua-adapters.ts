@@ -166,7 +166,7 @@ function normalizeProfession(
   if (skillLineId === null) return null;
   return {
     skillLineId,
-    name: text(source['currentLevelName']),
+    name: text(source['professionName']) ?? text(source['currentLevelName']),
     skillLevel: integer(source['skillLevel']),
     talents: normalizeEmbeddedTalents(source),
     recipes: entries(source['recipes'])
@@ -311,7 +311,7 @@ function normalizeEmbeddedTalents(
         if (nodeId === null) return [];
         const activeEntry = record(nodeInfo['activeEntry']);
         const entryId = integer(activeEntry['entryID']) ?? integer(nodeInfo['activeEntryID']);
-        const rank = integer(nodeInfo['currentRank']) ?? integer(activeEntry['rank']);
+        const rank = integer(activeEntry['rank']) ?? integer(nodeInfo['currentRank']);
         if (entryId !== null && rank !== null) allocations.push({ nodeId, entryId, rank });
         const maxRanks = integer(nodeInfo['maxRanks']) ?? integer(nodeInfo['totalMaxRanks']);
         return [

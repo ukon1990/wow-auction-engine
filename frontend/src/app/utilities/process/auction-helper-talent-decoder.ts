@@ -164,7 +164,7 @@ function allocationFromNode(
   const activeEntry = object(nodeInfo['activeEntry']);
   const nodeId = integer(node['nodeID']);
   const entryId = integer(activeEntry['entryID']) ?? integer(nodeInfo['activeEntryID']);
-  const rank = integer(nodeInfo['currentRank']) ?? integer(activeEntry['rank']);
+  const rank = integer(activeEntry['rank']) ?? integer(nodeInfo['currentRank']);
   return nodeId !== null && entryId !== null && rank !== null ? { nodeId, entryId, rank } : null;
 }
 

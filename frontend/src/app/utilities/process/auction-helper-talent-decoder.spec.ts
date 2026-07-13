@@ -20,9 +20,9 @@ describe('decodeAuctionHelperTalentExport', () => {
                 {
                   nodeID: 101,
                   nodeInfo: {
-                    maxRanks: 30,
-                    currentRank: 12,
-                    activeEntry: { entryID: 201 },
+                    maxRanks: 13,
+                    currentRank: 13,
+                    activeEntry: { entryID: 201, rank: 12 },
                   },
                   entries: [{ entryID: 201, entryInfo: { maxRanks: 30 } }],
                 },
@@ -41,7 +41,7 @@ describe('decodeAuctionHelperTalentExport', () => {
           trees: [
             {
               treeId: 999,
-              nodes: [{ nodeId: 101, maxRanks: 30, entries: [{ entryId: 201, rankLimit: 30 }] }],
+              nodes: [{ nodeId: 101, maxRanks: 13, entries: [{ entryId: 201, rankLimit: 30 }] }],
             },
           ],
           allocations: [{ nodeId: 101, entryId: 201, rank: 12 }],
