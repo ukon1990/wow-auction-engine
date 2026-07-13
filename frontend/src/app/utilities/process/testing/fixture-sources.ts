@@ -28,6 +28,7 @@ export const auctionHelperProfessionsSource = `AuctionHelperProfessionsDB = {
           ["skillLevel"] = 100,
           ["recipes"] = {
             ["450216"] = {
+              ["skillLineAbilityID"] = 12345,
               ["info"] = { ["recipeID"] = 450216, ["name"] = "Charged Claymore", ["categoryID"] = 1900, ["learned"] = true, ["supportsQualities"] = true, ["hasSingleItemOutput"] = true },
               ["outputs"] = {
                 ["raw"] = { ["itemID"] = 222437 },

@@ -58,6 +58,18 @@ export type NormalizedProfessionSnapshot = Readonly<{
       skillLineId: number;
       name: string | null;
       skillLevel: number | null;
+      talents: Readonly<{
+        trees: Array<{
+          treeId: number;
+          name?: string;
+          nodes: Array<{
+            nodeId: number;
+            maxRanks?: number;
+            entries: Array<{ entryId: number; rankLimit?: number }>;
+          }>;
+        }>;
+        allocations: Array<{ nodeId: number; entryId: number; rank: number }>;
+      }> | null;
       recipes: readonly NormalizedRecipe[];
     }>;
   }>;
@@ -156,20 +168,27 @@ function normalizeProfession(
     skillLineId,
     name: text(source['currentLevelName']),
     skillLevel: integer(source['skillLevel']),
-    recipes: values(source['recipes'])
-      .map(record)
-      .map((recipe) => normalizeRecipe(recipe, fileName, diagnostics))
+    talents: normalizeEmbeddedTalents(source),
+    recipes: entries(source['recipes'])
+      .map(([recipeKey, recipe]) =>
+        normalizeRecipe(record(recipe), recipeKey, fileName, diagnostics),
+      )
       .filter((value): value is NormalizedRecipe => value !== null),
   };
 }
 
 function normalizeRecipe(
   source: Record<string, LuaValue>,
+  recipeKey: string,
   fileName: string,
   diagnostics: ProcessingDiagnostic[],
 ): NormalizedRecipe | null {
   const info = record(source['info']);
-  const recipeId = integer(info['recipeID']);
+  const recipeId =
+    integer(source['skillLineAbilityID']) ??
+    integer(info['skillLineAbilityID']) ??
+    integerValue(recipeKey) ??
+    integer(info['recipeID']);
   if (recipeId === null) return null;
   const outputs = record(source['outputs']);
   const schematic = record(source['schematic']);
@@ -271,6 +290,58 @@ function normalizeRecipe(
   };
 }
 
+function normalizeEmbeddedTalents(
+  profession: Record<string, LuaValue>,
+): NormalizedProfessionSnapshot['characters'][number]['professions'][number]['talents'] {
+  const specializationTrees = values(profession['specializationTrees']).map(record);
+  const primaryTree = record(profession['specializationTree']);
+  if (specializationTrees.length === 0 && Object.keys(primaryTree).length > 0) {
+    specializationTrees.push(primaryTree);
+  }
+  const allocations: Array<{ nodeId: number; entryId: number; rank: number }> = [];
+  const trees = specializationTrees.flatMap((specialization) =>
+    values(specialization['tabs']).flatMap((tabValue) => {
+      const tab = record(tabValue);
+      const treeId = integer(tab['treeID']);
+      if (treeId === null) return [];
+      const nodes = values(tab['nodes']).flatMap((nodeValue) => {
+        const node = record(nodeValue);
+        const nodeInfo = record(node['nodeInfo']);
+        const nodeId = integer(node['nodeID']);
+        if (nodeId === null) return [];
+        const activeEntry = record(nodeInfo['activeEntry']);
+        const entryId = integer(activeEntry['entryID']) ?? integer(nodeInfo['activeEntryID']);
+        const rank = integer(nodeInfo['currentRank']) ?? integer(activeEntry['rank']);
+        if (entryId !== null && rank !== null) allocations.push({ nodeId, entryId, rank });
+        const maxRanks = integer(nodeInfo['maxRanks']) ?? integer(nodeInfo['totalMaxRanks']);
+        return [
+          {
+            nodeId,
+            ...(maxRanks !== null ? { maxRanks } : {}),
+            entries: values(node['entries']).flatMap((entryValue) => {
+              const entry = record(entryValue);
+              const normalizedEntryId = integer(entry['entryID']);
+              if (normalizedEntryId === null) return [];
+              const rankLimit =
+                integer(record(entry['entryInfo'])['maxRanks']) ??
+                integer(record(entry['definitionInfo'])['maxRanks']);
+              return [
+                {
+                  entryId: normalizedEntryId,
+                  ...(rankLimit !== null ? { rankLimit } : {}),
+                },
+              ];
+            }),
+          },
+        ];
+      });
+      const name = text(record(tab['tabInfo'])['name']);
+      return [{ treeId, ...(name ? { name } : {}), nodes }];
+    }),
+  );
+  return trees.length > 0 ? { trees, allocations } : null;
+}
+
 function normalizeReagents(
   schematic: Record<string, LuaValue>,
   enrichedSlots: LuaValue[],
@@ -314,6 +385,11 @@ function values(value: LuaValue | undefined): LuaValue[] {
   return isRecord(value) ? Object.values(value) : [];
 }
 
+function entries(value: LuaValue | undefined): Array<[string, LuaValue]> {
+  if (Array.isArray(value)) return value.map((item, index) => [String(index + 1), item]);
+  return isRecord(value) ? Object.entries(value) : [];
+}
+
 function record(value: LuaValue | undefined): Record<string, LuaValue> {
   return isRecord(value) ? value : {};
 }
@@ -333,6 +409,11 @@ function number(value: LuaValue | undefined): number | null {
 function integer(value: LuaValue | undefined): number | null {
   const result = number(value);
   return result !== null && Number.isInteger(result) ? result : null;
+}
+
+function integerValue(value: string): number | null {
+  const result = Number(value);
+  return Number.isInteger(result) ? result : null;
 }
 
 function craftingQuality(value: LuaValue | undefined): number | null {

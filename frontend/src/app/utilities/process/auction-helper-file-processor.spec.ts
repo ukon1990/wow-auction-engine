@@ -21,7 +21,7 @@ describe('processAuctionHelperFiles', () => {
     });
     expect(preview.payload.source.files[0]?.sha256).toMatch(/^[a-f0-9]{64}$/);
     const recipe = preview.payload.characters[0]?.professions[0]?.recipes.find(
-      (candidate) => candidate.recipeId === 450216,
+      (candidate) => candidate.recipeId === 12345,
     );
     expect(recipe).toMatchObject({
       recipeType: 1,
@@ -56,7 +56,7 @@ describe('processAuctionHelperFiles', () => {
 
     const preview = await processAuctionHelperFiles([file], 'eu');
     const recipe = preview.payload.characters[0]?.professions[0]?.recipes.find(
-      (candidate) => candidate.recipeId === 450216,
+      (candidate) => candidate.recipeId === 12345,
     );
 
     expect(recipe?.reagentSlots).toEqual([]);
@@ -72,7 +72,7 @@ describe('processAuctionHelperFiles', () => {
 
     const preview = await processAuctionHelperFiles([file], 'eu');
     const recipe = preview.payload.characters[0]?.professions[0]?.recipes.find(
-      (candidate) => candidate.recipeId === 450216,
+      (candidate) => candidate.recipeId === 12345,
     );
     const unrankedReagent = recipe?.reagentSlots[0]?.reagents.find(
       (reagent) => reagent.itemId === 210221,

@@ -47,7 +47,14 @@ export async function processAuctionHelperFiles(
   );
   const snapshot = professionResult?.data as NormalizedProfessionSnapshot | undefined;
   const characters = snapshot?.characters ?? [];
-  const diagnostics = results.flatMap((result) => result.diagnostics);
+  const hasEmbeddedTalents = characters.some((character) =>
+    character.professions.some((profession) => profession.talents !== null),
+  );
+  const diagnostics = results.flatMap((result) =>
+    hasEmbeddedTalents
+      ? result.diagnostics.filter((diagnostic) => diagnostic.code !== 'TALENT_EXPORT_MISSING')
+      : result.diagnostics,
+  );
   const talentResult = results.find((result) => result.adapterId === 'auction-helper-export-v1');
   let decodedTalents: ReturnType<typeof decodeAuctionHelperTalentExport> | null = null;
   if (talentResult) {
@@ -86,7 +93,9 @@ export async function processAuctionHelperFiles(
         name: profession.name ?? String(profession.skillLineId),
         ...(profession.skillLevel !== null ? { skillLevel: profession.skillLevel } : {}),
         recipes: profession.recipes.map(toApiRecipe),
-        ...talentsForProfession(decodedTalents, profession.skillLineId),
+        ...(profession.talents
+          ? { talents: profession.talents }
+          : talentsForProfession(decodedTalents, profession.skillLineId)),
       })),
     })),
   };

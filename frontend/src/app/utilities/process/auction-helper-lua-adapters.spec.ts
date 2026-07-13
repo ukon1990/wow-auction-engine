@@ -16,11 +16,11 @@ describe('AuctionHelper Lua adapters', () => {
       professionsSource,
     );
     const recipe = result.data.characters[0]?.professions[0]?.recipes.find(
-      (candidate) => candidate.recipeId === 450216,
+      (candidate) => candidate.recipeId === 12345,
     );
 
     expect(recipe).toMatchObject({
-      recipeId: 450216,
+      recipeId: 12345,
       craftedItemId: 222437,
       outputQualityItemIds: [
         { quality: 1, itemId: 222437 },
