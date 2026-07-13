@@ -2358,6 +2358,20 @@
       <trans-unit id="professionTalentTrees.sourceStatus" datatype="html"><source>Status: {$INTERPOLATION}</source><target>Status: {$INTERPOLATION}</target></trans-unit>
       <trans-unit id="professionTalentTrees.talentExportResult" datatype="html"><source>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</source><target>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</target></trans-unit>
       <trans-unit id="professionTalentTrees.error.totalFileSize" datatype="html"><source>Choose SavedVariables files smaller than 128 MiB in total.</source><target>Choose SavedVariables files smaller than 128 MiB in total.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.aria" datatype="html"><source>Profession data</source><target>전문 기술 데이터</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.recipes" datatype="html"><source>Recipes</source><target>도안</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.skillTree" datatype="html"><source>Skill tree</source><target>기술 트리</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.trees" datatype="html"><source>Trees</source><target>트리</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.nodes" datatype="html"><source>Nodes</source><target>노드</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.allocations" datatype="html"><source>Allocations</source><target>할당</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.tree" datatype="html"><source>Tree</source><target>트리</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.node" datatype="html"><source>Node</source><target>노드</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.maxRanks" datatype="html"><source>Max ranks</source><target>최대 등급</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.entry" datatype="html"><source>Entry</source><target>항목</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.rankLimit" datatype="html"><source>rank limit</source><target>등급 제한</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.currentRank" datatype="html"><source>current rank</source><target>현재 등급</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.emptyTitle" datatype="html"><source>No skill tree data found</source><target>기술 트리 데이터를 찾을 수 없음</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.emptyBody" datatype="html"><source>Run a fresh full dump in AuctionHelper, reload or log out to write AuctionHelper.lua, then select the SavedVariables folder again.</source><target>AuctionHelper에서 새 전체 덤프를 실행하고, AuctionHelper.lua를 기록하도록 다시 불러오거나 로그아웃한 다음 SavedVariables 폴더를 다시 선택하세요.</target></trans-unit>
     </body>
   </file>
 </xliff>

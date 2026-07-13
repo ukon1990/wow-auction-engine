@@ -2778,6 +2778,20 @@
       <trans-unit id="professionTalentTrees.sourceResults" datatype="html"><source>Source results</source></trans-unit>
       <trans-unit id="professionTalentTrees.sourceStatus" datatype="html"><source>Status: {$INTERPOLATION}</source></trans-unit>
       <trans-unit id="professionTalentTrees.talentExportResult" datatype="html"><source>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</source></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.aria" datatype="html"><source>Profession data</source></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.recipes" datatype="html"><source>Recipes</source></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.skillTree" datatype="html"><source>Skill tree</source></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.trees" datatype="html"><source>Trees</source></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.nodes" datatype="html"><source>Nodes</source></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.allocations" datatype="html"><source>Allocations</source></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.tree" datatype="html"><source>Tree</source></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.node" datatype="html"><source>Node</source></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.maxRanks" datatype="html"><source>Max ranks</source></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.entry" datatype="html"><source>Entry</source></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.rankLimit" datatype="html"><source>rank limit</source></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.currentRank" datatype="html"><source>current rank</source></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.emptyTitle" datatype="html"><source>No skill tree data found</source></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.emptyBody" datatype="html"><source>Run a fresh full dump in AuctionHelper, reload or log out to write AuctionHelper.lua, then select the SavedVariables folder again.</source></trans-unit>
     </body>
   </file>
 </xliff>

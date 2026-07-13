@@ -2358,6 +2358,20 @@
       <trans-unit id="professionTalentTrees.sourceStatus" datatype="html"><source>Status: {$INTERPOLATION}</source><target>Status: {$INTERPOLATION}</target></trans-unit>
       <trans-unit id="professionTalentTrees.talentExportResult" datatype="html"><source>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</source><target>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</target></trans-unit>
       <trans-unit id="professionTalentTrees.error.totalFileSize" datatype="html"><source>Choose SavedVariables files smaller than 128 MiB in total.</source><target>Choose SavedVariables files smaller than 128 MiB in total.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.aria" datatype="html"><source>Profession data</source><target>Données de métier</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.recipes" datatype="html"><source>Recipes</source><target>Recettes</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.skillTree" datatype="html"><source>Skill tree</source><target>Arbre de compétences</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.trees" datatype="html"><source>Trees</source><target>Arbres</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.nodes" datatype="html"><source>Nodes</source><target>Nœuds</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.allocations" datatype="html"><source>Allocations</source><target>Attributions</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.tree" datatype="html"><source>Tree</source><target>Arbre</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.node" datatype="html"><source>Node</source><target>Nœud</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.maxRanks" datatype="html"><source>Max ranks</source><target>Rangs maximum</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.entry" datatype="html"><source>Entry</source><target>Entrée</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.rankLimit" datatype="html"><source>rank limit</source><target>limite de rang</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.currentRank" datatype="html"><source>current rank</source><target>rang actuel</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.emptyTitle" datatype="html"><source>No skill tree data found</source><target>Aucune donnée d’arbre de compétences trouvée</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.emptyBody" datatype="html"><source>Run a fresh full dump in AuctionHelper, reload or log out to write AuctionHelper.lua, then select the SavedVariables folder again.</source><target>Lancez un nouvel export complet dans AuctionHelper, rechargez ou déconnectez-vous pour écrire AuctionHelper.lua, puis sélectionnez à nouveau le dossier SavedVariables.</target></trans-unit>
     </body>
   </file>
 </xliff>

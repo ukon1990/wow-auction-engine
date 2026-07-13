@@ -87,6 +87,16 @@ describe('SavedVariables folder selection', () => {
         maxQualityRequiredReagents: [],
       }),
     );
+    preview.payload.characters[0].professions[0].talents = {
+      trees: [
+        {
+          treeId: 10,
+          name: 'Weaponsmithing',
+          nodes: [{ nodeId: 20, maxRanks: 30, entries: [{ entryId: 21, rankLimit: 30 }] }],
+        },
+      ],
+      allocations: [{ nodeId: 20, entryId: 21, rank: 7 }],
+    };
     preview.payload.characters[0].professions.push({
       ...preview.payload.characters[0].professions[0],
       professionId: 333,
@@ -149,6 +159,16 @@ describe('SavedVariables folder selection', () => {
         maxQualityRequiredReagents: [],
       }),
     );
+    preview.payload.characters[0].professions[0].talents = {
+      trees: [
+        {
+          treeId: 10,
+          name: 'Weaponsmithing',
+          nodes: [{ nodeId: 20, maxRanks: 30, entries: [{ entryId: 21, rankLimit: 30 }] }],
+        },
+      ],
+      allocations: [{ nodeId: 20, entryId: 21, rank: 7 }],
+    };
     preview.payload.characters[0].professions.push({
       ...preview.payload.characters[0].professions[0],
       professionId: 333,
@@ -161,8 +181,12 @@ describe('SavedVariables folder selection', () => {
     await fixture.whenStable();
 
     const root = fixture.nativeElement as HTMLElement;
-    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
-    const panel = root.querySelector<HTMLElement>('[role="tabpanel"]');
+    const tabs = [
+      ...root.querySelectorAll<HTMLButtonElement>(
+        '[aria-label="Profession recipe overview"] > [role="tab"]',
+      ),
+    ];
+    const panel = root.querySelector<HTMLElement>('#profession-recipe-panel');
     expect(tabs).toHaveLength(2);
     expect(tabs[0].getAttribute('aria-selected')).toBe('true');
     expect(tabs[0].tabIndex).toBe(0);
@@ -189,6 +213,15 @@ describe('SavedVariables folder selection', () => {
     expect([...cards].every((card) => card.textContent?.match(/Recipe \d+/g)?.length === 1)).toBe(
       true,
     );
+
+    const skillTreeButton = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')].find(
+      (button) => button.textContent?.trim() === 'Skill tree',
+    );
+    skillTreeButton?.click();
+    await fixture.whenStable();
+    expect(root.textContent).toContain('Weaponsmithing');
+    expect(root.textContent).toContain('Node #20');
+    expect(root.textContent).toContain('current rank 7');
 
     tabs[0].focus();
     tabs[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));

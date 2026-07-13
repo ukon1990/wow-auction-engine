@@ -43,6 +43,18 @@ export type ProfessionRecipeOverview = Readonly<{
   name: string;
   characterCount: number;
   recipeCount: number;
+  talents: Readonly<{
+    trees: readonly Readonly<{
+      treeId: number;
+      name?: string;
+      nodes: readonly Readonly<{
+        nodeId: number;
+        maxRanks?: number;
+        entries: readonly Readonly<{ entryId: number; rankLimit?: number }>[];
+      }>[];
+    }>[];
+    allocations: readonly Readonly<{ nodeId: number; entryId: number; rank: number }>[];
+  }> | null;
   recipes: readonly Readonly<{
     recipeId: number;
     name: string;
@@ -78,6 +90,7 @@ export class ProfessionTalentTreesPage {
   protected readonly recipeSearch = signal('');
   protected readonly recipePage = signal(0);
   protected readonly cardView = signal(false);
+  protected readonly professionSection = signal<'recipes' | 'skillTree'>('recipes');
   protected readonly recipeColumns = createProfessionRecipeColumns();
   protected readonly professionOverview = computed(() => {
     const preview = this.preview();
@@ -116,6 +129,10 @@ export class ProfessionTalentTreesPage {
     return this.filteredRecipes().slice(page * RECIPE_PAGE_SIZE, (page + 1) * RECIPE_PAGE_SIZE);
   });
   protected readonly recipeRowId = (recipe: ProfessionRecipeRow): string => String(recipe.recipeId);
+
+  protected talentNodeCount(talents: NonNullable<ProfessionRecipeOverview['talents']>): number {
+    return talents.trees.reduce((count, tree) => count + tree.nodes.length, 0);
+  }
 
   protected onFolderSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -237,6 +254,7 @@ export class ProfessionTalentTreesPage {
     this.activeProfessionId.set(professionId);
     this.recipeSearch.set('');
     this.recipePage.set(0);
+    this.professionSection.set('recipes');
   }
 
   protected onRecipeSearch(value: string): void {
@@ -260,6 +278,17 @@ export class ProfessionTalentTreesPage {
       '[role="tab"]',
     );
     tabs?.item(target).focus();
+  }
+
+  protected onProfessionSectionKeydown(event: KeyboardEvent): void {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const section = event.key === 'ArrowLeft' || event.key === 'Home' ? 'recipes' : 'skillTree';
+    this.professionSection.set(section);
+    const tabs = (event.currentTarget as HTMLElement).parentElement?.querySelectorAll<HTMLElement>(
+      '[role="tab"]',
+    );
+    tabs?.item(section === 'recipes' ? 0 : 1).focus();
   }
 
   private resetRecipeBrowser(): void {
@@ -358,6 +387,7 @@ export function buildProfessionRecipeOverview(
       name: string;
       characters: Set<string>;
       recipes: Map<number, ProfessionRecipeOverview['recipes'][number]>;
+      talents: ProfessionRecipeOverview['talents'];
     }
   >();
   for (const character of preview.payload.characters) {
@@ -366,6 +396,7 @@ export function buildProfessionRecipeOverview(
         name: profession.name,
         characters: new Set<string>(),
         recipes: new Map(),
+        talents: null,
       };
       aggregate.characters.add(character.characterKey);
       for (const recipe of profession.recipes) {
@@ -381,6 +412,7 @@ export function buildProfessionRecipeOverview(
           });
         }
       }
+      if (!aggregate.talents && profession.talents) aggregate.talents = profession.talents;
       professions.set(profession.professionId, aggregate);
     }
   }
@@ -390,6 +422,7 @@ export function buildProfessionRecipeOverview(
       name: profession.name,
       characterCount: profession.characters.size,
       recipeCount: profession.recipes.size,
+      talents: profession.talents,
       recipes: [...profession.recipes.values()].sort((a, b) => a.name.localeCompare(b.name)),
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
