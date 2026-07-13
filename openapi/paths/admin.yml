@@ -325,11 +325,12 @@ inspectNormalizedAuctionHelperProfessionData:
     post:
         tags: [Admin]
         operationId: inspectNormalizedAuctionHelperProfessionData
-        summary: Validate locally normalized AuctionHelper profession data
+        summary: Import locally normalized AuctionHelper profession data
         description: >-
             Accepts bounded, versioned JSON produced by the browser-side Lua processors. Raw Lua and
-            encoded addon payloads are never accepted. This preview validates recipe, item, reagent,
-            skill, and talent associations without changing shared data. Requests are limited to
+            encoded addon payloads are never accepted. The endpoint validates recipe, item, reagent,
+            skill, and talent associations and stores an idempotent normalized snapshot. Incomplete
+            addon associations are reported as diagnostics rather than rejecting otherwise safe data. Requests are limited to
             32 MiB before JSON deserialization and receive an X-Request-Id correlation header.
         requestBody:
             required: true
@@ -339,12 +340,12 @@ inspectNormalizedAuctionHelperProfessionData:
                         $ref: "../openapi.yml#/components/schemas/NormalizedAuctionHelperProfessionData"
         responses:
             "200":
-                description: Normalized data inspection result. `imported` is always false.
+                description: Normalized data inspection result returned after persistence.
                 content:
                     application/json:
                         schema:
                             $ref: "../openapi.yml#/components/schemas/NormalizedAuctionHelperProfessionInspection"
-            "400": { description: Unsupported contract version or invalid normalized associations. }
+            "400": { description: Unsupported contract version or structurally invalid normalized data. }
             "403": { description: Administrator role required. }
             "413": { description: Normalized JSON request exceeds 32 MiB. }
 getAdminJob:

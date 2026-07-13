@@ -49,4 +49,17 @@ describe('processAuctionHelperFiles', () => {
     ]);
     expect(eu.payload.characters[0]?.characterKey).not.toBe(us.payload.characters[0]?.characterKey);
   });
+
+  it('omits reagents without a positive exported quantity and their dangling associations', async () => {
+    const sourceWithoutQuantity = professionsSource.replace('["quantityRequired"] = 3,', '');
+    const file = new File([sourceWithoutQuantity], 'AuctionHelper_Professions.lua');
+
+    const preview = await processAuctionHelperFiles([file], 'eu');
+    const recipe = preview.payload.characters[0]?.professions[0]?.recipes.find(
+      (candidate) => candidate.recipeId === 450216,
+    );
+
+    expect(recipe?.reagentSlots).toEqual([]);
+    expect(recipe?.maxQualityRequiredReagents).toEqual([]);
+  });
 });

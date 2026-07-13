@@ -138,8 +138,9 @@ function aggregateDiagnostics(
 function toApiRecipe(recipe: NormalizedRecipe): NormalizedAuctionHelperRecipe {
   const slots = new Map<string, NormalizedAuctionHelperReagentSlot>();
   for (const reagent of recipe.reagents) {
+    if (reagent.quantity === null || reagent.quantity <= 0) continue;
     const slotIndex = reagent.slotIndex ?? 0;
-    const quantity = reagent.quantity ?? 0;
+    const quantity = reagent.quantity;
     const key = `${slotIndex}:${reagent.dataSlotIndex ?? ''}:${reagent.slotType ?? ''}:${quantity}`;
     const slot = slots.get(key) ?? {
       slotIndex,
@@ -155,6 +156,7 @@ function toApiRecipe(recipe: NormalizedRecipe): NormalizedAuctionHelperRecipe {
     });
     slots.set(key, slot);
   }
+  const reagentSlots = [...slots.values()];
   return {
     recipeId: recipe.recipeId,
     name: recipe.name ?? String(recipe.recipeId),
@@ -185,13 +187,24 @@ function toApiRecipe(recipe: NormalizedRecipe): NormalizedAuctionHelperRecipe {
       ? { upperSkillThreshold: recipe.crafting.upperSkillThreshold }
       : {}),
     qualityThresholds: [...recipe.crafting.qualityThresholds],
-    reagentSlots: [...slots.values()],
-    maxQualityRequiredReagents: recipe.maxQualityRequiredReagents.map((choice) => ({
-      ...(choice.slotIndex !== null ? { slotIndex: choice.slotIndex } : {}),
-      ...(choice.dataSlotIndex !== null ? { dataSlotIndex: choice.dataSlotIndex } : {}),
-      itemId: choice.itemId,
-      quantity: choice.quantity,
-    })),
+    reagentSlots,
+    maxQualityRequiredReagents: recipe.maxQualityRequiredReagents
+      .filter(
+        (choice) =>
+          choice.quantity > 0 &&
+          reagentSlots.some(
+            (slot) =>
+              (choice.slotIndex === null || slot.slotIndex === choice.slotIndex) &&
+              (choice.dataSlotIndex === null || slot.dataSlotIndex === choice.dataSlotIndex) &&
+              slot.reagents.some((reagent) => reagent.itemId === choice.itemId),
+          ),
+      )
+      .map((choice) => ({
+        ...(choice.slotIndex !== null ? { slotIndex: choice.slotIndex } : {}),
+        ...(choice.dataSlotIndex !== null ? { dataSlotIndex: choice.dataSlotIndex } : {}),
+        itemId: choice.itemId,
+        quantity: choice.quantity,
+      })),
   };
 }
 

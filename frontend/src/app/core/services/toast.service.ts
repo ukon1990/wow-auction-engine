@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 
-export type ToastTone = 'error';
+export type ToastTone = 'error' | 'success';
 
 export type ToastMessage = {
   id: number;
@@ -18,6 +18,10 @@ export class ToastService {
 
   error(message: string): void {
     this.show('error', message);
+  }
+
+  success(message: string): void {
+    this.show('success', message);
   }
 
   dismiss(id: number): void {

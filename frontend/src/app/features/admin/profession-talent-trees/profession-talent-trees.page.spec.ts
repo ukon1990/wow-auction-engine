@@ -1,16 +1,104 @@
 import {
   MAX_FILE_SIZE_BYTES,
   MAX_TOTAL_FILE_SIZE_BYTES,
+  ProfessionTalentTreesPage,
+  canProcessSelection,
+  buildProfessionRecipeOverview,
   savedVariablesInspectionError,
   selectedFilesForProcessing,
   selectSavedVariablesFiles,
 } from './profession-talent-trees.page';
+import { TestBed } from '@angular/core/testing';
+import { AdminApiService } from '@api/generated';
+import { ToastService } from '@core/services/toast.service';
+import { of, throwError } from 'rxjs';
 
 function file(name: string, size = 1): File {
   return { name, size } as File;
 }
 
 describe('SavedVariables folder selection', () => {
+  it('reports submission success and failure through toasts', async () => {
+    const toast = { success: vi.fn(), error: vi.fn() };
+    const api = { inspectNormalizedAuctionHelperProfessionData: vi.fn() };
+    TestBed.configureTestingModule({
+      imports: [ProfessionTalentTreesPage],
+      providers: [
+        { provide: AdminApiService, useValue: api },
+        { provide: ToastService, useValue: toast },
+      ],
+    }).overrideComponent(ProfessionTalentTreesPage, { set: { template: '' } });
+    const component = TestBed.createComponent(ProfessionTalentTreesPage)
+      .componentInstance as unknown as {
+      preview: { set(value: { payload: ReturnType<typeof professionPreview>['payload'] }): void };
+      submitNormalizedData(): Promise<void>;
+    };
+    component.preview.set({ payload: professionPreview().payload });
+    api.inspectNormalizedAuctionHelperProfessionData.mockReturnValue(
+      of({ charactersFound: 1, professionsFound: 1, recipesFound: 1, diagnostics: [] }),
+    );
+
+    await component.submitNormalizedData();
+    expect(toast.success).toHaveBeenCalledOnce();
+
+    api.inspectNormalizedAuctionHelperProfessionData.mockReturnValue(
+      throwError(() => new Error('network failure')),
+    );
+    await component.submitNormalizedData();
+    expect(toast.error).toHaveBeenCalledOnce();
+  });
+
+  it('aggregates professions and de-duplicates recipes across characters', () => {
+    expect(buildProfessionRecipeOverview(professionPreview())).toMatchObject([
+      { professionId: 164, characterCount: 2, recipeCount: 1 },
+    ]);
+  });
+
+  function professionPreview() {
+    const profession = {
+      professionId: 164,
+      skillLineId: 164,
+      name: 'Blacksmithing',
+      recipes: [
+        {
+          recipeId: 1,
+          name: 'Hammer',
+          learned: true,
+          qualityOutputItemIds: [],
+          qualityThresholds: [],
+          reagentSlots: [],
+          maxQualityRequiredReagents: [],
+        },
+      ],
+    };
+    return {
+      charactersFound: 2,
+      professionsFound: 2,
+      recipesFound: 2,
+      diagnostics: [],
+      payload: {
+        contractVersion: 1 as const,
+        source: { addon: 'AuctionHelper' as const, processorVersion: '1', files: [] },
+        characters: [
+          {
+            characterKey: 'eu:a',
+            name: 'A',
+            realm: 'Realm',
+            region: 'eu',
+            professions: [profession],
+          },
+          {
+            characterKey: 'eu:b',
+            name: 'B',
+            realm: 'Realm',
+            region: 'eu',
+            professions: [profession],
+          },
+        ],
+      },
+    };
+  }
+
   it('shows the backend response detail instead of a generic upload error', async () => {
     const { HttpErrorResponse } = await import('@angular/common/http');
     expect(
@@ -48,6 +136,15 @@ describe('SavedVariables folder selection', () => {
     expect(selection.files.auctionHelper).toBeNull();
     expect(selection.files.professions).toBe(professions);
     expect(selectedFilesForProcessing(selection.files)).toEqual([professions]);
+    expect(canProcessSelection(selection.files, 'eu')).toBe(true);
+  });
+
+  it('waits for the required professions file or a region before automatic processing', () => {
+    const talentOnly = selectSavedVariablesFiles([file('AuctionHelper.lua')]);
+    const professions = selectSavedVariablesFiles([file('AuctionHelper_Professions.lua')]);
+
+    expect(canProcessSelection(talentOnly.files, 'eu')).toBe(false);
+    expect(canProcessSelection(professions.files, '')).toBe(false);
   });
 
   it('rejects duplicate recognized files', () => {

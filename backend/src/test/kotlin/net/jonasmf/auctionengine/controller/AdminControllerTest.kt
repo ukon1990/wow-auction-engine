@@ -199,9 +199,9 @@ class AdminControllerTest {
     @Nested
     inner class InspectNormalizedAuctionHelperProfessionData {
         @Test
-        fun `returns a preview without importing for an administrator`() {
-            `when`(normalizedAuctionHelperProfessionInspectionService.inspect(any())).thenReturn(
-                NormalizedAuctionHelperProfessionInspection(false, 1, 1, 1, 1, 0, 0, 0, emptyList()),
+        fun `returns a persisted import result for an administrator`() {
+            `when`(normalizedAuctionHelperProfessionInspectionService.inspect(anyNonNull())).thenReturn(
+                NormalizedAuctionHelperProfessionInspection(true, 1, 1, 1, 1, 0, 0, 0, emptyList()),
             )
 
             val result =
@@ -222,13 +222,13 @@ class AdminControllerTest {
             mockMvc
                 .perform(asyncDispatch(result))
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.imported").value(false))
+                .andExpect(jsonPath("$.imported").value(true))
                 .andExpect(jsonPath("$.charactersFound").value(1))
                 .andExpect(jsonPath("$.recipesWithOutputItemFound").value(1))
         }
 
         @Test
-        fun `rejects an unauthenticated preview`() {
+        fun `rejects an unauthenticated import`() {
             mockMvc
                 .perform(
                     post("/api/admin/profession-talent-trees/inspect-normalized")
@@ -239,7 +239,7 @@ class AdminControllerTest {
         }
 
         @Test
-        fun `rejects a non administrator preview`() {
+        fun `rejects a non administrator import`() {
             val result =
                 mockMvc
                     .perform(
@@ -856,4 +856,10 @@ class AdminControllerTest {
                 .andExpect(status().isNoContent)
         }
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun <T> anyNonNull(): T {
+    any<T>()
+    return null as T
 }

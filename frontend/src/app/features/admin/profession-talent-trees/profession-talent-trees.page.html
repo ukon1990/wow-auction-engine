@@ -173,23 +173,15 @@
       </section>
 
       <div class="flex flex-wrap gap-3">
-        <button
-          type="button"
-          class="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
-          [disabled]="!hasSelection() || processing() || submitting()"
-          [attr.aria-busy]="processing()"
-          (click)="processLocally()"
-        >
-          @if (processing()) {
-            <ng-container i18n="@@professionTalentTrees.inspecting"
-              >Processing locally…</ng-container
-            >
-          } @else {
-            <ng-container i18n="@@professionTalentTrees.inspect"
-              >Process files locally</ng-container
-            >
-          }
-        </button>
+        @if (processing()) {
+          <p
+            class="self-center text-sm text-outline"
+            role="status"
+            i18n="@@professionTalentTrees.inspecting"
+          >
+            Processing locally…
+          </p>
+        }
         <button
           type="button"
           class="min-h-11 rounded-md border border-white/20 px-4 font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
@@ -240,47 +232,38 @@
         </dl>
         <div
           class="grid gap-3"
-          aria-label="Normalized data samples"
+          aria-label="Profession recipe overview"
           i18n-aria-label="@@professionTalentTrees.previewSamplesAria"
         >
-          @for (
-            character of localPreview.payload.characters.slice(0, 5);
-            track character.characterKey
-          ) {
+          @for (profession of professionOverview(localPreview); track profession.professionId) {
             <article class="rounded-md border border-white/10 bg-surface p-3 text-sm">
               <h3 class="font-semibold text-on-surface">
-                {{ character.name }} — {{ character.realm }} ({{ character.region }})
+                {{ profession.name }} · {{ profession.recipeCount }}
+                <span i18n="@@professionTalentTrees.previewRecipesLabel">recipes</span>
               </h3>
-              @for (
-                profession of character.professions.slice(0, 5);
-                track profession.professionId
-              ) {
-                <div class="mt-2 border-l-2 border-white/10 pl-3">
-                  <p class="font-medium">
-                    {{ profession.name }} · {{ profession.recipes.length }}
-                    <span i18n="@@professionTalentTrees.previewRecipesLabel">recipes</span>
-                  </p>
-                  <ul class="mt-1 grid gap-1 text-outline">
-                    @for (recipe of profession.recipes.slice(0, 3); track recipe.recipeId) {
-                      <li>
-                        {{ recipe.name }} (#{{ recipe.recipeId }}) ·
-                        <span i18n="@@professionTalentTrees.previewOutputLabel">output</span>
-                        {{ recipe.craftedItemId ?? '—' }} · {{ recipe.reagentSlots.length }}
-                        <span i18n="@@professionTalentTrees.previewReagentSlotsLabel"
-                          >reagent slots</span
-                        >
-                        @if (recipe.baseDifficulty !== undefined) {
-                          ·
-                          <span i18n="@@professionTalentTrees.previewDifficultyLabel"
-                            >difficulty</span
-                          >
-                          {{ recipe.baseDifficulty }}
-                        }
-                      </li>
+              <p class="mt-1 text-outline">
+                {{ profession.characterCount }}
+                <span i18n="@@professionTalentTrees.previewCharactersLabel"
+                  >characters represented</span
+                >
+              </p>
+              <ul class="mt-2 grid gap-1 border-l-2 border-white/10 pl-3 text-outline">
+                @for (recipe of profession.recipes; track recipe.recipeId) {
+                  <li>
+                    {{ recipe.name }} (#{{ recipe.recipeId }}) ·
+                    <span i18n="@@professionTalentTrees.previewOutputLabel">output</span>
+                    {{ recipe.craftedItemId ?? '—' }} · {{ recipe.reagentSlotCount }}
+                    <span i18n="@@professionTalentTrees.previewReagentSlotsLabel"
+                      >reagent slots</span
+                    >
+                    @if (recipe.baseDifficulty !== undefined) {
+                      ·
+                      <span i18n="@@professionTalentTrees.previewDifficultyLabel">difficulty</span>
+                      {{ recipe.baseDifficulty }}
                     }
-                  </ul>
-                </div>
-              }
+                  </li>
+                }
+              </ul>
             </article>
           }
         </div>

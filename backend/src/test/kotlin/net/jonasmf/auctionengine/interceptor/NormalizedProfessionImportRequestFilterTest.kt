@@ -40,7 +40,7 @@ class NormalizedProfessionImportRequestFilterTest {
 
     private fun importRequest(body: ByteArray) =
         MockHttpServletRequest("POST", "/admin/profession-talent-trees/inspect-normalized").apply {
-            content = body
+            setContent(body)
             contentType = "application/json"
         }
 }

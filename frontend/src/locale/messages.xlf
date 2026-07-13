@@ -2743,7 +2743,9 @@
       <trans-unit id="professionTalentTrees.folder" datatype="html"><source>SavedVariables folder</source></trans-unit>
       <trans-unit id="professionTalentTrees.region" datatype="html"><source>Region</source></trans-unit>
       <trans-unit id="professionTalentTrees.regionHint" datatype="html"><source>SavedVariables does not contain a reliable region. Enter it so identical character names on different regions stay separate.</source></trans-unit>
-      <trans-unit id="professionTalentTrees.previewSamplesAria" datatype="html"><source>Normalized data samples</source></trans-unit>
+      <trans-unit id="professionTalentTrees.previewSamplesAria" datatype="html"><source>Profession recipe overview</source></trans-unit>
+      <trans-unit id="professionTalentTrees.previewCharactersLabel" datatype="html"><source>characters represented</source></trans-unit>
+      <trans-unit id="professionTalentTrees.success.submit" datatype="html"><source>Normalized profession data was accepted by the server.</source></trans-unit>
       <trans-unit id="professionTalentTrees.previewRecipesLabel" datatype="html"><source>recipes</source></trans-unit>
       <trans-unit id="professionTalentTrees.previewOutputLabel" datatype="html"><source>output</source></trans-unit>
       <trans-unit id="professionTalentTrees.previewReagentSlotsLabel" datatype="html"><source>reagent slots</source></trans-unit>

@@ -5,8 +5,8 @@ required:
 properties:
   imported:
     type: boolean
-    enum: [false]
-    description: Preview only; normalized data is not persisted.
+    enum: [true]
+    description: True after the validated normalized snapshot has been persisted.
   charactersFound: { type: integer, minimum: 0 }
   professionsFound: { type: integer, minimum: 0 }
   recipesFound: { type: integer, minimum: 0 }

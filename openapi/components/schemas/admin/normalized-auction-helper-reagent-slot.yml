@@ -5,7 +5,10 @@ properties:
   slotIndex: { type: integer, minimum: 1 }
   dataSlotIndex: { type: integer, minimum: 0 }
   slotType: { type: string, maxLength: 64 }
-  quantity: { type: number, exclusiveMinimum: 0 }
+  quantity:
+    type: number
+    minimum: 0
+    description: Exported slot quantity. Zero means the addon did not expose a reliable quantity.
   reagents:
     type: array
     maxItems: 100

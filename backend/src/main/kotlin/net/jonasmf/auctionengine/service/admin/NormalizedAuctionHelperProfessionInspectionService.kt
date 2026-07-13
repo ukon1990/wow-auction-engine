@@ -5,9 +5,11 @@ import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessi
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionDiagnostic
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperRecipe
+import net.jonasmf.auctionengine.repository.rds.NormalizedProfessionImportRepository
 import jakarta.validation.Validator
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import org.slf4j.LoggerFactory
 import java.math.BigDecimal
@@ -23,9 +25,11 @@ private const val MAX_DIAGNOSTIC_EXAMPLES = 10
 @Service
 class NormalizedAuctionHelperProfessionInspectionService(
     private val validator: Validator,
+    private val repository: NormalizedProfessionImportRepository,
 ) {
     private val log = LoggerFactory.getLogger(NormalizedAuctionHelperProfessionInspectionService::class.java)
 
+    @Transactional
     fun inspect(payload: NormalizedAuctionHelperProfessionData): NormalizedAuctionHelperProfessionInspection {
         try {
             return inspectValidated(payload)
@@ -88,6 +92,14 @@ class NormalizedAuctionHelperProfessionInspectionService(
                     missingCraftingSkillData++
                     diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.CRAFTING_SKILL_DATA_MISSING, recipe.recipeId)
                 }
+                recipe.maxQualityRequiredReagents.forEach { association ->
+                    if (!recipe.hasMatchingReagentAssociation(association.slotIndex, association.dataSlotIndex, association.itemId)) {
+                        diagnostics.record(
+                            NormalizedAuctionHelperProfessionDiagnostic.Code.MAX_QUALITY_REAGENT_ASSOCIATION_INCOMPLETE,
+                            recipe.recipeId,
+                        )
+                    }
+                }
             }
             profession.talents?.let { talents ->
                 val nodes = talents.trees.flatMap { it.nodes }.associateBy { it.nodeId }
@@ -108,8 +120,10 @@ class NormalizedAuctionHelperProfessionInspectionService(
             }
         }
 
+        repository.save(payload, professions.size, recipesFound)
+
         return NormalizedAuctionHelperProfessionInspection(
-            imported = false,
+            imported = true,
             charactersFound = payload.characters.size,
             professionsFound = professions.size,
             recipesFound = recipesFound,
@@ -170,30 +184,9 @@ private fun validateRecipe(recipe: NormalizedAuctionHelperRecipe) {
     val slotIndexes = recipe.reagentSlots.map { it.slotIndex }
     if (slotIndexes.distinct().size != slotIndexes.size) badRequest("Recipe ${recipe.recipeId} has duplicate reagent slot indexes")
     recipe.reagentSlots.forEach { slot ->
-        if (slot.quantity <= BigDecimal.ZERO) badRequest("Recipe ${recipe.recipeId} reagent slot quantity must be positive")
         val reagentKeys = slot.reagents.map { it.itemId to it.quality }
         if (reagentKeys.distinct().size != reagentKeys.size) {
             badRequest("Recipe ${recipe.recipeId} reagent slot ${slot.slotIndex} has duplicate item associations")
-        }
-        if (slot.reagents.any { it.quantity <= BigDecimal.ZERO }) {
-            badRequest("Recipe ${recipe.recipeId} reagent quantities must be positive")
-        }
-    }
-    recipe.maxQualityRequiredReagents.forEach { association ->
-        if (association.slotIndex == null && association.dataSlotIndex == null) {
-            badRequest("Recipe ${recipe.recipeId} max-quality reagent association requires a slot or data-slot index")
-        }
-        if (association.quantity <= BigDecimal.ZERO) {
-            badRequest("Recipe ${recipe.recipeId} max-quality reagent quantities must be positive")
-        }
-        val slotMatches = association.slotIndex?.let { index -> recipe.reagentSlots.any { it.slotIndex == index } } ?: false
-        val dataSlotMatches = association.dataSlotIndex?.let { index -> recipe.reagentSlots.any { it.dataSlotIndex == index } } ?: false
-        if (!slotMatches && !dataSlotMatches) {
-            badRequest("Recipe ${recipe.recipeId} max-quality reagent association references an unknown slot")
-        }
-        val matchingSlots = recipe.reagentSlots.filter { it.slotIndex == association.slotIndex || it.dataSlotIndex == association.dataSlotIndex }
-        if (matchingSlots.none { slot -> slot.reagents.any { it.itemId == association.itemId } }) {
-            badRequest("Recipe ${recipe.recipeId} max-quality reagent association references an item absent from its slot")
         }
     }
 
@@ -225,6 +218,15 @@ private fun NormalizedAuctionHelperRecipe.hasCraftingSkillData(): Boolean =
         lowerSkillThreshold != null ||
         upperSkillThreshold != null ||
         qualityThresholds.isNotEmpty()
+
+private fun NormalizedAuctionHelperRecipe.hasMatchingReagentAssociation(
+    slotIndex: Int?,
+    dataSlotIndex: Int?,
+    itemId: Int,
+): Boolean =
+    reagentSlots
+        .filter { slot -> slot.slotIndex == slotIndex || (dataSlotIndex != null && slot.dataSlotIndex == dataSlotIndex) }
+        .any { slot -> slot.reagents.any { it.itemId == itemId } }
 
 private fun List<BigDecimal>.isMonotonicallyIncreasing(): Boolean = zipWithNext().all { (left, right) -> left <= right }
 
@@ -259,6 +261,7 @@ private val DIAGNOSTIC_DETAILS =
         NormalizedAuctionHelperProfessionDiagnostic.Code.CRAFTED_ITEM_MISSING to "Recipes expected to create items have no output item association.",
         NormalizedAuctionHelperProfessionDiagnostic.Code.REAGENT_ITEM_MISSING to "Recipe reagent slots have no item association.",
         NormalizedAuctionHelperProfessionDiagnostic.Code.CRAFTING_SKILL_DATA_MISSING to "Recipes using quality or crafting operations have no skill or difficulty data.",
+        NormalizedAuctionHelperProfessionDiagnostic.Code.MAX_QUALITY_REAGENT_ASSOCIATION_INCOMPLETE to "Maximum-quality reagent metadata could not be matched to an exported recipe slot.",
         NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_ALLOCATION_MISSING_NODE to "Talent allocations reference nodes absent from their profession trees.",
         NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_ALLOCATION_MISSING_ENTRY to "Talent allocations reference entries absent from their nodes.",
     )

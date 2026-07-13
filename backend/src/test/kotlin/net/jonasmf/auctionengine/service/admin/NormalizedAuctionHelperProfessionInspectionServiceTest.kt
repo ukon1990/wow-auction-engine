@@ -3,7 +3,10 @@ package net.jonasmf.auctionengine.service.admin
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.validation.Validation
+import io.mockk.mockk
+import io.mockk.verify
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
+import net.jonasmf.auctionengine.repository.rds.NormalizedProfessionImportRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -13,13 +16,14 @@ import java.math.BigDecimal
 class NormalizedAuctionHelperProfessionInspectionServiceTest {
     private val objectMapper = jacksonObjectMapper()
     private val validator = Validation.buildDefaultValidatorFactory().validator
-    private val service = NormalizedAuctionHelperProfessionInspectionService(validator)
+    private val repository = mockk<NormalizedProfessionImportRepository>(relaxed = true)
+    private val service = NormalizedAuctionHelperProfessionInspectionService(validator, repository)
 
     @Test
     fun `accepts normalized recipe item skill and reagent associations`() {
         val result = service.inspect(normalizedPayload())
 
-        assertThat(result.imported).isFalse()
+        assertThat(result.imported).isTrue()
         assertThat(result.charactersFound).isEqualTo(1)
         assertThat(result.professionsFound).isEqualTo(1)
         assertThat(result.recipesFound).isEqualTo(1)
@@ -27,6 +31,7 @@ class NormalizedAuctionHelperProfessionInspectionServiceTest {
         assertThat(result.missingOutputItemAssociations).isZero()
         assertThat(result.missingReagentItemAssociations).isZero()
         assertThat(result.diagnostics).isEmpty()
+        verify(exactly = 1) { repository.save(any(), 1, 1) }
     }
 
     @Test
@@ -66,16 +71,37 @@ class NormalizedAuctionHelperProfessionInspectionServiceTest {
     }
 
     @Test
-    fun `rejects a max quality reagent that is not associated with its recipe slot`() {
+    fun `accepts an incomplete max quality reagent association as a diagnostic`() {
         val payload = normalizedPayload()
         val profession = payload.characters.single().professions.single()
         val recipe = profession.recipes.single()
         val association = recipe.maxQualityRequiredReagents.single().copy(itemId = 999999)
 
-        assertBadRequest(
-            payload.withProfession(profession.copy(recipes = listOf(recipe.copy(maxQualityRequiredReagents = listOf(association))))),
-            "references an item absent from its slot",
-        )
+        val result =
+            service.inspect(
+                payload.withProfession(profession.copy(recipes = listOf(recipe.copy(maxQualityRequiredReagents = listOf(association))))),
+            )
+
+        assertThat(result.imported).isTrue()
+        assertThat(result.diagnostics.single().code.value).isEqualTo("MAX_QUALITY_REAGENT_ASSOCIATION_INCOMPLETE")
+        assertThat(result.diagnostics.single().exampleRecipeIds).containsExactly(recipe.recipeId)
+    }
+
+    @Test
+    fun `accepts zero quantities used for unavailable addon metadata`() {
+        val payload = normalizedPayload()
+        val profession = payload.characters.single().professions.single()
+        val recipe = profession.recipes.single()
+        val slot = recipe.reagentSlots.single()
+        val zeroQuantityRecipe =
+            recipe.copy(
+                reagentSlots = listOf(slot.copy(quantity = BigDecimal.ZERO, reagents = listOf(slot.reagents.single().copy(quantity = BigDecimal.ZERO)))),
+                maxQualityRequiredReagents = listOf(recipe.maxQualityRequiredReagents.single().copy(quantity = BigDecimal.ZERO)),
+            )
+
+        val result = service.inspect(payload.withProfession(profession.copy(recipes = listOf(zeroQuantityRecipe))))
+
+        assertThat(result.imported).isTrue()
     }
 
     @Test

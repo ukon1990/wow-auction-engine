@@ -10,6 +10,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 import { AdminApiService, NormalizedAuctionHelperProfessionInspection } from '@api/generated';
+import { ToastService } from '@core/services/toast.service';
 import { PageFrameComponent } from '@ui';
 import {
   AuctionHelperLocalPreview,
@@ -31,6 +32,20 @@ type SavedVariablesSelection =
   | { files: SavedVariablesFiles; error: null }
   | { files: SavedVariablesFiles; error: 'duplicate' | 'fileSize' | 'totalFileSize' };
 
+export type ProfessionRecipeOverview = Readonly<{
+  professionId: number;
+  name: string;
+  characterCount: number;
+  recipeCount: number;
+  recipes: readonly Readonly<{
+    recipeId: number;
+    name: string;
+    craftedItemId?: number;
+    reagentSlotCount: number;
+    baseDifficulty?: number;
+  }>[];
+}>;
+
 @Component({
   selector: 'app-profession-talent-trees-page',
   imports: [PageFrameComponent],
@@ -40,6 +55,7 @@ type SavedVariablesSelection =
 })
 export class ProfessionTalentTreesPage {
   private readonly adminApi = inject(AdminApiService);
+  private readonly toast = inject(ToastService);
   private readonly folderInput = viewChild<ElementRef<HTMLInputElement>>('folderInput');
   private readonly auctionHelperInput =
     viewChild<ElementRef<HTMLInputElement>>('auctionHelperInput');
@@ -55,17 +71,20 @@ export class ProfessionTalentTreesPage {
 
   protected onFolderSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.selectFiles(input.files ?? []);
+    if (this.selectFiles(input.files ?? [])) void this.processLocally();
   }
 
   protected onFallbackFileSelected(kind: 'auctionHelper' | 'professions', event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.item(0) ?? null;
     const current = this.files();
-    this.selectFiles([
-      kind === 'auctionHelper' ? file : current.auctionHelper,
-      kind === 'professions' ? file : current.professions,
-    ]);
+    if (
+      this.selectFiles([
+        kind === 'auctionHelper' ? file : current.auctionHelper,
+        kind === 'professions' ? file : current.professions,
+      ])
+    )
+      void this.processLocally();
   }
 
   protected clearSelection(): void {
@@ -82,8 +101,7 @@ export class ProfessionTalentTreesPage {
   }
 
   protected hasSelection(): boolean {
-    const files = this.files();
-    return files.professions !== null && this.region().length > 0;
+    return canProcessSelection(this.files(), this.region());
   }
 
   protected onRegionInput(event: Event): void {
@@ -132,8 +150,11 @@ export class ProfessionTalentTreesPage {
           this.adminApi.inspectNormalizedAuctionHelperProfessionData(preview.payload),
         ),
       );
+      this.toast.success(
+        $localize`:@@professionTalentTrees.success.submit:Normalized profession data was accepted by the server.`,
+      );
     } catch (cause) {
-      this.error.set(
+      this.toast.error(
         savedVariablesInspectionError(cause) ??
           $localize`:@@professionTalentTrees.error.submit:Unable to submit the normalized profession data. The selected files remain available to retry.`,
       );
@@ -162,7 +183,11 @@ export class ProfessionTalentTreesPage {
     }
   }
 
-  private selectFiles(files: Iterable<File | null>): void {
+  protected professionOverview(preview: AuctionHelperLocalPreview): ProfessionRecipeOverview[] {
+    return buildProfessionRecipeOverview(preview);
+  }
+
+  private selectFiles(files: Iterable<File | null>): boolean {
     const selection = selectSavedVariablesFiles(files);
     this.files.set(selection.files);
     this.preview.set(null);
@@ -172,21 +197,22 @@ export class ProfessionTalentTreesPage {
       this.error.set(
         $localize`:@@professionTalentTrees.error.duplicateFiles:Choose only one copy of each required SavedVariables file.`,
       );
-      return;
+      return false;
     }
     if (selection.error === 'fileSize') {
       this.error.set(
         $localize`:@@professionTalentTrees.error.fileSize:Choose files smaller than 64 MiB.`,
       );
-      return;
+      return false;
     }
     if (selection.error === 'totalFileSize') {
       this.error.set(
         $localize`:@@professionTalentTrees.error.totalFileSize:Choose SavedVariables files smaller than 128 MiB in total.`,
       );
-      return;
+      return false;
     }
     this.error.set(null);
+    return canProcessSelection(selection.files, this.region());
   }
 }
 
@@ -228,6 +254,10 @@ export function selectedFilesForProcessing(files: SavedVariablesFiles): File[] {
   return [files.auctionHelper, files.professions].filter((file): file is File => file !== null);
 }
 
+export function canProcessSelection(files: SavedVariablesFiles, region: string): boolean {
+  return files.professions !== null && region.trim().length > 0;
+}
+
 export function savedVariablesInspectionError(cause: unknown): string | null {
   if (!(cause instanceof HttpErrorResponse)) return null;
   if (cause.status === 0) {
@@ -236,4 +266,50 @@ export function savedVariablesInspectionError(cause: unknown): string | null {
   if (!cause.error || typeof cause.error !== 'object') return null;
   const detail = (cause.error as { detail?: unknown }).detail;
   return typeof detail === 'string' && detail.trim() ? detail : null;
+}
+
+export function buildProfessionRecipeOverview(
+  preview: AuctionHelperLocalPreview,
+): ProfessionRecipeOverview[] {
+  const professions = new Map<
+    number,
+    {
+      name: string;
+      characters: Set<string>;
+      recipes: Map<number, ProfessionRecipeOverview['recipes'][number]>;
+    }
+  >();
+  for (const character of preview.payload.characters) {
+    for (const profession of character.professions) {
+      const aggregate = professions.get(profession.professionId) ?? {
+        name: profession.name,
+        characters: new Set<string>(),
+        recipes: new Map(),
+      };
+      aggregate.characters.add(character.characterKey);
+      for (const recipe of profession.recipes) {
+        if (!aggregate.recipes.has(recipe.recipeId)) {
+          aggregate.recipes.set(recipe.recipeId, {
+            recipeId: recipe.recipeId,
+            name: recipe.name,
+            ...(recipe.craftedItemId !== undefined ? { craftedItemId: recipe.craftedItemId } : {}),
+            reagentSlotCount: recipe.reagentSlots.length,
+            ...(recipe.baseDifficulty !== undefined
+              ? { baseDifficulty: recipe.baseDifficulty }
+              : {}),
+          });
+        }
+      }
+      professions.set(profession.professionId, aggregate);
+    }
+  }
+  return [...professions.entries()]
+    .map(([professionId, profession]) => ({
+      professionId,
+      name: profession.name,
+      characterCount: profession.characters.size,
+      recipeCount: profession.recipes.size,
+      recipes: [...profession.recipes.values()].sort((a, b) => a.name.localeCompare(b.name)),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
