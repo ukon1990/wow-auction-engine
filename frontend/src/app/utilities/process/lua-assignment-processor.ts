@@ -6,13 +6,12 @@ export type LuaAssignments = Readonly<Record<string, LuaValue>>;
 
 export type LuaProcessingLimits = Readonly<{
   maxDepth: number;
-  maxNodes: number;
+  maxNodes?: number;
   maxSourceCharacters?: number;
 }>;
 
 const DEFAULT_LIMITS: LuaProcessingLimits = {
   maxDepth: 64,
-  maxNodes: 8_000_000,
 };
 
 type AstNode = {
@@ -43,6 +42,7 @@ export class LuaProcessingError extends Error {
 export function processLuaAssignments(
   source: string,
   limits: LuaProcessingLimits = DEFAULT_LIMITS,
+  selectedAssignmentNames?: ReadonlySet<string>,
 ): LuaAssignments {
   if (limits.maxSourceCharacters !== undefined && source.length > limits.maxSourceCharacters) {
     throw new LuaProcessingError('INPUT_LIMIT_EXCEEDED', 'Lua source exceeds the local limit.');
@@ -71,6 +71,7 @@ export function processLuaAssignments(
     const values = nodes(statement.init);
     variables.forEach((variable, index) => {
       if (variable.type !== 'Identifier' || typeof variable.name !== 'string') return;
+      if (selectedAssignmentNames && !selectedAssignmentNames.has(variable.name)) return;
       const value = values[index];
       if (value) {
         rejectDangerousKey(variable.name);
@@ -171,7 +172,7 @@ function isNode(value: unknown): value is AstNode {
 
 function countNode(context: { nodes: number; limits: LuaProcessingLimits }): void {
   context.nodes += 1;
-  if (context.nodes > context.limits.maxNodes) {
+  if (context.limits.maxNodes !== undefined && context.nodes > context.limits.maxNodes) {
     throw new LuaProcessingError('INPUT_LIMIT_EXCEEDED', 'Lua syntax node limit exceeded.');
   }
 }

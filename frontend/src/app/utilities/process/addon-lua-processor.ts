@@ -21,6 +21,7 @@ export type AddonLuaResult<T> = Readonly<{
 export interface AddonLuaAdapter<T = unknown> {
   readonly id: string;
   readonly fileNames: readonly string[];
+  readonly assignmentNames: readonly string[];
   canProcess(fileName: string, assignments: LuaAssignments): boolean;
   normalize(fileName: string, assignments: LuaAssignments): AddonLuaResult<T>;
 }
@@ -29,12 +30,15 @@ export class AddonLuaProcessor {
   constructor(private readonly adapters: readonly AddonLuaAdapter[]) {}
 
   process<T = unknown>(fileName: string, source: string): AddonLuaResult<T> {
-    const assignments = processLuaAssignments(source);
-    const adapter = this.adapters.find(
-      (candidate) =>
-        candidate.fileNames.some((name) => name.toLowerCase() === fileName.toLowerCase()) &&
-        candidate.canProcess(fileName, assignments),
+    const candidates = this.adapters.filter((candidate) =>
+      candidate.fileNames.some((name) => name.toLowerCase() === fileName.toLowerCase()),
     );
+    const assignments = processLuaAssignments(
+      source,
+      undefined,
+      new Set(candidates.flatMap((candidate) => candidate.assignmentNames)),
+    );
+    const adapter = candidates.find((candidate) => candidate.canProcess(fileName, assignments));
     if (!adapter) {
       throw new LuaProcessingError(
         'UNSUPPORTED_LUA',

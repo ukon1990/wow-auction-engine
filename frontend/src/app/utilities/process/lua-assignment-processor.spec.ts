@@ -44,4 +44,14 @@ describe('processLuaAssignments', () => {
       }),
     ).toThrowError(/node limit/);
   });
+
+  it('only materializes requested top-level assignments', () => {
+    expect(
+      processLuaAssignments(
+        'IgnoredDB = { [1] = { [2] = "large" } }\nWantedDB = { ["value"] = 42 }',
+        undefined,
+        new Set(['WantedDB']),
+      ),
+    ).toEqual({ WantedDB: { value: 42 } });
+  });
 });

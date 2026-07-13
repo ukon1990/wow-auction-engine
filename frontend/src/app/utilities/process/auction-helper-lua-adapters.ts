@@ -74,6 +74,7 @@ export type NormalizedTalentExport = Readonly<{
 const professionsAdapter: AddonLuaAdapter<NormalizedProfessionSnapshot> = {
   id: 'auction-helper-professions-v1',
   fileNames: ['AuctionHelper_Professions.lua'],
+  assignmentNames: ['AuctionHelperProfessionsDB'],
   canProcess: (_fileName, assignments) => isRecord(assignments['AuctionHelperProfessionsDB']),
   normalize(fileName, assignments) {
     const root = record(assignments['AuctionHelperProfessionsDB']);
@@ -98,6 +99,7 @@ const professionsAdapter: AddonLuaAdapter<NormalizedProfessionSnapshot> = {
 const exportAdapter: AddonLuaAdapter<NormalizedTalentExport> = {
   id: 'auction-helper-export-v1',
   fileNames: ['AuctionHelper.lua'],
+  assignmentNames: ['AuctionHelperLastExport'],
   canProcess: (_fileName, assignments) => isRecord(assignments['AuctionHelperLastExport']),
   normalize(fileName, assignments) {
     const root = record(assignments['AuctionHelperLastExport']);
