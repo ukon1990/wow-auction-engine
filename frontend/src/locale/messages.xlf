@@ -2736,6 +2736,18 @@
       <trans-unit id="professionTalentTrees.characters" datatype="html"><source>Characters</source></trans-unit>
       <trans-unit id="professionTalentTrees.professions" datatype="html"><source>Professions</source></trans-unit>
       <trans-unit id="professionTalentTrees.recipes" datatype="html"><source>Recipes</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.recipe" datatype="html"><source>Recipe</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.recipeId" datatype="html"><source>Recipe ID</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.craftedItemId" datatype="html"><source>Crafted item ID</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.reagentSlots" datatype="html"><source>Reagent slots</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.baseDifficulty" datatype="html"><source>Base difficulty</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.aria" datatype="html"><source>Profession recipes</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.empty" datatype="html"><source>No recipes match the current search.</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.aria" datatype="html"><source>Recipe view</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.table" datatype="html"><source>Table</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.cards" datatype="html"><source>Cards</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeSearch.label" datatype="html"><source>Search recipes</source></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeSearch.placeholder" datatype="html"><source>Search by recipe name, recipe ID, or crafted item ID</source></trans-unit>
       <trans-unit id="route.admin.professionTalentTrees" datatype="html"><source>Profession talent trees</source></trans-unit>
       <trans-unit id="professionProfiles.importedProfessionsAria" datatype="html"><source>Imported professions</source></trans-unit>
       <trans-unit id="professionTalentTrees.importDiagnosticsAria" datatype="html"><source>Import diagnostics</source></trans-unit>

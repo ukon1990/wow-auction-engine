@@ -4,7 +4,7 @@
   i18n-eyebrow="@@professionTalentTrees.eyebrow"
   eyebrow="Admin"
 >
-  <section class="grid max-w-3xl gap-5" aria-labelledby="talent-tree-import-title">
+  <section class="grid w-full gap-5" aria-labelledby="talent-tree-import-title">
     <header>
       <h1
         id="talent-tree-import-title"
@@ -231,42 +231,107 @@
           </div>
         </dl>
         <div
-          class="grid gap-3"
+          class="flex gap-2 overflow-x-auto border-b border-white/10 pb-2"
+          role="tablist"
           aria-label="Profession recipe overview"
           i18n-aria-label="@@professionTalentTrees.previewSamplesAria"
         >
-          @for (profession of professionOverview(localPreview); track profession.professionId) {
-            <article class="rounded-md border border-white/10 bg-surface p-3 text-sm">
-              <h3 class="font-semibold text-on-surface">
-                {{ profession.name }} · {{ profession.recipeCount }}
-                <span i18n="@@professionTalentTrees.previewRecipesLabel">recipes</span>
-              </h3>
-              <p class="mt-1 text-outline">
-                {{ profession.characterCount }}
-                <span i18n="@@professionTalentTrees.previewCharactersLabel"
-                  >characters represented</span
-                >
-              </p>
-              <ul class="mt-2 grid gap-1 border-l-2 border-white/10 pl-3 text-outline">
-                @for (recipe of profession.recipes; track recipe.recipeId) {
-                  <li>
-                    {{ recipe.name }} (#{{ recipe.recipeId }}) ·
-                    <span i18n="@@professionTalentTrees.previewOutputLabel">output</span>
-                    {{ recipe.craftedItemId ?? '—' }} · {{ recipe.reagentSlotCount }}
-                    <span i18n="@@professionTalentTrees.previewReagentSlotsLabel"
-                      >reagent slots</span
-                    >
-                    @if (recipe.baseDifficulty !== undefined) {
-                      ·
-                      <span i18n="@@professionTalentTrees.previewDifficultyLabel">difficulty</span>
-                      {{ recipe.baseDifficulty }}
-                    }
-                  </li>
-                }
-              </ul>
-            </article>
+          @for (profession of professionOverview(); track profession.professionId; let i = $index) {
+            <button
+              type="button"
+              role="tab"
+              class="min-h-11 shrink-0 rounded-md px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
+              [class.bg-primary]="activeProfession().professionId === profession.professionId"
+              [class.text-on-primary]="activeProfession().professionId === profession.professionId"
+              [class.bg-surface]="activeProfession().professionId !== profession.professionId"
+              [class.text-on-surface]="activeProfession().professionId !== profession.professionId"
+              [attr.id]="'profession-tab-' + profession.professionId"
+              aria-controls="profession-recipe-panel"
+              [attr.aria-selected]="activeProfession().professionId === profession.professionId"
+              [attr.tabindex]="activeProfession().professionId === profession.professionId ? 0 : -1"
+              (click)="selectProfession(profession.professionId)"
+              (keydown)="onProfessionTabKeydown($event, i)"
+            >
+              {{ profession.name }}
+              <span class="text-xs opacity-80">({{ profession.recipeCount }})</span>
+            </button>
           }
         </div>
+
+        @if (activeProfession(); as profession) {
+          <div
+            role="tabpanel"
+            class="grid min-w-0 gap-4"
+            id="profession-recipe-panel"
+            [attr.aria-labelledby]="'profession-tab-' + profession.professionId"
+          >
+            <div class="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h3 class="font-semibold text-on-surface">{{ profession.name }}</h3>
+                <p class="text-sm text-outline">
+                  {{ profession.characterCount }}
+                  <span i18n="@@professionTalentTrees.previewCharactersLabel"
+                    >characters represented</span
+                  >
+                </p>
+              </div>
+              <div
+                class="inline-flex rounded-md border border-white/15 p-1"
+                role="group"
+                aria-label="Recipe view"
+                i18n-aria-label="@@professionTalentTrees.recipeView.aria"
+              >
+                <button
+                  type="button"
+                  class="min-h-9 rounded px-3 text-sm font-semibold"
+                  [class.bg-primary]="!cardView()"
+                  [class.text-on-primary]="!cardView()"
+                  [attr.aria-pressed]="!cardView()"
+                  (click)="cardView.set(false)"
+                  i18n="@@professionTalentTrees.recipeView.table"
+                >
+                  Table
+                </button>
+                <button
+                  type="button"
+                  class="min-h-9 rounded px-3 text-sm font-semibold"
+                  [class.bg-primary]="cardView()"
+                  [class.text-on-primary]="cardView()"
+                  [attr.aria-pressed]="cardView()"
+                  (click)="cardView.set(true)"
+                  i18n="@@professionTalentTrees.recipeView.cards"
+                >
+                  Cards
+                </button>
+              </div>
+            </div>
+            <ee-search-input
+              class="max-w-xl"
+              label="Search recipes"
+              i18n-label="@@professionTalentTrees.recipeSearch.label"
+              placeholder="Search by recipe name, recipe ID, or crafted item ID"
+              i18n-placeholder="@@professionTalentTrees.recipeSearch.placeholder"
+              [value]="recipeSearch()"
+              (valueChanged)="onRecipeSearch($event)"
+            />
+            <ee-table
+              [columns]="recipeColumns"
+              [data]="visibleRecipes()"
+              [cardView]="cardView()"
+              [getRowId]="recipeRowId"
+              [showFooter]="true"
+              [showPagination]="true"
+              [paginationState]="recipePagination()"
+              paginationRowLabel="recipes"
+              i18n-paginationRowLabel="@@professionTalentTrees.previewRecipesLabel"
+              sectionAriaLabel="Profession recipes"
+              i18n-sectionAriaLabel="@@professionTalentTrees.recipeTable.aria"
+              emptyMessage="No recipes match the current search."
+              i18n-emptyMessage="@@professionTalentTrees.recipeTable.empty"
+              (pageChange)="recipePage.set($event)"
+            />
+          </div>
+        }
         @if (localPreview.diagnostics.length > 0) {
           <ul
             class="grid gap-2"

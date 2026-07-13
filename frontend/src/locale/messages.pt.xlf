@@ -2316,6 +2316,18 @@
       <trans-unit id="professionTalentTrees.characters" datatype="html"><source>Characters</source><target>Characters</target></trans-unit>
       <trans-unit id="professionTalentTrees.professions" datatype="html"><source>Professions</source><target>Professions</target></trans-unit>
       <trans-unit id="professionTalentTrees.recipes" datatype="html"><source>Recipes</source><target>Recipes</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.recipe" datatype="html"><source>Recipe</source><target>Receita</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.recipeId" datatype="html"><source>Recipe ID</source><target>ID da receita</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.craftedItemId" datatype="html"><source>Crafted item ID</source><target>ID do item criado</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.reagentSlots" datatype="html"><source>Reagent slots</source><target>Espaços de reagentes</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.baseDifficulty" datatype="html"><source>Base difficulty</source><target>Dificuldade base</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.aria" datatype="html"><source>Profession recipes</source><target>Receitas de profissão</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.empty" datatype="html"><source>No recipes match the current search.</source><target>Nenhuma receita corresponde à pesquisa atual.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.aria" datatype="html"><source>Recipe view</source><target>Vista de receitas</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.table" datatype="html"><source>Table</source><target>Tabela</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.cards" datatype="html"><source>Cards</source><target>Cartões</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeSearch.label" datatype="html"><source>Search recipes</source><target>Pesquisar receitas</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeSearch.placeholder" datatype="html"><source>Search by recipe name, recipe ID, or crafted item ID</source><target>Pesquisar por nome da receita, ID da receita ou ID do item criado</target></trans-unit>
       <trans-unit id="route.admin.professionTalentTrees" datatype="html"><source>Profession talent trees</source><target>Profession talent trees</target></trans-unit>
 +      <trans-unit id="professionProfiles.importedProfessionsAria" datatype="html"><source>Imported professions</source><target>Imported professions</target></trans-unit>
       <trans-unit id="professionTalentTrees.importDiagnosticsAria" datatype="html"><source>Import diagnostics</source><target>Import diagnostics</target></trans-unit>

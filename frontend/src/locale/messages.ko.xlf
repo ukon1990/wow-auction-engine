@@ -2316,6 +2316,18 @@
       <trans-unit id="professionTalentTrees.characters" datatype="html"><source>Characters</source><target>Characters</target></trans-unit>
       <trans-unit id="professionTalentTrees.professions" datatype="html"><source>Professions</source><target>Professions</target></trans-unit>
       <trans-unit id="professionTalentTrees.recipes" datatype="html"><source>Recipes</source><target>Recipes</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.recipe" datatype="html"><source>Recipe</source><target>제작법</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.recipeId" datatype="html"><source>Recipe ID</source><target>제작법 ID</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.craftedItemId" datatype="html"><source>Crafted item ID</source><target>제작 아이템 ID</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.reagentSlots" datatype="html"><source>Reagent slots</source><target>재료 슬롯</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.baseDifficulty" datatype="html"><source>Base difficulty</source><target>기본 난이도</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.aria" datatype="html"><source>Profession recipes</source><target>전문 기술 제작법</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.empty" datatype="html"><source>No recipes match the current search.</source><target>현재 검색과 일치하는 제작법이 없습니다.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.aria" datatype="html"><source>Recipe view</source><target>제작법 보기</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.table" datatype="html"><source>Table</source><target>표</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.cards" datatype="html"><source>Cards</source><target>카드</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeSearch.label" datatype="html"><source>Search recipes</source><target>제작법 검색</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeSearch.placeholder" datatype="html"><source>Search by recipe name, recipe ID, or crafted item ID</source><target>제작법 이름, 제작법 ID 또는 제작 아이템 ID로 검색</target></trans-unit>
       <trans-unit id="route.admin.professionTalentTrees" datatype="html"><source>Profession talent trees</source><target>Profession talent trees</target></trans-unit>
 +      <trans-unit id="professionProfiles.importedProfessionsAria" datatype="html"><source>Imported professions</source><target>Imported professions</target></trans-unit>
       <trans-unit id="professionTalentTrees.importDiagnosticsAria" datatype="html"><source>Import diagnostics</source><target>Import diagnostics</target></trans-unit>

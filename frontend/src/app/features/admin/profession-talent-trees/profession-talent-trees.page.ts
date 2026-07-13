@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   inject,
   signal,
@@ -11,16 +12,21 @@ import { firstValueFrom } from 'rxjs';
 
 import { AdminApiService, NormalizedAuctionHelperProfessionInspection } from '@api/generated';
 import { ToastService } from '@core/services/toast.service';
-import { PageFrameComponent } from '@ui';
+import { PageFrameComponent, PaginationState, SearchInputComponent, TableComponent } from '@ui';
 import {
   AuctionHelperLocalPreview,
   processAuctionHelperFilesInWorker,
 } from '../../../utilities/process';
+import {
+  createProfessionRecipeColumns,
+  ProfessionRecipeRow,
+} from './profession-recipe-table.columns';
 
 export const MAX_FILE_SIZE_BYTES = 64 * 1024 * 1024;
 export const MAX_TOTAL_FILE_SIZE_BYTES = 128 * 1024 * 1024;
 const AUCTION_HELPER_FILE = 'auctionhelper.lua';
 const PROFESSIONS_FILE = 'auctionhelper_professions.lua';
+const RECIPE_PAGE_SIZE = 50;
 
 export type SavedVariablesFiles = {
   auctionHelper: File | null;
@@ -48,7 +54,7 @@ export type ProfessionRecipeOverview = Readonly<{
 
 @Component({
   selector: 'app-profession-talent-trees-page',
-  imports: [PageFrameComponent],
+  imports: [PageFrameComponent, SearchInputComponent, TableComponent],
   templateUrl: './profession-talent-trees.page.html',
   host: { class: 'flex min-h-0 flex-1 flex-col' },
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,6 +74,48 @@ export class ProfessionTalentTreesPage {
   protected readonly error = signal<string | null>(null);
   protected readonly preview = signal<AuctionHelperLocalPreview | null>(null);
   protected readonly result = signal<NormalizedAuctionHelperProfessionInspection | null>(null);
+  protected readonly activeProfessionId = signal<number | null>(null);
+  protected readonly recipeSearch = signal('');
+  protected readonly recipePage = signal(0);
+  protected readonly cardView = signal(false);
+  protected readonly recipeColumns = createProfessionRecipeColumns();
+  protected readonly professionOverview = computed(() => {
+    const preview = this.preview();
+    return preview ? buildProfessionRecipeOverview(preview) : [];
+  });
+  protected readonly activeProfession = computed(() => {
+    const overview = this.professionOverview();
+    return (
+      overview.find((profession) => profession.professionId === this.activeProfessionId()) ??
+      overview[0] ??
+      null
+    );
+  });
+  protected readonly filteredRecipes = computed(() => {
+    const recipes = this.activeProfession()?.recipes ?? [];
+    const query = this.recipeSearch().trim().toLocaleLowerCase();
+    if (!query) return recipes;
+    return recipes.filter(
+      (recipe) =>
+        recipe.name.toLocaleLowerCase().includes(query) ||
+        String(recipe.recipeId).includes(query) ||
+        (recipe.craftedItemId !== undefined && String(recipe.craftedItemId).includes(query)),
+    );
+  });
+  protected readonly recipePagination = computed<PaginationState>(() => {
+    const totalItems = this.filteredRecipes().length;
+    return {
+      page: Math.min(this.recipePage(), Math.max(0, Math.ceil(totalItems / RECIPE_PAGE_SIZE) - 1)),
+      pageSize: RECIPE_PAGE_SIZE,
+      totalItems,
+      totalPages: Math.max(1, Math.ceil(totalItems / RECIPE_PAGE_SIZE)),
+    };
+  });
+  protected readonly visibleRecipes = computed(() => {
+    const page = this.recipePagination().page;
+    return this.filteredRecipes().slice(page * RECIPE_PAGE_SIZE, (page + 1) * RECIPE_PAGE_SIZE);
+  });
+  protected readonly recipeRowId = (recipe: ProfessionRecipeRow): string => String(recipe.recipeId);
 
   protected onFolderSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -98,6 +146,7 @@ export class ProfessionTalentTreesPage {
     this.error.set(null);
     this.preview.set(null);
     this.result.set(null);
+    this.resetRecipeBrowser();
   }
 
   protected hasSelection(): boolean {
@@ -130,6 +179,7 @@ export class ProfessionTalentTreesPage {
           this.region(),
         ),
       );
+      this.activeProfessionId.set(this.professionOverview()[0]?.professionId ?? null);
     } catch {
       this.error.set(
         $localize`:@@professionTalentTrees.error.inspect:Unable to process these SavedVariables files locally. Check the region and choose a valid AuctionHelper_Professions.lua file, then try again.`,
@@ -183,8 +233,39 @@ export class ProfessionTalentTreesPage {
     }
   }
 
-  protected professionOverview(preview: AuctionHelperLocalPreview): ProfessionRecipeOverview[] {
-    return buildProfessionRecipeOverview(preview);
+  protected selectProfession(professionId: number): void {
+    this.activeProfessionId.set(professionId);
+    this.recipeSearch.set('');
+    this.recipePage.set(0);
+  }
+
+  protected onRecipeSearch(value: string): void {
+    this.recipeSearch.set(value);
+    this.recipePage.set(0);
+  }
+
+  protected onProfessionTabKeydown(event: KeyboardEvent, index: number): void {
+    const professions = this.professionOverview();
+    if (professions.length === 0) return;
+    let target = index;
+    if (event.key === 'ArrowRight') target = (index + 1) % professions.length;
+    else if (event.key === 'ArrowLeft')
+      target = (index - 1 + professions.length) % professions.length;
+    else if (event.key === 'Home') target = 0;
+    else if (event.key === 'End') target = professions.length - 1;
+    else return;
+    event.preventDefault();
+    this.selectProfession(professions[target].professionId);
+    const tabs = (event.currentTarget as HTMLElement).parentElement?.querySelectorAll<HTMLElement>(
+      '[role="tab"]',
+    );
+    tabs?.item(target).focus();
+  }
+
+  private resetRecipeBrowser(): void {
+    this.activeProfessionId.set(null);
+    this.recipeSearch.set('');
+    this.recipePage.set(0);
   }
 
   private selectFiles(files: Iterable<File | null>): boolean {
