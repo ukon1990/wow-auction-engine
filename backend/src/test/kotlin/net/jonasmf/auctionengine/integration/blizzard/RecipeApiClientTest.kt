@@ -22,7 +22,7 @@ class RecipeApiClientTest {
         assertEquals(42363, recipe.id)
         assertEquals("Ceremonious Breastplate", recipe.name.en_US)
         assertEquals(
-            "https://us.api.blizzard.com/data/wow/media/recipe/42363?namespace=static-12.0.5_66741-us",
+            "https://us.api.blizzard.com/data/wow/media/recipe/42363?namespace=static-12.0.7_67808-us",
             recipe.mediaUrl,
         )
         assertEquals(171374, recipe.craftedItemId)
