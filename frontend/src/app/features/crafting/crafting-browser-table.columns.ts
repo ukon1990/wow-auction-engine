@@ -138,5 +138,33 @@ export function createCraftingBrowserTableColumns(): ColumnDef<CraftingTableRow,
       } satisfies ColumnMeta,
       cell: () => flexRenderComponent(CraftingPercentCellComponent),
     },
+    {
+      id: 'saleRate',
+      accessorKey: 'saleRate',
+      enableSorting: false,
+      header: $localize`:@@crafting.column.saleRate:Sale rate`,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(4.5rem, max-content)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@crafting.column.saleRate:Sale rate`,
+        cardPriority: 55,
+      } satisfies ColumnMeta,
+      cell: () => flexRenderComponent(CraftingPercentCellComponent),
+    },
+    {
+      id: 'soldPerDay',
+      accessorKey: 'soldPerDay',
+      enableSorting: false,
+      header: $localize`:@@crafting.column.soldPerDay:Avg sold/day`,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(5rem, max-content)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@crafting.column.soldPerDay:Avg sold/day`,
+        cardPriority: 56,
+      } satisfies ColumnMeta,
+      cell: () => flexRenderComponent(CraftingPercentCellComponent),
+    },
   ];
 }

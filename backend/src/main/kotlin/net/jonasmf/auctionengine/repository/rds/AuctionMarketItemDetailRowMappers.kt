@@ -23,6 +23,8 @@ internal object AuctionMarketItemDetailRowMappers {
                 recipeRank = rs.getNullableInt("recipe_rank"),
                 recipeName = rs.getString("recipe_name"),
                 recipeMediaUrl = rs.getString("recipe_media_url"),
+                saleRate = rs.getNullableDouble("sale_rate"),
+                soldPerDay = rs.getNullableDouble("sold_per_day"),
             )
         }
 

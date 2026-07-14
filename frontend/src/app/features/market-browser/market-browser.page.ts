@@ -181,7 +181,13 @@ export class MarketBrowserPage {
 }
 
 function activeColumnIdsForViewport(width: number): Set<string> {
-  const active = new Set<string>(['itemName', 'selectedPrice', 'selectedQuantity']);
+  const active = new Set<string>([
+    'itemName',
+    'selectedPrice',
+    'selectedQuantity',
+    'saleRate',
+    'soldPerDay',
+  ]);
   if (width >= CLASS_MIN_WIDTH) active.add('itemClass');
   if (width >= SUBCLASS_MIN_WIDTH) active.add('itemSubclass');
   if (width >= QUALITY_MIN_WIDTH) active.add('quality');

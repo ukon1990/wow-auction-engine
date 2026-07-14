@@ -93,6 +93,7 @@ class AuctionMarketSearchService(
         val normalizedSortDirection = if (sortDirection.equals("desc", ignoreCase = true)) "desc" else "asc"
         val request =
             AuctionMarketSearchRequest(
+                region = context.region,
                 selectedConnectedRealmId = context.selectedSnapshot.connectedRealmId,
                 selectedDate = context.selectedSnapshot.date,
                 selectedHour = context.selectedSnapshot.hour,
@@ -199,6 +200,8 @@ class AuctionMarketSearchService(
                                     p75Price = row.commodityP75Price,
                                     quantity = row.commodityQuantity,
                                 ),
+                            saleRate = row.saleRate,
+                            soldPerDay = row.soldPerDay,
                         )
                     },
                 page =
@@ -257,6 +260,7 @@ class AuctionMarketSearchService(
         filtersCache.entries.removeIf { now.isAfter(it.value.expiresAt) }
         val request =
             AuctionMarketSearchRequest(
+                region = context.region,
                 selectedConnectedRealmId = context.selectedSnapshot.connectedRealmId,
                 selectedDate = context.selectedSnapshot.date,
                 selectedHour = context.selectedSnapshot.hour,

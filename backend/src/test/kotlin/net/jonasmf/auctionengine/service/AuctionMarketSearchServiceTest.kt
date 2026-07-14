@@ -153,6 +153,37 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `search returns TSM saleRate and soldPerDay for request region`() {
+        seedMarketSearchData()
+        MarketSearchTestFixtures.seedTsmItemMetric(jdbcTemplate)
+
+        val result =
+            service.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = "potion",
+                qualityIds = null,
+                itemClassIds = null,
+                itemSubclassIds = null,
+                expansionIds = null,
+                recipeOnly = null,
+                minPrice = null,
+                maxPrice = null,
+                minQuantity = null,
+                maxQuantity = null,
+            )
+
+        val row = result.items.single()
+        assertEquals(0.25, row.saleRate!!, 0.0000001)
+        assertEquals(1.5, row.soldPerDay!!, 0.0000001)
+    }
+
+    @Test
     fun `search includes commodity-only items in unfiltered results with default itemName sort`() {
         seedMarketSearchData()
         MarketSearchTestFixtures.seedCommodityOnlyItem(jdbcTemplate)

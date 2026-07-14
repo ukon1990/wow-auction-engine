@@ -20,6 +20,7 @@ data class MarketSnapshot(
 )
 
 data class MarketContext(
+    val region: Region,
     val locale: Locale,
     val localeColumnSuffix: String,
     val selectedRealmTimezone: String,
@@ -67,6 +68,7 @@ class AuctionMarketContextService(
                 )
 
         return MarketContext(
+            region = region,
             locale = locale,
             localeColumnSuffix = locale.columnSuffix,
             selectedRealmTimezone = detail.timezone,

@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.repository.rds
 
+import net.jonasmf.auctionengine.constant.Region
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.Date
@@ -12,6 +13,7 @@ class AuctionMarketItemDetailRepository(
     fun loadItemHeader(
         itemId: Int,
         localeColumnSuffix: String,
+        region: Region,
     ): AuctionMarketItemHeaderRow? =
         jdbcTemplate
             .query(
@@ -30,12 +32,19 @@ class AuctionMarketItemDetailRepository(
                     d.recipe_id,
                     d.recipe_rank,
                     COALESCE(d.recipe_name_$localeColumnSuffix, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
-                    d.recipe_media_url
+                    d.recipe_media_url,
+                    tsm.sale_rate,
+                    tsm.sold_per_day
                 FROM v_auction_market_item_details d
+                    LEFT JOIN tsm_region_metric tsm
+                        ON tsm.region = ?
+                        AND tsm.subject_type = 'ITEM'
+                        AND tsm.subject_id = d.item_id
                 WHERE d.item_id = ?
                 LIMIT 1
                 """.trimIndent(),
                 AuctionMarketItemDetailRowMappers.headerRowMapper,
+                region.name,
                 itemId,
             ).firstOrNull()
 

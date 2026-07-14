@@ -70,6 +70,27 @@ class AuctionMarketItemDetailServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `item detail returns TSM saleRate and soldPerDay for request region`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.seedTsmItemMetric(jdbcTemplate)
+
+        val detail =
+            service.itemDetail(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                itemId = 19019,
+                bonusKey = "",
+                modifierKey = "",
+                petSpeciesId = 0,
+                scope = "realm",
+                localeOverride = null,
+            )
+
+        assertEquals(0.25, detail.saleRate!!, 0.0000001)
+        assertEquals(1.5, detail.soldPerDay!!, 0.0000001)
+    }
+
+    @Test
     fun `item detail uses rank-specific reagent item ids when configured`() {
         MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
         MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)

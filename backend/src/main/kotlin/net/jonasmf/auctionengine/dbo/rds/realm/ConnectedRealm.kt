@@ -56,6 +56,8 @@ class AuctionHouse(
     @Nullable
     var lastHistoryDeleteEventDaily: Instant? = null, // TODO: Probably redundant due to SQL query?
     @Nullable
+    var lastTsmRegionSync: Instant? = null,
+    @Nullable
     var updateAttempts: Int = 0,
 )
 

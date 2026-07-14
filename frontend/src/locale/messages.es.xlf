@@ -642,6 +642,22 @@
           <context context-type="linenumber">100</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="crafting.column.saleRate" datatype="html">
+        <source>Sale rate</source>
+        <target>Tasa de venta</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
+          <context context-type="linenumber">145</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crafting.column.soldPerDay" datatype="html">
+        <source>Avg sold/day</source>
+        <target>Venta media/día</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
+          <context context-type="linenumber">159</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="filters.open" datatype="html">
         <source>Open filters</source>
         <target>Abrir filtros</target>
@@ -1000,6 +1016,22 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
           <context context-type="linenumber">96</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="market.column.saleRate" datatype="html">
+        <source>Sale rate</source>
+        <target>Tasa de venta</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
+          <context context-type="linenumber">142</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="market.column.soldPerDay" datatype="html">
+        <source>Avg sold/day</source>
+        <target>Venta media/día</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
+          <context context-type="linenumber">156</context>
         </context-group>
       </trans-unit>
       <trans-unit id="market.table.aria" datatype="html">

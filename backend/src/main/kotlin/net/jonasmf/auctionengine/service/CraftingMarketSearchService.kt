@@ -87,6 +87,7 @@ class CraftingMarketSearchService(
         val commodityPreviousDate = context.commoditySnapshot.date.minusDays(1)
         val request =
             CraftingMarketSearchRequest(
+                region = context.region,
                 selectedConnectedRealmId = context.selectedSnapshot.connectedRealmId,
                 selectedDate = context.selectedSnapshot.date,
                 selectedHour = context.selectedSnapshot.hour,
@@ -205,6 +206,8 @@ class CraftingMarketSearchService(
                         reagentsFullyPriced = row.reagentsFullyPriced,
                         outputPriced = row.outputUnitPrice != null,
                         profileFit = row.profileFit(candidatesByRecipeProfession, recipeRulesById, actorSubject != null),
+                        saleRate = row.saleRate,
+                        soldPerDay = row.soldPerDay,
                     )
                 },
             page =

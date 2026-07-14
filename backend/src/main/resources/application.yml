@@ -49,6 +49,11 @@ app:
     item-sync-startup-delay: PT30S
     item-sync-startup-repeat-delay: P3650D
 
+    tsm-region-sync-cron: "0 0 6 * * *"
+    tsm-region-sync-zone: GMT+1
+    tsm-region-sync-startup-delay: PT30S
+    tsm-region-sync-startup-repeat-delay: P3650D
+
     profession-recipe-sync-cron: "0 0 8 ? * WED"
     profession-recipe-sync-zone: GMT+1
     profession-recipe-sync-startup-delay: PT30S
@@ -72,6 +77,9 @@ app:
     concurrency: 3
     # Small delay between starting work items to reduce burst traffic (0 to disable).
     start-delay-ms: 50
+
+  tsm:
+    public-data-base-url: https://public-data.tradeskillmaster.com/retail
 
 blizzard:
   client-id: ${BLIZZARD_CLIENT_ID}

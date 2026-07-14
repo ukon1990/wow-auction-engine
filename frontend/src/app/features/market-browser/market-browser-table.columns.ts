@@ -135,5 +135,33 @@ export function createMarketBrowserTableColumns(): ColumnDef<MarketItemRow, unkn
       } satisfies MarketColumnMeta,
       cell: () => flexRenderComponent(MarketMetricCellComponent),
     },
+    {
+      id: 'saleRate',
+      accessorKey: 'saleRate',
+      enableSorting: false,
+      header: $localize`:@@market.column.saleRate:Sale rate`,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(4.5rem, 5.5rem)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@market.column.saleRate:Sale rate`,
+        cardPriority: 25,
+      } satisfies MarketColumnMeta,
+      cell: () => flexRenderComponent(MarketMetricCellComponent),
+    },
+    {
+      id: 'soldPerDay',
+      accessorKey: 'soldPerDay',
+      enableSorting: false,
+      header: $localize`:@@market.column.soldPerDay:Avg sold/day`,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(5rem, 6rem)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@market.column.soldPerDay:Avg sold/day`,
+        cardPriority: 26,
+      } satisfies MarketColumnMeta,
+      cell: () => flexRenderComponent(MarketMetricCellComponent),
+    },
   ];
 }

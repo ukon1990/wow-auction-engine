@@ -32,6 +32,8 @@ export function toCraftingRow(row: CraftingMarketSearchRow): CraftingTableRow {
     listingQuantity: row.listingQuantity != null ? Number(row.listingQuantity) : null,
     minBuyoutCopper: minBuy,
     profileFit: row.profileFit ?? null,
+    saleRate: toOptionalFiniteNumber(row.saleRate) ?? null,
+    soldPerDay: toOptionalFiniteNumber(row.soldPerDay) ?? null,
   };
 }
 

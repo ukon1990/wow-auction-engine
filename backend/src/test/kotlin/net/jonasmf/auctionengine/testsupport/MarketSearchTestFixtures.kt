@@ -645,4 +645,27 @@ object MarketSearchTestFixtures {
         )
         return id
     }
+
+    fun seedTsmItemMetric(
+        jdbcTemplate: JdbcTemplate,
+        region: String = "Europe",
+        itemId: Int = 19019,
+        saleRate: String = "0.25000000",
+        soldPerDay: String = "1.50000000",
+        sourceUpdatedAt: String = "2026-07-14 06:00:00",
+    ) {
+        jdbcTemplate.update(
+            """
+            INSERT INTO tsm_region_metric (
+                region, subject_type, subject_id, sale_rate, sold_per_day,
+                market_value, historical, avg_sale_price, source_updated_at
+            ) VALUES (?, 'ITEM', ?, ?, ?, NULL, NULL, NULL, ?)
+            """.trimIndent(),
+            region,
+            itemId,
+            saleRate,
+            soldPerDay,
+            sourceUpdatedAt,
+        )
+    }
 }

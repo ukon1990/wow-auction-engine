@@ -73,3 +73,17 @@ properties:
         type: array
         items:
             $ref: "../../openapi.yml#/components/schemas/AuctionMarketItemCraftingDetail"
+    saleRate:
+        type: number
+        format: double
+        nullable: true
+        description: |
+            TSM regional sale rate for this item in the request region, as a fraction in [0, 1]
+            (e.g. 0.25 means 25%). Null when no TSM metric row exists for the region/item.
+    soldPerDay:
+        type: number
+        format: double
+        nullable: true
+        description: |
+            TSM regional average units sold per day for this item in the request region.
+            Null when no TSM metric row exists for the region/item.
