@@ -70,6 +70,33 @@ class AuctionMarketItemDetailServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `item detail uses rank-specific reagent item ids when configured`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
+        addSecondRecipeForHealingPotion()
+        addRankTwoReagentVariantPricing()
+
+        val detail =
+            service.itemDetail(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                itemId = 19019,
+                bonusKey = "",
+                modifierKey = "",
+                petSpeciesId = 0,
+                scope = "realm",
+                localeOverride = null,
+                preferredRecipeId = 7004,
+            )
+
+        val rankTwo = detail.craftings.single { it.recipeId == 7004 }
+        assertEquals(200L, rankTwo.reagentCost)
+        assertEquals(19053, rankTwo.reagents.single().itemId)
+        assertEquals("Goldthorn", rankTwo.reagents.single().name)
+        assertEquals(200L, rankTwo.reagents.single().unitPrice)
+    }
+
+    @Test
     fun `item detail treats petSpeciesId -1 as rollup for non-pet items`() {
         MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
         MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
@@ -426,6 +453,47 @@ class AuctionMarketItemDetailServiceTest : IntegrationTestBase() {
             recipeName,
         )
         jdbcTemplate.update("INSERT INTO recipe_reagent (item_id, quantity, recipe_id) VALUES (19050, 1, 7004)")
+    }
+
+    private fun addRankTwoReagentVariantPricing() {
+        val rankTwoReagentName = insertLocale(1101, "Goldthorn", "Golddorn", "ITEM", "19053", "name")
+        jdbcTemplate.update(
+            """
+            INSERT INTO item (
+                id, is_equippable, is_stackable, level, max_count, media_url, purchase_price, purchase_quantity,
+                required_level, sell_price, item_class_id, item_subclass_id, name_id, quality_id
+            ) VALUES (19053, 0, 1, 1, 0, 'https://media.example/herb-r2.png', 0, 1, 1, 0, 2, 501, ?, 3)
+            """.trimIndent(),
+            rankTwoReagentName,
+        )
+        val reagentId =
+            jdbcTemplate.queryForObject(
+                "SELECT internal_id FROM recipe_reagent WHERE recipe_id = 7004 AND item_id = 19050",
+                Long::class.java,
+            )!!
+        jdbcTemplate.update(
+            """
+            INSERT INTO recipe_reagent_rank (recipe_reagent_id, rank, is_override, item_id, skill_points)
+            VALUES (?, 1, FALSE, 19050, NULL), (?, 2, FALSE, 19053, NULL)
+            """.trimIndent(),
+            reagentId,
+            reagentId,
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO auction (
+                id, connected_realm_id, item_id, buyout, p25, p75, quantity, last_seen, update_history_id,
+                bonus_key, modifier_key, pet_species_id
+            ) VALUES ('1084-current-19053', 1084, 19053, 200, 180, 220, 10, '2026-05-01 11:15:00', 1001, '', '', -1)
+            """.trimIndent(),
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO auction_stats_hourly (
+                connected_realm_id, item_id, date, pet_species_id, modifier_key, bonus_key, price11, quantity11
+            ) VALUES (1084, 19053, '2026-05-01', -1, '', '', 200, 10)
+            """.trimIndent(),
+        )
     }
 
     private fun addCommodityOnlyCraftingFixture() {

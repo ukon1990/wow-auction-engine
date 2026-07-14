@@ -235,7 +235,19 @@ class AuctionMarketItemDetailRepository(
                 WHERE ash.connected_realm_id = ?
                   AND ash.date = ?
                   AND ash.price$hourSuffix IS NOT NULL
-                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM v_recipe_reagent rr WHERE rr.recipe_id IN ($placeholders))
+                  AND ash.item_id IN (
+                      SELECT DISTINCT pricing_item_id
+                      FROM (
+                          SELECT rr.item_id AS pricing_item_id
+                          FROM v_recipe_reagent rr
+                          WHERE rr.recipe_id IN ($placeholders)
+                          UNION ALL
+                          SELECT rrk.item_id AS pricing_item_id
+                          FROM recipe_reagent_rank rrk
+                              INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+                          WHERE rr.recipe_id IN ($placeholders)
+                      ) scoped_items
+                  )
             ),
             reagent_sel_ranked AS (
                 SELECT item_id, price,
@@ -251,7 +263,19 @@ class AuctionMarketItemDetailRepository(
                 WHERE ash.connected_realm_id = ?
                   AND ash.date = ?
                   AND ash.price$commodityHourSuffix IS NOT NULL
-                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM v_recipe_reagent rr WHERE rr.recipe_id IN ($placeholders))
+                  AND ash.item_id IN (
+                      SELECT DISTINCT pricing_item_id
+                      FROM (
+                          SELECT rr.item_id AS pricing_item_id
+                          FROM v_recipe_reagent rr
+                          WHERE rr.recipe_id IN ($placeholders)
+                          UNION ALL
+                          SELECT rrk.item_id AS pricing_item_id
+                          FROM recipe_reagent_rank rrk
+                              INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+                          WHERE rr.recipe_id IN ($placeholders)
+                      ) scoped_items
+                  )
             ),
             reagent_com_ranked AS (
                 SELECT item_id, price,
@@ -263,32 +287,48 @@ class AuctionMarketItemDetailRepository(
             ),
             reagent_price AS (
                 SELECT items.item_id, COALESCE(rs.price, rc.price) AS price
-                FROM (SELECT DISTINCT item_id FROM v_recipe_reagent WHERE recipe_id IN ($placeholders)) items
+                FROM (
+                    SELECT DISTINCT pricing_item_id AS item_id
+                    FROM (
+                        SELECT rr.item_id AS pricing_item_id
+                        FROM v_recipe_reagent rr
+                        WHERE rr.recipe_id IN ($placeholders)
+                        UNION ALL
+                        SELECT rrk.item_id AS pricing_item_id
+                        FROM recipe_reagent_rank rrk
+                            INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+                        WHERE rr.recipe_id IN ($placeholders)
+                    ) scoped_items
+                ) items
                 LEFT JOIN reagent_sel rs ON rs.item_id = items.item_id
                 LEFT JOIN reagent_com rc ON rc.item_id = items.item_id
-            )
+            ),
+            ${RecipeReagentPricingSql.recipeReagentLinesForRecipesCte("rr.recipe_id IN ($placeholders)")}
             SELECT
-                rr.recipe_id,
-                rr.item_id,
-                COALESCE(i_l.$localeColumnSuffix, i_l.en_gb, i_l.en_us, CONCAT('Item ', rr.item_id)) AS name,
+                rl.recipe_id,
+                rl.pricing_item_id AS item_id,
+                COALESCE(i_l.$localeColumnSuffix, i_l.en_gb, i_l.en_us, CONCAT('Item ', rl.pricing_item_id)) AS name,
                 i.media_url AS media_url,
-                rr.quantity,
+                rl.quantity,
                 rp.price AS unit_price,
-                CASE WHEN rp.price IS NULL THEN NULL ELSE rp.price * rr.quantity END AS line_total
-            FROM v_recipe_reagent rr
-            LEFT JOIN reagent_price rp ON rp.item_id = rr.item_id
-            LEFT JOIN v_item i ON i.id = rr.item_id
+                CASE WHEN rp.price IS NULL THEN NULL ELSE rp.price * rl.quantity END AS line_total
+            FROM recipe_reagent_lines rl
+            LEFT JOIN reagent_price rp ON rp.item_id = rl.pricing_item_id
+            LEFT JOIN v_item i ON i.id = rl.pricing_item_id
             LEFT JOIN locale i_l ON i_l.id = i.name_id
-            WHERE rr.recipe_id IN ($placeholders)
-            ORDER BY rr.recipe_id, name, rr.item_id
+            WHERE rl.recipe_reagent_id IS NOT NULL
+            ORDER BY rl.recipe_id, name, rl.pricing_item_id
             """.trimIndent()
         val params =
             arrayOf<Any?>(
                 connectedRealmId,
                 Date.valueOf(statDate),
                 *recipeIds.toTypedArray(),
+                *recipeIds.toTypedArray(),
                 commodityConnectedRealmId,
                 Date.valueOf(commodityStatDate),
+                *recipeIds.toTypedArray(),
+                *recipeIds.toTypedArray(),
                 *recipeIds.toTypedArray(),
                 *recipeIds.toTypedArray(),
                 *recipeIds.toTypedArray(),
@@ -452,7 +492,14 @@ class AuctionMarketItemDetailRepository(
                   ON ash.connected_realm_id = ?
                  AND ash.date = ds.stat_date
                  AND ash.price$hourSuffix IS NOT NULL
-                 AND ash.item_id IN (SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?)
+                 AND ash.item_id IN (
+                     SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?
+                     UNION ALL
+                     SELECT rrk.item_id
+                     FROM recipe_reagent_rank rrk
+                         INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+                     WHERE rr.recipe_id = ?
+                 )
             ),
             reagent_sel_ranked AS (
                 SELECT stat_date, item_id, price,
@@ -469,7 +516,14 @@ class AuctionMarketItemDetailRepository(
                   ON ash.connected_realm_id = ?
                  AND ash.date = ds.stat_date
                  AND ash.price$commodityHourSuffix IS NOT NULL
-                 AND ash.item_id IN (SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?)
+                 AND ash.item_id IN (
+                     SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?
+                     UNION ALL
+                     SELECT rrk.item_id
+                     FROM recipe_reagent_rank rrk
+                         INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+                     WHERE rr.recipe_id = ?
+                 )
             ),
             reagent_com_ranked AS (
                 SELECT stat_date, item_id, price,
@@ -480,19 +534,37 @@ class AuctionMarketItemDetailRepository(
                 SELECT stat_date, item_id, price FROM reagent_com_ranked WHERE rn = 1
             ),
             reagent_price AS (
-                SELECT ds.stat_date, rr.item_id, COALESCE(rs.price, rc.price) AS price
+                SELECT ds.stat_date, rl.pricing_item_id AS item_id, COALESCE(rs.price, rc.price) AS price
                 FROM date_spine ds
-                CROSS JOIN (SELECT DISTINCT item_id FROM v_recipe_reagent WHERE recipe_id = ?) rr
-                LEFT JOIN reagent_sel rs ON rs.stat_date = ds.stat_date AND rs.item_id = rr.item_id
-                LEFT JOIN reagent_com rc ON rc.stat_date = ds.stat_date AND rc.item_id = rr.item_id
+                CROSS JOIN (
+                    SELECT DISTINCT pricing_item_id
+                    FROM (
+                        SELECT rr.item_id AS pricing_item_id
+                        FROM v_recipe_reagent rr
+                        WHERE rr.recipe_id = ?
+                        UNION ALL
+                        SELECT rrk.item_id AS pricing_item_id
+                        FROM recipe_reagent_rank rrk
+                            INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+                        WHERE rr.recipe_id = ?
+                    ) scoped_items
+                ) rl
+                LEFT JOIN reagent_sel rs ON rs.stat_date = ds.stat_date AND rs.item_id = rl.pricing_item_id
+                LEFT JOIN reagent_com rc ON rc.stat_date = ds.stat_date AND rc.item_id = rl.pricing_item_id
             ),
             reagent_cost AS (
                 SELECT ds.stat_date,
                        SUM(CASE WHEN rp.price IS NULL THEN 1 ELSE 0 END) AS missing_reagents,
                        SUM(COALESCE(rp.price, 0) * rr.quantity) AS partial_cost
                 FROM date_spine ds
-                JOIN v_recipe_reagent rr ON rr.recipe_id = ?
-                LEFT JOIN reagent_price rp ON rp.stat_date = ds.stat_date AND rp.item_id = rr.item_id
+                JOIN v_recipe r ON r.id = ?
+                JOIN v_recipe_reagent rr ON rr.recipe_id = r.id
+                LEFT JOIN recipe_reagent_rank rrk
+                    ON rrk.recipe_reagent_id = rr.internal_id
+                   AND rrk.rank = COALESCE(NULLIF(r.rank, 0), 1)
+                LEFT JOIN reagent_price rp
+                    ON rp.stat_date = ds.stat_date
+                   AND rp.item_id = COALESCE(rrk.item_id, rr.item_id)
                 GROUP BY ds.stat_date
             ),
             output_sel_base AS (
@@ -561,7 +633,10 @@ class AuctionMarketItemDetailRepository(
             Date.valueOf(toDate),
             connectedRealmId,
             recipeId,
+            recipeId,
             commodityConnectedRealmId,
+            recipeId,
+            recipeId,
             recipeId,
             recipeId,
             recipeId,
@@ -620,7 +695,14 @@ class AuctionMarketItemDetailRepository(
                 JOIN auction_stats_hourly ash
                   ON ash.connected_realm_id = ?
                  AND ash.date BETWEEN ? AND ?
-                 AND ash.item_id IN (SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?)
+                 AND ash.item_id IN (
+                     SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?
+                     UNION ALL
+                     SELECT rrk.item_id
+                     FROM recipe_reagent_rank rrk
+                         INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+                     WHERE rr.recipe_id = ?
+                 )
                 HAVING price IS NOT NULL
             ),
             reagent_sel_ranked AS (
@@ -642,7 +724,14 @@ class AuctionMarketItemDetailRepository(
                 JOIN auction_stats_hourly ash
                   ON ash.connected_realm_id = ?
                  AND ash.date BETWEEN ? AND ?
-                 AND ash.item_id IN (SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?)
+                 AND ash.item_id IN (
+                     SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?
+                     UNION ALL
+                     SELECT rrk.item_id
+                     FROM recipe_reagent_rank rrk
+                         INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+                     WHERE rr.recipe_id = ?
+                 )
                 HAVING price IS NOT NULL
             ),
             reagent_com_ranked AS (
@@ -657,15 +746,27 @@ class AuctionMarketItemDetailRepository(
                 SELECT stat_date, hour_of_day, item_id, price FROM reagent_com_ranked WHERE rn = 1
             ),
             reagent_price AS (
-                SELECT ds.stat_date, h.hour_of_day, rr.item_id,
+                SELECT ds.stat_date, h.hour_of_day, pricing_items.pricing_item_id AS item_id,
                        COALESCE(rs.price, rc.price) AS price
                 FROM date_spine ds
                 CROSS JOIN hours_t h
-                CROSS JOIN (SELECT DISTINCT item_id FROM v_recipe_reagent WHERE recipe_id = ?) rr
+                CROSS JOIN (
+                    SELECT DISTINCT pricing_item_id
+                    FROM (
+                        SELECT rr.item_id AS pricing_item_id
+                        FROM v_recipe_reagent rr
+                        WHERE rr.recipe_id = ?
+                        UNION ALL
+                        SELECT rrk.item_id AS pricing_item_id
+                        FROM recipe_reagent_rank rrk
+                            INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+                        WHERE rr.recipe_id = ?
+                    ) scoped_items
+                ) pricing_items
                 LEFT JOIN reagent_sel rs
-                       ON rs.stat_date = ds.stat_date AND rs.hour_of_day = h.hour_of_day AND rs.item_id = rr.item_id
+                       ON rs.stat_date = ds.stat_date AND rs.hour_of_day = h.hour_of_day AND rs.item_id = pricing_items.pricing_item_id
                 LEFT JOIN reagent_com rc
-                       ON rc.stat_date = ds.stat_date AND rc.hour_of_day = h.hour_of_day AND rc.item_id = rr.item_id
+                       ON rc.stat_date = ds.stat_date AND rc.hour_of_day = h.hour_of_day AND rc.item_id = pricing_items.pricing_item_id
             ),
             reagent_cost AS (
                 SELECT ds.stat_date, h.hour_of_day,
@@ -673,9 +774,15 @@ class AuctionMarketItemDetailRepository(
                        SUM(COALESCE(rp.price, 0) * rr.quantity) AS partial_cost
                 FROM date_spine ds
                 CROSS JOIN hours_t h
-                JOIN v_recipe_reagent rr ON rr.recipe_id = ?
+                JOIN v_recipe r ON r.id = ?
+                JOIN v_recipe_reagent rr ON rr.recipe_id = r.id
+                LEFT JOIN recipe_reagent_rank rrk
+                    ON rrk.recipe_reagent_id = rr.internal_id
+                   AND rrk.rank = COALESCE(NULLIF(r.rank, 0), 1)
                 LEFT JOIN reagent_price rp
-                       ON rp.stat_date = ds.stat_date AND rp.hour_of_day = h.hour_of_day AND rp.item_id = rr.item_id
+                       ON rp.stat_date = ds.stat_date
+                      AND rp.hour_of_day = h.hour_of_day
+                      AND rp.item_id = COALESCE(rrk.item_id, rr.item_id)
                 GROUP BY ds.stat_date, h.hour_of_day
             ),
             output_sel_priced AS (
@@ -772,9 +879,12 @@ class AuctionMarketItemDetailRepository(
             Date.valueOf(fromDate),
             Date.valueOf(toDate),
             recipeId,
+            recipeId,
             commodityConnectedRealmId,
             Date.valueOf(fromDate),
             Date.valueOf(toDate),
+            recipeId,
+            recipeId,
             recipeId,
             recipeId,
             recipeId,
