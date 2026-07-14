@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.repository.rds
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentNode
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTree
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -206,7 +207,7 @@ class NormalizedProfessionImportRepository(
                     databaseTreeId,
                     databaseTabId,
                     node.nodeId,
-                    node.name ?: "Node ${node.nodeId}",
+                    node.name,
                     node.description,
                     node.maxRanks ?: 1,
                     node.requiredRank ?: 0,
@@ -224,7 +225,7 @@ class NormalizedProfessionImportRepository(
                                 display_order = VALUES(display_order)""".trimIndent(),
                         databaseNodeId,
                         entry.entryId,
-                        entry.name ?: "Entry ${entry.entryId}",
+                        entry.name,
                         entry.description,
                         entry.rankLimit ?: node.maxRanks ?: 1,
                         entryOrder,
@@ -238,11 +239,11 @@ class NormalizedProfessionImportRepository(
                 WHERE node.tree_id = ?""".trimIndent(),
             databaseTreeId,
         )
-        tree.tabs
-            .flatMap { it.nodes }
+        val exportedNodes = tree.tabs.flatMap { it.nodes }
+        exportedNodes
             .forEach { node ->
                 val databaseNodeId = databaseNodeIds.getValue(node.nodeId)
-                node.parentNodeIds.orEmpty().forEach { parentNodeId ->
+                resolvedVisibleParentNodeIds(node.nodeId, exportedNodes).forEach { parentNodeId ->
                     jdbcTemplate.update(
                         """INSERT INTO profession_skill_tree_node_parent
                                 (node_id, parent_node_id, required_parent_ranks)
@@ -284,6 +285,24 @@ class NormalizedProfessionImportRepository(
     fun missingSkillLineIds(skillLineIds: Set<Int>): Set<Int> = skillLineIds.filterNot { exists("skill_tier", it) }.toSet()
 
     fun missingExpansionIds(expansionIds: Set<Int>): Set<Int> = expansionIds.filterNot { exists("expansion", it) }.toSet()
+}
+
+internal fun resolvedVisibleParentNodeIds(
+    nodeId: Int,
+    nodes: List<NormalizedAuctionHelperTalentNode>,
+    visiting: Set<Int> = emptySet(),
+): Set<Int> {
+    if (nodeId in visiting) return emptySet()
+    val nodesByExternalId = nodes.associateBy { it.nodeId }
+    val node = nodesByExternalId[nodeId] ?: return emptySet()
+    return node.parentNodeIds.orEmpty().flatMapTo(linkedSetOf()) { parentNodeId ->
+        val parent = nodesByExternalId[parentNodeId] ?: return@flatMapTo emptySet()
+        if (!parent.name.isNullOrBlank()) {
+            setOf(parentNodeId)
+        } else {
+            resolvedVisibleParentNodeIds(parentNodeId, nodes, visiting + nodeId)
+        }
+    }
 }
 
 private fun String.sha256(): String =

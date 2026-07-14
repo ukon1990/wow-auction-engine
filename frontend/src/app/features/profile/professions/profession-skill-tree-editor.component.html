@@ -2,7 +2,7 @@
   <div
     class="flex overflow-x-auto border-b border-white/10 px-3 pt-3"
     role="tablist"
-    [attr.aria-label]="tree().name"
+    [attr.aria-label]="treeLabel()"
   >
     @for (tab of tree().tabs; track tab.id; let index = $index) {
       <button
@@ -21,7 +21,7 @@
         (click)="selectTab(tab)"
         (keydown)="tabKeydown($event, index)"
       >
-        {{ tab.name }}
+        {{ tabLabel(tab) }}
       </button>
     }
   </div>
@@ -37,7 +37,7 @@
       @if (tab.description) {
         <p class="mb-3 text-sm text-outline">{{ tab.description }}</p>
       }
-      @if (tab.nodes.length) {
+      @if (layout().nodes.length) {
         <div class="overflow-auto rounded-md border border-white/10 bg-surface/40">
           <div
             class="relative"
@@ -78,14 +78,14 @@
                 class="absolute grid overflow-hidden rounded-md border border-white/15 bg-surface shadow-lg"
                 [style.left.px]="position.x"
                 [style.top.px]="position.y"
-                [style.width.px]="224"
-                [style.height.px]="188"
-                [attr.aria-label]="position.node.name"
+                [style.width.px]="192"
+                [style.height.px]="164"
+                [attr.aria-label]="position.node.name || null"
               >
                 <div class="min-h-0 overflow-auto p-3 pb-2">
                   <h3
                     class="truncate text-sm font-bold text-on-surface"
-                    [title]="position.node.name"
+                    [title]="position.node.name || null"
                   >
                     {{ position.node.name }}
                   </h3>
@@ -103,38 +103,52 @@
                   @for (entry of position.node.entries; track entry.id) {
                     <div
                       class="flex items-center justify-between gap-2"
-                      [title]="entry.description ?? entry.name"
+                      [title]="entry.description ?? entry.name ?? null"
                     >
-                      <span class="min-w-0 truncate text-xs font-medium text-on-surface">{{
-                        entry.name
-                      }}</span>
+                      @if (entry.name) {
+                        <span class="min-w-0 truncate text-xs font-medium text-on-surface">{{
+                          entry.name
+                        }}</span>
+                      }
                       <div class="flex shrink-0 items-center gap-1">
-                        <button
-                          type="button"
-                          class="min-h-11 min-w-11 rounded border border-white/20 font-bold focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-35"
-                          [disabled]="rankFor(entry.id) === 0"
-                          [attr.aria-label]="decreaseLabel(entry.name)"
-                          (click)="
-                            rankChanged.emit({ node: position.node, entryId: entry.id, change: -1 })
-                          "
-                        >
-                          −
-                        </button>
+                        @if (editable()) {
+                          <button
+                            type="button"
+                            class="min-h-11 min-w-11 rounded border border-white/20 font-bold focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-35"
+                            [disabled]="rankFor(entry.id) === 0"
+                            [attr.aria-label]="decreaseLabel(entryLabel(entry, position.node))"
+                            (click)="
+                              rankChanged.emit({
+                                node: position.node,
+                                entryId: entry.id,
+                                change: -1,
+                              })
+                            "
+                          >
+                            −
+                          </button>
+                        }
                         <output
                           class="min-w-10 text-center text-xs font-bold text-primary-container"
                           >{{ rankFor(entry.id) }}/{{ entry.rankLimit }}</output
                         >
-                        <button
-                          type="button"
-                          class="min-h-11 min-w-11 rounded border border-white/20 font-bold focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-35"
-                          [disabled]="!canIncrease(position.node, entry.id)"
-                          [attr.aria-label]="increaseLabel(entry.name)"
-                          (click)="
-                            rankChanged.emit({ node: position.node, entryId: entry.id, change: 1 })
-                          "
-                        >
-                          +
-                        </button>
+                        @if (editable()) {
+                          <button
+                            type="button"
+                            class="min-h-11 min-w-11 rounded border border-white/20 font-bold focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-35"
+                            [disabled]="!canIncrease(position.node, entry.id)"
+                            [attr.aria-label]="increaseLabel(entryLabel(entry, position.node))"
+                            (click)="
+                              rankChanged.emit({
+                                node: position.node,
+                                entryId: entry.id,
+                                change: 1,
+                              })
+                            "
+                          >
+                            +
+                          </button>
+                        }
                       </div>
                     </div>
                   }

@@ -7,14 +7,39 @@ import {
   output,
 } from '@angular/core';
 
-import {
-  ProfessionSkillTree,
-  ProfessionSkillTreeNode,
-  ProfessionSkillTreeTab,
-} from '@api/generated';
+export interface SkillTreeGraphEntry {
+  readonly id: number;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly rankLimit: number;
+}
+
+export interface SkillTreeGraphNode {
+  readonly id: number;
+  readonly externalNodeId: number;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly maxRanks: number;
+  readonly displayOrder: number;
+  readonly prerequisites: readonly { parentNodeId: number; requiredParentRanks: number }[];
+  readonly entries: readonly SkillTreeGraphEntry[];
+}
+
+export interface SkillTreeGraphTab {
+  readonly id: number;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly nodes: readonly SkillTreeGraphNode[];
+}
+
+export interface SkillTreeGraphTree {
+  readonly id: number;
+  readonly name?: string | null;
+  readonly tabs: readonly SkillTreeGraphTab[];
+}
 
 interface PositionedNode {
-  readonly node: ProfessionSkillTreeNode;
+  readonly node: SkillTreeGraphNode;
   readonly x: number;
   readonly y: number;
 }
@@ -31,10 +56,10 @@ interface GraphLayout {
   readonly connectors: readonly Connector[];
 }
 
-const nodeWidth = 224;
-const nodeHeight = 188;
-const columnGap = 64;
-const rowGap = 28;
+const nodeWidth = 192;
+const nodeHeight = 164;
+const columnGap = 40;
+const rowGap = 52;
 const graphPadding = 24;
 
 @Component({
@@ -43,10 +68,11 @@ const graphPadding = 24;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfessionSkillTreeEditor {
-  readonly tree = input.required<ProfessionSkillTree>();
+  readonly tree = input.required<SkillTreeGraphTree>();
   readonly allocations = input.required<ReadonlyMap<number, number>>();
+  readonly editable = input(true);
   readonly rankChanged = output<{
-    node: ProfessionSkillTreeNode;
+    node: SkillTreeGraphNode;
     entryId: number;
     change: number;
   }>();
@@ -58,7 +84,7 @@ export class ProfessionSkillTreeEditor {
   });
   protected readonly layout = computed(() => layoutGraph(this.selectedTab()?.nodes ?? []));
 
-  protected selectTab(tab: ProfessionSkillTreeTab): void {
+  protected selectTab(tab: SkillTreeGraphTab): void {
     this.selectedTabId.set(tab.id);
   }
 
@@ -80,7 +106,7 @@ export class ProfessionSkillTreeEditor {
     return this.allocations().get(entryId) ?? 0;
   }
 
-  protected canIncrease(node: ProfessionSkillTreeNode, entryId: number): boolean {
+  protected canIncrease(node: SkillTreeGraphNode, entryId: number): boolean {
     const entry = node.entries.find((candidate) => candidate.id === entryId);
     if (!entry || this.rankFor(entryId) >= entry.rankLimit) return false;
     return (
@@ -89,15 +115,20 @@ export class ProfessionSkillTreeEditor {
     );
   }
 
-  protected parentSummary(node: ProfessionSkillTreeNode, tab: ProfessionSkillTreeTab): string {
-    if (!node.prerequisites.length) {
+  protected parentSummary(node: SkillTreeGraphNode, tab: SkillTreeGraphTab): string {
+    const parents = visibleParents(node, tab.nodes);
+    if (!parents.length) {
       return $localize`:@@professionProfiles.noPrerequisites:No prerequisites`;
     }
-    return node.prerequisites
-      .map((prerequisite) => {
-        const parent = findNode(tab.nodes, prerequisite.parentNodeId);
-        const parentName = parent?.name ?? String(prerequisite.parentNodeId);
-        return $localize`:@@professionProfiles.namedPrerequisite:${parentName}:INTERPOLATION: at rank ${prerequisite.requiredParentRanks}:INTERPOLATION:`;
+    return parents
+      .map((parent) => {
+        const requiredRanks =
+          node.prerequisites.find(
+            (prerequisite) =>
+              prerequisite.parentNodeId === parent.id ||
+              prerequisite.parentNodeId === parent.externalNodeId,
+          )?.requiredParentRanks ?? 1;
+        return $localize`:@@professionProfiles.namedPrerequisite:${parent.name ?? ''}:INTERPOLATION: at rank ${requiredRanks}:INTERPOLATION:`;
       })
       .join(', ');
   }
@@ -121,47 +152,59 @@ export class ProfessionSkillTreeEditor {
   protected increaseLabel(entryName: string): string {
     return $localize`:@@professionProfiles.increaseRank:Increase ${entryName}:INTERPOLATION: rank`;
   }
+
+  protected entryLabel(entry: SkillTreeGraphEntry, node: SkillTreeGraphNode): string {
+    return entry.name?.trim() || node.name?.trim() || '';
+  }
+
+  protected treeLabel(): string {
+    return (
+      this.tree().name?.trim() ||
+      $localize`:@@professionProfiles.specializationTree:Specialization tree`
+    );
+  }
+
+  protected tabLabel(tab: SkillTreeGraphTab): string {
+    return tab.name?.trim() || `#${tab.id}`;
+  }
 }
 
-export function layoutGraph(nodes: readonly ProfessionSkillTreeNode[]): GraphLayout {
-  if (!nodes.length) return { width: 0, height: 0, nodes: [], connectors: [] };
-  const ids = new Set(nodes.flatMap((node) => [node.id, node.externalNodeId]));
+export function layoutGraph(nodes: readonly SkillTreeGraphNode[]): GraphLayout {
+  const visibleNodes = nodes.filter(isVisibleNode);
+  if (!visibleNodes.length) return { width: 0, height: 0, nodes: [], connectors: [] };
+  const parentsByNode = new Map(visibleNodes.map((node) => [node.id, visibleParents(node, nodes)]));
   const levels = new Map<number, number>();
-  const levelFor = (node: ProfessionSkillTreeNode, visiting = new Set<number>()): number => {
+  const levelFor = (node: SkillTreeGraphNode, visiting = new Set<number>()): number => {
     const cached = levels.get(node.id);
     if (cached != null) return cached;
     if (visiting.has(node.id)) return 0;
     const nextVisiting = new Set(visiting).add(node.id);
-    const parents = node.prerequisites
-      .map((prerequisite) => findNode(nodes, prerequisite.parentNodeId))
-      .filter((parent): parent is ProfessionSkillTreeNode => parent != null);
+    const parents = parentsByNode.get(node.id) ?? [];
     const level = parents.length
       ? Math.max(...parents.map((parent) => levelFor(parent, nextVisiting))) + 1
       : 0;
     levels.set(node.id, level);
     return level;
   };
-  nodes.forEach((node) => levelFor(node));
-  const columns = new Map<number, ProfessionSkillTreeNode[]>();
-  [...nodes]
+  visibleNodes.forEach((node) => levelFor(node));
+  const rows = new Map<number, SkillTreeGraphNode[]>();
+  [...visibleNodes]
     .sort((left, right) => left.displayOrder - right.displayOrder || left.id - right.id)
     .forEach((node) => {
       const level = levels.get(node.id) ?? 0;
-      columns.set(level, [...(columns.get(level) ?? []), node]);
+      rows.set(level, [...(rows.get(level) ?? []), node]);
     });
-  const maxRows = Math.max(...[...columns.values()].map((column) => column.length));
-  const width =
-    graphPadding * 2 +
-    (Math.max(...columns.keys()) + 1) * nodeWidth +
-    Math.max(...columns.keys()) * columnGap;
-  const height = graphPadding * 2 + maxRows * nodeHeight + (maxRows - 1) * rowGap;
-  const positioned = [...columns].flatMap(([level, column]) => {
-    const columnHeight = column.length * nodeHeight + (column.length - 1) * rowGap;
-    const offset = graphPadding + (height - graphPadding * 2 - columnHeight) / 2;
-    return column.map((node, index) => ({
+  const maxColumns = Math.max(...[...rows.values()].map((row) => row.length));
+  const maxLevel = Math.max(...rows.keys());
+  const width = graphPadding * 2 + maxColumns * nodeWidth + (maxColumns - 1) * columnGap;
+  const height = graphPadding * 2 + (maxLevel + 1) * nodeHeight + maxLevel * rowGap;
+  const positioned = [...rows].flatMap(([level, row]) => {
+    const rowWidth = row.length * nodeWidth + (row.length - 1) * columnGap;
+    const offset = graphPadding + (width - graphPadding * 2 - rowWidth) / 2;
+    return row.map((node, index) => ({
       node,
-      x: graphPadding + level * (nodeWidth + columnGap),
-      y: offset + index * (nodeHeight + rowGap),
+      x: offset + index * (nodeWidth + columnGap),
+      y: graphPadding + level * (nodeHeight + rowGap),
     }));
   });
   const positions = new Map(
@@ -171,19 +214,18 @@ export function layoutGraph(nodes: readonly ProfessionSkillTreeNode[]): GraphLay
     ]),
   );
   const connectors = positioned.flatMap((child) =>
-    child.node.prerequisites.flatMap((prerequisite) => {
-      if (!ids.has(prerequisite.parentNodeId)) return [];
-      const parent = positions.get(prerequisite.parentNodeId);
+    (parentsByNode.get(child.node.id) ?? []).flatMap((parentNode) => {
+      const parent = positions.get(parentNode.id);
       if (!parent) return [];
-      const startX = parent.x + nodeWidth;
-      const startY = parent.y + nodeHeight / 2;
-      const endX = child.x;
-      const endY = child.y + nodeHeight / 2;
-      const middleX = startX + (endX - startX) / 2;
+      const startX = parent.x + nodeWidth / 2;
+      const startY = parent.y + nodeHeight;
+      const endX = child.x + nodeWidth / 2;
+      const endY = child.y;
+      const middleY = startY + (endY - startY) / 2;
       return [
         {
           key: `${parent.node.id}-${child.node.id}`,
-          path: `M ${startX} ${startY} C ${middleX} ${startY}, ${middleX} ${endY}, ${endX} ${endY}`,
+          path: `M ${startX} ${startY} C ${startX} ${middleY}, ${endX} ${middleY}, ${endX} ${endY}`,
         },
       ];
     }),
@@ -192,8 +234,38 @@ export function layoutGraph(nodes: readonly ProfessionSkillTreeNode[]): GraphLay
 }
 
 function findNode(
-  nodes: readonly ProfessionSkillTreeNode[],
+  nodes: readonly SkillTreeGraphNode[],
   nodeId: number,
-): ProfessionSkillTreeNode | undefined {
+): SkillTreeGraphNode | undefined {
   return nodes.find((node) => node.id === nodeId || node.externalNodeId === nodeId);
+}
+
+export function isVisibleNode(node: SkillTreeGraphNode): boolean {
+  return Boolean(node.name?.trim());
+}
+
+export function visibleParents(
+  node: SkillTreeGraphNode,
+  nodes: readonly SkillTreeGraphNode[],
+): SkillTreeGraphNode[] {
+  const result = new Map<number, SkillTreeGraphNode>();
+  const visit = (candidate: SkillTreeGraphNode, visiting: Set<number>): void => {
+    if (visiting.has(candidate.id)) return;
+    if (isVisibleNode(candidate)) {
+      result.set(candidate.id, candidate);
+      return;
+    }
+    const nextVisiting = new Set(visiting).add(candidate.id);
+    candidate.prerequisites.forEach((prerequisite) => {
+      const parent = findNode(nodes, prerequisite.parentNodeId);
+      if (parent) visit(parent, nextVisiting);
+    });
+  };
+  node.prerequisites.forEach((prerequisite) => {
+    const parent = findNode(nodes, prerequisite.parentNodeId);
+    if (parent) visit(parent, new Set([node.id]));
+  });
+  return [...result.values()].sort(
+    (left, right) => left.displayOrder - right.displayOrder || left.id - right.id,
+  );
 }

@@ -64,13 +64,28 @@ describe('ProfessionSkillTreeEditor', () => {
 });
 
 describe('layoutGraph', () => {
-  it('places prerequisites in an earlier horizontal layer deterministically', () => {
+  it('places prerequisites above their children deterministically', () => {
     const first = layoutGraph([childNode, rootNode]);
     const second = layoutGraph([childNode, rootNode]);
     const root = first.nodes.find((position) => position.node.id === rootNode.id);
     const child = first.nodes.find((position) => position.node.id === childNode.id);
-    expect(root!.x).toBeLessThan(child!.x);
+    expect(root!.y).toBeLessThan(child!.y);
     expect(first).toEqual(second);
+  });
+
+  it('hides unnamed structural nodes while preserving their visible relationship', () => {
+    const hidden = node(15, '', 1, [{ parentNodeId: 10, requiredParentRanks: 1 }]);
+    const descendant = node(20, 'Armorsmithing', 2, [{ parentNodeId: 15, requiredParentRanks: 1 }]);
+
+    const layout = layoutGraph([rootNode, hidden, descendant]);
+
+    expect(layout.nodes.map((position) => position.node.id)).toEqual([10, 20]);
+    expect(layout.connectors).toHaveLength(1);
+    expect(layout.connectors[0].key).toBe('10-20');
+  });
+
+  it('returns an empty graph when every node is unnamed', () => {
+    expect(layoutGraph([node(15, '', 0)])).toMatchObject({ nodes: [], connectors: [] });
   });
 });
 

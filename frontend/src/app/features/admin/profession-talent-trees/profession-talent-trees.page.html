@@ -395,85 +395,20 @@
                       <dd class="font-semibold">{{ talents.allocations.length }}</dd>
                     </div>
                   </dl>
-                  <div class="grid gap-4">
-                    @for (tree of talents.trees; track tree.treeId) {
-                      <article class="grid gap-3 rounded-md border border-white/10 bg-surface p-4">
-                        <h4 class="font-semibold text-on-surface">
-                          @if (tree.name) {
-                            {{ tree.name }}
-                          } @else {
-                            <span i18n="@@professionTalentTrees.skillTree.tree">Tree</span>
-                          }
-                          #{{ tree.treeId }}
-                        </h4>
-                        @for (tab of tree.tabs; track tab.tabId) {
-                          <section class="grid gap-3">
-                            <h5 class="font-semibold text-on-surface">
-                              {{ tab.name || '#' + tab.tabId }}
-                            </h5>
-                            <div class="grid gap-3 md:grid-cols-2">
-                              @for (node of tab.nodes; track node.nodeId) {
-                                <section
-                                  class="rounded-md border border-white/10 bg-surface-container p-3"
-                                >
-                                  <div class="flex flex-wrap items-center justify-between gap-2">
-                                    <h5 class="font-semibold">
-                                      <span i18n="@@professionTalentTrees.skillTree.node"
-                                        >Node</span
-                                      >
-                                      #{{ node.nodeId }}
-                                    </h5>
-                                    @if (node.maxRanks !== undefined) {
-                                      <span class="text-sm text-outline"
-                                        ><span i18n="@@professionTalentTrees.skillTree.maxRanks"
-                                          >Max ranks</span
-                                        >: {{ node.maxRanks }}</span
-                                      >
-                                    }
-                                  </div>
-                                  <ul class="mt-2 grid gap-1 text-sm">
-                                    @for (entry of node.entries; track entry.entryId) {
-                                      <li>
-                                        <span i18n="@@professionTalentTrees.skillTree.entry"
-                                          >Entry</span
-                                        >
-                                        #{{ entry.entryId }}
-                                        @if (entry.rankLimit !== undefined) {
-                                          ·
-                                          <span i18n="@@professionTalentTrees.skillTree.rankLimit"
-                                            >rank limit</span
-                                          >
-                                          {{ entry.rankLimit }}
-                                        }
-                                        @for (
-                                          allocation of talents.allocations;
-                                          track allocation.nodeId + ':' + allocation.entryId
-                                        ) {
-                                          @if (
-                                            allocation.nodeId === node.nodeId &&
-                                            allocation.entryId === entry.entryId
-                                          ) {
-                                            ·
-                                            <strong
-                                              ><span
-                                                i18n="@@professionTalentTrees.skillTree.currentRank"
-                                                >current rank</span
-                                              >
-                                              {{ allocation.rank }}</strong
-                                            >
-                                          }
-                                        }
-                                      </li>
-                                    }
-                                  </ul>
-                                </section>
-                              }
-                            </div>
-                          </section>
-                        }
-                      </article>
-                    }
-                  </div>
+                  @if (activeTalentGraph(); as tree) {
+                    <ee-select-input
+                      label="Specialization tree"
+                      i18n-label="@@professionProfiles.specializationTree"
+                      [options]="talentTreeOptions()"
+                      [value]="tree.id.toString()"
+                      (valueChanged)="selectTalentTree($event)"
+                    />
+                    <app-profession-skill-tree-editor
+                      [tree]="tree"
+                      [allocations]="talentAllocations()"
+                      [editable]="false"
+                    />
+                  }
                 } @else {
                   <div class="rounded-md border border-dashed border-outline p-6 text-center">
                     <h4 class="font-semibold" i18n="@@professionTalentTrees.skillTree.emptyTitle">

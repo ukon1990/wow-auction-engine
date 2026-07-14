@@ -2,6 +2,8 @@ import {
   ProfessionTalentTreesPage,
   canProcessSelection,
   buildProfessionRecipeOverview,
+  highestTalentTree,
+  normalizedTalentTreeGraph,
   savedVariablesInspectionError,
   selectedFilesForProcessing,
   selectSavedVariablesFiles,
@@ -16,6 +18,40 @@ function file(name: string, size = 1): File {
 }
 
 describe('SavedVariables folder selection', () => {
+  it('defaults to the highest exported specialization tree and adapts it to the shared graph', () => {
+    const trees = [
+      { treeId: 10, skillLineId: 1, expansionId: 12, tabs: [] },
+      {
+        treeId: 30,
+        skillLineId: 1,
+        expansionId: 12,
+        name: 'Current tree',
+        tabs: [
+          {
+            tabId: 2,
+            name: 'Crafting',
+            nodes: [
+              {
+                nodeId: 3,
+                name: 'Foundations',
+                parentNodeIds: [],
+                entries: [{ entryId: 4, name: 'Foundations', rankLimit: 30 }],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    const selected = highestTalentTree(trees);
+
+    expect(selected?.treeId).toBe(30);
+    expect(normalizedTalentTreeGraph(selected!)).toMatchObject({
+      id: 30,
+      tabs: [{ nodes: [{ name: 'Foundations', entries: [{ name: 'Foundations' }] }] }],
+    });
+  });
+
   it('reports submission success and failure through toasts', async () => {
     const toast = { success: vi.fn(), error: vi.fn() };
     const api = { inspectNormalizedAuctionHelperProfessionData: vi.fn() };
@@ -96,7 +132,14 @@ describe('SavedVariables folder selection', () => {
             {
               tabId: 11,
               name: 'Weaponsmithing',
-              nodes: [{ nodeId: 20, maxRanks: 30, entries: [{ entryId: 21, rankLimit: 30 }] }],
+              nodes: [
+                {
+                  nodeId: 20,
+                  name: 'Foundations',
+                  maxRanks: 30,
+                  entries: [{ entryId: 21, name: 'Foundations', rankLimit: 30 }],
+                },
+              ],
             },
           ],
         },
@@ -176,7 +219,14 @@ describe('SavedVariables folder selection', () => {
             {
               tabId: 11,
               name: 'Weaponsmithing',
-              nodes: [{ nodeId: 20, maxRanks: 30, entries: [{ entryId: 21, rankLimit: 30 }] }],
+              nodes: [
+                {
+                  nodeId: 20,
+                  name: 'Foundations',
+                  maxRanks: 30,
+                  entries: [{ entryId: 21, name: 'Foundations', rankLimit: 30 }],
+                },
+              ],
             },
           ],
         },
@@ -234,8 +284,9 @@ describe('SavedVariables folder selection', () => {
     skillTreeButton?.click();
     await fixture.whenStable();
     expect(root.textContent).toContain('Weaponsmithing');
-    expect(root.textContent).toContain('Node #20');
-    expect(root.textContent).toContain('current rank 7');
+    expect(root.textContent).toContain('Foundations');
+    expect(root.textContent).toContain('7/30');
+    expect(root.querySelector('button[aria-label^="Increase"]')).toBeNull();
 
     tabs[0].focus();
     tabs[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));

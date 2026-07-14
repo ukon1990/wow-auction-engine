@@ -13,10 +13,21 @@ import { firstValueFrom } from 'rxjs';
 import {
   AdminApiService,
   NormalizedAuctionHelperProfessionInspection,
+  NormalizedAuctionHelperTalentTree,
   NormalizedAuctionHelperTalents,
 } from '@api/generated';
 import { ToastService } from '@core/services/toast.service';
-import { PageFrameComponent, PaginationState, SearchInputComponent, TableComponent } from '@ui';
+import {
+  PageFrameComponent,
+  PaginationState,
+  SearchInputComponent,
+  SelectInputComponent,
+  TableComponent,
+} from '@ui';
+import {
+  ProfessionSkillTreeEditor,
+  SkillTreeGraphTree,
+} from '../../profile/professions/profession-skill-tree-editor.component';
 import {
   AuctionHelperLocalPreview,
   processAuctionHelperFilesInWorker,
@@ -56,7 +67,13 @@ export type ProfessionRecipeOverview = Readonly<{
 
 @Component({
   selector: 'app-profession-talent-trees-page',
-  imports: [PageFrameComponent, SearchInputComponent, TableComponent],
+  imports: [
+    PageFrameComponent,
+    SearchInputComponent,
+    SelectInputComponent,
+    TableComponent,
+    ProfessionSkillTreeEditor,
+  ],
   templateUrl: './profession-talent-trees.page.html',
   host: { class: 'flex min-h-0 flex-1 flex-col' },
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -81,6 +98,7 @@ export class ProfessionTalentTreesPage {
   protected readonly recipePage = signal(0);
   protected readonly cardView = signal(false);
   protected readonly professionSection = signal<'recipes' | 'skillTree'>('recipes');
+  protected readonly activeTalentTreeId = signal<number | null>(null);
   protected readonly recipeColumns = createProfessionRecipeColumns();
   protected readonly professionOverview = computed(() => {
     const preview = this.preview();
@@ -118,6 +136,31 @@ export class ProfessionTalentTreesPage {
     const page = this.recipePagination().page;
     return this.filteredRecipes().slice(page * RECIPE_PAGE_SIZE, (page + 1) * RECIPE_PAGE_SIZE);
   });
+  protected readonly activeTalentTree = computed(() => {
+    const trees = this.activeProfession()?.talents?.trees ?? [];
+    return (
+      trees.find((tree) => tree.treeId === this.activeTalentTreeId()) ?? highestTalentTree(trees)
+    );
+  });
+  protected readonly talentTreeOptions = computed(() =>
+    (this.activeProfession()?.talents?.trees ?? [])
+      .slice()
+      .sort((left, right) => right.treeId - left.treeId)
+      .map((tree) => ({ id: String(tree.treeId), label: tree.name || `#${tree.treeId}` })),
+  );
+  protected readonly activeTalentGraph = computed(() => {
+    const tree = this.activeTalentTree();
+    return tree ? normalizedTalentTreeGraph(tree) : null;
+  });
+  protected readonly talentAllocations = computed(
+    () =>
+      new Map(
+        (this.activeProfession()?.talents?.allocations ?? []).map((allocation) => [
+          allocation.entryId,
+          allocation.rank,
+        ]),
+      ),
+  );
   protected readonly recipeRowId = (recipe: ProfessionRecipeRow): string => String(recipe.recipeId);
 
   protected talentNodeCount(talents: NonNullable<ProfessionRecipeOverview['talents']>): number {
@@ -190,6 +233,7 @@ export class ProfessionTalentTreesPage {
         ),
       );
       this.activeProfessionId.set(this.professionOverview()[0]?.professionId ?? null);
+      this.selectHighestTalentTree();
     } catch {
       this.error.set(
         $localize`:@@professionTalentTrees.error.inspect:Unable to process these SavedVariables files locally. Check the region and choose a valid AuctionHelper_Professions.lua file, then try again.`,
@@ -248,6 +292,11 @@ export class ProfessionTalentTreesPage {
     this.recipeSearch.set('');
     this.recipePage.set(0);
     this.professionSection.set('recipes');
+    this.selectHighestTalentTree();
+  }
+
+  protected selectTalentTree(value: string): void {
+    this.activeTalentTreeId.set(Number(value));
   }
 
   protected onRecipeSearch(value: string): void {
@@ -288,6 +337,13 @@ export class ProfessionTalentTreesPage {
     this.activeProfessionId.set(null);
     this.recipeSearch.set('');
     this.recipePage.set(0);
+    this.activeTalentTreeId.set(null);
+  }
+
+  private selectHighestTalentTree(): void {
+    this.activeTalentTreeId.set(
+      highestTalentTree(this.activeProfession()?.talents?.trees ?? [])?.treeId ?? null,
+    );
   }
 
   private selectFiles(files: Iterable<File | null>): boolean {
@@ -305,6 +361,47 @@ export class ProfessionTalentTreesPage {
     this.error.set(null);
     return canProcessSelection(selection.files, this.region());
   }
+}
+
+export function highestTalentTree<T extends Pick<NormalizedAuctionHelperTalentTree, 'treeId'>>(
+  trees: readonly T[],
+): T | null {
+  return trees.reduce<T | null>(
+    (highest, tree) => (highest === null || tree.treeId > highest.treeId ? tree : highest),
+    null,
+  );
+}
+
+export function normalizedTalentTreeGraph(
+  tree: NormalizedAuctionHelperTalentTree,
+): SkillTreeGraphTree {
+  return {
+    id: tree.treeId,
+    name: tree.name,
+    tabs: tree.tabs.map((tab) => ({
+      id: tab.tabId,
+      name: tab.name,
+      description: tab.description,
+      nodes: tab.nodes.map((node, nodeIndex) => ({
+        id: node.nodeId,
+        externalNodeId: node.nodeId,
+        name: node.name,
+        description: node.description,
+        maxRanks: node.maxRanks ?? 1,
+        displayOrder: nodeIndex,
+        prerequisites: (node.parentNodeIds ?? []).map((parentNodeId) => ({
+          parentNodeId,
+          requiredParentRanks: 1,
+        })),
+        entries: node.entries.map((entry) => ({
+          id: entry.entryId,
+          name: entry.name,
+          description: entry.description,
+          rankLimit: entry.rankLimit ?? node.maxRanks ?? 1,
+        })),
+      })),
+    })),
+  };
 }
 
 function emptySelection(): SavedVariablesFiles {

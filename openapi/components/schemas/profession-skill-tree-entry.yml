@@ -1,9 +1,9 @@
 type: object
-required: [id, externalEntryId, name, rankLimit, displayOrder]
+required: [id, externalEntryId, rankLimit, displayOrder]
 properties:
   id: { type: integer, format: int64 }
   externalEntryId: { type: integer, format: int32 }
-  name: { type: string }
+  name: { type: string, nullable: true }
   description: { type: string, nullable: true }
   rankLimit: { type: integer, format: int32 }
   displayOrder: { type: integer, format: int32 }

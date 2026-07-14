@@ -115,11 +115,13 @@ class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
                                     NormalizedAuctionHelperTalentNode(
                                         nodeId = 104229,
                                         maxRanks = 30,
+                                        name = "Craftsmithing",
                                         propertyEntries =
                                             listOf(
                                                 NormalizedAuctionHelperTalentEntry(
                                                     entryId = 128829,
                                                     rankLimit = 30,
+                                                    name = "Craftsmithing",
                                                 ),
                                             ),
                                     ),
@@ -127,14 +129,28 @@ class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
                                         nodeId = 104230,
                                         maxRanks = 1,
                                         requiredRank = 25,
+                                        name = "Concentration",
                                         description = "Consume less Concentration.",
-                                        parentNodeIds = listOf(104229),
+                                        parentNodeIds = listOf(104231),
                                         propertyEntries =
                                             listOf(
                                                 NormalizedAuctionHelperTalentEntry(
                                                     entryId = 128830,
                                                     rankLimit = 1,
+                                                    name = "Concentration",
                                                     description = "Consume 5% less Concentration.",
+                                                ),
+                                            ),
+                                    ),
+                                    NormalizedAuctionHelperTalentNode(
+                                        nodeId = 104231,
+                                        maxRanks = 1,
+                                        parentNodeIds = listOf(104229),
+                                        propertyEntries =
+                                            listOf(
+                                                NormalizedAuctionHelperTalentEntry(
+                                                    entryId = 128831,
+                                                    rankLimit = 1,
                                                 ),
                                             ),
                                     ),
@@ -146,6 +162,30 @@ class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
         val profession = NormalizedAuctionHelperProfession(164, "Blacksmithing", emptyList(), activeSkillLineId = 2907, talents = talents)
         val character = NormalizedAuctionHelperCharacter("eu-realm-character", "Character", "Realm", "EU", listOf(profession))
 
+        val legacyTree =
+            tree.copy(
+                tabs =
+                    tree.tabs.map { tab ->
+                        tab.copy(
+                            nodes =
+                                tab.nodes.map { node ->
+                                    if (node.nodeId != 104231) {
+                                        node
+                                    } else {
+                                        node.copy(
+                                            name = "Node 104231",
+                                            propertyEntries =
+                                                node.propertyEntries.map { entry ->
+                                                    entry.copy(name = "Entry 128831")
+                                                },
+                                        )
+                                    }
+                                },
+                        )
+                    },
+            )
+        val legacyProfession = profession.copy(talents = talents.copy(trees = listOf(legacyTree)))
+        repository.save(payload().copy(characters = listOf(character.copy(professions = listOf(legacyProfession)))), 1, 0, "admin-subject")
         repository.save(payload().copy(characters = listOf(character)), 1, 0, "admin-subject")
         repository.save(payload().copy(characters = listOf(character)), 1, 0, "admin-subject")
 
@@ -172,12 +212,35 @@ class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
         ).containsEntry("external_entry_id", 128830)
             .containsEntry("rank_limit", 1)
         assertThat(
+            jdbcTemplate.query(
+                "SELECT name FROM profession_skill_tree_node WHERE external_node_id = 104231",
+                { resultSet, _ -> resultSet.getString("name") },
+            ).single(),
+        ).isNull()
+        assertThat(
+            jdbcTemplate.query(
+                "SELECT name FROM profession_skill_tree_entry WHERE external_entry_id = 128831",
+                { resultSet, _ -> resultSet.getString("name") },
+            ).single(),
+        ).isNull()
+        val unnamedNode =
+            profileRepository
+                .listTrees(12, 164)
+                .single()
+                .tabs
+                .single()
+                .nodes
+                .single { it.externalNodeId == 104231 }
+        assertThat(unnamedNode.name).isNull()
+        assertThat(unnamedNode.propertyEntries.single().name).isNull()
+        assertThat(
             jdbcTemplate.queryForMap(
                 """SELECT child.external_node_id AS child_id, parent.external_node_id AS parent_id,
                            relationship.required_parent_ranks
                     FROM profession_skill_tree_node_parent relationship
                     JOIN profession_skill_tree_node child ON child.id = relationship.node_id
-                    JOIN profession_skill_tree_node parent ON parent.id = relationship.parent_node_id""".trimIndent(),
+                    JOIN profession_skill_tree_node parent ON parent.id = relationship.parent_node_id
+                    WHERE child.external_node_id = 104230""".trimIndent(),
             ),
         ).containsEntry("child_id", 104230)
             .containsEntry("parent_id", 104229)

@@ -137,8 +137,8 @@ class ProfileRepository(
 
 private data class TreeRow(val id: Long, val expansionId: Int, val professionId: Int, val externalTreeId: Int, val name: String, val description: String?)
 private data class TabRow(val id: Long, val treeId: Long, val externalTabId: Int, val name: String, val description: String?, val displayOrder: Int)
-private data class NodeRow(val id: Long, val treeId: Long, val tabId: Long?, val externalNodeId: Int, val name: String, val description: String?, val maxRanks: Int, val requiredRank: Int, val displayOrder: Int)
-private data class EntryRow(val id: Long, val nodeId: Long, val externalEntryId: Int, val name: String, val description: String?, val rankLimit: Int, val displayOrder: Int)
+private data class NodeRow(val id: Long, val treeId: Long, val tabId: Long?, val externalNodeId: Int, val name: String?, val description: String?, val maxRanks: Int, val requiredRank: Int, val displayOrder: Int)
+private data class EntryRow(val id: Long, val nodeId: Long, val externalEntryId: Int, val name: String?, val description: String?, val rankLimit: Int, val displayOrder: Int)
 private data class ParentRow(val nodeId: Long, val parentNodeId: Long, val requiredParentRanks: Int)
 data class AllocationRule(val entryId: Long, val nodeId: Long, val rankLimit: Int, val maxRanks: Int, val requiredRank: Int)
 data class ParentRule(val nodeId: Long, val parentNodeId: Long, val requiredParentRanks: Int)
@@ -154,4 +154,27 @@ data class CraftingProfileCandidate(
 )
 private data class ProfileRow(val id: Long, val treeId: Long, val skillLevel: Int?)
 
-private fun NodeRow.toApi(entries: List<EntryRow>, parents: List<ParentRow>) = ProfessionSkillTreeNode(id, externalNodeId, name, maxRanks, requiredRank, displayOrder, parents.map { ProfessionSkillTreePrerequisite(it.parentNodeId, it.requiredParentRanks) }, entries.map { ProfessionSkillTreeEntry(it.id, it.externalEntryId, it.name, it.rankLimit, it.displayOrder, it.description) }, description)
+private fun NodeRow.toApi(
+    entries: List<EntryRow>,
+    parents: List<ParentRow>,
+) = ProfessionSkillTreeNode(
+    id = id,
+    externalNodeId = externalNodeId,
+    maxRanks = maxRanks,
+    requiredRank = requiredRank,
+    displayOrder = displayOrder,
+    prerequisites = parents.map { ProfessionSkillTreePrerequisite(it.parentNodeId, it.requiredParentRanks) },
+    propertyEntries =
+        entries.map {
+            ProfessionSkillTreeEntry(
+                id = it.id,
+                externalEntryId = it.externalEntryId,
+                rankLimit = it.rankLimit,
+                displayOrder = it.displayOrder,
+                name = it.name,
+                description = it.description,
+            )
+        },
+    name = name,
+    description = description,
+)

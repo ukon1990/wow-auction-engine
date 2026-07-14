@@ -8,7 +8,6 @@ import {
   ProfessionProfile,
   ProfessionProfileRequest,
   ProfessionSkillTree,
-  ProfessionSkillTreeNode,
   ProfileApiService,
   ProfileCharacter,
   ProfileCharacterRequest,
@@ -18,7 +17,10 @@ import { PageFrameComponent, SelectInputComponent, TextInputComponent } from '@u
 import { UserRole } from '@api/auth/auth.model';
 import { AuthService } from '@core/services/auth.service';
 import { CharacterProfessionPreviewStorageService } from './character-profession-preview-storage.service';
-import { ProfessionSkillTreeEditor } from './profession-skill-tree-editor.component';
+import {
+  ProfessionSkillTreeEditor,
+  SkillTreeGraphNode,
+} from './profession-skill-tree-editor.component';
 
 const midnightExpansionId = 12;
 const professions = [
@@ -271,7 +273,7 @@ export class ProfessionProfilesPage {
     this.status.set(null);
   }
 
-  protected updateRank(node: ProfessionSkillTreeNode, entryId: number, change: number): void {
+  protected updateRank(node: SkillTreeGraphNode, entryId: number, change: number): void {
     const entry = node.entries.find((candidate) => candidate.id === entryId);
     if (!entry) return;
     const currentRank = this.rankFor(entryId);
@@ -291,30 +293,6 @@ export class ProfessionProfilesPage {
       return next;
     });
     this.status.set(null);
-  }
-
-  protected nodePrerequisites(node: ProfessionSkillTreeNode): string {
-    if (!node.prerequisites.length) {
-      return $localize`:@@professionProfiles.noPrerequisites:No prerequisites`;
-    }
-    return node.prerequisites
-      .map(
-        (prerequisite) =>
-          $localize`:@@professionProfiles.prerequisite:Required node ${prerequisite.parentNodeId}:INTERPOLATION: at rank ${prerequisite.requiredParentRanks}:INTERPOLATION:.`,
-      )
-      .join(', ');
-  }
-
-  protected rankLabel(entryName: string): string {
-    return $localize`:@@professionProfiles.rankLabel:${entryName}:INTERPOLATION: rank`;
-  }
-
-  protected decreaseRankLabel(entryName: string): string {
-    return $localize`:@@professionProfiles.decreaseRank:Decrease ${entryName}:INTERPOLATION: rank`;
-  }
-
-  protected increaseRankLabel(entryName: string): string {
-    return $localize`:@@professionProfiles.increaseRank:Increase ${entryName}:INTERPOLATION: rank`;
   }
 
   protected async save(): Promise<void> {

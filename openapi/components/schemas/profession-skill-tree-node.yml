@@ -1,9 +1,9 @@
 type: object
-required: [id, externalNodeId, name, maxRanks, requiredRank, displayOrder, prerequisites, entries]
+required: [id, externalNodeId, maxRanks, requiredRank, displayOrder, prerequisites, entries]
 properties:
   id: { type: integer, format: int64 }
   externalNodeId: { type: integer, format: int32 }
-  name: { type: string }
+  name: { type: string, nullable: true }
   description: { type: string, nullable: true }
   maxRanks: { type: integer, format: int32 }
   requiredRank: { type: integer, format: int32 }
