@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 class ProfileRepository(
     private val jdbcTemplate: JdbcTemplate,
+    private val normalizedProfessionImportRepository: NormalizedProfessionImportRepository,
 ) {
     private val characterInsert = SimpleJdbcInsert(jdbcTemplate).withTableName("user_character").usingGeneratedKeyColumns("id")
     private val profileInsert = SimpleJdbcInsert(jdbcTemplate).withTableName("user_character_profession_profile").usingGeneratedKeyColumns("id")
@@ -147,8 +148,17 @@ class ProfileRepository(
         )
 
     fun listTrees(expansionId: Int, professionId: Int): List<ProfessionSkillTree> {
-        val trees = jdbcTemplate.query("SELECT id, expansion_id, profession_id, external_tree_id, name, description FROM profession_skill_tree WHERE expansion_id = ? AND profession_id = ? ORDER BY id", { rs, _ -> TreeRow(rs.getLong("id"), rs.getInt("expansion_id"), rs.getInt("profession_id"), rs.getInt("external_tree_id"), rs.getString("name"), rs.getString("description")) }, expansionId, professionId)
+        val trees = jdbcTemplate.query("SELECT id, expansion_id, profession_id, external_tree_id, name, description, import_id FROM profession_skill_tree WHERE expansion_id = ? AND profession_id = ? ORDER BY id", { rs, _ -> TreeRow(rs.getLong("id"), rs.getInt("expansion_id"), rs.getInt("profession_id"), rs.getInt("external_tree_id"), rs.getString("name"), rs.getString("description"), rs.getLong("import_id")) }, expansionId, professionId)
         if (trees.isEmpty()) return emptyList()
+        trees.forEach { tree ->
+            normalizedProfessionImportRepository.rebuildParentsFromStoredImportIfMissing(
+                tree.id,
+                tree.professionId,
+                tree.expansionId,
+                tree.externalTreeId,
+                tree.importId,
+            )
+        }
         val treeIds = trees.map(TreeRow::id)
         val tabs = jdbcTemplate.query("SELECT id, tree_id, external_tab_id, name, description, display_order FROM profession_skill_tree_tab WHERE tree_id IN (${treeIds.joinToString()}) ORDER BY display_order, id", { rs, _ -> TabRow(rs.getLong("id"), rs.getLong("tree_id"), rs.getInt("external_tab_id"), rs.getString("name"), rs.getString("description"), rs.getInt("display_order")) })
         val nodes = jdbcTemplate.query("SELECT id, tree_id, tab_id, external_node_id, name, description, max_ranks, required_rank, display_order FROM profession_skill_tree_node WHERE tree_id IN (${treeIds.joinToString()}) ORDER BY display_order, id", { rs, _ -> NodeRow(rs.getLong("id"), rs.getLong("tree_id"), rs.getObject("tab_id", Long::class.javaObjectType), rs.getInt("external_node_id"), rs.getString("name"), rs.getString("description"), rs.getInt("max_ranks"), rs.getInt("required_rank"), rs.getInt("display_order")) })
@@ -264,7 +274,7 @@ private fun toProfileCharacterProfession(rs: java.sql.ResultSet): ProfileCharact
     )
 }
 
-private data class TreeRow(val id: Long, val expansionId: Int, val professionId: Int, val externalTreeId: Int, val name: String, val description: String?)
+private data class TreeRow(val id: Long, val expansionId: Int, val professionId: Int, val externalTreeId: Int, val name: String, val description: String?, val importId: Long)
 private data class TabRow(val id: Long, val treeId: Long, val externalTabId: Int, val name: String, val description: String?, val displayOrder: Int)
 private data class NodeRow(val id: Long, val treeId: Long, val tabId: Long?, val externalNodeId: Int, val name: String?, val description: String?, val maxRanks: Int, val requiredRank: Int, val displayOrder: Int)
 private data class EntryRow(val id: Long, val nodeId: Long, val externalEntryId: Int, val name: String?, val description: String?, val rankLimit: Int, val displayOrder: Int)

@@ -239,21 +239,96 @@ class NormalizedProfessionImportRepository(
                 WHERE node.tree_id = ?""".trimIndent(),
             databaseTreeId,
         )
-        val exportedNodes = tree.tabs.flatMap { it.nodes }
-        exportedNodes
-            .forEach { node ->
-                val databaseNodeId = databaseNodeIds.getValue(node.nodeId)
-                resolvedVisibleParentNodeIds(node.nodeId, exportedNodes).forEach { parentNodeId ->
+        replaceParentRelationships(databaseTreeId, tree.tabs, databaseNodeIds)
+        return databaseTreeId
+    }
+
+    fun rebuildParentsFromStoredImportIfMissing(
+        databaseTreeId: Long,
+        professionId: Int,
+        expansionId: Int,
+        externalTreeId: Int,
+        importId: Long,
+    ): Boolean {
+        val parentCount =
+            jdbcTemplate.queryForObject(
+                """SELECT COUNT(*)
+                    FROM profession_skill_tree_node_parent parent
+                    JOIN profession_skill_tree_node node ON node.id = parent.node_id
+                    WHERE node.tree_id = ?""".trimIndent(),
+                Int::class.java,
+                databaseTreeId,
+            ) ?: 0
+        if (parentCount > 0) return false
+
+        val databaseNodeIds =
+            jdbcTemplate
+                .query(
+                    "SELECT external_node_id, id FROM profession_skill_tree_node WHERE tree_id = ?",
+                    { rs, _ -> rs.getInt("external_node_id") to rs.getLong("id") },
+                    databaseTreeId,
+                ).toMap()
+        if (databaseNodeIds.isEmpty()) return false
+
+        val payloadCandidates = linkedSetOf<String>()
+        jdbcTemplate.queryForObject(
+            "SELECT content_hash FROM profession_tree_import WHERE id = ?",
+            String::class.java,
+            importId,
+        )?.let { contentHash ->
+            jdbcTemplate.queryForObject(
+                "SELECT payload FROM normalized_profession_import WHERE content_hash = ?",
+                String::class.java,
+                contentHash,
+            )?.let(payloadCandidates::add)
+        }
+        if (payloadCandidates.isEmpty()) {
+            jdbcTemplate
+                .query(
+                    "SELECT payload FROM normalized_profession_import ORDER BY imported_at DESC",
+                    { rs, _ -> rs.getString("payload") },
+                ).forEach(payloadCandidates::add)
+        }
+
+        for (payloadJson in payloadCandidates) {
+            val payload = objectMapper.readValue(payloadJson, NormalizedAuctionHelperProfessionData::class.java)
+            val talentTree =
+                payload.characters
+                    .asSequence()
+                    .flatMap { it.professions.asSequence() }
+                    .filter { it.professionId == professionId }
+                    .flatMap { it.talents?.trees.orEmpty().asSequence() }
+                    .find { it.treeId == externalTreeId && it.expansionId == expansionId }
+                    ?: continue
+
+            replaceParentRelationships(databaseTreeId, talentTree.tabs, databaseNodeIds)
+            return true
+        }
+
+        return false
+    }
+
+    private fun replaceParentRelationships(
+        databaseTreeId: Long,
+        tabs: List<net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTab>,
+        databaseNodeIds: Map<Int, Long>,
+    ) {
+        tabs.forEach { tab ->
+            val nodesWithParents = nodesWithResolvedParents(tab.nodes)
+            nodesWithParents.forEach { node ->
+                val databaseNodeId = databaseNodeIds[node.nodeId] ?: return@forEach
+                resolvedVisibleParentNodeIds(node.nodeId, nodesWithParents).forEach { parentNodeId ->
+                    val parentDatabaseId = databaseNodeIds[parentNodeId] ?: return@forEach
                     jdbcTemplate.update(
                         """INSERT INTO profession_skill_tree_node_parent
-                                (node_id, parent_node_id, required_parent_ranks)
-                            VALUES (?, ?, 1)""".trimIndent(),
+                            (node_id, parent_node_id, required_parent_ranks)
+                        VALUES (?, ?, 1)""".trimIndent(),
                         databaseNodeId,
-                        databaseNodeIds.getValue(parentNodeId),
+                        parentDatabaseId,
                     )
                 }
             }
-        return databaseTreeId
+        }
     }
 
     private fun saveAllocations(

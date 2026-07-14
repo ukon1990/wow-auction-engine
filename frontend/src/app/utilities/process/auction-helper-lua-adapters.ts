@@ -5,6 +5,7 @@ import {
   ProcessingDiagnostic,
 } from './addon-lua-processor';
 import { LuaValue } from './lua-assignment-processor';
+import { normalizeTalentTab } from './profession-talent-tab-normalizer';
 
 export type NormalizedReagent = Readonly<{
   itemId: number;
@@ -323,96 +324,35 @@ function normalizeEmbeddedTalents(
     const expansionId = normalizedExpansionId(specialization);
     if (configId === null || skillLineId === null || expansionId === null) return [];
     const tabs = values(specialization['tabs']).flatMap((tabValue) => {
-      const tab = record(tabValue);
-      const tabId = integer(tab['treeID']);
-      if (tabId === null) return [];
-      const sourceNodes = values(tab['nodes']).map(record);
-      const parentNodeIds = parentNodeIdsByChild(sourceNodes);
-      const nodes = sourceNodes.flatMap((node) => {
-        const nodeInfo = record(node['nodeInfo']);
-        const nodeId = integer(node['nodeID']);
-        if (nodeId === null) return [];
-        const activeEntry = record(nodeInfo['activeEntry']);
-        const entryId = integer(activeEntry['entryID']) ?? integer(nodeInfo['activeEntryID']);
-        const rank = integer(activeEntry['rank']) ?? integer(nodeInfo['currentRank']);
-        if (entryId !== null && rank !== null) allocations.push({ nodeId, entryId, rank });
-        const maxRanks = integer(nodeInfo['maxRanks']) ?? integer(nodeInfo['totalMaxRanks']);
-        const description = text(node['pathDescription']);
-        const sourceEntries = values(node['entries']).map(record);
-        const name =
-          text(node['overrideName']) ??
-          text(node['name']) ??
-          text(nodeInfo['overrideName']) ??
-          text(nodeInfo['name']) ??
-          sourceEntries.map(normalizedEntryName).find((value) => value !== null) ??
-          null;
-        return [
-          {
-            nodeId,
-            ...(name ? { name } : {}),
-            ...(maxRanks !== null ? { maxRanks } : {}),
-            ...(integer(node['unlockRank']) !== null
-              ? { requiredRank: integer(node['unlockRank'])! }
-              : {}),
-            ...(description ? { description } : {}),
-            parentNodeIds: parentNodeIds.get(nodeId) ?? [],
-            entries: sourceEntries.flatMap((entry) => {
-              const normalizedEntryId = integer(entry['entryID']);
-              if (normalizedEntryId === null) return [];
-              const rankLimit =
-                integer(record(entry['entryInfo'])['maxRanks']) ??
-                integer(record(entry['definitionInfo'])['maxRanks']);
-              const entryDescription = text(record(entry['definitionInfo'])['overrideDescription']);
-              const entryName = normalizedEntryName(entry);
-              return [
-                {
-                  entryId: normalizedEntryId,
-                  ...(entryName ? { name: entryName } : {}),
-                  ...(rankLimit !== null ? { rankLimit } : {}),
-                  ...(entryDescription ? { description: entryDescription } : {}),
-                },
-              ];
-            }),
-          },
-        ];
-      });
-      const tabInfo = record(tab['tabInfo']);
-      const name = text(tabInfo['name']);
-      const description = text(tabInfo['description']);
-      return [{ tabId, ...(name ? { name } : {}), ...(description ? { description } : {}), nodes }];
+      const normalized = normalizeTalentTab(record(tabValue) as Record<string, unknown>);
+      if (!normalized) return [];
+      allocations.push(...normalized.allocations);
+      return [
+        {
+          tabId: normalized.tabId,
+          ...(normalized.name ? { name: normalized.name } : {}),
+          ...(normalized.description ? { description: normalized.description } : {}),
+          nodes: normalized.nodes.map((node) => ({
+            nodeId: node.nodeId,
+            ...(node.name ? { name: node.name } : {}),
+            ...(node.maxRanks !== undefined ? { maxRanks: node.maxRanks } : {}),
+            ...(node.requiredRank !== undefined ? { requiredRank: node.requiredRank } : {}),
+            ...(node.description ? { description: node.description } : {}),
+            parentNodeIds: [...node.parentNodeIds],
+            entries: node.entries.map((entry) => ({
+              entryId: entry.entryId,
+              ...(entry.name ? { name: entry.name } : {}),
+              ...(entry.rankLimit !== undefined ? { rankLimit: entry.rankLimit } : {}),
+              ...(entry.description ? { description: entry.description } : {}),
+            })),
+          })),
+        },
+      ];
     });
     const name = text(specialization['tierName']);
     return [{ treeId: configId, skillLineId, expansionId, ...(name ? { name } : {}), tabs }];
   });
   return trees.length > 0 ? { trees, allocations } : null;
-}
-
-function normalizedEntryName(entry: Record<string, LuaValue>): string | null {
-  const definition = record(entry['definitionInfo']);
-  return (
-    text(definition['overrideName']) ??
-    text(definition['name']) ??
-    text(entry['overrideName']) ??
-    text(entry['name'])
-  );
-}
-
-function parentNodeIdsByChild(
-  nodes: ReadonlyArray<Record<string, LuaValue>>,
-): Map<number, number[]> {
-  const result = new Map<number, number[]>();
-  nodes.forEach((node) => {
-    const parentNodeId = integer(node['nodeID']);
-    if (parentNodeId === null) return;
-    values(node['childPathIDs'])
-      .map(integer)
-      .filter((childNodeId): childNodeId is number => childNodeId !== null)
-      .forEach((childNodeId) => {
-        const parents = result.get(childNodeId) ?? [];
-        if (!parents.includes(parentNodeId)) result.set(childNodeId, [...parents, parentNodeId]);
-      });
-  });
-  return result;
 }
 
 function normalizedExpansionId(specialization: Record<string, LuaValue>): number | null {

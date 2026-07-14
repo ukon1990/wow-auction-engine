@@ -152,6 +152,25 @@ describe('layoutGraph', () => {
     expect(layout.connectors).toHaveLength(3);
   });
 
+  it('shows unnamed hub nodes and stacks grandchildren beneath their branch parent', () => {
+    const root = node(10, 'Elevating Equipment', 0, [], 20);
+    const hub = node(11, '', 1, [{ parentNodeId: 10, requiredParentRanks: 1 }], 20);
+    const branch = node(20, 'Haranir Heightening', 2, [{ parentNodeId: 11, requiredParentRanks: 1 }]);
+    const leaf = node(21, "Nature's Novelties", 3, [{ parentNodeId: 20, requiredParentRanks: 1 }]);
+
+    const layout = layoutGraph([root, hub, branch, leaf]);
+    const rootPosition = layout.nodes.find((position) => position.node.id === root.id)!;
+    const hubPosition = layout.nodes.find((position) => position.node.id === hub.id)!;
+    const branchPosition = layout.nodes.find((position) => position.node.id === branch.id)!;
+    const leafPosition = layout.nodes.find((position) => position.node.id === leaf.id)!;
+
+    expect(layout.nodes.map((position) => position.node.id)).toEqual([10, 11, 20, 21]);
+    expect(rootPosition.y).toBeLessThan(hubPosition.y);
+    expect(hubPosition.y).toBeLessThan(branchPosition.y);
+    expect(branchPosition.y).toBeLessThan(leafPosition.y);
+    expect(layout.connectors).toHaveLength(3);
+  });
+
   it('returns an empty graph when every node is unnamed', () => {
     expect(layoutGraph([node(15, '', 0)])).toMatchObject({ nodes: [], connectors: [] });
   });

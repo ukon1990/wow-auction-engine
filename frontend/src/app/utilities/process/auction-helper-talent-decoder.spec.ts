@@ -86,6 +86,84 @@ describe('decodeAuctionHelperTalentExport', () => {
     });
   });
 
+  it('decodes schema 12 paths milestones and edges', () => {
+    const payload = packagePayload({
+      meta: { scope: 'profession_talents', characterKey: 'Player-Realm' },
+      character: { key: 'Player-Realm', name: 'Player', realm: 'Realm' },
+      profession: {
+        skillLineID: 2907,
+        professionName: 'Blacksmithing',
+        specializationTree: {
+          configID: 82167859,
+          skillLineID: 2907,
+          expansionID: 11,
+          tierName: 'Midnight Blacksmithing',
+          tabs: [
+            {
+              treeID: 1068,
+              tabInfo: { name: 'Armorsmithing' },
+              paths: [
+                {
+                  nodeID: 104565,
+                  nodeName: 'Armorsmithing',
+                  childPathIDs: [104566],
+                  nodeInfo: { maxRanks: 30, activeRank: 2, currentRank: 2 },
+                },
+                {
+                  nodeID: 104566,
+                  nodeName: 'Belts',
+                  nodeInfo: { maxRanks: 26, activeRank: 1, currentRank: 1 },
+                },
+              ],
+              edges: [{ fromPathID: 104565, toPathID: 104566, kind: 'path' }],
+              milestones: [
+                {
+                  nodeID: 104499,
+                  parentPathID: 104566,
+                  milestoneRank: 5,
+                  nodeDescription: 'Gain +5 Skill when crafting waist armor.',
+                  nodeInfo: { maxRanks: 1, activeRank: 0 },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    expect(decodeAuctionHelperTalentExport(payload, 'profession_talents')).toMatchObject({
+      professions: [
+        {
+          trees: [
+            {
+              tabs: [
+                {
+                  tabId: 1068,
+                  nodes: expect.arrayContaining([
+                    expect.objectContaining({
+                      nodeId: 104566,
+                      name: 'Belts',
+                      parentNodeIds: [104565],
+                    }),
+                    expect.objectContaining({
+                      nodeId: 104499,
+                      parentNodeIds: [104566],
+                      requiredRank: 5,
+                    }),
+                  ]),
+                },
+              ],
+            },
+          ],
+          allocations: [
+            { nodeId: 104565, entryId: 104565, rank: 2 },
+            { nodeId: 104566, entryId: 104566, rank: 1 },
+          ],
+        },
+      ],
+    });
+  });
+
   it('rejects unsupported and mismatched scopes', () => {
     expect(() =>
       decodeAuctionHelperTalentExport(
