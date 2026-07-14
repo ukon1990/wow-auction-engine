@@ -48,7 +48,7 @@ class ProfileRepository(
         if (trees.isEmpty()) return emptyList()
         val treeIds = trees.map(TreeRow::id)
         val tabs = jdbcTemplate.query("SELECT id, tree_id, external_tab_id, name, description, display_order FROM profession_skill_tree_tab WHERE tree_id IN (${treeIds.joinToString()}) ORDER BY display_order, id", { rs, _ -> TabRow(rs.getLong("id"), rs.getLong("tree_id"), rs.getInt("external_tab_id"), rs.getString("name"), rs.getString("description"), rs.getInt("display_order")) })
-        val nodes = jdbcTemplate.query("SELECT id, tree_id, tab_id, external_node_id, name, description, max_ranks, required_rank, display_order FROM profession_skill_tree_node WHERE tree_id IN (${treeIds.joinToString()}) ORDER BY display_order, id", { rs, _ -> NodeRow(rs.getLong("id"), rs.getLong("tree_id"), rs.getObject("tab_id", Long::class.java), rs.getInt("external_node_id"), rs.getString("name"), rs.getString("description"), rs.getInt("max_ranks"), rs.getInt("required_rank"), rs.getInt("display_order")) })
+        val nodes = jdbcTemplate.query("SELECT id, tree_id, tab_id, external_node_id, name, description, max_ranks, required_rank, display_order FROM profession_skill_tree_node WHERE tree_id IN (${treeIds.joinToString()}) ORDER BY display_order, id", { rs, _ -> NodeRow(rs.getLong("id"), rs.getLong("tree_id"), rs.getObject("tab_id", Long::class.javaObjectType), rs.getInt("external_node_id"), rs.getString("name"), rs.getString("description"), rs.getInt("max_ranks"), rs.getInt("required_rank"), rs.getInt("display_order")) })
         val nodeIds = nodes.map(NodeRow::id)
         val entries = if (nodeIds.isEmpty()) emptyList() else jdbcTemplate.query("SELECT id, node_id, external_entry_id, name, description, rank_limit, display_order FROM profession_skill_tree_entry WHERE node_id IN (${nodeIds.joinToString()}) ORDER BY display_order, id", { rs, _ -> EntryRow(rs.getLong("id"), rs.getLong("node_id"), rs.getInt("external_entry_id"), rs.getString("name"), rs.getString("description"), rs.getInt("rank_limit"), rs.getInt("display_order")) })
         val parents = if (nodeIds.isEmpty()) emptyList() else jdbcTemplate.query("SELECT node_id, parent_node_id, required_parent_ranks FROM profession_skill_tree_node_parent WHERE node_id IN (${nodeIds.joinToString()})", { rs, _ -> ParentRow(rs.getLong("node_id"), rs.getLong("parent_node_id"), rs.getInt("required_parent_ranks")) })
@@ -59,7 +59,7 @@ class ProfileRepository(
     }
 
     fun getProfile(subject: String, characterId: Long, professionId: Int): ProfessionProfile? =
-        jdbcTemplate.query("SELECT p.id, p.tree_id, p.skill_level FROM user_character_profession_profile p JOIN user_character c ON c.id = p.character_id WHERE p.character_id = ? AND p.profession_id = ? AND c.owner_subject = ?", { rs, _ -> ProfileRow(rs.getLong("id"), rs.getLong("tree_id"), rs.getObject("skill_level", Int::class.java)) }, characterId, professionId, subject).firstOrNull()?.let { profile -> ProfessionProfile(characterId, professionId, allocations(profile.id), profile.treeId, profile.skillLevel) }
+        jdbcTemplate.query("SELECT p.id, p.tree_id, p.skill_level FROM user_character_profession_profile p JOIN user_character c ON c.id = p.character_id WHERE p.character_id = ? AND p.profession_id = ? AND c.owner_subject = ?", { rs, _ -> ProfileRow(rs.getLong("id"), rs.getLong("tree_id"), rs.getObject("skill_level", Int::class.javaObjectType)) }, characterId, professionId, subject).firstOrNull()?.let { profile -> ProfessionProfile(characterId, professionId, allocations(profile.id), profile.treeId, profile.skillLevel) }
 
     @Transactional
     fun replaceProfile(subject: String, characterId: Long, professionId: Int, treeId: Long, skillLevel: Int?, allocations: List<ProfessionAllocation>): ProfessionProfile {
@@ -108,7 +108,7 @@ class ProfileRepository(
                     realmName = rs.getString("realm_name"),
                     professionId = rs.getInt("profession_id"),
                     expansionId = rs.getInt("expansion_id"),
-                    skillLevel = rs.getObject("skill_level", Int::class.java),
+                    skillLevel = rs.getObject("skill_level", Int::class.javaObjectType),
                     allocationCount = rs.getInt("allocation_count"),
                 )
             },

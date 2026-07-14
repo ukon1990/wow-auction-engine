@@ -24,6 +24,9 @@ class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
     lateinit var repository: NormalizedProfessionImportRepository
 
     @Autowired
+    lateinit var profileRepository: ProfileRepository
+
+    @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
 
     @Test
@@ -151,6 +154,7 @@ class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
             .containsEntry("rank_limit", 1)
         assertThat(jdbcTemplate.queryForObject("SELECT rank FROM user_character_profession_allocation", Int::class.java)).isEqualTo(1)
         assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM profession_skill_tree", Int::class.java)).isEqualTo(1)
+        assertThat(profileRepository.listTrees(12, 164).single().tabs.single().nodes.single().externalNodeId).isEqualTo(104230)
 
         val recipeOnlyProfession = profession.copy(activeSkillLineId = null, talents = null, skillLevel = 90)
         repository.save(payload().copy(characters = listOf(character.copy(professions = listOf(recipeOnlyProfession)))), 1, 0, "admin-subject")
