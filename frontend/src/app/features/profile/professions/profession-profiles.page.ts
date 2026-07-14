@@ -389,9 +389,15 @@ export class ProfessionProfilesPage {
         ),
       ]);
       this.trees.set(trees);
-      const treeId = profile.treeId ?? trees[0]?.id ?? null;
+      const treeId = preferredTreeId(trees);
       this.selectedTreeId.set(treeId);
-      this.applyProfile(profile, treeId);
+      if (profile.treeId === treeId) {
+        this.applyProfile(profile, treeId);
+      } else {
+        this.allocations.set(new Map());
+        this.savedAllocations.set(new Map());
+        this.savedTreeId.set(profile.treeId ?? null);
+      }
     } catch {
       this.resetProfile();
       this.error.set(
@@ -431,4 +437,16 @@ function sameAllocations(
 
 function isBlizzardRegion(region: string): region is CharacterProfessionPreview['region'] {
   return region === 'us' || region === 'eu' || region === 'kr' || region === 'tw';
+}
+
+export function preferredTreeId(
+  trees: readonly Pick<ProfessionSkillTree, 'id' | 'externalTreeId'>[],
+): number | null {
+  return (
+    trees.reduce<(typeof trees)[number] | null>(
+      (highest, tree) =>
+        highest === null || tree.externalTreeId > highest.externalTreeId ? tree : highest,
+      null,
+    )?.id ?? null
+  );
 }

@@ -78,7 +78,12 @@ describe('AuctionHelper Lua adapters', () => {
 
     expect(result.data.characters[0]?.professions[0]?.talents?.trees[0]?.tabs[0]?.nodes).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ nodeId: 101, parentNodeIds: [] }),
+        expect.objectContaining({
+          nodeId: 101,
+          name: 'Weaponsmithing',
+          parentNodeIds: [],
+          entries: [expect.objectContaining({ entryId: 201, name: 'Weaponsmithing' })],
+        }),
         expect.objectContaining({ nodeId: 102, parentNodeIds: [101] }),
       ]),
     );

@@ -71,11 +71,17 @@ export type NormalizedProfessionSnapshot = Readonly<{
             description?: string;
             nodes: Array<{
               nodeId: number;
+              name?: string;
               maxRanks?: number;
               requiredRank?: number;
               description?: string;
               parentNodeIds: number[];
-              entries: Array<{ entryId: number; rankLimit?: number; description?: string }>;
+              entries: Array<{
+                entryId: number;
+                name?: string;
+                rankLimit?: number;
+                description?: string;
+              }>;
             }>;
           }>;
         }>;
@@ -332,26 +338,36 @@ function normalizeEmbeddedTalents(
         if (entryId !== null && rank !== null) allocations.push({ nodeId, entryId, rank });
         const maxRanks = integer(nodeInfo['maxRanks']) ?? integer(nodeInfo['totalMaxRanks']);
         const description = text(node['pathDescription']);
+        const sourceEntries = values(node['entries']).map(record);
+        const name =
+          text(node['overrideName']) ??
+          text(node['name']) ??
+          text(nodeInfo['overrideName']) ??
+          text(nodeInfo['name']) ??
+          sourceEntries.map(normalizedEntryName).find((value) => value !== null) ??
+          null;
         return [
           {
             nodeId,
+            ...(name ? { name } : {}),
             ...(maxRanks !== null ? { maxRanks } : {}),
             ...(integer(node['unlockRank']) !== null
               ? { requiredRank: integer(node['unlockRank'])! }
               : {}),
             ...(description ? { description } : {}),
             parentNodeIds: parentNodeIds.get(nodeId) ?? [],
-            entries: values(node['entries']).flatMap((entryValue) => {
-              const entry = record(entryValue);
+            entries: sourceEntries.flatMap((entry) => {
               const normalizedEntryId = integer(entry['entryID']);
               if (normalizedEntryId === null) return [];
               const rankLimit =
                 integer(record(entry['entryInfo'])['maxRanks']) ??
                 integer(record(entry['definitionInfo'])['maxRanks']);
               const entryDescription = text(record(entry['definitionInfo'])['overrideDescription']);
+              const entryName = normalizedEntryName(entry);
               return [
                 {
                   entryId: normalizedEntryId,
+                  ...(entryName ? { name: entryName } : {}),
                   ...(rankLimit !== null ? { rankLimit } : {}),
                   ...(entryDescription ? { description: entryDescription } : {}),
                 },
@@ -369,6 +385,16 @@ function normalizeEmbeddedTalents(
     return [{ treeId: configId, skillLineId, expansionId, ...(name ? { name } : {}), tabs }];
   });
   return trees.length > 0 ? { trees, allocations } : null;
+}
+
+function normalizedEntryName(entry: Record<string, LuaValue>): string | null {
+  const definition = record(entry['definitionInfo']);
+  return (
+    text(definition['overrideName']) ??
+    text(definition['name']) ??
+    text(entry['overrideName']) ??
+    text(entry['name'])
+  );
 }
 
 function parentNodeIdsByChild(

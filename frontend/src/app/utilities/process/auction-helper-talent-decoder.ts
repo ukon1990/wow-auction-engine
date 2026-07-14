@@ -31,12 +31,14 @@ export type DecodedProfessionTalents = Readonly<{
         description: string | null;
         nodes: ReadonlyArray<{
           nodeId: number;
+          name: string | null;
           maxRanks: number | null;
           requiredRank: number | null;
           description: string | null;
           parentNodeIds: readonly number[];
           entries: ReadonlyArray<{
             entryId: number;
+            name: string | null;
             rankLimit: number | null;
             description: string | null;
           }>;
@@ -181,17 +183,27 @@ function normalizeNode(
   const nodeId = integer(node['nodeID']);
   if (nodeId === null) return null;
   const nodeInfo = object(node['nodeInfo']);
+  const sourceEntries = collection(node['entries']);
+  const nodeName =
+    string(node['overrideName']) ??
+    string(node['name']) ??
+    string(nodeInfo['overrideName']) ??
+    string(nodeInfo['name']) ??
+    sourceEntries.map(entryName).find(isPresent) ??
+    null;
   return {
     nodeId,
+    name: nodeName,
     maxRanks: integer(nodeInfo['maxRanks']),
     requiredRank: integer(node['unlockRank']),
     description: string(node['pathDescription']),
     parentNodeIds: parentNodeIds.get(nodeId) ?? [],
-    entries: collection(node['entries'])
+    entries: sourceEntries
       .map((entryValue) => {
         const entry = object(entryValue);
         return {
           entryId: integer(entry['entryID']) ?? 0,
+          name: entryName(entry),
           rankLimit:
             integer(object(entry['entryInfo'])['maxRanks']) ??
             integer(object(entry['definitionInfo'])['maxRanks']),
@@ -200,6 +212,17 @@ function normalizeNode(
       })
       .filter((entry) => entry.entryId > 0),
   };
+}
+
+function entryName(value: unknown): string | null {
+  const entry = object(value);
+  const definition = object(entry['definitionInfo']);
+  return (
+    string(definition['overrideName']) ??
+    string(definition['name']) ??
+    string(entry['overrideName']) ??
+    string(entry['name'])
+  );
 }
 
 function parentNodeIdsByChild(nodes: readonly unknown[]): Map<number, readonly number[]> {

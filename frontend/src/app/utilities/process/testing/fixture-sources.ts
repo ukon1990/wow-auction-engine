@@ -35,7 +35,7 @@ export const auctionHelperProfessionsSource = `AuctionHelperProfessionsDB = {
                 {
                   ["treeID"] = 999,
                   ["nodes"] = {
-                    { ["nodeID"] = 101, ["childPathIDs"] = { 102 }, ["nodeInfo"] = { ["maxRanks"] = 30 }, ["entries"] = { { ["entryID"] = 201 } } },
+                    { ["nodeID"] = 101, ["childPathIDs"] = { 102 }, ["nodeInfo"] = { ["maxRanks"] = 30 }, ["entries"] = { { ["entryID"] = 201, ["definitionInfo"] = { ["overrideName"] = "Weaponsmithing" } } } },
                     { ["nodeID"] = 102, ["nodeInfo"] = { ["maxRanks"] = 10 }, ["entries"] = { { ["entryID"] = 202 } } },
                   },
                 },
