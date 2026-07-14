@@ -42,6 +42,8 @@ interface PositionedNode {
   readonly node: SkillTreeGraphNode;
   readonly x: number;
   readonly y: number;
+  readonly width: number;
+  readonly height: number;
 }
 
 interface Connector {
@@ -56,8 +58,10 @@ interface GraphLayout {
   readonly connectors: readonly Connector[];
 }
 
-const nodeWidth = 192;
-const nodeHeight = 164;
+export const graphNodeWidth = 224;
+const nodeHeaderHeight = 72;
+const entryRowHeight = 44;
+const nodeFooterPadding = 8;
 const columnGap = 40;
 const rowGap = 52;
 const graphPadding = 24;
@@ -153,8 +157,20 @@ export class ProfessionSkillTreeEditor {
     return $localize`:@@professionProfiles.increaseRank:Increase ${entryName}:INTERPOLATION: rank`;
   }
 
-  protected entryLabel(entry: SkillTreeGraphEntry, node: SkillTreeGraphNode): string {
-    return entry.name?.trim() || node.name?.trim() || '';
+  protected entryNameVisible(entry: SkillTreeGraphEntry, node: SkillTreeGraphNode): boolean {
+    return entryNameVisible(entry, node);
+  }
+
+  protected entryLabel(
+    entry: SkillTreeGraphEntry,
+    node: SkillTreeGraphNode,
+    index = 0,
+  ): string {
+    const entryName = entry.name?.trim();
+    const nodeName = node.name?.trim() ?? '';
+    if (entryName && normalizeLabel(entryName) !== normalizeLabel(nodeName)) return entryName;
+    if (node.entries.length > 1) return `${nodeName} (${index + 1})`;
+    return nodeName;
   }
 
   protected treeLabel(): string {
@@ -195,16 +211,25 @@ export function layoutGraph(nodes: readonly SkillTreeGraphNode[]): GraphLayout {
       rows.set(level, [...(rows.get(level) ?? []), node]);
     });
   const maxColumns = Math.max(...[...rows.values()].map((row) => row.length));
-  const maxLevel = Math.max(...rows.keys());
-  const width = graphPadding * 2 + maxColumns * nodeWidth + (maxColumns - 1) * columnGap;
-  const height = graphPadding * 2 + (maxLevel + 1) * nodeHeight + maxLevel * rowGap;
+  const rowLevels = [...rows.keys()].sort((left, right) => left - right);
+  const rowY = new Map<number, number>();
+  let y = graphPadding;
+  for (const level of rowLevels) {
+    rowY.set(level, y);
+    const row = rows.get(level) ?? [];
+    y += Math.max(...row.map(heightForNode), 0) + rowGap;
+  }
+  const width = graphPadding * 2 + maxColumns * graphNodeWidth + (maxColumns - 1) * columnGap;
+  const height = y - rowGap + graphPadding;
   const positioned = [...rows].flatMap(([level, row]) => {
-    const rowWidth = row.length * nodeWidth + (row.length - 1) * columnGap;
+    const rowWidth = row.length * graphNodeWidth + (row.length - 1) * columnGap;
     const offset = graphPadding + (width - graphPadding * 2 - rowWidth) / 2;
     return row.map((node, index) => ({
       node,
-      x: offset + index * (nodeWidth + columnGap),
-      y: graphPadding + level * (nodeHeight + rowGap),
+      x: offset + index * (graphNodeWidth + columnGap),
+      y: rowY.get(level) ?? graphPadding,
+      width: graphNodeWidth,
+      height: heightForNode(node),
     }));
   });
   const positions = new Map(
@@ -217,9 +242,9 @@ export function layoutGraph(nodes: readonly SkillTreeGraphNode[]): GraphLayout {
     (parentsByNode.get(child.node.id) ?? []).flatMap((parentNode) => {
       const parent = positions.get(parentNode.id);
       if (!parent) return [];
-      const startX = parent.x + nodeWidth / 2;
-      const startY = parent.y + nodeHeight;
-      const endX = child.x + nodeWidth / 2;
+      const startX = parent.x + parent.width / 2;
+      const startY = parent.y + parent.height;
+      const endX = child.x + child.width / 2;
       const endY = child.y;
       const middleY = startY + (endY - startY) / 2;
       return [
@@ -242,6 +267,26 @@ function findNode(
 
 export function isVisibleNode(node: SkillTreeGraphNode): boolean {
   return Boolean(node.name?.trim());
+}
+
+export function entryNameVisible(entry: SkillTreeGraphEntry, node: SkillTreeGraphNode): boolean {
+  const entryName = entry.name?.trim();
+  if (!entryName) return false;
+  return normalizeLabel(entryName) !== normalizeLabel(node.name);
+}
+
+function normalizeLabel(value: string | null | undefined): string {
+  return (value ?? '')
+    .trim()
+    .normalize('NFKD')
+    .replace(/[\u2018\u2019\u0060\u00B4']/g, '')
+    .replace(/\s+/g, ' ')
+    .toLocaleLowerCase();
+}
+
+function heightForNode(node: SkillTreeGraphNode): number {
+  const entryCount = Math.max(node.entries.length, 1);
+  return nodeHeaderHeight + entryCount * entryRowHeight + nodeFooterPadding;
 }
 
 export function visibleParents(

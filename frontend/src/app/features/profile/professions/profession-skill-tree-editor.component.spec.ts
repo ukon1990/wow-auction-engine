@@ -1,7 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProfessionSkillTree, ProfessionSkillTreeNode } from '@api/generated';
-import { ProfessionSkillTreeEditor, layoutGraph } from './profession-skill-tree-editor.component';
+import {
+  ProfessionSkillTreeEditor,
+  entryNameVisible,
+  layoutGraph,
+} from './profession-skill-tree-editor.component';
 
 const rootNode = node(10, 'Foundations', 0);
 const childNode = node(20, 'Armorsmithing', 1, [{ parentNodeId: 10, requiredParentRanks: 5 }]);
@@ -46,10 +50,50 @@ describe('ProfessionSkillTreeEditor', () => {
     expect(root.textContent).not.toContain('Foundations');
   });
 
-  it('renders connected nodes and names prerequisite parents', () => {
+  it('renders connected nodes and keeps prerequisite parents available to assistive tech', () => {
     const root = fixture.nativeElement as HTMLElement;
     expect(root.querySelectorAll('svg path[marker-end]')).toHaveLength(1);
-    expect(root.textContent).toContain('Foundations at rank 5');
+    const summaries = [...root.querySelectorAll('.sr-only')].map((element) => element.textContent);
+    expect(summaries).toContain('Foundations at rank 5');
+  });
+
+  it('hides entry labels that repeat the node title', () => {
+    fixture.componentRef.setInput('allocations', new Map());
+    fixture.componentRef.setInput('tree', {
+      ...tree,
+      tabs: [
+        {
+          id: 1,
+          externalTabId: 101,
+          name: 'Armor',
+          displayOrder: 0,
+          nodes: [
+            {
+              ...rootNode,
+              entries: [
+                { id: 100, externalEntryId: 1000, name: 'Foundations', rankLimit: 1, displayOrder: 0 },
+                {
+                  id: 101,
+                  externalEntryId: 1001,
+                  name: 'Foundations',
+                  rankLimit: 25,
+                  displayOrder: 1,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+    const labels = [...root.querySelectorAll('article span.text-xs.font-medium')].map(
+      (element) => element.textContent?.trim(),
+    );
+    expect(labels).toEqual([]);
+    expect(root.textContent).toContain('0/1');
+    expect(root.textContent).toContain('0/25');
   });
 
   it('emits compact rank changes', () => {
@@ -86,6 +130,44 @@ describe('layoutGraph', () => {
 
   it('returns an empty graph when every node is unnamed', () => {
     expect(layoutGraph([node(15, '', 0)])).toMatchObject({ nodes: [], connectors: [] });
+  });
+
+  it('sizes nodes from their entry count so connectors meet the card edge', () => {
+    const layout = layoutGraph([
+      {
+        ...rootNode,
+        entries: [
+          { id: 100, externalEntryId: 1000, name: 'Foundations', rankLimit: 1, displayOrder: 0 },
+          { id: 101, externalEntryId: 1001, name: 'Foundations', rankLimit: 25, displayOrder: 1 },
+        ],
+      },
+      childNode,
+    ]);
+    const root = layout.nodes.find((position) => position.node.id === rootNode.id)!;
+    const child = layout.nodes.find((position) => position.node.id === childNode.id)!;
+
+    expect(root.height).toBeGreaterThan(child.height);
+    expect(layout.connectors[0].path).toContain(`${root.y + root.height}`);
+    expect(child.y).toBe(root.y + root.height + 52);
+  });
+});
+
+describe('entryNameVisible', () => {
+  it('hides labels that repeat the node title', () => {
+    const sample = node(10, 'Tool Stones', 0);
+    expect(entryNameVisible(sample.entries[0], sample)).toBe(false);
+  });
+
+  it('shows labels that differ from the node title', () => {
+    const sample = node(10, 'Tool Stones', 0);
+    const entry = { ...sample.entries[0], name: 'Bonus yield' };
+    expect(entryNameVisible(entry, sample)).toBe(true);
+  });
+
+  it('treats apostrophe variants as the same label', () => {
+    const sample = node(10, "Nature's Novelties", 0);
+    const entry = { ...sample.entries[0], name: 'Nature\u2019s Novelties' };
+    expect(entryNameVisible(entry, sample)).toBe(false);
   });
 });
 

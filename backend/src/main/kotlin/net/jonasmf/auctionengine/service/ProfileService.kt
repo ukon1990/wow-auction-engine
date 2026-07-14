@@ -8,6 +8,7 @@ import net.jonasmf.auctionengine.generated.model.CharacterProfessionPreviewProfe
 import net.jonasmf.auctionengine.generated.model.CharacterProfessionPreviewRecipe
 import net.jonasmf.auctionengine.generated.model.CharacterProfessionPreviewTier
 import net.jonasmf.auctionengine.generated.model.ProfileCharacter
+import net.jonasmf.auctionengine.generated.model.ProfileCharacterProfession
 import net.jonasmf.auctionengine.generated.model.ProfileCharacterRequest
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.integration.blizzard.CharacterProfessionApiClient
@@ -67,6 +68,17 @@ class ProfileService(
         return try { profileRepository.createCharacter(subject, request) } catch (_: DuplicateKeyException) { throw ResponseStatusException(HttpStatus.CONFLICT, "Character already exists for this profile") }
     }
 
+    fun listCharacterProfessions(subject: String, characterId: Long): List<ProfileCharacterProfession> {
+        requireCharacter(subject, characterId)
+        return profileRepository.listCharacterProfessions(subject, characterId)
+    }
+
+    fun syncCharacterFromBlizzard(subject: String, characterId: Long): List<ProfileCharacterProfession> {
+        val character = requireCharacter(subject, characterId)
+        val preview = getCharacterProfessionPreview(character.region, character.realmName, character.characterName)
+        return profileRepository.syncBlizzardProfessions(characterId, preview.professions)
+    }
+
     fun deleteCharacter(subject: String, characterId: Long) {
         if (!profileRepository.deleteCharacter(subject, characterId)) notFound("Character not found")
     }
@@ -89,9 +101,8 @@ class ProfileService(
         if (!profileRepository.deleteProfile(subject, characterId, professionId)) notFound("Profession profile not found")
     }
 
-    private fun requireCharacter(subject: String, characterId: Long) {
-        if (profileRepository.findCharacter(subject, characterId) == null) notFound("Character not found")
-    }
+    private fun requireCharacter(subject: String, characterId: Long): ProfileCharacter =
+        profileRepository.findCharacter(subject, characterId) ?: notFound("Character not found")
 
     private fun validateAllocations(
         professionId: Int,

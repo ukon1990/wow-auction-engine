@@ -81,6 +81,45 @@ characterById:
       "401": { description: Authentication required. }
       "404": { description: Character is missing or not owned by the caller. }
 
+characterProfessions:
+  get:
+    tags: [Profile]
+    operationId: listProfileCharacterProfessions
+    summary: List known professions for a character
+    description: Returns professions persisted from Blizzard sync, addon import, or manual skill-tree saves.
+    parameters:
+      - $ref: "#/components/parameters/CharacterId"
+    responses:
+      "200":
+        description: Known professions for the owned character.
+        content:
+          application/json:
+            schema:
+              type: array
+              items: { $ref: "../openapi.yml#/components/schemas/ProfileCharacterProfession" }
+      "401": { description: Authentication required. }
+      "404": { description: Character is missing or not owned by the caller. }
+
+characterSyncBlizzard:
+  post:
+    tags: [Profile]
+    operationId: syncProfileCharacterBlizzard
+    summary: Import a character's professions from Blizzard
+    description: Fetches current profession data from Blizzard and merges it with any existing addon or manual profile data.
+    parameters:
+      - $ref: "#/components/parameters/CharacterId"
+    responses:
+      "200":
+        description: Synced professions and known recipes.
+        content:
+          application/json:
+            schema:
+              type: array
+              items: { $ref: "../openapi.yml#/components/schemas/ProfileCharacterProfession" }
+      "400": { description: Blizzard lookup failed because of invalid character data. }
+      "401": { description: Authentication required. }
+      "404": { description: Character is missing or not owned by the caller. }
+
 characterProfessionProfile:
   get:
     tags: [Profile]

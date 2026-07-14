@@ -102,5 +102,28 @@ class ProfileServiceTest {
 
     }
 
-    private fun character() = ProfileCharacter(7, "eu", "draenor", "Owner")
+    @Test
+    fun `syncs Blizzard professions for an owned character`() {
+        val character = character()
+        `when`(repository.findCharacter("user-a", 7)).thenReturn(character)
+        `when`(characterProfessionApiClient.getProfessions(Region.Europe, "draenor", "Owner")).thenReturn(
+            CharacterProfessionsDTO(primaries = emptyList()),
+        )
+        `when`(repository.syncBlizzardProfessions(7, emptyList())).thenReturn(emptyList())
+
+        val result = service.syncCharacterFromBlizzard("user-a", 7)
+
+        assertThat(result).isEmpty()
+        verify(repository).syncBlizzardProfessions(7, emptyList())
+    }
+
+    @Test
+    fun `lists known professions for an owned character`() {
+        `when`(repository.findCharacter("user-a", 7)).thenReturn(character())
+        `when`(repository.listCharacterProfessions("user-a", 7)).thenReturn(emptyList())
+
+        assertThat(service.listCharacterProfessions("user-a", 7)).isEmpty()
+    }
+
+    private fun character() = ProfileCharacter(7, "eu", "draenor", "Owner", null)
 }

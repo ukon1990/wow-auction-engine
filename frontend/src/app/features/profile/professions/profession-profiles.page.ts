@@ -10,6 +10,8 @@ import {
   ProfessionSkillTree,
   ProfileApiService,
   ProfileCharacter,
+  ProfileCharacterProfession,
+  ProfileCharacterProfessionSource,
   ProfileCharacterRequest,
   CharacterProfessionPreview,
 } from '@api/generated';
@@ -58,7 +60,8 @@ export class ProfessionProfilesPage {
 
   protected readonly characters = signal<readonly ProfileCharacter[]>([]);
   protected readonly selectedCharacterId = signal<number | null>(null);
-  protected readonly selectedProfessionId = signal<number>(professions[0].id);
+  protected readonly selectedProfessionId = signal<number | null>(null);
+  protected readonly knownProfessions = signal<readonly ProfileCharacterProfession[]>([]);
   protected readonly trees = signal<readonly ProfessionSkillTree[]>([]);
   protected readonly selectedTreeId = signal<number | null>(null);
   protected readonly allocations = signal<ReadonlyMap<number, number>>(new Map());
@@ -67,6 +70,8 @@ export class ProfessionProfilesPage {
   protected readonly saving = signal(false);
   protected readonly addingCharacter = signal(false);
   protected readonly lookingUpCharacter = signal(false);
+  protected readonly syncingCharacter = signal(false);
+  protected readonly showNewCharacterForm = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly status = signal<string | null>(null);
   protected readonly characterRegion = signal('eu');
@@ -76,14 +81,16 @@ export class ProfessionProfilesPage {
   private readonly savedAllocations = signal<ReadonlyMap<number, number>>(new Map());
   private readonly savedTreeId = signal<number | null>(null);
 
-  protected readonly professionOptions = professions.map(({ id, label }) => ({
-    id: String(id),
-    label,
-  }));
   protected readonly characterOptions = computed(() =>
     this.characters().map((character) => ({
       id: character.id.toString(),
       label: `${character.characterName} — ${character.realmName} (${character.region.toUpperCase()})`,
+    })),
+  );
+  protected readonly professionOptions = computed(() =>
+    this.knownProfessions().map((profession) => ({
+      id: String(profession.professionId),
+      label: professionLabel(profession.professionId),
     })),
   );
   protected readonly selectedCharacter = computed(
@@ -101,10 +108,8 @@ export class ProfessionProfilesPage {
       this.selectedTreeId() !== this.savedTreeId() ||
       !sameAllocations(this.allocations(), this.savedAllocations()),
   );
-  protected readonly professionLabel = computed(
-    () =>
-      professions.find((profession) => profession.id === this.selectedProfessionId())?.label ?? '',
-  );
+  protected readonly hasKnownProfessions = computed(() => this.knownProfessions().length > 0);
+  protected readonly professionLabel = professionLabel;
 
   constructor() {
     void this.loadCharacters();
@@ -112,6 +117,8 @@ export class ProfessionProfilesPage {
 
   protected async selectCharacter(value: string): Promise<void> {
     if (this.hasUnsavedChanges() && !this.confirmDiscardChanges()) return;
+    this.showNewCharacterForm.set(false);
+    this.preview.set(null);
     this.selectedCharacterId.set(value ? Number(value) : null);
     await this.loadProfileAndTrees();
   }
@@ -120,6 +127,49 @@ export class ProfessionProfilesPage {
     if (this.hasUnsavedChanges() && !this.confirmDiscardChanges()) return;
     this.selectedProfessionId.set(Number(value));
     await this.loadProfileAndTrees();
+  }
+
+  protected openNewCharacterForm(): void {
+    this.showNewCharacterForm.set(true);
+    this.preview.set(null);
+    this.error.set(null);
+    this.status.set(null);
+  }
+
+  protected closeNewCharacterForm(): void {
+    this.showNewCharacterForm.set(false);
+    this.preview.set(null);
+  }
+
+  protected async syncSelectedCharacter(): Promise<void> {
+    const character = this.selectedCharacter();
+    if (!character) return;
+
+    this.syncingCharacter.set(true);
+    this.error.set(null);
+    this.status.set(null);
+    try {
+      const professions = await firstValueFrom(
+        this.profileApi.syncProfileCharacterBlizzard(character.id),
+      );
+      this.knownProfessions.set(professions);
+      if (
+        professions.length &&
+        !professions.some((profession) => profession.professionId === this.selectedProfessionId())
+      ) {
+        this.selectedProfessionId.set(professions[0].professionId);
+      }
+      await this.loadProfileAndTrees();
+      this.status.set(
+        $localize`:@@professionProfiles.status.characterSynced:${professions.length}:INTERPOLATION: professions imported from Blizzard.`,
+      );
+    } catch {
+      this.error.set(
+        $localize`:@@professionProfiles.error.syncCharacter:Unable to import professions from Blizzard for this character.`,
+      );
+    } finally {
+      this.syncingCharacter.set(false);
+    }
   }
 
   protected async addCharacter(): Promise<void> {
@@ -146,6 +196,14 @@ export class ProfessionProfilesPage {
       });
       this.selectedCharacterId.set(character.id);
       this.preview.set(null);
+      this.showNewCharacterForm.set(false);
+      const professions = await firstValueFrom(
+        this.profileApi.syncProfileCharacterBlizzard(character.id),
+      );
+      this.knownProfessions.set(professions);
+      if (professions.length) {
+        this.selectedProfessionId.set(professions[0].professionId);
+      }
       this.status.set($localize`:@@professionProfiles.status.characterAdded:Character added.`);
       await this.loadProfileAndTrees();
     } catch {
@@ -222,6 +280,8 @@ export class ProfessionProfilesPage {
       this.characters.update((characters) => [...characters, character]);
       this.selectedCharacterId.set(character.id);
       this.preview.set(null);
+      this.showNewCharacterForm.set(false);
+      this.knownProfessions.set([]);
       this.status.set($localize`:@@professionProfiles.status.characterAdded:Character added.`);
       await this.loadProfileAndTrees();
     } catch {
@@ -248,6 +308,10 @@ export class ProfessionProfilesPage {
     return profession.tiers.reduce((total, tier) => total + tier.knownRecipes.length, 0);
   }
 
+  protected sourceSummary(profession: ProfileCharacterProfession): string {
+    return profession.sources.map((source) => sourceLabel(source)).join(', ');
+  }
+
   protected rankFor(entryId: number): number {
     return this.allocations().get(entryId) ?? 0;
   }
@@ -257,7 +321,7 @@ export class ProfessionProfilesPage {
   }
 
   protected selectedProfessionOption(): string {
-    return this.selectedProfessionId().toString();
+    return this.selectedProfessionId()?.toString() ?? '';
   }
 
   protected treeOptions(): readonly { id: string; label: string }[] {
@@ -298,7 +362,8 @@ export class ProfessionProfilesPage {
   protected async save(): Promise<void> {
     const character = this.selectedCharacter();
     const tree = this.selectedTree();
-    if (!character || !tree) return;
+    const professionId = this.selectedProfessionId();
+    if (!character || !tree || professionId == null) return;
 
     this.saving.set(true);
     this.error.set(null);
@@ -311,9 +376,10 @@ export class ProfessionProfilesPage {
       );
       const request: ProfessionProfileRequest = { treeId: tree.id, allocations };
       const profile = await firstValueFrom(
-        this.profileApi.putProfessionProfile(character.id, this.selectedProfessionId(), request),
+        this.profileApi.putProfessionProfile(character.id, professionId, request),
       );
       this.applyProfile(profile, tree.id);
+      await this.loadKnownProfessions(character.id);
       this.status.set($localize`:@@professionProfiles.status.saved:Skill-tree profile saved.`);
     } catch {
       this.error.set(
@@ -358,13 +424,18 @@ export class ProfessionProfilesPage {
     this.loadingTree.set(true);
     this.error.set(null);
     try {
+      await this.loadKnownProfessions(characterId);
+      const professionId = this.selectedProfessionId();
+      if (professionId == null) {
+        this.resetProfile();
+        return;
+      }
+
       const [trees, profile] = await Promise.all([
         firstValueFrom(
-          this.profileApi.listProfessionTrees(midnightExpansionId, this.selectedProfessionId()),
+          this.profileApi.listProfessionTrees(midnightExpansionId, professionId),
         ),
-        firstValueFrom(
-          this.profileApi.getProfessionProfile(characterId, this.selectedProfessionId()),
-        ),
+        firstValueFrom(this.profileApi.getProfessionProfile(characterId, professionId)),
       ]);
       this.trees.set(trees);
       const treeId = preferredTreeId(trees);
@@ -386,6 +457,20 @@ export class ProfessionProfilesPage {
     }
   }
 
+  private async loadKnownProfessions(characterId: number): Promise<void> {
+    const known = await firstValueFrom(
+      this.profileApi.listProfileCharacterProfessions(characterId),
+    );
+    this.knownProfessions.set(known);
+    if (!known.length) {
+      this.selectedProfessionId.set(null);
+      return;
+    }
+    if (!known.some((profession) => profession.professionId === this.selectedProfessionId())) {
+      this.selectedProfessionId.set(known[0].professionId);
+    }
+  }
+
   private applyProfile(profile: ProfessionProfile, treeId: number | null): void {
     const allocations = new Map(
       profile.allocations.map((allocation) => [allocation.entryId, allocation.rank]),
@@ -397,11 +482,28 @@ export class ProfessionProfilesPage {
   }
 
   private resetProfile(): void {
+    this.knownProfessions.set([]);
+    this.selectedProfessionId.set(null);
     this.trees.set([]);
     this.selectedTreeId.set(null);
     this.allocations.set(new Map());
     this.savedAllocations.set(new Map());
     this.savedTreeId.set(null);
+  }
+}
+
+export function professionLabel(professionId: number): string {
+  return professions.find((profession) => profession.id === professionId)?.label ?? `#${professionId}`;
+}
+
+function sourceLabel(source: ProfileCharacterProfessionSource): string {
+  switch (source) {
+    case ProfileCharacterProfessionSource.Blizzard:
+      return $localize`:@@professionProfiles.source.blizzard:Blizzard`;
+    case ProfileCharacterProfessionSource.Addon:
+      return $localize`:@@professionProfiles.source.addon:Addon`;
+    case ProfileCharacterProfessionSource.Manual:
+      return $localize`:@@professionProfiles.source.manual:Manual`;
   }
 }
 

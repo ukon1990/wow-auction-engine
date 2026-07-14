@@ -6,6 +6,7 @@ import net.jonasmf.auctionengine.generated.model.ProfessionProfileRequest
 import net.jonasmf.auctionengine.generated.model.ProfessionSkillTree
 import net.jonasmf.auctionengine.generated.model.CharacterProfessionPreview
 import net.jonasmf.auctionengine.generated.model.ProfileCharacter
+import net.jonasmf.auctionengine.generated.model.ProfileCharacterProfession
 import net.jonasmf.auctionengine.generated.model.ProfileCharacterRequest
 import net.jonasmf.auctionengine.service.ProfileService
 import org.springframework.http.HttpStatus
@@ -28,6 +29,12 @@ class ProfileController(
     override suspend fun listProfileCharacters(): ResponseEntity<List<ProfileCharacter>> = ResponseEntity.ok(profileService.listCharacters(subject()))
 
     override suspend fun createProfileCharacter(body: ProfileCharacterRequest): ResponseEntity<ProfileCharacter> = ResponseEntity.status(HttpStatus.CREATED).body(profileService.createCharacter(subject(), body))
+
+    override suspend fun listProfileCharacterProfessions(characterId: Long): ResponseEntity<List<ProfileCharacterProfession>> =
+        ResponseEntity.ok(profileService.listCharacterProfessions(subject(), characterId))
+
+    override suspend fun syncProfileCharacterBlizzard(characterId: Long): ResponseEntity<List<ProfileCharacterProfession>> =
+        ResponseEntity.ok(profileService.syncCharacterFromBlizzard(subject(), characterId))
 
     override suspend fun deleteProfileCharacter(characterId: Long): ResponseEntity<Unit> {
         profileService.deleteCharacter(subject(), characterId)

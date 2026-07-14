@@ -2373,6 +2373,58 @@
       <trans-unit id="professionProfiles.specializationTree" datatype="html"><source>Specialization tree</source><target>Albero di specializzazione</target></trans-unit>
       <trans-unit id="professionProfiles.namedPrerequisite" datatype="html"><source>{$INTERPOLATION} at rank {$INTERPOLATION_1}</source><target>{$INTERPOLATION} al grado {$INTERPOLATION_1}</target></trans-unit>
       <trans-unit id="professionProfiles.emptyTab" datatype="html"><source>This specialization has no nodes.</source><target>Questa specializzazione non ha nodi.</target></trans-unit>
+      <trans-unit id="professionProfiles.addNewCharacter" datatype="html">
+        <source>Add new character</source>
+        <target>Add new character</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.cancelAddCharacter" datatype="html">
+        <source>Cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.syncCharacterHint" datatype="html">
+        <source>Refresh this character&apos;s professions and known recipes from Blizzard. Existing addon and manual skill-tree data is kept.</source>
+        <target>Refresh this character&apos;s professions and known recipes from Blizzard. Existing addon and manual skill-tree data is kept.</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.syncing" datatype="html">
+        <source>Importing…</source>
+        <target>Importing…</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.syncCharacter" datatype="html">
+        <source>Import from Blizzard</source>
+        <target>Import from Blizzard</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.knownProfessionsAria" datatype="html">
+        <source>Known professions</source>
+        <target>Known professions</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.knownProfessionSummary" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ profession.knownRecipeCount }}"/> recipes · <x id="INTERPOLATION_1" equiv-text="{{ profession.allocationCount }}"/> nodes · <x id="INTERPOLATION_2" equiv-text="{{ sourceSummary(profession) }}"/></source>
+        <target><x id="INTERPOLATION" equiv-text="{{ profession.knownRecipeCount }}"/> recipes · <x id="INTERPOLATION_1" equiv-text="{{ profession.allocationCount }}"/> nodes · <x id="INTERPOLATION_2" equiv-text="{{ sourceSummary(profession) }}"/></target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.emptyProfessions" datatype="html">
+        <source>Import professions from Blizzard or your addon before configuring a skill tree.</source>
+        <target>Import professions from Blizzard or your addon before configuring a skill tree.</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.status.characterSynced" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="professions.length"/> professions imported from Blizzard.</source>
+        <target><x id="INTERPOLATION" equiv-text="professions.length"/> professions imported from Blizzard.</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.error.syncCharacter" datatype="html">
+        <source>Unable to import professions from Blizzard for this character.</source>
+        <target>Unable to import professions from Blizzard for this character.</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.source.blizzard" datatype="html">
+        <source>Blizzard</source>
+        <target>Blizzard</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.source.addon" datatype="html">
+        <source>Addon</source>
+        <target>Addon</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.source.manual" datatype="html">
+        <source>Manual</source>
+        <target>Manual</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

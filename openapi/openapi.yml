@@ -100,6 +100,10 @@ paths:
     $ref: ./paths/profile.yml#/characterProfessionPreview
   /profile/characters/{characterId}:
     $ref: ./paths/profile.yml#/characterById
+  /profile/characters/{characterId}/professions:
+    $ref: ./paths/profile.yml#/characterProfessions
+  /profile/characters/{characterId}/sync-blizzard:
+    $ref: ./paths/profile.yml#/characterSyncBlizzard
   /profile/characters/{characterId}/professions/{professionId}:
     $ref: ./paths/profile.yml#/characterProfessionProfile
 components:
@@ -264,6 +268,10 @@ components:
       $ref: ./components/schemas/profile-character.yml
     ProfileCharacterRequest:
       $ref: ./components/schemas/profile-character-request.yml
+    ProfileCharacterProfession:
+      $ref: ./components/schemas/profile-character-profession.yml
+    ProfileCharacterProfessionSource:
+      $ref: ./components/schemas/profile-character-profession-source.yml
     CharacterProfessionPreview:
       $ref: ./components/schemas/character-profession-preview.yml
     CharacterProfessionPreviewProfession:
