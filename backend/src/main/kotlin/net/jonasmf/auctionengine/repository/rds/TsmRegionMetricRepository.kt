@@ -1,12 +1,13 @@
 package net.jonasmf.auctionengine.repository.rds
 
 import net.jonasmf.auctionengine.dbo.rds.tsm.TsmRegionMetric
+import net.jonasmf.auctionengine.repository.rds.JdbcBatchSupport.maxRowsPerStatement
+import net.jonasmf.auctionengine.repository.rds.JdbcBatchSupport.rowPlaceholders
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.sql.Timestamp
 
-private const val MAX_PREPARED_STATEMENT_PLACEHOLDERS = 60_000
 private const val UPSERT_COLUMN_COUNT = 9
 
 @Repository
@@ -67,13 +68,4 @@ class TsmRegionMetricRepository(
             }
         return totalRows
     }
-
-    private fun placeholders(count: Int): String = List(count) { "?" }.joinToString(",")
-
-    private fun rowPlaceholders(
-        rowCount: Int,
-        columnCount: Int,
-    ): String = List(rowCount) { "(${placeholders(columnCount)})" }.joinToString(",")
-
-    private fun maxRowsPerStatement(columnCount: Int): Int = MAX_PREPARED_STATEMENT_PLACEHOLDERS / columnCount
 }

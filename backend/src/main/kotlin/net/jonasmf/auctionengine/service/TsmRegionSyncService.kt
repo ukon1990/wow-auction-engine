@@ -50,12 +50,18 @@ class TsmRegionSyncService(
         zone: ZoneId = ZoneId.of(scheduleZone),
     ) {
         val connectedRealmId = CommodityRealms.idFor(region)
-        val lastTsmRegionSync =
-            auctionHouseRepository
-                .findByConnectedId(connectedRealmId)
-                .map { it.lastTsmRegionSync }
-                .orElse(null)
+        val auctionHouse =
+            auctionHouseRepository.findByConnectedId(connectedRealmId).orElse(null)
+        if (auctionHouse == null) {
+            log.warn(
+                "Skipping TSM region sync for region={} connectedRealmId={} because commodity auction house is missing",
+                region,
+                connectedRealmId,
+            )
+            return
+        }
 
+        val lastTsmRegionSync = auctionHouse.lastTsmRegionSync
         if (!shouldSyncRegion(lastTsmRegionSync, zone)) {
             log.info(
                 "Skipping TSM region sync for region={} connectedRealmId={} because already synced today (lastTsmRegionSync={})",
@@ -75,6 +81,15 @@ class TsmRegionSyncService(
 
         try {
             val itemRows = tsmPublicDataClient.downloadItems(region)
+            if (itemRows.isEmpty()) {
+                log.warn(
+                    "Skipping TSM region sync for region={} connectedRealmId={} because items.csv had no data rows; marker not updated",
+                    region,
+                    connectedRealmId,
+                )
+                return
+            }
+
             val petRows = tsmPublicDataClient.downloadPets(region)
             val metrics =
                 itemRows.map { it.toMetric(region, TsmSubjectType.ITEM) } +
@@ -82,7 +97,13 @@ class TsmRegionSyncService(
 
             val upserted = tsmRegionMetricRepository.upsertAll(metrics)
             val now = clock.instant().toKotlinInstant()
-            auctionHouseService.updateLastTsmRegionSync(connectedRealmId, now)
+            val updated =
+                auctionHouseService.updateLastTsmRegionSync(connectedRealmId, now)
+            if (updated == 0) {
+                error(
+                    "TSM region sync marker update affected 0 rows for region=$region connectedRealmId=$connectedRealmId",
+                )
+            }
 
             log.info(
                 "Completed TSM region sync for region={} connectedRealmId={} itemRows={} petRows={} upserted={} lastTsmRegionSync={}",

@@ -24,6 +24,7 @@ class TsmRegionSyncServiceTest {
     private val zone = ZoneOffset.ofHours(1)
     private val now = Instant.parse("2026-07-14T10:00:00Z")
     private val clock = Clock.fixed(now, ZoneOffset.UTC)
+    private val europeCommodityId = CommodityRealms.idFor(Region.Europe)
 
     private val properties =
         BlizzardApiProperties(
@@ -60,18 +61,33 @@ class TsmRegionSyncServiceTest {
     }
 
     @Test
+    fun `syncRegion skips download when commodity auction house is missing`() {
+        val auctionHouseRepository = mockk<AuctionHouseRepository>()
+        val tsmPublicDataClient = mockk<TsmPublicDataClient>()
+        val auctionHouseService = mockk<AuctionHouseService>()
+        every { auctionHouseRepository.findByConnectedId(europeCommodityId) } returns Optional.empty()
+
+        val service =
+            service(
+                auctionHouseRepository = auctionHouseRepository,
+                tsmPublicDataClient = tsmPublicDataClient,
+                auctionHouseService = auctionHouseService,
+            )
+
+        service.syncRegion(Region.Europe, zone)
+
+        verify(exactly = 0) { tsmPublicDataClient.downloadItems(any()) }
+        verify(exactly = 0) { tsmPublicDataClient.downloadPets(any()) }
+        verify(exactly = 0) { auctionHouseService.updateLastTsmRegionSync(any(), any()) }
+    }
+
+    @Test
     fun `syncRegion skips download when already synced today`() {
         val auctionHouseRepository = mockk<AuctionHouseRepository>()
         val tsmPublicDataClient = mockk<TsmPublicDataClient>()
         val auctionHouseService = mockk<AuctionHouseService>()
-        every { auctionHouseRepository.findByConnectedId(CommodityRealms.idFor(Region.Europe)) } returns
-            Optional.of(
-                AuctionHouseDbo(
-                    connectedId = CommodityRealms.idFor(Region.Europe),
-                    region = Region.Europe,
-                    lastTsmRegionSync = Instant.parse("2026-07-14T06:00:00Z"),
-                ),
-            )
+        every { auctionHouseRepository.findByConnectedId(europeCommodityId) } returns
+            Optional.of(commodityAuctionHouse(lastTsmRegionSync = Instant.parse("2026-07-14T06:00:00Z")))
 
         val service =
             service(
@@ -94,13 +110,14 @@ class TsmRegionSyncServiceTest {
         val tsmRegionMetricRepository = mockk<TsmRegionMetricRepository>()
         val auctionHouseService = mockk<AuctionHouseService>()
 
-        every { auctionHouseRepository.findByConnectedId(CommodityRealms.idFor(Region.Europe)) } returns Optional.empty()
+        every { auctionHouseRepository.findByConnectedId(europeCommodityId) } returns
+            Optional.of(commodityAuctionHouse())
         every { tsmPublicDataClient.downloadItems(Region.Europe) } returns listOf(csvRow(39, "0.25"))
         every { tsmPublicDataClient.downloadPets(Region.Europe) } returns listOf(csvRow(39, "0.50"))
         every { tsmRegionMetricRepository.upsertAll(any()) } returns 2
         every {
             auctionHouseService.updateLastTsmRegionSync(
-                CommodityRealms.idFor(Region.Europe),
+                europeCommodityId,
                 now.toKotlinInstant(),
             )
         } returns 1
@@ -134,10 +151,36 @@ class TsmRegionSyncServiceTest {
         }
         verify(exactly = 1) {
             auctionHouseService.updateLastTsmRegionSync(
-                CommodityRealms.idFor(Region.Europe),
+                europeCommodityId,
                 now.toKotlinInstant(),
             )
         }
+    }
+
+    @Test
+    fun `syncRegion does not update marker when items csv is empty`() {
+        val auctionHouseRepository = mockk<AuctionHouseRepository>()
+        val tsmPublicDataClient = mockk<TsmPublicDataClient>()
+        val tsmRegionMetricRepository = mockk<TsmRegionMetricRepository>()
+        val auctionHouseService = mockk<AuctionHouseService>()
+
+        every { auctionHouseRepository.findByConnectedId(europeCommodityId) } returns
+            Optional.of(commodityAuctionHouse())
+        every { tsmPublicDataClient.downloadItems(Region.Europe) } returns emptyList()
+
+        val service =
+            service(
+                auctionHouseRepository = auctionHouseRepository,
+                tsmPublicDataClient = tsmPublicDataClient,
+                tsmRegionMetricRepository = tsmRegionMetricRepository,
+                auctionHouseService = auctionHouseService,
+            )
+
+        service.syncRegion(Region.Europe, zone)
+
+        verify(exactly = 0) { tsmPublicDataClient.downloadPets(any()) }
+        verify(exactly = 0) { tsmRegionMetricRepository.upsertAll(any()) }
+        verify(exactly = 0) { auctionHouseService.updateLastTsmRegionSync(any(), any()) }
     }
 
     @Test
@@ -147,7 +190,8 @@ class TsmRegionSyncServiceTest {
         val tsmRegionMetricRepository = mockk<TsmRegionMetricRepository>()
         val auctionHouseService = mockk<AuctionHouseService>()
 
-        every { auctionHouseRepository.findByConnectedId(CommodityRealms.idFor(Region.Europe)) } returns Optional.empty()
+        every { auctionHouseRepository.findByConnectedId(europeCommodityId) } returns
+            Optional.of(commodityAuctionHouse())
         every { tsmPublicDataClient.downloadItems(Region.Europe) } returns listOf(csvRow(39, "0.25"))
         every { tsmPublicDataClient.downloadPets(Region.Europe) } throws IllegalStateException("pets failed")
 
@@ -165,6 +209,71 @@ class TsmRegionSyncServiceTest {
         verify(exactly = 0) { auctionHouseService.updateLastTsmRegionSync(any(), any()) }
     }
 
+    @Test
+    fun `syncRegion does not update marker when upsertAll throws`() {
+        val auctionHouseRepository = mockk<AuctionHouseRepository>()
+        val tsmPublicDataClient = mockk<TsmPublicDataClient>()
+        val tsmRegionMetricRepository = mockk<TsmRegionMetricRepository>()
+        val auctionHouseService = mockk<AuctionHouseService>()
+
+        every { auctionHouseRepository.findByConnectedId(europeCommodityId) } returns
+            Optional.of(commodityAuctionHouse())
+        every { tsmPublicDataClient.downloadItems(Region.Europe) } returns listOf(csvRow(39, "0.25"))
+        every { tsmPublicDataClient.downloadPets(Region.Europe) } returns emptyList()
+        every { tsmRegionMetricRepository.upsertAll(any()) } throws IllegalStateException("upsert failed")
+
+        val service =
+            service(
+                auctionHouseRepository = auctionHouseRepository,
+                tsmPublicDataClient = tsmPublicDataClient,
+                tsmRegionMetricRepository = tsmRegionMetricRepository,
+                auctionHouseService = auctionHouseService,
+            )
+
+        service.syncRegion(Region.Europe, zone)
+
+        verify(exactly = 1) { tsmRegionMetricRepository.upsertAll(any()) }
+        verify(exactly = 0) { auctionHouseService.updateLastTsmRegionSync(any(), any()) }
+    }
+
+    @Test
+    fun `syncRegion does not treat marker update of zero rows as success`() {
+        val auctionHouseRepository = mockk<AuctionHouseRepository>()
+        val tsmPublicDataClient = mockk<TsmPublicDataClient>()
+        val tsmRegionMetricRepository = mockk<TsmRegionMetricRepository>()
+        val auctionHouseService = mockk<AuctionHouseService>()
+
+        every { auctionHouseRepository.findByConnectedId(europeCommodityId) } returns
+            Optional.of(commodityAuctionHouse())
+        every { tsmPublicDataClient.downloadItems(Region.Europe) } returns listOf(csvRow(39, "0.25"))
+        every { tsmPublicDataClient.downloadPets(Region.Europe) } returns emptyList()
+        every { tsmRegionMetricRepository.upsertAll(any()) } returns 1
+        every {
+            auctionHouseService.updateLastTsmRegionSync(
+                europeCommodityId,
+                now.toKotlinInstant(),
+            )
+        } returns 0
+
+        val service =
+            service(
+                auctionHouseRepository = auctionHouseRepository,
+                tsmPublicDataClient = tsmPublicDataClient,
+                tsmRegionMetricRepository = tsmRegionMetricRepository,
+                auctionHouseService = auctionHouseService,
+            )
+
+        service.syncRegion(Region.Europe, zone)
+
+        // update was attempted once; zero rows means failure logged, not Completed
+        verify(exactly = 1) {
+            auctionHouseService.updateLastTsmRegionSync(
+                europeCommodityId,
+                now.toKotlinInstant(),
+            )
+        }
+    }
+
     private fun service(
         auctionHouseRepository: AuctionHouseRepository = mockk(),
         tsmPublicDataClient: TsmPublicDataClient = mockk(),
@@ -179,6 +288,13 @@ class TsmRegionSyncServiceTest {
         clock = clock,
         scheduleZone = "GMT+1",
     )
+
+    private fun commodityAuctionHouse(lastTsmRegionSync: Instant? = null) =
+        AuctionHouseDbo(
+            connectedId = europeCommodityId,
+            region = Region.Europe,
+            lastTsmRegionSync = lastTsmRegionSync,
+        )
 
     private fun csvRow(
         subjectId: Int,
