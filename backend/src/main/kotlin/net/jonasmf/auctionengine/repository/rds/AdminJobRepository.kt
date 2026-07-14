@@ -74,6 +74,21 @@ class AdminJobRepository(
         )
     }
 
+    fun updateJobProgress(
+        id: Long,
+        progress: Map<String, Any?>,
+    ) {
+        jdbcTemplate.update(
+            """
+            UPDATE admin_job
+            SET summary_json = ?
+            WHERE id = ? AND status = 'running'
+            """.trimIndent(),
+            objectMapper.writeValueAsString(progress),
+            id,
+        )
+    }
+
     fun findJob(id: Long): AdminJob? =
         jdbcTemplate
             .query(

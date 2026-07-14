@@ -58,8 +58,29 @@
           [attr.aria-live]="professionJobRunning() ? 'polite' : null"
           [attr.role]="professionJobFailed() ? 'alert' : 'status'"
         >
-          <div class="grid gap-1">
-            <p class="font-semibold text-on-surface">{{ professionJobTitle() }}</p>
+          <div class="grid min-w-0 flex-1 gap-2">
+            <p class="font-semibold text-on-surface">
+              {{
+                professionJobRunning()
+                  ? (professionJobProgress()?.primary ?? professionJobTitle())
+                  : professionJobTitle()
+              }}
+            </p>
+            @if (professionJobRunning() && professionJobProgress()?.percent != null) {
+              <div
+                class="h-2 overflow-hidden rounded-full bg-surface-container-high"
+                role="progressbar"
+                [attr.aria-valuemin]="0"
+                [attr.aria-valuemax]="100"
+                [attr.aria-valuenow]="professionJobProgress()?.percent ?? 0"
+                [attr.aria-label]="professionJobProgress()?.primary ?? professionJobTitle()"
+              >
+                <div
+                  class="h-full rounded-full bg-primary transition-[width] duration-300 ease-out"
+                  [style.width.%]="professionJobProgress()?.percent ?? 0"
+                ></div>
+              </div>
+            }
             @if (professionJobSummary()) {
               <p class="ee-data text-outline">{{ professionJobSummary() }}</p>
             }

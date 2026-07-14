@@ -78,7 +78,7 @@ describe('RecipesPage', () => {
     expect(recipeService.syncProfessionRecipes).toHaveBeenCalledOnce();
     expect(jobService.trackJob).toHaveBeenCalledWith(runningProfessionJob);
     expect(professionSyncButton().disabled).toBe(true);
-    expect(fixture.nativeElement.textContent).toContain('Profession sync is running');
+    expect(fixture.nativeElement.textContent).toContain('Starting profession sync');
   });
 
   it('rehydrates a running profession sync and tracks it for polling', async () => {
@@ -89,7 +89,7 @@ describe('RecipesPage', () => {
     expect(recipeService.getActiveProfessionSyncJob).toHaveBeenCalledOnce();
     expect(jobService.trackJob).toHaveBeenCalledWith(runningProfessionJob);
     expect(professionSyncButton().disabled).toBe(true);
-    expect(fixture.nativeElement.textContent).toContain('Profession sync is running');
+    expect(fixture.nativeElement.textContent).toContain('Starting profession sync');
   });
 
   it('ignores a missing active profession sync', async () => {

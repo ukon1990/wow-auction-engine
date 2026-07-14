@@ -39,7 +39,11 @@ import { AdminRecipeComparePanelComponent } from './admin-recipe-compare-panel.c
 import { AdminRecipeOverrideFormComponent } from './admin-recipe-override-form.component';
 import { AdminRecipeService } from './admin-recipe.service';
 import { createAdminRecipeColumns } from './admin-recipes-table.columns';
-import { professionSyncJobSummary, professionSyncJobTitle } from './profession-sync-job-summary';
+import {
+  professionSyncJobSummary,
+  professionSyncJobTitle,
+  professionSyncJobProgress,
+} from './profession-sync-job-summary';
 import {
   AdminRecipeFilterState,
   defaultAdminRecipeFilters,
@@ -194,6 +198,10 @@ export class RecipesPage {
   protected readonly professionJobSummary = computed(() => {
     const job = this.professionJob();
     return job ? professionSyncJobSummary(job) : null;
+  });
+  protected readonly professionJobProgress = computed(() => {
+    const job = this.professionJob();
+    return job ? professionSyncJobProgress(job) : null;
   });
   protected readonly professionJobRunning = computed(
     () => this.professionJob()?.status === AdminJob.StatusEnum.Running,

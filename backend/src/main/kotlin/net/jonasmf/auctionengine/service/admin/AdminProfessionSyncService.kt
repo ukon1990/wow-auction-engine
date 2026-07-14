@@ -22,6 +22,18 @@ class AdminProfessionSyncService(
     private val log = LoggerFactory.getLogger(AdminProfessionSyncService::class.java)
 
     fun syncProfessionRecipes(requestedBy: String?): AdminJob {
+        if (!professionRecipeSyncGuard.isLockHeld()) {
+            adminJobRepository
+                .findRunningJob(AdminJobDomain.PROFESSION, AdminJobOperations.SYNC_PROFESSIONS)
+                ?.let { staleJob ->
+                    adminJobRepository.failJob(staleJob.id, AdminJobOperations.STALE_PROFESSION_SYNC_MESSAGE)
+                    log.warn(
+                        "Marked stale profession/recipe sync job id={} as failed before starting a new sync",
+                        staleJob.id,
+                    )
+                }
+        }
+
         val syncLock = professionRecipeSyncGuard.tryAcquire()
         if (syncLock == null) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Profession/recipe sync is already running")
@@ -57,7 +69,12 @@ class AdminProfessionSyncService(
         val startTime = System.currentTimeMillis()
         log.info("Starting profession/recipe sync job id={}", jobId)
         try {
-            val result = professionRecipeSyncService.syncConfiguredStaticDataRegion(syncLock::ensureActive)
+            val result = professionRecipeSyncService.syncConfiguredStaticDataRegion(
+                lockCheck = syncLock::ensureActive,
+                onProgress = { progress ->
+                    adminJobRepository.updateJobProgress(jobId, progress.toSummaryMap())
+                },
+            )
             syncLock.ensureActive()
             adminJobRepository.completeJob(jobId, result.toSummaryMap())
             log.info(
