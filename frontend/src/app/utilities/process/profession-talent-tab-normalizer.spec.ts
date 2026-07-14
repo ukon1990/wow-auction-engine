@@ -181,6 +181,49 @@ describe('profession-talent-tab-normalizer', () => {
     expect(milestone?.description?.length ?? 0).toBeLessThanOrEqual(4096);
   });
 
+  it('uses node max ranks when entry definitions under-report rank limits', () => {
+    const tab = normalizeTalentTab({
+      treeID: 1068,
+      paths: [
+        {
+          nodeID: 119324,
+          nodeName: 'Thread Processing',
+          nodeInfo: { maxRanks: 30, activeRank: 12, currentRank: 12 },
+          entries: [{ entryID: 119324, definitionInfo: { maxRanks: 1 } }],
+        },
+      ],
+      edges: [],
+    });
+
+    const node = tab!.nodes.find((candidate) => candidate.nodeId === 119324);
+    expect(node?.maxRanks).toBe(30);
+    expect(node?.entries[0]?.rankLimit).toBe(30);
+    expect(tab?.allocations).toEqual([{ nodeId: 119324, entryId: 119324, rank: 12 }]);
+  });
+
+  it('routes definition tooltip text from entry names into descriptions', () => {
+    const tooltip =
+      'Learn a sub-specialization of your choice.|n|nGain the ability to use Polishing Cloth to apply finishing touches to your designs.';
+    const tab = normalizeTalentTab({
+      treeID: 1068,
+      paths: [
+        {
+          nodeID: 104566,
+          nodeName: 'Polishing Cloth',
+          nodeInfo: { maxRanks: 1, activeRank: 1, currentRank: 1 },
+          entries: [{ entryID: 104566, definitionInfo: { name: tooltip } }],
+        },
+      ],
+      edges: [],
+    });
+
+    const node = tab!.nodes.find((candidate) => candidate.nodeId === 104566);
+    expect(node?.name).toBe('Polishing Cloth');
+    expect(node?.entries[0]?.name).toBeUndefined();
+    expect(node?.entries[0]?.description).toBe(tooltip);
+    expect(node?.entries[0]?.description?.length ?? 0).toBeLessThanOrEqual(4096);
+  });
+
   it('keeps legacy flat nodes when structured collections are absent', () => {
     const tab = normalizeTalentTab({
       treeID: 999,

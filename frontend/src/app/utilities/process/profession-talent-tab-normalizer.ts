@@ -2,7 +2,11 @@ import {
   resolveTalentParentNodeIds,
   type TalentPathEdge,
 } from './profession-talent-parent-inference';
-import { boundedDescription, boundedName } from './normalized-string-bounds';
+import {
+  boundedDescription,
+  boundedName,
+  looksLikeTalentDescription,
+} from './normalized-string-bounds';
 
 export interface NormalizedTalentEntry {
   readonly entryId: number;
@@ -40,8 +44,8 @@ export function normalizeTalentTab(tab: Record<string, unknown>): NormalizedTale
   const tabId = asInt(tab['treeID']);
   if (tabId === null) return null;
   const tabInfo = asRecord(tab['tabInfo']);
-  const name = asText(tabInfo['name']) ?? undefined;
-  const description = asText(tabInfo['description']) ?? undefined;
+  const name = boundedName(asText(tabInfo['name']) ?? undefined);
+  const description = boundedDescription(asText(tabInfo['description']) ?? undefined);
 
   if (usesStructuredTabLayout(tab)) {
     return normalizeStructuredTalentTab(tab, tabId, name, description);
@@ -138,7 +142,7 @@ function normalizePathNode(raw: Record<string, unknown>): {
     asInt(activeEntry['entryID']) ?? asInt(nodeInfo['activeEntryID']) ?? nodeId;
   const entries =
     sourceEntries.length > 0
-      ? sourceEntries.flatMap((entry) => normalizeEntry(entry))
+      ? sourceEntries.flatMap((entry) => normalizeEntry(entry, maxRanks))
       : [
           {
             entryId: defaultEntryId,
@@ -234,7 +238,7 @@ function normalizeLegacyNode(raw: Record<string, unknown>): {
       asText(raw['nodeName']) ??
       asText(nodeInfo['overrideName']) ??
       asText(nodeInfo['name']) ??
-      sourceEntries.map(entryName).find((value) => value !== null) ??
+      sourceEntries.map(talentEntryName).find((value) => value !== undefined) ??
       undefined,
   );
   const description = boundedDescription(
@@ -242,7 +246,7 @@ function normalizeLegacyNode(raw: Record<string, unknown>): {
   );
   const maxRanks = asInt(nodeInfo['maxRanks']) ?? asInt(nodeInfo['totalMaxRanks']) ?? undefined;
   const requiredRank = asInt(raw['unlockRank']) ?? undefined;
-  const entries = sourceEntries.flatMap((entry) => normalizeEntry(entry));
+  const entries = sourceEntries.flatMap((entry) => normalizeEntry(entry, maxRanks));
   const entryId = asInt(activeEntry['entryID']) ?? asInt(nodeInfo['activeEntryID']);
   const rank =
     asInt(activeEntry['rank']) ?? asInt(nodeInfo['currentRank']) ?? asInt(nodeInfo['activeRank']);
@@ -263,24 +267,34 @@ function normalizeLegacyNode(raw: Record<string, unknown>): {
   };
 }
 
-function normalizeEntry(entry: Record<string, unknown>): NormalizedTalentEntry[] {
+function normalizeEntry(
+  entry: Record<string, unknown>,
+  nodeMaxRanks?: number,
+): NormalizedTalentEntry[] {
   const entryId = asInt(entry['entryID']);
   if (entryId === null) return [];
   const entryInfo = asRecord(entry['entryInfo']);
   const definitionInfo = asRecord(entry['definitionInfo']);
-  const name = entryName(entry) ?? undefined;
-  const rankLimit = asInt(entryInfo['maxRanks']) ?? asInt(definitionInfo['maxRanks']) ?? undefined;
-  const description = boundedDescription(
-    asText(definitionInfo['overrideDescription']) ?? undefined,
-  );
+  const name = talentEntryName(entry);
+  const entryRankLimit =
+    asInt(entryInfo['maxRanks']) ?? asInt(definitionInfo['maxRanks']) ?? undefined;
+  const rankLimit = resolveEntryRankLimit(nodeMaxRanks, entryRankLimit);
+  const description = talentEntryDescription(entry);
   return [
     {
       entryId,
-      ...(boundedName(name) ? { name: boundedName(name) } : {}),
+      ...(name ? { name } : {}),
       ...(rankLimit !== undefined ? { rankLimit } : {}),
       ...(description ? { description } : {}),
     },
   ];
+}
+
+function resolveEntryRankLimit(nodeMaxRanks?: number, entryRankLimit?: number): number | undefined {
+  if (nodeMaxRanks !== undefined && entryRankLimit !== undefined) {
+    return Math.max(nodeMaxRanks, entryRankLimit);
+  }
+  return nodeMaxRanks ?? entryRankLimit;
 }
 
 function pathNodeName(raw: Record<string, unknown>): string | undefined {
@@ -307,14 +321,22 @@ function milestoneNodeDescription(raw: Record<string, unknown>): string | undefi
   return asText(raw['nodeDescription']) ?? undefined;
 }
 
-function entryName(entry: Record<string, unknown>): string | null {
+function talentEntryName(entry: Record<string, unknown>): string | undefined {
   const definitionInfo = asRecord(entry['definitionInfo']);
-  return (
-    asText(definitionInfo['overrideName']) ??
-    asText(definitionInfo['name']) ??
-    asText(entry['overrideName']) ??
-    asText(entry['name'])
-  );
+  const overrideName = asText(definitionInfo['overrideName']) ?? asText(entry['overrideName']);
+  if (overrideName) return boundedName(overrideName);
+  const rawName = asText(definitionInfo['name']) ?? asText(entry['name']);
+  if (rawName && !looksLikeTalentDescription(rawName)) return boundedName(rawName);
+  return undefined;
+}
+
+function talentEntryDescription(entry: Record<string, unknown>): string | undefined {
+  const definitionInfo = asRecord(entry['definitionInfo']);
+  const overrideDescription = asText(definitionInfo['overrideDescription']);
+  if (overrideDescription) return boundedDescription(overrideDescription);
+  const rawName = asText(definitionInfo['name']) ?? asText(entry['name']);
+  if (rawName && looksLikeTalentDescription(rawName)) return boundedDescription(rawName);
+  return undefined;
 }
 
 function childPathIdsByNode(nodes: readonly Record<string, unknown>[]): Map<number, number[]> {

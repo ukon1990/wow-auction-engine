@@ -4,7 +4,10 @@
     {
       "id": "market-browser",
       "summary": "Auction market browser and item detail",
-      "match": { "title": ["market browser", "item search", "auction search"], "labelsAny": ["frontend"] },
+      "match": {
+        "title": ["market browser", "item search", "auction search"],
+        "labelsAny": ["frontend"]
+      },
       "implementedWhen": {
         "all": [
           {
@@ -22,7 +25,10 @@
     {
       "id": "crafting-browser",
       "summary": "Crafting market browser and recipe search",
-      "match": { "title": ["crafting", "recipe search"], "labelsAny": ["frontend"] },
+      "match": {
+        "title": ["crafting", "recipe search"],
+        "labelsAny": ["frontend"]
+      },
       "implementedWhen": {
         "all": [
           {
@@ -40,7 +46,10 @@
     {
       "id": "admin-status",
       "summary": "Admin server status and SQL editor",
-      "match": { "title": ["admin", "server status", "sql editor"], "labelsAny": ["admin"] },
+      "match": {
+        "title": ["admin", "server status", "sql editor"],
+        "labelsAny": ["admin"]
+      },
       "implementedWhen": {
         "all": [
           {
@@ -58,7 +67,10 @@
     {
       "id": "user-auth",
       "summary": "User registration and login",
-      "match": { "title": ["login", "registration", "auth"], "labelsAny": ["security"] },
+      "match": {
+        "title": ["login", "registration", "auth"],
+        "labelsAny": ["security"]
+      },
       "implementedWhen": {
         "all": [
           {
@@ -76,7 +88,10 @@
     {
       "id": "localization",
       "summary": "Angular localization with XLF catalogs",
-      "match": { "title": ["localization", "i18n", "translate"], "labelsAny": ["i18n"] },
+      "match": {
+        "title": ["localization", "i18n", "translate"],
+        "labelsAny": ["i18n"]
+      },
       "implementedWhen": {
         "all": [
           { "path": "frontend/src/locale/messages.xlf" },
@@ -84,6 +99,100 @@
             "grep": {
               "pattern": "i18nMissingTranslation",
               "paths": ["frontend/angular.json"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "profession-profiles-foundation",
+      "summary": "Profession profiles foundation — import, profiles UI, heuristic crafting fit (#95)",
+      "match": {
+        "number": 95,
+        "title": [
+          "profession profiles foundation",
+          "skill tree profiles",
+          "heuristic crafting fit"
+        ]
+      },
+      "implementedWhen": {
+        "all": [
+          {
+            "path": "frontend/src/app/features/profile/professions/profession-profiles.page.ts"
+          },
+          {
+            "path": "backend/src/main/kotlin/net/jonasmf/auctionengine/controller/ProfileController.kt"
+          },
+          {
+            "grep": {
+              "pattern": "findCraftingCandidates|profileFit",
+              "paths": ["backend/src/main/kotlin/net/jonasmf/auctionengine"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "recipe-crafting-rules",
+      "summary": "Persist global recipe crafting rules for quality evaluation (#92)",
+      "match": {
+        "number": 92,
+        "title": [
+          "recipe crafting rules",
+          "quality evaluation",
+          "qualityThresholds"
+        ]
+      },
+      "implementedWhen": {
+        "all": [
+          {
+            "grep": {
+              "pattern": "recipe_crafting_rule|RecipeCraftingRule",
+              "paths": ["backend/src/main"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "talent-tree-effects",
+      "summary": "Structured talent effects from AuctionHelper spec catalog (#93)",
+      "match": {
+        "number": 93,
+        "title": ["talent effects", "spec catalog", "milestone"]
+      },
+      "implementedWhen": {
+        "all": [
+          {
+            "grep": {
+              "pattern": "profession_skill_tree_node_effect|TalentTreeEffect|specCatalog",
+              "paths": ["backend/src/main"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "profile-craftability",
+      "summary": "Profile-aware craftability on crafting search (#94)",
+      "match": {
+        "number": 94,
+        "title": ["craftability", "profile talent allocations", "profileFit"]
+      },
+      "implementedWhen": {
+        "all": [
+          {
+            "grep": {
+              "pattern": "CraftabilityEvaluation|evaluateCraftability|predictedQuality",
+              "paths": ["backend/src/main"]
+            }
+          },
+          {
+            "grep": {
+              "pattern": "predictedQuality|craftable",
+              "paths": [
+                "openapi/components/schemas/crafting-profile-candidate.yml"
+              ]
             }
           }
         ]

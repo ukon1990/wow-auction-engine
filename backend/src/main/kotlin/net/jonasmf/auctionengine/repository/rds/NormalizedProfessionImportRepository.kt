@@ -227,7 +227,7 @@ class NormalizedProfessionImportRepository(
                         entry.entryId,
                         entry.name,
                         entry.description,
-                        entry.rankLimit ?: node.maxRanks ?: 1,
+                        listOfNotNull(entry.rankLimit, node.maxRanks).maxOrNull() ?: 1,
                         entryOrder,
                     )
                 }

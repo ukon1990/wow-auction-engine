@@ -97,9 +97,7 @@ export async function processAuctionHelperFiles(
         name: profession.name ?? String(profession.skillLineId),
         ...(profession.skillLevel !== null ? { skillLevel: profession.skillLevel } : {}),
         recipes: profession.recipes.map(toApiRecipe),
-        ...(profession.talents
-          ? { talents: profession.talents }
-          : talentsForProfession(decodedTalents, profession.skillLineId)),
+        ...talentsForProfession(profession.talents, decodedTalents, profession.skillLineId),
       })),
     })),
   };
@@ -219,47 +217,85 @@ function optionalBoolean<K extends string>(
   return value === null ? {} : ({ [key]: value } as Record<K, boolean>);
 }
 
+type LocalTalentSnapshot = Readonly<{
+  trees: ReadonlyArray<{
+    treeId: number;
+    skillLineId: number;
+    expansionId: number;
+    name?: string | null;
+    tabs: ReadonlyArray<{
+      tabId: number;
+      name?: string | null;
+      description?: string | null;
+      nodes: ReadonlyArray<{
+        nodeId: number;
+        name?: string | null;
+        maxRanks?: number | null;
+        requiredRank?: number | null;
+        description?: string | null;
+        parentNodeIds: readonly number[];
+        entries: ReadonlyArray<{
+          entryId: number;
+          name?: string | null;
+          rankLimit?: number | null;
+          description?: string | null;
+        }>;
+      }>;
+    }>;
+  }>;
+  allocations: ReadonlyArray<{ nodeId: number; entryId: number; rank: number }>;
+}>;
+
 function talentsForProfession(
+  embeddedTalents: LocalTalentSnapshot | null,
   decoded: ReturnType<typeof decodeAuctionHelperTalentExport> | null,
   skillLineId: number,
 ): { talents?: NormalizedAuctionHelperTalents } {
+  if (embeddedTalents) return { talents: toApiTalents(embeddedTalents) };
   const profession = decoded?.professions.find(
     (candidate) => candidate.skillLineId === skillLineId,
   );
   if (!profession) return {};
+  return { talents: toApiTalents(profession) };
+}
+
+function toApiTalents(talents: LocalTalentSnapshot): NormalizedAuctionHelperTalents {
   return {
-    talents: {
-      trees: profession.trees.map((tree) => ({
-        treeId: tree.treeId,
-        skillLineId: tree.skillLineId,
-        expansionId: tree.expansionId,
-        ...(tree.name ? { name: tree.name } : {}),
-        tabs: tree.tabs.map((tab) => ({
-          tabId: tab.tabId,
-          ...(tab.name ? { name: tab.name } : {}),
-          ...(tab.description ? { description: tab.description } : {}),
-          nodes: tab.nodes.map((node) => ({
-            nodeId: node.nodeId,
-            ...(boundedName(node.name) ? { name: boundedName(node.name) } : {}),
-            ...(node.maxRanks !== null ? { maxRanks: node.maxRanks } : {}),
-            ...(node.requiredRank !== null ? { requiredRank: node.requiredRank } : {}),
-            ...(boundedDescription(node.description)
-              ? { description: boundedDescription(node.description) }
-              : {}),
-            parentNodeIds: [...node.parentNodeIds],
-            entries: node.entries.map((entry) => ({
+    trees: talents.trees.map((tree) => ({
+      treeId: tree.treeId,
+      skillLineId: tree.skillLineId,
+      expansionId: tree.expansionId,
+      ...(boundedName(tree.name) ? { name: boundedName(tree.name) } : {}),
+      tabs: tree.tabs.map((tab) => ({
+        tabId: tab.tabId,
+        ...(boundedName(tab.name) ? { name: boundedName(tab.name) } : {}),
+        ...(boundedDescription(tab.description)
+          ? { description: boundedDescription(tab.description) }
+          : {}),
+        nodes: tab.nodes.map((node) => ({
+          nodeId: node.nodeId,
+          ...(boundedName(node.name) ? { name: boundedName(node.name) } : {}),
+          ...(node.maxRanks != null && node.maxRanks > 0 ? { maxRanks: node.maxRanks } : {}),
+          ...(node.requiredRank != null ? { requiredRank: node.requiredRank } : {}),
+          ...(boundedDescription(node.description)
+            ? { description: boundedDescription(node.description) }
+            : {}),
+          parentNodeIds: [...node.parentNodeIds],
+          entries: node.entries.map((entry) => {
+            const rankLimit = entry.rankLimit ?? node.maxRanks;
+            return {
               entryId: entry.entryId,
               ...(boundedName(entry.name) ? { name: boundedName(entry.name) } : {}),
-              ...(entry.rankLimit !== null ? { rankLimit: entry.rankLimit } : {}),
+              ...(rankLimit != null && rankLimit > 0 ? { rankLimit } : {}),
               ...(boundedDescription(entry.description)
                 ? { description: boundedDescription(entry.description) }
                 : {}),
-            })),
-          })),
+            };
+          }),
         })),
       })),
-      allocations: profession.allocations.map((allocation) => ({ ...allocation })),
-    },
+    })),
+    allocations: talents.allocations.map((allocation) => ({ ...allocation })),
   };
 }
 

@@ -133,7 +133,7 @@ class NormalizedAuctionHelperProfessionInspectionService(
                         diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_ALLOCATION_MISSING_ENTRY)
                     } else {
                         val entry = node.propertyEntries.first { it.entryId == allocation.entryId }
-                        val rankLimit = listOfNotNull(node.maxRanks, entry.rankLimit).minOrNull()
+                        val rankLimit = listOfNotNull(entry.rankLimit, node.maxRanks).maxOrNull()
                         if (rankLimit != null && allocation.rank > rankLimit) {
                             badRequest("Talent allocation rank exceeds the limit for entry ${allocation.entryId}")
                         }

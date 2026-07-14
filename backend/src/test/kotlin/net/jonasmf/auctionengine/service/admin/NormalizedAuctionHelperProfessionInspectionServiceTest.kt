@@ -221,6 +221,35 @@ class NormalizedAuctionHelperProfessionInspectionServiceTest {
     }
 
     @Test
+    fun `accepts path allocations when entry rank limit is lower than node max ranks`() {
+        val payload = normalizedPayload()
+        val profession = payload.characters.single().professions.single()
+        val node =
+            NormalizedAuctionHelperTalentNode(
+                nodeId = 119324,
+                maxRanks = 30,
+                propertyEntries = listOf(NormalizedAuctionHelperTalentEntry(entryId = 119324, rankLimit = 1)),
+            )
+        val talents =
+            NormalizedAuctionHelperTalents(
+                trees =
+                    listOf(
+                        NormalizedAuctionHelperTalentTree(
+                            treeId = 123,
+                            skillLineId = 2872,
+                            expansionId = 11,
+                            tabs = listOf(NormalizedAuctionHelperTalentTab(tabId = 999, nodes = listOf(node))),
+                        ),
+                    ),
+                allocations = listOf(net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentAllocation(119324, 119324, 12)),
+            )
+
+        val result = service.inspect(payload.withProfession(profession.copy(talents = talents)))
+
+        assertThat(result.imported).isTrue()
+    }
+
+    @Test
     fun `rejects a talent relationship whose parent is absent from the config`() {
         val payload = normalizedPayload()
         val profession = payload.characters.single().professions.single()
