@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
 
 enum class DeletedAuctionCleanupType(
     val tableName: String,
@@ -22,11 +20,7 @@ data class DeletedAuctionCleanupRunResult(
     val type: DeletedAuctionCleanupType,
     val connectedRealmId: Int?,
     val cutoff: Instant,
-    val candidateCount: Long,
     val deletedRows: Int,
-    val batchCount: Int,
-    val optimized: Boolean,
-    val dryRun: Boolean,
 )
 
 @Service
@@ -38,159 +32,107 @@ class DeletedAuctionCleanupService(
 ) {
     private val logger = LoggerFactory.getLogger(DeletedAuctionCleanupService::class.java)
 
-    fun cleanupHourlyStats(): DeletedAuctionCleanupRunResult =
-        cleanupStats(
+    fun cleanupHourlyStats(): List<DeletedAuctionCleanupRunResult> =
+        cleanup(
             type = DeletedAuctionCleanupType.HOURLY_STATS,
             cutoff = clock.instant().minus(properties.hourlyRetention),
-            findRealm = cleanupRepository::findNextHourlyCleanupRealm,
-            countCandidates = cleanupRepository::countHourlyCleanupCandidates,
-            deleteBatch = cleanupRepository::deleteHourlyBatch,
+            findRealms = cleanupRepository::findNextHourlyCleanupRealms,
+            deleteAction = cleanupRepository::deleteHourlyBeforeOrEqualToCutoff,
             updateMarker = auctionHouseRepository::updateLastHistoryDeleteEvent,
         )
 
-    fun cleanupDailyStats(): DeletedAuctionCleanupRunResult =
-        cleanupStats(
+    fun cleanupDailyStats(): List<DeletedAuctionCleanupRunResult> =
+        cleanup(
             type = DeletedAuctionCleanupType.DAILY_STATS,
             cutoff = clock.instant().minus(properties.dailyRetention),
-            findRealm = cleanupRepository::findNextDailyCleanupRealm,
-            countCandidates = cleanupRepository::countDailyCleanupCandidates,
-            deleteBatch = cleanupRepository::deleteDailyBatch,
+            findRealms = cleanupRepository::findNextDailyCleanupRealms,
+            deleteAction = cleanupRepository::deleteDailyBeforeOrEqualToCutoff,
             updateMarker = auctionHouseRepository::updateLastHistoryDeleteEventDaily,
         )
 
-    fun cleanupPriceHistory(): DeletedAuctionCleanupRunResult =
-        cleanupInstant(
+    fun cleanupPriceHistory(): List<DeletedAuctionCleanupRunResult> =
+        cleanup(
             type = DeletedAuctionCleanupType.PRICE_HISTORY,
             cutoff = clock.instant().minus(properties.priceRetention),
-            findRealm = cleanupRepository::findNextPriceCleanupRealm,
-            countCandidates = cleanupRepository::countPriceCleanupCandidates,
-            deleteBatch = cleanupRepository::deletePriceBatch,
-            updateMarker = auctionHouseRepository::updateLastHistoryDeleteEvent,
-        )
-
-    private fun cleanupStats(
-        type: DeletedAuctionCleanupType,
-        cutoff: Instant,
-        findRealm: (LocalDate) -> Int?,
-        countCandidates: (Int, LocalDate) -> Long,
-        deleteBatch: (Int, LocalDate, Int) -> Int,
-        updateMarker: (Int, Instant) -> Int,
-    ): DeletedAuctionCleanupRunResult {
-        val cutoffDate = LocalDate.ofInstant(cutoff, ZoneOffset.UTC)
-        return cleanup(
-            type = type,
-            cutoff = cutoff,
-            findRealm = { findRealm(cutoffDate) },
-            countCandidates = { connectedRealmId -> countCandidates(connectedRealmId, cutoffDate) },
-            deleteBatch = { connectedRealmId -> deleteBatch(connectedRealmId, cutoffDate, properties.batchSize) },
-            updateMarker = updateMarker,
-        )
-    }
-
-    private fun cleanupInstant(
-        type: DeletedAuctionCleanupType,
-        cutoff: Instant,
-        findRealm: (Instant) -> Int?,
-        countCandidates: (Int, Instant) -> Long,
-        deleteBatch: (Int, Instant, Int) -> Int,
-        updateMarker: (Int, Instant) -> Int,
-    ): DeletedAuctionCleanupRunResult =
-        cleanup(
-            type = type,
-            cutoff = cutoff,
-            findRealm = { findRealm(cutoff) },
-            countCandidates = { connectedRealmId -> countCandidates(connectedRealmId, cutoff) },
-            deleteBatch = { connectedRealmId -> deleteBatch(connectedRealmId, cutoff, properties.batchSize) },
-            updateMarker = updateMarker,
+            findRealms = cleanupRepository::findNextPriceCleanupRealms,
+            deleteAction = cleanupRepository::deletePriceForRealmBeforeOrEqualToCutoff,
+            updateMarker = auctionHouseRepository::updateLastAuctionPriceDeleteEvent,
         )
 
     private fun cleanup(
         type: DeletedAuctionCleanupType,
         cutoff: Instant,
-        findRealm: () -> Int?,
-        countCandidates: (Int) -> Long,
-        deleteBatch: (Int) -> Int,
+        findRealms: () -> List<Int?>,
+        deleteAction: (Int, Instant) -> Int,
         updateMarker: (Int, Instant) -> Int,
-    ): DeletedAuctionCleanupRunResult {
+    ): List<DeletedAuctionCleanupRunResult> {
         if (!properties.enabled) {
             logger.info("Skipping {} cleanup because deleted auction cleanup is disabled.", type)
-            return emptyResult(type, cutoff)
+            return listOf(emptyResult(type, cutoff))
         }
 
-        val connectedRealmId = findRealm()
-        if (connectedRealmId == null) {
-            val optimized = optimizeWhenEnabled(type)
-            return DeletedAuctionCleanupRunResult(type, null, cutoff, 0, 0, 0, optimized, properties.dryRun)
-        }
+        val connectedRealmIds = findRealms().filterNotNull()
+        val deletionsPerConnectedRealm = mutableListOf<DeletedAuctionCleanupRunResult>()
 
-        val candidateCount = countCandidates(connectedRealmId)
-        if (properties.dryRun) {
-            logger.info(
-                "Dry-run {} cleanup found {} candidates for connected realm {} older than {}.",
-                type,
-                candidateCount,
-                connectedRealmId,
-                cutoff,
-            )
-            return DeletedAuctionCleanupRunResult(type, connectedRealmId, cutoff, candidateCount, 0, 0, false, true)
-        }
-
-        return try {
-            val (deletedRows, batchCount) = deleteAllBatches { deleteBatch(connectedRealmId) }
-            updateMarkerAfterSuccess(connectedRealmId, cutoff, updateMarker)
-            val optimized = if (findRealm() == null) optimizeWhenEnabled(type) else false
-            logger.info(
-                "Completed {} cleanup for connected realm {}. candidates={}, deletedRows={}, batches={}, cutoff={}",
-                type,
-                connectedRealmId,
-                candidateCount,
-                deletedRows,
-                batchCount,
-                cutoff,
-            )
-            DeletedAuctionCleanupRunResult(
-                type = type,
-                connectedRealmId = connectedRealmId,
-                cutoff = cutoff,
-                candidateCount = candidateCount,
-                deletedRows = deletedRows,
-                batchCount = batchCount,
-                optimized = optimized,
-                dryRun = false,
-            )
-        } catch (exception: RuntimeException) {
-            logger.warn(
-                "Failed {} cleanup for connected realm {}. Leaving work eligible for retry.",
-                type,
-                connectedRealmId,
-                exception,
-            )
-            DeletedAuctionCleanupRunResult(
-                type = type,
-                connectedRealmId = connectedRealmId,
-                cutoff = cutoff,
-                candidateCount = candidateCount,
-                deletedRows = 0,
-                batchCount = 0,
-                optimized = false,
-                dryRun = false,
-            )
-        }
-    }
-
-    private fun deleteAllBatches(deleteBatch: () -> Int): Pair<Int, Int> {
-        var totalDeleted = 0
-        var batches = 0
-        do {
-            val deleted = deleteBatch()
-            if (deleted > 0) {
-                totalDeleted += deleted
-                batches += 1
+        for (connectedRealmId in connectedRealmIds) {
+            val result = deleteOldHistoryForConnectedRealm(type, connectedRealmId, cutoff, deleteAction, updateMarker)
+            if (result != null && result.deletedRows > 0) {
+                deletionsPerConnectedRealm.add(result)
             }
-        } while (deleted == properties.batchSize)
-
-        return totalDeleted to batches
+        }
+        /*
+         * We only want to optimize the table, if there has been done deletions
+         * This allows me to not have to keep a value stored in memory or in the database for this.
+         * And Ideally, I'll get most realms at the same time, so we should be good here.
+         */
+        if (!deletionsPerConnectedRealm.isEmpty()) {
+            optimizeTable(type)
+        }
+        return deletionsPerConnectedRealm
     }
+
+    private fun deleteOldHistoryForConnectedRealm(
+        type: DeletedAuctionCleanupType,
+        connectedRealmId: Int,
+        cutoff: Instant,
+        deleteAction: (Int, Instant) -> Int,
+        updateMarker: (Int, Instant) -> Int,
+    ): DeletedAuctionCleanupRunResult? =
+        try {
+            try {
+                val deletedRows = deleteAction(connectedRealmId, cutoff)
+                updateMarkerAfterSuccess(connectedRealmId, cutoff, updateMarker)
+                logger.info(
+                    "Completed {} cleanup for connected realm {}. candidates={}, deletedRows={}, batches={}, cutoff={}",
+                    type,
+                    connectedRealmId,
+                    deletedRows,
+                    deletedRows,
+                    cutoff,
+                )
+                DeletedAuctionCleanupRunResult(
+                    type = type,
+                    connectedRealmId = connectedRealmId,
+                    cutoff = cutoff,
+                    deletedRows = deletedRows,
+                )
+            } catch (exception: RuntimeException) {
+                logger.warn(
+                    "Failed {} cleanup for connected realm {}. Leaving work eligible for retry.",
+                    type,
+                    connectedRealmId,
+                    exception,
+                )
+                DeletedAuctionCleanupRunResult(
+                    type = type,
+                    connectedRealmId = connectedRealmId,
+                    cutoff = cutoff,
+                    deletedRows = 0,
+                )
+            }
+        } catch (_: Exception) {
+            null
+        }
 
     private fun updateMarkerAfterSuccess(
         connectedRealmId: Int,
@@ -200,17 +142,12 @@ class DeletedAuctionCleanupService(
         updateMarker(connectedRealmId, cutoff)
     }
 
-    private fun optimizeWhenEnabled(type: DeletedAuctionCleanupType): Boolean {
-        if (!properties.optimizeEnabled || properties.dryRun) {
-            logger.info(
-                "No {} cleanup candidates remain. optimizeEnabled={}, dryRun={}.",
-                type,
-                properties.optimizeEnabled,
-                properties.dryRun,
-            )
-            return false
-        }
-
+    /**
+     * Optimizes the tables or re-building them.
+     * This is to make it so that we can clear up space in the database
+     * storage as we keep getting close to the 200 GB limit.
+     */
+    private fun optimizeTable(type: DeletedAuctionCleanupType): Boolean {
         val startedAt = clock.instant()
         logger.info("Starting OPTIMIZE TABLE {} after {} cleanup queue drained.", type.tableName, type)
         cleanupRepository.optimizeTable(type.tableName)
@@ -225,5 +162,5 @@ class DeletedAuctionCleanupService(
     private fun emptyResult(
         type: DeletedAuctionCleanupType,
         cutoff: Instant,
-    ) = DeletedAuctionCleanupRunResult(type, null, cutoff, 0, 0, 0, false, properties.dryRun)
+    ) = DeletedAuctionCleanupRunResult(type, null, cutoff, 0)
 }

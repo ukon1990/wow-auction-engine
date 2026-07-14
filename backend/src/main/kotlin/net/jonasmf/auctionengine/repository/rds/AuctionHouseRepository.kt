@@ -73,6 +73,21 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
     ): Int
 
     @Modifying
+    @Transactional
+    @Query(
+        """
+        UPDATE AuctionHouse a
+        SET a.lastAuctionPriceDeleteEvent = :lastAuctionPriceDeleteEvent
+        WHERE a.connectedId = :connectedRealmId
+    """,
+    )
+    fun updateLastAuctionPriceDeleteEvent(
+        connectedRealmId: Int,
+        lastAuctionPriceDeleteEvent: Instant,
+    ): Int
+
+    @Modifying
+    @Transactional
     @Query(
         """
         UPDATE AuctionHouse a

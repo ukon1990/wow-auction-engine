@@ -7,24 +7,18 @@ import java.time.Duration
 data class DeletedAuctionCleanupProperties(
     val enabled: Boolean = true,
     val hourlyRetention: Duration = Duration.ofDays(14),
-    val dailyRetention: Duration = Duration.ofDays(120),
-    val priceRetention: Duration = Duration.ofDays(7),
-    val batchSize: Int = 10_000,
-    val dryRun: Boolean = false,
-    val optimizeEnabled: Boolean = false,
+    val dailyRetention: Duration = Duration.ofDays(90),
+    val priceRetention: Duration = Duration.ofHours(48),
 ) {
-        init {
-            require(!hourlyRetention.isNegative && !hourlyRetention.isZero) {
-                "Hourly cleanup retention must be positive"
-            }
-            require(!dailyRetention.isNegative && !dailyRetention.isZero) {
-                "Daily cleanup retention must be positive"
-            }
-            require(!priceRetention.isNegative && !priceRetention.isZero) {
-                "Price cleanup retention must be positive"
-            }
-            require(batchSize > 0) {
-                "Cleanup batch size must be greater than zero"
-            }
+    init {
+        require(!hourlyRetention.isNegative && !hourlyRetention.isZero) {
+            "Hourly cleanup retention must be positive"
+        }
+        require(!dailyRetention.isNegative && !dailyRetention.isZero) {
+            "Daily cleanup retention must be positive"
+        }
+        require(!priceRetention.isNegative && !priceRetention.isZero) {
+            "Price cleanup retention must be positive"
         }
     }
+}

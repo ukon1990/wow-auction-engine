@@ -52,6 +52,8 @@ class AuctionHouse(
     @Nullable
     var lastDailyPriceUpdate: Instant? = null,
     @Nullable
+    var lastAuctionPriceDeleteEvent: Instant? = null,
+    @Nullable
     var lastHistoryDeleteEvent: Instant? = null,
     @Nullable
     var lastHistoryDeleteEventDaily: Instant? = null, // TODO: Probably redundant due to SQL query?

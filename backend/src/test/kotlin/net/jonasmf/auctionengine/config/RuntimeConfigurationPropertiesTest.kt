@@ -97,9 +97,6 @@ class RuntimeConfigurationPropertiesTest {
                 assertEquals(java.time.Duration.ofDays(21), properties.hourlyRetention)
                 assertEquals(java.time.Duration.ofDays(180), properties.dailyRetention)
                 assertEquals(java.time.Duration.ofDays(10), properties.priceRetention)
-                assertEquals(500, properties.batchSize)
-                assertEquals(true, properties.dryRun)
-                assertEquals(true, properties.optimizeEnabled)
             }
     }
 

@@ -59,13 +59,15 @@ app:
     profession-recipe-sync-startup-delay: PT30S
     profession-recipe-sync-startup-repeat-delay: P3650D
 
-    deleted-auction-cleanup-cron: "0 0 4 * * *"
+    deleted-auction-cleanup-cron: "0 0 * * * *"
     deleted-auction-cleanup-zone: GMT+1
+    deleted-auction-cleanup-startup-delay: PT1M
+    deleted-auction-cleanup-startup-repeat-delay: P3650D
     deleted-auction-cleanup:
       enabled: ${WAE_DELETED_AUCTION_CLEANUP_ENABLED:true}
       hourly-retention: ${WAE_DELETED_AUCTION_CLEANUP_HOURLY_RETENTION:P14D}
-      daily-retention: ${WAE_DELETED_AUCTION_CLEANUP_DAILY_RETENTION:P120D}
-      price-retention: ${WAE_DELETED_AUCTION_CLEANUP_PRICE_RETENTION:P7D}
+      daily-retention: ${WAE_DELETED_AUCTION_CLEANUP_DAILY_RETENTION:P90D}
+      price-retention: ${WAE_DELETED_AUCTION_CLEANUP_PRICE_RETENTION:PT48H}
       batch-size: ${WAE_DELETED_AUCTION_CLEANUP_BATCH_SIZE:10000}
       dry-run: ${WAE_DELETED_AUCTION_CLEANUP_DRY_RUN:false}
       optimize-enabled: ${WAE_DELETED_AUCTION_CLEANUP_OPTIMIZE_ENABLED:false}
