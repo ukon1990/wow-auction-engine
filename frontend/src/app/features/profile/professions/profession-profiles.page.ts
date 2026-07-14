@@ -18,6 +18,7 @@ import { PageFrameComponent, SelectInputComponent, TextInputComponent } from '@u
 import { UserRole } from '@api/auth/auth.model';
 import { AuthService } from '@core/services/auth.service';
 import { CharacterProfessionPreviewStorageService } from './character-profession-preview-storage.service';
+import { ProfessionSkillTreeEditor } from './profession-skill-tree-editor.component';
 
 const midnightExpansionId = 12;
 const professions = [
@@ -36,7 +37,14 @@ const professions = [
 
 @Component({
   selector: 'app-profession-profiles-page',
-  imports: [FormsModule, RouterLink, PageFrameComponent, SelectInputComponent, TextInputComponent],
+  imports: [
+    FormsModule,
+    RouterLink,
+    PageFrameComponent,
+    SelectInputComponent,
+    TextInputComponent,
+    ProfessionSkillTreeEditor,
+  ],
   templateUrl: './profession-profiles.page.html',
   host: { class: 'flex min-h-0 flex-1 flex-col' },
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -250,10 +258,32 @@ export class ProfessionProfilesPage {
     return this.selectedProfessionId().toString();
   }
 
+  protected treeOptions(): readonly { id: string; label: string }[] {
+    return this.trees().map((tree) => ({ id: String(tree.id), label: tree.name }));
+  }
+
+  protected async selectTree(value: string): Promise<void> {
+    const treeId = Number(value);
+    if (treeId === this.selectedTreeId()) return;
+    if (this.hasUnsavedChanges() && !this.confirmDiscardChanges()) return;
+    this.selectedTreeId.set(treeId);
+    this.allocations.set(new Map());
+    this.status.set(null);
+  }
+
   protected updateRank(node: ProfessionSkillTreeNode, entryId: number, change: number): void {
     const entry = node.entries.find((candidate) => candidate.id === entryId);
     if (!entry) return;
-    const nextRank = Math.max(0, Math.min(entry.rankLimit, this.rankFor(entryId) + change));
+    const currentRank = this.rankFor(entryId);
+    const nodeRank = node.entries.reduce(
+      (total, candidate) => total + this.rankFor(candidate.id),
+      0,
+    );
+    const availableNodeRanks = Math.max(0, node.maxRanks - (nodeRank - currentRank));
+    const nextRank = Math.max(
+      0,
+      Math.min(entry.rankLimit, availableNodeRanks, currentRank + change),
+    );
     this.allocations.update((current) => {
       const next = new Map(current);
       if (nextRank === 0) next.delete(entryId);

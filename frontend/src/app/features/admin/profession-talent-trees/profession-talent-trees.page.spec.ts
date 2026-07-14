@@ -7,7 +7,7 @@ import {
   selectSavedVariablesFiles,
 } from './profession-talent-trees.page';
 import { TestBed } from '@angular/core/testing';
-import { AdminApiService } from '@api/generated';
+import { AdminApiService, type NormalizedAuctionHelperProfession } from '@api/generated';
 import { ToastService } from '@core/services/toast.service';
 import { of, throwError } from 'rxjs';
 
@@ -246,7 +246,7 @@ describe('SavedVariables folder selection', () => {
   });
 
   function professionPreview() {
-    const profession = {
+    const profession: NormalizedAuctionHelperProfession = {
       professionId: 164,
       skillLineId: 164,
       name: 'Blacksmithing',

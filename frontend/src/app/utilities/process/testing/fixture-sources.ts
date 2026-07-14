@@ -24,8 +24,24 @@ export const auctionHelperProfessionsSource = `AuctionHelperProfessionsDB = {
       ["professions"] = {
         ["Blacksmithing"] = {
           ["skillLineID"] = 2872,
+          ["primarySpecializationSkillLineID"] = 2872,
           ["currentLevelName"] = "Khaz Algar Blacksmithing",
           ["skillLevel"] = 100,
+          ["specializationTrees"] = {
+            {
+              ["configID"] = 123, ["skillLineID"] = 2872, ["expansionID"] = 10,
+              ["tierName"] = "Khaz Algar Blacksmithing",
+              ["tabs"] = {
+                {
+                  ["treeID"] = 999,
+                  ["nodes"] = {
+                    { ["nodeID"] = 101, ["childPathIDs"] = { 102 }, ["nodeInfo"] = { ["maxRanks"] = 30 }, ["entries"] = { { ["entryID"] = 201 } } },
+                    { ["nodeID"] = 102, ["nodeInfo"] = { ["maxRanks"] = 10 }, ["entries"] = { { ["entryID"] = 202 } } },
+                  },
+                },
+              },
+            },
+          },
           ["recipes"] = {
             ["450216"] = {
               ["skillLineAbilityID"] = 12345,

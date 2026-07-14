@@ -7,6 +7,11 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.every
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentEntry
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentNode
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalents
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTab
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTree
 import net.jonasmf.auctionengine.repository.rds.NormalizedProfessionImportRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -22,6 +27,8 @@ class NormalizedAuctionHelperProfessionInspectionServiceTest {
 
     init {
         every { repository.missingProfessionIds(any()) } returns emptySet()
+        every { repository.missingSkillLineIds(any()) } returns emptySet()
+        every { repository.missingExpansionIds(any()) } returns emptySet()
     }
 
     @Test
@@ -211,6 +218,33 @@ class NormalizedAuctionHelperProfessionInspectionServiceTest {
         val result = service.inspect(payload.withProfession(profession.copy(recipes = listOf(recipe))))
 
         assertThat(result.missingCraftingSkillData).isZero()
+    }
+
+    @Test
+    fun `rejects a talent relationship whose parent is absent from the config`() {
+        val payload = normalizedPayload()
+        val profession = payload.characters.single().professions.single()
+        val node =
+            NormalizedAuctionHelperTalentNode(
+                nodeId = 102,
+                propertyEntries = listOf(NormalizedAuctionHelperTalentEntry(entryId = 202)),
+                parentNodeIds = listOf(101),
+            )
+        val talents =
+            NormalizedAuctionHelperTalents(
+                trees =
+                    listOf(
+                        NormalizedAuctionHelperTalentTree(
+                            treeId = 123,
+                            skillLineId = 2872,
+                            expansionId = 11,
+                            tabs = listOf(NormalizedAuctionHelperTalentTab(tabId = 999, nodes = listOf(node))),
+                        ),
+                    ),
+                allocations = emptyList(),
+            )
+
+        assertBadRequest(payload.withProfession(profession.copy(talents = talents)), "missing parent node 101")
     }
 
     private fun normalizedPayload(): NormalizedAuctionHelperProfessionData = objectMapper.readValue(normalizedPayloadJson)

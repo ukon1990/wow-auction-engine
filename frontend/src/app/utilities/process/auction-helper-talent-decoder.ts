@@ -34,6 +34,7 @@ export type DecodedProfessionTalents = Readonly<{
           maxRanks: number | null;
           requiredRank: number | null;
           description: string | null;
+          parentNodeIds: readonly number[];
           entries: ReadonlyArray<{
             entryId: number;
             rankLimit: number | null;
@@ -136,12 +137,14 @@ function normalizeProfession(
       const tab = object(tabValue);
       const tabId = integer(tab['treeID']);
       if (tabId === null) return [];
+      const sourceNodes = collection(tab['nodes']);
+      const parentNodeIds = parentNodeIdsByChild(sourceNodes);
       return [
         {
           tabId,
           name: string(object(tab['tabInfo'])['name']),
           description: string(object(tab['tabInfo'])['description']),
-          nodes: collection(tab['nodes']).map(normalizeNode).filter(isPresent),
+          nodes: sourceNodes.map((node) => normalizeNode(node, parentNodeIds)).filter(isPresent),
         },
       ];
     });
@@ -170,6 +173,7 @@ function normalizeProfession(
 
 function normalizeNode(
   value: unknown,
+  parentNodeIds: ReadonlyMap<number, readonly number[]>,
 ):
   | DecodedProfessionTalents['professions'][number]['trees'][number]['tabs'][number]['nodes'][number]
   | null {
@@ -182,6 +186,7 @@ function normalizeNode(
     maxRanks: integer(nodeInfo['maxRanks']),
     requiredRank: integer(node['unlockRank']),
     description: string(node['pathDescription']),
+    parentNodeIds: parentNodeIds.get(nodeId) ?? [],
     entries: collection(node['entries'])
       .map((entryValue) => {
         const entry = object(entryValue);
@@ -195,6 +200,23 @@ function normalizeNode(
       })
       .filter((entry) => entry.entryId > 0),
   };
+}
+
+function parentNodeIdsByChild(nodes: readonly unknown[]): Map<number, readonly number[]> {
+  const result = new Map<number, readonly number[]>();
+  nodes.forEach((value) => {
+    const node = object(value);
+    const parentNodeId = integer(node['nodeID']);
+    if (parentNodeId === null) return;
+    collection(node['childPathIDs'])
+      .map(integer)
+      .filter(isPresent)
+      .forEach((childNodeId) => {
+        const parents = result.get(childNodeId) ?? [];
+        if (!parents.includes(parentNodeId)) result.set(childNodeId, [...parents, parentNodeId]);
+      });
+  });
+  return result;
 }
 
 function normalizedExpansionId(specialization: Record<string, unknown>): number | null {

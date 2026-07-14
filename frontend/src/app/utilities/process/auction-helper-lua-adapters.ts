@@ -74,6 +74,7 @@ export type NormalizedProfessionSnapshot = Readonly<{
               maxRanks?: number;
               requiredRank?: number;
               description?: string;
+              parentNodeIds: number[];
               entries: Array<{ entryId: number; rankLimit?: number; description?: string }>;
             }>;
           }>;
@@ -319,8 +320,9 @@ function normalizeEmbeddedTalents(
       const tab = record(tabValue);
       const tabId = integer(tab['treeID']);
       if (tabId === null) return [];
-      const nodes = values(tab['nodes']).flatMap((nodeValue) => {
-        const node = record(nodeValue);
+      const sourceNodes = values(tab['nodes']).map(record);
+      const parentNodeIds = parentNodeIdsByChild(sourceNodes);
+      const nodes = sourceNodes.flatMap((node) => {
         const nodeInfo = record(node['nodeInfo']);
         const nodeId = integer(node['nodeID']);
         if (nodeId === null) return [];
@@ -338,6 +340,7 @@ function normalizeEmbeddedTalents(
               ? { requiredRank: integer(node['unlockRank'])! }
               : {}),
             ...(description ? { description } : {}),
+            parentNodeIds: parentNodeIds.get(nodeId) ?? [],
             entries: values(node['entries']).flatMap((entryValue) => {
               const entry = record(entryValue);
               const normalizedEntryId = integer(entry['entryID']);
@@ -366,6 +369,24 @@ function normalizeEmbeddedTalents(
     return [{ treeId: configId, skillLineId, expansionId, ...(name ? { name } : {}), tabs }];
   });
   return trees.length > 0 ? { trees, allocations } : null;
+}
+
+function parentNodeIdsByChild(
+  nodes: ReadonlyArray<Record<string, LuaValue>>,
+): Map<number, number[]> {
+  const result = new Map<number, number[]>();
+  nodes.forEach((node) => {
+    const parentNodeId = integer(node['nodeID']);
+    if (parentNodeId === null) return;
+    values(node['childPathIDs'])
+      .map(integer)
+      .filter((childNodeId): childNodeId is number => childNodeId !== null)
+      .forEach((childNodeId) => {
+        const parents = result.get(childNodeId) ?? [];
+        if (!parents.includes(parentNodeId)) result.set(childNodeId, [...parents, parentNodeId]);
+      });
+  });
+  return result;
 }
 
 function normalizedExpansionId(specialization: Record<string, LuaValue>): number | null {

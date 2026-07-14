@@ -197,6 +197,14 @@ private fun validateProfession(profession: NormalizedAuctionHelperProfession) {
         tree.tabs.flatMap { it.nodes }.forEach { node ->
             val entryIds = node.propertyEntries.map { it.entryId }
             if (entryIds.distinct().size != entryIds.size) badRequest("Talent entry IDs must be unique within node ${node.nodeId}")
+            if (node.parentNodeIds.orEmpty().distinct().size != node.parentNodeIds.orEmpty().size) {
+                badRequest("Talent parent node IDs must be unique within node ${node.nodeId}")
+            }
+            if (node.nodeId in node.parentNodeIds.orEmpty()) badRequest("Talent node ${node.nodeId} cannot be its own parent")
+            val missingParentNodeIds = node.parentNodeIds.orEmpty().filterNot { it in nodeIds }
+            if (missingParentNodeIds.isNotEmpty()) {
+                badRequest("Talent node ${node.nodeId} references missing parent node ${missingParentNodeIds.first()}")
+            }
         }
     }
 }

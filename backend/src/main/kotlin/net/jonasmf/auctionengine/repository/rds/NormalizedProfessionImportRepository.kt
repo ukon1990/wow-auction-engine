@@ -180,6 +180,7 @@ class NormalizedProfessionImportRepository(
             importId,
         )
         val databaseTreeId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long::class.java)!!
+        val databaseNodeIds = mutableMapOf<Int, Long>()
         tree.tabs.forEachIndexed { tabOrder, tab ->
             jdbcTemplate.update(
                 """INSERT INTO profession_skill_tree_tab
@@ -212,6 +213,7 @@ class NormalizedProfessionImportRepository(
                     nodeOrder,
                 )
                 val databaseNodeId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long::class.java)!!
+                databaseNodeIds[node.nodeId] = databaseNodeId
                 node.propertyEntries.forEachIndexed { entryOrder, entry ->
                     jdbcTemplate.update(
                         """INSERT INTO profession_skill_tree_entry
@@ -230,6 +232,26 @@ class NormalizedProfessionImportRepository(
                 }
             }
         }
+        jdbcTemplate.update(
+            """DELETE parent FROM profession_skill_tree_node_parent parent
+                JOIN profession_skill_tree_node node ON node.id = parent.node_id
+                WHERE node.tree_id = ?""".trimIndent(),
+            databaseTreeId,
+        )
+        tree.tabs
+            .flatMap { it.nodes }
+            .forEach { node ->
+                val databaseNodeId = databaseNodeIds.getValue(node.nodeId)
+                node.parentNodeIds.orEmpty().forEach { parentNodeId ->
+                    jdbcTemplate.update(
+                        """INSERT INTO profession_skill_tree_node_parent
+                                (node_id, parent_node_id, required_parent_ranks)
+                            VALUES (?, ?, 1)""".trimIndent(),
+                        databaseNodeId,
+                        databaseNodeIds.getValue(parentNodeId),
+                    )
+                }
+            }
         return databaseTreeId
     }
 

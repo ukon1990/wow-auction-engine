@@ -113,10 +113,22 @@ class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
                             nodes =
                                 listOf(
                                     NormalizedAuctionHelperTalentNode(
+                                        nodeId = 104229,
+                                        maxRanks = 30,
+                                        propertyEntries =
+                                            listOf(
+                                                NormalizedAuctionHelperTalentEntry(
+                                                    entryId = 128829,
+                                                    rankLimit = 30,
+                                                ),
+                                            ),
+                                    ),
+                                    NormalizedAuctionHelperTalentNode(
                                         nodeId = 104230,
                                         maxRanks = 1,
                                         requiredRank = 25,
                                         description = "Consume less Concentration.",
+                                        parentNodeIds = listOf(104229),
                                         propertyEntries =
                                             listOf(
                                                 NormalizedAuctionHelperTalentEntry(
@@ -145,16 +157,54 @@ class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
         assertThat(jdbcTemplate.queryForMap("SELECT external_tab_id, name FROM profession_skill_tree_tab"))
             .containsEntry("external_tab_id", 1068)
             .containsEntry("name", "Craftsmithing")
-        assertThat(jdbcTemplate.queryForMap("SELECT external_node_id, max_ranks, required_rank FROM profession_skill_tree_node"))
+        assertThat(
+            jdbcTemplate.queryForMap(
+                "SELECT external_node_id, max_ranks, required_rank FROM profession_skill_tree_node WHERE external_node_id = 104230",
+            ),
+        )
             .containsEntry("external_node_id", 104230)
             .containsEntry("max_ranks", 1)
             .containsEntry("required_rank", 25)
-        assertThat(jdbcTemplate.queryForMap("SELECT external_entry_id, rank_limit FROM profession_skill_tree_entry"))
-            .containsEntry("external_entry_id", 128830)
+        assertThat(
+            jdbcTemplate.queryForMap(
+                "SELECT external_entry_id, rank_limit FROM profession_skill_tree_entry WHERE external_entry_id = 128830",
+            ),
+        ).containsEntry("external_entry_id", 128830)
             .containsEntry("rank_limit", 1)
+        assertThat(
+            jdbcTemplate.queryForMap(
+                """SELECT child.external_node_id AS child_id, parent.external_node_id AS parent_id,
+                           relationship.required_parent_ranks
+                    FROM profession_skill_tree_node_parent relationship
+                    JOIN profession_skill_tree_node child ON child.id = relationship.node_id
+                    JOIN profession_skill_tree_node parent ON parent.id = relationship.parent_node_id""".trimIndent(),
+            ),
+        ).containsEntry("child_id", 104230)
+            .containsEntry("parent_id", 104229)
+            .containsEntry("required_parent_ranks", 1)
         assertThat(jdbcTemplate.queryForObject("SELECT rank FROM user_character_profession_allocation", Int::class.java)).isEqualTo(1)
         assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM profession_skill_tree", Int::class.java)).isEqualTo(1)
-        assertThat(profileRepository.listTrees(12, 164).single().tabs.single().nodes.single().externalNodeId).isEqualTo(104230)
+        assertThat(
+            profileRepository
+                .listTrees(12, 164)
+                .single()
+                .tabs
+                .single()
+                .nodes
+                .single { it.externalNodeId == 104230 }
+                .prerequisites
+                .single()
+                .parentNodeId,
+        ).isEqualTo(
+            profileRepository
+                .listTrees(12, 164)
+                .single()
+                .tabs
+                .single()
+                .nodes
+                .single { it.externalNodeId == 104229 }
+                .id,
+        )
 
         val recipeOnlyProfession = profession.copy(activeSkillLineId = null, talents = null, skillLevel = 90)
         repository.save(payload().copy(characters = listOf(character.copy(professions = listOf(recipeOnlyProfession)))), 1, 0, "admin-subject")

@@ -1,0 +1,153 @@
+<section class="overflow-hidden rounded-lg border border-white/10 bg-surface-container-highest">
+  <div
+    class="flex overflow-x-auto border-b border-white/10 px-3 pt-3"
+    role="tablist"
+    [attr.aria-label]="tree().name"
+  >
+    @for (tab of tree().tabs; track tab.id; let index = $index) {
+      <button
+        type="button"
+        role="tab"
+        class="min-h-11 shrink-0 rounded-t-md border-b-2 px-4 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-container"
+        [class.border-primary-container]="selectedTab().id === tab.id"
+        [class.border-transparent]="selectedTab().id !== tab.id"
+        [class.bg-surface]="selectedTab().id === tab.id"
+        [class.text-primary-container]="selectedTab().id === tab.id"
+        [class.text-outline]="selectedTab().id !== tab.id"
+        [id]="tabButtonId(tab.id)"
+        [attr.aria-controls]="tabPanelId(tab.id)"
+        [attr.aria-selected]="selectedTab().id === tab.id"
+        [attr.tabindex]="selectedTab().id === tab.id ? 0 : -1"
+        (click)="selectTab(tab)"
+        (keydown)="tabKeydown($event, index)"
+      >
+        {{ tab.name }}
+      </button>
+    }
+  </div>
+
+  @if (selectedTab(); as tab) {
+    <div
+      role="tabpanel"
+      class="p-4"
+      [id]="tabPanelId(tab.id)"
+      [attr.aria-labelledby]="tabButtonId(tab.id)"
+      tabindex="0"
+    >
+      @if (tab.description) {
+        <p class="mb-3 text-sm text-outline">{{ tab.description }}</p>
+      }
+      @if (tab.nodes.length) {
+        <div class="overflow-auto rounded-md border border-white/10 bg-surface/40">
+          <div
+            class="relative"
+            [style.width.px]="layout().width"
+            [style.height.px]="layout().height"
+          >
+            <svg
+              class="pointer-events-none absolute inset-0 size-full"
+              aria-hidden="true"
+              [attr.viewBox]="'0 0 ' + layout().width + ' ' + layout().height"
+              preserveAspectRatio="none"
+            >
+              <defs>
+                <marker
+                  [id]="markerId(tab.id)"
+                  viewBox="0 0 10 10"
+                  refX="9"
+                  refY="5"
+                  markerWidth="5"
+                  markerHeight="5"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M 0 0 L 10 5 L 0 10 z" class="fill-primary-container" />
+                </marker>
+              </defs>
+              @for (connector of layout().connectors; track connector.key) {
+                <path
+                  [attr.d]="connector.path"
+                  fill="none"
+                  class="stroke-primary-container/70"
+                  stroke-width="2"
+                  [attr.marker-end]="'url(#' + markerId(tab.id) + ')'"
+                />
+              }
+            </svg>
+            @for (position of layout().nodes; track position.node.id) {
+              <article
+                class="absolute grid overflow-hidden rounded-md border border-white/15 bg-surface shadow-lg"
+                [style.left.px]="position.x"
+                [style.top.px]="position.y"
+                [style.width.px]="224"
+                [style.height.px]="188"
+                [attr.aria-label]="position.node.name"
+              >
+                <div class="min-h-0 overflow-auto p-3 pb-2">
+                  <h3
+                    class="truncate text-sm font-bold text-on-surface"
+                    [title]="position.node.name"
+                  >
+                    {{ position.node.name }}
+                  </h3>
+                  <p class="mt-1 line-clamp-2 text-xs text-outline">
+                    {{ position.node.description }}
+                  </p>
+                  <p
+                    class="mt-1 truncate text-[0.6875rem] text-outline"
+                    [title]="parentSummary(position.node, tab)"
+                  >
+                    {{ parentSummary(position.node, tab) }}
+                  </p>
+                </div>
+                <div class="self-end border-t border-white/10 px-3 py-2">
+                  @for (entry of position.node.entries; track entry.id) {
+                    <div
+                      class="flex items-center justify-between gap-2"
+                      [title]="entry.description ?? entry.name"
+                    >
+                      <span class="min-w-0 truncate text-xs font-medium text-on-surface">{{
+                        entry.name
+                      }}</span>
+                      <div class="flex shrink-0 items-center gap-1">
+                        <button
+                          type="button"
+                          class="min-h-11 min-w-11 rounded border border-white/20 font-bold focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-35"
+                          [disabled]="rankFor(entry.id) === 0"
+                          [attr.aria-label]="decreaseLabel(entry.name)"
+                          (click)="
+                            rankChanged.emit({ node: position.node, entryId: entry.id, change: -1 })
+                          "
+                        >
+                          −
+                        </button>
+                        <output
+                          class="min-w-10 text-center text-xs font-bold text-primary-container"
+                          >{{ rankFor(entry.id) }}/{{ entry.rankLimit }}</output
+                        >
+                        <button
+                          type="button"
+                          class="min-h-11 min-w-11 rounded border border-white/20 font-bold focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-35"
+                          [disabled]="!canIncrease(position.node, entry.id)"
+                          [attr.aria-label]="increaseLabel(entry.name)"
+                          (click)="
+                            rankChanged.emit({ node: position.node, entryId: entry.id, change: 1 })
+                          "
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+      } @else {
+        <p class="py-8 text-center text-sm text-outline" i18n="@@professionProfiles.emptyTab">
+          No nodes are available in this specialization.
+        </p>
+      }
+    </div>
+  }
+</section>

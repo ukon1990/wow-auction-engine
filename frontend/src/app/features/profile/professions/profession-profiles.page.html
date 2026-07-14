@@ -229,65 +229,20 @@
           }
         </div>
       } @else {
-        @for (tab of selectedTree()!.tabs; track tab.id) {
-          <section class="rounded-lg border border-white/10 bg-surface-container-highest p-5">
-            <h2 class="font-cinzel text-lg font-bold text-primary-container">{{ tab.name }}</h2>
-            @if (tab.description) {
-              <p class="mt-1 text-sm text-outline">{{ tab.description }}</p>
-            }
-            <ul class="mt-4 grid gap-3" [attr.aria-label]="tab.name">
-              @for (node of tab.nodes; track node.id) {
-                <li class="rounded-md border border-white/10 bg-surface p-4">
-                  <h3 class="font-semibold text-on-surface">{{ node.name }}</h3>
-                  @if (node.description) {
-                    <p class="mt-1 text-sm text-outline">{{ node.description }}</p>
-                  }
-                  <p class="mt-2 text-xs text-outline">{{ nodePrerequisites(node) }}</p>
-                  @for (entry of node.entries; track entry.id) {
-                    <div
-                      class="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3"
-                    >
-                      <div>
-                        <p class="font-medium text-on-surface">{{ entry.name }}</p>
-                        @if (entry.description) {
-                          <p class="text-sm text-outline">{{ entry.description }}</p>
-                        }
-                      </div>
-                      <div
-                        class="flex items-center gap-2"
-                        [attr.aria-label]="rankLabel(entry.name)"
-                      >
-                        <button
-                          type="button"
-                          class="min-h-11 min-w-11 rounded border border-white/20 text-lg focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-40"
-                          [disabled]="rankFor(entry.id) === 0"
-                          [attr.aria-label]="decreaseRankLabel(entry.name)"
-                          (click)="updateRank(node, entry.id, -1)"
-                        >
-                          −
-                        </button>
-                        <output
-                          class="min-w-16 text-center font-semibold text-primary-container"
-                          [attr.aria-label]="rankLabel(entry.name)"
-                          >{{ rankFor(entry.id) }} / {{ entry.rankLimit }}</output
-                        >
-                        <button
-                          type="button"
-                          class="min-h-11 min-w-11 rounded border border-white/20 text-lg focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-40"
-                          [disabled]="rankFor(entry.id) >= entry.rankLimit"
-                          [attr.aria-label]="increaseRankLabel(entry.name)"
-                          (click)="updateRank(node, entry.id, 1)"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  }
-                </li>
-              }
-            </ul>
-          </section>
+        @if (trees().length > 1) {
+          <ee-select-input
+            i18n-label="@@professionProfiles.specializationTree"
+            label="Specialization tree"
+            [options]="treeOptions()"
+            [value]="selectedTreeId()!.toString()"
+            (valueChanged)="selectTree($event)"
+          />
         }
+        <app-profession-skill-tree-editor
+          [tree]="selectedTree()!"
+          [allocations]="allocations()"
+          (rankChanged)="updateRank($event.node, $event.entryId, $event.change)"
+        />
         <div class="flex justify-end">
           <button
             type="button"

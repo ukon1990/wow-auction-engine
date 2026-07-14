@@ -23,12 +23,18 @@ describe('decodeAuctionHelperTalentExport', () => {
               nodes: [
                 {
                   nodeID: 101,
+                  childPathIDs: [102],
                   nodeInfo: {
                     maxRanks: 13,
                     currentRank: 13,
                     activeEntry: { entryID: 201, rank: 12 },
                   },
                   entries: [{ entryID: 201, entryInfo: { maxRanks: 30 } }],
+                },
+                {
+                  nodeID: 102,
+                  nodeInfo: { maxRanks: 10 },
+                  entries: [{ entryID: 202, entryInfo: { maxRanks: 10 } }],
                 },
               ],
             },
@@ -51,7 +57,17 @@ describe('decodeAuctionHelperTalentExport', () => {
                 {
                   tabId: 999,
                   nodes: [
-                    { nodeId: 101, maxRanks: 13, entries: [{ entryId: 201, rankLimit: 30 }] },
+                    {
+                      nodeId: 101,
+                      maxRanks: 13,
+                      parentNodeIds: [],
+                      entries: [{ entryId: 201, rankLimit: 30 }],
+                    },
+                    {
+                      nodeId: 102,
+                      parentNodeIds: [101],
+                      entries: [{ entryId: 202, rankLimit: 10 }],
+                    },
                   ],
                 },
               ],

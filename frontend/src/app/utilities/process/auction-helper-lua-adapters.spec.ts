@@ -70,6 +70,20 @@ describe('AuctionHelper Lua adapters', () => {
     ).toEqual(['CRAFTED_ITEM_MISSING', 'CRAFTING_SKILL_DATA_MISSING']);
   });
 
+  it('converts exported child paths into normalized parent relationships', () => {
+    const result = auctionHelperLuaProcessor.process<NormalizedProfessionSnapshot>(
+      'AuctionHelper_Professions.lua',
+      professionsSource,
+    );
+
+    expect(result.data.characters[0]?.professions[0]?.talents?.trees[0]?.tabs[0]?.nodes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ nodeId: 101, parentNodeIds: [] }),
+        expect.objectContaining({ nodeId: 102, parentNodeIds: [101] }),
+      ]),
+    );
+  });
+
   it('does not report missing output or difficulty for non-quality gathering recipes', () => {
     const result = auctionHelperLuaProcessor.process<NormalizedProfessionSnapshot>(
       'AuctionHelper_Professions.lua',

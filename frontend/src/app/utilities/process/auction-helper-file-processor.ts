@@ -242,6 +242,7 @@ function talentsForProfession(
             ...(node.maxRanks !== null ? { maxRanks: node.maxRanks } : {}),
             ...(node.requiredRank !== null ? { requiredRank: node.requiredRank } : {}),
             ...(node.description ? { description: node.description } : {}),
+            parentNodeIds: [...node.parentNodeIds],
             entries: node.entries.map((entry) => ({
               entryId: entry.entryId,
               ...(entry.rankLimit !== null ? { rankLimit: entry.rankLimit } : {}),

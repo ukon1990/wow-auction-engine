@@ -2370,6 +2370,9 @@
       <trans-unit id="professionTalentTrees.skillTree.currentRank" datatype="html"><source>current rank</source><target>aktueller Rang</target></trans-unit>
       <trans-unit id="professionTalentTrees.skillTree.emptyTitle" datatype="html"><source>No skill tree data found</source><target>Keine Fertigkeitsbaumdaten gefunden</target></trans-unit>
       <trans-unit id="professionTalentTrees.skillTree.emptyBody" datatype="html"><source>Run a fresh full dump in AuctionHelper, reload or log out to write AuctionHelper.lua, then select the SavedVariables folder again.</source><target>Führe in AuctionHelper einen neuen vollständigen Export aus, lade die UI neu oder melde dich ab, damit AuctionHelper.lua geschrieben wird, und wähle dann den SavedVariables-Ordner erneut aus.</target></trans-unit>
+      <trans-unit id="professionProfiles.specializationTree" datatype="html"><source>Specialization tree</source><target>Spezialisierungsbaum</target></trans-unit>
+      <trans-unit id="professionProfiles.namedPrerequisite" datatype="html"><source>{$INTERPOLATION} at rank {$INTERPOLATION_1}</source><target>{$INTERPOLATION} auf Rang {$INTERPOLATION_1}</target></trans-unit>
+      <trans-unit id="professionProfiles.emptyTab" datatype="html"><source>This specialization has no nodes.</source><target>Diese Spezialisierung hat keine Knoten.</target></trans-unit>
     </body>
   </file>
 </xliff>
