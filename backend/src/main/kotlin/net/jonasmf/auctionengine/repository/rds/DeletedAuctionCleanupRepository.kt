@@ -94,15 +94,17 @@ class DeletedAuctionCleanupRepository(
                 connectedRealmId,
                 cutoff,
             )
-        val deletedCount =
-            jdbcTemplate.update(
-                """
-                DELETE FROM auction_price
-                WHERE update_history_id IN ?
-                """.trimIndent(),
-                logIds,
-            )
-        return deletedCount
+        if (logIds.isEmpty()) {
+            return 0
+        }
+        val placeholders = logIds.joinToString(",") { "?" }
+        return jdbcTemplate.update(
+            """
+            DELETE FROM auction_price
+            WHERE update_history_id IN ($placeholders)
+            """.trimIndent(),
+            *logIds.toTypedArray(),
+        )
     }
 
     fun optimizeTable(tableName: String) {

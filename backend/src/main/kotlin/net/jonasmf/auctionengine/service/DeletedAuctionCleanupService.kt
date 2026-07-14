@@ -75,7 +75,10 @@ class DeletedAuctionCleanupService(
         val deletionsPerConnectedRealm = mutableListOf<DeletedAuctionCleanupRunResult>()
 
         for (connectedRealmId in connectedRealmIds) {
-            deleteOldHistoryForConnectedRealm(type, connectedRealmId, cutoff, deleteAction, updateMarker)
+            val result = deleteOldHistoryForConnectedRealm(type, connectedRealmId, cutoff, deleteAction, updateMarker)
+            if (result != null && result.deletedRows > 0) {
+                deletionsPerConnectedRealm.add(result)
+            }
         }
         /*
          * We only want to optimize the table, if there has been done deletions
@@ -94,7 +97,7 @@ class DeletedAuctionCleanupService(
         cutoff: Instant,
         deleteAction: (Int, Instant) -> Int,
         updateMarker: (Int, Instant) -> Int,
-    ) {
+    ): DeletedAuctionCleanupRunResult? =
         try {
             try {
                 val deletedRows = deleteAction(connectedRealmId, cutoff)
@@ -128,9 +131,8 @@ class DeletedAuctionCleanupService(
                 )
             }
         } catch (_: Exception) {
-            // TODO: Hmm…
+            null
         }
-    }
 
     private fun updateMarkerAfterSuccess(
         connectedRealmId: Int,

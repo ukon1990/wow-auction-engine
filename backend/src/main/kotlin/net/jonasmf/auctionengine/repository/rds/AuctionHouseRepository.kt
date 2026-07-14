@@ -87,6 +87,7 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
     ): Int
 
     @Modifying
+    @Transactional
     @Query(
         """
         UPDATE AuctionHouse a
