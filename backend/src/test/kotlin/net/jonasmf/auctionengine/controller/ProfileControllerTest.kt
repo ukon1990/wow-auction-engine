@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.context.annotation.Import
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
@@ -30,6 +31,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     SecurityFilterAutoConfiguration::class,
 )
 @Import(SecurityConfig::class)
+@TestPropertySource(
+    properties = [
+        "spring.security.oauth2.resourceserver.jwt.issuer-uri=https://issuer.example.test",
+    ],
+)
 class ProfileControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc

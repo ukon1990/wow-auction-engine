@@ -68,7 +68,7 @@ describe('decodeAuctionHelperTalentExport', () => {
                       name: 'Weaponsmithing',
                       maxRanks: 13,
                       parentNodeIds: [],
-                      entries: [{ entryId: 201, name: 'Weaponsmithing', rankLimit: 30 }],
+                      entries: [{ entryId: 201, name: 'Weaponsmithing', rankLimit: 13 }],
                     },
                     {
                       nodeId: 102,

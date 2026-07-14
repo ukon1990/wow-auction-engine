@@ -288,11 +288,15 @@ function scrollNodeIntoView(scroll: HTMLElement, position: PositionedNode): void
   const maxLeft = Math.max(0, scroll.scrollWidth - scroll.clientWidth);
   const maxTop = Math.max(0, scroll.scrollHeight - scroll.clientHeight);
 
-  scroll.scrollTo({
-    left: Math.min(maxLeft, Math.max(0, targetLeft)),
-    top: Math.min(maxTop, Math.max(0, targetTop)),
-    behavior: 'smooth',
-  });
+  const left = Math.min(maxLeft, Math.max(0, targetLeft));
+  const top = Math.min(maxTop, Math.max(0, targetTop));
+  if (typeof scroll.scrollTo === 'function') {
+    scroll.scrollTo({ left, top, behavior: 'smooth' });
+    return;
+  }
+
+  scroll.scrollLeft = left;
+  scroll.scrollTop = top;
 }
 
 function nodeTooltip(node: SkillTreeGraphNode, tab: SkillTreeGraphTab): string | null {
