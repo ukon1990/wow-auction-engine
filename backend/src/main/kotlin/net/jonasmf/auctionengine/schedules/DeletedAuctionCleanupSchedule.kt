@@ -13,29 +13,51 @@ class DeletedAuctionCleanupSchedule(
     private val logger: Logger = LoggerFactory.getLogger(DeletedAuctionCleanupSchedule::class.java)
 
     @Scheduled(
-        cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 4 * * *}",
+        cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 * * * *}",
         zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
     )
-    fun deleteOldHourlyHistory() {
-        logger.info("Starting scheduled hourly auction statistics cleanup.")
+    fun deleteOldHourlyHistoryOnSchedule() {
+        deleteOldHourlyHistory("scheduled")
+    }
+
+    @Scheduled(
+        cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 * * * *}",
+        zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
+    )
+    fun deleteOldDailyHistoryOnSchedule() {
+        deleteOldDailyHistory("scheduled")
+    }
+
+    @Scheduled(
+        cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 * * * *}",
+        zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
+    )
+    fun deleteOldPriceHistoryOnSchedule() {
+        deleteOldPriceHistory("scheduled")
+    }
+
+    @Scheduled(
+        initialDelayString = "\${app.scheduling.deleted-auction-cleanup-startup-delay:PT1M}",
+        fixedDelayString = "\${app.scheduling.deleted-auction-cleanup-startup-repeat-delay:P3650D}",
+    )
+    fun cleanupAfterStartup() {
+        deleteOldHourlyHistory("startup")
+        deleteOldDailyHistory("startup")
+        deleteOldPriceHistory("startup")
+    }
+
+    private fun deleteOldHourlyHistory(trigger: String) {
+        logger.info("Starting {} hourly auction statistics cleanup.", trigger)
         cleanupService.cleanupHourlyStats()
     }
 
-    @Scheduled(
-        cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 4 * * *}",
-        zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
-    )
-    fun deleteOldDailyHistory() {
-        logger.info("Starting scheduled daily auction statistics cleanup.")
+    private fun deleteOldDailyHistory(trigger: String) {
+        logger.info("Starting {} daily auction statistics cleanup.", trigger)
         cleanupService.cleanupDailyStats()
     }
 
-    @Scheduled(
-        cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 4 * * *}",
-        zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
-    )
-    fun deleteOldPriceHistory() {
-        logger.info("Starting scheduled auction price history cleanup.")
+    private fun deleteOldPriceHistory(trigger: String) {
+        logger.info("Starting {} auction price history cleanup.", trigger)
         cleanupService.cleanupPriceHistory()
     }
 }

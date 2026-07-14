@@ -7,8 +7,8 @@ import java.time.Duration
 data class DeletedAuctionCleanupProperties(
     val enabled: Boolean = true,
     val hourlyRetention: Duration = Duration.ofDays(14),
-    val dailyRetention: Duration = Duration.ofDays(120),
-    val priceRetention: Duration = Duration.ofDays(7),
+    val dailyRetention: Duration = Duration.ofDays(90),
+    val priceRetention: Duration = Duration.ofHours(48),
 ) {
     init {
         require(!hourlyRetention.isNegative && !hourlyRetention.isZero) {
