@@ -33,6 +33,10 @@ data class AuctionMarketSearchRequest(
     val maxPrice: Long?,
     val minQuantity: Long?,
     val maxQuantity: Long?,
+    val minSaleRatePercent: Double?,
+    val maxSaleRatePercent: Double?,
+    val minSoldPerDay: Double?,
+    val maxSoldPerDay: Double?,
 )
 
 data class AuctionMarketSearchResult(
@@ -514,6 +518,22 @@ class AuctionMarketSearchRepository(
         }
         request.maxQuantity?.let {
             predicates.add("COALESCE(p.selected_quantity, p.commodity_quantity) <= ?")
+            params.add(it)
+        }
+        request.minSaleRatePercent?.let {
+            predicates.add("tsm.sale_rate IS NOT NULL AND tsm.sale_rate >= ?")
+            params.add(it / 100.0)
+        }
+        request.maxSaleRatePercent?.let {
+            predicates.add("tsm.sale_rate IS NOT NULL AND tsm.sale_rate <= ?")
+            params.add(it / 100.0)
+        }
+        request.minSoldPerDay?.let {
+            predicates.add("tsm.sold_per_day IS NOT NULL AND tsm.sold_per_day >= ?")
+            params.add(it)
+        }
+        request.maxSoldPerDay?.let {
+            predicates.add("tsm.sold_per_day IS NOT NULL AND tsm.sold_per_day <= ?")
             params.add(it)
         }
 

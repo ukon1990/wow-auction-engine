@@ -79,9 +79,15 @@ class AuctionMarketSearchService(
         maxPrice: Long?,
         minQuantity: Long?,
         maxQuantity: Long?,
+        minSaleRatePercent: Double? = null,
+        maxSaleRatePercent: Double? = null,
+        minSoldPerDay: Double? = null,
+        maxSoldPerDay: Double? = null,
     ): AuctionMarketSearchPage {
         validateRange("price", minPrice, maxPrice)
         validateRange("quantity", minQuantity, maxQuantity)
+        validateDoubleRange("saleRatePercent", minSaleRatePercent, maxSaleRatePercent)
+        validateDoubleRange("soldPerDay", minSoldPerDay, maxSoldPerDay)
 
         val totalStartNanos = System.nanoTime()
         val resolveContextStartNanos = System.nanoTime()
@@ -115,6 +121,10 @@ class AuctionMarketSearchService(
                 maxPrice = maxPrice,
                 minQuantity = minQuantity,
                 maxQuantity = maxQuantity,
+                minSaleRatePercent = minSaleRatePercent,
+                maxSaleRatePercent = maxSaleRatePercent,
+                minSoldPerDay = minSoldPerDay,
+                maxSoldPerDay = maxSoldPerDay,
             )
         val repositoryStartNanos = System.nanoTime()
         val result = auctionMarketSearchRepository.search(request)
@@ -282,6 +292,10 @@ class AuctionMarketSearchService(
                 maxPrice = null,
                 minQuantity = null,
                 maxQuantity = null,
+                minSaleRatePercent = null,
+                maxSaleRatePercent = null,
+                minSoldPerDay = null,
+                maxSoldPerDay = null,
             )
         val mdcSnapshot = MDC.getCopyOfContextMap()
         val parallelStartNanos = System.nanoTime()
@@ -345,6 +359,20 @@ class AuctionMarketSearchService(
                             max = null,
                         ),
                         AuctionMarketFilter(
+                            id = "saleRatePercent",
+                            label = "Sale rate %",
+                            type = AuctionMarketFilter.Type.RANGE,
+                            min = null,
+                            max = null,
+                        ),
+                        AuctionMarketFilter(
+                            id = "soldPerDay",
+                            label = "Avg sold/day",
+                            type = AuctionMarketFilter.Type.RANGE,
+                            min = null,
+                            max = null,
+                        ),
+                        AuctionMarketFilter(
                             id = "qualityIds",
                             label = "Quality",
                             type = AuctionMarketFilter.Type.MULTI_SELECT,
@@ -396,6 +424,19 @@ class AuctionMarketSearchService(
         label: String,
         min: Long?,
         max: Long?,
+    ) {
+        if (min != null && max != null && min > max) {
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Invalid $label range: min must be less than or equal to max",
+            )
+        }
+    }
+
+    private fun validateDoubleRange(
+        label: String,
+        min: Double?,
+        max: Double?,
     ) {
         if (min != null && max != null && min > max) {
             throw ResponseStatusException(

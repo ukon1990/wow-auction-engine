@@ -60,12 +60,16 @@ describe('market-browser-query.mapper', () => {
         convertToParamMap({
           qualityIds: '4',
           minPrice: '100',
+          minSaleRatePercent: '25',
+          minSoldPerDay: '1.5',
           recipeOnly: 'true',
         }),
       ),
     ).toMatchObject({
       qualityIds: [4],
       minPrice: 100,
+      minSaleRatePercent: 25,
+      minSoldPerDay: 1.5,
       recipeOnly: true,
     });
   });

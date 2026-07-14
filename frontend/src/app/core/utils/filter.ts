@@ -12,6 +12,10 @@ export const filterLabel = (filter: AuctionMarketFilter): string => {
       return $localize`:@@market.column.price:Price`;
     case 'quantity':
       return $localize`:@@market.column.quantity:Quantity`;
+    case 'saleRatePercent':
+      return $localize`:@@filters.saleRatePercent:Sale rate %`;
+    case 'soldPerDay':
+      return $localize`:@@filters.soldPerDay:Avg sold/day`;
     case 'qualityIds':
       return $localize`:@@market.column.quality:Quality`;
     case 'itemClassIds':
@@ -81,6 +85,10 @@ export const selectedRangeValue = (
   if (filterId === 'price') return (bound === 'min' ? state.minPrice : state.maxPrice) ?? undefined;
   if (filterId === 'quantity')
     return (bound === 'min' ? state.minQuantity : state.maxQuantity) ?? undefined;
+  if (filterId === 'saleRatePercent')
+    return (bound === 'min' ? state.minSaleRatePercent : state.maxSaleRatePercent) ?? undefined;
+  if (filterId === 'soldPerDay')
+    return (bound === 'min' ? state.minSoldPerDay : state.maxSoldPerDay) ?? undefined;
   return undefined;
 };
 
@@ -111,6 +119,8 @@ export type ParsedFilterOptionId = {
 export const MARKET_RANGE_SECTION_KEYS = {
   price: ['minPrice', 'maxPrice'],
   quantity: ['minQuantity', 'maxQuantity'],
+  saleRatePercent: ['minSaleRatePercent', 'maxSaleRatePercent'],
+  soldPerDay: ['minSoldPerDay', 'maxSoldPerDay'],
 } as const satisfies Record<
   string,
   readonly [keyof MarketBrowserQueryState, keyof MarketBrowserQueryState]
@@ -242,6 +252,8 @@ export function applyMarketRangeFilter(
 export const CRAFTING_RANGE_SECTION_KEYS = {
   profit: ['minProfit', 'maxProfit'],
   roiPercent: ['minRoiPercent', 'maxRoiPercent'],
+  saleRatePercent: ['minSaleRatePercent', 'maxSaleRatePercent'],
+  soldPerDay: ['minSoldPerDay', 'maxSoldPerDay'],
   reagentCost: ['minReagentCost', 'maxReagentCost'],
   outputPrice: ['minOutputPrice', 'maxOutputPrice'],
   outputPriceChangePercent: ['minOutputPriceChangePercent', 'maxOutputPriceChangePercent'],
@@ -275,6 +287,10 @@ export const craftingSelectedRangeValue = (
     return (bound === 'min' ? state.minProfit : state.maxProfit) ?? undefined;
   if (filterId === 'roiPercent')
     return (bound === 'min' ? state.minRoiPercent : state.maxRoiPercent) ?? undefined;
+  if (filterId === 'saleRatePercent')
+    return (bound === 'min' ? state.minSaleRatePercent : state.maxSaleRatePercent) ?? undefined;
+  if (filterId === 'soldPerDay')
+    return (bound === 'min' ? state.minSoldPerDay : state.maxSoldPerDay) ?? undefined;
   if (filterId === 'reagentCost')
     return (bound === 'min' ? state.minReagentCost : state.maxReagentCost) ?? undefined;
   if (filterId === 'outputPrice')

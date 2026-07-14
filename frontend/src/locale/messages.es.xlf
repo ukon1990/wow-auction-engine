@@ -62,6 +62,15 @@
         <source>Has Recipe</source>
         <target>Tiene receta</target>
       </trans-unit>
+      <trans-unit id="filters.saleRatePercent" datatype="html">
+        <source>Sale rate %</source>
+        <target>Tasa de venta %</target>
+      </trans-unit>
+      <trans-unit id="filters.soldPerDay" datatype="html">
+        <source>Avg sold/day</source>
+        <target>Prom. vendido/día</target>
+      </trans-unit>
+
       <trans-unit id="filters.expansion" datatype="html">
         <source>Expansion</source>
         <target>Expansión</target>

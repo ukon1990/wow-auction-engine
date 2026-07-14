@@ -31,6 +31,10 @@ data class CraftingMarketSearchRequest(
     val maxProfit: Long?,
     val minRoiPercent: Double?,
     val maxRoiPercent: Double?,
+    val minSaleRatePercent: Double?,
+    val maxSaleRatePercent: Double?,
+    val minSoldPerDay: Double?,
+    val maxSoldPerDay: Double?,
     val minReagentCost: Long?,
     val maxReagentCost: Long?,
     val minOutputPrice: Long?,
@@ -648,6 +652,22 @@ class CraftingMarketSearchRepository(
         }
         request.maxRoiPercent?.let {
             predicates.add("c.roi_percent IS NOT NULL AND c.roi_percent <= ?")
+            params.add(it)
+        }
+        request.minSaleRatePercent?.let {
+            predicates.add("c.sale_rate IS NOT NULL AND c.sale_rate >= ?")
+            params.add(it / 100.0)
+        }
+        request.maxSaleRatePercent?.let {
+            predicates.add("c.sale_rate IS NOT NULL AND c.sale_rate <= ?")
+            params.add(it / 100.0)
+        }
+        request.minSoldPerDay?.let {
+            predicates.add("c.sold_per_day IS NOT NULL AND c.sold_per_day >= ?")
+            params.add(it)
+        }
+        request.maxSoldPerDay?.let {
+            predicates.add("c.sold_per_day IS NOT NULL AND c.sold_per_day <= ?")
             params.add(it)
         }
         request.minReagentCost?.let {

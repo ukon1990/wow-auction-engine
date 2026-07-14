@@ -66,5 +66,9 @@ class AuctionMarketSearchQueryPlanIntegrationTest : IntegrationTestBase() {
             maxPrice = null,
             minQuantity = null,
             maxQuantity = null,
+            minSaleRatePercent = null,
+            maxSaleRatePercent = null,
+            minSoldPerDay = null,
+            maxSoldPerDay = null,
         )
 }

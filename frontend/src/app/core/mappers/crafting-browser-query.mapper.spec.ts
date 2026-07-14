@@ -58,12 +58,16 @@ describe('crafting-browser-query.mapper', () => {
         convertToParamMap({
           professionIds: '171',
           minProfit: '100',
+          minSaleRatePercent: '25',
+          maxSoldPerDay: '10',
           requireCompleteReagentPricing: 'true',
         }),
       ),
     ).toMatchObject({
       professionIds: [171],
       minProfit: 100,
+      minSaleRatePercent: 25,
+      maxSoldPerDay: 10,
       requireCompleteReagentPricing: true,
     });
   });

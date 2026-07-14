@@ -63,6 +63,10 @@ class CraftingMarketSearchService(
         maxProfit: Long?,
         minRoiPercent: Double?,
         maxRoiPercent: Double?,
+        minSaleRatePercent: Double? = null,
+        maxSaleRatePercent: Double? = null,
+        minSoldPerDay: Double? = null,
+        maxSoldPerDay: Double? = null,
         minReagentCost: Long?,
         maxReagentCost: Long?,
         minOutputPrice: Long?,
@@ -76,6 +80,8 @@ class CraftingMarketSearchService(
         validateLongRange("reagentCost", minReagentCost, maxReagentCost)
         validateLongRange("outputPrice", minOutputPrice, maxOutputPrice)
         validateDoubleRange("roiPercent", minRoiPercent, maxRoiPercent)
+        validateDoubleRange("saleRatePercent", minSaleRatePercent, maxSaleRatePercent)
+        validateDoubleRange("soldPerDay", minSoldPerDay, maxSoldPerDay)
         validateDoubleRange("outputPriceChangePercent", minOutputPriceChangePercent, maxOutputPriceChangePercent)
 
         val context = auctionMarketContextService.resolve(regionCode, realmSlug, localeOverride)
@@ -109,6 +115,10 @@ class CraftingMarketSearchService(
                 maxProfit = maxProfit,
                 minRoiPercent = minRoiPercent,
                 maxRoiPercent = maxRoiPercent,
+                minSaleRatePercent = minSaleRatePercent,
+                maxSaleRatePercent = maxSaleRatePercent,
+                minSoldPerDay = minSoldPerDay,
+                maxSoldPerDay = maxSoldPerDay,
                 minReagentCost = minReagentCost,
                 maxReagentCost = maxReagentCost,
                 minOutputPrice = minOutputPrice,
@@ -351,6 +361,20 @@ class CraftingMarketSearchService(
                     AuctionMarketFilter(
                         id = "roiPercent",
                         label = "ROI %",
+                        type = AuctionMarketFilter.Type.RANGE,
+                        min = null,
+                        max = null,
+                    ),
+                    AuctionMarketFilter(
+                        id = "saleRatePercent",
+                        label = "Sale rate %",
+                        type = AuctionMarketFilter.Type.RANGE,
+                        min = null,
+                        max = null,
+                    ),
+                    AuctionMarketFilter(
+                        id = "soldPerDay",
+                        label = "Avg sold/day",
                         type = AuctionMarketFilter.Type.RANGE,
                         min = null,
                         max = null,

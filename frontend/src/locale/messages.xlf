@@ -518,11 +518,25 @@
           <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="filters.saleRatePercent" datatype="html">
+        <source>Sale rate %</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="filters.soldPerDay" datatype="html">
+        <source>Avg sold/day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="market.column.quality" datatype="html">
         <source>Quality</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">16</context>
+          <context context-type="linenumber">20</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
@@ -541,7 +555,7 @@
         <source>Class</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">22</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
@@ -560,7 +574,7 @@
         <source>Subclass</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">24</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
@@ -579,14 +593,14 @@
         <source>Expansion</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="filters.hasRecipe" datatype="html">
         <source>Has Recipe</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.jobs.apply.running" datatype="html">

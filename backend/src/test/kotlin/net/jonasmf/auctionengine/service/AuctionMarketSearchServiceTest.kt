@@ -184,6 +184,110 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `search filters by minSaleRatePercent excluding rows below threshold`() {
+        seedMarketSearchData()
+        MarketSearchTestFixtures.seedTsmItemMetric(jdbcTemplate, saleRate = "0.25000000")
+
+        val matching =
+            service.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = "potion",
+                qualityIds = null,
+                itemClassIds = null,
+                itemSubclassIds = null,
+                expansionIds = null,
+                recipeOnly = null,
+                minPrice = null,
+                maxPrice = null,
+                minQuantity = null,
+                maxQuantity = null,
+                minSaleRatePercent = 20.0,
+            )
+        assertEquals(1, matching.page.totalItems)
+
+        val excluded =
+            service.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = "potion",
+                qualityIds = null,
+                itemClassIds = null,
+                itemSubclassIds = null,
+                expansionIds = null,
+                recipeOnly = null,
+                minPrice = null,
+                maxPrice = null,
+                minQuantity = null,
+                maxQuantity = null,
+                minSaleRatePercent = 30.0,
+            )
+        assertEquals(0, excluded.page.totalItems)
+    }
+
+    @Test
+    fun `search filters by minSoldPerDay excluding rows below threshold`() {
+        seedMarketSearchData()
+        MarketSearchTestFixtures.seedTsmItemMetric(jdbcTemplate, soldPerDay = "1.50000000")
+
+        val matching =
+            service.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = "potion",
+                qualityIds = null,
+                itemClassIds = null,
+                itemSubclassIds = null,
+                expansionIds = null,
+                recipeOnly = null,
+                minPrice = null,
+                maxPrice = null,
+                minQuantity = null,
+                maxQuantity = null,
+                minSoldPerDay = 1.0,
+            )
+        assertEquals(1, matching.page.totalItems)
+
+        val excluded =
+            service.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = "potion",
+                qualityIds = null,
+                itemClassIds = null,
+                itemSubclassIds = null,
+                expansionIds = null,
+                recipeOnly = null,
+                minPrice = null,
+                maxPrice = null,
+                minQuantity = null,
+                maxQuantity = null,
+                minSoldPerDay = 2.0,
+            )
+        assertEquals(0, excluded.page.totalItems)
+    }
+
+    @Test
     fun `search includes commodity-only items in unfiltered results with default itemName sort`() {
         seedMarketSearchData()
         MarketSearchTestFixtures.seedCommodityOnlyItem(jdbcTemplate)
@@ -355,6 +459,10 @@ class AuctionMarketSearchServiceTest : IntegrationTestBase() {
         val quantityFilter = result.filters.single { it.id == "quantity" }
         assertEquals(null, quantityFilter.min)
         assertEquals(null, quantityFilter.max)
+        val saleRateFilter = result.filters.single { it.id == "saleRatePercent" }
+        assertEquals("Sale rate %", saleRateFilter.label)
+        val soldPerDayFilter = result.filters.single { it.id == "soldPerDay" }
+        assertEquals("Avg sold/day", soldPerDayFilter.label)
         val expansion = result.filters.single { it.id == "expansionIds" }
         assertTrue(expansion.options.orEmpty().any { it.id == "1" && it.label == "Vanilla" })
     }
