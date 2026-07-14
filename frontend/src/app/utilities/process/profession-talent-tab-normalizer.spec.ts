@@ -201,6 +201,64 @@ describe('profession-talent-tab-normalizer', () => {
     expect(tab?.allocations).toEqual([{ nodeId: 119324, entryId: 119324, rank: 12 }]);
   });
 
+  it('infers node max ranks from entry limits when node info omits them', () => {
+    const tab = normalizeTalentTab({
+      treeID: 1076,
+      paths: [
+        {
+          nodeID: 107769,
+          nodeName: 'Elevating Equipment',
+          nodeInfo: { activeRank: 18, currentRank: 18 },
+          entries: [{ entryID: 108769, definitionInfo: { maxRanks: 31 } }],
+        },
+      ],
+      edges: [],
+    });
+
+    const node = tab!.nodes.find((candidate) => candidate.nodeId === 107769);
+    expect(node?.maxRanks).toBe(30);
+    expect(node?.entries[0]?.rankLimit).toBe(30);
+    expect(tab?.allocations).toEqual([{ nodeId: 107769, entryId: 108769, rank: 18 }]);
+  });
+
+  it('normalizes addon off-by-one rank limits when node and entry both report 31', () => {
+    const tab = normalizeTalentTab({
+      treeID: 1076,
+      paths: [
+        {
+          nodeID: 107769,
+          nodeName: 'Elevating Equipment',
+          nodeInfo: { maxRanks: 31, activeRank: 30, currentRank: 30 },
+          entries: [{ entryID: 108769, definitionInfo: { maxRanks: 31 } }],
+        },
+      ],
+      edges: [],
+    });
+
+    const node = tab!.nodes.find((candidate) => candidate.nodeId === 107769);
+    expect(node?.maxRanks).toBe(30);
+    expect(node?.entries[0]?.rankLimit).toBe(30);
+  });
+
+  it('caps entry rank limits that over-report the node max ranks', () => {
+    const tab = normalizeTalentTab({
+      treeID: 1076,
+      paths: [
+        {
+          nodeID: 107769,
+          nodeName: 'Elevating Equipment',
+          nodeInfo: { maxRanks: 30, activeRank: 30, currentRank: 30 },
+          entries: [{ entryID: 108769, definitionInfo: { maxRanks: 31 } }],
+        },
+      ],
+      edges: [],
+    });
+
+    const node = tab!.nodes.find((candidate) => candidate.nodeId === 107769);
+    expect(node?.maxRanks).toBe(30);
+    expect(node?.entries[0]?.rankLimit).toBe(30);
+  });
+
   it('routes definition tooltip text from entry names into descriptions', () => {
     const tooltip =
       'Learn a sub-specialization of your choice.|n|nGain the ability to use Polishing Cloth to apply finishing touches to your designs.';

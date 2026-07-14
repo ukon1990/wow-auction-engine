@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 
 import { isMilestoneNode, milestoneTooltipText } from './profession-skill-tree-nodes';
+import { normalizeSpendableLimit } from './profession-spendable-ranks';
 
 export interface SkillTreeGraphEntry {
   readonly id: number;
@@ -107,6 +108,7 @@ export class ProfessionSkillTreeEditor {
   protected readonly nodeDisplayName = nodeDisplayName;
   protected readonly editableEntries = editableEntries;
   protected readonly nodeTooltip = nodeTooltip;
+  protected readonly displayRankLimit = displayRankLimit;
 
   constructor() {
     effect((onCleanup) => {
@@ -144,17 +146,18 @@ export class ProfessionSkillTreeEditor {
     document.getElementById(this.tabButtonId(tabs[nextIndex].id))?.focus();
   }
 
-  protected rankFor(entryId: number): number {
+  protected rankFor(node: SkillTreeGraphNode, entryId: number): number {
+    const editable = editableEntries(node);
+    if (editable.length === 1 && editable[0].id === entryId) {
+      return nodeAllocatedRank(node, this.allocations());
+    }
     return this.allocations().get(entryId) ?? 0;
   }
 
   protected canIncrease(node: SkillTreeGraphNode, entryId: number): boolean {
     const entry = node.entries.find((candidate) => candidate.id === entryId);
-    if (!entry || this.rankFor(entryId) >= entry.rankLimit) return false;
-    return (
-      node.entries.reduce((total, candidate) => total + this.rankFor(candidate.id), 0) <
-      node.maxRanks
-    );
+    if (!entry || this.rankFor(node, entryId) >= displayRankLimit(node, entry)) return false;
+    return nodeAllocatedRank(node, this.allocations()) < nodeRankCap(node);
   }
 
   protected parentSummary(node: SkillTreeGraphNode, tab: SkillTreeGraphTab): string {
@@ -234,6 +237,33 @@ export class ProfessionSkillTreeEditor {
     element.focus({ preventScroll: true });
     return true;
   }
+}
+
+export function nodeRankCap(node: SkillTreeGraphNode): number {
+  if (node.maxRanks > 1) return normalizeSpendableLimit(node.maxRanks);
+  const editable = editableEntries(node);
+  if (editable.length === 1) return normalizeSpendableLimit(editable[0].rankLimit);
+  return normalizeSpendableLimit(
+    Math.max(node.maxRanks, ...editable.map((entry) => entry.rankLimit), 0),
+  );
+}
+
+export function displayRankLimit(node: SkillTreeGraphNode, entry: SkillTreeGraphEntry): number {
+  const entryLimit = normalizeSpendableLimit(entry.rankLimit);
+  const cap = nodeRankCap(node);
+  if (cap > 1) return Math.min(cap, entryLimit);
+  return entryLimit;
+}
+
+export function nodeAllocatedRank(
+  node: SkillTreeGraphNode,
+  allocations: ReadonlyMap<number, number>,
+): number {
+  return node.entries.reduce((total, entry) => total + (allocations.get(entry.id) ?? 0), 0);
+}
+
+export function primaryEditableEntryId(node: SkillTreeGraphNode, entryId: number): number {
+  return editableEntries(node)[0]?.id ?? entryId;
 }
 
 export function primaryRootPosition(

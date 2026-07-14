@@ -6,6 +6,9 @@ import {
   editableEntries,
   entryNameVisible,
   layoutGraph,
+  nodeAllocatedRank,
+  nodeRankCap,
+  displayRankLimit,
 } from './profession-skill-tree-editor.component';
 import { milestoneTooltipText } from './profession-skill-tree-nodes';
 
@@ -142,6 +145,160 @@ describe('ProfessionSkillTreeEditor', () => {
     );
     increase?.click();
     expect(emitted).toHaveBeenCalledWith({ node: rootNode, entryId: 100, change: 1 });
+  });
+
+  it('shows ranks stored on a hidden duplicate entry on the visible progression row', () => {
+    fixture.componentRef.setInput('allocations', new Map([[100, 12]]));
+    fixture.componentRef.setInput('tree', {
+      ...tree,
+      tabs: [
+        {
+          id: 1,
+          externalTabId: 101,
+          name: 'Armor',
+          displayOrder: 0,
+          nodes: [
+            {
+              ...rootNode,
+              maxRanks: 1,
+              entries: [
+                {
+                  id: 100,
+                  externalEntryId: 1000,
+                  name: 'Foundations',
+                  rankLimit: 1,
+                  displayOrder: 0,
+                },
+                {
+                  id: 101,
+                  externalEntryId: 1001,
+                  name: 'Foundations',
+                  rankLimit: 25,
+                  displayOrder: 1,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('12/25');
+  });
+
+  it('renders the node cap when an entry rank limit over-reports it', () => {
+    fixture.componentRef.setInput('allocations', new Map([[100, 30]]));
+    fixture.componentRef.setInput('tree', {
+      ...tree,
+      tabs: [
+        {
+          id: 1,
+          externalTabId: 101,
+          name: 'Armor',
+          displayOrder: 0,
+          nodes: [
+            {
+              ...rootNode,
+              name: 'Elevating Equipment',
+              maxRanks: 30,
+              entries: [
+                {
+                  id: 100,
+                  externalEntryId: 1000,
+                  name: 'Elevating Equipment',
+                  rankLimit: 31,
+                  displayOrder: 0,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('30/30');
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('30/31');
+  });
+
+  it('renders 30/30 when addon reports 31 for both node and entry limits', () => {
+    fixture.componentRef.setInput('allocations', new Map([[100, 30]]));
+    fixture.componentRef.setInput('tree', {
+      ...tree,
+      tabs: [
+        {
+          id: 1,
+          externalTabId: 101,
+          name: 'Armor',
+          displayOrder: 0,
+          nodes: [
+            {
+              ...rootNode,
+              name: 'Elevating Equipment',
+              maxRanks: 31,
+              entries: [
+                {
+                  id: 100,
+                  externalEntryId: 1000,
+                  name: 'Elevating Equipment',
+                  rankLimit: 31,
+                  displayOrder: 0,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('30/30');
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('30/31');
+  });
+});
+
+describe('node rank helpers', () => {
+  const sample = node(10, 'Foundations', 0);
+
+  it('uses the highest configured rank cap for the node', () => {
+    expect(
+      nodeRankCap({
+        ...sample,
+        maxRanks: 30,
+        entries: [{ id: 100, rankLimit: 31, displayOrder: 0 }],
+      }),
+    ).toBe(30);
+  });
+
+  it('shows the node cap instead of an over-reporting entry rank limit', () => {
+    const node = {
+      ...sample,
+      maxRanks: 30,
+      entries: [{ id: 100, rankLimit: 31, displayOrder: 0 }],
+    };
+    expect(displayRankLimit(node, node.entries[0])).toBe(30);
+  });
+
+  it('normalizes addon off-by-one limits when node and entry both report 31', () => {
+    const node = {
+      ...sample,
+      maxRanks: 31,
+      entries: [{ id: 100, rankLimit: 31, displayOrder: 0 }],
+    };
+    expect(nodeRankCap(node)).toBe(30);
+    expect(displayRankLimit(node, node.entries[0])).toBe(30);
+  });
+
+  it('aggregates allocations across all node entries', () => {
+    const nodeWithEntries = {
+      ...sample,
+      entries: [
+        { id: 100, rankLimit: 1, displayOrder: 0 },
+        { id: 101, rankLimit: 25, displayOrder: 1 },
+      ],
+    };
+    expect(nodeAllocatedRank(nodeWithEntries, new Map([[100, 12]]))).toBe(12);
   });
 });
 

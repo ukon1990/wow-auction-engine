@@ -22,6 +22,10 @@ import { CharacterProfessionPreviewStorageService } from './character-profession
 import {
   ProfessionSkillTreeEditor,
   SkillTreeGraphNode,
+  nodeAllocatedRank,
+  nodeRankCap,
+  primaryEditableEntryId,
+  displayRankLimit,
 } from './profession-skill-tree-editor.component';
 
 const midnightExpansionId = 12;
@@ -312,10 +316,6 @@ export class ProfessionProfilesPage {
     return profession.sources.map((source) => sourceLabel(source)).join(', ');
   }
 
-  protected rankFor(entryId: number): number {
-    return this.allocations().get(entryId) ?? 0;
-  }
-
   protected selectedCharacterOption(): string {
     return this.selectedCharacterId()?.toString() ?? '';
   }
@@ -340,20 +340,21 @@ export class ProfessionProfilesPage {
   protected updateRank(node: SkillTreeGraphNode, entryId: number, change: number): void {
     const entry = node.entries.find((candidate) => candidate.id === entryId);
     if (!entry) return;
-    const currentRank = this.rankFor(entryId);
-    const nodeRank = node.entries.reduce(
-      (total, candidate) => total + this.rankFor(candidate.id),
-      0,
-    );
-    const availableNodeRanks = Math.max(0, node.maxRanks - (nodeRank - currentRank));
-    const nextRank = Math.max(
-      0,
-      Math.min(entry.rankLimit, availableNodeRanks, currentRank + change),
-    );
+
+    const limit = displayRankLimit(node, entry);
+    const currentRank = nodeAllocatedRank(node, this.allocations());
+    const cap = nodeRankCap(node);
+    const nextRank = Math.max(0, Math.min(limit, cap, currentRank + change));
+    const targetEntryId = primaryEditableEntryId(node, entryId);
+
     this.allocations.update((current) => {
       const next = new Map(current);
-      if (nextRank === 0) next.delete(entryId);
-      else next.set(entryId, nextRank);
+      for (const candidate of node.entries) {
+        next.delete(candidate.id);
+      }
+      if (nextRank > 0) {
+        next.set(targetEntryId, nextRank);
+      }
       return next;
     });
     this.status.set(null);
@@ -436,15 +437,9 @@ export class ProfessionProfilesPage {
         firstValueFrom(this.profileApi.getProfessionProfile(characterId, professionId)),
       ]);
       this.trees.set(trees);
-      const treeId = preferredTreeId(trees);
+      const treeId = resolveProfileTreeId(profile, trees);
       this.selectedTreeId.set(treeId);
-      if (profile.treeId === treeId) {
-        this.applyProfile(profile, treeId);
-      } else {
-        this.allocations.set(new Map());
-        this.savedAllocations.set(new Map());
-        this.savedTreeId.set(profile.treeId ?? null);
-      }
+      this.applyProfile(profile, treeId);
     } catch {
       this.resetProfile();
       this.error.set(
@@ -529,4 +524,14 @@ export function preferredTreeId(
       null,
     )?.id ?? null
   );
+}
+
+export function resolveProfileTreeId(
+  profile: Pick<ProfessionProfile, 'treeId'>,
+  trees: readonly Pick<ProfessionSkillTree, 'id' | 'externalTreeId'>[],
+): number | null {
+  if (profile.treeId != null && trees.some((tree) => tree.id === profile.treeId)) {
+    return profile.treeId;
+  }
+  return preferredTreeId(trees);
 }

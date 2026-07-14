@@ -7,6 +7,7 @@ import {
   boundedName,
   looksLikeTalentDescription,
 } from './normalized-string-bounds';
+import { normalizeSpendableLimit } from '../../features/profile/professions/profession-spendable-ranks';
 
 export interface NormalizedTalentEntry {
   readonly entryId: number;
@@ -151,6 +152,13 @@ function normalizePathNode(raw: Record<string, unknown>): {
             ...(description ? { description } : {}),
           },
         ];
+  const inferredMaxRanks = Math.max(0, ...entries.map((entry) => entry.rankLimit ?? 0));
+  const nodeMaxRanks =
+    maxRanks !== undefined
+      ? normalizeSpendableLimit(maxRanks)
+      : inferredMaxRanks > 0
+        ? normalizeSpendableLimit(inferredMaxRanks)
+        : undefined;
   const rank =
     asInt(activeEntry['rank']) ?? asInt(nodeInfo['currentRank']) ?? asInt(nodeInfo['activeRank']);
   const allocationEntryId = entries[0]?.entryId ?? defaultEntryId;
@@ -161,7 +169,7 @@ function normalizePathNode(raw: Record<string, unknown>): {
       nodeId,
       nodeKind: 'path',
       ...(name ? { name } : {}),
-      ...(maxRanks !== undefined ? { maxRanks } : {}),
+      ...(nodeMaxRanks !== undefined ? { maxRanks: nodeMaxRanks } : {}),
       ...(requiredRank !== undefined ? { requiredRank } : {}),
       ...(description ? { description } : {}),
       parentNodeIds: [],
@@ -291,10 +299,15 @@ function normalizeEntry(
 }
 
 function resolveEntryRankLimit(nodeMaxRanks?: number, entryRankLimit?: number): number | undefined {
-  if (nodeMaxRanks !== undefined && entryRankLimit !== undefined) {
-    return Math.max(nodeMaxRanks, entryRankLimit);
-  }
-  return nodeMaxRanks ?? entryRankLimit;
+  const normalizedEntry =
+    entryRankLimit !== undefined ? normalizeSpendableLimit(entryRankLimit) : undefined;
+  const normalizedNode =
+    nodeMaxRanks !== undefined ? normalizeSpendableLimit(nodeMaxRanks) : undefined;
+  if (normalizedNode === undefined) return normalizedEntry;
+  if (normalizedEntry === undefined) return normalizedNode;
+  if (normalizedEntry > normalizedNode) return normalizedNode;
+  if (normalizedEntry <= 1 && normalizedEntry < normalizedNode) return normalizedNode;
+  return normalizedEntry;
 }
 
 function pathNodeName(raw: Record<string, unknown>): string | undefined {

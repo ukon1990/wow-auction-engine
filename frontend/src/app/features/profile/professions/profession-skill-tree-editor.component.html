@@ -125,7 +125,7 @@
                           <button
                             type="button"
                             class="min-h-11 min-w-11 rounded border border-white/20 font-bold focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-35"
-                            [disabled]="rankFor(entry.id) === 0"
+                            [disabled]="rankFor(position.node, entry.id) === 0"
                             [attr.aria-label]="
                               decreaseLabel(entryLabel(entry, position.node, entryIndex))
                             "
@@ -142,7 +142,9 @@
                         }
                         <output
                           class="min-w-10 text-center text-xs font-bold text-primary-container"
-                          >{{ rankFor(entry.id) }}/{{ entry.rankLimit }}</output
+                          >{{ rankFor(position.node, entry.id) }}/{{
+                            displayRankLimit(position.node, entry)
+                          }}</output
                         >
                         @if (editable()) {
                           <button
