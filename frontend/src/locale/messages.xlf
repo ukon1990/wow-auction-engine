@@ -518,11 +518,25 @@
           <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="filters.saleRatePercent" datatype="html">
+        <source>Sale rate %</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="filters.soldPerDay" datatype="html">
+        <source>Avg sold/day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="market.column.quality" datatype="html">
         <source>Quality</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">16</context>
+          <context context-type="linenumber">20</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
@@ -541,7 +555,7 @@
         <source>Class</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">22</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
@@ -560,7 +574,7 @@
         <source>Subclass</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">24</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
@@ -579,14 +593,14 @@
         <source>Expansion</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="filters.hasRecipe" datatype="html">
         <source>Has Recipe</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/utils/filter.ts</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.expansions.jobs.apply.running" datatype="html">
@@ -1755,7 +1769,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-item-cell.component.ts</context>
-          <context context-type="linenumber">123</context>
+          <context context-type="linenumber">121</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-cell.component.ts</context>
@@ -1767,7 +1781,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">353,354</context>
+          <context context-type="linenumber">360,361</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.form.removeOutput" datatype="html">
@@ -2421,7 +2435,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">370,371</context>
+          <context context-type="linenumber">377,378</context>
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.column.roi" datatype="html">
@@ -2440,7 +2454,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">374,375</context>
+          <context context-type="linenumber">381,382</context>
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.column.trend" datatype="html">
@@ -2456,6 +2470,28 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
           <context context-type="linenumber">85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crafting.column.saleRate" datatype="html">
+        <source>Sale rate</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
+          <context context-type="linenumber">145</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
+          <context context-type="linenumber">150</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crafting.column.soldPerDay" datatype="html">
+        <source>Avg sold/day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
+          <context context-type="linenumber">159</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
+          <context context-type="linenumber">164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="filters.open" datatype="html">
@@ -2791,6 +2827,28 @@
           <context context-type="linenumber">83</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="market.column.saleRate" datatype="html">
+        <source>Sale rate</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
+          <context context-type="linenumber">142</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
+          <context context-type="linenumber">147</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="market.column.soldPerDay" datatype="html">
+        <source>Avg sold/day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
+          <context context-type="linenumber">156</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
+          <context context-type="linenumber">161</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="market.pagination.empty" datatype="html">
         <source>No market items available.</source>
         <context-group purpose="location">
@@ -2935,11 +2993,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">408</context>
+          <context context-type="linenumber">415</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">421</context>
+          <context context-type="linenumber">428</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.dailyMarketDescription" datatype="html">
@@ -3063,70 +3121,70 @@
         <source>missing price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">322,323</context>
+          <context context-type="linenumber">323,324</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftedQty" datatype="html">
         <source>Crafted qty</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">358,359</context>
+          <context context-type="linenumber">365,366</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.reagentCost" datatype="html">
         <source>Reagent cost</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">362,363</context>
+          <context context-type="linenumber">369,370</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.outputUnit" datatype="html">
         <source>Output unit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">366,367</context>
+          <context context-type="linenumber">373,374</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.profitHidden" datatype="html">
         <source> Profit hidden until all reagents have prices. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">381,382</context>
+          <context context-type="linenumber">388,389</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftingProfitRoi" datatype="html">
         <source>Crafting profit / ROI</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">405,406</context>
+          <context context-type="linenumber">412,413</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftingProfitDescription" datatype="html">
         <source>Daily profit and ROI for selected recipe. Missing points mean incomplete pricing.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">411,414</context>
+          <context context-type="linenumber">418,421</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftingProfitHeatmap" datatype="html">
         <source>Crafting profit heatmap</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">418,419</context>
+          <context context-type="linenumber">425,426</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftingProfitHeatmapDescription" datatype="html">
         <source>Average profit by day and hour for selected recipe.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">422,424</context>
+          <context context-type="linenumber">429,431</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.craftingAnalyticsError" datatype="html">
         <source> Could not load crafting analytics. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
-          <context context-type="linenumber">433,435</context>
+          <context context-type="linenumber">440,442</context>
         </context-group>
       </trans-unit>
       <trans-unit id="itemDetail.eyebrow" datatype="html">

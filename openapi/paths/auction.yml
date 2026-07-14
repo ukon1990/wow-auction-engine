@@ -53,6 +53,8 @@ search:
             - commodityPrice
             - selectedQuantity
             - commodityQuantity
+            - saleRate
+            - soldPerDay
       - name: sortDirection
         in: query
         required: false
@@ -134,6 +136,34 @@ search:
           type: integer
           format: int64
           minimum: 0
+      - name: minSaleRatePercent
+        in: query
+        required: false
+        description: Minimum TSM sale rate as a percent (25 means 25%). Bound as fraction against tsm.sale_rate.
+        schema:
+          type: number
+          format: double
+      - name: maxSaleRatePercent
+        in: query
+        required: false
+        description: Maximum TSM sale rate as a percent (25 means 25%). Bound as fraction against tsm.sale_rate.
+        schema:
+          type: number
+          format: double
+      - name: minSoldPerDay
+        in: query
+        required: false
+        description: Minimum TSM average sold per day.
+        schema:
+          type: number
+          format: double
+      - name: maxSoldPerDay
+        in: query
+        required: false
+        description: Maximum TSM average sold per day.
+        schema:
+          type: number
+          format: double
     responses:
       "200":
         description: Paginated market search results.

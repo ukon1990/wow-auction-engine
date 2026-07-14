@@ -97,7 +97,7 @@ class AuctionMarketItemDetailService(
                     val headerDef =
                         async {
                             withAuctionMdc(mdcSnapshot) {
-                                detailRepository.loadItemHeader(itemId, localeSuffix)
+                                detailRepository.loadItemHeader(itemId, localeSuffix, context.region)
                             }
                         }
                     val dailyRealmDef =
@@ -389,6 +389,8 @@ class AuctionMarketItemDetailService(
             currentListings = repositoryRows.currentListings.map { it.toCurrentListingDto() },
             crafting = craftingDto,
             craftings = craftingDtos,
+            saleRate = header.saleRate,
+            soldPerDay = header.soldPerDay,
         )
     }
 

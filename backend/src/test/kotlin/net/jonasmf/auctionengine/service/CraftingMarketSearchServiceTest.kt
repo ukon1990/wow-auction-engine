@@ -73,6 +73,106 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `crafting search returns TSM saleRate and soldPerDay for crafted item`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
+        MarketSearchTestFixtures.seedTsmItemMetric(jdbcTemplate)
+
+        val result =
+            craftingMarketSearchService.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = null,
+                professionIds = null,
+                expansionIds = null,
+                qualityIds = null,
+                minProfit = null,
+                maxProfit = null,
+                minRoiPercent = null,
+                maxRoiPercent = null,
+                minReagentCost = null,
+                maxReagentCost = null,
+                minOutputPrice = null,
+                maxOutputPrice = null,
+                minOutputPriceChangePercent = null,
+                maxOutputPriceChangePercent = null,
+                requireCompleteReagentPricing = false,
+            )
+
+        val row = result.items.single()
+        assertEquals(0.25, row.saleRate!!, 0.0000001)
+        assertEquals(1.5, row.soldPerDay!!, 0.0000001)
+    }
+
+    @Test
+    fun `crafting search filters by minSaleRatePercent excluding rows below threshold`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
+        MarketSearchTestFixtures.seedTsmItemMetric(jdbcTemplate, saleRate = "0.25000000")
+
+        val matching =
+            craftingMarketSearchService.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = null,
+                professionIds = null,
+                expansionIds = null,
+                qualityIds = null,
+                minProfit = null,
+                maxProfit = null,
+                minRoiPercent = null,
+                maxRoiPercent = null,
+                minSaleRatePercent = 20.0,
+                minReagentCost = null,
+                maxReagentCost = null,
+                minOutputPrice = null,
+                maxOutputPrice = null,
+                minOutputPriceChangePercent = null,
+                maxOutputPriceChangePercent = null,
+                requireCompleteReagentPricing = false,
+            )
+        assertEquals(1L, matching.page.totalItems)
+
+        val excluded =
+            craftingMarketSearchService.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "itemName",
+                sortDirection = "asc",
+                query = null,
+                professionIds = null,
+                expansionIds = null,
+                qualityIds = null,
+                minProfit = null,
+                maxProfit = null,
+                minRoiPercent = null,
+                maxRoiPercent = null,
+                minSaleRatePercent = 30.0,
+                minReagentCost = null,
+                maxReagentCost = null,
+                minOutputPrice = null,
+                maxOutputPrice = null,
+                minOutputPriceChangePercent = null,
+                maxOutputPriceChangePercent = null,
+                requireCompleteReagentPricing = false,
+            )
+        assertEquals(0L, excluded.page.totalItems)
+    }
+
+    @Test
     fun `authenticated crafting search returns documented default when no profile matches`() {
         MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
         MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
@@ -343,6 +443,8 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
         val quality = result.filters.single { it.id == "qualityIds" }
         assertTrue(quality.options.orEmpty().isNotEmpty())
         assertEquals("RARE", quality.options.orEmpty().single().qualityType)
+        assertTrue(result.filters.any { it.id == "saleRatePercent" && it.label == "Sale rate %" })
+        assertTrue(result.filters.any { it.id == "soldPerDay" && it.label == "Avg sold/day" })
     }
 
     @Test

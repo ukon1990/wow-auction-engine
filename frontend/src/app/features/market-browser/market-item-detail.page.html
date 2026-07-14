@@ -125,7 +125,7 @@
 
     <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)]">
       <div class="space-y-4 min-w-0">
-        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <ee-item-stat-card
             [eeSkeleton]="contentLoading()"
             [label]="activeScopePriceLabel()"
@@ -141,6 +141,20 @@
             [label]="activeScopeQuantityLabel()"
             icon="inventory_2"
             [value]="detail() ? quantityLabel(activeScopeQuantity(detail()!.summary)) : '—'"
+            [caption]="''"
+          />
+          <ee-item-stat-card
+            [eeSkeleton]="contentLoading()"
+            [label]="saleRateStatLabel"
+            icon="show_chart"
+            [value]="detail() ? saleRateLabel(detail()!.saleRate) : '—'"
+            [caption]="''"
+          />
+          <ee-item-stat-card
+            [eeSkeleton]="contentLoading()"
+            [label]="soldPerDayStatLabel"
+            icon="query_stats"
+            [value]="detail() ? soldPerDayLabel(detail()!.soldPerDay) : '—'"
             [caption]="''"
           />
         </div>

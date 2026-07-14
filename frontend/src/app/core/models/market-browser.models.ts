@@ -9,6 +9,10 @@ export interface MarketBrowserQueryState {
   readonly maxPrice: number | null;
   readonly minQuantity: number | null;
   readonly maxQuantity: number | null;
+  readonly minSaleRatePercent: number | null;
+  readonly maxSaleRatePercent: number | null;
+  readonly minSoldPerDay: number | null;
+  readonly maxSoldPerDay: number | null;
   readonly page: number;
   readonly pageSize: number;
   readonly sortBy:
@@ -19,6 +23,8 @@ export interface MarketBrowserQueryState {
     | 'selectedPrice'
     | 'commodityPrice'
     | 'selectedQuantity'
-    | 'commodityQuantity';
+    | 'commodityQuantity'
+    | 'saleRate'
+    | 'soldPerDay';
   readonly sortDirection: 'asc' | 'desc';
 }

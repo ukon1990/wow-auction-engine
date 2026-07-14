@@ -1,4 +1,4 @@
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { injectFlexRenderContext } from '@tanstack/angular-table';
 import type { CellContext } from '@tanstack/table-core';
@@ -9,14 +9,36 @@ import type { CraftingTableRow } from './crafting-browser.models';
 
 @Component({
   selector: 'app-crafting-percent-cell',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, PercentPipe],
   template: `
-    @if (value() != null) {
-      <div class="ee-data text-on-surface">
-        {{ value()! | number: '1.1-1' : selectedLocaleForNumberPipe() }}%
-      </div>
-    } @else {
-      <span class="text-outline">—</span>
+    @switch (columnId()) {
+      @case ('saleRate') {
+        @if (value() != null) {
+          <div class="ee-data text-on-surface">
+            {{ value()! | percent: '1.0-1' : selectedLocaleForNumberPipe() }}
+          </div>
+        } @else {
+          <span class="text-outline">—</span>
+        }
+      }
+      @case ('soldPerDay') {
+        @if (value() != null) {
+          <div class="ee-data text-on-surface">
+            {{ value()! | number: '1.0-2' : selectedLocaleForNumberPipe() }}
+          </div>
+        } @else {
+          <span class="text-outline">—</span>
+        }
+      }
+      @default {
+        @if (value() != null) {
+          <div class="ee-data text-on-surface">
+            {{ value()! | number: '1.1-1' : selectedLocaleForNumberPipe() }}%
+          </div>
+        } @else {
+          <span class="text-outline">—</span>
+        }
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +58,10 @@ export class CraftingPercentCellComponent {
         return r.roiPercent;
       case 'outputPriceChangePercent':
         return r.outputPriceChangePercent;
+      case 'saleRate':
+        return r.saleRate;
+      case 'soldPerDay':
+        return r.soldPerDay;
       default:
         return null;
     }

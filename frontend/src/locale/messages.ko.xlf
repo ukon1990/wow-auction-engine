@@ -62,6 +62,15 @@
         <source>Has Recipe</source>
         <target>제조법 있음</target>
       </trans-unit>
+      <trans-unit id="filters.saleRatePercent" datatype="html">
+        <source>Sale rate %</source>
+        <target>판매율 %</target>
+      </trans-unit>
+      <trans-unit id="filters.soldPerDay" datatype="html">
+        <source>Avg sold/day</source>
+        <target>일평균 판매량</target>
+      </trans-unit>
+
       <trans-unit id="filters.expansion" datatype="html">
         <source>Expansion</source>
         <target>확장팩</target>
@@ -642,6 +651,22 @@
           <context context-type="linenumber">100</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="crafting.column.saleRate" datatype="html">
+        <source>Sale rate</source>
+        <target>판매율</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
+          <context context-type="linenumber">145</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crafting.column.soldPerDay" datatype="html">
+        <source>Avg sold/day</source>
+        <target>일평균 판매</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
+          <context context-type="linenumber">159</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="filters.open" datatype="html">
         <source>Open filters</source>
         <target>필터 열기</target>
@@ -1000,6 +1025,22 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
           <context context-type="linenumber">96</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="market.column.saleRate" datatype="html">
+        <source>Sale rate</source>
+        <target>판매율</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
+          <context context-type="linenumber">142</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="market.column.soldPerDay" datatype="html">
+        <source>Avg sold/day</source>
+        <target>일평균 판매</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/market-browser/market-browser-table.columns.ts</context>
+          <context context-type="linenumber">156</context>
         </context-group>
       </trans-unit>
       <trans-unit id="market.table.aria" datatype="html">

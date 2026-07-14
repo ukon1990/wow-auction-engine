@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.repository.rds
 
+import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.utility.ItemQualityOrder
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -10,6 +11,7 @@ import java.sql.ResultSet
 import java.time.LocalDate
 
 data class AuctionMarketSearchRequest(
+    val region: Region,
     val selectedConnectedRealmId: Int,
     val selectedDate: LocalDate,
     val selectedHour: Int,
@@ -31,6 +33,10 @@ data class AuctionMarketSearchRequest(
     val maxPrice: Long?,
     val minQuantity: Long?,
     val maxQuantity: Long?,
+    val minSaleRatePercent: Double?,
+    val maxSaleRatePercent: Double?,
+    val minSoldPerDay: Double?,
+    val maxSoldPerDay: Double?,
 )
 
 data class AuctionMarketSearchResult(
@@ -64,6 +70,8 @@ data class AuctionMarketRow(
     val commodityP25Price: Long?,
     val commodityP75Price: Long?,
     val commodityQuantity: Long?,
+    val saleRate: Double?,
+    val soldPerDay: Double?,
 )
 
 data class AuctionMarketFilterOptionRow(
@@ -89,6 +97,8 @@ class AuctionMarketSearchRepository(
             "commodityPrice" to "commodity_price",
             "selectedQuantity" to "selected_quantity",
             "commodityQuantity" to "commodity_quantity",
+            "saleRate" to "sale_rate",
+            "soldPerDay" to "sold_per_day",
         )
 
     fun search(request: AuctionMarketSearchRequest): AuctionMarketSearchResult {
@@ -233,6 +243,8 @@ class AuctionMarketSearchRepository(
             wrapped.commodity_p25_price,
             wrapped.commodity_p75_price,
             wrapped.commodity_quantity,
+            wrapped.sale_rate,
+            wrapped.sold_per_day,
             wrapped.total_items
         FROM (
             SELECT
@@ -263,6 +275,8 @@ class AuctionMarketSearchRepository(
                 p.commodity_p25_price,
                 p.commodity_p75_price,
                 p.commodity_quantity,
+                tsm.sale_rate,
+                tsm.sold_per_day,
                 COUNT(*) OVER () AS total_items
             $fromSql
             $whereSql
@@ -288,6 +302,10 @@ class AuctionMarketSearchRepository(
                     val expr = "COALESCE(wrapped.selected_quantity, wrapped.commodity_quantity)"
                     "(($expr) IS NULL) ASC, $expr $dir"
                 }
+                "saleRate", "soldPerDay" -> {
+                    val col = sortColumns.getValue(request.sortBy)
+                    "((wrapped.$col) IS NULL) ASC, wrapped.$col $dir"
+                }
                 else -> {
                     val col = sortColumns[request.sortBy] ?: sortColumns.getValue("itemName")
                     "wrapped.$col $dir"
@@ -306,10 +324,15 @@ class AuctionMarketSearchRepository(
         params: MutableList<Any?>,
     ): Pair<String, String> {
         val withSql = buildCurrentAuctionSnapshotCtes(request, params)
+        params.add(request.region.name)
         val fromSql =
             """
             FROM market_prices p
                      STRAIGHT_JOIN v_auction_market_item_details d ON d.item_id = p.item_id
+                     LEFT JOIN tsm_region_metric tsm
+                         ON tsm.region = ?
+                         AND tsm.subject_type = 'ITEM'
+                         AND tsm.subject_id = p.item_id
             """.trimIndent()
         return Pair(withSql, fromSql)
     }
@@ -503,6 +526,22 @@ class AuctionMarketSearchRepository(
             predicates.add("COALESCE(p.selected_quantity, p.commodity_quantity) <= ?")
             params.add(it)
         }
+        request.minSaleRatePercent?.let {
+            predicates.add("tsm.sale_rate IS NOT NULL AND tsm.sale_rate >= ?")
+            params.add(it / 100.0)
+        }
+        request.maxSaleRatePercent?.let {
+            predicates.add("tsm.sale_rate IS NOT NULL AND tsm.sale_rate <= ?")
+            params.add(it / 100.0)
+        }
+        request.minSoldPerDay?.let {
+            predicates.add("tsm.sold_per_day IS NOT NULL AND tsm.sold_per_day >= ?")
+            params.add(it)
+        }
+        request.maxSoldPerDay?.let {
+            predicates.add("tsm.sold_per_day IS NOT NULL AND tsm.sold_per_day <= ?")
+            params.add(it)
+        }
 
         return if (predicates.isEmpty()) "" else predicates.joinToString(prefix = "WHERE ", separator = " AND ")
     }
@@ -553,6 +592,8 @@ class AuctionMarketSearchRepository(
                 commodityP25Price = rs.getNullableLong("commodity_p25_price"),
                 commodityP75Price = rs.getNullableLong("commodity_p75_price"),
                 commodityQuantity = rs.getNullableLong("commodity_quantity"),
+                saleRate = rs.getNullableDouble("sale_rate"),
+                soldPerDay = rs.getNullableDouble("sold_per_day"),
             )
         }
 
@@ -589,6 +630,11 @@ class AuctionMarketSearchRepository(
 
     private fun ResultSet.getNullableLong(column: String): Long? {
         val value = getLong(column)
+        return if (wasNull()) null else value
+    }
+
+    private fun ResultSet.getNullableDouble(column: String): Double? {
+        val value = getDouble(column)
         return if (wasNull()) null else value
     }
 

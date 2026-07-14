@@ -110,6 +110,16 @@ class AuctionHouseService(
         )
 
     @Transactional
+    fun updateLastTsmRegionSync(
+        connectedRealmId: Int,
+        lastTsmRegionSync: Instant,
+    ): Int =
+        auctionHouseEntityRepository.updateLastTsmRegionSync(
+            connectedRealmId,
+            lastTsmRegionSync.toJavaInstant(),
+        )
+
+    @Transactional
     fun updateLastHistoryDeleted(
         connectedRealmId: Int,
         lastDeletedTime: Instant,

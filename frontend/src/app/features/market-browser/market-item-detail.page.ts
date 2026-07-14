@@ -1,4 +1,4 @@
-import { DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { DecimalPipe, isPlatformBrowser, PercentPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -111,6 +111,10 @@ export class MarketItemDetailPage {
   private readonly locale = inject(LocaleService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly decimalPipe = new DecimalPipe(this.locale.formatLocale());
+  private readonly percentPipe = new PercentPipe(this.locale.formatLocale());
+
+  protected readonly saleRateStatLabel = $localize`:@@market.column.saleRate:Sale rate`;
+  protected readonly soldPerDayStatLabel = $localize`:@@market.column.soldPerDay:Avg sold/day`;
 
   protected readonly loading = signal(true);
   protected readonly commodityLoading = signal(false);
@@ -527,6 +531,16 @@ export class MarketItemDetailPage {
   protected quantityLabel(q: number | null | undefined): string {
     if (q == null || !Number.isFinite(q)) return '—';
     return this.formatDecimal(Math.round(q), '1.0-0');
+  }
+
+  protected saleRateLabel(rate: number | null | undefined): string {
+    if (rate == null || !Number.isFinite(rate)) return '—';
+    return this.percentPipe.transform(rate, '1.0-1', this.locale.formatLocale()) ?? '—';
+  }
+
+  protected soldPerDayLabel(value: number | null | undefined): string {
+    if (value == null || !Number.isFinite(value)) return '—';
+    return this.formatDecimal(value, '1.0-2');
   }
 
   protected onCurrentListingsPageChange(page: number): void {

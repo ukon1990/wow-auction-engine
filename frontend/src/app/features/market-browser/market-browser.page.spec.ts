@@ -31,6 +31,7 @@ describe('MarketBrowserPage', () => {
         marketValue: {},
         regionalAverage: { gold: 1 },
         saleRate: 0,
+        soldPerDay: null,
         p25PriceCopper: 95,
         p75PriceCopper: 120,
         selectedQuantity: 4,

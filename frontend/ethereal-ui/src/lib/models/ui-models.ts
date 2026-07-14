@@ -81,7 +81,10 @@ export interface MarketItemRow {
   readonly minBuyout: CurrencyAmount;
   readonly marketValue: CurrencyAmount;
   readonly regionalAverage: CurrencyAmount;
-  readonly saleRate: number;
+  /** TSM regional sale rate as a fraction in [0, 1]; null when no metric. */
+  readonly saleRate: number | null;
+  /** TSM regional average units sold per day; null when no metric. */
+  readonly soldPerDay: number | null;
   readonly selectedQuantity?: number;
   readonly commodityQuantity?: number;
   readonly iconUrl?: string;

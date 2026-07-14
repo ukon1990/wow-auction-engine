@@ -3,13 +3,13 @@ package net.jonasmf.auctionengine.repository.rds
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionPrice
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
+import net.jonasmf.auctionengine.repository.rds.JdbcBatchSupport.maxRowsPerStatement
+import net.jonasmf.auctionengine.repository.rds.JdbcBatchSupport.rowPlaceholders
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.sql.Timestamp
 import java.time.OffsetDateTime
-
-private const val MAX_PREPARED_STATEMENT_PLACEHOLDERS = 60_000
 
 @Repository
 class AuctionJDBCRepository(
@@ -129,15 +129,6 @@ class AuctionJDBCRepository(
             }
         return totalRows
     }
-
-    private fun placeholders(count: Int): String = List(count) { "?" }.joinToString(",")
-
-    private fun rowPlaceholders(
-        rowCount: Int,
-        columnCount: Int,
-    ): String = List(rowCount) { "(${placeholders(columnCount)})" }.joinToString(",")
-
-    private fun maxRowsPerStatement(columnCount: Int): Int = MAX_PREPARED_STATEMENT_PLACEHOLDERS / columnCount
 }
 
 private fun OffsetDateTime.toSqlTimestamp(): Timestamp = Timestamp.from(toInstant())

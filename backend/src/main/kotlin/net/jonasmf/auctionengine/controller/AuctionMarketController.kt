@@ -48,6 +48,10 @@ class AuctionMarketController(
         maxPrice: Long?,
         minQuantity: Long?,
         maxQuantity: Long?,
+        minSaleRatePercent: Double?,
+        maxSaleRatePercent: Double?,
+        minSoldPerDay: Double?,
+        maxSoldPerDay: Double?,
     ): ResponseEntity<AuctionMarketSearchPage> =
         ResponseEntity.ok(
             auctionMarketSearchService.search(
@@ -68,6 +72,10 @@ class AuctionMarketController(
                 maxPrice = maxPrice,
                 minQuantity = minQuantity,
                 maxQuantity = maxQuantity,
+                minSaleRatePercent = minSaleRatePercent,
+                maxSaleRatePercent = maxSaleRatePercent,
+                minSoldPerDay = minSoldPerDay,
+                maxSoldPerDay = maxSoldPerDay,
             ),
         )
 

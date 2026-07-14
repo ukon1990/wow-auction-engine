@@ -63,6 +63,10 @@ class CraftingMarketSearchService(
         maxProfit: Long?,
         minRoiPercent: Double?,
         maxRoiPercent: Double?,
+        minSaleRatePercent: Double? = null,
+        maxSaleRatePercent: Double? = null,
+        minSoldPerDay: Double? = null,
+        maxSoldPerDay: Double? = null,
         minReagentCost: Long?,
         maxReagentCost: Long?,
         minOutputPrice: Long?,
@@ -76,6 +80,8 @@ class CraftingMarketSearchService(
         validateLongRange("reagentCost", minReagentCost, maxReagentCost)
         validateLongRange("outputPrice", minOutputPrice, maxOutputPrice)
         validateDoubleRange("roiPercent", minRoiPercent, maxRoiPercent)
+        validateDoubleRange("saleRatePercent", minSaleRatePercent, maxSaleRatePercent)
+        validateDoubleRange("soldPerDay", minSoldPerDay, maxSoldPerDay)
         validateDoubleRange("outputPriceChangePercent", minOutputPriceChangePercent, maxOutputPriceChangePercent)
 
         val context = auctionMarketContextService.resolve(regionCode, realmSlug, localeOverride)
@@ -87,6 +93,7 @@ class CraftingMarketSearchService(
         val commodityPreviousDate = context.commoditySnapshot.date.minusDays(1)
         val request =
             CraftingMarketSearchRequest(
+                region = context.region,
                 selectedConnectedRealmId = context.selectedSnapshot.connectedRealmId,
                 selectedDate = context.selectedSnapshot.date,
                 selectedHour = context.selectedSnapshot.hour,
@@ -108,6 +115,10 @@ class CraftingMarketSearchService(
                 maxProfit = maxProfit,
                 minRoiPercent = minRoiPercent,
                 maxRoiPercent = maxRoiPercent,
+                minSaleRatePercent = minSaleRatePercent,
+                maxSaleRatePercent = maxSaleRatePercent,
+                minSoldPerDay = minSoldPerDay,
+                maxSoldPerDay = maxSoldPerDay,
                 minReagentCost = minReagentCost,
                 maxReagentCost = maxReagentCost,
                 minOutputPrice = minOutputPrice,
@@ -205,6 +216,8 @@ class CraftingMarketSearchService(
                         reagentsFullyPriced = row.reagentsFullyPriced,
                         outputPriced = row.outputUnitPrice != null,
                         profileFit = row.profileFit(candidatesByRecipeProfession, recipeRulesById, actorSubject != null),
+                        saleRate = row.saleRate,
+                        soldPerDay = row.soldPerDay,
                     )
                 },
             page =
@@ -348,6 +361,20 @@ class CraftingMarketSearchService(
                     AuctionMarketFilter(
                         id = "roiPercent",
                         label = "ROI %",
+                        type = AuctionMarketFilter.Type.RANGE,
+                        min = null,
+                        max = null,
+                    ),
+                    AuctionMarketFilter(
+                        id = "saleRatePercent",
+                        label = "Sale rate %",
+                        type = AuctionMarketFilter.Type.RANGE,
+                        min = null,
+                        max = null,
+                    ),
+                    AuctionMarketFilter(
+                        id = "soldPerDay",
+                        label = "Avg sold/day",
                         type = AuctionMarketFilter.Type.RANGE,
                         min = null,
                         max = null,

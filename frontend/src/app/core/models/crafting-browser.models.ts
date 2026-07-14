@@ -8,7 +8,9 @@ export type CraftingSortBy =
   | 'roiPercent'
   | 'outputPriceChangePercent'
   | 'profitChangePercent'
-  | 'listingQuantity';
+  | 'listingQuantity'
+  | 'saleRate'
+  | 'soldPerDay';
 
 export interface CraftingBrowserQueryState {
   readonly query: string;
@@ -19,6 +21,10 @@ export interface CraftingBrowserQueryState {
   readonly maxProfit: number | null;
   readonly minRoiPercent: number | null;
   readonly maxRoiPercent: number | null;
+  readonly minSaleRatePercent: number | null;
+  readonly maxSaleRatePercent: number | null;
+  readonly minSoldPerDay: number | null;
+  readonly maxSoldPerDay: number | null;
   readonly minReagentCost: number | null;
   readonly maxReagentCost: number | null;
   readonly minOutputPrice: number | null;

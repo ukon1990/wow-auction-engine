@@ -23,6 +23,15 @@ describe('crafting-browser-query.mapper', () => {
     });
   });
 
+  it('accepts saleRate and soldPerDay sortBy values', () => {
+    expect(readCraftingBrowserQueryState(convertToParamMap({ sortBy: 'saleRate' })).sortBy).toBe(
+      'saleRate',
+    );
+    expect(readCraftingBrowserQueryState(convertToParamMap({ sortBy: 'soldPerDay' })).sortBy).toBe(
+      'soldPerDay',
+    );
+  });
+
   it('falls back to default sortBy for unknown columns', () => {
     expect(
       readCraftingBrowserQueryState(convertToParamMap({ sortBy: 'not-a-column' })).sortBy,
@@ -58,12 +67,16 @@ describe('crafting-browser-query.mapper', () => {
         convertToParamMap({
           professionIds: '171',
           minProfit: '100',
+          minSaleRatePercent: '25',
+          maxSoldPerDay: '10',
           requireCompleteReagentPricing: 'true',
         }),
       ),
     ).toMatchObject({
       professionIds: [171],
       minProfit: 100,
+      minSaleRatePercent: 25,
+      maxSoldPerDay: 10,
       requireCompleteReagentPricing: true,
     });
   });

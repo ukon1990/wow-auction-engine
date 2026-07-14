@@ -54,6 +54,8 @@ search:
             - outputPriceChangePercent
             - profitChangePercent
             - listingQuantity
+            - saleRate
+            - soldPerDay
       - name: sortDirection
         in: query
         required: false
@@ -117,6 +119,34 @@ search:
       - name: maxRoiPercent
         in: query
         required: false
+        schema:
+          type: number
+          format: double
+      - name: minSaleRatePercent
+        in: query
+        required: false
+        description: Minimum TSM sale rate as a percent (25 means 25%). Bound as fraction against c.sale_rate.
+        schema:
+          type: number
+          format: double
+      - name: maxSaleRatePercent
+        in: query
+        required: false
+        description: Maximum TSM sale rate as a percent (25 means 25%). Bound as fraction against c.sale_rate.
+        schema:
+          type: number
+          format: double
+      - name: minSoldPerDay
+        in: query
+        required: false
+        description: Minimum TSM average sold per day.
+        schema:
+          type: number
+          format: double
+      - name: maxSoldPerDay
+        in: query
+        required: false
+        description: Maximum TSM average sold per day.
         schema:
           type: number
           format: double

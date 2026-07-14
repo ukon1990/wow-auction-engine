@@ -48,7 +48,8 @@ export const toMarketRow = (row: AuctionMarketSearchRow): MarketItemRow => {
     minBuyout: mergedCurrency,
     marketValue: {},
     regionalAverage: mergedCurrency,
-    saleRate: 0,
+    saleRate: toOptionalFiniteNumber(row.saleRate) ?? null,
+    soldPerDay: toOptionalFiniteNumber(row.soldPerDay) ?? null,
     selectedQuantity: listingQuantity ?? undefined,
   };
 };

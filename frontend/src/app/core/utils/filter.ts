@@ -12,6 +12,10 @@ export const filterLabel = (filter: AuctionMarketFilter): string => {
       return $localize`:@@market.column.price:Price`;
     case 'quantity':
       return $localize`:@@market.column.quantity:Quantity`;
+    case 'saleRatePercent':
+      return $localize`:@@filters.saleRatePercent:Sale rate %`;
+    case 'soldPerDay':
+      return $localize`:@@filters.soldPerDay:Avg sold/day`;
     case 'qualityIds':
       return $localize`:@@market.column.quality:Quality`;
     case 'itemClassIds':
@@ -38,8 +42,33 @@ export const filterOptionLabel = (
 
 export const qualityLabel = (quality: ItemQuality): string => formatQuality(quality);
 
+export const MARKET_RANGE_SECTION_KEYS = {
+  price: ['minPrice', 'maxPrice'],
+  quantity: ['minQuantity', 'maxQuantity'],
+  saleRatePercent: ['minSaleRatePercent', 'maxSaleRatePercent'],
+  soldPerDay: ['minSoldPerDay', 'maxSoldPerDay'],
+} as const satisfies Record<
+  string,
+  readonly [keyof MarketBrowserQueryState, keyof MarketBrowserQueryState]
+>;
+
+export const CRAFTING_RANGE_SECTION_KEYS = {
+  profit: ['minProfit', 'maxProfit'],
+  roiPercent: ['minRoiPercent', 'maxRoiPercent'],
+  saleRatePercent: ['minSaleRatePercent', 'maxSaleRatePercent'],
+  soldPerDay: ['minSoldPerDay', 'maxSoldPerDay'],
+  reagentCost: ['minReagentCost', 'maxReagentCost'],
+  outputPrice: ['minOutputPrice', 'maxOutputPrice'],
+  outputPriceChangePercent: ['minOutputPriceChangePercent', 'maxOutputPriceChangePercent'],
+} as const satisfies Record<
+  string,
+  readonly [keyof CraftingBrowserQueryState, keyof CraftingBrowserQueryState]
+>;
+
 export const filterType = (filter: AuctionMarketFilter): FilterSection['type'] => {
   if (filter.id === 'itemClassIds' || filter.id === 'itemSubclassIds') return 'select';
+  if (Object.hasOwn(MARKET_RANGE_SECTION_KEYS, filter.id)) return 'range';
+  if (Object.hasOwn(CRAFTING_RANGE_SECTION_KEYS, filter.id)) return 'range';
   return filter.type;
 };
 
@@ -81,6 +110,10 @@ export const selectedRangeValue = (
   if (filterId === 'price') return (bound === 'min' ? state.minPrice : state.maxPrice) ?? undefined;
   if (filterId === 'quantity')
     return (bound === 'min' ? state.minQuantity : state.maxQuantity) ?? undefined;
+  if (filterId === 'saleRatePercent')
+    return (bound === 'min' ? state.minSaleRatePercent : state.maxSaleRatePercent) ?? undefined;
+  if (filterId === 'soldPerDay')
+    return (bound === 'min' ? state.minSoldPerDay : state.maxSoldPerDay) ?? undefined;
   return undefined;
 };
 
@@ -107,14 +140,6 @@ export type ParsedFilterOptionId = {
   readonly value: number;
   readonly parentId?: number;
 };
-
-export const MARKET_RANGE_SECTION_KEYS = {
-  price: ['minPrice', 'maxPrice'],
-  quantity: ['minQuantity', 'maxQuantity'],
-} as const satisfies Record<
-  string,
-  readonly [keyof MarketBrowserQueryState, keyof MarketBrowserQueryState]
->;
 
 export const MARKET_MULTI_SELECT_KEYS = new Set<string>([
   'qualityIds',
@@ -239,17 +264,6 @@ export function applyMarketRangeFilter(
   return applyRangeUpdate(state, MARKET_RANGE_SECTION_KEYS, sectionId, bound, value);
 }
 
-export const CRAFTING_RANGE_SECTION_KEYS = {
-  profit: ['minProfit', 'maxProfit'],
-  roiPercent: ['minRoiPercent', 'maxRoiPercent'],
-  reagentCost: ['minReagentCost', 'maxReagentCost'],
-  outputPrice: ['minOutputPrice', 'maxOutputPrice'],
-  outputPriceChangePercent: ['minOutputPriceChangePercent', 'maxOutputPriceChangePercent'],
-} as const satisfies Record<
-  string,
-  readonly [keyof CraftingBrowserQueryState, keyof CraftingBrowserQueryState]
->;
-
 export const CRAFTING_MULTI_SELECT_KEYS = new Set<string>([
   'professionIds',
   'expansionIds',
@@ -275,6 +289,10 @@ export const craftingSelectedRangeValue = (
     return (bound === 'min' ? state.minProfit : state.maxProfit) ?? undefined;
   if (filterId === 'roiPercent')
     return (bound === 'min' ? state.minRoiPercent : state.maxRoiPercent) ?? undefined;
+  if (filterId === 'saleRatePercent')
+    return (bound === 'min' ? state.minSaleRatePercent : state.maxSaleRatePercent) ?? undefined;
+  if (filterId === 'soldPerDay')
+    return (bound === 'min' ? state.minSoldPerDay : state.maxSoldPerDay) ?? undefined;
   if (filterId === 'reagentCost')
     return (bound === 'min' ? state.minReagentCost : state.maxReagentCost) ?? undefined;
   if (filterId === 'outputPrice')

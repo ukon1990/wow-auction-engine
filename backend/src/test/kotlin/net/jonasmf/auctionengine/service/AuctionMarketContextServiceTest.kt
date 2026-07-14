@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.service
 
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.constant.Locale
+import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.testsupport.MarketSearchTestFixtures
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -22,6 +23,7 @@ class AuctionMarketContextServiceTest : IntegrationTestBase() {
 
         val context = auctionMarketContextService.resolve("eu", "argent-dawn", null)
 
+        assertEquals(Region.Europe, context.region)
         assertEquals(Locale.EN_GB, context.locale)
         assertEquals("UTC", context.selectedRealmTimezone)
         assertEquals(1084, context.selectedSnapshot.connectedRealmId)

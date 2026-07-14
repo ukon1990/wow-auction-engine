@@ -18,6 +18,8 @@ spring:
 app:
     scheduling:
         enabled: false
+    tsm:
+        public-data-base-url: https://public-data.tradeskillmaster.com/retail
 blizzard:
     client-id: dummy-client-id
     client-secret: dummy-client-secret

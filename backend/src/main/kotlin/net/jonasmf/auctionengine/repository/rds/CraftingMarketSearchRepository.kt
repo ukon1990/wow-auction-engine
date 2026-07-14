@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.repository.rds
 
+import net.jonasmf.auctionengine.constant.Region
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
@@ -8,6 +9,7 @@ import java.sql.ResultSet
 import java.time.LocalDate
 
 data class CraftingMarketSearchRequest(
+    val region: Region,
     val selectedConnectedRealmId: Int,
     val selectedDate: LocalDate,
     val selectedHour: Int,
@@ -29,6 +31,10 @@ data class CraftingMarketSearchRequest(
     val maxProfit: Long?,
     val minRoiPercent: Double?,
     val maxRoiPercent: Double?,
+    val minSaleRatePercent: Double?,
+    val maxSaleRatePercent: Double?,
+    val minSoldPerDay: Double?,
+    val maxSoldPerDay: Double?,
     val minReagentCost: Long?,
     val maxReagentCost: Long?,
     val minOutputPrice: Long?,
@@ -77,6 +83,8 @@ data class CraftingMarketSqlRow(
     val expansionId: Int?,
     val skillTierName: String?,
     val professionCategoryName: String?,
+    val saleRate: Double?,
+    val soldPerDay: Double?,
 )
 
 @Repository
@@ -97,6 +105,8 @@ class CraftingMarketSearchRepository(
             "outputPriceChangePercent" to "output_price_change_percent",
             "profitChangePercent" to "profit_change_percent",
             "listingQuantity" to "listing_quantity",
+            "saleRate" to "sale_rate",
+            "soldPerDay" to "sold_per_day",
         )
 
     fun search(request: CraftingMarketSearchRequest): CraftingMarketSearchResult {
@@ -175,6 +185,7 @@ class CraftingMarketSearchRepository(
         params.add(previousDate)
         params.add(request.commodityConnectedRealmId)
         params.add(commodityPreviousDate)
+        params.add(request.region.name)
 
         return """
             WITH
@@ -455,7 +466,9 @@ class CraftingMarketSearchRepository(
                     COALESCE(d.item_class_name_$loc, d.item_class_name_en_gb, d.item_class_name_en_us) AS item_class_name,
                     d.item_subclass_id,
                     COALESCE(d.item_subclass_name_$loc, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
-                    d.expansion_id
+                    d.expansion_id,
+                    tsm.sale_rate,
+                    tsm.sold_per_day
                 FROM crafted_current cc
                     INNER JOIN recipe_dim rd
                         ON rd.recipe_id = cc.recipe_id
@@ -472,6 +485,10 @@ class CraftingMarketSearchRepository(
                     LEFT JOIN v_auction_market_item_details d
                         ON d.item_id = cc.crafted_item_id
                         AND d.recipe_id = cc.recipe_id
+                    LEFT JOIN tsm_region_metric tsm
+                        ON tsm.region = ?
+                        AND tsm.subject_type = 'ITEM'
+                        AND tsm.subject_id = cc.crafted_item_id
             ),
             computed AS (
                 SELECT
@@ -526,6 +543,8 @@ class CraftingMarketSearchRepository(
             wrapped.item_class_name,
             wrapped.item_subclass_id,
             wrapped.item_subclass_name,
+            wrapped.sale_rate,
+            wrapped.sold_per_day,
             wrapped.total_items
         FROM (
             SELECT
@@ -562,6 +581,8 @@ class CraftingMarketSearchRepository(
                 c.item_class_name,
                 c.item_subclass_id,
                 c.item_subclass_name,
+                c.sale_rate,
+                c.sold_per_day,
                 COUNT(*) OVER () AS total_items
             FROM computed c
             $whereSql
@@ -578,7 +599,7 @@ class CraftingMarketSearchRepository(
                     val col = sortColumns.getValue(request.sortBy)
                     "((wrapped.$col) IS NULL) ASC, wrapped.$col $dir"
                 }
-                "roiPercent", "outputPriceChangePercent", "profitChangePercent" -> {
+                "roiPercent", "outputPriceChangePercent", "profitChangePercent", "saleRate", "soldPerDay" -> {
                     val col = sortColumns.getValue(request.sortBy)
                     "((wrapped.$col) IS NULL) ASC, wrapped.$col $dir"
                 }
@@ -633,6 +654,22 @@ class CraftingMarketSearchRepository(
         }
         request.maxRoiPercent?.let {
             predicates.add("c.roi_percent IS NOT NULL AND c.roi_percent <= ?")
+            params.add(it)
+        }
+        request.minSaleRatePercent?.let {
+            predicates.add("c.sale_rate IS NOT NULL AND c.sale_rate >= ?")
+            params.add(it / 100.0)
+        }
+        request.maxSaleRatePercent?.let {
+            predicates.add("c.sale_rate IS NOT NULL AND c.sale_rate <= ?")
+            params.add(it / 100.0)
+        }
+        request.minSoldPerDay?.let {
+            predicates.add("c.sold_per_day IS NOT NULL AND c.sold_per_day >= ?")
+            params.add(it)
+        }
+        request.maxSoldPerDay?.let {
+            predicates.add("c.sold_per_day IS NOT NULL AND c.sold_per_day <= ?")
             params.add(it)
         }
         request.minReagentCost?.let {
@@ -708,6 +745,8 @@ class CraftingMarketSearchRepository(
                 expansionId = rs.getNullableInt("expansion_id"),
                 skillTierName = rs.getString("skill_tier_name"),
                 professionCategoryName = rs.getString("profession_category_name"),
+                saleRate = rs.getNullableDouble("sale_rate"),
+                soldPerDay = rs.getNullableDouble("sold_per_day"),
             )
         }
 

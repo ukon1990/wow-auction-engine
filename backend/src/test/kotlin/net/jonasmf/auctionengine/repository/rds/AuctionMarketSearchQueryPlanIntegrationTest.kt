@@ -1,6 +1,7 @@
 package net.jonasmf.auctionengine.repository.rds
 
 import net.jonasmf.auctionengine.config.IntegrationTestBase
+import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.testsupport.MarketSearchTestFixtures
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -43,6 +44,7 @@ class AuctionMarketSearchQueryPlanIntegrationTest : IntegrationTestBase() {
 
     private fun sampleRequest(): AuctionMarketSearchRequest =
         AuctionMarketSearchRequest(
+            region = Region.Europe,
             selectedConnectedRealmId = 1084,
             selectedDate = LocalDate.parse("2026-05-01"),
             selectedHour = 11,
@@ -64,5 +66,9 @@ class AuctionMarketSearchQueryPlanIntegrationTest : IntegrationTestBase() {
             maxPrice = null,
             minQuantity = null,
             maxQuantity = null,
+            minSaleRatePercent = null,
+            maxSaleRatePercent = null,
+            minSoldPerDay = null,
+            maxSoldPerDay = null,
         )
 }

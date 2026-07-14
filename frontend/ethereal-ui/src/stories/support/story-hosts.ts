@@ -124,6 +124,7 @@ export const rows: readonly MarketItemRow[] = [
     marketValue: { gold: 3510 },
     regionalAverage: { gold: 3480 },
     saleRate: 0.85,
+    soldPerDay: 42.5,
   },
   {
     id: 'awakened-order',
@@ -133,6 +134,7 @@ export const rows: readonly MarketItemRow[] = [
     marketValue: { gold: 415 },
     regionalAverage: { gold: 418 },
     saleRate: 0.92,
+    soldPerDay: 120,
     selected: true,
   },
 ];
@@ -192,7 +194,8 @@ export function createMarketStoryTableColumns(): ColumnDef<MarketItemRow, unknow
       id: 'sale-rate',
       header: 'Sale Rate',
       meta: { align: 'right' },
-      cell: ({ row }) => row.original.saleRate.toFixed(2),
+      cell: ({ row }) =>
+        row.original.saleRate != null ? `${(row.original.saleRate * 100).toFixed(0)}%` : '—',
     },
   ];
 }

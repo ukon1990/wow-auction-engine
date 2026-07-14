@@ -83,6 +83,10 @@ export class AuctionItemService extends BaseSearchService<
       maxPrice,
       minQuantity,
       maxQuantity,
+      minSaleRatePercent,
+      maxSaleRatePercent,
+      minSoldPerDay,
+      maxSoldPerDay,
       recipeOnly,
     } = queryParams;
 
@@ -105,6 +109,10 @@ export class AuctionItemService extends BaseSearchService<
         maxPrice ?? undefined,
         minQuantity ?? undefined,
         maxQuantity ?? undefined,
+        minSaleRatePercent ?? undefined,
+        maxSaleRatePercent ?? undefined,
+        minSoldPerDay ?? undefined,
+        maxSoldPerDay ?? undefined,
         'body',
         false,
         { transferCache: false },

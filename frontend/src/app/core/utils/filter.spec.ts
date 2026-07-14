@@ -102,6 +102,18 @@ describe('filter helpers', () => {
       expect(withMin.minPrice).toBe(100);
       expect(applyMarketRangeFilter(withMin, 'price', 'max', 500).maxPrice).toBe(500);
     });
+
+    it('updates min sale rate percent and sold per day', () => {
+      const withSaleRate = applyMarketRangeFilter(
+        defaultMarketBrowserQueryState,
+        'saleRatePercent',
+        'min',
+        25,
+      );
+      expect(withSaleRate.minSaleRatePercent).toBe(25);
+      const withSoldPerDay = applyMarketRangeFilter(withSaleRate, 'soldPerDay', 'min', 1.5);
+      expect(withSoldPerDay.minSoldPerDay).toBe(1.5);
+    });
   });
 
   describe('applyCraftingFilterToggle', () => {
@@ -139,6 +151,18 @@ describe('filter helpers', () => {
       );
       expect(withMin.minProfit).toBe(100);
       expect(applyCraftingRangeFilter(withMin, 'profit', 'max', 500).maxProfit).toBe(500);
+    });
+
+    it('updates min sale rate percent and sold per day', () => {
+      const withSaleRate = applyCraftingRangeFilter(
+        defaultCraftingBrowserQueryState,
+        'saleRatePercent',
+        'min',
+        25,
+      );
+      expect(withSaleRate.minSaleRatePercent).toBe(25);
+      const withSoldPerDay = applyCraftingRangeFilter(withSaleRate, 'soldPerDay', 'max', 10);
+      expect(withSoldPerDay.maxSoldPerDay).toBe(10);
     });
   });
 });

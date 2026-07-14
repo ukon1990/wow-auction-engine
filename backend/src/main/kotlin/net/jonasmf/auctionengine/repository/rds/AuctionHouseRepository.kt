@@ -49,6 +49,20 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
     @Query(
         """
         UPDATE AuctionHouse a
+        SET a.lastTsmRegionSync = :lastTsmRegionSync
+        WHERE a.connectedId = :connectedId
+        """,
+    )
+    fun updateLastTsmRegionSync(
+        @Param("connectedId") connectedId: Int,
+        @Param("lastTsmRegionSync") lastTsmRegionSync: Instant,
+    ): Int
+
+    @Modifying
+    @Transactional
+    @Query(
+        """
+        UPDATE AuctionHouse a
         SET a.lastHistoryDeleteEvent = :lastHistoryDeleteEvent
         WHERE a.connectedId = :connectedRealmId
     """,
