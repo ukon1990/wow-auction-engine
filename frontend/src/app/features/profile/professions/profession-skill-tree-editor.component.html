@@ -40,7 +40,10 @@
         <p class="mb-3 text-sm text-outline">{{ tab.description }}</p>
       }
       @if (layout().nodes.length) {
-        <div class="max-w-full overflow-auto rounded-md border border-white/10 bg-surface/40">
+        <div
+          #graphScroll
+          class="max-w-full overflow-auto rounded-md border border-white/10 bg-surface/40"
+        >
           <div
             class="relative"
             [style.width.px]="layout().width"
@@ -77,11 +80,13 @@
             </svg>
             @for (position of layout().nodes; track position.node.id) {
               <article
-                class="absolute grid min-w-0 overflow-hidden rounded-md border border-white/15 bg-surface shadow-lg"
+                class="absolute grid min-w-0 overflow-hidden rounded-md border border-white/15 bg-surface shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-container"
                 [style.left.px]="position.x"
                 [style.top.px]="position.y"
                 [style.width.px]="position.width"
                 [style.height.px]="position.height"
+                [id]="nodeElementId(position.node.id)"
+                tabindex="-1"
                 [attr.aria-label]="nodeDisplayName(position.node)"
                 [title]="nodeTooltip(position.node, tab)"
               >

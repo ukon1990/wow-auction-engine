@@ -2,9 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
+  ElementRef,
   input,
   linkedSignal,
   output,
+  viewChild,
 } from '@angular/core';
 
 import { isMilestoneNode, milestoneTooltipText } from './profession-skill-tree-nodes';
@@ -99,10 +102,29 @@ export class ProfessionSkillTreeEditor {
     return tabs.find((tab) => tab.id === this.selectedTabId()) ?? tabs[0] ?? null;
   });
   protected readonly layout = computed(() => layoutGraph(this.selectedTab()?.nodes ?? []));
+  private readonly graphScroll = viewChild<ElementRef<HTMLDivElement>>('graphScroll');
 
   protected readonly nodeDisplayName = nodeDisplayName;
   protected readonly editableEntries = editableEntries;
   protected readonly nodeTooltip = nodeTooltip;
+
+  constructor() {
+    effect((onCleanup) => {
+      const tab = this.selectedTab();
+      const layout = this.layout();
+      if (!tab || !layout.nodes.length) return;
+
+      let frame = 0;
+      let attempts = 0;
+      const tryFocus = () => {
+        if (this.focusPrimaryRoot(tab.nodes, layout) || attempts >= 3) return;
+        attempts += 1;
+        frame = requestAnimationFrame(tryFocus);
+      };
+      frame = requestAnimationFrame(tryFocus);
+      onCleanup(() => cancelAnimationFrame(frame));
+    });
+  }
 
   protected selectTab(tab: SkillTreeGraphTab): void {
     this.selectedTabId.set(tab.id);
@@ -161,6 +183,10 @@ export class ProfessionSkillTreeEditor {
     return `profession-tree-panel-${this.tree().id}-${tabId}`;
   }
 
+  protected nodeElementId(nodeId: number): string {
+    return `profession-tree-node-${this.tree().id}-${nodeId}`;
+  }
+
   protected markerId(tabId: number): string {
     return `profession-tree-arrow-${this.tree().id}-${tabId}`;
   }
@@ -195,6 +221,48 @@ export class ProfessionSkillTreeEditor {
   protected tabLabel(tab: SkillTreeGraphTab): string {
     return tab.name?.trim() || `#${tab.id}`;
   }
+
+  private focusPrimaryRoot(nodes: readonly SkillTreeGraphNode[], layout: GraphLayout): boolean {
+    const root = primaryRootPosition(layout, nodes);
+    if (!root) return false;
+
+    const element = document.getElementById(this.nodeElementId(root.node.id));
+    const scroll = this.graphScroll()?.nativeElement;
+    if (!element || !scroll) return false;
+
+    scrollNodeIntoView(scroll, root);
+    element.focus({ preventScroll: true });
+    return true;
+  }
+}
+
+export function primaryRootPosition(
+  layout: GraphLayout,
+  nodes: readonly SkillTreeGraphNode[],
+): PositionedNode | null {
+  if (!layout.nodes.length) return null;
+
+  const rootIds = new Set(
+    nodes
+      .filter((node) => isVisibleNode(node, nodes) && visibleParents(node, nodes).length === 0)
+      .map((node) => node.id),
+  );
+  const roots = layout.nodes.filter((position) => rootIds.has(position.node.id));
+  const candidates = roots.length ? roots : [layout.nodes[0]];
+  return [...candidates].sort((left, right) => compareNodes(left.node, right.node))[0];
+}
+
+function scrollNodeIntoView(scroll: HTMLElement, position: PositionedNode): void {
+  const targetLeft = position.x + position.width / 2 - scroll.clientWidth / 2;
+  const targetTop = position.y + position.height / 2 - scroll.clientHeight / 2;
+  const maxLeft = Math.max(0, scroll.scrollWidth - scroll.clientWidth);
+  const maxTop = Math.max(0, scroll.scrollHeight - scroll.clientHeight);
+
+  scroll.scrollTo({
+    left: Math.min(maxLeft, Math.max(0, targetLeft)),
+    top: Math.min(maxTop, Math.max(0, targetTop)),
+    behavior: 'smooth',
+  });
 }
 
 function nodeTooltip(node: SkillTreeGraphNode, tab: SkillTreeGraphTab): string | null {

@@ -52,6 +52,36 @@ describe('ProfessionSkillTreeEditor', () => {
     expect(root.textContent).not.toContain('Foundations');
   });
 
+  it('focuses and scrolls the primary root node when switching tabs', async () => {
+    const scrollTo = vi.fn();
+    const root = fixture.nativeElement as HTMLElement;
+    const scrollContainer = root.querySelector<HTMLElement>('.overflow-auto');
+    expect(scrollContainer).not.toBeNull();
+    scrollContainer!.scrollTo = scrollTo;
+    Object.defineProperty(scrollContainer!, 'clientWidth', { value: 400, configurable: true });
+    Object.defineProperty(scrollContainer!, 'clientHeight', { value: 300, configurable: true });
+    Object.defineProperty(scrollContainer!, 'scrollWidth', { value: 2000, configurable: true });
+    Object.defineProperty(scrollContainer!, 'scrollHeight', { value: 1500, configurable: true });
+
+    const tabs = root.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+    tabs[1].click();
+    fixture.detectChanges();
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+    const weaponsRoot = layoutGraph([secondTabNode]).nodes[0];
+    const focused = document.activeElement as HTMLElement | null;
+    expect(focused?.id).toBe(`profession-tree-node-${tree.id}-${secondTabNode.id}`);
+
+    const centerLeft = weaponsRoot.x + weaponsRoot.width / 2 - 200;
+    const centerTop = weaponsRoot.y + weaponsRoot.height / 2 - 150;
+    expect(scrollTo).toHaveBeenCalledWith({
+      left: Math.min(1600, Math.max(0, centerLeft)),
+      top: Math.min(1200, Math.max(0, centerTop)),
+      behavior: 'smooth',
+    });
+  });
+
   it('renders connected nodes and keeps prerequisite parents available to assistive tech', () => {
     const root = fixture.nativeElement as HTMLElement;
     expect(root.querySelectorAll('svg path[marker-end]')).toHaveLength(1);
