@@ -6,7 +6,7 @@ describe('profileFitSummary', () => {
   const fit = (overrides: Partial<CraftingProfileFit> = {}): CraftingProfileFit => ({
     state: 'configured',
     craftable: null,
-    diagnostic: 'recipe_rules_unavailable_heuristic_ranking',
+    diagnostic: 'recipe_rules_missing',
     alternatives: [],
     ...overrides,
   });
@@ -29,11 +29,12 @@ describe('profileFitSummary', () => {
     expect(profileFitSummary(fit())).toContain('rules are unavailable');
   });
 
-  it('names the best candidate only when craftability is known', () => {
+  it('names the best candidate with predicted quality when craftability is evaluated', () => {
     expect(
       profileFitSummary(
         fit({
           craftable: true,
+          diagnostic: 'profile_evaluated',
           bestCandidate: {
             characterId: 1,
             characterName: 'Aelwyn',
@@ -41,9 +42,27 @@ describe('profileFitSummary', () => {
             realmName: 'Draenor',
             professionId: 171,
             allocationCount: 2,
+            predictedQuality: 2,
           },
         }),
       ),
     ).toContain('Aelwyn');
+    expect(
+      profileFitSummary(
+        fit({
+          craftable: true,
+          diagnostic: 'profile_evaluated',
+          bestCandidate: {
+            characterId: 1,
+            characterName: 'Aelwyn',
+            region: 'eu',
+            realmName: 'Draenor',
+            professionId: 171,
+            allocationCount: 2,
+            predictedQuality: 2,
+          },
+        }),
+      ),
+    ).toContain('quality 2');
   });
 });

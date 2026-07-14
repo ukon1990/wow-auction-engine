@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 390,
@@ -22,7 +22,7 @@
     "compatible_categories": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/831?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/831?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Blessed Pango Charm",
@@ -42,7 +42,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/832?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/832?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Primal Spore Binding",
@@ -62,7 +62,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/830?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/830?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Devouring Banding",
@@ -82,7 +82,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/854?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/854?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Lucky Keychain",
@@ -102,7 +102,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/805?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/805?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Darkmoon Sigil: Blood",
@@ -122,7 +122,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/806?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/806?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Darkmoon Sigil: Hunt",
@@ -142,7 +142,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/807?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/807?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Darkmoon Sigil: Rot",
@@ -162,7 +162,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/808?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/category/808?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Darkmoon Sigil: Void",

@@ -98,10 +98,62 @@ class CraftingMarketSearchServiceTest : IntegrationTestBase() {
         val fit = search(actorSubject = "owner").items.single().profileFit
 
         assertEquals("configured", fit?.state?.value)
-        assertEquals("recipe_rules_unavailable_heuristic_ranking", fit?.diagnostic?.value)
+        assertEquals("recipe_rules_missing", fit?.diagnostic?.value)
         assertNull(fit?.craftable)
         assertEquals("Higher Skill", fit?.bestCandidate?.characterName)
         assertEquals(listOf("Lower Skill"), fit?.alternatives?.map { it.characterName })
+    }
+
+    @Test
+    fun `authenticated crafting search evaluates craftability from manual allocations rules and effects`() {
+        MarketSearchTestFixtures.seedMarketSearchData(jdbcTemplate)
+        MarketSearchTestFixtures.augmentMarketSearchDataForCrafting(jdbcTemplate)
+        jdbcTemplate.update("UPDATE item SET expansion_id = 1 WHERE id = 19019")
+        val treeId = createProfessionTree()
+        val nodeId = 5001L
+        val entryId = 6001L
+        jdbcTemplate.update(
+            "INSERT INTO profession_skill_tree_node (id, tree_id, external_node_id, name, max_ranks, display_order) VALUES (?, ?, 501, 'Skill milestone', 1, 0)",
+            nodeId,
+            treeId,
+        )
+        jdbcTemplate.update(
+            "INSERT INTO profession_skill_tree_entry (id, node_id, external_entry_id, name, rank_limit, display_order) VALUES (?, ?, 601, 'Waist mastery', 1, 0)",
+            entryId,
+            nodeId,
+        )
+        jdbcTemplate.update(
+            "INSERT INTO profession_skill_tree_node_effect (node_id, effect_type, skill_bonus, crafting_category, unlock_rank, source) VALUES (?, 'SKILL_BONUS', 35, NULL, 0, 'description')",
+            nodeId,
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO recipe_crafting_rule (recipe_id, base_skill, quality_thresholds)
+            VALUES (7001, 50, '[80, 100, 120]')
+            """.trimIndent(),
+        )
+        jdbcTemplate.update(
+            "INSERT INTO user_character (owner_subject, region, realm_name, character_name) VALUES ('owner', 'eu', 'Argent Dawn', 'Crafter')",
+        )
+        val characterId = jdbcTemplate.queryForObject("SELECT id FROM user_character WHERE character_name = 'Crafter'", Long::class.java)!!
+        jdbcTemplate.update(
+            "INSERT INTO user_character_profession_profile (character_id, profession_id, tree_id, skill_level) VALUES (?, 50, ?, 85)",
+            characterId,
+            treeId,
+        )
+        val profileId = jdbcTemplate.queryForObject("SELECT id FROM user_character_profession_profile WHERE character_id = ?", Long::class.java, characterId)!!
+        jdbcTemplate.update(
+            "INSERT INTO user_character_profession_allocation (profile_id, entry_id, rank) VALUES (?, ?, 1)",
+            profileId,
+            entryId,
+        )
+
+        val fit = search(actorSubject = "owner").items.single().profileFit
+
+        assertEquals("profile_evaluated", fit?.diagnostic?.value)
+        assertEquals(true, fit?.craftable)
+        assertEquals("Crafter", fit?.bestCandidate?.characterName)
+        assertEquals(1, fit?.bestCandidate?.predictedQuality)
     }
 
     @Test

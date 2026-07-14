@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/182?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/182?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 182,
@@ -52,14 +52,14 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/profession/182?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/profession/182?namespace=static-12.0.7_67808-us"
         },
         "id": 182
     },
     "skill_tiers": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2550?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2550?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Legion Herbalism",
@@ -79,7 +79,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2912?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2912?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Midnight Herbalism",

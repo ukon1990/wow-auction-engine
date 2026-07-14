@@ -31,6 +31,10 @@ class BranchDatabaseCloner {
                         targetDatabase = selectedDatabase.name,
                         replaceExisting = false,
                     )
+                    connection.backfillAuctionSnapshotIfMissing(
+                        sourceDatabase = selectedDatabase.cloneSourceDatabase,
+                        targetDatabase = selectedDatabase.name,
+                    )
                     connection.commit()
                     logger.info(
                         "Using existing local dev database {} after {} ms",
@@ -75,12 +79,10 @@ private fun elapsedMillis(startedAt: Long): Long = (System.nanoTime() - startedA
 private val SKIP_DATA_TABLES =
     setOf(
         "admin_job",
-        "auction",
         "auction_house_file_log",
         "auction_update_history",
         "auction_price",
         "blizzard_media_fetch_failure",
-        "connected_realm_update_history",
         "file_reference",
         "item_fetch_failure",
     )
@@ -89,6 +91,12 @@ private val BOUNDED_HISTORY_TABLES =
     setOf(
         "auction_stats_daily",
         "auction_stats_hourly",
+    )
+
+private val BOUNDED_SNAPSHOT_TABLES =
+    setOf(
+        "connected_realm_update_history",
+        "auction",
     )
 
 private val SEQUENCE_RESETS =
@@ -216,6 +224,13 @@ internal fun dataCopySql(
     tableName: String,
 ): String? {
     if (tableName in SKIP_DATA_TABLES) return null
+    if (tableName in BOUNDED_SNAPSHOT_TABLES) {
+        return boundedSnapshotCopySql(
+            sourceDatabase = sourceDatabase,
+            targetDatabase = targetDatabase,
+            tableName = tableName,
+        )
+    }
 
     val sql =
         """
@@ -230,6 +245,75 @@ internal fun dataCopySql(
         sql
     }
 }
+
+internal fun boundedSnapshotCopySql(
+    sourceDatabase: String,
+    targetDatabase: String,
+    tableName: String,
+): String? =
+    when (tableName) {
+        "connected_realm_update_history" ->
+            """
+            INSERT INTO ${quoteIdentifier(targetDatabase)}.${quoteIdentifier(tableName)}
+            SELECT cruh.*
+            FROM ${quoteIdentifier(sourceDatabase)}.${quoteIdentifier(tableName)} cruh
+                INNER JOIN (
+                    SELECT connected_realm_id, MAX(id) AS latest_id
+                    FROM ${quoteIdentifier(sourceDatabase)}.${quoteIdentifier(tableName)}
+                    GROUP BY connected_realm_id
+                ) latest ON latest.latest_id = cruh.id
+            """.trimIndent()
+        "auction" ->
+            """
+            INSERT INTO ${quoteIdentifier(targetDatabase)}.${quoteIdentifier(tableName)}
+            SELECT a.*
+            FROM ${quoteIdentifier(sourceDatabase)}.${quoteIdentifier(tableName)} a
+            WHERE a.update_history_id IN (
+                SELECT MAX(id)
+                FROM ${quoteIdentifier(sourceDatabase)}.connected_realm_update_history
+                GROUP BY connected_realm_id
+            )
+              AND (
+                a.item_id IN (SELECT DISTINCT item_id FROM ${quoteIdentifier(sourceDatabase)}.v_recipe_reagent)
+                OR a.item_id IN (SELECT DISTINCT crafted_item_id FROM ${quoteIdentifier(sourceDatabase)}.v_recipe_crafted_output)
+              )
+            """.trimIndent()
+        else -> null
+    }
+
+private fun Connection.backfillAuctionSnapshotIfMissing(
+    sourceDatabase: String,
+    targetDatabase: String,
+) {
+    if (tableRowCount(targetDatabase, "auction") > 0) return
+
+    val logger = LoggerFactory.getLogger(BranchDatabaseCloner::class.java)
+    logger.info(
+        "Backfilling latest auction snapshot into existing local dev database {} from {}",
+        targetDatabase,
+        sourceDatabase,
+    )
+    BOUNDED_SNAPSHOT_TABLES.forEach { tableName ->
+        boundedSnapshotCopySql(
+            sourceDatabase = sourceDatabase,
+            targetDatabase = targetDatabase,
+            tableName = tableName,
+        )?.let(::executeSql)
+    }
+}
+
+private fun Connection.tableRowCount(
+    database: String,
+    tableName: String,
+): Long =
+    createStatement().use { statement ->
+        statement
+            .executeQuery("SELECT COUNT(*) FROM ${qualifiedIdentifier(database, tableName)}")
+            .use { result ->
+                result.next()
+                result.getLong(1)
+            }
+    }
 
 private fun Connection.resetCopiedSequences(
     targetDatabase: String,

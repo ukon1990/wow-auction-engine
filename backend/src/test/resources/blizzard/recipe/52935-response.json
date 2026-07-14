@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/recipe/52935?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52935?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 52935,
@@ -35,7 +35,7 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52935?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52935?namespace=static-12.0.7_67808-us"
         },
         "id": 52935
     },
@@ -43,7 +43,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/236951?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/236951?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Mote of Wild Magic",
@@ -66,7 +66,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/238528?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/238528?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Majestic Claw",
@@ -89,7 +89,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/251285?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/251285?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Petrified Root",
@@ -114,7 +114,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/404?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/404?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Eversinging Dust",
@@ -137,7 +137,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/403?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/403?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Radiant Shard",
@@ -160,7 +160,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/402?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/402?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Dawn Crystal",
@@ -183,7 +183,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Artisan's Authenticity",

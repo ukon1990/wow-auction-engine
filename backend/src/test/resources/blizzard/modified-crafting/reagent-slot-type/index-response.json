@@ -1,13 +1,13 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/?namespace=static-12.0.7_67808-us"
         }
     },
     "slot_types": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/46?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/46?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Modify Item Level - Minor",
@@ -27,7 +27,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/77?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/77?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Modify Item Level - Minor",
@@ -47,7 +47,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/110?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/110?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Increase Rank",
@@ -67,7 +67,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/386?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/386?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Refulgent Copper Ingot",
@@ -87,7 +87,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/388?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Artisan's Authenticity",
@@ -107,7 +107,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/390?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Add Embellishment",
@@ -127,7 +127,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/391?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/391?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Add Embellishment",
@@ -147,7 +147,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/393?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Customize Secondary Stats",
@@ -167,7 +167,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/395?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/395?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Customize Crafting Stat",
@@ -187,7 +187,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/396?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/396?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Artisan's Authenticity",
@@ -207,7 +207,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/402?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/402?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Dawn Crystal",
@@ -227,7 +227,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/403?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/403?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Radiant Shard",
@@ -247,7 +247,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/404?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/404?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Eversinging Dust",
@@ -267,7 +267,107 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/417?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/406?namespace=static-12.0.7_67808-us"
+            },
+            "name": {
+                "en_US": "Amani Lapis",
+                "es_MX": "Lapislázuli amani",
+                "pt_BR": "Lápis Amani",
+                "de_DE": "Amanilapis",
+                "en_GB": "Amani Lapis",
+                "es_ES": "Lapislázuli Amani",
+                "fr_FR": "Lapis amani",
+                "it_IT": "Lapislazzuli degli Amani",
+                "ru_RU": "Аманийский лазурит",
+                "ko_KR": "아마니 청금석",
+                "zh_TW": "阿曼尼青金石",
+                "zh_CN": "阿曼尼青金石"
+            },
+            "id": 406
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/408?namespace=static-12.0.7_67808-us"
+            },
+            "name": {
+                "en_US": "Harandar Peridot",
+                "es_MX": "Peridoto de Harandar",
+                "pt_BR": "Peridoto de Harandar",
+                "de_DE": "Peridot von Harandar",
+                "en_GB": "Harandar Peridot",
+                "es_ES": "Peridoto de Harandar",
+                "fr_FR": "Olivine d’Harandar",
+                "it_IT": "Olivina di Harandar",
+                "ru_RU": "Харандарский хризолит",
+                "ko_KR": "하란다르 감람석",
+                "zh_TW": "哈朗達橄欖石",
+                "zh_CN": "哈籁恩达尔榄石"
+            },
+            "id": 408
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/409?namespace=static-12.0.7_67808-us"
+            },
+            "name": {
+                "en_US": "Sanguine Garnet",
+                "es_MX": "Granate sanguíneo",
+                "pt_BR": "Granada Sanguínea",
+                "de_DE": "Blutgranat",
+                "en_GB": "Sanguine Garnet",
+                "es_ES": "Granate sanguino",
+                "fr_FR": "Grenat hématique",
+                "it_IT": "Granato Rosso Sangue",
+                "ru_RU": "Кровавый гранат",
+                "ko_KR": "선혈 석류석",
+                "zh_TW": "血紅石榴石",
+                "zh_CN": "血色榴石"
+            },
+            "id": 409
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/410?namespace=static-12.0.7_67808-us"
+            },
+            "name": {
+                "en_US": "Tenebrous Amethyst",
+                "es_MX": "Amatista tenebrosa",
+                "pt_BR": "Ametista Tenebrosa",
+                "de_DE": "Finsteramethyst",
+                "en_GB": "Tenebrous Amethyst",
+                "es_ES": "Amatista tenebrosa",
+                "fr_FR": "Améthyste ténébreuse",
+                "it_IT": "Ametista Tenebrosa",
+                "ru_RU": "Мрачный аметист",
+                "ko_KR": "암영 자수정",
+                "zh_TW": "陰暗紫水晶",
+                "zh_CN": "晦暗紫晶"
+            },
+            "id": 410
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/414?namespace=static-12.0.7_67808-us"
+            },
+            "name": {
+                "en_US": "Glimmering Gemdust",
+                "es_MX": "Polvo de gemas reluciente",
+                "pt_BR": "Pó de Gema Luzente",
+                "de_DE": "Glitzernder Edelsteinstaub",
+                "en_GB": "Glimmering Gemdust",
+                "es_ES": "Polvo de gema de luz trémula",
+                "fr_FR": "Poussière de gemme rougeoyante",
+                "it_IT": "Polvere di Gemma Luccicante",
+                "ru_RU": "Мерцающая самоцветная пыль",
+                "ko_KR": "아른거리는 보석 가루",
+                "zh_TW": "微光寶石粉",
+                "zh_CN": "微光宝石尘"
+            },
+            "id": 414
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/417?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Duskshrouded Stone",
@@ -287,7 +387,27 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/425?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/418?namespace=static-12.0.7_67808-us"
+            },
+            "name": {
+                "en_US": "Kaleidoscopic Prism",
+                "es_MX": "Prisma caleidoscópico",
+                "pt_BR": "Prisma Caleidoscópico",
+                "de_DE": "Kaleidoskopisches Prisma",
+                "en_GB": "Kaleidoscopic Prism",
+                "es_ES": "Prisma caleidoscópico",
+                "fr_FR": "Prisme kaléidoscopique",
+                "it_IT": "Prisma Caleidoscopico",
+                "ru_RU": "Калейдоскопическая призма",
+                "ko_KR": "만화 분광경",
+                "zh_TW": "萬花筒稜石",
+                "zh_CN": "万花棱镜"
+            },
+            "id": 418
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/425?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Silvermoon Weapon Wrap",
@@ -307,7 +427,27 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/432?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/429?namespace=static-12.0.7_67808-us"
+            },
+            "name": {
+                "en_US": "Eversong Diamond",
+                "es_MX": "Diamante de Canción Eterna",
+                "pt_BR": "Diamante do Canto Eterno",
+                "de_DE": "Immersangdiamant",
+                "en_GB": "Eversong Diamond",
+                "es_ES": "Diamante de Canción Eterna",
+                "fr_FR": "Diamant des Chants éternels",
+                "it_IT": "Diamante di Cantoeterno",
+                "ru_RU": "Алмаз Вечной Песни",
+                "ko_KR": "영원노래 다이아몬드",
+                "zh_TW": "永歌鑽石",
+                "zh_CN": "永歌钻石"
+            },
+            "id": 429
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/432?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Peacebloom",
@@ -327,7 +467,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/466?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/466?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Gloaming Alloy",
@@ -347,7 +487,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/467?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/467?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Sterling Alloy",
@@ -367,7 +507,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/469?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/469?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Empower",
@@ -387,7 +527,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/470?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/470?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Empower",
@@ -407,7 +547,7 @@
         },
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/471?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/471?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Competitor's Heraldry",
@@ -424,6 +564,26 @@
                 "zh_CN": "竞争者的饰章"
             },
             "id": 471
+        },
+        {
+            "key": {
+                "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/497?namespace=static-12.0.7_67808-us"
+            },
+            "name": {
+                "en_US": "Artisan's Authenticity",
+                "es_MX": "Autenticidad del artesano",
+                "pt_BR": "Autenticidade do Artífice",
+                "de_DE": "Authentizität des Kunsthandwerks",
+                "en_GB": "Artisan's Authenticity",
+                "es_ES": "Autenticidad de artesano",
+                "fr_FR": "Authenticité artisanale",
+                "it_IT": "Autenticità dell'Artigiano",
+                "ru_RU": "Почерк ремесленника",
+                "ko_KR": "장인의 진정성",
+                "zh_TW": "工匠之保證",
+                "zh_CN": "匠人之真"
+            },
+            "id": 497
         }
     ]
 }

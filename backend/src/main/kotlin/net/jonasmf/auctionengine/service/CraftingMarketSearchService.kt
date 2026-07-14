@@ -19,6 +19,7 @@ import net.jonasmf.auctionengine.repository.rds.CraftingMarketSearchRequest
 import net.jonasmf.auctionengine.repository.rds.CraftingMarketSqlRow
 import net.jonasmf.auctionengine.repository.rds.CraftingProfileCandidate as StoredCraftingProfileCandidate
 import net.jonasmf.auctionengine.repository.rds.ProfileRepository
+import net.jonasmf.auctionengine.repository.rds.RecipeCraftingRuleRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -29,6 +30,8 @@ class CraftingMarketSearchService(
     private val auctionMarketSearchRepository: AuctionMarketSearchRepository,
     private val craftingMarketSearchRepository: CraftingMarketSearchRepository,
     private val profileRepository: ProfileRepository,
+    private val profileCraftabilityEvaluator: ProfileCraftabilityEvaluator,
+    private val recipeCraftingRuleRepository: RecipeCraftingRuleRepository,
 ) {
     private val allowedSorts =
         setOf(
@@ -121,6 +124,10 @@ class CraftingMarketSearchService(
                         .findCraftingCandidates(subject, result.rows.mapNotNull(CraftingMarketSqlRow::professionId).toSet())
                         .groupBy { candidate -> candidate.professionId to candidate.expansionId }
                 }.orEmpty()
+        val recipeRulesById =
+            actorSubject?.let {
+                recipeCraftingRuleRepository.findByRecipeIds(result.rows.map { it.recipeId }.toSet())
+            }.orEmpty()
         val totalPages =
             if (result.totalItems == 0L) {
                 0
@@ -197,7 +204,7 @@ class CraftingMarketSearchService(
                         profitChangePercent = row.profitChangePercent,
                         reagentsFullyPriced = row.reagentsFullyPriced,
                         outputPriced = row.outputUnitPrice != null,
-                        profileFit = row.profileFit(candidatesByRecipeProfession, actorSubject != null),
+                        profileFit = row.profileFit(candidatesByRecipeProfession, recipeRulesById, actorSubject != null),
                     )
                 },
             page =
@@ -217,6 +224,7 @@ class CraftingMarketSearchService(
 
     private fun CraftingMarketSqlRow.profileFit(
         candidatesByRecipeProfession: Map<Pair<Int, Int>, List<StoredCraftingProfileCandidate>>,
+        recipeRulesById: Map<Int, net.jonasmf.auctionengine.repository.rds.RecipeCraftingRule>,
         authenticated: Boolean,
     ): CraftingProfileFit? {
         if (!authenticated) return null
@@ -224,7 +232,7 @@ class CraftingMarketSearchService(
             if (professionId == null || expansionId == null) {
                 emptyList()
             } else {
-                candidatesByRecipeProfession[professionId to expansionId].orEmpty().sortedWith(craftingCandidateOrder)
+                candidatesByRecipeProfession[professionId to expansionId].orEmpty()
             }
         if (candidates.isEmpty()) {
             return CraftingProfileFit(
@@ -234,11 +242,39 @@ class CraftingMarketSearchService(
                 alternatives = emptyList(),
             )
         }
-        val rankedCandidates = candidates.map(StoredCraftingProfileCandidate::toApi)
+        if (!recipeRulesById.containsKey(recipeId)) {
+            return heuristicProfileFit(candidates, CraftingProfileFit.Diagnostic.RECIPE_RULES_MISSING)
+        }
+        val evaluatedCandidates = profileCraftabilityEvaluator.evaluateCandidates(recipeId, candidates)
+        if (evaluatedCandidates.isEmpty()) {
+            return heuristicProfileFit(candidates, CraftingProfileFit.Diagnostic.TALENT_EFFECTS_MISSING)
+        }
+        val rankedCandidates =
+            evaluatedCandidates
+                .sortedWith(
+                    compareByDescending<Pair<StoredCraftingProfileCandidate, ProfileCraftabilityEvaluation>> { it.first.predictedQuality ?: -1 }
+                        .thenByDescending { it.first.skillLevel ?: -1 }
+                        .thenBy { it.first.characterName.lowercase() },
+                ).map { it.first.toApi() }
+        val bestEvaluation = evaluatedCandidates.maxByOrNull { it.second.predictedQuality }?.second
+        return CraftingProfileFit(
+            state = CraftingProfileFit.State.CONFIGURED,
+            craftable = bestEvaluation?.craftable,
+            diagnostic = CraftingProfileFit.Diagnostic.PROFILE_EVALUATED,
+            bestCandidate = rankedCandidates.first(),
+            alternatives = rankedCandidates.drop(1),
+        )
+    }
+
+    private fun heuristicProfileFit(
+        candidates: List<StoredCraftingProfileCandidate>,
+        diagnostic: CraftingProfileFit.Diagnostic,
+    ): CraftingProfileFit {
+        val rankedCandidates = candidates.sortedWith(craftingCandidateOrder).map(StoredCraftingProfileCandidate::toApi)
         return CraftingProfileFit(
             state = CraftingProfileFit.State.CONFIGURED,
             craftable = null,
-            diagnostic = CraftingProfileFit.Diagnostic.RECIPE_RULES_UNAVAILABLE_HEURISTIC_RANKING,
+            diagnostic = diagnostic,
             bestCandidate = rankedCandidates.first(),
             alternatives = rankedCandidates.drop(1),
         )
@@ -385,4 +421,5 @@ private fun StoredCraftingProfileCandidate.toApi() =
         professionId = professionId,
         allocationCount = allocationCount,
         skillLevel = skillLevel,
+        predictedQuality = predictedQuality,
     )

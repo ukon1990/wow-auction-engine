@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/recipe/52596?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/recipe/52596?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 52596,
@@ -21,7 +21,7 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52596?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/52596?namespace=static-12.0.7_67808-us"
         },
         "id": 52596
     },
@@ -29,7 +29,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/409?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/409?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Sanguine Garnet",
@@ -52,7 +52,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/414?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/414?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Glimmering Gemdust",
@@ -75,7 +75,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/396?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/396?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Artisan's Authenticity",

@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2912?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/182/skill-tier/2912?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 2912,
@@ -40,7 +40,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51818?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51818?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Magical Mulch",
@@ -78,7 +78,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51851?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51851?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Tranquility Bloom",
@@ -116,7 +116,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51852?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51852?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Sanguithorn",
@@ -154,7 +154,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51853?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51853?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Azeroot",
@@ -192,7 +192,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51854?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51854?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Argentleaf",
@@ -230,7 +230,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51855?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51855?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Mana Lily",

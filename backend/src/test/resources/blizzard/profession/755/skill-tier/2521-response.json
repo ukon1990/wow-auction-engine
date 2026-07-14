@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/755/skill-tier/2521?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/755/skill-tier/2521?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 2521,
@@ -40,7 +40,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/21388?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/21388?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Bold Carnelian",
@@ -78,7 +78,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/21393?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/21393?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Solid Zephyrite",
@@ -116,7 +116,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/21397?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/21397?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Subtle Alicite",
@@ -154,7 +154,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/21402?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/21402?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Sovereign Nightstone",
@@ -192,7 +192,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/21413?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/21413?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Polished Hessonite",
@@ -230,7 +230,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/21426?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/21426?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Regal Jasper",

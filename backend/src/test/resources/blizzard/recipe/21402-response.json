@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/recipe/21402?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/recipe/21402?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 21402,
@@ -21,13 +21,13 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/recipe/21402?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/21402?namespace=static-12.0.7_67808-us"
         },
         "id": 21402
     },
     "crafted_item": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item/52095?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/52095?namespace=static-12.0.7_67808-us"
         },
         "name": {
             "en_US": "Sovereign Nightstone",
@@ -49,7 +49,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/52180?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/52180?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Nightstone",

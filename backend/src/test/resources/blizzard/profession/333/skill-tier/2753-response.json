@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2753?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/333/skill-tier/2753?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 2753,
@@ -40,7 +40,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42637?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42637?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Eternal Agility",
@@ -78,7 +78,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42638?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42638?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Eternal Bulwark",
@@ -116,7 +116,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42639?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42639?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Fortified Speed",
@@ -154,7 +154,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42643?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42643?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Shadowlands Gathering",
@@ -192,7 +192,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42655?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42655?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Illuminated Soul",
@@ -230,7 +230,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/42659?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/42659?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Enchanted Elethium Bar",

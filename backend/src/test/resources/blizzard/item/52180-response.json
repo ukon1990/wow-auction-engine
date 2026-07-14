@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/item/52180?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/52180?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 52180,
@@ -40,13 +40,13 @@
     "required_level": 0,
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/item/52180?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/item/52180?namespace=static-12.0.7_67808-us"
         },
         "id": 52180
     },
     "item_class": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.7_67808-us"
         },
         "name": {
             "en_US": "Tradeskill",
@@ -66,7 +66,7 @@
     },
     "item_subclass": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/4?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/4?namespace=static-12.0.7_67808-us"
         },
         "name": {
             "en_US": "Jewelcrafting",
@@ -109,7 +109,7 @@
     "preview_item": {
         "item": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item/52180?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item/52180?namespace=static-12.0.7_67808-us"
             },
             "id": 52180
         },
@@ -146,13 +146,13 @@
         },
         "media": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/media/item/52180?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/media/item/52180?namespace=static-12.0.7_67808-us"
             },
             "id": 52180
         },
         "item_class": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Tradeskill",
@@ -172,7 +172,7 @@
         },
         "item_subclass": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/4?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/7/item-subclass/4?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Jewelcrafting",

@@ -25,8 +25,23 @@ describe('currency helpers', () => {
     expect(formatCopperCurrency(null)).toBe('—');
   });
 
+  it('converts negative copper into signed currency parts', () => {
+    expect(copperToCurrencyAmount(-158_500)).toEqual({
+      negative: true,
+      gold: 15,
+      silver: 85,
+    });
+    expect(formatCopperCurrency(-158_500)).toBe('-15g 85s');
+  });
+
+  it('preserves zero copper as a displayable amount', () => {
+    expect(copperToCurrencyAmount(0)).toEqual({ copper: 0 });
+    expect(formatCopperCurrency(0)).toBe('0c');
+  });
+
   it('detects empty currency amounts', () => {
     expect(hasCurrencyValue({})).toBe(false);
     expect(hasCurrencyValue({ gold: 1 })).toBe(true);
+    expect(hasCurrencyValue({ copper: 0 })).toBe(true);
   });
 });

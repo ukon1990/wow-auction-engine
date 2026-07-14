@@ -1,6 +1,7 @@
 package net.jonasmf.auctionengine.repository.rds
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import net.jonasmf.auctionengine.domain.profession.ProfessionSkillTreeNodeEffectParser
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentNode
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTree
@@ -11,6 +12,8 @@ import java.security.MessageDigest
 @Repository
 class NormalizedProfessionImportRepository(
     private val jdbcTemplate: JdbcTemplate,
+    private val recipeCraftingRuleRepository: RecipeCraftingRuleRepository,
+    private val professionSkillTreeNodeEffectRepository: ProfessionSkillTreeNodeEffectRepository,
 ) {
     private val objectMapper = jacksonObjectMapper()
 
@@ -69,6 +72,10 @@ class NormalizedProfessionImportRepository(
                 .associate { (professionId, tree) ->
                     (professionId to tree.treeId) to saveTreeDefinition(professionId, tree, treeImportId)
                 }
+        payload.characters
+            .flatMap { character -> character.professions.flatMap { profession -> profession.recipes } }
+            .distinctBy { it.recipeId }
+            .forEach { recipe -> recipeCraftingRuleRepository.upsert(recipe, importId) }
         payload.characters.forEach { character ->
             jdbcTemplate.update(
                 """
@@ -271,6 +278,18 @@ class NormalizedProfessionImportRepository(
                         entryOrder,
                     )
                 }
+                val parsedEffects =
+                    buildList {
+                        ProfessionSkillTreeNodeEffectParser.parseDescription(node.description)?.let(::add)
+                        node.propertyEntries.forEach { entry ->
+                            ProfessionSkillTreeNodeEffectParser.parseDescription(entry.description)?.let(::add)
+                        }
+                    }.distinctBy { it.skillBonus to it.craftingCategory }
+                professionSkillTreeNodeEffectRepository.replaceNodeEffects(
+                    databaseNodeId,
+                    node.requiredRank ?: 0,
+                    parsedEffects,
+                )
             }
         }
         jdbcTemplate.update(

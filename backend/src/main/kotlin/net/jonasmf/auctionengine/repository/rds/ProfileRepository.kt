@@ -203,15 +203,17 @@ class ProfileRepository(
                 c.realm_name,
                 p.profession_id,
                 t.expansion_id,
+                p.id AS profile_id,
+                p.tree_id,
                 p.skill_level,
                 COUNT(a.entry_id) AS allocation_count
-            FROM user_character_profession_profile p
-                INNER JOIN user_character c ON c.id = p.character_id
+            FROM user_character c
+                INNER JOIN user_character_profession_profile p
+                    ON p.character_id = c.id AND p.profession_id IN ($placeholders)
                 INNER JOIN profession_skill_tree t ON t.id = p.tree_id
                 LEFT JOIN user_character_profession_allocation a ON a.profile_id = p.id
             WHERE c.owner_subject = ?
-                AND p.profession_id IN ($placeholders)
-            GROUP BY c.id, c.character_name, c.region, c.realm_name, p.profession_id, t.expansion_id, p.skill_level
+            GROUP BY c.id, c.character_name, c.region, c.realm_name, p.profession_id, t.expansion_id, p.id, p.tree_id, p.skill_level
             """.trimIndent(),
             { rs, _ ->
                 CraftingProfileCandidate(
@@ -221,14 +223,72 @@ class ProfileRepository(
                     realmName = rs.getString("realm_name"),
                     professionId = rs.getInt("profession_id"),
                     expansionId = rs.getInt("expansion_id"),
+                    profileId = rs.getLong("profile_id"),
+                    treeId = rs.getObject("tree_id", Long::class.javaObjectType),
                     skillLevel = rs.getObject("skill_level", Int::class.javaObjectType),
                     allocationCount = rs.getInt("allocation_count"),
                 )
             },
-            subject,
             *professionIds.toTypedArray(),
+            subject,
         )
     }
+
+    fun loadProfileAllocations(profileIds: Collection<Long>): Map<Long, Map<Long, Int>> {
+        if (profileIds.isEmpty()) return emptyMap()
+        val placeholders = profileIds.joinToString(",")
+        return jdbcTemplate
+            .query(
+                "SELECT profile_id, entry_id, rank FROM user_character_profession_allocation WHERE profile_id IN ($placeholders)",
+                { rs, _ ->
+                    rs.getLong("profile_id") to (rs.getLong("entry_id") to rs.getInt("rank"))
+                },
+                *profileIds.toTypedArray(),
+            ).groupBy({ it.first }, { it.second })
+            .mapValues { (_, entries) -> entries.associate { it } }
+    }
+
+    fun loadEntryNodeIdsByTreeIds(treeIds: Collection<Long>): Map<Long, Map<Long, Long>> {
+        if (treeIds.isEmpty()) return emptyMap()
+        val placeholders = treeIds.joinToString(",")
+        return jdbcTemplate
+            .query(
+                """
+                SELECT n.tree_id, e.id AS entry_id, e.node_id
+                FROM profession_skill_tree_node n
+                    INNER JOIN profession_skill_tree_entry e ON e.node_id = n.id
+                WHERE n.tree_id IN ($placeholders)
+                """.trimIndent(),
+                { rs, _ ->
+                    rs.getLong("tree_id") to (rs.getLong("entry_id") to rs.getLong("node_id"))
+                },
+                *treeIds.toTypedArray(),
+            ).groupBy({ it.first }, { it.second })
+            .mapValues { (_, entries) -> entries.associate { it } }
+    }
+
+    fun summarizeNodeRanks(
+        entryNodeIds: Map<Long, Long>,
+        allocations: Map<Long, Int>,
+    ): Map<Long, Int> =
+        allocations.entries
+            .mapNotNull { (entryId, rank) ->
+                entryNodeIds[entryId]?.let { nodeId -> nodeId to rank }
+            }.groupBy({ it.first }, { it.second })
+            .mapValues { (_, ranks) -> ranks.sum() }
+
+    fun hasLearnedRecipe(profileId: Long, recipeId: Int): Boolean =
+        jdbcTemplate.queryForObject(
+            """
+            SELECT EXISTS(
+                SELECT 1 FROM user_character_profession_recipe
+                WHERE profile_id = ? AND recipe_id = ? AND learned = TRUE
+            )
+            """.trimIndent(),
+            Boolean::class.java,
+            profileId,
+            recipeId,
+        ) == true
 
     fun allocationRules(treeId: Long): List<AllocationRule> = jdbcTemplate.query("SELECT e.id entry_id, e.node_id, e.rank_limit, n.max_ranks, n.required_rank FROM profession_skill_tree_entry e JOIN profession_skill_tree_node n ON n.id = e.node_id WHERE n.tree_id = ?", { rs, _ -> AllocationRule(rs.getLong("entry_id"), rs.getLong("node_id"), rs.getInt("rank_limit"), rs.getInt("max_ranks"), rs.getInt("required_rank")) }, treeId)
 
@@ -288,8 +348,11 @@ data class CraftingProfileCandidate(
     val realmName: String,
     val professionId: Int,
     val expansionId: Int,
+    val profileId: Long,
+    val treeId: Long?,
     val skillLevel: Int?,
     val allocationCount: Int,
+    val predictedQuality: Int? = null,
 )
 private data class ProfileRow(val id: Long, val treeId: Long, val skillLevel: Int?)
 

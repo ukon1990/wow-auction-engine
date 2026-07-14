@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2907?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/164/skill-tier/2907?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 2907,
@@ -40,7 +40,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51520?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51520?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Recraft Equipment",
@@ -78,7 +78,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52333?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52333?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Sun-Blessed Blacksmith's Hammer",
@@ -116,7 +116,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52349?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52349?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Primalforged Heavy Axe",
@@ -154,7 +154,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52356?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52356?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Blood-Tempered Gauntlets",
@@ -192,7 +192,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52365?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52365?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Thalassian Competitor's Sword",
@@ -230,7 +230,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52666?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52666?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Refulgent Whetstone",
