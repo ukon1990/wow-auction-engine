@@ -40,8 +40,6 @@ server:
     context-path: /api
 
 app:
-  import:
-    normalized-profession-max-request-bytes: 33554432
   scheduling:
     enabled: true
     static-data-sync-enabled: ${WAE_STATIC_DATA_SYNC_ENABLED:true}
