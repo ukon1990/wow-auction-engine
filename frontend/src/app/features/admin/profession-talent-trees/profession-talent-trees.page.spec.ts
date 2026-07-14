@@ -282,19 +282,40 @@ describe('SavedVariables folder selection', () => {
       (button) => button.textContent?.trim() === 'Skill tree',
     );
     skillTreeButton?.click();
-    await fixture.whenStable();
+    fixture.detectChanges();
+    await flushAnimationFrames();
     expect(root.textContent).toContain('Weaponsmithing');
     expect(root.textContent).toContain('Foundations');
     expect(root.textContent).toContain('7/30');
     expect(root.querySelector('button[aria-label^="Increase"]')).toBeNull();
 
-    tabs[0].focus();
-    tabs[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    const professionTabs = [
+      ...root.querySelectorAll<HTMLButtonElement>(
+        '[aria-label="Profession recipe overview"] > [role="tab"]',
+      ),
+    ];
+    professionTabs[0].focus();
+    professionTabs[0].dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }),
+    );
+    fixture.detectChanges();
     await fixture.whenStable();
-    expect(document.activeElement).toBe(tabs[1]);
-    expect(tabs[1].getAttribute('aria-selected')).toBe('true');
-    expect(panel?.getAttribute('aria-labelledby')).toBe(tabs[1].id);
+
+    const updatedTabs = [
+      ...root.querySelectorAll<HTMLButtonElement>(
+        '[aria-label="Profession recipe overview"] > [role="tab"]',
+      ),
+    ];
+    expect(document.activeElement).toBe(updatedTabs[1]);
+    expect(updatedTabs[1].getAttribute('aria-selected')).toBe('true');
+    expect(panel?.getAttribute('aria-labelledby')).toBe(updatedTabs[1].id);
   });
+
+  async function flushAnimationFrames(count = 2): Promise<void> {
+    for (let index = 0; index < count; index++) {
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    }
+  }
 
   function professionPreview() {
     const profession: NormalizedAuctionHelperProfession = {

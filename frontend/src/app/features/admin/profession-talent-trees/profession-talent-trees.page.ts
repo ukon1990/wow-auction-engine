@@ -315,11 +315,9 @@ export class ProfessionTalentTreesPage {
     else if (event.key === 'End') target = professions.length - 1;
     else return;
     event.preventDefault();
-    this.selectProfession(professions[target].professionId);
-    const tabs = (event.currentTarget as HTMLElement).parentElement?.querySelectorAll<HTMLElement>(
-      '[role="tab"]',
-    );
-    tabs?.item(target).focus();
+    const nextProfession = professions[target];
+    this.selectProfession(nextProfession.professionId);
+    document.getElementById(`profession-tab-${nextProfession.professionId}`)?.focus();
   }
 
   protected onProfessionSectionKeydown(event: KeyboardEvent): void {
@@ -327,10 +325,11 @@ export class ProfessionTalentTreesPage {
     event.preventDefault();
     const section = event.key === 'ArrowLeft' || event.key === 'Home' ? 'recipes' : 'skillTree';
     this.professionSection.set(section);
-    const tabs = (event.currentTarget as HTMLElement).parentElement?.querySelectorAll<HTMLElement>(
-      '[role="tab"]',
-    );
-    tabs?.item(section === 'recipes' ? 0 : 1).focus();
+    document
+      .getElementById(
+        section === 'recipes' ? 'profession-section-recipes' : 'profession-section-skill-tree',
+      )
+      ?.focus();
   }
 
   private resetRecipeBrowser(): void {

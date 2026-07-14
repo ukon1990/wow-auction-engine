@@ -160,6 +160,7 @@
           "builder": "@ethereal/angular-unit-test-alias:unit-test",
           "options": {
             "include": ["**/*.spec.ts", "../ethereal-ui/src/**/*.spec.ts"],
+            "setupFiles": ["tools/vitest.storage-setup.ts"],
             "reporters": ["default", "github-actions"],
             "coverageReporters": [
               "text",
