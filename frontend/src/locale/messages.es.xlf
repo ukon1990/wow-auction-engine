@@ -566,6 +566,18 @@
           <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="crafting.column.item" datatype="html">
+        <source>Item</source>
+        <target>Objeto</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
+          <context context-type="linenumber">80</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="crafting.column.recipe" datatype="html">
         <source>Recipe</source>
         <target>Receta</target>
@@ -1910,6 +1922,96 @@
         <source>Close dialog</source>
         <target>Close dialog</target>
       </trans-unit>
+
+      <trans-unit id="admin.recipes.professionSync.progressMetadata" datatype="html">
+        <source>Loading modified crafting metadata…</source>
+        <target>Cargando metadatos de fabricación modificada…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">84</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="admin.recipes.professionSync.progressProfessions" datatype="html">
+        <source>Fetching professions from Blizzard…</source>
+        <target>Obteniendo profesiones de Blizzard…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="admin.recipes.professionSync.progressProfession" datatype="html">
+        <source>Processing profession <x id="INTERPOLATION" equiv-text="professionIndex"/>/<x id="INTERPOLATION_2" equiv-text="professionTotal"/> · <x id="INTERPOLATION_3" equiv-text="professionName"/></source>
+        <target>Procesando profesión <x id="INTERPOLATION" equiv-text="professionIndex"/>/<x id="INTERPOLATION_2" equiv-text="professionTotal"/> · <x id="INTERPOLATION_3" equiv-text="professionName"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">92</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="admin.recipes.professionSync.progressProcessing" datatype="html">
+        <source>Processing professions and skill tiers…</source>
+        <target>Procesando profesiones y niveles de habilidad…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">94</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="admin.recipes.professionSync.progressStarting" datatype="html">
+        <source>Starting profession sync…</source>
+        <target>Iniciando sincronización de profesiones…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="admin.recipes.professionSync.progressSkillTier" datatype="html">
+        <source>Skill tier <x id="INTERPOLATION" equiv-text="skillTierIndex"/>/<x id="INTERPOLATION_2" equiv-text="skillTierTotal"/> · <x id="INTERPOLATION_3" equiv-text="skillTierName"/></source>
+        <target>Nivel de habilidad <x id="INTERPOLATION" equiv-text="skillTierIndex"/>/<x id="INTERPOLATION_2" equiv-text="skillTierTotal"/> · <x id="INTERPOLATION_3" equiv-text="skillTierName"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">110</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="admin.recipes.professionSync.progressTiersOverall" datatype="html">
+        <source>Tiers completed <x id="INTERPOLATION" equiv-text="completed"/>/<x id="INTERPOLATION_2" equiv-text="total"/></source>
+        <target>Niveles completados <x id="INTERPOLATION" equiv-text="completed"/>/<x id="INTERPOLATION_2" equiv-text="total"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">118</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="admin.recipes.professionSync.progressRecipesInTier" datatype="html">
+        <source>Recipes in tier <x id="INTERPOLATION" equiv-text="recipesInTier"/></source>
+        <target>Recetas en el nivel <x id="INTERPOLATION" equiv-text="recipesInTier"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">125</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="admin.recipes.professionSync.progressRecipesFetched" datatype="html">
+        <source>Recipes fetched <x id="INTERPOLATION" equiv-text="recipesFetched"/></source>
+        <target>Recetas obtenidas <x id="INTERPOLATION" equiv-text="recipesFetched"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">134</context>
+        </context-group>
+      </trans-unit>
+
+      <trans-unit id="admin.recipes.professionSync.progressRecipeFailures" datatype="html">
+        <source>Recipe failures <x id="INTERPOLATION" equiv-text="recipeFailures"/></source>
+        <target>Fallos de recetas <x id="INTERPOLATION" equiv-text="recipeFailures"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">139</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="admin.recipes.page.heading" datatype="html">
         <source>Recipe overrides</source>
         <target>Recipe overrides</target>
@@ -2221,6 +2323,8 @@
       <trans-unit id="admin.jobs.pollingError" datatype="html"><source>Unable to monitor the admin job. You can try starting it again.</source><target>No se puede supervisar la tarea de administración. Puedes intentar iniciarla de nuevo.</target></trans-unit>
       <trans-unit id="crafting.profileFit.rulesUnavailable" datatype="html"><source>Crafting rules are unavailable; ranking is heuristic.</source><target>Crafting rules are unavailable; ranking is heuristic.</target></trans-unit>
       <trans-unit id="crafting.profileFit.bestCrafter" datatype="html"><source>Best crafter: {$INTERPOLATION}.</source><target>Best crafter: {$INTERPOLATION}.</target></trans-unit>
+      <trans-unit id="crafting.profileFit.evaluatedBestCrafter" datatype="html"><source>Best crafter: {$INTERPOLATION} (quality {$INTERPOLATION_2}).</source><target>Best crafter: {$INTERPOLATION} (quality {$INTERPOLATION_2}).</target></trans-unit>
+      <trans-unit id="crafting.profileFit.evaluatedNotCraftable" datatype="html"><source>{$INTERPOLATION} cannot craft this recipe with the current profile.</source><target>{$INTERPOLATION} cannot craft this recipe with the current profile.</target></trans-unit>
       <trans-unit id="crafting.profileFit.heuristicBestCrafter" datatype="html"><source>Heuristic best crafter: {$INTERPOLATION}. Crafting rules are unavailable.</source><target>Heuristic best crafter: {$INTERPOLATION}. Crafting rules are unavailable.</target></trans-unit>
       <trans-unit id="crafting.profileFit.noMatch" datatype="html"><source>No matching character profile.</source><target>No matching character profile.</target></trans-unit>
       <trans-unit id="profile.professionProfiles" datatype="html"><source>Profession profiles</source><target>Profession profiles</target></trans-unit>

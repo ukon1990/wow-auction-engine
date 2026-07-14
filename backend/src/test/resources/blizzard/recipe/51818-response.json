@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/recipe/51818?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/recipe/51818?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 51818,
@@ -21,7 +21,7 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51818?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/51818?namespace=static-12.0.7_67808-us"
         },
         "id": 51818
     },
@@ -29,7 +29,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/432?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/432?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Peacebloom",

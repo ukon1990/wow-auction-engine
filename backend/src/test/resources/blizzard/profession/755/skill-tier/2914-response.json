@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/755/skill-tier/2914?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/755/skill-tier/2914?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 2914,
@@ -40,7 +40,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51525?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51525?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Recraft Equipment",
@@ -78,7 +78,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52572?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52572?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Quick Peridot",
@@ -116,7 +116,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52580?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52580?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Quick Lapis",
@@ -154,7 +154,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52588?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52588?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Quick Amethyst",
@@ -192,7 +192,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52596?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52596?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Quick Garnet",
@@ -230,7 +230,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52604?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52604?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Powerful Eversong Diamond",

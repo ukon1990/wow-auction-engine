@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/recipe/42406?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42406?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 42406,
@@ -21,13 +21,13 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42406?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42406?namespace=static-12.0.7_67808-us"
         },
         "id": 42406
     },
     "crafted_item": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item/171388?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/171388?namespace=static-12.0.7_67808-us"
         },
         "name": {
             "en_US": "Ceremonious Axe",
@@ -49,7 +49,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/171828?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/171828?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Laestrite Ore",
@@ -72,7 +72,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Luminous Flux",
@@ -100,7 +100,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/77?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/77?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Modify Item Level - Minor",

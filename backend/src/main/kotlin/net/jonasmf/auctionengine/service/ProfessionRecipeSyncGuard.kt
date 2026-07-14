@@ -45,6 +45,16 @@ class ProfessionRecipeSyncGuard(
             lock.connection.close()
         }
     }
+
+    fun isLockHeld(): Boolean =
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("SELECT IS_USED_LOCK(?)").use { statement ->
+                statement.setString(1, LOCK_NAME)
+                statement.executeQuery().use { result ->
+                    result.next() && result.getObject(1) != null
+                }
+            }
+        }
 }
 
 private const val LOCK_NAME = "profession-recipe-sync"

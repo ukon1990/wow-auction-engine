@@ -46,15 +46,19 @@ class ProfessionRecipeSyncService(
 
     fun syncAllConfiguredRegions(): List<ProfessionRecipeSyncResult> = listOf(syncConfiguredStaticDataRegion())
 
-    fun syncConfiguredStaticDataRegion(lockCheck: () -> Unit = {}): ProfessionRecipeSyncResult =
-        syncRegion(properties.staticDataRegion, lockCheck)
+    fun syncConfiguredStaticDataRegion(
+        lockCheck: () -> Unit = {},
+        onProgress: (ProfessionRecipeSyncProgress) -> Unit = {},
+    ): ProfessionRecipeSyncResult = syncRegion(properties.staticDataRegion, lockCheck, onProgress)
 
     fun syncRegion(
         region: Region,
         lockCheck: () -> Unit = {},
+        onProgress: (ProfessionRecipeSyncProgress) -> Unit = {},
     ): ProfessionRecipeSyncResult {
         val startTime = System.currentTimeMillis()
         log.info("Starting profession/recipe sync for region {}", region)
+        onProgress(ProfessionRecipeSyncProgress(phase = PHASE_FETCHING_METADATA))
 
         val modifiedCraftingFetchStartTime = System.currentTimeMillis()
         log.info("Fetching modified crafting categories for region {}", region)
@@ -86,6 +90,7 @@ class ProfessionRecipeSyncService(
         )
 
         val professionFetchStartTime = System.currentTimeMillis()
+        onProgress(ProfessionRecipeSyncProgress(phase = PHASE_FETCHING_PROFESSIONS))
         val professions = professionApiClient.getAll(region).map { blizzardMediaService.resolveProfession(region, it) }
         log.info(
             "Fetched professions for region {} count={} tiers={} in {}ms",
@@ -94,8 +99,10 @@ class ProfessionRecipeSyncService(
             professions.sumOf { it.skillTiers.size },
             System.currentTimeMillis() - professionFetchStartTime,
         )
+        val totalSkillTiers = professions.sumOf { it.skillTiers.size }
 
         var skillTiersFetched = 0
+        var skillTiersCompleted = 0
         var recipeReferencesDiscovered = 0
         var recipesFetched = 0
         var recipeFailures = 0
@@ -107,18 +114,24 @@ class ProfessionRecipeSyncService(
         var persistedRecipeSlots = 0
 
         professions.forEachIndexed { professionIndex, profession ->
+            val professionName =
+                profession.name.en_GB
+                    .orEmpty()
+                    .ifBlank { profession.name.en_US.orEmpty() }
             log.info(
                 "Processing profession {}/{} region={} professionId={} name={} skillTiers={}",
                 professionIndex + 1,
                 professions.size,
                 region,
                 profession.id,
-                profession.name.en_GB
-                    .orEmpty()
-                    .ifBlank { profession.name.en_US.orEmpty() },
+                professionName,
                 profession.skillTiers.size,
             )
             profession.skillTiers.forEachIndexed { skillTierIndex, skillTier ->
+                val tierName =
+                    skillTier.name.en_GB
+                        .orEmpty()
+                        .ifBlank { skillTier.name.en_US.orEmpty() }
                 val tierStartTime = System.currentTimeMillis()
                 val recipeIds =
                     skillTier.categories
@@ -127,15 +140,29 @@ class ProfessionRecipeSyncService(
                         .distinct()
                 recipeReferencesDiscovered += recipeIds.size
                 skillTiersFetched += 1
+                onProgress(
+                    ProfessionRecipeSyncProgress(
+                        phase = PHASE_PROCESSING_SKILL_TIER,
+                        professionIndex = professionIndex + 1,
+                        professionTotal = professions.size,
+                        professionName = professionName,
+                        skillTierIndex = skillTierIndex + 1,
+                        skillTierTotal = profession.skillTiers.size,
+                        skillTierName = tierName,
+                        skillTiersCompleted = skillTiersCompleted,
+                        skillTiersTotal = totalSkillTiers,
+                        recipesInTier = recipeIds.size,
+                        recipesFetched = recipesFetched,
+                        recipeFailures = recipeFailures,
+                    ),
+                )
                 log.info(
                     "Processing skill tier {}/{} for professionId={} skillTierId={} tierName={} recipesToLoad={} categories={}",
                     skillTierIndex + 1,
                     profession.skillTiers.size,
                     profession.id,
                     skillTier.id,
-                    skillTier.name.en_GB
-                        .orEmpty()
-                        .ifBlank { skillTier.name.en_US.orEmpty() },
+                    tierName,
                     recipeIds.size,
                     skillTier.categories.size,
                 )
@@ -190,6 +217,7 @@ class ProfessionRecipeSyncService(
                         skillTier.id,
                         tierRecipeFailures.size,
                     )
+                    skillTiersCompleted += 1
                     return@forEachIndexed
                 }
 
@@ -217,6 +245,23 @@ class ProfessionRecipeSyncService(
                     tierSummary.recipeSlotsReplaced,
                     System.currentTimeMillis() - persistenceStartTime,
                     System.currentTimeMillis() - tierStartTime,
+                )
+                skillTiersCompleted += 1
+                onProgress(
+                    ProfessionRecipeSyncProgress(
+                        phase = PHASE_PROCESSING_SKILL_TIER,
+                        professionIndex = professionIndex + 1,
+                        professionTotal = professions.size,
+                        professionName = professionName,
+                        skillTierIndex = skillTierIndex + 1,
+                        skillTierTotal = profession.skillTiers.size,
+                        skillTierName = tierName,
+                        skillTiersCompleted = skillTiersCompleted,
+                        skillTiersTotal = totalSkillTiers,
+                        recipesInTier = recipeIds.size,
+                        recipesFetched = recipesFetched,
+                        recipeFailures = recipeFailures,
+                    ),
                 )
             }
         }

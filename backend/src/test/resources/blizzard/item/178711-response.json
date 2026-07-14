@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/item/178711?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/178711?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 178711,
@@ -40,13 +40,13 @@
     "required_level": 60,
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/item/178711?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/item/178711?namespace=static-12.0.7_67808-us"
         },
         "id": 178711
     },
     "item_class": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.7_67808-us"
         },
         "name": {
             "en_US": "Weapon",
@@ -66,7 +66,7 @@
     },
     "item_subclass": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.7_67808-us"
         },
         "name": {
             "en_US": "Axe",
@@ -109,7 +109,7 @@
     "preview_item": {
         "item": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item/178711?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item/178711?namespace=static-12.0.7_67808-us"
             },
             "id": 178711
         },
@@ -146,13 +146,13 @@
         },
         "media": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/media/item/178711?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/media/item/178711?namespace=static-12.0.7_67808-us"
             },
             "id": 178711
         },
         "item_class": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Weapon",
@@ -172,7 +172,7 @@
         },
         "item_subclass": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/2/item-subclass/0?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Axe",
@@ -587,7 +587,7 @@
     "appearances": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42529?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42529?namespace=static-12.0.7_67808-us"
             },
             "id": 42529
         }

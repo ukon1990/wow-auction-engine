@@ -77,13 +77,12 @@ export class CraftingBrowserPage {
   protected readonly headerRowClass = craftingBrowserHeaderRowClass();
   protected readonly skeletonRowClass = craftingBrowserSkeletonRowClass();
   protected readonly mobileSortOptions = [
-    { id: 'itemName', label: $localize`:@@crafting.column.output:Output` },
+    { id: 'itemName', label: $localize`:@@crafting.column.item:Item` },
     { id: 'outputPrice', label: $localize`:@@crafting.column.buyout:Buyout` },
     { id: 'profit', label: $localize`:@@crafting.column.profit:Profit` },
     { id: 'reagentCost', label: $localize`:@@crafting.column.materialCost:Mat. cost` },
     { id: 'roiPercent', label: $localize`:@@crafting.column.roi:ROI` },
     { id: 'outputPriceChangePercent', label: $localize`:@@crafting.column.trend:Trend` },
-    { id: 'recipeName', label: $localize`:@@crafting.column.recipe:Recipe` },
     { id: 'professionName', label: $localize`:@@crafting.column.profession:Profession` },
   ];
   private readonly craftingService = inject(CraftingItemService);

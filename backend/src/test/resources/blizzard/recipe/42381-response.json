@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/recipe/42381?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/recipe/42381?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 42381,
@@ -35,13 +35,13 @@
     },
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42381?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/recipe/42381?namespace=static-12.0.7_67808-us"
         },
         "id": 42381
     },
     "crafted_item": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item/171412?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/171412?namespace=static-12.0.7_67808-us"
         },
         "name": {
             "en_US": "Shadowghast Breastplate",
@@ -63,7 +63,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/171428?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/171428?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Shadowghast Ingot",
@@ -86,7 +86,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/172437?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/172437?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Enchanted Elethium Bar",
@@ -109,7 +109,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/180733?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Luminous Flux",
@@ -132,7 +132,7 @@
         {
             "reagent": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/item/178787?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/item/178787?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Orboreal Shard",
@@ -160,7 +160,7 @@
         {
             "slot_type": {
                 "key": {
-                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/110?namespace=static-12.0.5_66741-us"
+                    "href": "https://us.api.blizzard.com/data/wow/modified-crafting/reagent-slot-type/110?namespace=static-12.0.7_67808-us"
                 },
                 "name": {
                     "en_US": "Increase Rank",

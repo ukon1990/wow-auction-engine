@@ -199,7 +199,7 @@ class CraftingMarketSearchRepository(
                     INNER JOIN sel_latest_history lh ON lh.update_history_id = a.update_history_id
                 WHERE a.connected_realm_id = ?
                   AND a.buyout IS NOT NULL
-                  AND a.item_id IN (SELECT DISTINCT rr.item_id FROM v_recipe_reagent rr)
+                  AND a.item_id IN (${RecipeReagentPricingSql.allPricingItemIdsSql()})
             ),
             reagent_sel_ranked AS (
                 SELECT
@@ -225,7 +225,7 @@ class CraftingMarketSearchRepository(
                     INNER JOIN com_latest_history lh ON lh.update_history_id = a.update_history_id
                 WHERE a.connected_realm_id = ?
                   AND a.buyout IS NOT NULL
-                  AND a.item_id IN (SELECT DISTINCT rr.item_id FROM v_recipe_reagent rr)
+                  AND a.item_id IN (${RecipeReagentPricingSql.allPricingItemIdsSql()})
             ),
             reagent_com_ranked AS (
                 SELECT
@@ -241,7 +241,7 @@ class CraftingMarketSearchRepository(
                 SELECT item_id, price FROM reagent_com_ranked WHERE rn = 1
             ),
             reagent_items AS (
-                SELECT DISTINCT item_id FROM v_recipe_reagent
+                ${RecipeReagentPricingSql.allPricingItemIdsSql()}
             ),
             reagent_unit AS (
                 SELECT
@@ -255,38 +255,12 @@ class CraftingMarketSearchRepository(
                 SELECT
                     ro.recipe_id,
                     ro.crafted_item_id,
+                    ro.sort_order,
                     COALESCE(NULLIF(ro.crafted_quantity, 0), 1) AS crafted_qty
                 FROM v_recipe_crafted_output ro
             ),
-            recipe_reagent_agg AS (
-                SELECT
-                    r.id AS recipe_id,
-                    SUM(
-                        CASE
-                            WHEN rr.internal_id IS NULL THEN 0
-                            WHEN ru.price IS NULL THEN 1
-                            ELSE 0
-                        END
-                    ) AS missing_reagents,
-                    SUM(
-                        CASE
-                            WHEN rr.internal_id IS NULL THEN 0
-                            ELSE COALESCE(ru.price, 0) * rr.quantity
-                        END
-                    ) AS reagent_cost_partial
-                FROM v_recipe r
-                    INNER JOIN recipe_outputs ro ON ro.recipe_id = r.id
-                    LEFT JOIN v_recipe_reagent rr ON rr.recipe_id = r.id
-                    LEFT JOIN reagent_unit ru ON ru.item_id = rr.item_id
-                GROUP BY r.id
-            ),
-            recipe_reagent_cost AS (
-                SELECT
-                    recipe_id,
-                    CASE WHEN missing_reagents > 0 THEN NULL ELSE reagent_cost_partial END AS reagent_cost,
-                    missing_reagents = 0 AS reagents_fully_priced
-                FROM recipe_reagent_agg
-            ),
+            ${RecipeReagentPricingSql.recipeReagentLinesCte(rankExpr = RecipeReagentPricingSql.craftingTargetRankExpr(), priceCte = "reagent_unit")},
+            ${RecipeReagentPricingSql.recipeReagentCostCte()},
             realm_outputs AS (
                 SELECT
                     ro.recipe_id,
@@ -412,7 +386,7 @@ class CraftingMarketSearchRepository(
                     ro.crafted_item_id,
                     ro.crafted_qty AS crafted_quantity,
                     reci.media_url AS recipe_media_url,
-                    reci.rank AS recipe_rank,
+                    ${RecipeReagentPricingSql.craftingTargetRankExpr(recipeAlias = "reci")} AS recipe_rank,
                     COALESCE(reci_l.$loc, reci_l.en_gb, reci_l.en_us) AS recipe_name,
                     p.id AS profession_id,
                     COALESCE(p_l.$loc, p_l.en_gb, p_l.en_us) AS profession_name,
@@ -486,7 +460,9 @@ class CraftingMarketSearchRepository(
                     INNER JOIN recipe_dim rd
                         ON rd.recipe_id = cc.recipe_id
                         AND rd.crafted_item_id = cc.crafted_item_id
-                    LEFT JOIN recipe_reagent_cost rrc ON rrc.recipe_id = cc.recipe_id
+                    LEFT JOIN recipe_reagent_cost rrc
+                        ON rrc.recipe_id = cc.recipe_id
+                        AND rrc.target_rank = rd.recipe_rank
                     LEFT JOIN crafted_prev cp
                         ON cp.recipe_id = cc.recipe_id
                         AND cp.crafted_item_id <=> cc.crafted_item_id

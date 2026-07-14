@@ -1,9 +1,12 @@
 package net.jonasmf.auctionengine.repository.rds
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import net.jonasmf.auctionengine.domain.profession.ProfessionSkillTreeNodeEffectParser
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperRecipe
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentNode
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTree
+import net.jonasmf.auctionengine.service.admin.AddonRecipeOverrideSyncService
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.security.MessageDigest
@@ -11,6 +14,9 @@ import java.security.MessageDigest
 @Repository
 class NormalizedProfessionImportRepository(
     private val jdbcTemplate: JdbcTemplate,
+    private val recipeCraftingRuleRepository: RecipeCraftingRuleRepository,
+    private val professionSkillTreeNodeEffectRepository: ProfessionSkillTreeNodeEffectRepository,
+    private val addonRecipeOverrideSyncService: AddonRecipeOverrideSyncService,
 ) {
     private val objectMapper = jacksonObjectMapper()
 
@@ -69,6 +75,9 @@ class NormalizedProfessionImportRepository(
                 .associate { (professionId, tree) ->
                     (professionId to tree.treeId) to saveTreeDefinition(professionId, tree, treeImportId)
                 }
+        val distinctRecipes = distinctRecipes(payload)
+        distinctRecipes.forEach { recipe -> recipeCraftingRuleRepository.upsert(recipe, importId) }
+        addonRecipeOverrideSyncService.syncRecipes(distinctRecipes, importId)
         payload.characters.forEach { character ->
             jdbcTemplate.update(
                 """
@@ -271,6 +280,18 @@ class NormalizedProfessionImportRepository(
                         entryOrder,
                     )
                 }
+                val parsedEffects =
+                    buildList {
+                        ProfessionSkillTreeNodeEffectParser.parseDescription(node.description)?.let(::add)
+                        node.propertyEntries.forEach { entry ->
+                            ProfessionSkillTreeNodeEffectParser.parseDescription(entry.description)?.let(::add)
+                        }
+                    }.distinctBy { it.skillBonus to it.craftingCategory }
+                professionSkillTreeNodeEffectRepository.replaceNodeEffects(
+                    databaseNodeId,
+                    node.requiredRank ?: 0,
+                    parsedEffects,
+                )
             }
         }
         jdbcTemplate.update(
@@ -423,6 +444,30 @@ class NormalizedProfessionImportRepository(
 
     fun missingExpansionIds(expansionIds: Set<Int>): Set<Int> =
         expansionIds.filterNot { exists("expansion", it) }.toSet()
+
+    internal fun distinctRecipes(payload: NormalizedAuctionHelperProfessionData): List<NormalizedAuctionHelperRecipe> =
+        payload.characters
+            .flatMap { character -> character.professions.flatMap { profession -> profession.recipes } }
+            .groupBy { it.recipeId }
+            .map { (_, recipes) -> recipes.maxBy { recipeCompletenessScore(it) } }
+
+    private fun String.sha256(): String =
+        MessageDigest
+            .getInstance("SHA-256")
+            .digest(toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+}
+
+internal fun recipeCompletenessScore(recipe: NormalizedAuctionHelperRecipe): Int {
+    var score = 0
+    if (recipe.outputItemId != null) score += 4
+    if (recipe.craftedItemId != null) score += 4
+    score += recipe.qualityOutputItemIds.size * 3
+    score += recipe.reagentSlots.count { it.reagents.isNotEmpty() } * 2
+    score += recipe.reagentSlots.sumOf { it.reagents.size }
+    if (recipe.baseSkill != null) score += 1
+    if (recipe.qualityThresholds.isNotEmpty()) score += 1
+    return score
 }
 
 internal fun resolvedVisibleParentNodeIds(
@@ -460,9 +505,3 @@ internal fun resolvedEntryRankLimit(
 }
 
 internal fun normalizeSpendableLimit(limit: Int): Int = if (limit > 1 && limit % 10 == 1) limit - 1 else limit
-
-private fun String.sha256(): String =
-    MessageDigest
-        .getInstance("SHA-256")
-        .digest(toByteArray(Charsets.UTF_8))
-        .joinToString("") { "%02x".format(it) }

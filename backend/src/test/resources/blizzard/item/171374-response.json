@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/item/171374?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/171374?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 171374,
@@ -40,13 +40,13 @@
     "required_level": 52,
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/item/171374?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/item/171374?namespace=static-12.0.7_67808-us"
         },
         "id": 171374
     },
     "item_class": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.7_67808-us"
         },
         "name": {
             "en_US": "Armor",
@@ -66,7 +66,7 @@
     },
     "item_subclass": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.7_67808-us"
         },
         "name": {
             "en_US": "Plate",
@@ -109,7 +109,7 @@
     "preview_item": {
         "item": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item/171374?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item/171374?namespace=static-12.0.7_67808-us"
             },
             "id": 171374
         },
@@ -150,13 +150,13 @@
         },
         "media": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/media/item/171374?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/media/item/171374?namespace=static-12.0.7_67808-us"
             },
             "id": 171374
         },
         "item_class": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Armor",
@@ -176,7 +176,7 @@
         },
         "item_subclass": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/4/item-subclass/4?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Plate",
@@ -426,38 +426,38 @@
             },
             {
                 "type": {
-                    "type": "MASTERY_RATING",
+                    "type": "HASTE_RATING",
                     "name": {
-                        "en_US": "Mastery",
-                        "es_MX": "maestría",
-                        "pt_BR": "Maestria",
-                        "de_DE": "Meisterschaft",
-                        "en_GB": "Mastery",
-                        "es_ES": "maestría",
-                        "fr_FR": "Maîtrise",
-                        "it_IT": "Indice di maestria",
-                        "ru_RU": "к искусности",
-                        "ko_KR": "특화",
-                        "zh_TW": "精通",
-                        "zh_CN": "精通"
+                        "en_US": "Haste",
+                        "es_MX": "celeridad",
+                        "pt_BR": "Aceleração",
+                        "de_DE": "Tempo",
+                        "en_GB": "Haste",
+                        "es_ES": "celeridad",
+                        "fr_FR": "Hâte",
+                        "it_IT": "Indice di celerità",
+                        "ru_RU": "к скорости",
+                        "ko_KR": "가속",
+                        "zh_TW": "加速",
+                        "zh_CN": "急速"
                     }
                 },
                 "value": 7,
                 "is_equip_bonus": true,
                 "display": {
                     "display_string": {
-                        "en_US": "+7 Mastery",
-                        "es_MX": "+7 maestría",
-                        "pt_BR": "+7 Maestria",
-                        "de_DE": "+7 Meisterschaft",
-                        "en_GB": "+7 Mastery",
-                        "es_ES": "+7 maestría",
-                        "fr_FR": "+7 Maîtrise",
-                        "it_IT": "+7 Indice di maestria",
-                        "ru_RU": "+7 к искусности",
-                        "ko_KR": "특화 +7",
-                        "zh_TW": "+7精通",
-                        "zh_CN": "+7 精通"
+                        "en_US": "+7 Haste",
+                        "es_MX": "+7 celeridad",
+                        "pt_BR": "+7 Aceleração",
+                        "de_DE": "+7 Tempo",
+                        "en_GB": "+7 Haste",
+                        "es_ES": "+7 celeridad",
+                        "fr_FR": "+7 Hâte",
+                        "it_IT": "+7 Indice di celerità",
+                        "ru_RU": "+7 к скорости",
+                        "ko_KR": "가속 +7",
+                        "zh_TW": "+7加速",
+                        "zh_CN": "+7 急速"
                     },
                     "color": {
                         "r": 0,
@@ -565,24 +565,6 @@
         },
         "modified_crafting_stat": [
             {
-                "id": 49,
-                "type": "MASTERY_RATING",
-                "name": {
-                    "en_US": "Mastery",
-                    "es_MX": "maestría",
-                    "pt_BR": "Maestria",
-                    "de_DE": "Meisterschaft",
-                    "en_GB": "Mastery",
-                    "es_ES": "maestría",
-                    "fr_FR": "Maîtrise",
-                    "it_IT": "Indice di maestria",
-                    "ru_RU": "к искусности",
-                    "ko_KR": "특화",
-                    "zh_TW": "精通",
-                    "zh_CN": "精通"
-                }
-            },
-            {
                 "id": 32,
                 "type": "CRIT_RATING",
                 "name": {
@@ -599,6 +581,24 @@
                     "zh_TW": "致命一擊",
                     "zh_CN": "爆击"
                 }
+            },
+            {
+                "id": 36,
+                "type": "HASTE_RATING",
+                "name": {
+                    "en_US": "Haste",
+                    "es_MX": "celeridad",
+                    "pt_BR": "Aceleração",
+                    "de_DE": "Tempo",
+                    "en_GB": "Haste",
+                    "es_ES": "celeridad",
+                    "fr_FR": "Hâte",
+                    "it_IT": "Indice di celerità",
+                    "ru_RU": "к скорости",
+                    "ko_KR": "가속",
+                    "zh_TW": "加速",
+                    "zh_CN": "急速"
+                }
             }
         ]
     },
@@ -606,7 +606,7 @@
     "appearances": [
         {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42040?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-appearance/42040?namespace=static-12.0.7_67808-us"
             },
             "id": 42040
         }

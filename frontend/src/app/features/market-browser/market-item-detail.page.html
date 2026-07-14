@@ -311,16 +311,23 @@
                     @for (reagent of crafting.reagents; track $index) {
                       <tr class="border-b border-white/5">
                         <td class="py-3 pr-4 select-text">
-                          <div class="flex items-center gap-2">
-                            @if (reagent.mediaUrl) {
-                              <img class="h-6 w-6 rounded" [src]="reagent.mediaUrl" alt="" />
-                            }
-                            <span>{{ reagent.name }}</span>
-                            @if (!reagent.priced) {
-                              <span class="rounded bg-error/15 px-2 py-0.5 ee-label text-error"
-                                ><ng-container i18n="@@itemDetail.missingPrice"
-                                  >missing price</ng-container
-                                ></span
+                          <div class="flex flex-col gap-0.5">
+                            <div class="flex items-center gap-2">
+                              @if (reagent.mediaUrl) {
+                                <img class="h-6 w-6 rounded" [src]="reagent.mediaUrl" alt="" />
+                              }
+                              <span>{{ reagent.name }}</span>
+                              @if (!reagent.priced) {
+                                <span class="rounded bg-error/15 px-2 py-0.5 ee-label text-error"
+                                  ><ng-container i18n="@@itemDetail.missingPrice"
+                                    >missing price</ng-container
+                                  ></span
+                                >
+                              }
+                            </div>
+                            @if (reagent.purchaseRank; as purchaseRank) {
+                              <span class="pl-8 text-xs text-outline"
+                                >Purchase rank {{ purchaseRank }}</span
                               >
                             }
                           </div>

@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/item/52119?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item/52119?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 52119,
@@ -40,13 +40,13 @@
     "required_level": 0,
     "media": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/media/item/52119?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/media/item/52119?namespace=static-12.0.7_67808-us"
         },
         "id": 52119
     },
     "item_class": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/3?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/3?namespace=static-12.0.7_67808-us"
         },
         "name": {
             "en_US": "Gem",
@@ -66,7 +66,7 @@
     },
     "item_subclass": {
         "key": {
-            "href": "https://us.api.blizzard.com/data/wow/item-class/3/item-subclass/10?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/item-class/3/item-subclass/10?namespace=static-12.0.7_67808-us"
         },
         "name": {
             "en_US": "Multiple Stats",
@@ -123,7 +123,7 @@
     "preview_item": {
         "item": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item/52119?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item/52119?namespace=static-12.0.7_67808-us"
             },
             "id": 52119
         },
@@ -160,13 +160,13 @@
         },
         "media": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/media/item/52119?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/media/item/52119?namespace=static-12.0.7_67808-us"
             },
             "id": 52119
         },
         "item_class": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/3?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/3?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Gem",
@@ -186,7 +186,7 @@
         },
         "item_subclass": {
             "key": {
-                "href": "https://us.api.blizzard.com/data/wow/item-class/3/item-subclass/10?namespace=static-12.0.5_66741-us"
+                "href": "https://us.api.blizzard.com/data/wow/item-class/3/item-subclass/10?namespace=static-12.0.7_67808-us"
             },
             "name": {
                 "en_US": "Multiple Stats",

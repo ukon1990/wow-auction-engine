@@ -434,7 +434,7 @@ internal object AuctionMarketItemDetailSql {
                 WHERE ash.connected_realm_id = ?
                   AND ash.date = ?
                   AND ash.price$hourSuffix IS NOT NULL
-                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM v_recipe_reagent rr)
+                  AND ash.item_id IN (${RecipeReagentPricingSql.allPricingItemIdsSql()})
             ),
             reagent_sel_ranked AS (
                 SELECT item_id, price,
@@ -450,7 +450,7 @@ internal object AuctionMarketItemDetailSql {
                 WHERE ash.connected_realm_id = ?
                   AND ash.date = ?
                   AND ash.price$commodityHourSuffix IS NOT NULL
-                  AND ash.item_id IN (SELECT DISTINCT rr.item_id FROM v_recipe_reagent rr)
+                  AND ash.item_id IN (${RecipeReagentPricingSql.allPricingItemIdsSql()})
             ),
             reagent_com_ranked AS (
                 SELECT item_id, price,
@@ -462,30 +462,24 @@ internal object AuctionMarketItemDetailSql {
             ),
             reagent_price AS (
                 SELECT items.item_id, COALESCE(rs.price, rc.price) AS price
-                FROM (SELECT DISTINCT item_id FROM v_recipe_reagent) items
+                FROM (${RecipeReagentPricingSql.allPricingItemIdsSql()}) items
                 LEFT JOIN reagent_sel rs ON rs.item_id = items.item_id
                 LEFT JOIN reagent_com rc ON rc.item_id = items.item_id
             ),
-            recipe_reagent_agg AS (
+            recipe_outputs AS (
                 SELECT
-                    r.id AS recipe_id,
-                    SUM(CASE WHEN rr.internal_id IS NULL THEN 0 WHEN rp.price IS NULL THEN 1 ELSE 0 END) AS missing_reagents,
-                    SUM(CASE WHEN rr.internal_id IS NULL THEN 0 ELSE COALESCE(rp.price, 0) * rr.quantity END) AS reagent_cost_partial
-                FROM v_recipe r
-                INNER JOIN v_recipe_crafted_output target_output
-                    ON target_output.recipe_id = r.id
-                    AND target_output.crafted_item_id = ?
-                LEFT JOIN v_recipe_reagent rr ON rr.recipe_id = r.id
-                LEFT JOIN reagent_price rp ON rp.item_id = rr.item_id
-                GROUP BY r.id
+                    ro.recipe_id,
+                    ro.crafted_item_id,
+                    ro.sort_order,
+                    COALESCE(NULLIF(ro.crafted_quantity, 0), 1) AS crafted_qty
+                FROM v_recipe_crafted_output ro
+                WHERE ro.crafted_item_id = ?
             ),
-            recipe_reagent_cost AS (
-                SELECT
-                    recipe_id,
-                    CASE WHEN missing_reagents > 0 THEN NULL ELSE reagent_cost_partial END AS reagent_cost,
-                    missing_reagents = 0 AS reagents_fully_priced
-                FROM recipe_reagent_agg
-            ),
+            ${RecipeReagentPricingSql.recipeReagentLinesCte(
+                rankExpr = RecipeReagentPricingSql.craftingTargetRankExpr(recipeOutputsCte = "v_recipe_crafted_output"),
+                priceCte = "reagent_price",
+            )},
+            ${RecipeReagentPricingSql.recipeReagentCostCte(reagentUnitCte = "reagent_price")},
             output_sel_base AS (
                 SELECT ash.item_id, ash.price$hourSuffix AS output_unit_price, ash.bonus_key, ash.modifier_key, ash.pet_species_id
                 FROM auction_stats_hourly ash
@@ -528,7 +522,11 @@ internal object AuctionMarketItemDetailSql {
             )
             SELECT
                 r.id AS recipe_id,
-                r.rank AS recipe_rank,
+                ${RecipeReagentPricingSql.craftingTargetRankExpr(
+                    recipeAlias = "r",
+                    recipeOutputAlias = "target_output",
+                    recipeOutputsCte = "v_recipe_crafted_output",
+                )} AS recipe_rank,
                 COALESCE(l.$localeColumnSuffix, l.en_gb, l.en_us, CAST(r.id AS CHAR)) AS recipe_name,
                 r.media_url AS recipe_media_url,
                 COALESCE(NULLIF(target_output.crafted_quantity, 0), 1) AS crafted_quantity,
@@ -549,7 +547,13 @@ internal object AuctionMarketItemDetailSql {
             INNER JOIN v_recipe_crafted_output target_output
                 ON target_output.recipe_id = r.id
                 AND target_output.crafted_item_id = ?
-            LEFT JOIN recipe_reagent_cost rrc ON rrc.recipe_id = r.id
+            LEFT JOIN recipe_reagent_cost rrc
+                ON rrc.recipe_id = r.id
+                AND rrc.target_rank = ${RecipeReagentPricingSql.craftingTargetRankExpr(
+                    recipeAlias = "r",
+                    recipeOutputAlias = "target_output",
+                    recipeOutputsCte = "v_recipe_crafted_output",
+                )}
             LEFT JOIN locale l ON l.id = r.name_id
             LEFT JOIN output_price op ON TRUE
             ORDER BY (r.id = ?) DESC, (profit IS NULL), profit DESC, r.id

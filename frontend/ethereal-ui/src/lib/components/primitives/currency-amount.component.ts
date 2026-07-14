@@ -8,6 +8,9 @@ import { CurrencyAmount } from '../../models/ui-models';
   template: `
     <span [class]="hostClass()" [attr.aria-label]="ariaLabel()">
       @if (hasValue()) {
+        @if (amount().negative) {
+          <span aria-hidden="true">-</span>
+        }
         @if (amount().gold) {
           <span>{{ format(amount().gold) }}</span>
           <span [class]="coinClass()" aria-hidden="true"></span>

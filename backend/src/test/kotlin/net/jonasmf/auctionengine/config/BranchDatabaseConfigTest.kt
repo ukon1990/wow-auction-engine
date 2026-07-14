@@ -85,6 +85,72 @@ class BranchDatabaseConfigTest {
     }
 
     @Test
+    fun `branch database clone bounds auction snapshot data to crafting relevant listings`() {
+        assertEquals(
+            """
+            INSERT INTO `branch_feature`.`auction`
+            SELECT a.*
+            FROM `dbo`.`auction` a
+            WHERE a.update_history_id IN (
+                SELECT MAX(id)
+                FROM `dbo`.connected_realm_update_history
+                GROUP BY connected_realm_id
+            )
+              AND a.item_id IN (${recipePricingItemIdsSql("dbo")})
+            """.trimIndent(),
+            dataCopySql(
+                sourceDatabase = "dbo",
+                targetDatabase = "branch_feature",
+                tableName = "auction",
+            ),
+        )
+    }
+
+    @Test
+    fun `recipe pricing item ids include reagent rank variants`() {
+        assertEquals(
+            """
+            SELECT DISTINCT item_id
+            FROM (
+                SELECT item_id
+                FROM `dbo`.v_recipe_reagent
+                UNION ALL
+                SELECT crafted_item_id AS item_id
+                FROM `dbo`.v_recipe_crafted_output
+                UNION ALL
+                SELECT rrk.item_id
+                FROM `dbo`.recipe_reagent_rank rrk
+                    INNER JOIN `dbo`.v_recipe_reagent rr
+                        ON rr.internal_id = rrk.recipe_reagent_id
+            ) recipe_items
+            WHERE item_id IS NOT NULL
+            """.trimIndent(),
+            recipePricingItemIdsSql("dbo"),
+        )
+    }
+
+    @Test
+    fun `branch database clone bounds update history to latest snapshot per realm`() {
+        assertEquals(
+            """
+            INSERT INTO `branch_feature`.`connected_realm_update_history`
+            SELECT cruh.*
+            FROM `dbo`.`connected_realm_update_history` cruh
+                INNER JOIN (
+                    SELECT connected_realm_id, MAX(id) AS latest_id
+                    FROM `dbo`.`connected_realm_update_history`
+                    GROUP BY connected_realm_id
+                ) latest ON latest.latest_id = cruh.id
+            """.trimIndent(),
+            dataCopySql(
+                sourceDatabase = "dbo",
+                targetDatabase = "branch_feature",
+                tableName = "connected_realm_update_history",
+            ),
+        )
+    }
+
+    @Test
     fun `branch database clone bounds historical stats data`() {
         assertEquals(
             """

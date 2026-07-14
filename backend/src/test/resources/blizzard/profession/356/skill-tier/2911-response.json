@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2911?namespace=static-12.0.5_66741-us"
+            "href": "https://us.api.blizzard.com/data/wow/profession/356/skill-tier/2911?namespace=static-12.0.7_67808-us"
         }
     },
     "id": 2911,
@@ -40,7 +40,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51945?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51945?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Sin'dorei Swarmer",
@@ -78,7 +78,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51965?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51965?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Eversong Woods",
@@ -116,7 +116,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51968?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51968?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Twisted Tetra",
@@ -154,7 +154,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51969?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51969?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Bloomtail Minnow",
@@ -192,7 +192,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/51988?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/51988?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Midnight Anglin'",
@@ -230,7 +230,7 @@
             "recipes": [
                 {
                     "key": {
-                        "href": "https://us.api.blizzard.com/data/wow/recipe/52039?namespace=static-12.0.5_66741-us"
+                        "href": "https://us.api.blizzard.com/data/wow/recipe/52039?namespace=static-12.0.7_67808-us"
                     },
                     "name": {
                         "en_US": "Lucky Loa Lure",

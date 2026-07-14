@@ -31,7 +31,7 @@ class AdminProfessionSyncServiceTest {
 
     @Test
     fun `completes job with profession sync diagnostics`() {
-        every { professionRecipeSyncService.syncConfiguredStaticDataRegion(any()) } returns syncResult()
+        every { professionRecipeSyncService.syncConfiguredStaticDataRegion(any(), any()) } returns syncResult()
         service.runSyncJob(42, syncLock)
 
         verify {
@@ -52,7 +52,23 @@ class AdminProfessionSyncServiceTest {
     }
 
     @Test
+    fun `clears stale running job before starting a new sync`() {
+        val staleJob = adminJob()
+        every { guard.isLockHeld() } returns false
+        every {
+            adminJobRepository.findRunningJob(AdminJobDomain.PROFESSION, AdminJobOperations.SYNC_PROFESSIONS)
+        } returns staleJob
+        every { guard.tryAcquire() } returns syncLock
+        every { adminJobRepository.createJob(any(), any(), any()) } returns adminJob()
+
+        service.syncProfessionRecipes("admin")
+
+        verify { adminJobRepository.failJob(staleJob.id, AdminJobOperations.STALE_PROFESSION_SYNC_MESSAGE) }
+    }
+
+    @Test
     fun `rejects duplicate manual start while sync is running`() {
+        every { guard.isLockHeld() } returns true
         every { guard.tryAcquire() } returns null
 
         assertThatThrownBy { service.syncProfessionRecipes("admin") }
@@ -63,7 +79,7 @@ class AdminProfessionSyncServiceTest {
 
     @Test
     fun `marks job failed and releases guard after top-level failure`() {
-        every { professionRecipeSyncService.syncConfiguredStaticDataRegion(any()) } throws IllegalStateException("private upstream detail")
+        every { professionRecipeSyncService.syncConfiguredStaticDataRegion(any(), any()) } throws IllegalStateException("private upstream detail")
         service.runSyncJob(42, syncLock)
 
         verify { adminJobRepository.failJob(42, "Profession/recipe sync failed") }
@@ -79,7 +95,7 @@ class AdminProfessionSyncServiceTest {
         val jobId = AtomicReference<String?>()
         every { guard.tryAcquire() } returns syncLock
         every { adminJobRepository.createJob(any(), any(), any()) } returns job
-        every { professionRecipeSyncService.syncConfiguredStaticDataRegion(any()) } answers {
+        every { professionRecipeSyncService.syncConfiguredStaticDataRegion(any(), any()) } answers {
             requestId.set(MDC.get("requestId"))
             jobId.set(MDC.get("adminJobId"))
             started.countDown()

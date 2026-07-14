@@ -4,6 +4,7 @@ export interface CurrencyAmount {
   readonly gold?: number;
   readonly silver?: number;
   readonly copper?: number;
+  readonly negative?: boolean;
 }
 
 export type ItemQuality = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'artifact';

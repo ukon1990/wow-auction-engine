@@ -51,34 +51,14 @@ export function createCraftingBrowserTableColumns(): ColumnDef<CraftingTableRow,
     {
       id: 'itemName',
       accessorKey: 'craftedItemName',
-      header: $localize`:@@crafting.column.output:Output`,
+      header: $localize`:@@crafting.column.item:Item`,
       meta: {
         align: 'left',
-        gridTrack: 'minmax(14rem, 2fr)',
+        gridTrack: 'minmax(18rem, 2.5fr)',
         cardRole: 'primary',
         cardPriority: 0,
       } satisfies ColumnMeta,
       cell: () => flexRenderComponent(CraftingItemCellComponent),
-    },
-    {
-      id: 'recipeName',
-      accessorKey: 'recipeName',
-      header: $localize`:@@crafting.column.recipe:Recipe`,
-      meta: {
-        align: 'left',
-        gridTrack: 'minmax(8rem, 1.2fr)',
-        cardRole: 'detail',
-        cardLabel: $localize`:@@crafting.column.recipe:Recipe`,
-        cardPriority: 10,
-      } satisfies ColumnMeta,
-      cell: (info) => {
-        const row = info.row.original;
-        const name = textCell(info.getValue());
-        const rank = row.recipeRank;
-        return rank == null
-          ? name
-          : `${name} · ${$localize`:@@admin.recipes.form.rankNumber:Rank ${rank}:INTERPOLATION:`}`;
-      },
     },
     {
       id: 'professionName',

@@ -43,8 +43,8 @@ function variantSummary(lk: {
   const parts: string[] = [];
   if (lk.bonusKey?.trim()) parts.push(`B:${truncate(lk.bonusKey, 24)}`);
   if (lk.modifierKey?.trim()) parts.push(`M:${truncate(lk.modifierKey, 12)}`);
-  if (lk.petSpeciesId) parts.push(`Pet ${lk.petSpeciesId}`);
-  return parts.length ? parts.join(' · ') : 'Default';
+  if (lk.petSpeciesId > 0) parts.push(`Pet ${lk.petSpeciesId}`);
+  return parts.join(' · ');
 }
 
 function truncate(s: string, max: number): string {

@@ -250,7 +250,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="route.admin.users" datatype="html">
@@ -282,7 +282,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">107</context>
+          <context context-type="linenumber">111</context>
         </context-group>
       </trans-unit>
       <trans-unit id="route.admin.professionTalentTrees" datatype="html">
@@ -323,7 +323,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
-          <context context-type="linenumber">137</context>
+          <context context-type="linenumber">136</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-detail.page.html</context>
@@ -899,7 +899,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="linenumber">149</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.filter.anySubclass" datatype="html">
@@ -910,7 +910,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">149</context>
+          <context context-type="linenumber">153</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.filter.anyExpansion" datatype="html">
@@ -921,7 +921,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">153</context>
+          <context context-type="linenumber">157</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.items.panel.create" datatype="html">
@@ -1242,77 +1242,77 @@
         <source> Recipes </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">329,332</context>
+          <context context-type="linenumber">330,333</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.professionSection.skillTree" datatype="html">
         <source> Skill tree </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">344,347</context>
+          <context context-type="linenumber">346,349</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.recipeSearch.label" datatype="html">
         <source>Search recipes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">351,352</context>
+          <context context-type="linenumber">353,354</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.recipeSearch.placeholder" datatype="html">
         <source>Search by recipe name, recipe ID, or crafted item ID</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">353,354</context>
+          <context context-type="linenumber">355,356</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.previewRecipesLabel" datatype="html">
         <source>recipes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">367</context>
+          <context context-type="linenumber">369</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.recipeTable.aria" datatype="html">
         <source>Profession recipes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">368,369</context>
+          <context context-type="linenumber">370,371</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.recipeTable.empty" datatype="html">
         <source>No recipes match the current search.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">370,371</context>
+          <context context-type="linenumber">372,373</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.skillTree.trees" datatype="html">
         <source> Trees </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">381,383</context>
+          <context context-type="linenumber">383,385</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.skillTree.nodes" datatype="html">
         <source> Nodes </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">387,389</context>
+          <context context-type="linenumber">389,391</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.skillTree.allocations" datatype="html">
         <source> Allocations </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">393,395</context>
+          <context context-type="linenumber">395,397</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.specializationTree" datatype="html">
         <source>Specialization tree</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">400,401</context>
+          <context context-type="linenumber">402,403</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.html</context>
@@ -1320,63 +1320,63 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-skill-tree-editor.component.ts</context>
-          <context context-type="linenumber">194</context>
+          <context context-type="linenumber">220</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.skillTree.emptyTitle" datatype="html">
         <source> No skill tree data found </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">415,417</context>
+          <context context-type="linenumber">417,419</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.skillTree.emptyBody" datatype="html">
         <source> Run a fresh full dump in AuctionHelper, reload or log out to write AuctionHelper.lua, then select the SavedVariables folder again. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">421,423</context>
+          <context context-type="linenumber">423,425</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.importDiagnosticsAria" datatype="html">
         <source>Local processing diagnostics</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">433,434</context>
+          <context context-type="linenumber">435,436</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.normalizedOnlyHint" datatype="html">
         <source> Submit only the normalized character, profession, recipe, crafted-item, reagent, and crafting-skill fields shown in this summary. No Lua source is included. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">445,449</context>
+          <context context-type="linenumber">447,451</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.submitting" datatype="html">
         <source>Submitting…</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">456,458</context>
+          <context context-type="linenumber">458,460</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.submitNormalized" datatype="html">
         <source>Submit normalized data</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">459,462</context>
+          <context context-type="linenumber">461,464</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.serverValidationTitle" datatype="html">
         <source> Server validation complete </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">477,479</context>
+          <context context-type="linenumber">479,481</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.serverValidationSummary" datatype="html">
         <source> Validated <x id="INTERPOLATION" equiv-text="{{ serverResult.charactersFound }}"/> character(s), <x id="INTERPOLATION_1" equiv-text="{{ serverResult.professionsFound }}"/> profession(s), and <x id="INTERPOLATION_2" equiv-text="{{ serverResult.recipesFound }}"/> recipe(s). No raw Lua was sent. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.html</context>
-          <context context-type="linenumber">480,484</context>
+          <context context-type="linenumber">482,486</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.error.fileRequired" datatype="html">
@@ -1446,14 +1446,14 @@
         <source>Choose only one copy of each required SavedVariables file.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.ts</context>
-          <context context-type="linenumber">357</context>
+          <context context-type="linenumber">356</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionTalentTrees.error.apiUnavailable" datatype="html">
         <source>The local API could not be reached. Start the backend, then try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/profession-talent-trees/profession-talent-trees.page.ts</context>
-          <context context-type="linenumber">445</context>
+          <context context-type="linenumber">444</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.actions.edit" datatype="html">
@@ -1754,8 +1754,8 @@
           <context context-type="linenumber">305</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">80</context>
+          <context context-type="sourcefile">src/app/features/crafting/crafting-item-cell.component.ts</context>
+          <context context-type="linenumber">123</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-item-cell.component.ts</context>
@@ -1845,7 +1845,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">113</context>
+          <context context-type="linenumber">117</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.table.name" datatype="html">
@@ -1898,315 +1898,385 @@
         <source>Profession sync is running…</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
-          <context context-type="linenumber">5</context>
+          <context context-type="linenumber">11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.failed" datatype="html">
         <source>Profession sync failed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
-          <context context-type="linenumber">8</context>
+          <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.completed" datatype="html">
         <source>Profession sync completed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
-          <context context-type="linenumber">10</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="admin.recipes.professionSync.runningDescription" datatype="html">
-        <source>You can continue browsing recipes while it finishes.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.failedDescription" datatype="html">
         <source>The profession sync could not be completed.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.professions" datatype="html">
         <source>Professions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.tiers" datatype="html">
         <source>Skill tiers</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.recipes" datatype="html">
         <source>Recipes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.reagents" datatype="html">
         <source>Reagents</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.failures" datatype="html">
         <source>Recipe failures</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.progressMetadata" datatype="html">
+        <source>Loading modified crafting metadata…</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">84</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.progressProfessions" datatype="html">
+        <source>Fetching professions from Blizzard…</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.progressProfession" datatype="html">
+        <source>Processing profession <x id="INTERPOLATION" equiv-text="professionIndex"/>/<x id="INTERPOLATION_2" equiv-text="professionTotal"/> · <x id="INTERPOLATION_3" equiv-text="professionName"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">92</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.progressProcessing" datatype="html">
+        <source>Processing professions and skill tiers…</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">94</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.progressStarting" datatype="html">
+        <source>Starting profession sync…</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.progressSkillTier" datatype="html">
+        <source>Skill tier <x id="INTERPOLATION" equiv-text="skillTierIndex"/>/<x id="INTERPOLATION_2" equiv-text="skillTierTotal"/> · <x id="INTERPOLATION_3" equiv-text="skillTierName"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">110</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.progressTiersOverall" datatype="html">
+        <source>Tiers completed <x id="INTERPOLATION" equiv-text="completed"/>/<x id="INTERPOLATION_2" equiv-text="total"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">118</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.progressRecipesInTier" datatype="html">
+        <source>Recipes in tier <x id="INTERPOLATION" equiv-text="recipesInTier"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">125</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.progressRecipesFetched" datatype="html">
+        <source>Recipes fetched <x id="INTERPOLATION" equiv-text="recipesFetched"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">134</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.progressRecipeFailures" datatype="html">
+        <source>Recipe failures <x id="INTERPOLATION" equiv-text="recipeFailures"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">139</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="admin.recipes.professionSync.runningDescription" datatype="html">
+        <source>You can continue browsing recipes while it finishes.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/admin/recipes/profession-sync-job-summary.ts</context>
+          <context context-type="linenumber">144</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.page.heading" datatype="html">
         <source>Recipe overrides</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">109</context>
+          <context context-type="linenumber">113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.page.description" datatype="html">
         <source>Search effective recipe rows and manage admin overrides that survive Blizzard sync.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">110</context>
+          <context context-type="linenumber">114</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.name" datatype="html">
         <source>Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">111</context>
+          <context context-type="linenumber">115</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.namePlaceholder" datatype="html">
         <source>Search localized names</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">112</context>
+          <context context-type="linenumber">116</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.recipeIdPlaceholder" datatype="html">
         <source>Exact or partial recipe ID</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">118</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.associatedItem" datatype="html">
         <source>Associated item</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">115</context>
+          <context context-type="linenumber">119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.associatedItemPlaceholder" datatype="html">
         <source>Search crafted items or reagents</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">116</context>
+          <context context-type="linenumber">120</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.class" datatype="html">
         <source>Class</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">117</context>
+          <context context-type="linenumber">121</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.subclass" datatype="html">
         <source>Subclass</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">118</context>
+          <context context-type="linenumber">122</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.expansion" datatype="html">
         <source>Expansion</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">119</context>
+          <context context-type="linenumber">123</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.associationType" datatype="html">
         <source>Item association</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">120</context>
+          <context context-type="linenumber">124</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.overrideState" datatype="html">
         <source>Override state</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">121</context>
+          <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.pageSize" datatype="html">
         <source>Page size</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">126</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.apply" datatype="html">
         <source>Apply</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">123</context>
+          <context context-type="linenumber">127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.reset" datatype="html">
         <source>Reset</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">124</context>
+          <context context-type="linenumber">128</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.table.empty" datatype="html">
         <source>No recipes match the current filters.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">125</context>
+          <context context-type="linenumber">129</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.table.sectionAria" datatype="html">
         <source>Admin recipes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">126</context>
+          <context context-type="linenumber">130</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.table.paginationLabel" datatype="html">
         <source>recipes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">127</context>
+          <context context-type="linenumber">131</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.form.loading" datatype="html">
         <source>Loading recipe details...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">128</context>
+          <context context-type="linenumber">132</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.heading" datatype="html">
         <source>Profession sync</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">129</context>
+          <context context-type="linenumber">133</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.description" datatype="html">
         <source>Start an asynchronous sync of professions, skill tiers, recipes, and reagents.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">130</context>
+          <context context-type="linenumber">134</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.start" datatype="html">
         <source>Sync professions and recipes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">131</context>
+          <context context-type="linenumber">135</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.dismiss" datatype="html">
         <source>Dismiss</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">132</context>
+          <context context-type="linenumber">136</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.anyOverride" datatype="html">
         <source>All override states</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">135</context>
+          <context context-type="linenumber">139</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.hasOverride" datatype="html">
         <source>Has override</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">136</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.noOverride" datatype="html">
         <source>No override</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">137</context>
+          <context context-type="linenumber">141</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.anyAssociation" datatype="html">
         <source>Crafted or reagent</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">140</context>
+          <context context-type="linenumber">144</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.craftedAssociation" datatype="html">
         <source>Crafted output</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">141</context>
+          <context context-type="linenumber">145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.filter.reagentAssociation" datatype="html">
         <source>Reagent</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">146</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.panel.compare" datatype="html">
         <source>Compare Blizzard API</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">211</context>
+          <context context-type="linenumber">219</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.panel.edit" datatype="html">
         <source>Edit recipe override</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">213</context>
+          <context context-type="linenumber">221</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.formError" datatype="html">
         <source>Unable to save recipe override.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">310</context>
+          <context context-type="linenumber">318</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.deleteConfirm" datatype="html">
         <source>Delete this recipe override? Base recipe data will be inherited again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">318</context>
+          <context context-type="linenumber">326</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.conflict" datatype="html">
         <source>A profession sync is already running.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">340</context>
+          <context context-type="linenumber">348</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.professionSync.startError" datatype="html">
         <source>Unable to start the profession sync.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/admin/recipes/recipes.page.ts</context>
-          <context context-type="linenumber">341</context>
+          <context context-type="linenumber">349</context>
         </context-group>
       </trans-unit>
       <trans-unit id="admin.recipes.itemTypeahead.empty" datatype="html">
@@ -2279,8 +2349,8 @@
           <context context-type="linenumber">10,12</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="crafting.column.output" datatype="html">
-        <source>Output</source>
+      <trans-unit id="crafting.column.item" datatype="html">
+        <source>Item</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
           <context context-type="linenumber">54</context>
@@ -2290,8 +2360,8 @@
           <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="crafting.column.recipe" datatype="html">
-        <source>Recipe</source>
+      <trans-unit id="crafting.column.profession" datatype="html">
+        <source>Profession</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
           <context context-type="linenumber">66</context>
@@ -2305,30 +2375,15 @@
           <context context-type="linenumber">86</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="crafting.column.profession" datatype="html">
-        <source>Profession</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">86</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">91</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
-          <context context-type="linenumber">87</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="crafting.column.materialCost" datatype="html">
         <source>Mat. cost</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">79</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="linenumber">84</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
@@ -2339,11 +2394,11 @@
         <source>Buyout</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">112</context>
+          <context context-type="linenumber">92</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">117</context>
+          <context context-type="linenumber">97</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
@@ -2354,11 +2409,11 @@
         <source>Profit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">125</context>
+          <context context-type="linenumber">105</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">130</context>
+          <context context-type="linenumber">110</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
@@ -2373,11 +2428,11 @@
         <source>ROI</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">138</context>
+          <context context-type="linenumber">118</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">123</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
@@ -2392,11 +2447,11 @@
         <source>Trend</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">151</context>
+          <context context-type="linenumber">131</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
-          <context context-type="linenumber">156</context>
+          <context context-type="linenumber">136</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
@@ -2441,7 +2496,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.table.aria" datatype="html">
@@ -2477,53 +2532,67 @@
         <source>Loading recipes...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.eyebrow" datatype="html">
         <source>Recipe economics</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
-          <context context-type="linenumber">141</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="filters.options" datatype="html">
         <source>Filter options</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser.page.ts</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="linenumber">144</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser.page.ts</context>
           <context context-type="linenumber">147</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="crafting.profileFit.evaluatedBestCrafter" datatype="html">
+        <source>Best crafter: <x id="INTERPOLATION" equiv-text="profileFit.bestCandidate.characterName"/> (quality <x id="INTERPOLATION_2" equiv-text="profileFit.bestCandidate.predictedQuality"/>).</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-profile-fit.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crafting.profileFit.evaluatedNotCraftable" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="profileFit.bestCandidate.characterName"/> cannot craft this recipe with the current profile.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/crafting/crafting-profile-fit.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="crafting.profileFit.heuristicBestCrafter" datatype="html">
         <source>Heuristic best crafter: <x id="INTERPOLATION" equiv-text="profileFit.bestCandidate.characterName"/>. Crafting rules are unavailable.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-profile-fit.ts</context>
-          <context context-type="linenumber">7</context>
+          <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.profileFit.bestCrafter" datatype="html">
         <source>Best crafter: <x id="INTERPOLATION" equiv-text="profileFit.bestCandidate.characterName"/>.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-profile-fit.ts</context>
-          <context context-type="linenumber">8</context>
+          <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.profileFit.rulesUnavailable" datatype="html">
         <source>Crafting rules are unavailable; ranking is heuristic.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-profile-fit.ts</context>
-          <context context-type="linenumber">11</context>
+          <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.profileFit.noMatch" datatype="html">
         <source>No matching character profile.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-profile-fit.ts</context>
-          <context context-type="linenumber">13</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="login.title" datatype="html">
@@ -3489,113 +3558,102 @@
         <source>Blacksmithing</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.profession.leatherworking" datatype="html">
         <source>Leatherworking</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.profession.alchemy" datatype="html">
         <source>Alchemy</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.profession.herbalism" datatype="html">
         <source>Herbalism</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">32</context>
+          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.profession.mining" datatype="html">
         <source>Mining</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.profession.tailoring" datatype="html">
         <source>Tailoring</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.profession.engineering" datatype="html">
         <source>Engineering</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.profession.enchanting" datatype="html">
         <source>Enchanting</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.profession.skinning" datatype="html">
         <source>Skinning</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.profession.jewelcrafting" datatype="html">
         <source>Jewelcrafting</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">38</context>
+          <context context-type="linenumber">42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.profession.inscription" datatype="html">
         <source>Inscription</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.status.characterSynced" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="professions.length"/> professions imported from Blizzard.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">164</context>
+          <context context-type="linenumber">168</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.error.syncCharacter" datatype="html">
         <source>Unable to import professions from Blizzard for this character.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">168</context>
+          <context context-type="linenumber">172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.error.lookupRequired" datatype="html">
         <source>Look up the character with Blizzard first.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">179</context>
+          <context context-type="linenumber">183</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.status.characterAdded" datatype="html">
         <source>Character added.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">207</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">285</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="professionProfiles.error.addCharacter" datatype="html">
-        <source>Unable to add this character. Check the details and try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
           <context context-type="linenumber">211</context>
@@ -3605,138 +3663,149 @@
           <context context-type="linenumber">289</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="professionProfiles.error.addCharacter" datatype="html">
+        <source>Unable to add this character. Check the details and try again.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
+          <context context-type="linenumber">215</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
+          <context context-type="linenumber">293</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="professionProfiles.error.characterRequired" datatype="html">
         <source>Enter a region, realm, and character name.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">224</context>
+          <context context-type="linenumber">228</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">269</context>
+          <context context-type="linenumber">273</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.status.characterFound" datatype="html">
         <source>Character profession data loaded. Review it, then add the character.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">239</context>
+          <context context-type="linenumber">243</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.status.cachedCharacter" datatype="html">
         <source>Blizzard is unavailable, so the last saved profession preview is shown.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">246</context>
+          <context context-type="linenumber">250</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.error.lookupCharacter" datatype="html">
         <source>Unable to load professions from Blizzard. Check the realm slug and character name, then try again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">251</context>
+          <context context-type="linenumber">255</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.status.saved" datatype="html">
         <source>Skill-tree profile saved.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">383</context>
+          <context context-type="linenumber">384</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.error.save" datatype="html">
         <source>Unable to save your skill-tree profile. Your edits are still here.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">386</context>
+          <context context-type="linenumber">387</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.confirmDiscard" datatype="html">
         <source>Discard unsaved skill-tree changes?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">398</context>
+          <context context-type="linenumber">399</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.error.loadCharacters" datatype="html">
         <source>Unable to load your characters.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">410</context>
+          <context context-type="linenumber">411</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.error.loadProfile" datatype="html">
         <source>Unable to load this profession profile.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">451</context>
+          <context context-type="linenumber">446</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.source.blizzard" datatype="html">
         <source>Blizzard</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">502</context>
+          <context context-type="linenumber">497</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.source.addon" datatype="html">
         <source>Addon</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">504</context>
+          <context context-type="linenumber">499</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.source.manual" datatype="html">
         <source>Manual</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-profiles.page.ts</context>
-          <context context-type="linenumber">506</context>
+          <context context-type="linenumber">501</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.emptyTab" datatype="html">
         <source> No nodes are available in this specialization. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-skill-tree-editor.component.html</context>
-          <context context-type="linenumber">171,175</context>
+          <context context-type="linenumber">178,182</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.noPrerequisites" datatype="html">
         <source>No prerequisites</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-skill-tree-editor.component.ts</context>
-          <context context-type="linenumber">144</context>
+          <context context-type="linenumber">166</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.namedPrerequisite" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="requiredRanks"/> at rank <x id="INTERPOLATION" equiv-text="requiredRanks"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-skill-tree-editor.component.ts</context>
-          <context context-type="linenumber">154</context>
+          <context context-type="linenumber">176</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.decreaseRank" datatype="html">
         <source>Decrease <x id="INTERPOLATION" equiv-text="entryName"/> rank</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-skill-tree-editor.component.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="linenumber">198</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.increaseRank" datatype="html">
         <source>Increase <x id="INTERPOLATION" equiv-text="entryName"/> rank</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-skill-tree-editor.component.ts</context>
-          <context context-type="linenumber">176</context>
+          <context context-type="linenumber">202</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.unnamedTalentHub" datatype="html">
         <source>Specialization</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-skill-tree-editor.component.ts</context>
-          <context context-type="linenumber">332</context>
+          <context context-type="linenumber">431</context>
         </context-group>
       </trans-unit>
       <trans-unit id="professionProfiles.milestoneAtRank" datatype="html">
-        <source>Rank <x id="INTERPOLATION" equiv-text="label"/>: <x id="INTERPOLATION" equiv-text="label"/></source>
+        <source>Rank <x id="INTERPOLATION" equiv-text="milestone.requiredRank"/>: <x id="INTERPOLATION_1" equiv-text="label"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/profile/professions/profession-skill-tree-nodes.ts</context>
           <context context-type="linenumber">74</context>
