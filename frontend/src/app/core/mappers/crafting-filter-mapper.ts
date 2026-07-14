@@ -1,9 +1,12 @@
 import { AuctionMarketFilter } from '@api/generated';
 import { CraftingBrowserQueryState } from '@core/models/crafting-browser.models';
 import {
+  CRAFTING_RANGE_SECTION_KEYS,
   craftingSelectedRangeValue,
   craftingSelectedSet,
+  filterLabel,
   filterOptionLabel,
+  filterType,
 } from '@core/utils/filter';
 import {
   mapQualityFilterOptions,
@@ -16,25 +19,29 @@ export const toCraftingFilterSections = (
   state: CraftingBrowserQueryState,
 ): readonly FilterSection[] => {
   return filters.map((filter) => {
+    const label = filterLabel(filter);
     if (filter.type === AuctionMarketFilter.TypeEnum.Boolean) {
       return {
         id: filter.id,
-        label: filter.label,
+        label,
         type: filter.type,
         options: [
           {
             id: `${filter.id}:true`,
-            label: filter.label,
+            label,
             selected: state.requireCompleteReagentPricing,
           },
         ],
       };
     }
     const selectedIds = craftingSelectedSet(filter.id, state);
+    const type = Object.hasOwn(CRAFTING_RANGE_SECTION_KEYS, filter.id)
+      ? 'range'
+      : filterType(filter);
     return {
       id: filter.id,
-      label: filter.label,
-      type: filter.type,
+      label,
+      type,
       min: filter.min ?? undefined,
       max: filter.max ?? undefined,
       selectedMin: craftingSelectedRangeValue(filter.id, 'min', state),

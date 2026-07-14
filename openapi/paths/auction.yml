@@ -53,6 +53,8 @@ search:
             - commodityPrice
             - selectedQuantity
             - commodityQuantity
+            - saleRate
+            - soldPerDay
       - name: sortDirection
         in: query
         required: false

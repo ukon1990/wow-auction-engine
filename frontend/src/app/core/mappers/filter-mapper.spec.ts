@@ -1,7 +1,8 @@
 import { AuctionMarketFilter, AuctionMarketFilterResponse } from '@api/generated';
 import { defaultMarketBrowserQueryState } from '@core/mappers/market-browser-query.mapper';
 import { toFilterSections } from '@core/mappers/filter-mapper';
-import { expect } from 'vitest';
+import { filterType } from '@core/utils/filter';
+import { describe, expect, it } from 'vitest';
 
 describe('Filter Mapper', () => {
   it('toFilterSections', () => {
@@ -77,5 +78,43 @@ describe('Filter Mapper', () => {
       'itemClassIds',
       'recipeOnly',
     ]);
+  });
+
+  it('forces range type for TSM filters when API type is wrong or missing', () => {
+    const filters = [
+      {
+        id: 'saleRatePercent',
+        label: 'Sale rate %',
+        type: 'RANGE' as unknown as AuctionMarketFilter.TypeEnum,
+        min: null,
+        max: null,
+      },
+      {
+        id: 'soldPerDay',
+        label: 'Avg sold/day',
+        type: undefined as unknown as AuctionMarketFilter.TypeEnum,
+        min: null,
+        max: null,
+      },
+    ] as const satisfies readonly AuctionMarketFilter[];
+
+    expect(filterType(filters[0]!)).toBe('range');
+    expect(filterType(filters[1]!)).toBe('range');
+
+    const sections = toFilterSections(filters, defaultMarketBrowserQueryState);
+    expect(sections).toEqual([
+      expect.objectContaining({
+        id: 'saleRatePercent',
+        type: 'range',
+        label: expect.any(String),
+      }),
+      expect.objectContaining({
+        id: 'soldPerDay',
+        type: 'range',
+        label: expect.any(String),
+      }),
+    ]);
+    expect(sections[0]!.label.length).toBeGreaterThan(0);
+    expect(sections[1]!.label.length).toBeGreaterThan(0);
   });
 });

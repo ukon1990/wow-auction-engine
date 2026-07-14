@@ -23,6 +23,8 @@ export interface MarketBrowserQueryState {
     | 'selectedPrice'
     | 'commodityPrice'
     | 'selectedQuantity'
-    | 'commodityQuantity';
+    | 'commodityQuantity'
+    | 'saleRate'
+    | 'soldPerDay';
   readonly sortDirection: 'asc' | 'desc';
 }

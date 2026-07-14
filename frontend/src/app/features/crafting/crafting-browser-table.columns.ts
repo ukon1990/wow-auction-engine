@@ -141,7 +141,6 @@ export function createCraftingBrowserTableColumns(): ColumnDef<CraftingTableRow,
     {
       id: 'saleRate',
       accessorKey: 'saleRate',
-      enableSorting: false,
       header: $localize`:@@crafting.column.saleRate:Sale rate`,
       meta: {
         align: 'right',
@@ -155,7 +154,6 @@ export function createCraftingBrowserTableColumns(): ColumnDef<CraftingTableRow,
     {
       id: 'soldPerDay',
       accessorKey: 'soldPerDay',
-      enableSorting: false,
       header: $localize`:@@crafting.column.soldPerDay:Avg sold/day`,
       meta: {
         align: 'right',

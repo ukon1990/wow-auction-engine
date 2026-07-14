@@ -83,6 +83,8 @@ export class MarketBrowserPage {
     { id: 'itemName', label: $localize`:@@market.column.item:Item` },
     { id: 'selectedPrice', label: $localize`:@@market.column.price:Price` },
     { id: 'selectedQuantity', label: $localize`:@@market.column.quantity:Quantity` },
+    { id: 'saleRate', label: $localize`:@@market.column.saleRate:Sale rate` },
+    { id: 'soldPerDay', label: $localize`:@@market.column.soldPerDay:Avg sold/day` },
     { id: 'quality', label: $localize`:@@market.column.quality:Quality` },
     { id: 'itemClass', label: $localize`:@@market.column.class:Class` },
     { id: 'itemSubclass', label: $localize`:@@market.column.subclass:Subclass` },

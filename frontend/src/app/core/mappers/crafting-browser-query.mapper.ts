@@ -13,6 +13,8 @@ export const CRAFTING_SORT_BY_VALUES = [
   'outputPriceChangePercent',
   'profitChangePercent',
   'listingQuantity',
+  'saleRate',
+  'soldPerDay',
 ] as const satisfies readonly CraftingSortBy[];
 
 const MAX_PAGE_SIZE = 200;

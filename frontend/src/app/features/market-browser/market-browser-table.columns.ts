@@ -138,7 +138,6 @@ export function createMarketBrowserTableColumns(): ColumnDef<MarketItemRow, unkn
     {
       id: 'saleRate',
       accessorKey: 'saleRate',
-      enableSorting: false,
       header: $localize`:@@market.column.saleRate:Sale rate`,
       meta: {
         align: 'right',
@@ -152,7 +151,6 @@ export function createMarketBrowserTableColumns(): ColumnDef<MarketItemRow, unkn
     {
       id: 'soldPerDay',
       accessorKey: 'soldPerDay',
-      enableSorting: false,
       header: $localize`:@@market.column.soldPerDay:Avg sold/day`,
       meta: {
         align: 'right',

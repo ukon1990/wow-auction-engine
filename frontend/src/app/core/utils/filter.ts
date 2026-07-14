@@ -42,8 +42,33 @@ export const filterOptionLabel = (
 
 export const qualityLabel = (quality: ItemQuality): string => formatQuality(quality);
 
+export const MARKET_RANGE_SECTION_KEYS = {
+  price: ['minPrice', 'maxPrice'],
+  quantity: ['minQuantity', 'maxQuantity'],
+  saleRatePercent: ['minSaleRatePercent', 'maxSaleRatePercent'],
+  soldPerDay: ['minSoldPerDay', 'maxSoldPerDay'],
+} as const satisfies Record<
+  string,
+  readonly [keyof MarketBrowserQueryState, keyof MarketBrowserQueryState]
+>;
+
+export const CRAFTING_RANGE_SECTION_KEYS = {
+  profit: ['minProfit', 'maxProfit'],
+  roiPercent: ['minRoiPercent', 'maxRoiPercent'],
+  saleRatePercent: ['minSaleRatePercent', 'maxSaleRatePercent'],
+  soldPerDay: ['minSoldPerDay', 'maxSoldPerDay'],
+  reagentCost: ['minReagentCost', 'maxReagentCost'],
+  outputPrice: ['minOutputPrice', 'maxOutputPrice'],
+  outputPriceChangePercent: ['minOutputPriceChangePercent', 'maxOutputPriceChangePercent'],
+} as const satisfies Record<
+  string,
+  readonly [keyof CraftingBrowserQueryState, keyof CraftingBrowserQueryState]
+>;
+
 export const filterType = (filter: AuctionMarketFilter): FilterSection['type'] => {
   if (filter.id === 'itemClassIds' || filter.id === 'itemSubclassIds') return 'select';
+  if (Object.hasOwn(MARKET_RANGE_SECTION_KEYS, filter.id)) return 'range';
+  if (Object.hasOwn(CRAFTING_RANGE_SECTION_KEYS, filter.id)) return 'range';
   return filter.type;
 };
 
@@ -115,16 +140,6 @@ export type ParsedFilterOptionId = {
   readonly value: number;
   readonly parentId?: number;
 };
-
-export const MARKET_RANGE_SECTION_KEYS = {
-  price: ['minPrice', 'maxPrice'],
-  quantity: ['minQuantity', 'maxQuantity'],
-  saleRatePercent: ['minSaleRatePercent', 'maxSaleRatePercent'],
-  soldPerDay: ['minSoldPerDay', 'maxSoldPerDay'],
-} as const satisfies Record<
-  string,
-  readonly [keyof MarketBrowserQueryState, keyof MarketBrowserQueryState]
->;
 
 export const MARKET_MULTI_SELECT_KEYS = new Set<string>([
   'qualityIds',
@@ -248,19 +263,6 @@ export function applyMarketRangeFilter(
 ): MarketBrowserQueryState {
   return applyRangeUpdate(state, MARKET_RANGE_SECTION_KEYS, sectionId, bound, value);
 }
-
-export const CRAFTING_RANGE_SECTION_KEYS = {
-  profit: ['minProfit', 'maxProfit'],
-  roiPercent: ['minRoiPercent', 'maxRoiPercent'],
-  saleRatePercent: ['minSaleRatePercent', 'maxSaleRatePercent'],
-  soldPerDay: ['minSoldPerDay', 'maxSoldPerDay'],
-  reagentCost: ['minReagentCost', 'maxReagentCost'],
-  outputPrice: ['minOutputPrice', 'maxOutputPrice'],
-  outputPriceChangePercent: ['minOutputPriceChangePercent', 'maxOutputPriceChangePercent'],
-} as const satisfies Record<
-  string,
-  readonly [keyof CraftingBrowserQueryState, keyof CraftingBrowserQueryState]
->;
 
 export const CRAFTING_MULTI_SELECT_KEYS = new Set<string>([
   'professionIds',

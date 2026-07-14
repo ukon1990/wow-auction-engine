@@ -82,6 +82,8 @@ export class CraftingBrowserPage {
     { id: 'profit', label: $localize`:@@crafting.column.profit:Profit` },
     { id: 'reagentCost', label: $localize`:@@crafting.column.materialCost:Mat. cost` },
     { id: 'roiPercent', label: $localize`:@@crafting.column.roi:ROI` },
+    { id: 'saleRate', label: $localize`:@@crafting.column.saleRate:Sale rate` },
+    { id: 'soldPerDay', label: $localize`:@@crafting.column.soldPerDay:Avg sold/day` },
     { id: 'outputPriceChangePercent', label: $localize`:@@crafting.column.trend:Trend` },
     { id: 'professionName', label: $localize`:@@crafting.column.profession:Profession` },
   ];

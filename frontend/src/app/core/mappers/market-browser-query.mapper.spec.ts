@@ -25,6 +25,15 @@ describe('market-browser-query.mapper', () => {
     });
   });
 
+  it('accepts saleRate and soldPerDay sortBy values', () => {
+    expect(readMarketBrowserQueryState(convertToParamMap({ sortBy: 'saleRate' })).sortBy).toBe(
+      'saleRate',
+    );
+    expect(readMarketBrowserQueryState(convertToParamMap({ sortBy: 'soldPerDay' })).sortBy).toBe(
+      'soldPerDay',
+    );
+  });
+
   it('falls back to default sortBy for unknown columns', () => {
     expect(readMarketBrowserQueryState(convertToParamMap({ sortBy: 'not-a-column' })).sortBy).toBe(
       'itemName',

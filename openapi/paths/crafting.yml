@@ -54,6 +54,8 @@ search:
             - outputPriceChangePercent
             - profitChangePercent
             - listingQuantity
+            - saleRate
+            - soldPerDay
       - name: sortDirection
         in: query
         required: false

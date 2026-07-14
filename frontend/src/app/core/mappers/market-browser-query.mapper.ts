@@ -11,6 +11,8 @@ const SORT_BY_VALUES = [
   'commodityPrice',
   'selectedQuantity',
   'commodityQuantity',
+  'saleRate',
+  'soldPerDay',
 ] as const satisfies readonly MarketBrowserQueryState['sortBy'][];
 
 const MAX_PAGE_SIZE = 200;

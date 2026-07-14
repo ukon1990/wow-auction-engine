@@ -105,6 +105,8 @@ class CraftingMarketSearchRepository(
             "outputPriceChangePercent" to "output_price_change_percent",
             "profitChangePercent" to "profit_change_percent",
             "listingQuantity" to "listing_quantity",
+            "saleRate" to "sale_rate",
+            "soldPerDay" to "sold_per_day",
         )
 
     fun search(request: CraftingMarketSearchRequest): CraftingMarketSearchResult {
@@ -597,7 +599,7 @@ class CraftingMarketSearchRepository(
                     val col = sortColumns.getValue(request.sortBy)
                     "((wrapped.$col) IS NULL) ASC, wrapped.$col $dir"
                 }
-                "roiPercent", "outputPriceChangePercent", "profitChangePercent" -> {
+                "roiPercent", "outputPriceChangePercent", "profitChangePercent", "saleRate", "soldPerDay" -> {
                     val col = sortColumns.getValue(request.sortBy)
                     "((wrapped.$col) IS NULL) ASC, wrapped.$col $dir"
                 }

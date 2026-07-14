@@ -97,6 +97,8 @@ class AuctionMarketSearchRepository(
             "commodityPrice" to "commodity_price",
             "selectedQuantity" to "selected_quantity",
             "commodityQuantity" to "commodity_quantity",
+            "saleRate" to "sale_rate",
+            "soldPerDay" to "sold_per_day",
         )
 
     fun search(request: AuctionMarketSearchRequest): AuctionMarketSearchResult {
@@ -299,6 +301,10 @@ class AuctionMarketSearchRepository(
                 "selectedQuantity", "commodityQuantity" -> {
                     val expr = "COALESCE(wrapped.selected_quantity, wrapped.commodity_quantity)"
                     "(($expr) IS NULL) ASC, $expr $dir"
+                }
+                "saleRate", "soldPerDay" -> {
+                    val col = sortColumns.getValue(request.sortBy)
+                    "((wrapped.$col) IS NULL) ASC, wrapped.$col $dir"
                 }
                 else -> {
                     val col = sortColumns[request.sortBy] ?: sortColumns.getValue("itemName")

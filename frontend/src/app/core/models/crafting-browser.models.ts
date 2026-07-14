@@ -8,7 +8,9 @@ export type CraftingSortBy =
   | 'roiPercent'
   | 'outputPriceChangePercent'
   | 'profitChangePercent'
-  | 'listingQuantity';
+  | 'listingQuantity'
+  | 'saleRate'
+  | 'soldPerDay';
 
 export interface CraftingBrowserQueryState {
   readonly query: string;
