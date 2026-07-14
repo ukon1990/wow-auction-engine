@@ -393,11 +393,12 @@ export function normalizedTalentTreeGraph(
           parentNodeId,
           requiredParentRanks: 1,
         })),
-        entries: node.entries.map((entry) => ({
+        entries: node.entries.map((entry, entryIndex) => ({
           id: entry.entryId,
           name: entry.name,
           description: entry.description,
           rankLimit: entry.rankLimit ?? node.maxRanks ?? 1,
+          displayOrder: entryIndex,
         })),
       })),
     })),

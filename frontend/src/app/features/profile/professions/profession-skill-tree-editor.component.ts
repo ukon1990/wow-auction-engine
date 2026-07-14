@@ -12,6 +12,7 @@ export interface SkillTreeGraphEntry {
   readonly name?: string | null;
   readonly description?: string | null;
   readonly rankLimit: number;
+  readonly displayOrder: number;
 }
 
 export interface SkillTreeGraphNode {
@@ -58,6 +59,12 @@ interface GraphLayout {
   readonly connectors: readonly Connector[];
 }
 
+interface SubtreeLayout {
+  readonly width: number;
+  readonly positions: readonly PositionedNode[];
+  readonly connectors: readonly Connector[];
+}
+
 export const graphNodeWidth = 224;
 const nodeHeaderHeight = 72;
 const entryRowHeight = 44;
@@ -69,6 +76,7 @@ const graphPadding = 24;
 @Component({
   selector: 'app-profession-skill-tree-editor',
   templateUrl: './profession-skill-tree-editor.component.html',
+  host: { class: 'block min-w-0 max-w-full' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfessionSkillTreeEditor {
@@ -87,6 +95,9 @@ export class ProfessionSkillTreeEditor {
     return tabs.find((tab) => tab.id === this.selectedTabId()) ?? tabs[0] ?? null;
   });
   protected readonly layout = computed(() => layoutGraph(this.selectedTab()?.nodes ?? []));
+
+  protected readonly nodeDisplayName = nodeDisplayName;
+  protected readonly editableEntries = editableEntries;
 
   protected selectTab(tab: SkillTreeGraphTab): void {
     this.selectedTabId.set(tab.id);
@@ -132,7 +143,7 @@ export class ProfessionSkillTreeEditor {
               prerequisite.parentNodeId === parent.id ||
               prerequisite.parentNodeId === parent.externalNodeId,
           )?.requiredParentRanks ?? 1;
-        return $localize`:@@professionProfiles.namedPrerequisite:${parent.name ?? ''}:INTERPOLATION: at rank ${requiredRanks}:INTERPOLATION:`;
+        return $localize`:@@professionProfiles.namedPrerequisite:${nodeDisplayName(parent)}:INTERPOLATION: at rank ${requiredRanks}:INTERPOLATION:`;
       })
       .join(', ');
   }
@@ -161,15 +172,11 @@ export class ProfessionSkillTreeEditor {
     return entryNameVisible(entry, node);
   }
 
-  protected entryLabel(
-    entry: SkillTreeGraphEntry,
-    node: SkillTreeGraphNode,
-    index = 0,
-  ): string {
+  protected entryLabel(entry: SkillTreeGraphEntry, node: SkillTreeGraphNode, index = 0): string {
     const entryName = entry.name?.trim();
-    const nodeName = node.name?.trim() ?? '';
+    const nodeName = nodeDisplayName(node);
     if (entryName && normalizeLabel(entryName) !== normalizeLabel(nodeName)) return entryName;
-    if (node.entries.length > 1) return `${nodeName} (${index + 1})`;
+    if (editableEntries(node).length > 1) return `${nodeName} (${index + 1})`;
     return nodeName;
   }
 
@@ -186,76 +193,107 @@ export class ProfessionSkillTreeEditor {
 }
 
 export function layoutGraph(nodes: readonly SkillTreeGraphNode[]): GraphLayout {
-  const visibleNodes = nodes.filter(isVisibleNode);
+  const visibleNodes = nodes.filter((node) => isVisibleNode(node, nodes));
   if (!visibleNodes.length) return { width: 0, height: 0, nodes: [], connectors: [] };
-  const parentsByNode = new Map(visibleNodes.map((node) => [node.id, visibleParents(node, nodes)]));
-  const levels = new Map<number, number>();
-  const levelFor = (node: SkillTreeGraphNode, visiting = new Set<number>()): number => {
-    const cached = levels.get(node.id);
-    if (cached != null) return cached;
-    if (visiting.has(node.id)) return 0;
-    const nextVisiting = new Set(visiting).add(node.id);
-    const parents = parentsByNode.get(node.id) ?? [];
-    const level = parents.length
-      ? Math.max(...parents.map((parent) => levelFor(parent, nextVisiting))) + 1
-      : 0;
-    levels.set(node.id, level);
-    return level;
-  };
-  visibleNodes.forEach((node) => levelFor(node));
-  const rows = new Map<number, SkillTreeGraphNode[]>();
-  [...visibleNodes]
-    .sort((left, right) => left.displayOrder - right.displayOrder || left.id - right.id)
-    .forEach((node) => {
-      const level = levels.get(node.id) ?? 0;
-      rows.set(level, [...(rows.get(level) ?? []), node]);
-    });
-  const maxColumns = Math.max(...[...rows.values()].map((row) => row.length));
-  const rowLevels = [...rows.keys()].sort((left, right) => left - right);
-  const rowY = new Map<number, number>();
-  let y = graphPadding;
-  for (const level of rowLevels) {
-    rowY.set(level, y);
-    const row = rows.get(level) ?? [];
-    y += Math.max(...row.map(heightForNode), 0) + rowGap;
+
+  const roots = visibleNodes
+    .filter((node) => visibleParents(node, nodes).length === 0)
+    .sort(compareNodes);
+
+  let offsetX = graphPadding;
+  const positions: PositionedNode[] = [];
+  const connectors: Connector[] = [];
+
+  for (const [index, root] of roots.entries()) {
+    const layout = layoutSubtree(root, offsetX, graphPadding, nodes);
+    positions.push(...layout.positions);
+    connectors.push(...layout.connectors);
+    offsetX += layout.width + (index < roots.length - 1 ? columnGap : 0);
   }
-  const width = graphPadding * 2 + maxColumns * graphNodeWidth + (maxColumns - 1) * columnGap;
-  const height = y - rowGap + graphPadding;
-  const positioned = [...rows].flatMap(([level, row]) => {
-    const rowWidth = row.length * graphNodeWidth + (row.length - 1) * columnGap;
-    const offset = graphPadding + (width - graphPadding * 2 - rowWidth) / 2;
-    return row.map((node, index) => ({
-      node,
-      x: offset + index * (graphNodeWidth + columnGap),
-      y: rowY.get(level) ?? graphPadding,
+
+  const width = Math.max(offsetX + graphPadding - columnGap, graphNodeWidth + graphPadding * 2);
+  const height =
+    positions.length > 0
+      ? Math.max(...positions.map((position) => position.y + position.height)) + graphPadding
+      : 0;
+
+  return { width, height, nodes: positions, connectors };
+}
+
+function layoutSubtree(
+  node: SkillTreeGraphNode,
+  offsetX: number,
+  y: number,
+  nodes: readonly SkillTreeGraphNode[],
+): SubtreeLayout {
+  const children = visibleChildNodes(node, nodes);
+  const height = heightForNode(node);
+
+  if (!children.length) {
+    return {
       width: graphNodeWidth,
-      height: heightForNode(node),
-    }));
+      positions: [{ node, x: offsetX, y, width: graphNodeWidth, height }],
+      connectors: [],
+    };
+  }
+
+  let childX = offsetX;
+  const childLayouts: SubtreeLayout[] = [];
+  for (const child of children) {
+    const layout = layoutSubtree(child, childX, y + height + rowGap, nodes);
+    childLayouts.push(layout);
+    childX += layout.width + columnGap;
+  }
+
+  const childrenWidth = childX - offsetX - columnGap;
+  const subtreeWidth = Math.max(graphNodeWidth, childrenWidth);
+  const parentPosition: PositionedNode = {
+    node,
+    x: offsetX + (subtreeWidth - graphNodeWidth) / 2,
+    y,
+    width: graphNodeWidth,
+    height,
+  };
+
+  const childConnectors = children.flatMap((child, index) => {
+    const childPosition = childLayouts[index].positions.find(
+      (position) => position.node.id === child.id,
+    );
+    if (!childPosition) return [];
+    return [connectorBetween(parentPosition, childPosition)];
   });
-  const positions = new Map(
-    positioned.flatMap((item) => [
-      [item.node.id, item],
-      [item.node.externalNodeId, item],
-    ]),
-  );
-  const connectors = positioned.flatMap((child) =>
-    (parentsByNode.get(child.node.id) ?? []).flatMap((parentNode) => {
-      const parent = positions.get(parentNode.id);
-      if (!parent) return [];
-      const startX = parent.x + parent.width / 2;
-      const startY = parent.y + parent.height;
-      const endX = child.x + child.width / 2;
-      const endY = child.y;
-      const middleY = startY + (endY - startY) / 2;
-      return [
-        {
-          key: `${parent.node.id}-${child.node.id}`,
-          path: `M ${startX} ${startY} C ${startX} ${middleY}, ${endX} ${middleY}, ${endX} ${endY}`,
-        },
-      ];
-    }),
-  );
-  return { width, height, nodes: positioned, connectors };
+
+  return {
+    width: subtreeWidth,
+    positions: [parentPosition, ...childLayouts.flatMap((layout) => layout.positions)],
+    connectors: [...childLayouts.flatMap((layout) => layout.connectors), ...childConnectors],
+  };
+}
+
+function visibleChildNodes(
+  parent: SkillTreeGraphNode,
+  nodes: readonly SkillTreeGraphNode[],
+): readonly SkillTreeGraphNode[] {
+  return nodes
+    .filter((node) => isVisibleNode(node, nodes))
+    .filter((node) => visibleParents(node, nodes).some((candidate) => candidate.id === parent.id))
+    .sort(compareNodes);
+}
+
+function connectorBetween(parent: PositionedNode, child: PositionedNode): Connector {
+  const startX = parent.x + parent.width / 2;
+  const startY = parent.y + parent.height;
+  const endX = child.x + child.width / 2;
+  const endY = child.y;
+  const middleY = startY + (endY - startY) / 2;
+  return {
+    key: `${parent.node.id}-${child.node.id}`,
+    path: `M ${startX} ${startY} C ${startX} ${middleY}, ${endX} ${middleY}, ${endX} ${endY}`,
+  };
+}
+
+function compareNodes(left: SkillTreeGraphNode, right: SkillTreeGraphNode): number {
+  return left.displayOrder - right.displayOrder || left.id - right.id;
 }
 
 function findNode(
@@ -265,14 +303,73 @@ function findNode(
   return nodes.find((node) => node.id === nodeId || node.externalNodeId === nodeId);
 }
 
-export function isVisibleNode(node: SkillTreeGraphNode): boolean {
-  return Boolean(node.name?.trim());
+export function isVisibleNode(
+  node: SkillTreeGraphNode,
+  allNodes: readonly SkillTreeGraphNode[] = [],
+): boolean {
+  if (node.name?.trim()) return true;
+  return node.maxRanks > 1 && hasStructuralChildren(node, allNodes);
+}
+
+export function nodeDisplayName(node: SkillTreeGraphNode): string {
+  const explicit = node.name?.trim();
+  if (explicit) return explicit;
+  const entryName = node.entries.find((entry) => entry.name?.trim())?.name?.trim();
+  if (entryName) return entryName;
+  return $localize`:@@professionProfiles.unnamedTalentHub:Specialization`;
+}
+
+export function editableEntries(node: SkillTreeGraphNode): readonly SkillTreeGraphEntry[] {
+  const sorted = [...node.entries].sort(
+    (left, right) => left.displayOrder - right.displayOrder || left.id - right.id,
+  );
+  if (sorted.length <= 1) return sorted;
+
+  const nodeLabel = normalizeLabel(nodeDisplayName(node));
+  const labelFor = (entry: SkillTreeGraphEntry): string =>
+    normalizeLabel(entry.name?.trim()) || nodeLabel;
+
+  if (sorted.length === 2 && labelFor(sorted[0]) === labelFor(sorted[1])) {
+    return [sorted[1]];
+  }
+
+  let candidates = sorted.filter((entry) => entry.rankLimit > 1);
+  if (!candidates.length) candidates = sorted;
+
+  const deduped = new Map<string, SkillTreeGraphEntry>();
+  for (const entry of candidates) {
+    const label = labelFor(entry);
+    const existing = deduped.get(label);
+    if (
+      !existing ||
+      entry.rankLimit > existing.rankLimit ||
+      (entry.rankLimit === existing.rankLimit && entry.displayOrder > existing.displayOrder)
+    ) {
+      deduped.set(label, entry);
+    }
+  }
+
+  return [...deduped.values()].sort(
+    (left, right) => left.displayOrder - right.displayOrder || left.id - right.id,
+  );
 }
 
 export function entryNameVisible(entry: SkillTreeGraphEntry, node: SkillTreeGraphNode): boolean {
   const entryName = entry.name?.trim();
   if (!entryName) return false;
-  return normalizeLabel(entryName) !== normalizeLabel(node.name);
+  return normalizeLabel(entryName) !== normalizeLabel(nodeDisplayName(node));
+}
+
+function hasStructuralChildren(
+  node: SkillTreeGraphNode,
+  allNodes: readonly SkillTreeGraphNode[],
+): boolean {
+  return allNodes.some((candidate) =>
+    candidate.prerequisites.some(
+      (prerequisite) =>
+        prerequisite.parentNodeId === node.id || prerequisite.parentNodeId === node.externalNodeId,
+    ),
+  );
 }
 
 function normalizeLabel(value: string | null | undefined): string {
@@ -285,7 +382,7 @@ function normalizeLabel(value: string | null | undefined): string {
 }
 
 function heightForNode(node: SkillTreeGraphNode): number {
-  const entryCount = Math.max(node.entries.length, 1);
+  const entryCount = Math.max(editableEntries(node).length, 1);
   return nodeHeaderHeight + entryCount * entryRowHeight + nodeFooterPadding;
 }
 
@@ -296,7 +393,7 @@ export function visibleParents(
   const result = new Map<number, SkillTreeGraphNode>();
   const visit = (candidate: SkillTreeGraphNode, visiting: Set<number>): void => {
     if (visiting.has(candidate.id)) return;
-    if (isVisibleNode(candidate)) {
+    if (isVisibleNode(candidate, nodes)) {
       result.set(candidate.id, candidate);
       return;
     }
@@ -310,7 +407,5 @@ export function visibleParents(
     const parent = findNode(nodes, prerequisite.parentNodeId);
     if (parent) visit(parent, new Set([node.id]));
   });
-  return [...result.values()].sort(
-    (left, right) => left.displayOrder - right.displayOrder || left.id - right.id,
-  );
+  return [...result.values()].sort(compareNodes);
 }

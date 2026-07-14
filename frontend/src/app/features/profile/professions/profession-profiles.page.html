@@ -5,9 +5,9 @@
   eyebrow="Character crafting"
   [loading]="loading()"
 >
-  <div class="grid max-w-6xl gap-6 lg:grid-cols-[minmax(16rem,0.4fr)_minmax(0,1fr)]">
+  <div class="grid w-full min-w-0 max-w-6xl gap-6 lg:grid-cols-[minmax(16rem,0.4fr)_minmax(0,1fr)]">
     <aside
-      class="grid content-start gap-5 rounded-lg border border-white/10 bg-surface-container-highest p-5"
+      class="grid min-w-0 content-start gap-5 rounded-lg border border-white/10 bg-surface-container-highest p-5"
     >
       <header>
         <h2
@@ -157,8 +157,8 @@
             Add manually instead
           </summary>
           <p class="mt-2 text-sm text-outline" i18n="@@professionProfiles.manualAddHint">
-            Use this only when Blizzard's profile API is unavailable. Profession and recipe data will
-            not be imported.
+            Use this only when Blizzard's profile API is unavailable. Profession and recipe data
+            will not be imported.
           </p>
           <button
             type="button"
@@ -184,7 +184,9 @@
             @if (syncingCharacter()) {
               <ng-container i18n="@@professionProfiles.syncing">Importing…</ng-container>
             } @else {
-              <ng-container i18n="@@professionProfiles.syncCharacter">Import from Blizzard</ng-container>
+              <ng-container i18n="@@professionProfiles.syncCharacter"
+                >Import from Blizzard</ng-container
+              >
             }
           </button>
           @if (knownProfessions().length) {
@@ -213,7 +215,7 @@
       }
     </aside>
 
-    <section class="grid content-start gap-5">
+    <section class="grid min-w-0 content-start gap-5">
       <header class="grid gap-3 sm:flex sm:items-end sm:justify-between">
         <div>
           <h1
@@ -237,14 +239,27 @@
       </header>
 
       @if (selectedCharacter() && hasKnownProfessions()) {
-        <ee-select-input
-          i18n-label="@@professionProfiles.profession"
-          label="Profession"
-          [options]="professionOptions()"
-          [value]="selectedProfessionOption()"
-          (valueChanged)="selectProfession($event)"
-          [disabled]="loadingTree()"
-        />
+        <div class="grid min-w-0 gap-5 sm:grid-cols-2">
+          <ee-select-input
+            class="min-w-0"
+            i18n-label="@@professionProfiles.profession"
+            label="Profession"
+            [options]="professionOptions()"
+            [value]="selectedProfessionOption()"
+            (valueChanged)="selectProfession($event)"
+            [disabled]="loadingTree()"
+          />
+          @if (!loadingTree() && selectedTree() && trees().length) {
+            <ee-select-input
+              class="min-w-0"
+              i18n-label="@@professionProfiles.specializationTree"
+              label="Specialization tree"
+              [options]="treeOptions()"
+              [value]="selectedTreeId()!.toString()"
+              (valueChanged)="selectTree($event)"
+            />
+          }
+        </div>
       }
 
       @if (error()) {
@@ -303,16 +318,8 @@
           }
         </div>
       } @else {
-        @if (trees().length) {
-          <ee-select-input
-            i18n-label="@@professionProfiles.specializationTree"
-            label="Specialization tree"
-            [options]="treeOptions()"
-            [value]="selectedTreeId()!.toString()"
-            (valueChanged)="selectTree($event)"
-          />
-        }
         <app-profession-skill-tree-editor
+          class="min-w-0 max-w-full"
           [tree]="selectedTree()!"
           [allocations]="allocations()"
           (rankChanged)="updateRank($event.node, $event.entryId, $event.change)"

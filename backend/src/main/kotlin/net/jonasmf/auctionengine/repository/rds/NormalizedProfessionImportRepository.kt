@@ -297,13 +297,16 @@ internal fun resolvedVisibleParentNodeIds(
     val node = nodesByExternalId[nodeId] ?: return emptySet()
     return node.parentNodeIds.orEmpty().flatMapTo(linkedSetOf()) { parentNodeId ->
         val parent = nodesByExternalId[parentNodeId] ?: return@flatMapTo emptySet()
-        if (!parent.name.isNullOrBlank()) {
+        if (!parent.name.isNullOrBlank() || isStructuralTalentHub(parent)) {
             setOf(parentNodeId)
         } else {
             resolvedVisibleParentNodeIds(parentNodeId, nodes, visiting + nodeId)
         }
     }
 }
+
+internal fun isStructuralTalentHub(node: NormalizedAuctionHelperTalentNode): Boolean =
+    node.name.isNullOrBlank() && (node.maxRanks ?: 1) > 1
 
 private fun String.sha256(): String =
     MessageDigest.getInstance("SHA-256")

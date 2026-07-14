@@ -432,9 +432,7 @@ export class ProfessionProfilesPage {
       }
 
       const [trees, profile] = await Promise.all([
-        firstValueFrom(
-          this.profileApi.listProfessionTrees(midnightExpansionId, professionId),
-        ),
+        firstValueFrom(this.profileApi.listProfessionTrees(midnightExpansionId, professionId)),
         firstValueFrom(this.profileApi.getProfessionProfile(characterId, professionId)),
       ]);
       this.trees.set(trees);
@@ -493,7 +491,9 @@ export class ProfessionProfilesPage {
 }
 
 export function professionLabel(professionId: number): string {
-  return professions.find((profession) => profession.id === professionId)?.label ?? `#${professionId}`;
+  return (
+    professions.find((profession) => profession.id === professionId)?.label ?? `#${professionId}`
+  );
 }
 
 function sourceLabel(source: ProfileCharacterProfessionSource): string {

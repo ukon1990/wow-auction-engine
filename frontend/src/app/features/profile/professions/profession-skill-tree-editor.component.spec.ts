@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProfessionSkillTree, ProfessionSkillTreeNode } from '@api/generated';
 import {
   ProfessionSkillTreeEditor,
+  editableEntries,
   entryNameVisible,
   layoutGraph,
 } from './profession-skill-tree-editor.component';
@@ -71,7 +72,13 @@ describe('ProfessionSkillTreeEditor', () => {
             {
               ...rootNode,
               entries: [
-                { id: 100, externalEntryId: 1000, name: 'Foundations', rankLimit: 1, displayOrder: 0 },
+                {
+                  id: 100,
+                  externalEntryId: 1000,
+                  name: 'Foundations',
+                  rankLimit: 1,
+                  displayOrder: 0,
+                },
                 {
                   id: 101,
                   externalEntryId: 1001,
@@ -88,11 +95,11 @@ describe('ProfessionSkillTreeEditor', () => {
     fixture.detectChanges();
 
     const root = fixture.nativeElement as HTMLElement;
-    const labels = [...root.querySelectorAll('article span.text-xs.font-medium')].map(
-      (element) => element.textContent?.trim(),
+    const labels = [...root.querySelectorAll('article span.text-xs.font-medium')].map((element) =>
+      element.textContent?.trim(),
     );
     expect(labels).toEqual([]);
-    expect(root.textContent).toContain('0/1');
+    expect(root.textContent).not.toContain('0/1');
     expect(root.textContent).toContain('0/25');
   });
 
@@ -117,8 +124,8 @@ describe('layoutGraph', () => {
     expect(first).toEqual(second);
   });
 
-  it('hides unnamed structural nodes while preserving their visible relationship', () => {
-    const hidden = node(15, '', 1, [{ parentNodeId: 10, requiredParentRanks: 1 }]);
+  it('hides unnamed pass-through nodes while preserving visible relationships', () => {
+    const hidden = node(15, '', 1, [{ parentNodeId: 10, requiredParentRanks: 1 }], 1);
     const descendant = node(20, 'Armorsmithing', 2, [{ parentNodeId: 15, requiredParentRanks: 1 }]);
 
     const layout = layoutGraph([rootNode, hidden, descendant]);
@@ -126,13 +133,30 @@ describe('layoutGraph', () => {
     expect(layout.nodes.map((position) => position.node.id)).toEqual([10, 20]);
     expect(layout.connectors).toHaveLength(1);
     expect(layout.connectors[0].key).toBe('10-20');
+    expect(layout.nodes[1].y).toBeGreaterThan(layout.nodes[0].y);
+  });
+
+  it('fans children out under their visible parent instead of a single row', () => {
+    const hub = node(10, 'Armorsmithing', 0, [], 30);
+    const left = node(20, 'Gauntlets', 1, [{ parentNodeId: 10, requiredParentRanks: 1 }]);
+    const center = node(21, 'Helm', 2, [{ parentNodeId: 10, requiredParentRanks: 1 }]);
+    const right = node(22, 'Belts', 3, [{ parentNodeId: 10, requiredParentRanks: 1 }]);
+
+    const layout = layoutGraph([hub, left, center, right]);
+    const hubPosition = layout.nodes.find((position) => position.node.id === hub.id)!;
+    const childPositions = layout.nodes.filter((position) => position.node.id !== hub.id);
+
+    expect(childPositions).toHaveLength(3);
+    expect(hubPosition.y).toBeLessThan(Math.min(...childPositions.map((position) => position.y)));
+    expect(new Set(childPositions.map((position) => position.x)).size).toBe(3);
+    expect(layout.connectors).toHaveLength(3);
   });
 
   it('returns an empty graph when every node is unnamed', () => {
     expect(layoutGraph([node(15, '', 0)])).toMatchObject({ nodes: [], connectors: [] });
   });
 
-  it('sizes nodes from their entry count so connectors meet the card edge', () => {
+  it('sizes nodes from their editable entry count so connectors meet the card edge', () => {
     const layout = layoutGraph([
       {
         ...rootNode,
@@ -146,9 +170,56 @@ describe('layoutGraph', () => {
     const root = layout.nodes.find((position) => position.node.id === rootNode.id)!;
     const child = layout.nodes.find((position) => position.node.id === childNode.id)!;
 
-    expect(root.height).toBeGreaterThan(child.height);
+    expect(root.height).toBeLessThan(72 + 2 * 44 + 8);
     expect(layout.connectors[0].path).toContain(`${root.y + root.height}`);
     expect(child.y).toBe(root.y + root.height + 52);
+  });
+});
+
+describe('editableEntries', () => {
+  it('hides unlock rows when a primary progression entry exists', () => {
+    const sample = node(10, 'Gauntlets', 0);
+    const entries = [
+      { id: 100, externalEntryId: 1000, name: 'Gauntlets', rankLimit: 1, displayOrder: 0 },
+      { id: 101, externalEntryId: 1001, name: 'Gauntlets', rankLimit: 25, displayOrder: 1 },
+    ];
+    expect(editableEntries({ ...sample, entries })).toEqual([entries[1]]);
+  });
+
+  it('keeps one progression row when addon data omitted per-entry rank limits', () => {
+    const sample = node(10, "Nature's Novelties", 0);
+    const entries = [
+      {
+        id: 100,
+        externalEntryId: 1000,
+        name: "Nature's Novelties",
+        rankLimit: 30,
+        displayOrder: 0,
+      },
+      {
+        id: 101,
+        externalEntryId: 1001,
+        name: "Nature's Novelties",
+        rankLimit: 30,
+        displayOrder: 1,
+      },
+    ];
+    expect(editableEntries({ ...sample, entries })).toEqual([entries[1]]);
+  });
+
+  it('keeps one progression row when the unlock entry has no name', () => {
+    const sample = node(10, "Nature's Novelties", 0);
+    const entries = [
+      { id: 100, externalEntryId: 1000, name: null, rankLimit: 1, displayOrder: 0 },
+      {
+        id: 101,
+        externalEntryId: 1001,
+        name: "Nature's Novelties",
+        rankLimit: 30,
+        displayOrder: 1,
+      },
+    ];
+    expect(editableEntries({ ...sample, entries })).toEqual([entries[1]]);
   });
 });
 
@@ -176,12 +247,13 @@ function node(
   name: string,
   displayOrder: number,
   prerequisites: ProfessionSkillTreeNode['prerequisites'] = [],
+  maxRanks = 30,
 ): ProfessionSkillTreeNode {
   return {
     id,
     externalNodeId: id,
     name,
-    maxRanks: 30,
+    maxRanks,
     requiredRank: 0,
     displayOrder,
     prerequisites,
@@ -190,7 +262,7 @@ function node(
         id: id * 10,
         externalEntryId: id * 100,
         name,
-        rankLimit: 30,
+        rankLimit: maxRanks,
         displayOrder: 0,
       },
     ],

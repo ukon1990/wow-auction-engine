@@ -1,4 +1,6 @@
-<section class="overflow-hidden rounded-lg border border-white/10 bg-surface-container-highest">
+<section
+  class="min-w-0 max-w-full overflow-hidden rounded-lg border border-white/10 bg-surface-container-highest"
+>
   <div
     class="flex overflow-x-auto border-b border-white/10 px-3 pt-3"
     role="tablist"
@@ -29,7 +31,7 @@
   @if (selectedTab(); as tab) {
     <div
       role="tabpanel"
-      class="p-4"
+      class="min-w-0 p-4"
       [id]="tabPanelId(tab.id)"
       [attr.aria-labelledby]="tabButtonId(tab.id)"
       tabindex="0"
@@ -38,7 +40,7 @@
         <p class="mb-3 text-sm text-outline">{{ tab.description }}</p>
       }
       @if (layout().nodes.length) {
-        <div class="overflow-auto rounded-md border border-white/10 bg-surface/40">
+        <div class="max-w-full overflow-auto rounded-md border border-white/10 bg-surface/40">
           <div
             class="relative"
             [style.width.px]="layout().width"
@@ -80,14 +82,14 @@
                 [style.top.px]="position.y"
                 [style.width.px]="position.width"
                 [style.height.px]="position.height"
-                [attr.aria-label]="position.node.name || null"
+                [attr.aria-label]="nodeDisplayName(position.node)"
               >
                 <div class="min-h-0 overflow-hidden p-3 pb-2">
                   <h3
                     class="truncate text-sm font-bold text-on-surface"
-                    [title]="position.node.name || null"
+                    [title]="nodeDisplayName(position.node)"
                   >
-                    {{ position.node.name }}
+                    {{ nodeDisplayName(position.node) }}
                   </h3>
                   <p class="mt-1 line-clamp-2 break-words text-xs text-outline">
                     {{ position.node.description }}
@@ -95,7 +97,11 @@
                   <p class="sr-only">{{ parentSummary(position.node, tab) }}</p>
                 </div>
                 <div class="min-w-0 self-end border-t border-white/10 px-3 py-2">
-                  @for (entry of position.node.entries; track entry.id; let entryIndex = $index) {
+                  @for (
+                    entry of editableEntries(position.node);
+                    track entry.id;
+                    let entryIndex = $index
+                  ) {
                     <div
                       class="flex min-w-0 items-center gap-2"
                       [class.justify-center]="!entryNameVisible(entry, position.node)"

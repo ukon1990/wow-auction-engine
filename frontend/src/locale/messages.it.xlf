@@ -2264,6 +2264,13 @@
       <trans-unit id="professionProfiles.rankLabel" datatype="html"><source>{$INTERPOLATION} rank</source><target>{$INTERPOLATION} rank</target></trans-unit>
       <trans-unit id="professionProfiles.decreaseRank" datatype="html"><source>Decrease {$INTERPOLATION} rank</source><target>Decrease {$INTERPOLATION} rank</target></trans-unit>
       <trans-unit id="professionProfiles.increaseRank" datatype="html"><source>Increase {$INTERPOLATION} rank</source><target>Increase {$INTERPOLATION} rank</target></trans-unit>
+      <trans-unit id="professionProfiles.unnamedTalentHub" datatype="html">
+        <source>Specialization</source><target>Specialization</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/profile/professions/profession-skill-tree-editor.component.ts</context>
+          <context context-type="linenumber">319</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="professionProfiles.status.saved" datatype="html"><source>Skill-tree profile saved.</source><target>Skill-tree profile saved.</target></trans-unit>
       <trans-unit id="professionProfiles.error.save" datatype="html"><source>Unable to save your skill-tree profile. Your edits are still here.</source><target>Unable to save your skill-tree profile. Your edits are still here.</target></trans-unit>
       <trans-unit id="professionProfiles.confirmDiscard" datatype="html"><source>Discard unsaved skill-tree changes?</source><target>Discard unsaved skill-tree changes?</target></trans-unit>
