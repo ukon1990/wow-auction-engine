@@ -1,0 +1,8 @@
+type: object
+required: [professionId, professionName, tiers]
+properties:
+  professionId: { type: integer, format: int32 }
+  professionName: { type: string }
+  tiers:
+    type: array
+    items: { $ref: "../../openapi.yml#/components/schemas/CharacterProfessionPreviewTier" }

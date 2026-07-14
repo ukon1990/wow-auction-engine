@@ -35,7 +35,6 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${WAE_COGNITO_ISSUER_URI:}
-
 server:
   servlet:
     context-path: /api

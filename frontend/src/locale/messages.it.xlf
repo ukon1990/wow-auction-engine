@@ -2219,6 +2219,220 @@
       <trans-unit id="admin.recipes.professionSync.reagents" datatype="html"><source>Reagents</source><target>Reagenti</target></trans-unit>
       <trans-unit id="admin.recipes.professionSync.failures" datatype="html"><source>Recipe failures</source><target>Errori delle ricette</target></trans-unit>
       <trans-unit id="admin.jobs.pollingError" datatype="html"><source>Unable to monitor the admin job. You can try starting it again.</source><target>Impossibile monitorare il processo di amministrazione. Puoi provare ad avviarlo di nuovo.</target></trans-unit>
+      <trans-unit id="crafting.profileFit.rulesUnavailable" datatype="html"><source>Crafting rules are unavailable; ranking is heuristic.</source><target>Crafting rules are unavailable; ranking is heuristic.</target></trans-unit>
+      <trans-unit id="crafting.profileFit.bestCrafter" datatype="html"><source>Best crafter: {$INTERPOLATION}.</source><target>Best crafter: {$INTERPOLATION}.</target></trans-unit>
+      <trans-unit id="crafting.profileFit.heuristicBestCrafter" datatype="html"><source>Heuristic best crafter: {$INTERPOLATION}. Crafting rules are unavailable.</source><target>Heuristic best crafter: {$INTERPOLATION}. Crafting rules are unavailable.</target></trans-unit>
+      <trans-unit id="crafting.profileFit.noMatch" datatype="html"><source>No matching character profile.</source><target>No matching character profile.</target></trans-unit>
+      <trans-unit id="profile.professionProfiles" datatype="html"><source>Profession profiles</source><target>Profession profiles</target></trans-unit>
+      <trans-unit id="profile.professionProfilesHint" datatype="html"><source>Configure your characters’ crafting skill trees.</source><target>Configure your characters’ crafting skill trees.</target></trans-unit>
+      <trans-unit id="professionProfiles.title" datatype="html"><source>Profession profiles</source><target>Profession profiles</target></trans-unit>
+      <trans-unit id="professionProfiles.eyebrow" datatype="html"><source>Character crafting</source><target>Character crafting</target></trans-unit>
+      <trans-unit id="professionProfiles.characters" datatype="html"><source>Characters</source><target>Characters</target></trans-unit>
+      <trans-unit id="professionProfiles.charactersHint" datatype="html"><source>Add the characters whose profession builds you want to compare.</source><target>Add the characters whose profession builds you want to compare.</target></trans-unit>
+      <trans-unit id="professionProfiles.character" datatype="html"><source>Character</source><target>Character</target></trans-unit>
+      <trans-unit id="professionProfiles.selectCharacter" datatype="html"><source>Select a character</source><target>Select a character</target></trans-unit>
+      <trans-unit id="professionProfiles.addCharacter" datatype="html"><source>Add character</source><target>Add character</target></trans-unit>
+      <trans-unit id="professionProfiles.region" datatype="html"><source>Region</source><target>Region</target></trans-unit>
+      <trans-unit id="professionProfiles.realm" datatype="html"><source>Realm</source><target>Realm</target></trans-unit>
+      <trans-unit id="professionProfiles.characterName" datatype="html"><source>Character name</source><target>Character name</target></trans-unit>
+      <trans-unit id="professionProfiles.add" datatype="html"><source>Add character</source><target>Add character</target></trans-unit>
+      <trans-unit id="professionProfiles.editorTitle" datatype="html"><source>Profession skill tree</source><target>Profession skill tree</target></trans-unit>
+      <trans-unit id="professionProfiles.editorHint" datatype="html"><source>Choose a profession and record its ranks. Changes are saved per character.</source><target>Choose a profession and record its ranks. Changes are saved per character.</target></trans-unit>
+      <trans-unit id="professionProfiles.unsaved" datatype="html"><source>Unsaved changes</source><target>Unsaved changes</target></trans-unit>
+      <trans-unit id="professionProfiles.profession" datatype="html"><source>Profession</source><target>Profession</target></trans-unit>
+      <trans-unit id="professionProfiles.emptyCharacters" datatype="html"><source>Add a character to configure a profession profile.</source><target>Add a character to configure a profession profile.</target></trans-unit>
+      <trans-unit id="professionProfiles.loadingTree" datatype="html"><source>Loading skill tree…</source><target>Loading skill tree…</target></trans-unit>
+      <trans-unit id="professionProfiles.treeUnavailable" datatype="html"><source>Skill tree unavailable</source><target>Skill tree unavailable</target></trans-unit>
+      <trans-unit id="professionProfiles.treeUnavailableHint" datatype="html"><source>No imported tree is available for this profession yet. Importing is not available from this page.</source><target>No imported tree is available for this profession yet. Importing is not available from this page.</target></trans-unit>
+      <trans-unit id="professionProfiles.save" datatype="html"><source>Save profile</source><target>Save profile</target></trans-unit>
+      <trans-unit id="professionProfiles.profession.blacksmithing" datatype="html"><source>Blacksmithing</source><target>Blacksmithing</target></trans-unit>
+      <trans-unit id="professionProfiles.profession.leatherworking" datatype="html"><source>Leatherworking</source><target>Leatherworking</target></trans-unit>
+      <trans-unit id="professionProfiles.profession.alchemy" datatype="html"><source>Alchemy</source><target>Alchemy</target></trans-unit>
+      <trans-unit id="professionProfiles.profession.herbalism" datatype="html"><source>Herbalism</source><target>Herbalism</target></trans-unit>
+      <trans-unit id="professionProfiles.profession.mining" datatype="html"><source>Mining</source><target>Mining</target></trans-unit>
+      <trans-unit id="professionProfiles.profession.tailoring" datatype="html"><source>Tailoring</source><target>Tailoring</target></trans-unit>
+      <trans-unit id="professionProfiles.profession.engineering" datatype="html"><source>Engineering</source><target>Engineering</target></trans-unit>
+      <trans-unit id="professionProfiles.profession.enchanting" datatype="html"><source>Enchanting</source><target>Enchanting</target></trans-unit>
+      <trans-unit id="professionProfiles.profession.skinning" datatype="html"><source>Skinning</source><target>Skinning</target></trans-unit>
+      <trans-unit id="professionProfiles.profession.jewelcrafting" datatype="html"><source>Jewelcrafting</source><target>Jewelcrafting</target></trans-unit>
+      <trans-unit id="professionProfiles.profession.inscription" datatype="html"><source>Inscription</source><target>Inscription</target></trans-unit>
+      <trans-unit id="professionProfiles.error.characterRequired" datatype="html"><source>Enter a region, realm, and character name.</source><target>Enter a region, realm, and character name.</target></trans-unit>
+      <trans-unit id="professionProfiles.status.characterAdded" datatype="html"><source>Character added.</source><target>Character added.</target></trans-unit>
+      <trans-unit id="professionProfiles.error.addCharacter" datatype="html"><source>Unable to add this character. Check the details and try again.</source><target>Unable to add this character. Check the details and try again.</target></trans-unit>
+      <trans-unit id="professionProfiles.noPrerequisites" datatype="html"><source>No prerequisites</source><target>No prerequisites</target></trans-unit>
+      <trans-unit id="professionProfiles.prerequisite" datatype="html"><source>Required node {$INTERPOLATION} at rank {$INTERPOLATION_1}.</source><target>Required node {$INTERPOLATION} at rank {$INTERPOLATION_1}.</target></trans-unit>
+      <trans-unit id="professionProfiles.rankLabel" datatype="html"><source>{$INTERPOLATION} rank</source><target>{$INTERPOLATION} rank</target></trans-unit>
+      <trans-unit id="professionProfiles.decreaseRank" datatype="html"><source>Decrease {$INTERPOLATION} rank</source><target>Decrease {$INTERPOLATION} rank</target></trans-unit>
+      <trans-unit id="professionProfiles.increaseRank" datatype="html"><source>Increase {$INTERPOLATION} rank</source><target>Increase {$INTERPOLATION} rank</target></trans-unit>
+      <trans-unit id="professionProfiles.unnamedTalentHub" datatype="html">
+        <source>Specialization</source><target>Specialization</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/profile/professions/profession-skill-tree-editor.component.ts</context>
+          <context context-type="linenumber">319</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="professionProfiles.status.saved" datatype="html"><source>Skill-tree profile saved.</source><target>Skill-tree profile saved.</target></trans-unit>
+      <trans-unit id="professionProfiles.error.save" datatype="html"><source>Unable to save your skill-tree profile. Your edits are still here.</source><target>Unable to save your skill-tree profile. Your edits are still here.</target></trans-unit>
+      <trans-unit id="professionProfiles.confirmDiscard" datatype="html"><source>Discard unsaved skill-tree changes?</source><target>Discard unsaved skill-tree changes?</target></trans-unit>
+      <trans-unit id="professionProfiles.error.loadCharacters" datatype="html"><source>Unable to load your characters.</source><target>Unable to load your characters.</target></trans-unit>
+      <trans-unit id="professionProfiles.error.loadProfile" datatype="html"><source>Unable to load this profession profile.</source><target>Unable to load this profession profile.</target></trans-unit>
++      <trans-unit id="professionProfiles.importCharacter" datatype="html"><source>Import from Blizzard</source><target>Import from Blizzard</target></trans-unit>
+      <trans-unit id="professionProfiles.importCharacterHint" datatype="html"><source>Look up the character's professions and known recipes before adding it to your profile.</source><target>Look up the character's professions and known recipes before adding it to your profile.</target></trans-unit>
+      <trans-unit id="professionProfiles.realmSlug" datatype="html"><source>Realm slug</source><target>Realm slug</target></trans-unit>
+      <trans-unit id="professionProfiles.lookingUp" datatype="html"><source>Looking up…</source><target>Looking up…</target></trans-unit>
+      <trans-unit id="professionProfiles.lookup" datatype="html"><source>Look up character</source><target>Look up character</target></trans-unit>
+      <trans-unit id="professionProfiles.previewTitle" datatype="html"><source>Profession preview</source><target>Profession preview</target></trans-unit>
+      <trans-unit id="professionProfiles.previewSummary" datatype="html"><source>{$INTERPOLATION} professions and {$INTERPOLATION_1} known recipes found.</source><target>{$INTERPOLATION} professions and {$INTERPOLATION_1} known recipes found.</target></trans-unit>
+      <trans-unit id="professionProfiles.tierSummary" datatype="html"><source>{$INTERPOLATION} tiers · {$INTERPOLATION_1} known recipes</source><target>{$INTERPOLATION} tiers · {$INTERPOLATION_1} known recipes</target></trans-unit>
+      <trans-unit id="professionProfiles.addImported" datatype="html"><source>Add character</source><target>Add character</target></trans-unit>
+      <trans-unit id="professionProfiles.manualAdd" datatype="html"><source>Add manually instead</source><target>Add manually instead</target></trans-unit>
+      <trans-unit id="professionProfiles.manualAddHint" datatype="html"><source>Use this only when Blizzard's profile API is unavailable. Profession and recipe data will not be imported.</source><target>Use this only when Blizzard's profile API is unavailable. Profession and recipe data will not be imported.</target></trans-unit>
+      <trans-unit id="professionProfiles.addManual" datatype="html"><source>Add manually</source><target>Add manually</target></trans-unit>
+      <trans-unit id="professionProfiles.error.lookupRequired" datatype="html"><source>Look up the character with Blizzard first.</source><target>Look up the character with Blizzard first.</target></trans-unit>
+      <trans-unit id="professionProfiles.status.characterFound" datatype="html"><source>Character profession data loaded. Review it, then add the character.</source><target>Character profession data loaded. Review it, then add the character.</target></trans-unit>
+      <trans-unit id="professionProfiles.status.cachedCharacter" datatype="html"><source>Blizzard is unavailable, so the last saved profession preview is shown.</source><target>Blizzard is unavailable, so the last saved profession preview is shown.</target></trans-unit>
+      <trans-unit id="professionProfiles.error.lookupCharacter" datatype="html"><source>Unable to load professions from Blizzard. Check the realm slug and character name, then try again.</source><target>Unable to load professions from Blizzard. Check the realm slug and character name, then try again.</target></trans-unit>
+      <trans-unit id="professionProfiles.manageTalentTrees" datatype="html"><source>Manage profession talent trees</source><target>Manage profession talent trees</target></trans-unit>
+      <trans-unit id="professionTalentTrees.title" datatype="html"><source>Profession talent trees</source><target>Profession talent trees</target></trans-unit>
+      <trans-unit id="professionTalentTrees.eyebrow" datatype="html"><source>Admin</source><target>Admin</target></trans-unit>
+      <trans-unit id="professionTalentTrees.uploadTitle" datatype="html"><source>Process AuctionHelper SavedVariables locally</source><target>Process AuctionHelper SavedVariables locally</target></trans-unit>
+      <trans-unit id="professionTalentTrees.uploadHint" datatype="html"><source>Select your SavedVariables folder. The browser finds AuctionHelper.lua and AuctionHelper_Professions.lua, then processes only those matching files on this device.</source><target>Select your SavedVariables folder. The browser finds AuctionHelper.lua and AuctionHelper_Professions.lua, then processes only those matching files on this device.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.destructiveTitle" datatype="html"><source>Replacing talent-tree definitions is destructive</source><target>Replacing talent-tree definitions is destructive</target></trans-unit>
+      <trans-unit id="professionTalentTrees.destructiveHint" datatype="html"><source>Local processing and server validation only report available data. They do not import or replace shared talent-tree definitions.</source><target>Local processing and server validation only report available data. They do not import or replace shared talent-tree definitions.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.file" datatype="html"><source>AuctionHelper Lua file</source><target>AuctionHelper Lua file</target></trans-unit>
+      <trans-unit id="professionTalentTrees.selectedFile" datatype="html"><source>Selected: {$INTERPOLATION} ({$INTERPOLATION_1})</source><target>Selected: {$INTERPOLATION} ({$INTERPOLATION_1})</target></trans-unit>
+      <trans-unit id="professionTalentTrees.inspect" datatype="html"><source>Process files locally</source><target>Process files locally</target></trans-unit>
+      <trans-unit id="professionTalentTrees.inspecting" datatype="html"><source>Processing locally…</source><target>Processing locally…</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.fileType" datatype="html"><source>Choose an AuctionHelper .lua file.</source><target>Choose an AuctionHelper .lua file.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.fileRequired" datatype="html"><source>Choose a folder containing AuctionHelper_Professions.lua first.</source><target>Choose a folder containing AuctionHelper_Professions.lua first.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.inspect" datatype="html"><source>Unable to process these SavedVariables files locally. Check the region and choose a valid AuctionHelper_Professions.lua file, then try again.</source><target>Unable to process these SavedVariables files locally. Check the region and choose a valid AuctionHelper_Professions.lua file, then try again.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.diagnostic.craftedItemMissing" datatype="html"><source>One or more item-producing recipes do not include a crafted item ID.</source><target>One or more item-producing recipes do not include a crafted item ID.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.diagnostic.craftingSkillMissing" datatype="html"><source>One or more quality recipes do not include crafting difficulty or skill data.</source><target>One or more quality recipes do not include crafting difficulty or skill data.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.diagnostic.talentScopeUnsupported" datatype="html"><source>The saved export does not contain a supported profession talent scope.</source><target>The saved export does not contain a supported profession talent scope.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.diagnostic.talentExportInvalid" datatype="html"><source>The saved profession talent export could not be decoded safely.</source><target>The saved profession talent export could not be decoded safely.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.diagnostic.generic" datatype="html"><source>Some addon data could not be associated safely and was omitted.</source><target>Some addon data could not be associated safely and was omitted.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.submit" datatype="html"><source>Unable to submit the normalized profession data. The selected files remain available to retry.</source><target>Impossibile inviare i dati normalizzati delle professioni. I file selezionati restano disponibili per riprovare.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.apiUnavailable" datatype="html"><source>The local API could not be reached. Start the backend, then try again.</source><target>The local API could not be reached. Start the backend, then try again.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.resultTitle" datatype="html"><source>Local processing result</source><target>Local processing result</target></trans-unit>
+      <trans-unit id="professionTalentTrees.normalizedOnlyHint" datatype="html"><source>Submit only the normalized character, profession, recipe, crafted-item, reagent, and crafting-skill fields shown in this summary. No Lua source is included.</source><target>Submit only the normalized character, profession, recipe, crafted-item, reagent, and crafting-skill fields shown in this summary. No Lua source is included.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.submitting" datatype="html"><source>Submitting…</source><target>Submitting…</target></trans-unit>
+      <trans-unit id="professionTalentTrees.submitNormalized" datatype="html"><source>Submit normalized data</source><target>Submit normalized data</target></trans-unit>
+      <trans-unit id="professionTalentTrees.serverValidationTitle" datatype="html"><source>Server validation complete</source><target>Server validation complete</target></trans-unit>
+      <trans-unit id="professionTalentTrees.serverValidationSummary" datatype="html"><source>Validated {$INTERPOLATION} character(s), {$INTERPOLATION_1} profession(s), and {$INTERPOLATION_2} recipe(s). No raw Lua was sent.</source><target>Validated {$INTERPOLATION} character(s), {$INTERPOLATION_1} profession(s), and {$INTERPOLATION_2} recipe(s). No raw Lua was sent.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.characters" datatype="html"><source>Characters</source><target>Characters</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professions" datatype="html"><source>Professions</source><target>Professions</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipes" datatype="html"><source>Recipes</source><target>Recipes</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.recipe" datatype="html"><source>Recipe</source><target>Ricetta</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.recipeId" datatype="html"><source>Recipe ID</source><target>ID ricetta</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.craftedItemId" datatype="html"><source>Crafted item ID</source><target>ID oggetto creato</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.reagentSlots" datatype="html"><source>Reagent slots</source><target>Spazi reagenti</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.baseDifficulty" datatype="html"><source>Base difficulty</source><target>Difficoltà base</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.aria" datatype="html"><source>Profession recipes</source><target>Ricette della professione</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeTable.empty" datatype="html"><source>No recipes match the current search.</source><target>Nessuna ricetta corrisponde alla ricerca corrente.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.aria" datatype="html"><source>Recipe view</source><target>Vista ricette</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.table" datatype="html"><source>Table</source><target>Tabella</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeView.cards" datatype="html"><source>Cards</source><target>Schede</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeSearch.label" datatype="html"><source>Search recipes</source><target>Cerca ricette</target></trans-unit>
+      <trans-unit id="professionTalentTrees.recipeSearch.placeholder" datatype="html"><source>Search by recipe name, recipe ID, or crafted item ID</source><target>Cerca per nome ricetta, ID ricetta o ID oggetto creato</target></trans-unit>
+      <trans-unit id="route.admin.professionTalentTrees" datatype="html"><source>Profession talent trees</source><target>Profession talent trees</target></trans-unit>
++      <trans-unit id="professionProfiles.importedProfessionsAria" datatype="html"><source>Imported professions</source><target>Imported professions</target></trans-unit>
+      <trans-unit id="professionTalentTrees.importDiagnosticsAria" datatype="html"><source>Import diagnostics</source><target>Import diagnostics</target></trans-unit>
+      <trans-unit id="professionTalentTrees.privacyHint" datatype="html"><source>Raw Lua never leaves this device. Other files in the folder are ignored without being read, and only normalized JSON is sent after you review and submit it.</source><target>Raw Lua never leaves this device. Other files in the folder are ignored without being read, and only normalized JSON is sent after you review and submit it.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.folder" datatype="html"><source>SavedVariables folder</source><target>SavedVariables folder</target></trans-unit>
+      <trans-unit id="professionTalentTrees.region" datatype="html"><source>Region</source><target>Region</target></trans-unit>
+      <trans-unit id="professionTalentTrees.regionHint" datatype="html"><source>SavedVariables does not contain a reliable region. Enter it so identical character names on different regions stay separate.</source><target>SavedVariables does not contain a reliable region. Enter it so identical character names on different regions stay separate.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.previewSamplesAria" datatype="html"><source>Profession recipe overview</source><target>Panoramica delle ricette di professione</target></trans-unit>
+      <trans-unit id="professionTalentTrees.previewCharactersLabel" datatype="html"><source>characters represented</source><target>personaggi rappresentati</target></trans-unit>
+      <trans-unit id="professionTalentTrees.success.submit" datatype="html"><source>Normalized profession data was accepted by the server.</source><target>I dati normalizzati delle professioni sono stati accettati dal server.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.previewRecipesLabel" datatype="html"><source>recipes</source><target>recipes</target></trans-unit>
+      <trans-unit id="professionTalentTrees.previewOutputLabel" datatype="html"><source>output</source><target>output</target></trans-unit>
+      <trans-unit id="professionTalentTrees.previewReagentSlotsLabel" datatype="html"><source>reagent slots</source><target>reagent slots</target></trans-unit>
+      <trans-unit id="professionTalentTrees.previewDifficultyLabel" datatype="html"><source>difficulty</source><target>difficulty</target></trans-unit>
+      <trans-unit id="professionTalentTrees.folderHint" datatype="html"><source>Choose the SavedVariables directory itself. Only the two required filenames are selected.</source><target>Choose the SavedVariables directory itself. Only the two required filenames are selected.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.fallbackTitle" datatype="html"><source>Can’t select a folder?</source><target>Can’t select a folder?</target></trans-unit>
+      <trans-unit id="professionTalentTrees.fallbackHint" datatype="html"><source>Choose the two files individually instead.</source><target>Choose the two files individually instead.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.auctionHelperFile" datatype="html"><source>AuctionHelper.lua</source><target>AuctionHelper.lua</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professionsFile" datatype="html"><source>AuctionHelper_Professions.lua</source><target>AuctionHelper_Professions.lua</target></trans-unit>
+      <trans-unit id="professionTalentTrees.detectedFiles" datatype="html"><source>Detected files</source><target>Detected files</target></trans-unit>
+      <trans-unit id="professionTalentTrees.fileFound" datatype="html"><source>Found: {$INTERPOLATION} ({$INTERPOLATION_1})</source><target>Found: {$INTERPOLATION} ({$INTERPOLATION_1})</target></trans-unit>
+      <trans-unit id="professionTalentTrees.fileMissingAuctionHelper" datatype="html"><source>Not found: AuctionHelper.lua</source><target>Not found: AuctionHelper.lua</target></trans-unit>
+      <trans-unit id="professionTalentTrees.fileMissingProfessions" datatype="html"><source>Not found: AuctionHelper_Professions.lua</source><target>Not found: AuctionHelper_Professions.lua</target></trans-unit>
+      <trans-unit id="professionTalentTrees.ignoredFiles" datatype="html"><source>{$INTERPOLATION} other file(s) ignored and will not be read.</source><target>{$INTERPOLATION} other file(s) ignored and will not be read.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.clearSelection" datatype="html"><source>Clear selection</source><target>Clear selection</target></trans-unit>
+      <trans-unit id="professionTalentTrees.error.duplicateFiles" datatype="html"><source>Choose only one copy of each required SavedVariables file.</source><target>Choose only one copy of each required SavedVariables file.</target></trans-unit>
+      <trans-unit id="professionTalentTrees.sourceResults" datatype="html"><source>Source results</source><target>Source results</target></trans-unit>
+      <trans-unit id="professionTalentTrees.sourceStatus" datatype="html"><source>Status: {$INTERPOLATION}</source><target>Status: {$INTERPOLATION}</target></trans-unit>
+      <trans-unit id="professionTalentTrees.talentExportResult" datatype="html"><source>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</source><target>Talent export: {$INTERPOLATION} · scope {$INTERPOLATION_1}</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.aria" datatype="html"><source>Profession data</source><target>Dati della professione</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.recipes" datatype="html"><source>Recipes</source><target>Ricette</target></trans-unit>
+      <trans-unit id="professionTalentTrees.professionSection.skillTree" datatype="html"><source>Skill tree</source><target>Albero delle abilità</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.trees" datatype="html"><source>Trees</source><target>Alberi</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.nodes" datatype="html"><source>Nodes</source><target>Nodi</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.allocations" datatype="html"><source>Allocations</source><target>Assegnazioni</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.tree" datatype="html"><source>Tree</source><target>Albero</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.node" datatype="html"><source>Node</source><target>Nodo</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.maxRanks" datatype="html"><source>Max ranks</source><target>Ranghi massimi</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.entry" datatype="html"><source>Entry</source><target>Voce</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.rankLimit" datatype="html"><source>rank limit</source><target>limite di rango</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.currentRank" datatype="html"><source>current rank</source><target>rango attuale</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.emptyTitle" datatype="html"><source>No skill tree data found</source><target>Nessun dato dell’albero delle abilità trovato</target></trans-unit>
+      <trans-unit id="professionTalentTrees.skillTree.emptyBody" datatype="html"><source>Run a fresh full dump in AuctionHelper, reload or log out to write AuctionHelper.lua, then select the SavedVariables folder again.</source><target>Esegui un nuovo dump completo in AuctionHelper, ricarica o disconnettiti per scrivere AuctionHelper.lua, quindi seleziona di nuovo la cartella SavedVariables.</target></trans-unit>
+      <trans-unit id="professionProfiles.specializationTree" datatype="html"><source>Specialization tree</source><target>Albero di specializzazione</target></trans-unit>
+      <trans-unit id="professionProfiles.namedPrerequisite" datatype="html"><source>{$INTERPOLATION} at rank {$INTERPOLATION_1}</source><target>{$INTERPOLATION} al grado {$INTERPOLATION_1}</target></trans-unit>
+      <trans-unit id="professionProfiles.milestoneAtRank" datatype="html"><source>Rank {$INTERPOLATION}: {$INTERPOLATION_1}</source><target>Grado {$INTERPOLATION}: {$INTERPOLATION_1}</target></trans-unit>
+      <trans-unit id="professionProfiles.emptyTab" datatype="html"><source>This specialization has no nodes.</source><target>Questa specializzazione non ha nodi.</target></trans-unit>
+      <trans-unit id="professionProfiles.addNewCharacter" datatype="html">
+        <source>Add new character</source>
+        <target>Add new character</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.cancelAddCharacter" datatype="html">
+        <source>Cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.syncCharacterHint" datatype="html">
+        <source>Refresh this character&apos;s professions and known recipes from Blizzard. Existing addon and manual skill-tree data is kept.</source>
+        <target>Refresh this character&apos;s professions and known recipes from Blizzard. Existing addon and manual skill-tree data is kept.</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.syncing" datatype="html">
+        <source>Importing…</source>
+        <target>Importing…</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.syncCharacter" datatype="html">
+        <source>Import from Blizzard</source>
+        <target>Import from Blizzard</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.knownProfessionsAria" datatype="html">
+        <source>Known professions</source>
+        <target>Known professions</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.knownProfessionSummary" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ profession.knownRecipeCount }}"/> recipes · <x id="INTERPOLATION_1" equiv-text="{{ profession.allocationCount }}"/> nodes · <x id="INTERPOLATION_2" equiv-text="{{ sourceSummary(profession) }}"/></source>
+        <target><x id="INTERPOLATION" equiv-text="{{ profession.knownRecipeCount }}"/> recipes · <x id="INTERPOLATION_1" equiv-text="{{ profession.allocationCount }}"/> nodes · <x id="INTERPOLATION_2" equiv-text="{{ sourceSummary(profession) }}"/></target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.emptyProfessions" datatype="html">
+        <source>Import professions from Blizzard or your addon before configuring a skill tree.</source>
+        <target>Import professions from Blizzard or your addon before configuring a skill tree.</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.status.characterSynced" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="professions.length"/> professions imported from Blizzard.</source>
+        <target><x id="INTERPOLATION" equiv-text="professions.length"/> professions imported from Blizzard.</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.error.syncCharacter" datatype="html">
+        <source>Unable to import professions from Blizzard for this character.</source>
+        <target>Unable to import professions from Blizzard for this character.</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.source.blizzard" datatype="html">
+        <source>Blizzard</source>
+        <target>Blizzard</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.source.addon" datatype="html">
+        <source>Addon</source>
+        <target>Addon</target>
+      </trans-unit>
+      <trans-unit id="professionProfiles.source.manual" datatype="html">
+        <source>Manual</source>
+        <target>Manual</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

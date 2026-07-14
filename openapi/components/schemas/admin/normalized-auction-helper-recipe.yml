@@ -1,0 +1,44 @@
+type: object
+additionalProperties: false
+required: [recipeId, name, learned, reagentSlots, qualityThresholds, qualityOutputItemIds, maxQualityRequiredReagents]
+properties:
+  recipeId: { type: integer, minimum: 1 }
+  name: { type: string, minLength: 1, maxLength: 256 }
+  learned: { type: boolean }
+  recipeType:
+    type: integer
+    minimum: 0
+    description: Numeric Enum.TSchematicType value exported by World of Warcraft; value 1 creates an item.
+  supportsQualities: { type: boolean }
+  isGatheringRecipe: { type: boolean }
+  isEnchantingRecipe: { type: boolean }
+  isSalvageRecipe: { type: boolean }
+  isRecraft: { type: boolean }
+  hasCraftingOperationInfo: { type: boolean }
+  craftedItemId: { type: integer, minimum: 1 }
+  outputItemId: { type: integer, minimum: 1 }
+  qualityOutputItemIds:
+    type: array
+    maxItems: 10
+    items: { $ref: ./normalized-auction-helper-quality-output.yml }
+  baseDifficulty: { type: number, minimum: 0 }
+  baseSkill: { type: number, minimum: 0 }
+  bonusSkill: { type: number }
+  requiredReagentSkillDelta:
+    type: number
+    description: Additional aggregate reagent skill needed to reach the recipe's maximum output quality.
+  lowerSkillThreshold: { type: number, minimum: 0 }
+  upperSkillThreshold: { type: number, minimum: 0 }
+  qualityThresholds:
+    type: array
+    maxItems: 10
+    items: { type: number, minimum: 0 }
+  reagentSlots:
+    type: array
+    maxItems: 64
+    items: { $ref: ./normalized-auction-helper-reagent-slot.yml }
+  maxQualityRequiredReagents:
+    type: array
+    maxItems: 256
+    description: Concrete reagent choices associated with the recipe's maximum-quality calculation.
+    items: { $ref: ./normalized-auction-helper-max-quality-reagent.yml }

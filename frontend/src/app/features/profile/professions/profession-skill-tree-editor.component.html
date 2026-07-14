@@ -1,0 +1,183 @@
+<section
+  class="min-w-0 max-w-full overflow-hidden rounded-lg border border-white/10 bg-surface-container-highest"
+>
+  <div
+    class="flex overflow-x-auto border-b border-white/10 px-3 pt-3"
+    role="tablist"
+    [attr.aria-label]="treeLabel()"
+  >
+    @for (tab of tree().tabs; track tab.id; let index = $index) {
+      <button
+        type="button"
+        role="tab"
+        class="min-h-11 shrink-0 rounded-t-md border-b-2 px-4 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-container"
+        [class.border-primary-container]="selectedTab().id === tab.id"
+        [class.border-transparent]="selectedTab().id !== tab.id"
+        [class.bg-surface]="selectedTab().id === tab.id"
+        [class.text-primary-container]="selectedTab().id === tab.id"
+        [class.text-outline]="selectedTab().id !== tab.id"
+        [id]="tabButtonId(tab.id)"
+        [attr.aria-controls]="tabPanelId(tab.id)"
+        [attr.aria-selected]="selectedTab().id === tab.id"
+        [attr.tabindex]="selectedTab().id === tab.id ? 0 : -1"
+        (click)="selectTab(tab)"
+        (keydown)="tabKeydown($event, index)"
+      >
+        {{ tabLabel(tab) }}
+      </button>
+    }
+  </div>
+
+  @if (selectedTab(); as tab) {
+    <div
+      role="tabpanel"
+      class="min-w-0 p-4"
+      [id]="tabPanelId(tab.id)"
+      [attr.aria-labelledby]="tabButtonId(tab.id)"
+      tabindex="0"
+    >
+      @if (tab.description) {
+        <p class="mb-3 text-sm text-outline">{{ tab.description }}</p>
+      }
+      @if (layout().nodes.length) {
+        <div
+          #graphScroll
+          class="max-w-full overflow-auto rounded-md border border-white/10 bg-surface/40"
+        >
+          <div
+            class="relative"
+            [style.width.px]="layout().width"
+            [style.height.px]="layout().height"
+          >
+            <svg
+              class="pointer-events-none absolute inset-0 size-full"
+              aria-hidden="true"
+              [attr.viewBox]="'0 0 ' + layout().width + ' ' + layout().height"
+              preserveAspectRatio="none"
+            >
+              <defs>
+                <marker
+                  [id]="markerId(tab.id)"
+                  viewBox="0 0 10 10"
+                  refX="9"
+                  refY="5"
+                  markerWidth="5"
+                  markerHeight="5"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M 0 0 L 10 5 L 0 10 z" class="fill-primary-container" />
+                </marker>
+              </defs>
+              @for (connector of layout().connectors; track connector.key) {
+                <path
+                  [attr.d]="connector.path"
+                  fill="none"
+                  class="stroke-primary-container"
+                  stroke-width="2.5"
+                  [attr.marker-end]="'url(#' + markerId(tab.id) + ')'"
+                />
+              }
+            </svg>
+            @for (position of layout().nodes; track position.node.id) {
+              <article
+                class="absolute grid min-w-0 overflow-hidden rounded-md border border-white/15 bg-surface shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-container"
+                [style.left.px]="position.x"
+                [style.top.px]="position.y"
+                [style.width.px]="position.width"
+                [style.height.px]="position.height"
+                [id]="nodeElementId(position.node.id)"
+                tabindex="-1"
+                [attr.aria-label]="nodeDisplayName(position.node)"
+                [title]="nodeTooltip(position.node, tab)"
+              >
+                <div class="min-h-0 overflow-hidden p-3 pb-2">
+                  <h3 class="truncate text-sm font-bold text-on-surface">
+                    {{ nodeDisplayName(position.node) }}
+                  </h3>
+                  <p class="mt-1 line-clamp-2 break-words text-xs text-outline">
+                    {{ position.node.description }}
+                  </p>
+                  <p class="sr-only">{{ parentSummary(position.node, tab) }}</p>
+                </div>
+                <div class="min-w-0 self-end border-t border-white/10 px-3 py-2">
+                  @for (
+                    entry of editableEntries(position.node);
+                    track entry.id;
+                    let entryIndex = $index
+                  ) {
+                    <div
+                      class="flex min-w-0 items-center gap-2"
+                      [class.justify-center]="!entryNameVisible(entry, position.node)"
+                      [class.justify-between]="entryNameVisible(entry, position.node)"
+                      [class.border-t]="entryIndex > 0"
+                      [class.border-white/10]="entryIndex > 0"
+                      [class.pt-2]="entryIndex > 0"
+                      [class.mt-2]="entryIndex > 0"
+                      [title]="entry.description ?? entry.name ?? null"
+                    >
+                      @if (entryNameVisible(entry, position.node)) {
+                        <span class="min-w-0 truncate text-xs font-medium text-on-surface">{{
+                          entry.name
+                        }}</span>
+                      }
+                      <div class="flex shrink-0 items-center gap-1">
+                        @if (editable()) {
+                          <button
+                            type="button"
+                            class="min-h-11 min-w-11 rounded border border-white/20 font-bold focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-35"
+                            [disabled]="rankFor(position.node, entry.id) === 0"
+                            [attr.aria-label]="
+                              decreaseLabel(entryLabel(entry, position.node, entryIndex))
+                            "
+                            (click)="
+                              rankChanged.emit({
+                                node: position.node,
+                                entryId: entry.id,
+                                change: -1,
+                              })
+                            "
+                          >
+                            −
+                          </button>
+                        }
+                        <output
+                          class="min-w-10 text-center text-xs font-bold text-primary-container"
+                          >{{ rankFor(position.node, entry.id) }}/{{
+                            displayRankLimit(position.node, entry)
+                          }}</output
+                        >
+                        @if (editable()) {
+                          <button
+                            type="button"
+                            class="min-h-11 min-w-11 rounded border border-white/20 font-bold focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-35"
+                            [disabled]="!canIncrease(position.node, entry.id)"
+                            [attr.aria-label]="
+                              increaseLabel(entryLabel(entry, position.node, entryIndex))
+                            "
+                            (click)="
+                              rankChanged.emit({
+                                node: position.node,
+                                entryId: entry.id,
+                                change: 1,
+                              })
+                            "
+                          >
+                            +
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+      } @else {
+        <p class="py-8 text-center text-sm text-outline" i18n="@@professionProfiles.emptyTab">
+          No nodes are available in this specialization.
+        </p>
+      }
+    </div>
+  }
+</section>

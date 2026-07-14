@@ -1,0 +1,8 @@
+type: object
+additionalProperties: false
+required: [entryId]
+properties:
+  entryId: { type: integer, minimum: 1 }
+  rankLimit: { type: integer, minimum: 1 }
+  name: { type: string, maxLength: 128 }
+  description: { type: string, maxLength: 4096 }

@@ -1,0 +1,489 @@
+<ee-page-frame
+  i18n-title="@@professionTalentTrees.title"
+  title="Profession talent trees"
+  i18n-eyebrow="@@professionTalentTrees.eyebrow"
+  eyebrow="Admin"
+>
+  <section class="grid w-full gap-5" aria-labelledby="talent-tree-import-title">
+    <header>
+      <h1
+        id="talent-tree-import-title"
+        class="font-cinzel text-2xl font-bold text-primary-container"
+        i18n="@@professionTalentTrees.uploadTitle"
+      >
+        Process AuctionHelper SavedVariables locally
+      </h1>
+      <p class="mt-1 text-sm text-outline" i18n="@@professionTalentTrees.uploadHint">
+        Select your SavedVariables folder. The browser finds AuctionHelper.lua and
+        AuctionHelper_Professions.lua, then processes only those matching files on this device.
+      </p>
+    </header>
+
+    <div
+      class="rounded-lg border border-white/10 bg-surface-container-highest p-4 text-sm text-outline"
+      role="note"
+    >
+      <p i18n="@@professionTalentTrees.privacyHint">
+        Raw Lua never leaves this device. Other files in the folder are ignored without being read,
+        and only normalized JSON is sent after you review and submit it.
+      </p>
+    </div>
+
+    <div
+      class="rounded-lg border border-error/30 bg-error/10 p-4 text-sm text-on-surface"
+      role="note"
+    >
+      <p class="font-semibold" i18n="@@professionTalentTrees.destructiveTitle">
+        Replacing talent-tree definitions is destructive
+      </p>
+      <p class="mt-1 text-outline" i18n="@@professionTalentTrees.destructiveHint">
+        Local processing and server validation only report available data. They do not import or
+        replace shared talent-tree definitions.
+      </p>
+    </div>
+
+    <div class="grid gap-5 rounded-lg border border-white/10 bg-surface-container-highest p-5">
+      <div class="grid gap-2">
+        <label
+          class="text-sm font-semibold text-on-surface"
+          for="talent-tree-region"
+          i18n="@@professionTalentTrees.region"
+        >
+          Region
+        </label>
+        <input
+          id="talent-tree-region"
+          type="text"
+          required
+          maxlength="16"
+          autocomplete="off"
+          class="block w-full rounded-md border border-white/20 bg-surface px-3 py-2 text-sm text-on-surface"
+          [value]="region()"
+          (input)="onRegionInput($event)"
+          aria-describedby="talent-tree-region-hint"
+        />
+        <p
+          id="talent-tree-region-hint"
+          class="text-sm text-outline"
+          i18n="@@professionTalentTrees.regionHint"
+        >
+          SavedVariables does not contain a reliable region. Enter it so identical character names
+          on different regions stay separate.
+        </p>
+      </div>
+      <div class="grid gap-2">
+        <label
+          class="text-sm font-semibold text-on-surface"
+          for="talent-tree-saved-variables-folder"
+          i18n="@@professionTalentTrees.folder"
+        >
+          SavedVariables folder
+        </label>
+        <input
+          #folderInput
+          id="talent-tree-saved-variables-folder"
+          type="file"
+          multiple
+          [attr.webkitdirectory]="''"
+          [attr.directory]="''"
+          class="block w-full rounded-md border border-white/20 bg-surface px-3 py-2 text-sm text-on-surface file:mr-4 file:rounded file:border-0 file:bg-primary file:px-3 file:py-2 file:font-semibold file:text-on-primary"
+          (change)="onFolderSelected($event)"
+        />
+        <p class="text-sm text-outline" i18n="@@professionTalentTrees.folderHint">
+          Choose the SavedVariables directory itself. Only the two required filenames are selected.
+        </p>
+      </div>
+
+      <fieldset class="grid gap-3 border-t border-white/10 pt-5">
+        <legend
+          class="px-0 text-sm font-semibold text-on-surface"
+          i18n="@@professionTalentTrees.fallbackTitle"
+        >
+          Can’t select a folder?
+        </legend>
+        <p class="text-sm text-outline" i18n="@@professionTalentTrees.fallbackHint">
+          Choose the two files individually instead.
+        </p>
+        <label class="grid gap-2 text-sm text-on-surface" for="talent-tree-auction-helper-file">
+          <span i18n="@@professionTalentTrees.auctionHelperFile">AuctionHelper.lua</span>
+          <input
+            #auctionHelperInput
+            id="talent-tree-auction-helper-file"
+            type="file"
+            accept=".lua,text/plain"
+            class="block w-full rounded-md border border-white/20 bg-surface px-3 py-2 text-sm text-on-surface file:mr-4 file:rounded file:border-0 file:bg-primary file:px-3 file:py-2 file:font-semibold file:text-on-primary"
+            (change)="onFallbackFileSelected('auctionHelper', $event)"
+          />
+        </label>
+        <label class="grid gap-2 text-sm text-on-surface" for="talent-tree-professions-file">
+          <span i18n="@@professionTalentTrees.professionsFile">AuctionHelper_Professions.lua</span>
+          <input
+            #professionsInput
+            id="talent-tree-professions-file"
+            type="file"
+            accept=".lua,text/plain"
+            class="block w-full rounded-md border border-white/20 bg-surface px-3 py-2 text-sm text-on-surface file:mr-4 file:rounded file:border-0 file:bg-primary file:px-3 file:py-2 file:font-semibold file:text-on-primary"
+            (change)="onFallbackFileSelected('professions', $event)"
+          />
+        </label>
+      </fieldset>
+
+      <section
+        class="grid gap-2 text-sm"
+        aria-live="polite"
+        aria-labelledby="saved-variables-files-title"
+      >
+        <h2
+          id="saved-variables-files-title"
+          class="font-semibold text-on-surface"
+          i18n="@@professionTalentTrees.detectedFiles"
+        >
+          Detected files
+        </h2>
+        <p
+          [class.text-primary]="files().auctionHelper"
+          [class.text-outline]="!files().auctionHelper"
+        >
+          @if (files().auctionHelper; as file) {
+            <ng-container i18n="@@professionTalentTrees.fileFound"
+              >Found: {{ file.name }} ({{ fileSize(file) }})</ng-container
+            >
+          } @else {
+            <ng-container i18n="@@professionTalentTrees.fileMissingAuctionHelper"
+              >Not found: AuctionHelper.lua</ng-container
+            >
+          }
+        </p>
+        <p [class.text-primary]="files().professions" [class.text-outline]="!files().professions">
+          @if (files().professions; as file) {
+            <ng-container i18n="@@professionTalentTrees.fileFound"
+              >Found: {{ file.name }} ({{ fileSize(file) }})</ng-container
+            >
+          } @else {
+            <ng-container i18n="@@professionTalentTrees.fileMissingProfessions"
+              >Not found: AuctionHelper_Professions.lua</ng-container
+            >
+          }
+        </p>
+        @if (files().ignoredCount > 0) {
+          <p class="text-outline" i18n="@@professionTalentTrees.ignoredFiles">
+            {{ files().ignoredCount }} other file(s) ignored and will not be read.
+          </p>
+        }
+      </section>
+
+      <div class="flex flex-wrap gap-3">
+        @if (processing()) {
+          <p
+            class="self-center text-sm text-outline"
+            role="status"
+            i18n="@@professionTalentTrees.inspecting"
+          >
+            Processing locally…
+          </p>
+        }
+        <button
+          type="button"
+          class="min-h-11 rounded-md border border-white/20 px-4 font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+          [disabled]="!hasSelection() || processing() || submitting()"
+          (click)="clearSelection()"
+          i18n="@@professionTalentTrees.clearSelection"
+        >
+          Clear selection
+        </button>
+      </div>
+    </div>
+
+    @if (error()) {
+      <p
+        class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
+        role="alert"
+      >
+        {{ error() }}
+      </p>
+    }
+
+    @if (preview(); as localPreview) {
+      <section
+        class="grid gap-3 rounded-lg border border-white/10 bg-surface-container-highest p-5"
+        aria-labelledby="inspection-result-title"
+        aria-live="polite"
+      >
+        <h2
+          id="inspection-result-title"
+          class="font-cinzel text-lg font-bold text-primary-container"
+          i18n="@@professionTalentTrees.resultTitle"
+        >
+          Local processing result
+        </h2>
+        <dl class="grid gap-2 text-sm sm:grid-cols-3">
+          <div>
+            <dt class="text-outline" i18n="@@professionTalentTrees.characters">Characters</dt>
+            <dd class="font-semibold">{{ localPreview.charactersFound }}</dd>
+          </div>
+          <div>
+            <dt class="text-outline" i18n="@@professionTalentTrees.professions">Professions</dt>
+            <dd class="font-semibold">{{ localPreview.professionsFound }}</dd>
+          </div>
+          <div>
+            <dt class="text-outline" i18n="@@professionTalentTrees.recipes">Recipes</dt>
+            <dd class="font-semibold">{{ localPreview.recipesFound }}</dd>
+          </div>
+        </dl>
+        <div
+          class="flex gap-2 overflow-x-auto border-b border-white/10 pb-2"
+          role="tablist"
+          aria-label="Profession recipe overview"
+          i18n-aria-label="@@professionTalentTrees.previewSamplesAria"
+        >
+          @for (profession of professionOverview(); track profession.professionId; let i = $index) {
+            <button
+              type="button"
+              role="tab"
+              class="min-h-11 shrink-0 rounded-md px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
+              [class.bg-primary]="activeProfession().professionId === profession.professionId"
+              [class.text-on-primary]="activeProfession().professionId === profession.professionId"
+              [class.bg-surface]="activeProfession().professionId !== profession.professionId"
+              [class.text-on-surface]="activeProfession().professionId !== profession.professionId"
+              [attr.id]="'profession-tab-' + profession.professionId"
+              aria-controls="profession-recipe-panel"
+              [attr.aria-selected]="activeProfession().professionId === profession.professionId"
+              [attr.tabindex]="activeProfession().professionId === profession.professionId ? 0 : -1"
+              (click)="selectProfession(profession.professionId)"
+              (keydown)="onProfessionTabKeydown($event, i)"
+            >
+              {{ profession.name }}
+              <span class="text-xs opacity-80">({{ profession.recipeCount }})</span>
+            </button>
+          }
+        </div>
+
+        @if (activeProfession(); as profession) {
+          <div
+            role="tabpanel"
+            class="grid min-w-0 gap-4"
+            id="profession-recipe-panel"
+            [attr.aria-labelledby]="'profession-tab-' + profession.professionId"
+          >
+            <div class="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h3 class="font-semibold text-on-surface">{{ profession.name }}</h3>
+                <p class="text-sm text-outline">
+                  {{ profession.characterCount }}
+                  <span i18n="@@professionTalentTrees.previewCharactersLabel"
+                    >characters represented</span
+                  >
+                </p>
+              </div>
+              @if (professionSection() === 'recipes') {
+                <div
+                  class="inline-flex rounded-md border border-white/15 p-1"
+                  role="group"
+                  aria-label="Recipe view"
+                  i18n-aria-label="@@professionTalentTrees.recipeView.aria"
+                >
+                  <button
+                    type="button"
+                    class="min-h-9 rounded px-3 text-sm font-semibold"
+                    [class.bg-primary]="!cardView()"
+                    [class.text-on-primary]="!cardView()"
+                    [attr.aria-pressed]="!cardView()"
+                    (click)="cardView.set(false)"
+                    i18n="@@professionTalentTrees.recipeView.table"
+                  >
+                    Table
+                  </button>
+                  <button
+                    type="button"
+                    class="min-h-9 rounded px-3 text-sm font-semibold"
+                    [class.bg-primary]="cardView()"
+                    [class.text-on-primary]="cardView()"
+                    [attr.aria-pressed]="cardView()"
+                    (click)="cardView.set(true)"
+                    i18n="@@professionTalentTrees.recipeView.cards"
+                  >
+                    Cards
+                  </button>
+                </div>
+              }
+            </div>
+            <div
+              class="flex gap-2 border-b border-white/10"
+              role="tablist"
+              aria-label="Profession data"
+              i18n-aria-label="@@professionTalentTrees.professionSection.aria"
+            >
+              <button
+                type="button"
+                role="tab"
+                id="profession-section-recipes"
+                class="min-h-11 border-b-2 px-3 font-semibold"
+                [class.border-primary-container]="professionSection() === 'recipes'"
+                [class.border-transparent]="professionSection() !== 'recipes'"
+                [attr.aria-selected]="professionSection() === 'recipes'"
+                [attr.tabindex]="professionSection() === 'recipes' ? 0 : -1"
+                aria-controls="profession-section-panel"
+                (click)="professionSection.set('recipes')"
+                (keydown)="onProfessionSectionKeydown($event)"
+                i18n="@@professionTalentTrees.professionSection.recipes"
+              >
+                Recipes
+              </button>
+              <button
+                type="button"
+                role="tab"
+                id="profession-section-skill-tree"
+                class="min-h-11 border-b-2 px-3 font-semibold"
+                [class.border-primary-container]="professionSection() === 'skillTree'"
+                [class.border-transparent]="professionSection() !== 'skillTree'"
+                [attr.aria-selected]="professionSection() === 'skillTree'"
+                [attr.tabindex]="professionSection() === 'skillTree' ? 0 : -1"
+                aria-controls="profession-section-panel"
+                (click)="professionSection.set('skillTree')"
+                (keydown)="onProfessionSectionKeydown($event)"
+                i18n="@@professionTalentTrees.professionSection.skillTree"
+              >
+                Skill tree
+              </button>
+            </div>
+            @if (professionSection() === 'recipes') {
+              <div id="profession-section-panel" role="tabpanel" class="grid gap-4">
+                <ee-search-input
+                  class="max-w-xl"
+                  label="Search recipes"
+                  i18n-label="@@professionTalentTrees.recipeSearch.label"
+                  placeholder="Search by recipe name, recipe ID, or crafted item ID"
+                  i18n-placeholder="@@professionTalentTrees.recipeSearch.placeholder"
+                  [value]="recipeSearch()"
+                  (valueChanged)="onRecipeSearch($event)"
+                />
+                <ee-table
+                  [columns]="recipeColumns"
+                  [data]="visibleRecipes()"
+                  [cardView]="cardView()"
+                  [getRowId]="recipeRowId"
+                  [showFooter]="true"
+                  [showPagination]="true"
+                  [paginationState]="recipePagination()"
+                  paginationRowLabel="recipes"
+                  i18n-paginationRowLabel="@@professionTalentTrees.previewRecipesLabel"
+                  sectionAriaLabel="Profession recipes"
+                  i18n-sectionAriaLabel="@@professionTalentTrees.recipeTable.aria"
+                  emptyMessage="No recipes match the current search."
+                  i18n-emptyMessage="@@professionTalentTrees.recipeTable.empty"
+                  (pageChange)="recipePage.set($event)"
+                />
+              </div>
+            } @else {
+              <div id="profession-section-panel" role="tabpanel" class="grid gap-4">
+                @if (profession.talents; as talents) {
+                  <dl class="grid gap-2 text-sm sm:grid-cols-3">
+                    <div>
+                      <dt class="text-outline" i18n="@@professionTalentTrees.skillTree.trees">
+                        Trees
+                      </dt>
+                      <dd class="font-semibold">{{ talents.trees.length }}</dd>
+                    </div>
+                    <div>
+                      <dt class="text-outline" i18n="@@professionTalentTrees.skillTree.nodes">
+                        Nodes
+                      </dt>
+                      <dd class="font-semibold">{{ talentNodeCount(talents) }}</dd>
+                    </div>
+                    <div>
+                      <dt class="text-outline" i18n="@@professionTalentTrees.skillTree.allocations">
+                        Allocations
+                      </dt>
+                      <dd class="font-semibold">{{ talents.allocations.length }}</dd>
+                    </div>
+                  </dl>
+                  @if (activeTalentGraph(); as tree) {
+                    <ee-select-input
+                      label="Specialization tree"
+                      i18n-label="@@professionProfiles.specializationTree"
+                      [options]="talentTreeOptions()"
+                      [value]="tree.id.toString()"
+                      (valueChanged)="selectTalentTree($event)"
+                    />
+                    <app-profession-skill-tree-editor
+                      [tree]="tree"
+                      [allocations]="talentAllocations()"
+                      [editable]="false"
+                    />
+                  }
+                } @else {
+                  <div class="rounded-md border border-dashed border-outline p-6 text-center">
+                    <h4 class="font-semibold" i18n="@@professionTalentTrees.skillTree.emptyTitle">
+                      No skill tree data found
+                    </h4>
+                    <p
+                      class="mt-1 text-sm text-outline"
+                      i18n="@@professionTalentTrees.skillTree.emptyBody"
+                    >
+                      Run a fresh full dump in AuctionHelper, reload or log out to write
+                      AuctionHelper.lua, then select the SavedVariables folder again.
+                    </p>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+        @if (localPreview.diagnostics.length > 0) {
+          <ul
+            class="grid gap-2"
+            aria-label="Local processing diagnostics"
+            i18n-aria-label="@@professionTalentTrees.importDiagnosticsAria"
+          >
+            @for (diagnostic of localPreview.diagnostics; track $index) {
+              <li class="rounded-md border border-white/10 bg-surface p-3 text-sm">
+                <p class="font-semibold text-on-surface">{{ diagnostic.code }}</p>
+                <p class="mt-1 text-outline">{{ diagnosticDetail(diagnostic.code) }}</p>
+              </li>
+            }
+          </ul>
+        }
+        <p class="text-sm text-outline" i18n="@@professionTalentTrees.normalizedOnlyHint">
+          Submit only the normalized character, profession, recipe, crafted-item, reagent, and
+          crafting-skill fields shown in this summary. No Lua source is included.
+        </p>
+        <button
+          type="button"
+          class="min-h-11 justify-self-start rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+          [disabled]="submitting() || processing()"
+          [attr.aria-busy]="submitting()"
+          (click)="submitNormalizedData()"
+        >
+          @if (submitting()) {
+            <ng-container i18n="@@professionTalentTrees.submitting">Submitting…</ng-container>
+          } @else {
+            <ng-container i18n="@@professionTalentTrees.submitNormalized"
+              >Submit normalized data</ng-container
+            >
+          }
+        </button>
+      </section>
+    }
+
+    @if (result(); as serverResult) {
+      <section
+        class="grid gap-2 rounded-lg border border-primary/30 bg-primary/10 p-5 text-sm"
+        aria-live="polite"
+        aria-labelledby="server-validation-title"
+      >
+        <h2
+          id="server-validation-title"
+          class="font-semibold text-on-surface"
+          i18n="@@professionTalentTrees.serverValidationTitle"
+        >
+          Server validation complete
+        </h2>
+        <p i18n="@@professionTalentTrees.serverValidationSummary">
+          Validated {{ serverResult.charactersFound }} character(s),
+          {{ serverResult.professionsFound }} profession(s), and
+          {{ serverResult.recipesFound }} recipe(s). No raw Lua was sent.
+        </p>
+      </section>
+    }
+  </section>
+</ee-page-frame>

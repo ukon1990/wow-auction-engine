@@ -1,0 +1,12 @@
+type: object
+additionalProperties: false
+required: [trees, allocations]
+properties:
+  trees:
+    type: array
+    maxItems: 32
+    items: { $ref: ./normalized-auction-helper-talent-tree.yml }
+  allocations:
+    type: array
+    maxItems: 5000
+    items: { $ref: ./normalized-auction-helper-talent-allocation.yml }

@@ -20,6 +20,7 @@ import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.AdminSqlTable
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.User
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
@@ -27,10 +28,13 @@ import net.jonasmf.auctionengine.service.admin.AdminProfessionSyncService
 import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
+import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
+import net.jonasmf.auctionengine.service.admin.NormalizedAuctionHelperProfessionInspectionService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
+import org.mockito.ArgumentMatchers.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
@@ -51,11 +55,25 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delet
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.server.ResponseStatusException
 import java.time.OffsetDateTime
+
+private val normalizedProfessionJson =
+    """
+    {
+      "contractVersion": 1,
+      "source": {
+        "addon": "AuctionHelper",
+        "processorVersion": "1.0.0",
+        "files": [{"fileName": "AuctionHelper_Professions.lua", "sha256": "${"a".repeat(64)}"}]
+      },
+      "characters": []
+    }
+    """.trimIndent()
 
 @WebMvcTest(AdminController::class)
 @ImportAutoConfiguration(
@@ -69,6 +87,9 @@ import java.time.OffsetDateTime
     ],
 )
 class AdminControllerTest {
+    @Autowired
+    private lateinit var mockMvc: MockMvc
+
     @MockitoBean
     private lateinit var userService: UserService
 
@@ -92,6 +113,12 @@ class AdminControllerTest {
 
     @MockitoBean
     private lateinit var adminRecipeService: AdminRecipeService
+
+    @MockitoBean
+    private lateinit var professionTalentTreeImportService: ProfessionTalentTreeImportService
+
+    @MockitoBean
+    private lateinit var normalizedAuctionHelperProfessionInspectionService: NormalizedAuctionHelperProfessionInspectionService
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder
@@ -159,6 +186,125 @@ class AdminControllerTest {
                     .perform(
                         get("/api/admin/status")
                             .contextPath("/api")
+                            .with(jwt()),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isForbidden)
+        }
+    }
+
+    @Nested
+    inner class InspectNormalizedAuctionHelperProfessionData {
+        @Test
+        fun `returns a persisted import result for an administrator`() {
+            `when`(normalizedAuctionHelperProfessionInspectionService.inspect(anyNonNull(), anyNonNull())).thenReturn(
+                NormalizedAuctionHelperProfessionInspection(true, 1, 1, 1, 1, 0, 0, 0, emptyList()),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        post("/api/admin/profession-talent-trees/inspect-normalized")
+                            .contextPath("/api")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(normalizedProfessionJson)
+                            .with(
+                                jwt()
+                                    .jwt { token -> token.claim("cognito:groups", listOf("admin")) }
+                                    .authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.imported").value(true))
+                .andExpect(jsonPath("$.charactersFound").value(1))
+                .andExpect(jsonPath("$.recipesWithOutputItemFound").value(1))
+        }
+
+        @Test
+        fun `rejects an unauthenticated import`() {
+            mockMvc
+                .perform(
+                    post("/api/admin/profession-talent-trees/inspect-normalized")
+                        .contextPath("/api")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(normalizedProfessionJson),
+                ).andExpect(status().isUnauthorized)
+        }
+
+        @Test
+        fun `returns a concise validation error for oversized normalized node names`() {
+            val invalidJson =
+                """
+                {
+                  "contractVersion": 1,
+                  "source": {
+                    "addon": "AuctionHelper",
+                    "processorVersion": "1",
+                    "files": [{ "fileName": "AuctionHelper_Professions.lua", "sha256": "${"a".repeat(64)}" }]
+                  },
+                  "characters": [{
+                    "characterKey": "eu:test",
+                    "name": "Test",
+                    "realm": "Realm",
+                    "region": "eu",
+                    "professions": [{
+                      "professionId": 164,
+                      "skillLineId": 164,
+                      "name": "Blacksmithing",
+                      "recipes": [],
+                      "talents": {
+                        "trees": [{
+                          "treeId": 1,
+                          "skillLineId": 2907,
+                          "expansionId": 12,
+                          "tabs": [{
+                            "tabId": 1,
+                            "nodes": [{
+                              "nodeId": 1,
+                              "name": "${"x".repeat(129)}",
+                              "entries": [{ "entryId": 1 }]
+                            }]
+                          }]
+                        }],
+                        "allocations": []
+                      }
+                    }]
+                  }]
+                }
+                """.trimIndent()
+
+            mockMvc
+                .perform(
+                    post("/api/admin/profession-talent-trees/inspect-normalized")
+                        .contextPath("/api")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidJson)
+                        .with(
+                            jwt()
+                                .jwt { token -> token.claim("cognito:groups", listOf("admin")) }
+                                .authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                        ),
+                ).andExpect(status().isBadRequest)
+                .andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("validation failed")))
+                .andExpect(jsonPath("$.errorCount").value(org.hamcrest.Matchers.greaterThan(0)))
+        }
+
+        @Test
+        fun `rejects a non administrator import`() {
+            val result =
+                mockMvc
+                    .perform(
+                        post("/api/admin/profession-talent-trees/inspect-normalized")
+                            .contextPath("/api")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(normalizedProfessionJson)
                             .with(jwt()),
                     ).andExpect(request().asyncStarted())
                     .andReturn()
@@ -768,4 +914,10 @@ class AdminControllerTest {
                 .andExpect(status().isNoContent)
         }
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun <T> anyNonNull(): T {
+    any<T>()
+    return null as T
 }

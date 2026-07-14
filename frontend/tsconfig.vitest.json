@@ -5,7 +5,7 @@
     "target": "es2022",
     "types": ["vitest/globals", "node"]
   },
-  "files": ["tools/vitest.setup.ts"],
+  "files": ["tools/vitest.setup.ts", "tools/vitest.storage-setup.ts"],
   "include": [
     "src/**/*.d.ts",
     "src/**/*.spec.ts",

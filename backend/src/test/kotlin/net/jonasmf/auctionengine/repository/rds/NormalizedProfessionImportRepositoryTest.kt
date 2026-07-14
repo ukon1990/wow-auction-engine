@@ -1,0 +1,495 @@
+package net.jonasmf.auctionengine.repository.rds
+
+import net.jonasmf.auctionengine.config.IntegrationTestBase
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperCharacter
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfession
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperRecipe
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentAllocation
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentEntry
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentNode
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalents
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTab
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTree
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperSource
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperSourceFilesInner
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.assertj.core.api.Assertions.assertThat
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
+
+class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
+    @Autowired
+    lateinit var repository: NormalizedProfessionImportRepository
+
+    @Autowired
+    lateinit var profileRepository: ProfileRepository
+
+    @Autowired
+    lateinit var jdbcTemplate: JdbcTemplate
+
+    @Test
+    fun `save binds generated enum values as database scalars`() {
+        repository.save(payload(), professionCount = 0, recipeCount = 0)
+
+        val stored =
+            jdbcTemplate.queryForMap(
+                "SELECT contract_version, addon, character_count FROM normalized_profession_import",
+            )
+
+        assertEquals(1, (stored["contract_version"] as Number).toInt())
+        assertEquals("AuctionHelper", stored["addon"])
+        assertEquals(0, (stored["character_count"] as Number).toInt())
+    }
+
+    @Test
+    fun `save persists character profession and exported recipe knowledge`() {
+        jdbcTemplate.update("INSERT INTO profession (id) VALUES (164)")
+        val recipe =
+            NormalizedAuctionHelperRecipe(
+                recipeId = 450216,
+                name = "Charged Claymore",
+                learned = true,
+                qualityOutputItemIds = emptyList(),
+                qualityThresholds = emptyList(),
+                reagentSlots = emptyList(),
+                maxQualityRequiredReagents = emptyList(),
+            )
+        val profession = NormalizedAuctionHelperProfession(164, "Blacksmithing", listOf(recipe), skillLevel = 85)
+        val character = NormalizedAuctionHelperCharacter("eu-realm-character", "Character", "Realm", "EU", listOf(profession))
+
+        repository.save(payload().copy(characters = listOf(character)), 1, 1, "admin-subject")
+
+        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM user_character", Int::class.java)).isEqualTo(1)
+        assertThat(jdbcTemplate.queryForObject("SELECT skill_level FROM user_character_profession_profile", Int::class.java)).isEqualTo(85)
+        assertThat(jdbcTemplate.queryForMap("SELECT recipe_id, recipe_name, learned FROM user_character_profession_recipe"))
+            .containsEntry("recipe_id", 450216)
+            .containsEntry("recipe_name", "Charged Claymore")
+            .containsEntry("learned", true)
+        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM profession_skill_tree", Int::class.java)).isZero()
+    }
+
+    @Test
+    fun `save attaches source guid to an existing character matched by location and name`() {
+        jdbcTemplate.update(
+            """INSERT INTO user_character (owner_subject, region, realm_name, character_name)
+                VALUES ('admin-subject', 'eu', 'Realm', 'Character')""".trimIndent(),
+        )
+        val existingId = jdbcTemplate.queryForObject("SELECT id FROM user_character", Long::class.java)
+        val character = NormalizedAuctionHelperCharacter("eu-realm-character", "Character", "Realm", "EU", emptyList())
+
+        repository.save(payload().copy(characters = listOf(character)), 0, 0, "admin-subject")
+
+        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM user_character", Int::class.java)).isEqualTo(1)
+        assertThat(jdbcTemplate.queryForMap("SELECT id, source_guid FROM user_character"))
+            .containsEntry("id", existingId)
+            .containsEntry("source_guid", "eu-realm-character")
+    }
+
+    @Test
+    fun `save upserts config tree definitions and active character allocations without replacing other configs`() {
+        jdbcTemplate.update("INSERT INTO profession (id) VALUES (164)")
+        jdbcTemplate.update("INSERT INTO skill_tier (id, minimum_skill_level, maximum_skill_level, profession_id) VALUES (2907, 1, 100, 164)")
+        jdbcTemplate.update(
+            "INSERT INTO locale (source_type, source_key, source_field, en_us) VALUES ('expansion', '12', 'name', 'Midnight')",
+        )
+        jdbcTemplate.update(
+            """INSERT INTO expansion (id, slug, name_id, major_version, display_order)
+                VALUES (12, 'midnight', (SELECT id FROM locale WHERE source_type = 'expansion' AND source_key = '12'), 12, 120)""".trimIndent(),
+        )
+        val tree =
+            NormalizedAuctionHelperTalentTree(
+                treeId = 82167859,
+                skillLineId = 2907,
+                expansionId = 12,
+                name = "Midnight Blacksmithing",
+                tabs =
+                    listOf(
+                        NormalizedAuctionHelperTalentTab(
+                            tabId = 1068,
+                            name = "Craftsmithing",
+                            description = "Craft professional equipment.",
+                            nodes =
+                                listOf(
+                                    NormalizedAuctionHelperTalentNode(
+                                        nodeId = 104229,
+                                        maxRanks = 30,
+                                        name = "Craftsmithing",
+                                        propertyEntries =
+                                            listOf(
+                                                NormalizedAuctionHelperTalentEntry(
+                                                    entryId = 128829,
+                                                    rankLimit = 30,
+                                                    name = "Craftsmithing",
+                                                ),
+                                            ),
+                                    ),
+                                    NormalizedAuctionHelperTalentNode(
+                                        nodeId = 104230,
+                                        maxRanks = 1,
+                                        requiredRank = 25,
+                                        name = "Concentration",
+                                        description = "Consume less Concentration.",
+                                        parentNodeIds = listOf(104231),
+                                        propertyEntries =
+                                            listOf(
+                                                NormalizedAuctionHelperTalentEntry(
+                                                    entryId = 128830,
+                                                    rankLimit = 1,
+                                                    name = "Concentration",
+                                                    description = "Consume 5% less Concentration.",
+                                                ),
+                                            ),
+                                    ),
+                                    NormalizedAuctionHelperTalentNode(
+                                        nodeId = 104231,
+                                        maxRanks = 1,
+                                        parentNodeIds = listOf(104229),
+                                        propertyEntries =
+                                            listOf(
+                                                NormalizedAuctionHelperTalentEntry(
+                                                    entryId = 128831,
+                                                    rankLimit = 1,
+                                                ),
+                                            ),
+                                    ),
+                                ),
+                        ),
+                    ),
+            )
+        val talents = NormalizedAuctionHelperTalents(listOf(tree), listOf(NormalizedAuctionHelperTalentAllocation(104230, 128830, 1)))
+        val profession = NormalizedAuctionHelperProfession(164, "Blacksmithing", emptyList(), activeSkillLineId = 2907, talents = talents)
+        val character = NormalizedAuctionHelperCharacter("eu-realm-character", "Character", "Realm", "EU", listOf(profession))
+
+        val legacyTree =
+            tree.copy(
+                tabs =
+                    tree.tabs.map { tab ->
+                        tab.copy(
+                            nodes =
+                                tab.nodes.map { node ->
+                                    if (node.nodeId != 104231) {
+                                        node
+                                    } else {
+                                        node.copy(
+                                            name = "Node 104231",
+                                            propertyEntries =
+                                                node.propertyEntries.map { entry ->
+                                                    entry.copy(name = "Entry 128831")
+                                                },
+                                        )
+                                    }
+                                },
+                        )
+                    },
+            )
+        val legacyProfession = profession.copy(talents = talents.copy(trees = listOf(legacyTree)))
+        repository.save(payload().copy(characters = listOf(character.copy(professions = listOf(legacyProfession)))), 1, 0, "admin-subject")
+        repository.save(payload().copy(characters = listOf(character)), 1, 0, "admin-subject")
+        repository.save(payload().copy(characters = listOf(character)), 1, 0, "admin-subject")
+
+        assertThat(jdbcTemplate.queryForMap("SELECT expansion_id, profession_id, skill_line_id, config_id FROM profession_skill_tree"))
+            .containsEntry("expansion_id", 12)
+            .containsEntry("profession_id", 164)
+            .containsEntry("skill_line_id", 2907)
+            .containsEntry("config_id", 82167859L)
+        assertThat(jdbcTemplate.queryForMap("SELECT external_tab_id, name FROM profession_skill_tree_tab"))
+            .containsEntry("external_tab_id", 1068)
+            .containsEntry("name", "Craftsmithing")
+        assertThat(
+            jdbcTemplate.queryForMap(
+                "SELECT external_node_id, max_ranks, required_rank FROM profession_skill_tree_node WHERE external_node_id = 104230",
+            ),
+        )
+            .containsEntry("external_node_id", 104230)
+            .containsEntry("max_ranks", 1)
+            .containsEntry("required_rank", 25)
+        assertThat(
+            jdbcTemplate.queryForMap(
+                "SELECT external_entry_id, rank_limit FROM profession_skill_tree_entry WHERE external_entry_id = 128830",
+            ),
+        ).containsEntry("external_entry_id", 128830)
+            .containsEntry("rank_limit", 1)
+        assertThat(
+            jdbcTemplate.query(
+                "SELECT name FROM profession_skill_tree_node WHERE external_node_id = 104231",
+                { resultSet, _ -> resultSet.getString("name") },
+            ).single(),
+        ).isNull()
+        assertThat(
+            jdbcTemplate.query(
+                "SELECT name FROM profession_skill_tree_entry WHERE external_entry_id = 128831",
+                { resultSet, _ -> resultSet.getString("name") },
+            ).single(),
+        ).isNull()
+        val unnamedNode =
+            profileRepository
+                .listTrees(12, 164)
+                .single()
+                .tabs
+                .single()
+                .nodes
+                .single { it.externalNodeId == 104231 }
+        assertThat(unnamedNode.name).isNull()
+        assertThat(unnamedNode.propertyEntries.single().name).isNull()
+        assertThat(
+            jdbcTemplate.queryForMap(
+                """SELECT child.external_node_id AS child_id, parent.external_node_id AS parent_id,
+                           relationship.required_parent_ranks
+                    FROM profession_skill_tree_node_parent relationship
+                    JOIN profession_skill_tree_node child ON child.id = relationship.node_id
+                    JOIN profession_skill_tree_node parent ON parent.id = relationship.parent_node_id
+                    WHERE child.external_node_id = 104230""".trimIndent(),
+            ),
+        ).containsEntry("child_id", 104230)
+            .containsEntry("parent_id", 104229)
+            .containsEntry("required_parent_ranks", 1)
+        assertThat(jdbcTemplate.queryForObject("SELECT rank FROM user_character_profession_allocation", Int::class.java)).isEqualTo(1)
+        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM profession_skill_tree", Int::class.java)).isEqualTo(1)
+        assertThat(
+            profileRepository
+                .listTrees(12, 164)
+                .single()
+                .tabs
+                .single()
+                .nodes
+                .single { it.externalNodeId == 104230 }
+                .prerequisites
+                .single()
+                .parentNodeId,
+        ).isEqualTo(
+            profileRepository
+                .listTrees(12, 164)
+                .single()
+                .tabs
+                .single()
+                .nodes
+                .single { it.externalNodeId == 104229 }
+                .id,
+        )
+
+        val recipeOnlyProfession = profession.copy(activeSkillLineId = null, talents = null, skillLevel = 90)
+        repository.save(payload().copy(characters = listOf(character.copy(professions = listOf(recipeOnlyProfession)))), 1, 0, "admin-subject")
+
+        assertThat(jdbcTemplate.queryForObject("SELECT tree_id FROM user_character_profession_profile", Long::class.java)).isNotNull()
+        assertThat(jdbcTemplate.queryForObject("SELECT skill_level FROM user_character_profession_profile", Int::class.java)).isEqualTo(90)
+        assertThat(jdbcTemplate.queryForObject("SELECT rank FROM user_character_profession_allocation", Int::class.java)).isEqualTo(1)
+    }
+
+    @Test
+    fun `rebuilds missing parent relationships from the stored normalized import`() {
+        jdbcTemplate.update("INSERT INTO profession (id) VALUES (164)")
+        jdbcTemplate.update("INSERT INTO skill_tier (id, minimum_skill_level, maximum_skill_level, profession_id) VALUES (2907, 1, 100, 164)")
+        jdbcTemplate.update(
+            "INSERT INTO locale (source_type, source_key, source_field, en_us) VALUES ('expansion', '12', 'name', 'Midnight')",
+        )
+        jdbcTemplate.update(
+            """INSERT INTO expansion (id, slug, name_id, major_version, display_order)
+                VALUES (12, 'midnight', (SELECT id FROM locale WHERE source_type = 'expansion' AND source_key = '12'), 12, 120)""".trimIndent(),
+        )
+        val tree =
+            NormalizedAuctionHelperTalentTree(
+                treeId = 82167859,
+                skillLineId = 2907,
+                expansionId = 12,
+                name = "Midnight Blacksmithing",
+                tabs =
+                    listOf(
+                        NormalizedAuctionHelperTalentTab(
+                            tabId = 1068,
+                            name = "Craftsmithing",
+                            nodes =
+                                listOf(
+                                    NormalizedAuctionHelperTalentNode(
+                                        nodeId = 104229,
+                                        maxRanks = 30,
+                                        name = "Craftsmithing",
+                                        propertyEntries =
+                                            listOf(
+                                                NormalizedAuctionHelperTalentEntry(
+                                                    entryId = 128829,
+                                                    rankLimit = 30,
+                                                    name = "Craftsmithing",
+                                                ),
+                                            ),
+                                    ),
+                                    NormalizedAuctionHelperTalentNode(
+                                        nodeId = 104230,
+                                        maxRanks = 1,
+                                        requiredRank = 25,
+                                        name = "Concentration",
+                                        parentNodeIds = listOf(104231),
+                                        propertyEntries =
+                                            listOf(
+                                                NormalizedAuctionHelperTalentEntry(
+                                                    entryId = 128830,
+                                                    rankLimit = 1,
+                                                    name = "Concentration",
+                                                ),
+                                            ),
+                                    ),
+                                    NormalizedAuctionHelperTalentNode(
+                                        nodeId = 104231,
+                                        maxRanks = 1,
+                                        parentNodeIds = listOf(104229),
+                                        propertyEntries =
+                                            listOf(
+                                                NormalizedAuctionHelperTalentEntry(
+                                                    entryId = 128831,
+                                                    rankLimit = 1,
+                                                ),
+                                            ),
+                                    ),
+                                ),
+                        ),
+                    ),
+            )
+        val profession =
+            NormalizedAuctionHelperProfession(
+                164,
+                "Blacksmithing",
+                emptyList(),
+                activeSkillLineId = 2907,
+                talents = NormalizedAuctionHelperTalents(listOf(tree), emptyList()),
+            )
+        val character = NormalizedAuctionHelperCharacter("eu-realm-character", "Character", "Realm", "EU", listOf(profession))
+        repository.save(payload().copy(characters = listOf(character)), 1, 0, "admin-subject")
+
+        val persistedTree = profileRepository.listTrees(12, 164).single()
+        jdbcTemplate.update(
+            """DELETE parent FROM profession_skill_tree_node_parent parent
+                JOIN profession_skill_tree_node node ON node.id = parent.node_id
+                WHERE node.tree_id = ?""".trimIndent(),
+            persistedTree.id,
+        )
+
+        val rebuilt = profileRepository.listTrees(12, 164).single()
+
+        assertThat(
+            rebuilt.tabs
+                .single()
+                .nodes
+                .single { it.externalNodeId == 104230 }
+                .prerequisites
+                .single()
+                .parentNodeId,
+        ).isEqualTo(
+            rebuilt.tabs
+                .single()
+                .nodes
+                .single { it.externalNodeId == 104229 }
+                .id,
+        )
+    }
+
+    @Test
+    fun `rebuilds missing parent relationships from export order when addon omitted child paths`() {
+        jdbcTemplate.update("INSERT INTO profession (id) VALUES (333)")
+        jdbcTemplate.update("INSERT INTO skill_tier (id, minimum_skill_level, maximum_skill_level, profession_id) VALUES (2909, 1, 100, 333)")
+        jdbcTemplate.update(
+            "INSERT INTO locale (source_type, source_key, source_field, en_us) VALUES ('expansion', '12', 'name', 'Midnight')",
+        )
+        jdbcTemplate.update(
+            """INSERT INTO expansion (id, slug, name_id, major_version, display_order)
+                VALUES (12, 'midnight', (SELECT id FROM locale WHERE source_type = 'expansion' AND source_key = '12'), 12, 120)""".trimIndent(),
+        )
+        val enchantingNodes =
+            listOf(
+                enchantingNode(107757, "Nature's Novelties"),
+                enchantingNode(107758, "Worldsoul Wards"),
+                enchantingNode(107759, "Azerothian Arms"),
+                enchantingNode(107760, "Haranir Heightening"),
+                enchantingNode(107761, "Trollish Tools"),
+                enchantingNode(107762, "Berserker Brawn"),
+                enchantingNode(107763, "Zul'Aman Zeal"),
+                enchantingNode(107764, "Amani Augments"),
+                enchantingNode(107765, "Quel'Thalas Quality"),
+                enchantingNode(107766, "Eversong Empowerments"),
+                enchantingNode(107767, "Silvermoon's Spellpower"),
+                enchantingNode(107768, "Thalassian Talents"),
+                enchantingNode(107769, "Elevating Equipment", maxRanks = 30),
+            )
+        val tree =
+            NormalizedAuctionHelperTalentTree(
+                treeId = 83739141,
+                skillLineId = 2909,
+                expansionId = 12,
+                name = "Midnight Enchanting",
+                tabs =
+                    listOf(
+                        NormalizedAuctionHelperTalentTab(
+                            tabId = 1076,
+                            name = "Elevating Equipment",
+                            description = "Empower your ability to magically enhance equipment.",
+                            nodes = enchantingNodes,
+                        ),
+                    ),
+            )
+        val profession =
+            NormalizedAuctionHelperProfession(
+                333,
+                "Enchanting",
+                emptyList(),
+                activeSkillLineId = 2909,
+                talents = NormalizedAuctionHelperTalents(listOf(tree), emptyList()),
+            )
+        val character = NormalizedAuctionHelperCharacter("eu-realm-character", "Character", "Realm", "EU", listOf(profession))
+        repository.save(payload().copy(characters = listOf(character)), 1, 0, "admin-subject")
+
+        val persistedTree = profileRepository.listTrees(12, 333).single()
+        jdbcTemplate.update(
+            """DELETE parent FROM profession_skill_tree_node_parent parent
+                JOIN profession_skill_tree_node node ON node.id = parent.node_id
+                WHERE node.tree_id = ?""".trimIndent(),
+            persistedTree.id,
+        )
+
+        val rebuilt = profileRepository.listTrees(12, 333).single()
+        val nodesByExternalId = rebuilt.tabs.single().nodes.associateBy { it.externalNodeId }
+
+        assertThat(nodesByExternalId.getValue(107757).prerequisites.single().parentNodeId)
+            .isEqualTo(nodesByExternalId.getValue(107760).id)
+        assertThat(nodesByExternalId.getValue(107758).prerequisites.single().parentNodeId)
+            .isEqualTo(nodesByExternalId.getValue(107760).id)
+        assertThat(nodesByExternalId.getValue(107760).prerequisites.single().parentNodeId)
+            .isEqualTo(nodesByExternalId.getValue(107769).id)
+    }
+
+    private fun enchantingNode(
+        nodeId: Int,
+        name: String,
+        maxRanks: Int = 20,
+    ) = NormalizedAuctionHelperTalentNode(
+        nodeId = nodeId,
+        maxRanks = maxRanks,
+        name = name,
+        propertyEntries =
+            listOf(
+                NormalizedAuctionHelperTalentEntry(
+                    entryId = nodeId + 1000,
+                    rankLimit = maxRanks,
+                    name = name,
+                ),
+            ),
+    )
+
+    private fun payload() =
+        NormalizedAuctionHelperProfessionData(
+            contractVersion = NormalizedAuctionHelperProfessionData.ContractVersion._1,
+            source =
+                NormalizedAuctionHelperSource(
+                    addon = NormalizedAuctionHelperSource.Addon.AUCTION_HELPER,
+                    addonVersion = "2.0.0",
+                    processorVersion = "test",
+                    files =
+                        listOf(
+                            NormalizedAuctionHelperSourceFilesInner(
+                                fileName = "AuctionHelper_Professions.lua",
+                                sha256 = "0".repeat(64),
+                            ),
+                        ),
+                ),
+            characters = emptyList(),
+        )
+}

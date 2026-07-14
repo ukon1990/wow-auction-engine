@@ -1,0 +1,11 @@
+type: object
+additionalProperties: false
+required: [itemId, quantity]
+properties:
+  slotIndex: { type: integer, minimum: 1 }
+  dataSlotIndex: { type: integer, minimum: 0 }
+  itemId: { type: integer, minimum: 1 }
+  quantity:
+    type: number
+    minimum: 0
+    description: Exported quantity. Zero means the addon did not expose a reliable quantity.

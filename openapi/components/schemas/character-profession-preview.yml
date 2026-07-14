@@ -1,0 +1,13 @@
+type: object
+required: [region, realmSlug, characterName, professions]
+properties:
+  region:
+    type: string
+    enum: [us, eu, kr, tw]
+  realmSlug:
+    type: string
+  characterName:
+    type: string
+  professions:
+    type: array
+    items: { $ref: "../../openapi.yml#/components/schemas/CharacterProfessionPreviewProfession" }

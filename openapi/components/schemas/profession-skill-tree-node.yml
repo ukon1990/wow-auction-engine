@@ -1,0 +1,12 @@
+type: object
+required: [id, externalNodeId, maxRanks, requiredRank, displayOrder, prerequisites, entries]
+properties:
+  id: { type: integer, format: int64 }
+  externalNodeId: { type: integer, format: int32 }
+  name: { type: string, nullable: true }
+  description: { type: string, nullable: true }
+  maxRanks: { type: integer, format: int32 }
+  requiredRank: { type: integer, format: int32 }
+  displayOrder: { type: integer, format: int32 }
+  prerequisites: { type: array, items: { $ref: "../../openapi.yml#/components/schemas/ProfessionSkillTreePrerequisite" } }
+  entries: { type: array, items: { $ref: "../../openapi.yml#/components/schemas/ProfessionSkillTreeEntry" } }

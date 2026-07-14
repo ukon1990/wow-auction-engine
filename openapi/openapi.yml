@@ -19,6 +19,8 @@ tags:
     description: Auction market search and filter metadata.
   - name: CraftingMarket
     description: Crafting market search and filter metadata.
+  - name: Profile
+    description: Authenticated character profession profiles.
 paths:
   /health:
     $ref: ./paths/health.yml#/health
@@ -46,6 +48,10 @@ paths:
     $ref: ./paths/admin.yml#/syncProfessionRecipes
   /admin/professions/sync/active:
     $ref: ./paths/admin.yml#/getActiveProfessionSyncJob
+  /admin/profession-talent-trees/import:
+    $ref: ./paths/admin.yml#/importProfessionTalentTrees
+  /admin/profession-talent-trees/inspect-normalized:
+    $ref: ./paths/admin.yml#/inspectNormalizedAuctionHelperProfessionData
   /admin/jobs/{id}:
     $ref: ./paths/admin.yml#/getAdminJob
   /admin/items:
@@ -86,6 +92,20 @@ paths:
     $ref: ./paths/crafting.yml#/search
   /crafting/filters:
     $ref: ./paths/crafting.yml#/filters
+  /profile/professions/trees:
+    $ref: ./paths/profile.yml#/listProfessionTrees
+  /profile/characters:
+    $ref: ./paths/profile.yml#/characters
+  /profile/characters/professions-preview:
+    $ref: ./paths/profile.yml#/characterProfessionPreview
+  /profile/characters/{characterId}:
+    $ref: ./paths/profile.yml#/characterById
+  /profile/characters/{characterId}/professions:
+    $ref: ./paths/profile.yml#/characterProfessions
+  /profile/characters/{characterId}/sync-blizzard:
+    $ref: ./paths/profile.yml#/characterSyncBlizzard
+  /profile/characters/{characterId}/professions/{professionId}:
+    $ref: ./paths/profile.yml#/characterProfessionProfile
 components:
   schemas:
     User:
@@ -124,6 +144,12 @@ components:
       $ref: ./components/schemas/admin/admin-expansion-item-range-request.yml
     AdminJob:
       $ref: ./components/schemas/admin/admin-job.yml
+    ProfessionTalentTreeImportRequest:
+      $ref: ./components/schemas/admin/profession-talent-tree-import-request.yml
+    NormalizedAuctionHelperProfessionData:
+      $ref: ./components/schemas/admin/normalized-auction-helper-profession-data.yml
+    NormalizedAuctionHelperProfessionInspection:
+      $ref: ./components/schemas/admin/normalized-auction-helper-profession-inspection.yml
     AdminItem:
       $ref: ./components/schemas/admin/admin-item.yml
     AdminItemBulkOverride:
@@ -226,6 +252,10 @@ components:
       $ref: ./components/schemas/crafting-market-search-page.yml
     CraftingMarketSearchRow:
       $ref: ./components/schemas/crafting-market-search-row.yml
+    CraftingProfileCandidate:
+      $ref: ./components/schemas/crafting-profile-candidate.yml
+    CraftingProfileFit:
+      $ref: ./components/schemas/crafting-profile-fit.yml
     MarketDataSource:
       $ref: ./components/schemas/market-data-source.yml
     PageMetadata:
@@ -234,3 +264,35 @@ components:
       $ref: ./components/schemas/realm.yml
     RealmDetail:
       $ref: ./components/schemas/realm-detail.yml
+    ProfileCharacter:
+      $ref: ./components/schemas/profile-character.yml
+    ProfileCharacterRequest:
+      $ref: ./components/schemas/profile-character-request.yml
+    ProfileCharacterProfession:
+      $ref: ./components/schemas/profile-character-profession.yml
+    ProfileCharacterProfessionSource:
+      $ref: ./components/schemas/profile-character-profession-source.yml
+    CharacterProfessionPreview:
+      $ref: ./components/schemas/character-profession-preview.yml
+    CharacterProfessionPreviewProfession:
+      $ref: ./components/schemas/character-profession-preview-profession.yml
+    CharacterProfessionPreviewTier:
+      $ref: ./components/schemas/character-profession-preview-tier.yml
+    CharacterProfessionPreviewRecipe:
+      $ref: ./components/schemas/character-profession-preview-recipe.yml
+    ProfessionProfile:
+      $ref: ./components/schemas/profession-profile.yml
+    ProfessionProfileRequest:
+      $ref: ./components/schemas/profession-profile-request.yml
+    ProfessionAllocation:
+      $ref: ./components/schemas/profession-allocation.yml
+    ProfessionSkillTree:
+      $ref: ./components/schemas/profession-skill-tree.yml
+    ProfessionSkillTreeTab:
+      $ref: ./components/schemas/profession-skill-tree-tab.yml
+    ProfessionSkillTreeNode:
+      $ref: ./components/schemas/profession-skill-tree-node.yml
+    ProfessionSkillTreeEntry:
+      $ref: ./components/schemas/profession-skill-tree-entry.yml
+    ProfessionSkillTreePrerequisite:
+      $ref: ./components/schemas/profession-skill-tree-prerequisite.yml

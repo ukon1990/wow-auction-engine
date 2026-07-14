@@ -7,6 +7,7 @@ import { WowheadItemTooltipDirective } from '@core/directives/wowhead-item-toolt
 import { copperToCurrencyAmount, qualityToneClasses, SymbolIconComponent } from '@ui';
 
 import type { CraftingTableRow } from './crafting-browser.models';
+import { profileFitSummary } from './crafting-profile-fit';
 
 @Component({
   selector: 'app-crafting-item-cell',
@@ -41,6 +42,9 @@ import type { CraftingTableRow } from './crafting-browser.models';
         >
       </div>
       <span class="truncate pl-11 text-xs text-outline">{{ row().variantSummary }}</span>
+      @if (row().profileFit; as profileFit) {
+        <span class="pl-11 text-xs text-primary-container">{{ profileFitText(profileFit) }}</span>
+      }
     </a>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -100,4 +104,6 @@ export class CraftingItemCellComponent {
   protected nameClass(): string {
     return `truncate text-sm font-semibold ${qualityToneClasses(this.row().quality).split(' ')[0]}`;
   }
+
+  protected profileFitText = profileFitSummary;
 }

@@ -86,3 +86,8 @@ properties:
     type: boolean
   outputPriced:
     type: boolean
+  profileFit:
+    allOf:
+      - $ref: "../../openapi.yml#/components/schemas/CraftingProfileFit"
+    nullable: true
+    description: Present only when the request has an authenticated user. It never exposes another user's profiles.

@@ -351,6 +351,7 @@
                     <!-- OpenAPI generator output does not match project ktlint rules; lint hand-written sources only. -->
                     <sourcesExcludes>
                         <sourcesExclude>net/jonasmf/auctionengine/generated/**</sourcesExclude>
+                        <sourcesExclude>org/openapitools/**</sourcesExclude>
                     </sourcesExcludes>
                 </configuration>
                 <executions>

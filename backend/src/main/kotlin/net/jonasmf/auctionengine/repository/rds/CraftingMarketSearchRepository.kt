@@ -74,6 +74,7 @@ data class CraftingMarketSqlRow(
     val itemSubclassName: String?,
     val professionId: Int?,
     val professionName: String?,
+    val expansionId: Int?,
     val skillTierName: String?,
     val professionCategoryName: String?,
 )
@@ -537,6 +538,7 @@ class CraftingMarketSearchRepository(
             wrapped.recipe_rank,
             wrapped.profession_id,
             wrapped.profession_name,
+            wrapped.expansion_id,
             wrapped.skill_tier_name,
             wrapped.profession_category_name,
             wrapped.item_name,
@@ -572,6 +574,7 @@ class CraftingMarketSearchRepository(
                 c.recipe_rank,
                 c.profession_id,
                 c.profession_name,
+                c.expansion_id,
                 c.skill_tier_name,
                 c.profession_category_name,
                 c.item_name,
@@ -726,6 +729,7 @@ class CraftingMarketSearchRepository(
                 itemSubclassName = rs.getString("item_subclass_name"),
                 professionId = rs.getNullableInt("profession_id"),
                 professionName = rs.getString("profession_name"),
+                expansionId = rs.getNullableInt("expansion_id"),
                 skillTierName = rs.getString("skill_tier_name"),
                 professionCategoryName = rs.getString("profession_category_name"),
             )

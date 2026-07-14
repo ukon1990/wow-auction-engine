@@ -53,6 +53,9 @@ class BlizzardApiSupport(
     fun staticNamespaceForRegion(region: Region = getPropertyRegionOrFallback()): NameSpace =
         NameSpace.getStaticForRegion(region)
 
+    fun profileNamespaceForRegion(region: Region = getPropertyRegionOrFallback()): NameSpace =
+        NameSpace.getProfileForRegion(region)
+
     fun namespaceForBuild(gameBuild: GameBuildVersion): NameSpace =
         when (gameBuild) {
             GameBuildVersion.CLASSIC -> NameSpace.DYNAMIC_CLASSIC

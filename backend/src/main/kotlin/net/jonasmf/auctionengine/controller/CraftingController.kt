@@ -5,6 +5,8 @@ import net.jonasmf.auctionengine.generated.model.AuctionMarketFilterResponse
 import net.jonasmf.auctionengine.generated.model.CraftingMarketSearchPage
 import net.jonasmf.auctionengine.service.CraftingMarketSearchService
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -72,6 +74,10 @@ class CraftingController(
                 minOutputPriceChangePercent = minOutputPriceChangePercent,
                 maxOutputPriceChangePercent = maxOutputPriceChangePercent,
                 requireCompleteReagentPricing = requireCompleteReagentPricing,
+                actorSubject = authenticatedSubject(),
             ),
         )
 }
+
+private fun authenticatedSubject(): String? =
+    (SecurityContextHolder.getContext().authentication as? JwtAuthenticationToken)?.token?.subject

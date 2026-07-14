@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.controller
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.jonasmf.auctionengine.generated.api.AdminApi
 import net.jonasmf.auctionengine.generated.model.AdminExpansion1
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
@@ -23,6 +24,9 @@ import net.jonasmf.auctionengine.generated.model.AdminSqlExecuteRequest
 import net.jonasmf.auctionengine.generated.model.AdminSqlMetadata
 import net.jonasmf.auctionengine.generated.model.AdminSqlResult
 import net.jonasmf.auctionengine.generated.model.AdminStatus
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
+import net.jonasmf.auctionengine.generated.model.ProfessionTalentTreeImportRequest
 import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminItemService
@@ -31,6 +35,8 @@ import net.jonasmf.auctionengine.service.admin.AdminProfessionSyncService
 import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
+import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
+import net.jonasmf.auctionengine.service.admin.NormalizedAuctionHelperProfessionInspectionService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -48,7 +54,10 @@ class AdminController(
     private val adminProfessionSyncService: AdminProfessionSyncService,
     private val adminItemService: AdminItemService,
     private val adminRecipeService: AdminRecipeService,
+    private val professionTalentTreeImportService: ProfessionTalentTreeImportService,
+    private val normalizedAuctionHelperProfessionInspectionService: NormalizedAuctionHelperProfessionInspectionService,
 ) : AdminApi {
+    private val objectMapper = jacksonObjectMapper()
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getAdminStatus(): ResponseEntity<AdminStatus> = ResponseEntity.ok(adminStatusService.getStatus())
 
@@ -121,6 +130,18 @@ class AdminController(
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getActiveProfessionSyncJob(): ResponseEntity<AdminJob> =
         ResponseEntity.ok(adminJobService.getActiveProfessionSyncJob())
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun importProfessionTalentTrees(body: ProfessionTalentTreeImportRequest): ResponseEntity<Unit> {
+        professionTalentTreeImportService.import(objectMapper.valueToTree(body))
+        return ResponseEntity.noContent().build()
+    }
+
+    @PreAuthorize("hasAuthority('admin')")
+    override suspend fun inspectNormalizedAuctionHelperProfessionData(
+        body: NormalizedAuctionHelperProfessionData,
+    ): ResponseEntity<NormalizedAuctionHelperProfessionInspection> =
+        ResponseEntity.ok(normalizedAuctionHelperProfessionInspectionService.inspect(body, requestedBy() ?: "admin"))
 
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getAdminJob(id: Long): ResponseEntity<AdminJob> =
