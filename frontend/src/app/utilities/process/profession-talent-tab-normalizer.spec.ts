@@ -12,9 +12,7 @@ describe('profession-talent-parent-inference', () => {
         { nodeId: 101, name: 'Root' },
         { nodeId: 102, name: 'Child' },
       ],
-      new Map([
-        [101, [102]],
-      ]),
+      new Map([[101, [102]]]),
     );
 
     expect(parents.get(102)).toEqual([101]);
@@ -145,12 +143,42 @@ describe('profession-talent-tab-normalizer', () => {
     expect(nodesById[104567].parentNodeIds).toEqual([104566]);
     expect(nodesById[104568].parentNodeIds).toEqual([104565]);
     expect(nodesById[104499]).toMatchObject({
-      name: 'Gain +5 Skill when crafting waist armor.',
+      nodeKind: 'milestone',
+      description: 'Gain +5 Skill when crafting waist armor.',
       maxRanks: 1,
       requiredRank: 5,
       parentNodeIds: [104566],
       entries: [{ entryId: 104499, rankLimit: 1 }],
     });
+  });
+
+  it('keeps milestone descriptions out of the bounded name field', () => {
+    const longDescription = `Gain +${'very '.repeat(40)}long perk text.`;
+    const tab = normalizeTalentTab({
+      treeID: 1068,
+      paths: [
+        {
+          nodeID: 104566,
+          nodeName: 'Belts',
+          nodeInfo: { maxRanks: 26, activeRank: 1, currentRank: 1 },
+        },
+      ],
+      milestones: [
+        {
+          nodeID: 104499,
+          parentPathID: 104566,
+          milestoneRank: 5,
+          nodeDescription: longDescription,
+          nodeInfo: { maxRanks: 1, activeRank: 0, currentRank: 0 },
+        },
+      ],
+      edges: [],
+    });
+
+    const milestone = tab!.nodes.find((node) => node.nodeId === 104499);
+    expect(milestone?.name).toBeUndefined();
+    expect(milestone?.description).toBe(longDescription);
+    expect(milestone?.description?.length ?? 0).toBeLessThanOrEqual(4096);
   });
 
   it('keeps legacy flat nodes when structured collections are absent', () => {

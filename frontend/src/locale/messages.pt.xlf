@@ -2379,6 +2379,7 @@
       <trans-unit id="professionTalentTrees.skillTree.emptyBody" datatype="html"><source>Run a fresh full dump in AuctionHelper, reload or log out to write AuctionHelper.lua, then select the SavedVariables folder again.</source><target>Execute um novo despejo completo no AuctionHelper, recarregue ou saia para gravar AuctionHelper.lua e selecione novamente a pasta SavedVariables.</target></trans-unit>
       <trans-unit id="professionProfiles.specializationTree" datatype="html"><source>Specialization tree</source><target>Árvore de especialização</target></trans-unit>
       <trans-unit id="professionProfiles.namedPrerequisite" datatype="html"><source>{$INTERPOLATION} at rank {$INTERPOLATION_1}</source><target>{$INTERPOLATION} no nível {$INTERPOLATION_1}</target></trans-unit>
+      <trans-unit id="professionProfiles.milestoneAtRank" datatype="html"><source>Rank {$INTERPOLATION}: {$INTERPOLATION_1}</source><target>Nível {$INTERPOLATION}: {$INTERPOLATION_1}</target></trans-unit>
       <trans-unit id="professionProfiles.emptyTab" datatype="html"><source>This specialization has no nodes.</source><target>Esta especialização não tem nós.</target></trans-unit>
       <trans-unit id="professionProfiles.addNewCharacter" datatype="html">
         <source>Add new character</source>

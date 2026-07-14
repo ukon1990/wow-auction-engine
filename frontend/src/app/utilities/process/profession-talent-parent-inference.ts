@@ -15,8 +15,7 @@ export interface TalentParentResolutionOptions {
 }
 
 export type TalentParentResolutionInput =
-  | ReadonlyMap<number, readonly number[]>
-  | TalentParentResolutionOptions;
+  ReadonlyMap<number, readonly number[]> | TalentParentResolutionOptions;
 
 export function resolveParentNodeIdsByChild(
   nodes: ReadonlyArray<{
@@ -122,9 +121,7 @@ function normalizeParentResolution(
   };
 }
 
-function mergeParentMaps(
-  ...maps: ReadonlyArray<Map<number, number[]>>
-): Map<number, number[]> {
+function mergeParentMaps(...maps: ReadonlyArray<Map<number, number[]>>): Map<number, number[]> {
   const result = new Map<number, number[]>();
   maps.forEach((map) => {
     map.forEach((parents, nodeId) => {

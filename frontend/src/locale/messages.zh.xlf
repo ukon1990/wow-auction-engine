@@ -2379,6 +2379,7 @@
       <trans-unit id="professionTalentTrees.skillTree.emptyBody" datatype="html"><source>Run a fresh full dump in AuctionHelper, reload or log out to write AuctionHelper.lua, then select the SavedVariables folder again.</source><target>在 AuctionHelper 中运行新的完整导出，重新加载或退出登录以写入 AuctionHelper.lua，然后再次选择 SavedVariables 文件夹。</target></trans-unit>
       <trans-unit id="professionProfiles.specializationTree" datatype="html"><source>Specialization tree</source><target>专精树</target></trans-unit>
       <trans-unit id="professionProfiles.namedPrerequisite" datatype="html"><source>{$INTERPOLATION} at rank {$INTERPOLATION_1}</source><target>{$INTERPOLATION} 达到 {$INTERPOLATION_1} 级</target></trans-unit>
+      <trans-unit id="professionProfiles.milestoneAtRank" datatype="html"><source>Rank {$INTERPOLATION}: {$INTERPOLATION_1}</source><target>等级 {$INTERPOLATION}：{$INTERPOLATION_1}</target></trans-unit>
       <trans-unit id="professionProfiles.emptyTab" datatype="html"><source>This specialization has no nodes.</source><target>此专精没有节点。</target></trans-unit>
       <trans-unit id="professionProfiles.addNewCharacter" datatype="html">
         <source>Add new character</source>

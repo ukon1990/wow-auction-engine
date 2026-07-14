@@ -13,6 +13,7 @@ import {
   auctionHelperLuaProcessor,
 } from './auction-helper-lua-adapters';
 import { decodeAuctionHelperTalentExport } from './auction-helper-talent-decoder';
+import { boundedDescription, boundedName } from './normalized-string-bounds';
 
 export type AuctionHelperLocalPreview = Readonly<{
   payload: NormalizedAuctionHelperProfessionData;
@@ -239,16 +240,20 @@ function talentsForProfession(
           ...(tab.description ? { description: tab.description } : {}),
           nodes: tab.nodes.map((node) => ({
             nodeId: node.nodeId,
-            ...(node.name ? { name: node.name } : {}),
+            ...(boundedName(node.name) ? { name: boundedName(node.name) } : {}),
             ...(node.maxRanks !== null ? { maxRanks: node.maxRanks } : {}),
             ...(node.requiredRank !== null ? { requiredRank: node.requiredRank } : {}),
-            ...(node.description ? { description: node.description } : {}),
+            ...(boundedDescription(node.description)
+              ? { description: boundedDescription(node.description) }
+              : {}),
             parentNodeIds: [...node.parentNodeIds],
             entries: node.entries.map((entry) => ({
               entryId: entry.entryId,
-              ...(entry.name ? { name: entry.name } : {}),
+              ...(boundedName(entry.name) ? { name: boundedName(entry.name) } : {}),
               ...(entry.rankLimit !== null ? { rankLimit: entry.rankLimit } : {}),
-              ...(entry.description ? { description: entry.description } : {}),
+              ...(boundedDescription(entry.description)
+                ? { description: boundedDescription(entry.description) }
+                : {}),
             })),
           })),
         })),

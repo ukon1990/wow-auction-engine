@@ -7,6 +7,8 @@ import {
   output,
 } from '@angular/core';
 
+import { isMilestoneNode, milestoneTooltipText } from './profession-skill-tree-nodes';
+
 export interface SkillTreeGraphEntry {
   readonly id: number;
   readonly name?: string | null;
@@ -18,9 +20,11 @@ export interface SkillTreeGraphEntry {
 export interface SkillTreeGraphNode {
   readonly id: number;
   readonly externalNodeId: number;
+  readonly nodeKind?: 'path' | 'milestone';
   readonly name?: string | null;
   readonly description?: string | null;
   readonly maxRanks: number;
+  readonly requiredRank: number;
   readonly displayOrder: number;
   readonly prerequisites: readonly { parentNodeId: number; requiredParentRanks: number }[];
   readonly entries: readonly SkillTreeGraphEntry[];
@@ -98,6 +102,7 @@ export class ProfessionSkillTreeEditor {
 
   protected readonly nodeDisplayName = nodeDisplayName;
   protected readonly editableEntries = editableEntries;
+  protected readonly nodeTooltip = nodeTooltip;
 
   protected selectTab(tab: SkillTreeGraphTab): void {
     this.selectedTabId.set(tab.id);
@@ -190,6 +195,10 @@ export class ProfessionSkillTreeEditor {
   protected tabLabel(tab: SkillTreeGraphTab): string {
     return tab.name?.trim() || `#${tab.id}`;
   }
+}
+
+function nodeTooltip(node: SkillTreeGraphNode, tab: SkillTreeGraphTab): string | null {
+  return milestoneTooltipText(node, tab.nodes);
 }
 
 export function layoutGraph(nodes: readonly SkillTreeGraphNode[]): GraphLayout {
@@ -307,6 +316,7 @@ export function isVisibleNode(
   node: SkillTreeGraphNode,
   allNodes: readonly SkillTreeGraphNode[] = [],
 ): boolean {
+  if (isMilestoneNode(node, allNodes)) return false;
   if (node.name?.trim()) return true;
   return node.maxRanks > 1 && hasStructuralChildren(node, allNodes);
 }
@@ -364,11 +374,14 @@ function hasStructuralChildren(
   node: SkillTreeGraphNode,
   allNodes: readonly SkillTreeGraphNode[],
 ): boolean {
-  return allNodes.some((candidate) =>
-    candidate.prerequisites.some(
-      (prerequisite) =>
-        prerequisite.parentNodeId === node.id || prerequisite.parentNodeId === node.externalNodeId,
-    ),
+  return allNodes.some(
+    (candidate) =>
+      !isMilestoneNode(candidate, allNodes) &&
+      candidate.prerequisites.some(
+        (prerequisite) =>
+          prerequisite.parentNodeId === node.id ||
+          prerequisite.parentNodeId === node.externalNodeId,
+      ),
   );
 }
 

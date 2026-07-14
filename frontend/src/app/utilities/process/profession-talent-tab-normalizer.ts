@@ -2,6 +2,7 @@ import {
   resolveTalentParentNodeIds,
   type TalentPathEdge,
 } from './profession-talent-parent-inference';
+import { boundedDescription, boundedName } from './normalized-string-bounds';
 
 export interface NormalizedTalentEntry {
   readonly entryId: number;
@@ -12,6 +13,7 @@ export interface NormalizedTalentEntry {
 
 export interface NormalizedTalentNode {
   readonly nodeId: number;
+  readonly nodeKind?: 'path' | 'milestone';
   readonly name?: string;
   readonly maxRanks?: number;
   readonly requiredRank?: number;
@@ -67,7 +69,9 @@ function normalizeStructuredTalentTab(
   const edges = parsePathEdges(asArray(tab['edges']));
 
   const pathResults = paths.map(normalizePathNode).filter((result) => result.node.nodeId > 0);
-  const milestoneResults = milestones.map(normalizeMilestoneNode).filter((result) => result.node.nodeId > 0);
+  const milestoneResults = milestones
+    .map(normalizeMilestoneNode)
+    .filter((result) => result.node.nodeId > 0);
   const nodes = [...pathResults, ...milestoneResults].map((result) => result.node);
   const allocations = [...pathResults, ...milestoneResults]
     .map((result) => result.allocation)
@@ -124,8 +128,8 @@ function normalizePathNode(raw: Record<string, unknown>): {
     };
   }
 
-  const name = pathNodeName(raw);
-  const description = pathNodeDescription(raw);
+  const name = boundedName(pathNodeName(raw));
+  const description = boundedDescription(pathNodeDescription(raw));
   const maxRanks = asInt(nodeInfo['maxRanks']) ?? asInt(nodeInfo['totalMaxRanks']) ?? undefined;
   const requiredRank = asInt(raw['unlockRank']) ?? undefined;
   const sourceEntries = asArray(raw['entries']).map(asRecord);
@@ -146,12 +150,12 @@ function normalizePathNode(raw: Record<string, unknown>): {
   const rank =
     asInt(activeEntry['rank']) ?? asInt(nodeInfo['currentRank']) ?? asInt(nodeInfo['activeRank']);
   const allocationEntryId = entries[0]?.entryId ?? defaultEntryId;
-  const allocation =
-    rank !== null ? { nodeId, entryId: allocationEntryId, rank } : null;
+  const allocation = rank !== null ? { nodeId, entryId: allocationEntryId, rank } : null;
 
   return {
     node: {
       nodeId,
+      nodeKind: 'path',
       ...(name ? { name } : {}),
       ...(maxRanks !== undefined ? { maxRanks } : {}),
       ...(requiredRank !== undefined ? { requiredRank } : {}),
@@ -176,11 +180,10 @@ function normalizeMilestoneNode(raw: Record<string, unknown>): {
     };
   }
 
-  const name = milestoneNodeName(raw);
-  const description = milestoneNodeDescription(raw);
+  const name = boundedName(milestoneNodeName(raw));
+  const description = boundedDescription(milestoneNodeDescription(raw));
   const parentPathId = asInt(raw['parentPathID']);
-  const requiredRank =
-    asInt(raw['milestoneRank']) ?? asInt(raw['unlockRank']) ?? undefined;
+  const requiredRank = asInt(raw['milestoneRank']) ?? asInt(raw['unlockRank']) ?? undefined;
   const maxRanks = asInt(nodeInfo['maxRanks']) ?? 1;
   const activeEntry = asRecord(nodeInfo['activeEntry']);
   const entryId = asInt(activeEntry['entryID']) ?? asInt(nodeInfo['activeEntryID']) ?? nodeId;
@@ -198,6 +201,7 @@ function normalizeMilestoneNode(raw: Record<string, unknown>): {
   return {
     node: {
       nodeId,
+      nodeKind: 'milestone',
       ...(name ? { name } : {}),
       maxRanks,
       ...(requiredRank !== undefined ? { requiredRank } : {}),
@@ -205,7 +209,7 @@ function normalizeMilestoneNode(raw: Record<string, unknown>): {
       parentNodeIds: parentPathId !== null ? [parentPathId] : [],
       entries,
     },
-    allocation: rank !== null ? { nodeId, entryId, rank } : null,
+    allocation: rank !== null && rank > 0 ? { nodeId, entryId, rank } : null,
   };
 }
 
@@ -224,30 +228,30 @@ function normalizeLegacyNode(raw: Record<string, unknown>): {
 
   const sourceEntries = asArray(raw['entries']).map(asRecord);
   const activeEntry = asRecord(nodeInfo['activeEntry']);
-  const name =
+  const name = boundedName(
     asText(raw['overrideName']) ??
-    asText(raw['name']) ??
-    asText(raw['nodeName']) ??
-    asText(nodeInfo['overrideName']) ??
-    asText(nodeInfo['name']) ??
-    sourceEntries.map(entryName).find((value) => value !== null) ??
-    undefined;
-  const description =
-    asText(raw['pathDescription']) ??
-    asText(raw['nodeDescription']) ??
-    undefined;
+      asText(raw['name']) ??
+      asText(raw['nodeName']) ??
+      asText(nodeInfo['overrideName']) ??
+      asText(nodeInfo['name']) ??
+      sourceEntries.map(entryName).find((value) => value !== null) ??
+      undefined,
+  );
+  const description = boundedDescription(
+    asText(raw['pathDescription']) ?? asText(raw['nodeDescription']) ?? undefined,
+  );
   const maxRanks = asInt(nodeInfo['maxRanks']) ?? asInt(nodeInfo['totalMaxRanks']) ?? undefined;
   const requiredRank = asInt(raw['unlockRank']) ?? undefined;
   const entries = sourceEntries.flatMap((entry) => normalizeEntry(entry));
   const entryId = asInt(activeEntry['entryID']) ?? asInt(nodeInfo['activeEntryID']);
   const rank =
     asInt(activeEntry['rank']) ?? asInt(nodeInfo['currentRank']) ?? asInt(nodeInfo['activeRank']);
-  const allocation =
-    entryId !== null && rank !== null ? { nodeId, entryId, rank } : null;
+  const allocation = entryId !== null && rank !== null ? { nodeId, entryId, rank } : null;
 
   return {
     node: {
       nodeId,
+      nodeKind: 'path',
       ...(name ? { name } : {}),
       ...(maxRanks !== undefined ? { maxRanks } : {}),
       ...(requiredRank !== undefined ? { requiredRank } : {}),
@@ -265,13 +269,14 @@ function normalizeEntry(entry: Record<string, unknown>): NormalizedTalentEntry[]
   const entryInfo = asRecord(entry['entryInfo']);
   const definitionInfo = asRecord(entry['definitionInfo']);
   const name = entryName(entry) ?? undefined;
-  const rankLimit =
-    asInt(entryInfo['maxRanks']) ?? asInt(definitionInfo['maxRanks']) ?? undefined;
-  const description = asText(definitionInfo['overrideDescription']) ?? undefined;
+  const rankLimit = asInt(entryInfo['maxRanks']) ?? asInt(definitionInfo['maxRanks']) ?? undefined;
+  const description = boundedDescription(
+    asText(definitionInfo['overrideDescription']) ?? undefined,
+  );
   return [
     {
       entryId,
-      ...(name ? { name } : {}),
+      ...(boundedName(name) ? { name: boundedName(name) } : {}),
       ...(rankLimit !== undefined ? { rankLimit } : {}),
       ...(description ? { description } : {}),
     },
@@ -291,21 +296,11 @@ function pathNodeName(raw: Record<string, unknown>): string | undefined {
 }
 
 function pathNodeDescription(raw: Record<string, unknown>): string | undefined {
-  return (
-    asText(raw['nodeDescription']) ??
-    asText(raw['pathDescription']) ??
-    undefined
-  );
+  return asText(raw['nodeDescription']) ?? asText(raw['pathDescription']) ?? undefined;
 }
 
 function milestoneNodeName(raw: Record<string, unknown>): string | undefined {
-  return (
-    asText(raw['nodeName']) ??
-    asText(raw['overrideName']) ??
-    asText(raw['name']) ??
-    milestoneNodeDescription(raw) ??
-    undefined
-  );
+  return asText(raw['nodeName']) ?? asText(raw['overrideName']) ?? asText(raw['name']) ?? undefined;
 }
 
 function milestoneNodeDescription(raw: Record<string, unknown>): string | undefined {

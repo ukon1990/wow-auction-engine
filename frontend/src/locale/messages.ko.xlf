@@ -2379,6 +2379,7 @@
       <trans-unit id="professionTalentTrees.skillTree.emptyBody" datatype="html"><source>Run a fresh full dump in AuctionHelper, reload or log out to write AuctionHelper.lua, then select the SavedVariables folder again.</source><target>AuctionHelper에서 새 전체 덤프를 실행하고, AuctionHelper.lua를 기록하도록 다시 불러오거나 로그아웃한 다음 SavedVariables 폴더를 다시 선택하세요.</target></trans-unit>
       <trans-unit id="professionProfiles.specializationTree" datatype="html"><source>Specialization tree</source><target>전문화 트리</target></trans-unit>
       <trans-unit id="professionProfiles.namedPrerequisite" datatype="html"><source>{$INTERPOLATION} at rank {$INTERPOLATION_1}</source><target>{$INTERPOLATION} {$INTERPOLATION_1} 등급</target></trans-unit>
+      <trans-unit id="professionProfiles.milestoneAtRank" datatype="html"><source>Rank {$INTERPOLATION}: {$INTERPOLATION_1}</source><target>{$INTERPOLATION}등급: {$INTERPOLATION_1}</target></trans-unit>
       <trans-unit id="professionProfiles.emptyTab" datatype="html"><source>This specialization has no nodes.</source><target>이 전문화에는 노드가 없습니다.</target></trans-unit>
       <trans-unit id="professionProfiles.addNewCharacter" datatype="html">
         <source>Add new character</source>

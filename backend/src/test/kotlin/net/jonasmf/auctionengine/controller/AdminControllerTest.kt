@@ -239,6 +239,64 @@ class AdminControllerTest {
         }
 
         @Test
+        fun `returns a concise validation error for oversized normalized node names`() {
+            val invalidJson =
+                """
+                {
+                  "contractVersion": 1,
+                  "source": {
+                    "addon": "AuctionHelper",
+                    "processorVersion": "1",
+                    "files": [{ "fileName": "AuctionHelper_Professions.lua", "sha256": "${"a".repeat(64)}" }]
+                  },
+                  "characters": [{
+                    "characterKey": "eu:test",
+                    "name": "Test",
+                    "realm": "Realm",
+                    "region": "eu",
+                    "professions": [{
+                      "professionId": 164,
+                      "skillLineId": 164,
+                      "name": "Blacksmithing",
+                      "recipes": [],
+                      "talents": {
+                        "trees": [{
+                          "treeId": 1,
+                          "skillLineId": 2907,
+                          "expansionId": 12,
+                          "tabs": [{
+                            "tabId": 1,
+                            "nodes": [{
+                              "nodeId": 1,
+                              "name": "${"x".repeat(129)}",
+                              "entries": [{ "entryId": 1 }]
+                            }]
+                          }]
+                        }],
+                        "allocations": []
+                      }
+                    }]
+                  }]
+                }
+                """.trimIndent()
+
+            mockMvc
+                .perform(
+                    post("/api/admin/profession-talent-trees/inspect-normalized")
+                        .contextPath("/api")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidJson)
+                        .with(
+                            jwt()
+                                .jwt { token -> token.claim("cognito:groups", listOf("admin")) }
+                                .authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                        ),
+                ).andExpect(status().isBadRequest)
+                .andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("validation failed")))
+                .andExpect(jsonPath("$.errorCount").value(org.hamcrest.Matchers.greaterThan(0)))
+        }
+
+        @Test
         fun `rejects a non administrator import`() {
             val result =
                 mockMvc

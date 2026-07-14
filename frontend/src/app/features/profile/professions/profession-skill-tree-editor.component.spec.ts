@@ -7,6 +7,7 @@ import {
   entryNameVisible,
   layoutGraph,
 } from './profession-skill-tree-editor.component';
+import { milestoneTooltipText } from './profession-skill-tree-nodes';
 
 const rootNode = node(10, 'Foundations', 0);
 const childNode = node(20, 'Armorsmithing', 1, [{ parentNodeId: 10, requiredParentRanks: 5 }]);
@@ -155,7 +156,9 @@ describe('layoutGraph', () => {
   it('shows unnamed hub nodes and stacks grandchildren beneath their branch parent', () => {
     const root = node(10, 'Elevating Equipment', 0, [], 20);
     const hub = node(11, '', 1, [{ parentNodeId: 10, requiredParentRanks: 1 }], 20);
-    const branch = node(20, 'Haranir Heightening', 2, [{ parentNodeId: 11, requiredParentRanks: 1 }]);
+    const branch = node(20, 'Haranir Heightening', 2, [
+      { parentNodeId: 11, requiredParentRanks: 1 },
+    ]);
     const leaf = node(21, "Nature's Novelties", 3, [{ parentNodeId: 20, requiredParentRanks: 1 }]);
 
     const layout = layoutGraph([root, hub, branch, leaf]);
@@ -173,6 +176,22 @@ describe('layoutGraph', () => {
 
   it('returns an empty graph when every node is unnamed', () => {
     expect(layoutGraph([node(15, '', 0)])).toMatchObject({ nodes: [], connectors: [] });
+  });
+
+  it('hides milestone nodes and keeps them available for parent tooltips', () => {
+    const belts = node(104566, 'Belts', 1, [], 26);
+    const milestone = {
+      ...node(104499, '', 2, [{ parentNodeId: 104566, requiredParentRanks: 5 }], 1),
+      nodeKind: 'milestone' as const,
+      requiredRank: 5,
+      description: 'Gain +5 Skill when crafting waist armor.',
+    };
+
+    const layout = layoutGraph([belts, milestone]);
+
+    expect(layout.nodes.map((position) => position.node.id)).toEqual([104566]);
+    expect(milestoneTooltipText(belts, [belts, milestone])).toContain('Rank 5');
+    expect(milestoneTooltipText(belts, [belts, milestone])).toContain('Gain +5 Skill');
   });
 
   it('sizes nodes from their editable entry count so connectors meet the card edge', () => {

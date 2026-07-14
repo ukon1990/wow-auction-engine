@@ -385,9 +385,11 @@ export function normalizedTalentTreeGraph(
       nodes: tab.nodes.map((node, nodeIndex) => ({
         id: node.nodeId,
         externalNodeId: node.nodeId,
+        nodeKind: (node as { nodeKind?: 'path' | 'milestone' }).nodeKind,
         name: node.name,
         description: node.description,
         maxRanks: node.maxRanks ?? 1,
+        requiredRank: node.requiredRank ?? 0,
         displayOrder: nodeIndex,
         prerequisites: (node.parentNodeIds ?? []).map((parentNodeId) => ({
           parentNodeId,

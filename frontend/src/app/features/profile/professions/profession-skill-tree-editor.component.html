@@ -83,12 +83,10 @@
                 [style.width.px]="position.width"
                 [style.height.px]="position.height"
                 [attr.aria-label]="nodeDisplayName(position.node)"
+                [title]="nodeTooltip(position.node, tab)"
               >
                 <div class="min-h-0 overflow-hidden p-3 pb-2">
-                  <h3
-                    class="truncate text-sm font-bold text-on-surface"
-                    [title]="nodeDisplayName(position.node)"
-                  >
+                  <h3 class="truncate text-sm font-bold text-on-surface">
                     {{ nodeDisplayName(position.node) }}
                   </h3>
                   <p class="mt-1 line-clamp-2 break-words text-xs text-outline">
