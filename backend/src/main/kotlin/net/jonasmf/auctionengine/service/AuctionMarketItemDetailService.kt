@@ -293,6 +293,7 @@ class AuctionMarketItemDetailService(
                                         .loadCraftingReagents(
                                             context.selectedSnapshot.connectedRealmId,
                                             context.commoditySnapshot.connectedRealmId,
+                                            itemId,
                                             craftingRows.map { it.recipeId },
                                             context.selectedSnapshot.date,
                                             context.commoditySnapshot.date,
@@ -636,6 +637,7 @@ class AuctionMarketItemDetailService(
             unitPrice = unitPrice,
             lineTotal = lineTotal,
             priced = unitPrice != null,
+            purchaseRank = purchaseRank,
         )
 
     private fun AuctionMarketItemCraftingAnalyticsDailyRow.toAnalyticsPoint(): AuctionMarketItemCraftingAnalyticsPoint =

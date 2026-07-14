@@ -470,11 +470,15 @@ internal object AuctionMarketItemDetailSql {
                 SELECT
                     ro.recipe_id,
                     ro.crafted_item_id,
+                    ro.sort_order,
                     COALESCE(NULLIF(ro.crafted_quantity, 0), 1) AS crafted_qty
                 FROM v_recipe_crafted_output ro
                 WHERE ro.crafted_item_id = ?
             ),
-            ${RecipeReagentPricingSql.recipeReagentLinesCte()},
+            ${RecipeReagentPricingSql.recipeReagentLinesCte(
+                rankExpr = RecipeReagentPricingSql.craftingTargetRankExpr(recipeOutputsCte = "v_recipe_crafted_output"),
+                priceCte = "reagent_price",
+            )},
             ${RecipeReagentPricingSql.recipeReagentCostCte(reagentUnitCte = "reagent_price")},
             output_sel_base AS (
                 SELECT ash.item_id, ash.price$hourSuffix AS output_unit_price, ash.bonus_key, ash.modifier_key, ash.pet_species_id
@@ -518,7 +522,11 @@ internal object AuctionMarketItemDetailSql {
             )
             SELECT
                 r.id AS recipe_id,
-                r.rank AS recipe_rank,
+                ${RecipeReagentPricingSql.craftingTargetRankExpr(
+                    recipeAlias = "r",
+                    recipeOutputAlias = "target_output",
+                    recipeOutputsCte = "v_recipe_crafted_output",
+                )} AS recipe_rank,
                 COALESCE(l.$localeColumnSuffix, l.en_gb, l.en_us, CAST(r.id AS CHAR)) AS recipe_name,
                 r.media_url AS recipe_media_url,
                 COALESCE(NULLIF(target_output.crafted_quantity, 0), 1) AS crafted_quantity,
@@ -541,7 +549,11 @@ internal object AuctionMarketItemDetailSql {
                 AND target_output.crafted_item_id = ?
             LEFT JOIN recipe_reagent_cost rrc
                 ON rrc.recipe_id = r.id
-                AND rrc.target_rank = COALESCE(NULLIF(r.rank, 0), 1)
+                AND rrc.target_rank = ${RecipeReagentPricingSql.craftingTargetRankExpr(
+                    recipeAlias = "r",
+                    recipeOutputAlias = "target_output",
+                    recipeOutputsCte = "v_recipe_crafted_output",
+                )}
             LEFT JOIN locale l ON l.id = r.name_id
             LEFT JOIN output_price op ON TRUE
             ORDER BY (r.id = ?) DESC, (profit IS NULL), profit DESC, r.id

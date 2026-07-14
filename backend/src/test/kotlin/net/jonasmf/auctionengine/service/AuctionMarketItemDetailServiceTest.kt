@@ -93,6 +93,7 @@ class AuctionMarketItemDetailServiceTest : IntegrationTestBase() {
         assertEquals(200L, rankTwo.reagentCost)
         assertEquals(19053, rankTwo.reagents.single().itemId)
         assertEquals("Goldthorn", rankTwo.reagents.single().name)
+        assertEquals(2, rankTwo.reagents.single().purchaseRank)
         assertEquals(200L, rankTwo.reagents.single().unitPrice)
     }
 

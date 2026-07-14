@@ -216,6 +216,7 @@ class AuctionMarketItemDetailRepository(
     fun loadCraftingReagents(
         connectedRealmId: Int,
         commodityConnectedRealmId: Int,
+        craftedItemId: Int,
         recipeIds: List<Int>,
         statDate: LocalDate,
         commodityStatDate: LocalDate,
@@ -303,7 +304,7 @@ class AuctionMarketItemDetailRepository(
                 LEFT JOIN reagent_sel rs ON rs.item_id = items.item_id
                 LEFT JOIN reagent_com rc ON rc.item_id = items.item_id
             ),
-            ${RecipeReagentPricingSql.recipeReagentLinesForRecipesCte("rr.recipe_id IN ($placeholders)")}
+            ${RecipeReagentPricingSql.recipeReagentLinesForCraftedItemCte("ro.recipe_id IN ($placeholders)")}
             SELECT
                 rl.recipe_id,
                 rl.pricing_item_id AS item_id,
@@ -311,7 +312,8 @@ class AuctionMarketItemDetailRepository(
                 i.media_url AS media_url,
                 rl.quantity,
                 rp.price AS unit_price,
-                CASE WHEN rp.price IS NULL THEN NULL ELSE rp.price * rl.quantity END AS line_total
+                CASE WHEN rp.price IS NULL THEN NULL ELSE rp.price * rl.quantity END AS line_total,
+                rl.purchase_rank
             FROM recipe_reagent_lines rl
             LEFT JOIN reagent_price rp ON rp.item_id = rl.pricing_item_id
             LEFT JOIN v_item i ON i.id = rl.pricing_item_id
@@ -331,6 +333,7 @@ class AuctionMarketItemDetailRepository(
                 *recipeIds.toTypedArray(),
                 *recipeIds.toTypedArray(),
                 *recipeIds.toTypedArray(),
+                craftedItemId,
                 *recipeIds.toTypedArray(),
             )
         return jdbcTemplate.query(sql, AuctionMarketItemDetailRowMappers.craftingReagentRowMapper, *params)

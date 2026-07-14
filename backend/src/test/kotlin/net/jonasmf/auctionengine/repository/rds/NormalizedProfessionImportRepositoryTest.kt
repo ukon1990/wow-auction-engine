@@ -4,7 +4,10 @@ import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperCharacter
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfession
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperQualityOutput
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperRecipe
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperReagent
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperReagentSlot
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentAllocation
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentEntry
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentNode
@@ -18,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
+import java.math.BigDecimal
 
 class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
     @Autowired
@@ -28,6 +32,152 @@ class NormalizedProfessionImportRepositoryTest : IntegrationTestBase() {
 
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
+
+    @Test
+    fun `save upserts addon recipe overrides for enchanting output and reagent ranks`() {
+        jdbcTemplate.update("INSERT INTO profession (id) VALUES (333)")
+        jdbcTemplate.update(
+            """
+            INSERT INTO skill_tier (id, maximum_skill_level, minimum_skill_level, profession_id)
+            VALUES (2909, 100, 1, 333)
+            """.trimIndent(),
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO profession_category (internal_id, skill_tier_id)
+            VALUES (9100, 2909)
+            """.trimIndent(),
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO locale (id, en_gb, en_us, de_de, source_type, source_key, source_field)
+            VALUES (9101, 'Enchant Chest', 'Enchant Chest', 'Verzaubern', 'RECIPE', '910001', 'name')
+            """.trimIndent(),
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO recipe (id, is_override, media_url, name_id, profession_category_id, crafted_item_id)
+            VALUES (910001, FALSE, 'https://media.example/enchant.png', 9101, 9100, NULL)
+            """.trimIndent(),
+        )
+
+        val recipe =
+            NormalizedAuctionHelperRecipe(
+                recipeId = 910_001,
+                name = "Enchant Chest - Test",
+                learned = true,
+                isEnchantingRecipe = true,
+                outputItemId = 224_501,
+                qualityOutputItemIds = emptyList(),
+                qualityThresholds = emptyList(),
+                reagentSlots =
+                    listOf(
+                        NormalizedAuctionHelperReagentSlot(
+                            slotIndex = 1,
+                            quantity = BigDecimal.ONE,
+                            reagents =
+                                listOf(
+                                    NormalizedAuctionHelperReagent(190_901, BigDecimal.ONE, quality = 1),
+                                    NormalizedAuctionHelperReagent(190_902, BigDecimal.ONE, quality = 2),
+                                ),
+                        ),
+                    ),
+                maxQualityRequiredReagents = emptyList(),
+            )
+        val profession = NormalizedAuctionHelperProfession(333, "Enchanting", listOf(recipe), skillLevel = 85)
+        val character = NormalizedAuctionHelperCharacter("eu-realm-enchanter", "Enchanter", "Realm", "EU", listOf(profession))
+
+        repository.save(payload().copy(characters = listOf(character)), 1, 1, "admin-subject")
+
+        assertEquals(224_501, jdbcTemplate.queryForObject("SELECT crafted_item_id FROM recipe WHERE id = 910001 AND is_override = TRUE", Int::class.java))
+        assertThat(
+            jdbcTemplate.queryForList(
+                "SELECT crafted_item_id FROM recipe_crafted_output WHERE recipe_id = 910001 AND is_override = TRUE",
+                Int::class.java,
+            ),
+        ).containsExactly(224_501)
+        assertThat(
+            jdbcTemplate.queryForList(
+                """
+                SELECT rr.item_id, rr.quantity, rrk.rank, rrk.item_id
+                FROM recipe_reagent rr
+                LEFT JOIN recipe_reagent_rank rrk ON rrk.recipe_reagent_id = rr.internal_id
+                WHERE rr.recipe_id = 910001 AND rr.is_override = TRUE
+                ORDER BY rrk.rank
+                """.trimIndent(),
+            ),
+        ).hasSize(2)
+        assertThat(
+            jdbcTemplate.queryForObject(
+                "SELECT override_note FROM recipe WHERE id = 910001 AND is_override = TRUE",
+                String::class.java,
+            ),
+        ).startsWith("Auction Helper import #")
+    }
+
+    @Test
+    fun `save prefers the most complete duplicate addon recipe export`() {
+        jdbcTemplate.update("INSERT INTO profession (id) VALUES (164)")
+        jdbcTemplate.update(
+            """
+            INSERT INTO skill_tier (id, maximum_skill_level, minimum_skill_level, profession_id)
+            VALUES (600, 375, 1, 164)
+            """.trimIndent(),
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO profession_category (internal_id, skill_tier_id)
+            VALUES (9101, 600)
+            """.trimIndent(),
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO locale (id, en_gb, en_us, de_de, source_type, source_key, source_field)
+            VALUES (9102, 'Test Sword', 'Test Sword', 'Testschwert', 'RECIPE', '910002', 'name')
+            """.trimIndent(),
+        )
+        jdbcTemplate.update(
+            """
+            INSERT INTO recipe (id, is_override, media_url, name_id, profession_category_id)
+            VALUES (910002, FALSE, 'https://media.example/sword.png', 9102, 9101)
+            """.trimIndent(),
+        )
+
+        val sparse =
+            NormalizedAuctionHelperRecipe(
+                recipeId = 910_002,
+                name = "Test Sword",
+                learned = true,
+                qualityOutputItemIds = emptyList(),
+                qualityThresholds = emptyList(),
+                reagentSlots = emptyList(),
+                maxQualityRequiredReagents = emptyList(),
+            )
+        val rich =
+            sparse.copy(
+                outputItemId = 225_001,
+                reagentSlots =
+                    listOf(
+                        NormalizedAuctionHelperReagentSlot(
+                            slotIndex = 1,
+                            quantity = BigDecimal.ONE,
+                            reagents = listOf(NormalizedAuctionHelperReagent(190_903, BigDecimal.ONE)),
+                        ),
+                    ),
+            )
+        val profession =
+            NormalizedAuctionHelperProfession(
+                164,
+                "Blacksmithing",
+                listOf(sparse, rich),
+                skillLevel = 50,
+            )
+        val character = NormalizedAuctionHelperCharacter("eu-realm-smith", "Smith", "Realm", "EU", listOf(profession))
+
+        repository.save(payload().copy(characters = listOf(character)), 1, 2, "admin-subject")
+
+        assertEquals(225_001, jdbcTemplate.queryForObject("SELECT crafted_item_id FROM recipe WHERE id = 910002 AND is_override = TRUE", Int::class.java))
+    }
 
     @Test
     fun `save binds generated enum values as database scalars`() {

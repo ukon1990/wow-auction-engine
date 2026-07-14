@@ -96,16 +96,36 @@ class BranchDatabaseConfigTest {
                 FROM `dbo`.connected_realm_update_history
                 GROUP BY connected_realm_id
             )
-              AND (
-                a.item_id IN (SELECT DISTINCT item_id FROM `dbo`.v_recipe_reagent)
-                OR a.item_id IN (SELECT DISTINCT crafted_item_id FROM `dbo`.v_recipe_crafted_output)
-              )
+              AND a.item_id IN (${recipePricingItemIdsSql("dbo")})
             """.trimIndent(),
             dataCopySql(
                 sourceDatabase = "dbo",
                 targetDatabase = "branch_feature",
                 tableName = "auction",
             ),
+        )
+    }
+
+    @Test
+    fun `recipe pricing item ids include reagent rank variants`() {
+        assertEquals(
+            """
+            SELECT DISTINCT item_id
+            FROM (
+                SELECT item_id
+                FROM `dbo`.v_recipe_reagent
+                UNION ALL
+                SELECT crafted_item_id AS item_id
+                FROM `dbo`.v_recipe_crafted_output
+                UNION ALL
+                SELECT rrk.item_id
+                FROM `dbo`.recipe_reagent_rank rrk
+                    INNER JOIN `dbo`.v_recipe_reagent rr
+                        ON rr.internal_id = rrk.recipe_reagent_id
+            ) recipe_items
+            WHERE item_id IS NOT NULL
+            """.trimIndent(),
+            recipePricingItemIdsSql("dbo"),
         )
     }
 

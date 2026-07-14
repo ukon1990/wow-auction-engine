@@ -24,5 +24,12 @@ properties:
         type: integer
         format: int64
         nullable: true
+    purchaseRank:
+        type: integer
+        format: int32
+        nullable: true
+        minimum: 1
+        maximum: 3
+        description: Quality rank of the reagent variant to purchase for this recipe output rank.
     priced:
         type: boolean

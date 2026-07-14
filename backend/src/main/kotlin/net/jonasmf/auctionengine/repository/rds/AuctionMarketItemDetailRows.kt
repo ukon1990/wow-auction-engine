@@ -76,6 +76,7 @@ data class AuctionMarketItemCraftingReagentRow(
     val quantity: Int,
     val unitPrice: Long?,
     val lineTotal: Long?,
+    val purchaseRank: Int?,
 )
 
 data class AuctionMarketItemCraftingAnalyticsDailyRow(

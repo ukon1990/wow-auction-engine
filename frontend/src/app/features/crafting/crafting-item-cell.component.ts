@@ -41,7 +41,12 @@ import { profileFitSummary } from './crafting-profile-fit';
           >{{ row().craftedItemName }}</span
         >
       </div>
-      <span class="truncate pl-11 text-xs text-outline">{{ row().variantSummary }}</span>
+      @if (recipeSubtext(); as recipeSubtext) {
+        <span class="truncate pl-11 text-xs text-outline">{{ recipeSubtext }}</span>
+      }
+      @if (row().variantSummary) {
+        <span class="truncate pl-11 text-xs text-outline">{{ row().variantSummary }}</span>
+      }
       @if (row().profileFit; as profileFit) {
         <span class="pl-11 text-xs text-primary-container">{{ profileFitText(profileFit) }}</span>
       }
@@ -106,4 +111,18 @@ export class CraftingItemCellComponent {
   }
 
   protected profileFitText = profileFitSummary;
+
+  protected recipeSubtext(): string | null {
+    const row = this.row();
+    const itemName = row.craftedItemName.trim();
+    const recipeName = row.recipeName.trim();
+    const rank = row.recipeRank;
+    const rankLabel =
+      rank == null ? null : $localize`:@@admin.recipes.form.rankNumber:Rank ${rank}:INTERPOLATION:`;
+
+    if (recipeName && recipeName !== itemName) {
+      return rankLabel ? `${recipeName} · ${rankLabel}` : recipeName;
+    }
+    return rankLabel;
+  }
 }

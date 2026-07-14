@@ -35,6 +35,10 @@ class BranchDatabaseCloner {
                         sourceDatabase = selectedDatabase.cloneSourceDatabase,
                         targetDatabase = selectedDatabase.name,
                     )
+                    connection.backfillMissingRecipeAuctionSnapshot(
+                        sourceDatabase = selectedDatabase.cloneSourceDatabase,
+                        targetDatabase = selectedDatabase.name,
+                    )
                     connection.commit()
                     logger.info(
                         "Using existing local dev database {} after {} ms",
@@ -273,10 +277,7 @@ internal fun boundedSnapshotCopySql(
                 FROM ${quoteIdentifier(sourceDatabase)}.connected_realm_update_history
                 GROUP BY connected_realm_id
             )
-              AND (
-                a.item_id IN (SELECT DISTINCT item_id FROM ${quoteIdentifier(sourceDatabase)}.v_recipe_reagent)
-                OR a.item_id IN (SELECT DISTINCT crafted_item_id FROM ${quoteIdentifier(sourceDatabase)}.v_recipe_crafted_output)
-              )
+              AND a.item_id IN (${recipePricingItemIdsSql(sourceDatabase)})
             """.trimIndent()
         else -> null
     }
@@ -301,6 +302,91 @@ private fun Connection.backfillAuctionSnapshotIfMissing(
         )?.let(::executeSql)
     }
 }
+
+private fun Connection.backfillMissingRecipeAuctionSnapshot(
+    sourceDatabase: String,
+    targetDatabase: String,
+) {
+    val logger = LoggerFactory.getLogger(BranchDatabaseCloner::class.java)
+    val insertedHistory =
+        createStatement().use { statement ->
+            statement.executeUpdate(
+                """
+                INSERT INTO ${qualifiedIdentifier(targetDatabase, "connected_realm_update_history")}
+                SELECT source_history.*
+                FROM ${qualifiedIdentifier(sourceDatabase, "connected_realm_update_history")} source_history
+                    INNER JOIN (
+                        SELECT connected_realm_id, MAX(id) AS latest_id
+                        FROM ${qualifiedIdentifier(sourceDatabase, "connected_realm_update_history")}
+                        GROUP BY connected_realm_id
+                    ) latest ON latest.latest_id = source_history.id
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM ${qualifiedIdentifier(targetDatabase, "connected_realm_update_history")} target_history
+                    WHERE target_history.id = source_history.id
+                )
+                """.trimIndent(),
+            )
+        }
+    val insertedAuctions =
+        createStatement().use { statement ->
+            statement.executeUpdate(
+                """
+                INSERT INTO ${qualifiedIdentifier(targetDatabase, "auction")}
+                SELECT source_auction.*
+                FROM ${qualifiedIdentifier(sourceDatabase, "auction")} source_auction
+                    INNER JOIN (
+                        SELECT connected_realm_id, MAX(id) AS latest_id
+                        FROM ${qualifiedIdentifier(sourceDatabase, "connected_realm_update_history")}
+                        GROUP BY connected_realm_id
+                    ) latest
+                        ON latest.latest_id = source_auction.update_history_id
+                        AND latest.connected_realm_id = source_auction.connected_realm_id
+                WHERE source_auction.item_id IN (${recipePricingItemIdsSql(targetDatabase)})
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM ${qualifiedIdentifier(targetDatabase, "auction")} target_auction
+                          INNER JOIN (
+                              SELECT connected_realm_id, MAX(id) AS latest_id
+                              FROM ${qualifiedIdentifier(targetDatabase, "connected_realm_update_history")}
+                              GROUP BY connected_realm_id
+                          ) target_latest
+                              ON target_latest.latest_id = target_auction.update_history_id
+                              AND target_latest.connected_realm_id = target_auction.connected_realm_id
+                      WHERE target_auction.item_id = source_auction.item_id
+                        AND target_auction.connected_realm_id = source_auction.connected_realm_id
+                  )
+                """.trimIndent(),
+            )
+        }
+    if (insertedHistory > 0 || insertedAuctions > 0) {
+        logger.info(
+            "Backfilled {} connected realm snapshots and {} auction rows into {} from {}",
+            insertedHistory,
+            insertedAuctions,
+            targetDatabase,
+            sourceDatabase,
+        )
+    }
+}
+
+internal fun recipePricingItemIdsSql(database: String): String =
+    """
+    SELECT DISTINCT item_id
+    FROM (
+        SELECT item_id
+        FROM ${quoteIdentifier(database)}.v_recipe_reagent
+        UNION ALL
+        SELECT crafted_item_id AS item_id
+        FROM ${quoteIdentifier(database)}.v_recipe_crafted_output
+        UNION ALL
+        SELECT rrk.item_id
+        FROM ${quoteIdentifier(database)}.recipe_reagent_rank rrk
+            INNER JOIN ${quoteIdentifier(database)}.v_recipe_reagent rr
+                ON rr.internal_id = rrk.recipe_reagent_id
+    ) recipe_items
+    WHERE item_id IS NOT NULL
+    """.trimIndent()
 
 private fun Connection.tableRowCount(
     database: String,

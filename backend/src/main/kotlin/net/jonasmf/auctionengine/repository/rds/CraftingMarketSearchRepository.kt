@@ -255,10 +255,11 @@ class CraftingMarketSearchRepository(
                 SELECT
                     ro.recipe_id,
                     ro.crafted_item_id,
+                    ro.sort_order,
                     COALESCE(NULLIF(ro.crafted_quantity, 0), 1) AS crafted_qty
                 FROM v_recipe_crafted_output ro
             ),
-            ${RecipeReagentPricingSql.recipeReagentLinesCte()},
+            ${RecipeReagentPricingSql.recipeReagentLinesCte(rankExpr = RecipeReagentPricingSql.craftingTargetRankExpr(), priceCte = "reagent_unit")},
             ${RecipeReagentPricingSql.recipeReagentCostCte()},
             realm_outputs AS (
                 SELECT
@@ -385,7 +386,7 @@ class CraftingMarketSearchRepository(
                     ro.crafted_item_id,
                     ro.crafted_qty AS crafted_quantity,
                     reci.media_url AS recipe_media_url,
-                    reci.rank AS recipe_rank,
+                    ${RecipeReagentPricingSql.craftingTargetRankExpr(recipeAlias = "reci")} AS recipe_rank,
                     COALESCE(reci_l.$loc, reci_l.en_gb, reci_l.en_us) AS recipe_name,
                     p.id AS profession_id,
                     COALESCE(p_l.$loc, p_l.en_gb, p_l.en_us) AS profession_name,
@@ -461,7 +462,7 @@ class CraftingMarketSearchRepository(
                         AND rd.crafted_item_id = cc.crafted_item_id
                     LEFT JOIN recipe_reagent_cost rrc
                         ON rrc.recipe_id = cc.recipe_id
-                        AND rrc.target_rank = COALESCE(NULLIF(rd.recipe_rank, 0), 1)
+                        AND rrc.target_rank = rd.recipe_rank
                     LEFT JOIN crafted_prev cp
                         ON cp.recipe_id = cc.recipe_id
                         AND cp.crafted_item_id <=> cc.crafted_item_id

@@ -106,6 +106,7 @@ internal object AuctionMarketItemDetailRowMappers {
                 quantity = rs.getInt("quantity"),
                 unitPrice = rs.getNullableLong("unit_price"),
                 lineTotal = rs.getNullableLong("line_total"),
+                purchaseRank = rs.getNullableInt("purchase_rank"),
             )
         }
 

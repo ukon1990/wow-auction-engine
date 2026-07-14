@@ -28,7 +28,7 @@ describe('CraftingBrowserPage', () => {
         craftedItemName: 'Healing Potion',
         recipeName: 'Healing Potion',
         professionName: 'Alchemy',
-        variantSummary: 'Default',
+        variantSummary: '',
         listingKey: { bonusKey: '', modifierKey: '', petSpeciesId: 0 },
         quality: 'rare' as const,
         outputPriceCopper: 100,
@@ -82,9 +82,10 @@ describe('CraftingBrowserPage', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(compiled.textContent).toContain('Crafting');
-    expect(compiled.textContent).toContain('Output');
+    expect(compiled.textContent).toContain('Item');
     expect(compiled.textContent).toContain('Healing Potion');
     expect(compiled.textContent).toContain('Alchemy');
+    expect(compiled.querySelector('[role="columnheader"]')?.textContent).not.toContain('Recipe');
     expect(compiled.textContent).toContain('p25');
     expect(compiled.textContent).toContain('p75');
   });
@@ -119,7 +120,6 @@ describe('CraftingBrowserPage', () => {
     expect(compiled.textContent).toContain('Buyout');
     expect(compiled.textContent).toContain('Profit');
     expect(compiled.textContent).toContain('Mat. cost');
-    expect(compiled.textContent).toContain('Recipe');
     expect(compiled.textContent).toContain('Profession');
     expect(compiled.textContent).toContain('Alchemy');
   });
