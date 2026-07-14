@@ -17,16 +17,21 @@ CREATE TABLE profession_skill_tree (
     id BIGINT NOT NULL AUTO_INCREMENT,
     expansion_id INT NOT NULL,
     profession_id INT NOT NULL,
+    skill_line_id INT DEFAULT NULL,
+    config_id BIGINT DEFAULT NULL,
     external_tree_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     description TEXT DEFAULT NULL,
     import_id BIGINT NOT NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_profession_skill_tree_expansion_profession_external (expansion_id, profession_id, external_tree_id),
+    UNIQUE KEY uk_profession_skill_tree_profession_config (profession_id, config_id),
     KEY idx_profession_skill_tree_profession_expansion (profession_id, expansion_id),
+    KEY idx_profession_skill_tree_expansion (expansion_id),
+    KEY idx_profession_skill_tree_skill_line (skill_line_id),
     CONSTRAINT fk_profession_skill_tree_expansion FOREIGN KEY (expansion_id) REFERENCES expansion (id),
     CONSTRAINT fk_profession_skill_tree_profession FOREIGN KEY (profession_id) REFERENCES profession (id),
-    CONSTRAINT fk_profession_skill_tree_import FOREIGN KEY (import_id) REFERENCES profession_tree_import (id)
+    CONSTRAINT fk_profession_skill_tree_import FOREIGN KEY (import_id) REFERENCES profession_tree_import (id),
+    CONSTRAINT fk_profession_skill_tree_skill_line FOREIGN KEY (skill_line_id) REFERENCES skill_tier (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE profession_skill_tree_tab (
@@ -47,7 +52,7 @@ CREATE TABLE profession_skill_tree_node (
     tree_id BIGINT NOT NULL,
     tab_id BIGINT DEFAULT NULL,
     external_node_id INT NOT NULL,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) DEFAULT NULL,
     description TEXT DEFAULT NULL,
     max_ranks INT NOT NULL,
     required_rank INT NOT NULL DEFAULT 0,
@@ -57,7 +62,7 @@ CREATE TABLE profession_skill_tree_node (
     KEY idx_profession_skill_tree_node_tab_order (tab_id, display_order),
     CONSTRAINT fk_profession_skill_tree_node_tree FOREIGN KEY (tree_id) REFERENCES profession_skill_tree (id) ON DELETE CASCADE,
     CONSTRAINT fk_profession_skill_tree_node_tab FOREIGN KEY (tab_id) REFERENCES profession_skill_tree_tab (id) ON DELETE SET NULL,
-    CONSTRAINT chk_profession_skill_tree_node_ranks CHECK (max_ranks > 0 AND required_rank >= 0 AND required_rank <= max_ranks)
+    CONSTRAINT chk_profession_skill_tree_node_ranks CHECK (max_ranks > 0 AND required_rank >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE profession_skill_tree_node_parent (
@@ -75,7 +80,7 @@ CREATE TABLE profession_skill_tree_entry (
     id BIGINT NOT NULL AUTO_INCREMENT,
     node_id BIGINT NOT NULL,
     external_entry_id INT NOT NULL,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) DEFAULT NULL,
     description TEXT DEFAULT NULL,
     rank_limit INT NOT NULL,
     display_order INT NOT NULL,
@@ -108,6 +113,7 @@ CREATE TABLE user_character_profession_profile (
     skill_level INT DEFAULT NULL,
     tree_id BIGINT DEFAULT NULL,
     source_import_id BIGINT DEFAULT NULL,
+    blizzard_synced_at TIMESTAMP NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
