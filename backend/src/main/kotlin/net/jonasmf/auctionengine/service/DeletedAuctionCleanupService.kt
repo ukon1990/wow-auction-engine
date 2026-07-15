@@ -117,7 +117,7 @@ class DeletedAuctionCleanupService(
         try {
             try {
                 val deletedRows = deleteAction(connectedRealmId, cutoff)
-                updateMarkerAfterSuccess(connectedRealmId, cutoff, updateMarker)
+                updateMarkerAfterSuccess(connectedRealmId, updateMarker)
                 logger.info(
                     "Completed {} cleanup for connected realm {}. Deleted rows={}, cutoff={}",
                     type,
@@ -149,12 +149,14 @@ class DeletedAuctionCleanupService(
             null
         }
 
+    /**
+     * Updating the last updated time to now
+     */
     private fun updateMarkerAfterSuccess(
         connectedRealmId: Int,
-        cutoff: Instant,
         updateMarker: (Int, Instant) -> Int,
     ) {
-        updateMarker(connectedRealmId, cutoff)
+        updateMarker(connectedRealmId, Instant.now())
     }
 
     /**
