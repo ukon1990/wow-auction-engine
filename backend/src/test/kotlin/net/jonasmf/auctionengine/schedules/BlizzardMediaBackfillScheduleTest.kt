@@ -32,7 +32,7 @@ class BlizzardMediaBackfillScheduleTest {
         val started = CountDownLatch(1)
         val release = CountDownLatch(1)
         val executor = Executors.newSingleThreadExecutor()
-        val listAppender = attachAppender()
+        val listAppender = attachAppender(BackgroundWorkLauncher::class.java)
 
         every { service.backfillConfiguredStaticDataRegion() } answers {
             started.countDown()
@@ -41,14 +41,15 @@ class BlizzardMediaBackfillScheduleTest {
         }
 
         try {
-            val schedule = BlizzardMediaBackfillSchedule(properties, service, true)
+            val schedule =
+                BlizzardMediaBackfillSchedule(properties, service, immediateBackgroundWorkLauncher(), true)
             val future = executor.submit<Unit> { schedule.backfillMedia() }
             assertTrue(started.await(5, TimeUnit.SECONDS))
 
             schedule.backfillMedia()
 
             val messages = listAppender.list.map(ILoggingEvent::getFormattedMessage)
-            assertTrue(messages.any { it.contains("Skipping manual media backfill because backfill already running.") })
+            assertTrue(messages.any { it.contains("Skipping blizzard-media-backfill because a run is already in progress.") })
             verify(exactly = 1) { service.backfillConfiguredStaticDataRegion() }
 
             release.countDown()
@@ -56,7 +57,7 @@ class BlizzardMediaBackfillScheduleTest {
         } finally {
             release.countDown()
             executor.shutdownNow()
-            detachAppender(listAppender)
+            detachAppender(listAppender, BackgroundWorkLauncher::class.java)
         }
     }
 
@@ -64,7 +65,8 @@ class BlizzardMediaBackfillScheduleTest {
     fun `scheduled backfill skips when static data sync is disabled`() {
         val service = mockk<BlizzardMediaBackfillService>()
         val listAppender = attachAppender()
-        val schedule = BlizzardMediaBackfillSchedule(properties, service, false)
+        val schedule =
+            BlizzardMediaBackfillSchedule(properties, service, immediateBackgroundWorkLauncher(), false)
 
         try {
             schedule.backfillMediaOnSchedule()
@@ -92,16 +94,21 @@ class BlizzardMediaBackfillScheduleTest {
             professionUpdates = 4,
         )
 
-    private fun attachAppender(): ListAppender<ILoggingEvent> {
-        val logger = LoggerFactory.getLogger(BlizzardMediaBackfillSchedule::class.java) as Logger
+    private fun attachAppender(
+        loggerClass: Class<*> = BlizzardMediaBackfillSchedule::class.java,
+    ): ListAppender<ILoggingEvent> {
+        val logger = LoggerFactory.getLogger(loggerClass) as Logger
         return ListAppender<ILoggingEvent>().also {
             it.start()
             logger.addAppender(it)
         }
     }
 
-    private fun detachAppender(appender: ListAppender<ILoggingEvent>) {
-        val logger = LoggerFactory.getLogger(BlizzardMediaBackfillSchedule::class.java) as Logger
+    private fun detachAppender(
+        appender: ListAppender<ILoggingEvent>,
+        loggerClass: Class<*> = BlizzardMediaBackfillSchedule::class.java,
+    ) {
+        val logger = LoggerFactory.getLogger(loggerClass) as Logger
         logger.detachAppender(appender)
         appender.stop()
     }

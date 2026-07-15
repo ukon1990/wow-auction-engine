@@ -33,7 +33,7 @@ class ItemScheduleTest {
         val started = CountDownLatch(1)
         val release = CountDownLatch(1)
         val executor = Executors.newSingleThreadExecutor()
-        val listAppender = attachAppender()
+        val listAppender = attachAppender(BackgroundWorkLauncher::class.java)
 
         every { service.syncConfiguredStaticDataRegion() } answers {
             started.countDown()
@@ -42,14 +42,14 @@ class ItemScheduleTest {
         }
 
         try {
-            val schedule = ItemSchedule(properties, service, true)
+            val schedule = ItemSchedule(properties, service, immediateBackgroundWorkLauncher(), true)
             val future = executor.submit<Unit> { schedule.syncItems() }
             assertTrue(started.await(5, TimeUnit.SECONDS))
 
             schedule.syncItems()
 
             val messages = listAppender.list.map(ILoggingEvent::getFormattedMessage)
-            assertTrue(messages.any { it.contains("Skipping manual item sync because sync already running.") })
+            assertTrue(messages.any { it.contains("Skipping item-sync because a run is already in progress.") })
             verify(exactly = 1) { service.syncConfiguredStaticDataRegion() }
 
             release.countDown()
@@ -57,7 +57,7 @@ class ItemScheduleTest {
         } finally {
             release.countDown()
             executor.shutdownNow()
-            detachAppender(listAppender)
+            detachAppender(listAppender, BackgroundWorkLauncher::class.java)
         }
     }
 
@@ -65,7 +65,7 @@ class ItemScheduleTest {
     fun `scheduled sync skips when static data sync is disabled`() {
         val service = mockk<ItemSyncService>()
         val listAppender = attachAppender()
-        val schedule = ItemSchedule(properties, service, false)
+        val schedule = ItemSchedule(properties, service, immediateBackgroundWorkLauncher(), false)
 
         try {
             schedule.syncItemsOnSchedule()
@@ -113,16 +113,21 @@ class ItemScheduleTest {
             durationMs = 1,
         )
 
-    private fun attachAppender(): ListAppender<ILoggingEvent> {
-        val logger = LoggerFactory.getLogger(ItemSchedule::class.java) as Logger
+    private fun attachAppender(
+        loggerClass: Class<*> = ItemSchedule::class.java,
+    ): ListAppender<ILoggingEvent> {
+        val logger = LoggerFactory.getLogger(loggerClass) as Logger
         return ListAppender<ILoggingEvent>().also {
             it.start()
             logger.addAppender(it)
         }
     }
 
-    private fun detachAppender(appender: ListAppender<ILoggingEvent>) {
-        val logger = LoggerFactory.getLogger(ItemSchedule::class.java) as Logger
+    private fun detachAppender(
+        appender: ListAppender<ILoggingEvent>,
+        loggerClass: Class<*> = ItemSchedule::class.java,
+    ) {
+        val logger = LoggerFactory.getLogger(loggerClass) as Logger
         logger.detachAppender(appender)
         appender.stop()
     }

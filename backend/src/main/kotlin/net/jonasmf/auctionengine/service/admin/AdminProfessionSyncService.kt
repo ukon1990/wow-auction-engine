@@ -8,16 +8,20 @@ import net.jonasmf.auctionengine.service.ProfessionRecipeSyncResult
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
 
 @Service
 class AdminProfessionSyncService(
     private val adminJobRepository: AdminJobRepository,
     private val professionRecipeSyncService: ProfessionRecipeSyncService,
     private val professionRecipeSyncGuard: ProfessionRecipeSyncGuard,
+    @Qualifier("backgroundWorkExecutor")
+    private val backgroundWorkExecutor: Executor,
 ) {
     private val log = LoggerFactory.getLogger(AdminProfessionSyncService::class.java)
 
@@ -49,11 +53,11 @@ class AdminProfessionSyncService(
                 )
             log.info("Accepted profession/recipe sync job id={} requestedBy={}", job.id, requestedBy)
             val mdcSnapshot = MDC.getCopyOfContextMap()
-            CompletableFuture.runAsync {
+            CompletableFuture.runAsync({
                 withJobMdc(mdcSnapshot, job.id) {
                     runSyncJob(job.id, syncLock)
                 }
-            }
+            }, backgroundWorkExecutor)
             return job
         } catch (error: Throwable) {
             job?.let { adminJobRepository.failJob(it.id, "Profession/recipe sync could not be started") }

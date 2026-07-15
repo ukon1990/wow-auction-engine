@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class BlizzardMediaBackfillSchedule(
     private val properties: BlizzardApiProperties,
     private val blizzardMediaBackfillService: BlizzardMediaBackfillService,
+    private val backgroundWorkLauncher: BackgroundWorkLauncher,
     @Value("\${app.scheduling.static-data-sync-enabled:true}")
     private val staticDataSyncEnabled: Boolean,
 ) {
@@ -52,12 +53,7 @@ class BlizzardMediaBackfillSchedule(
     }
 
     private fun runBackfill(trigger: String) {
-        if (!backfillRunning.compareAndSet(false, true)) {
-            log.info("Skipping {} media backfill because backfill already running.", trigger)
-            return
-        }
-
-        try {
+        backgroundWorkLauncher.launchSingleFlight(backfillRunning, "blizzard-media-backfill") {
             log.info(
                 "Starting {} media backfill for region {} (configured regions={})",
                 trigger,
@@ -75,8 +71,6 @@ class BlizzardMediaBackfillSchedule(
                 result.professionUpdates,
                 result.totalUpdates,
             )
-        } finally {
-            backfillRunning.set(false)
         }
     }
 }

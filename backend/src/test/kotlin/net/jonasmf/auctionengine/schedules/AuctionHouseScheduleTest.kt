@@ -56,6 +56,7 @@ class AuctionHouseScheduleTest {
                     blizzardAuctionService,
                     auctionHouseService,
                     RuntimeHealthTracker(Duration.ofMinutes(20)),
+                    immediateBackgroundWorkLauncher(),
                 )
             val future = executor.submit<Unit> { schedule.checkForUpdates() }
             assertTrue(started.await(5, TimeUnit.SECONDS))
@@ -66,7 +67,7 @@ class AuctionHouseScheduleTest {
             assertTrue(
                 messages.any {
                     it.contains(
-                        "Skipping scheduled auction house update check because an update batch is already running.",
+                        "Skipping auction-house-update because a run is already in progress.",
                     )
                 },
             )
@@ -98,6 +99,7 @@ class AuctionHouseScheduleTest {
                 blizzardAuctionService,
                 auctionHouseService,
                 RuntimeHealthTracker(Duration.ofMinutes(20)),
+                immediateBackgroundWorkLauncher(),
             )
 
         schedule.checkForUpdates()
@@ -123,6 +125,7 @@ class AuctionHouseScheduleTest {
                 blizzardAuctionService,
                 auctionHouseService,
                 RuntimeHealthTracker(Duration.ofMinutes(20)),
+                immediateBackgroundWorkLauncher(),
             )
 
         runCatching { schedule.checkForUpdates() }
@@ -132,7 +135,7 @@ class AuctionHouseScheduleTest {
     }
 
     private fun attachAppender(): ListAppender<ILoggingEvent> {
-        val logger = LoggerFactory.getLogger(AuctionHouseSchedule::class.java) as Logger
+        val logger = LoggerFactory.getLogger(BackgroundWorkLauncher::class.java) as Logger
         return ListAppender<ILoggingEvent>().also {
             it.start()
             logger.addAppender(it)
@@ -140,7 +143,7 @@ class AuctionHouseScheduleTest {
     }
 
     private fun detachAppender(appender: ListAppender<ILoggingEvent>) {
-        val logger = LoggerFactory.getLogger(AuctionHouseSchedule::class.java) as Logger
+        val logger = LoggerFactory.getLogger(BackgroundWorkLauncher::class.java) as Logger
         logger.detachAppender(appender)
         appender.stop()
     }

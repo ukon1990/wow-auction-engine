@@ -61,7 +61,12 @@ class AuctionStatsDailyScheduleTest {
         every { auctionHouseService.updateLastDailyPriceUpdate(1, capture(europeMarker)) } returns 1
         every { auctionHouseService.updateLastDailyPriceUpdate(2, capture(taiwanMarker)) } returns 1
 
-        AuctionStatsDailySchedule(properties, auctionHouseService, auctionStatsDailyService)
+        AuctionStatsDailySchedule(
+            properties,
+            auctionHouseService,
+            auctionStatsDailyService,
+            immediateBackgroundWorkLauncher(),
+        )
             .updateDailyPriceStatistics()
 
         verify(exactly = 1) {
@@ -112,7 +117,13 @@ class AuctionStatsDailyScheduleTest {
         } andThen AuctionStatsDailyUpdateResult(listOf(LocalDate.of(2026, 1, 3)), updatedRows = 1)
         every { auctionHouseService.updateLastDailyPriceUpdate(any(), any()) } returns 1
 
-        val schedule = AuctionStatsDailySchedule(properties, auctionHouseService, auctionStatsDailyService)
+        val schedule =
+            AuctionStatsDailySchedule(
+                properties,
+                auctionHouseService,
+                auctionStatsDailyService,
+                immediateBackgroundWorkLauncher(),
+            )
         try {
             val future = executor.submit<Unit> { schedule.updateDailyPriceStatistics() }
             started.await(5, TimeUnit.SECONDS)
@@ -142,7 +153,12 @@ class AuctionStatsDailyScheduleTest {
         every { auctionHouseService.findAllByRegion(Region.Taiwan) } returns emptyList()
         every { auctionStatsDailyService.updateForDate(any(), any(), any()) } throws RuntimeException("boom")
 
-        AuctionStatsDailySchedule(properties, auctionHouseService, auctionStatsDailyService)
+        AuctionStatsDailySchedule(
+            properties,
+            auctionHouseService,
+            auctionStatsDailyService,
+            immediateBackgroundWorkLauncher(),
+        )
             .updateDailyPriceStatistics()
 
         verify(exactly = 0) { auctionHouseService.updateLastDailyPriceUpdate(any(), any()) }

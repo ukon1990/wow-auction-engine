@@ -22,7 +22,8 @@ class ConnectedRealmScheduleTest {
         every { authService.ensureToken() } returns Mono.just("token")
         every { connectedRealmService.updateRealms() } returns Unit
 
-        ConnectedRealmSchedule(authService, connectedRealmService).run(DefaultApplicationArguments())
+        ConnectedRealmSchedule(authService, connectedRealmService, mockk(relaxed = true))
+            .run(DefaultApplicationArguments())
 
         verify(exactly = 1) { authService.ensureToken() }
         verify(exactly = 1) { connectedRealmService.updateRealms() }
@@ -36,7 +37,8 @@ class ConnectedRealmScheduleTest {
         every { authService.ensureToken() } throws RuntimeException("failure")
 
         try {
-            ConnectedRealmSchedule(authService, connectedRealmService).run(DefaultApplicationArguments())
+            ConnectedRealmSchedule(authService, connectedRealmService, mockk(relaxed = true))
+                .run(DefaultApplicationArguments())
 
             val messages = listAppender.list.map(ILoggingEvent::getFormattedMessage)
             Assertions.assertTrue(

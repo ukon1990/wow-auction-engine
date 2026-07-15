@@ -33,7 +33,7 @@ class ProfessionRecipeScheduleTest {
         val started = CountDownLatch(1)
         val release = CountDownLatch(1)
         val executor = Executors.newSingleThreadExecutor()
-        val listAppender = attachAppender()
+        val listAppender = attachAppender(BackgroundWorkLauncher::class.java)
 
         every { service.syncConfiguredStaticDataRegion(any()) } answers {
             started.countDown()
@@ -42,7 +42,8 @@ class ProfessionRecipeScheduleTest {
         }
 
         try {
-            val schedule = ProfessionRecipeSchedule(properties, service, createGuard(), true)
+            val schedule =
+                ProfessionRecipeSchedule(properties, service, createGuard(), immediateBackgroundWorkLauncher(), true)
             val future = executor.submit<Unit> { schedule.syncProfessionRecipes() }
             assertTrue(started.await(5, TimeUnit.SECONDS))
 
@@ -50,7 +51,7 @@ class ProfessionRecipeScheduleTest {
 
             val messages = listAppender.list.map(ILoggingEvent::getFormattedMessage)
             assertTrue(
-                messages.any { it.contains("Skipping manual profession/recipe sync because sync already running.") },
+                messages.any { it.contains("Skipping profession-recipe-sync because a run is already in progress.") },
             )
             verify(exactly = 1) { service.syncConfiguredStaticDataRegion(any()) }
 
@@ -59,7 +60,7 @@ class ProfessionRecipeScheduleTest {
         } finally {
             release.countDown()
             executor.shutdownNow()
-            detachAppender(listAppender)
+            detachAppender(listAppender, BackgroundWorkLauncher::class.java)
         }
     }
 
@@ -68,7 +69,8 @@ class ProfessionRecipeScheduleTest {
         val service = mockk<ProfessionRecipeSyncService>()
         every { service.syncConfiguredStaticDataRegion(any()) } returns mockk<ProfessionRecipeSyncResult>(relaxed = true)
 
-        val schedule = ProfessionRecipeSchedule(properties, service, createGuard(), true)
+        val schedule =
+            ProfessionRecipeSchedule(properties, service, createGuard(), immediateBackgroundWorkLauncher(), true)
 
         schedule.syncProfessionRecipes()
         schedule.syncProfessionRecipes()
@@ -82,7 +84,8 @@ class ProfessionRecipeScheduleTest {
         every { service.syncConfiguredStaticDataRegion(any()) } throws RuntimeException("boom") andThen
             mockk<ProfessionRecipeSyncResult>(relaxed = true)
 
-        val schedule = ProfessionRecipeSchedule(properties, service, createGuard(), true)
+        val schedule =
+            ProfessionRecipeSchedule(properties, service, createGuard(), immediateBackgroundWorkLauncher(), true)
 
         runCatching { schedule.syncProfessionRecipes() }
         schedule.syncProfessionRecipes()
@@ -94,7 +97,8 @@ class ProfessionRecipeScheduleTest {
     fun `scheduled sync skips when static data sync is disabled`() {
         val service = mockk<ProfessionRecipeSyncService>()
         val listAppender = attachAppender()
-        val schedule = ProfessionRecipeSchedule(properties, service, createGuard(), false)
+        val schedule =
+            ProfessionRecipeSchedule(properties, service, createGuard(), immediateBackgroundWorkLauncher(), false)
 
         try {
             schedule.syncProfessionRecipesOnSchedule()
@@ -113,16 +117,21 @@ class ProfessionRecipeScheduleTest {
         }
     }
 
-    private fun attachAppender(): ListAppender<ILoggingEvent> {
-        val logger = LoggerFactory.getLogger(ProfessionRecipeSchedule::class.java) as Logger
+    private fun attachAppender(
+        loggerClass: Class<*> = ProfessionRecipeSchedule::class.java,
+    ): ListAppender<ILoggingEvent> {
+        val logger = LoggerFactory.getLogger(loggerClass) as Logger
         return ListAppender<ILoggingEvent>().also {
             it.start()
             logger.addAppender(it)
         }
     }
 
-    private fun detachAppender(appender: ListAppender<ILoggingEvent>) {
-        val logger = LoggerFactory.getLogger(ProfessionRecipeSchedule::class.java) as Logger
+    private fun detachAppender(
+        appender: ListAppender<ILoggingEvent>,
+        loggerClass: Class<*> = ProfessionRecipeSchedule::class.java,
+    ) {
+        val logger = LoggerFactory.getLogger(loggerClass) as Logger
         logger.detachAppender(appender)
         appender.stop()
     }

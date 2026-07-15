@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class TsmRegionSyncSchedule(
     private val properties: BlizzardApiProperties,
     private val tsmRegionSyncService: TsmRegionSyncService,
+    private val backgroundWorkLauncher: BackgroundWorkLauncher,
     @Value("\${app.scheduling.static-data-sync-enabled:true}")
     private val staticDataSyncEnabled: Boolean,
 ) {
@@ -52,12 +53,7 @@ class TsmRegionSyncSchedule(
     }
 
     private fun runSync(trigger: String) {
-        if (!syncRunning.compareAndSet(false, true)) {
-            log.info("Skipping {} TSM region sync because sync already running.", trigger)
-            return
-        }
-
-        try {
+        backgroundWorkLauncher.launchSingleFlight(syncRunning, "tsm-region-sync") {
             log.info(
                 "Starting {} TSM region sync for configured regions={}",
                 trigger,
@@ -69,8 +65,6 @@ class TsmRegionSyncSchedule(
                 trigger,
                 properties.configuredRegions,
             )
-        } finally {
-            syncRunning.set(false)
         }
     }
 }

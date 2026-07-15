@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class ItemSchedule(
     private val properties: BlizzardApiProperties,
     private val itemSyncService: ItemSyncService,
+    private val backgroundWorkLauncher: BackgroundWorkLauncher,
     @Value("\${app.scheduling.static-data-sync-enabled:true}")
     private val staticDataSyncEnabled: Boolean,
 ) {
@@ -52,12 +53,7 @@ class ItemSchedule(
     }
 
     private fun runSync(trigger: String) {
-        if (!syncRunning.compareAndSet(false, true)) {
-            log.info("Skipping {} item sync because sync already running.", trigger)
-            return
-        }
-
-        try {
+        backgroundWorkLauncher.launchSingleFlight(syncRunning, "item-sync") {
             log.info(
                 "Starting {} item sync for region {} (configured regions={})",
                 trigger,
@@ -71,8 +67,6 @@ class ItemSchedule(
                 properties.staticDataRegion,
                 properties.configuredRegions,
             )
-        } finally {
-            syncRunning.set(false)
         }
     }
 }
