@@ -19,7 +19,6 @@ class DeletedAuctionCleanupRepository(
                 SELECT connected_id
                 FROM auction_house
                 WHERE last_history_delete_event IS NULL OR last_history_delete_event < DATE_ADD(NOW(), INTERVAL -1 DAY)
-                GROUP BY last_history_delete_event
                 ORDER BY last_history_delete_event
                 """.trimIndent(),
             )
@@ -31,7 +30,6 @@ class DeletedAuctionCleanupRepository(
                 SELECT connected_id
                 FROM auction_house
                 WHERE last_history_delete_event_daily IS NULL OR last_history_delete_event_daily < DATE_ADD(NOW(), INTERVAL -1 DAY)
-                GROUP BY last_history_delete_event_daily
                 ORDER BY last_history_delete_event_daily
                 """.trimIndent(),
             )
@@ -43,7 +41,6 @@ class DeletedAuctionCleanupRepository(
                 SELECT connected_id
                 FROM auction_house
                 WHERE last_auction_price_delete_event IS NULL OR last_auction_price_delete_event < DATE_ADD(NOW(), INTERVAL -1 DAY)
-                GROUP BY last_auction_price_delete_event
                 ORDER BY last_auction_price_delete_event
                 """.trimIndent(),
             )

@@ -80,25 +80,28 @@ class DeletedAuctionCleanupService(
             return emptyList()
         }
         logger.info("Starting to cleanup for {} connected realms that needs cleanup", connectedRealmIds.size)
+        var numberOfDeletedRows = 0
         for (connectedRealmId in connectedRealmIds) {
             val result = deleteOldHistoryForConnectedRealm(type, connectedRealmId, cutoff, deleteAction, updateMarker)
             if (result != null && result.deletedRows > 0) {
                 deletionsPerConnectedRealm.add(result)
+                numberOfDeletedRows += result.deletedRows
             }
         }
 
         logger.info(
-            "Cleanup completed in {} ms for {} connected realms",
+            "Cleanup completed in {} ms for {} connected realms. {} rows deleted in total",
             Instant.now().toEpochMilli() - startTime,
             deletionsPerConnectedRealm.size,
+            numberOfDeletedRows,
         )
         /*
          * We only want to optimize the table, if there has been done deletions
          * This allows me to not have to keep a value stored in memory or in the database for this.
          * And Ideally, I'll get most realms at the same time, so we should be good here.
          */
-        if (!deletionsPerConnectedRealm.isEmpty()) {
-            logger.info("Found {} deleted auction cleanup", connectedRealmIds.size)
+        if (numberOfDeletedRows > 0) {
+            logger.info("Deleted {} rows during the cleanup", numberOfDeletedRows)
             optimizeTable(type)
         }
         return deletionsPerConnectedRealm
