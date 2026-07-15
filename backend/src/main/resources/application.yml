@@ -44,6 +44,8 @@ app:
     enabled: true
     static-data-sync-enabled: ${WAE_STATIC_DATA_SYNC_ENABLED:true}
     initial-delay: PT30S
+    daily-price-stats-delay: PT5M
+    
     item-sync-cron: "0 0 * * * *"
     item-sync-zone: GMT+1
     item-sync-startup-delay: PT30S
@@ -59,7 +61,9 @@ app:
     profession-recipe-sync-startup-delay: PT30S
     profession-recipe-sync-startup-repeat-delay: P3650D
 
-    deleted-auction-cleanup-cron: "0 0 * * * *"
+    deleted-auction-price-cleanup-cron: "0 15 * * * *"
+    deleted-auction-hourly-cleanup-cron: "0 30 * * * *"
+    deleted-auction-daily-cleanup-cron: "0 45 * * * *"
     deleted-auction-cleanup-zone: GMT+1
     deleted-auction-cleanup-startup-delay: PT1M
     deleted-auction-cleanup-startup-repeat-delay: P3650D

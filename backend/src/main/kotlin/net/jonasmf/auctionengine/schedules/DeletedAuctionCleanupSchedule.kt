@@ -13,7 +13,7 @@ class DeletedAuctionCleanupSchedule(
     private val logger: Logger = LoggerFactory.getLogger(DeletedAuctionCleanupSchedule::class.java)
 
     @Scheduled(
-        cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 * * * *}",
+        cron = "\${app.scheduling.deleted-auction-hourly-cleanup-cron:0 0 * * * *}",
         zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
     )
     fun deleteOldHourlyHistoryOnSchedule() {
@@ -21,7 +21,7 @@ class DeletedAuctionCleanupSchedule(
     }
 
     @Scheduled(
-        cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 * * * *}",
+        cron = "\${app.scheduling.deleted-auction-daily-cleanup-cron:0 0 * * * *}",
         zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
     )
     fun deleteOldDailyHistoryOnSchedule() {
@@ -29,7 +29,7 @@ class DeletedAuctionCleanupSchedule(
     }
 
     @Scheduled(
-        cron = "\${app.scheduling.deleted-auction-cleanup-cron:0 0 * * * *}",
+        cron = "\${app.scheduling.deleted-auction-price-cleanup-cron:0 0 * * * *}",
         zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
     )
     fun deleteOldPriceHistoryOnSchedule() {
