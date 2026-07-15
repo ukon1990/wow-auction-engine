@@ -5,6 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import kotlin.time.Clock
 
 @Component
 class DeletedAuctionCleanupSchedule(
@@ -17,7 +18,13 @@ class DeletedAuctionCleanupSchedule(
         zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
     )
     fun deleteOldHourlyHistoryOnSchedule() {
+        val startTime = Clock.System.now().toEpochMilliseconds()
+        logger.info("Starting scheduled old hourly history cleanup")
+
         deleteOldHourlyHistory("scheduled")
+
+        val endTime = Clock.System.now().toEpochMilliseconds()
+        logger.info("Completed hourly history cleanup in {} ms", endTime - startTime)
     }
 
     @Scheduled(
@@ -25,7 +32,13 @@ class DeletedAuctionCleanupSchedule(
         zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
     )
     fun deleteOldDailyHistoryOnSchedule() {
+        val startTime = Clock.System.now().toEpochMilliseconds()
+        logger.info("Starting scheduled old daily history cleanup")
+
         deleteOldDailyHistory("scheduled")
+
+        val endTime = Clock.System.now().toEpochMilliseconds()
+        logger.info("Completed daily history cleanup in {} ms", endTime - startTime)
     }
 
     @Scheduled(
@@ -33,7 +46,13 @@ class DeletedAuctionCleanupSchedule(
         zone = "\${app.scheduling.deleted-auction-cleanup-zone:GMT+1}",
     )
     fun deleteOldPriceHistoryOnSchedule() {
+        val startTime = Clock.System.now().toEpochMilliseconds()
+        logger.info("Starting scheduled old auction prices history cleanup")
+
         deleteOldPriceHistory("scheduled")
+
+        val endTime = Clock.System.now().toEpochMilliseconds()
+        logger.info("Completed auction prices history cleanup in {} ms", endTime - startTime)
     }
 
     @Scheduled(

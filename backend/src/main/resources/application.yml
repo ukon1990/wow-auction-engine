@@ -45,7 +45,7 @@ app:
     static-data-sync-enabled: ${WAE_STATIC_DATA_SYNC_ENABLED:true}
     initial-delay: PT30S
     daily-price-stats-delay: PT5M
-    
+
     item-sync-cron: "0 0 * * * *"
     item-sync-zone: GMT+1
     item-sync-startup-delay: PT30S

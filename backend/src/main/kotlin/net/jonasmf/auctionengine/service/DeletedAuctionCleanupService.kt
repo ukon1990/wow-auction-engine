@@ -70,22 +70,35 @@ class DeletedAuctionCleanupService(
             logger.info("Skipping {} cleanup because deleted auction cleanup is disabled.", type)
             return listOf(emptyResult(type, cutoff))
         }
+        val startTime = clock.instant().toEpochMilli()
 
         val connectedRealmIds = findRealms().filterNotNull()
         val deletionsPerConnectedRealm = mutableListOf<DeletedAuctionCleanupRunResult>()
 
+        if (connectedRealmIds.isEmpty()) {
+            logger.info("There were no connected realms to cleanup the history for")
+            return emptyList()
+        }
+        logger.info("Starting to cleanup for {} connected realms that needs cleanup", connectedRealmIds.size)
         for (connectedRealmId in connectedRealmIds) {
             val result = deleteOldHistoryForConnectedRealm(type, connectedRealmId, cutoff, deleteAction, updateMarker)
             if (result != null && result.deletedRows > 0) {
                 deletionsPerConnectedRealm.add(result)
             }
         }
+
+        logger.info(
+            "Cleanup completed in {} ms for {} connected realms",
+            Instant.now().toEpochMilli() - startTime,
+            deletionsPerConnectedRealm.size,
+        )
         /*
          * We only want to optimize the table, if there has been done deletions
          * This allows me to not have to keep a value stored in memory or in the database for this.
          * And Ideally, I'll get most realms at the same time, so we should be good here.
          */
         if (!deletionsPerConnectedRealm.isEmpty()) {
+            logger.info("Found {} deleted auction cleanup", connectedRealmIds.size)
             optimizeTable(type)
         }
         return deletionsPerConnectedRealm
@@ -103,10 +116,9 @@ class DeletedAuctionCleanupService(
                 val deletedRows = deleteAction(connectedRealmId, cutoff)
                 updateMarkerAfterSuccess(connectedRealmId, cutoff, updateMarker)
                 logger.info(
-                    "Completed {} cleanup for connected realm {}. candidates={}, deletedRows={}, batches={}, cutoff={}",
+                    "Completed {} cleanup for connected realm {}. Deleted rows={}, cutoff={}",
                     type,
                     connectedRealmId,
-                    deletedRows,
                     deletedRows,
                     cutoff,
                 )
