@@ -19,5 +19,8 @@ class RecipeReagentPricingSqlTest {
         val itemDetailLines = RecipeReagentPricingSql.recipeReagentLinesForCraftedItemCte("ro.recipe_id IN (?)")
         assertTrue(itemDetailLines.contains("purchase_rank"))
         assertTrue(itemDetailLines.contains("recipe_target_ranks"))
+
+        assertTrue(RecipeReagentPricingSql.pricingItemIdsForCraftedItemSql().contains("crafted_item_id = ?"))
+        assertTrue(RecipeReagentPricingSql.pricingItemIdsForRecipeSql().contains("recipe_id = ?"))
     }
 }

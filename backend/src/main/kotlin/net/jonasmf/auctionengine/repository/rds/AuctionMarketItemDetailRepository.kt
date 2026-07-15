@@ -239,25 +239,16 @@ class AuctionMarketItemDetailRepository(
         val commodityHourSuffix = hourColumnSuffix(commodityHourOfDay)
         val sql =
             """
-            WITH reagent_sel_base AS (
+            WITH pricing_item_ids AS (
+                ${RecipeReagentPricingSql.pricingItemIdsForRecipesInClauseSql(placeholders)}
+            ),
+            reagent_sel_base AS (
                 SELECT ash.item_id, ash.price$hourSuffix AS price, ash.bonus_key, ash.modifier_key, ash.pet_species_id
                 FROM auction_stats_hourly ash
                 WHERE ash.connected_realm_id = ?
                   AND ash.date = ?
                   AND ash.price$hourSuffix IS NOT NULL
-                  AND ash.item_id IN (
-                      SELECT DISTINCT pricing_item_id
-                      FROM (
-                          SELECT rr.item_id AS pricing_item_id
-                          FROM v_recipe_reagent rr
-                          WHERE rr.recipe_id IN ($placeholders)
-                          UNION ALL
-                          SELECT rrk.item_id AS pricing_item_id
-                          FROM recipe_reagent_rank rrk
-                              INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
-                          WHERE rr.recipe_id IN ($placeholders)
-                      ) scoped_items
-                  )
+                  AND EXISTS (SELECT 1 FROM pricing_item_ids pi WHERE pi.item_id = ash.item_id)
             ),
             reagent_sel_ranked AS (
                 SELECT item_id, price,
@@ -273,19 +264,7 @@ class AuctionMarketItemDetailRepository(
                 WHERE ash.connected_realm_id = ?
                   AND ash.date = ?
                   AND ash.price$commodityHourSuffix IS NOT NULL
-                  AND ash.item_id IN (
-                      SELECT DISTINCT pricing_item_id
-                      FROM (
-                          SELECT rr.item_id AS pricing_item_id
-                          FROM v_recipe_reagent rr
-                          WHERE rr.recipe_id IN ($placeholders)
-                          UNION ALL
-                          SELECT rrk.item_id AS pricing_item_id
-                          FROM recipe_reagent_rank rrk
-                              INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
-                          WHERE rr.recipe_id IN ($placeholders)
-                      ) scoped_items
-                  )
+                  AND EXISTS (SELECT 1 FROM pricing_item_ids pi WHERE pi.item_id = ash.item_id)
             ),
             reagent_com_ranked AS (
                 SELECT item_id, price,
@@ -297,19 +276,7 @@ class AuctionMarketItemDetailRepository(
             ),
             reagent_price AS (
                 SELECT items.item_id, COALESCE(rs.price, rc.price) AS price
-                FROM (
-                    SELECT DISTINCT pricing_item_id AS item_id
-                    FROM (
-                        SELECT rr.item_id AS pricing_item_id
-                        FROM v_recipe_reagent rr
-                        WHERE rr.recipe_id IN ($placeholders)
-                        UNION ALL
-                        SELECT rrk.item_id AS pricing_item_id
-                        FROM recipe_reagent_rank rrk
-                            INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
-                        WHERE rr.recipe_id IN ($placeholders)
-                    ) scoped_items
-                ) items
+                FROM pricing_item_ids items
                 LEFT JOIN reagent_sel rs ON rs.item_id = items.item_id
                 LEFT JOIN reagent_com rc ON rc.item_id = items.item_id
             ),
@@ -332,16 +299,12 @@ class AuctionMarketItemDetailRepository(
             """.trimIndent()
         val params =
             arrayOf<Any?>(
+                *recipeIds.toTypedArray(),
+                *recipeIds.toTypedArray(),
                 connectedRealmId,
                 Date.valueOf(statDate),
-                *recipeIds.toTypedArray(),
-                *recipeIds.toTypedArray(),
                 commodityConnectedRealmId,
                 Date.valueOf(commodityStatDate),
-                *recipeIds.toTypedArray(),
-                *recipeIds.toTypedArray(),
-                *recipeIds.toTypedArray(),
-                *recipeIds.toTypedArray(),
                 craftedItemId,
                 *recipeIds.toTypedArray(),
             )
@@ -497,6 +460,9 @@ class AuctionMarketItemDetailRepository(
                 UNION ALL
                 SELECT DATE_ADD(stat_date, INTERVAL 1 DAY) FROM date_spine WHERE stat_date < ?
             ),
+            recipe_reagent_ids AS (
+                ${RecipeReagentPricingSql.pricingItemIdsForRecipeSql()}
+            ),
             reagent_sel_base AS (
                 SELECT ds.stat_date, ash.item_id, ash.price$hourSuffix AS price, ash.bonus_key, ash.modifier_key, ash.pet_species_id
                 FROM date_spine ds
@@ -504,14 +470,7 @@ class AuctionMarketItemDetailRepository(
                   ON ash.connected_realm_id = ?
                  AND ash.date = ds.stat_date
                  AND ash.price$hourSuffix IS NOT NULL
-                 AND ash.item_id IN (
-                     SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?
-                     UNION ALL
-                     SELECT rrk.item_id
-                     FROM recipe_reagent_rank rrk
-                         INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
-                     WHERE rr.recipe_id = ?
-                 )
+                 AND EXISTS (SELECT 1 FROM recipe_reagent_ids ri WHERE ri.item_id = ash.item_id)
             ),
             reagent_sel_ranked AS (
                 SELECT stat_date, item_id, price,
@@ -528,14 +487,7 @@ class AuctionMarketItemDetailRepository(
                   ON ash.connected_realm_id = ?
                  AND ash.date = ds.stat_date
                  AND ash.price$commodityHourSuffix IS NOT NULL
-                 AND ash.item_id IN (
-                     SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?
-                     UNION ALL
-                     SELECT rrk.item_id
-                     FROM recipe_reagent_rank rrk
-                         INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
-                     WHERE rr.recipe_id = ?
-                 )
+                 AND EXISTS (SELECT 1 FROM recipe_reagent_ids ri WHERE ri.item_id = ash.item_id)
             ),
             reagent_com_ranked AS (
                 SELECT stat_date, item_id, price,
@@ -546,23 +498,11 @@ class AuctionMarketItemDetailRepository(
                 SELECT stat_date, item_id, price FROM reagent_com_ranked WHERE rn = 1
             ),
             reagent_price AS (
-                SELECT ds.stat_date, rl.pricing_item_id AS item_id, COALESCE(rs.price, rc.price) AS price
+                SELECT ds.stat_date, ri.item_id, COALESCE(rs.price, rc.price) AS price
                 FROM date_spine ds
-                CROSS JOIN (
-                    SELECT DISTINCT pricing_item_id
-                    FROM (
-                        SELECT rr.item_id AS pricing_item_id
-                        FROM v_recipe_reagent rr
-                        WHERE rr.recipe_id = ?
-                        UNION ALL
-                        SELECT rrk.item_id AS pricing_item_id
-                        FROM recipe_reagent_rank rrk
-                            INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
-                        WHERE rr.recipe_id = ?
-                    ) scoped_items
-                ) rl
-                LEFT JOIN reagent_sel rs ON rs.stat_date = ds.stat_date AND rs.item_id = rl.pricing_item_id
-                LEFT JOIN reagent_com rc ON rc.stat_date = ds.stat_date AND rc.item_id = rl.pricing_item_id
+                CROSS JOIN recipe_reagent_ids ri
+                LEFT JOIN reagent_sel rs ON rs.stat_date = ds.stat_date AND rs.item_id = ri.item_id
+                LEFT JOIN reagent_com rc ON rc.stat_date = ds.stat_date AND rc.item_id = ri.item_id
             ),
             reagent_cost AS (
                 SELECT ds.stat_date,
@@ -643,14 +583,10 @@ class AuctionMarketItemDetailRepository(
             AuctionMarketItemDetailRowMappers.craftingAnalyticsDailyRowMapper,
             Date.valueOf(fromDate),
             Date.valueOf(toDate),
+            recipeId,
+            recipeId,
             connectedRealmId,
-            recipeId,
-            recipeId,
             commodityConnectedRealmId,
-            recipeId,
-            recipeId,
-            recipeId,
-            recipeId,
             recipeId,
             connectedRealmId,
             itemId,
@@ -699,6 +635,9 @@ class AuctionMarketItemDetailRepository(
                 SELECT DATE_ADD(stat_date, INTERVAL 1 DAY) FROM date_spine WHERE stat_date < ?
             ),
             hours_t AS (${hoursCteSql()}),
+            recipe_reagent_ids AS (
+                ${RecipeReagentPricingSql.pricingItemIdsForRecipeSql()}
+            ),
             reagent_sel_priced AS (
                 SELECT ash.date AS stat_date, h.hour_of_day, ash.item_id,
                        ash.bonus_key, ash.modifier_key, ash.pet_species_id,
@@ -707,14 +646,7 @@ class AuctionMarketItemDetailRepository(
                 JOIN auction_stats_hourly ash
                   ON ash.connected_realm_id = ?
                  AND ash.date BETWEEN ? AND ?
-                 AND ash.item_id IN (
-                     SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?
-                     UNION ALL
-                     SELECT rrk.item_id
-                     FROM recipe_reagent_rank rrk
-                         INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
-                     WHERE rr.recipe_id = ?
-                 )
+                 AND EXISTS (SELECT 1 FROM recipe_reagent_ids ri WHERE ri.item_id = ash.item_id)
                 HAVING price IS NOT NULL
             ),
             reagent_sel_ranked AS (
@@ -736,14 +668,7 @@ class AuctionMarketItemDetailRepository(
                 JOIN auction_stats_hourly ash
                   ON ash.connected_realm_id = ?
                  AND ash.date BETWEEN ? AND ?
-                 AND ash.item_id IN (
-                     SELECT item_id FROM v_recipe_reagent WHERE recipe_id = ?
-                     UNION ALL
-                     SELECT rrk.item_id
-                     FROM recipe_reagent_rank rrk
-                         INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
-                     WHERE rr.recipe_id = ?
-                 )
+                 AND EXISTS (SELECT 1 FROM recipe_reagent_ids ri WHERE ri.item_id = ash.item_id)
                 HAVING price IS NOT NULL
             ),
             reagent_com_ranked AS (
@@ -758,27 +683,15 @@ class AuctionMarketItemDetailRepository(
                 SELECT stat_date, hour_of_day, item_id, price FROM reagent_com_ranked WHERE rn = 1
             ),
             reagent_price AS (
-                SELECT ds.stat_date, h.hour_of_day, pricing_items.pricing_item_id AS item_id,
+                SELECT ds.stat_date, h.hour_of_day, ri.item_id,
                        COALESCE(rs.price, rc.price) AS price
                 FROM date_spine ds
                 CROSS JOIN hours_t h
-                CROSS JOIN (
-                    SELECT DISTINCT pricing_item_id
-                    FROM (
-                        SELECT rr.item_id AS pricing_item_id
-                        FROM v_recipe_reagent rr
-                        WHERE rr.recipe_id = ?
-                        UNION ALL
-                        SELECT rrk.item_id AS pricing_item_id
-                        FROM recipe_reagent_rank rrk
-                            INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
-                        WHERE rr.recipe_id = ?
-                    ) scoped_items
-                ) pricing_items
+                CROSS JOIN recipe_reagent_ids ri
                 LEFT JOIN reagent_sel rs
-                       ON rs.stat_date = ds.stat_date AND rs.hour_of_day = h.hour_of_day AND rs.item_id = pricing_items.pricing_item_id
+                       ON rs.stat_date = ds.stat_date AND rs.hour_of_day = h.hour_of_day AND rs.item_id = ri.item_id
                 LEFT JOIN reagent_com rc
-                       ON rc.stat_date = ds.stat_date AND rc.hour_of_day = h.hour_of_day AND rc.item_id = pricing_items.pricing_item_id
+                       ON rc.stat_date = ds.stat_date AND rc.hour_of_day = h.hour_of_day AND rc.item_id = ri.item_id
             ),
             reagent_cost AS (
                 SELECT ds.stat_date, h.hour_of_day,
@@ -887,18 +800,14 @@ class AuctionMarketItemDetailRepository(
             AuctionMarketItemDetailRowMappers.craftingAnalyticsHeatmapRowMapper,
             Date.valueOf(fromDate),
             Date.valueOf(toDate),
+            recipeId,
+            recipeId,
             connectedRealmId,
             Date.valueOf(fromDate),
             Date.valueOf(toDate),
-            recipeId,
-            recipeId,
             commodityConnectedRealmId,
             Date.valueOf(fromDate),
             Date.valueOf(toDate),
-            recipeId,
-            recipeId,
-            recipeId,
-            recipeId,
             recipeId,
             connectedRealmId,
             Date.valueOf(fromDate),

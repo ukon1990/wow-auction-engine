@@ -45,6 +45,8 @@ class CraftingMarketSearchService(
             "outputPriceChangePercent",
             "profitChangePercent",
             "listingQuantity",
+            "saleRate",
+            "soldPerDay",
         )
 
     fun search(
