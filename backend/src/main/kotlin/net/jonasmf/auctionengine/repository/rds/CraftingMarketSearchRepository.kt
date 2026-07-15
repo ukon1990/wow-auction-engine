@@ -110,22 +110,32 @@ class CraftingMarketSearchRepository(
         )
 
     fun search(request: CraftingMarketSearchRequest): CraftingMarketSearchResult {
-        val params = ArrayList<Any?>()
-        val withSql = buildWithSql(request, params)
-        val whereSql = buildWhereSql(request, params)
-        val offset = request.page * request.pageSize
-        params.add(request.pageSize)
-        params.add(offset)
-        val sql = buildPagedSql(request, withSql, whereSql)
+        val countParams = ArrayList<Any?>()
+        val withSql = buildWithSql(request, countParams)
+        val countWhereParams = ArrayList<Any?>()
+        val countWhereSql = buildWhereSql(request, countWhereParams)
+        countParams.addAll(countWhereParams)
+        val countSql = buildCountSql(withSql, countWhereSql)
+
         val queryStart = System.nanoTime()
-        val pairs =
+        val totalItems =
+            jdbcTemplate.queryForObject(countSql, Long::class.java, *countParams.toTypedArray()) ?: 0L
+
+        val dataParams = ArrayList<Any?>()
+        val dataWithSql = buildWithSql(request, dataParams)
+        val dataWhereParams = ArrayList<Any?>()
+        val dataWhereSql = buildWhereSql(request, dataWhereParams)
+        dataParams.addAll(dataWhereParams)
+        dataParams.add(request.pageSize)
+        dataParams.add(request.page * request.pageSize)
+        val dataSql = buildPagedSql(request, dataWithSql, dataWhereSql, includeTotalItems = false)
+
+        val rows =
             jdbcTemplate.query(
-                sql,
-                rowMapperWithTotal,
-                *params.toTypedArray(),
+                dataSql,
+                rowMapper,
+                *dataParams.toTypedArray(),
             )
-        val rows = pairs.map { it.first }
-        val totalItems = pairs.firstOrNull()?.second ?: 0L
         logger.debug(
             "Crafting market search queryMs={} totalItems={} rows={}",
             (System.nanoTime() - queryStart) / 1_000_000,
@@ -189,6 +199,9 @@ class CraftingMarketSearchRepository(
 
         return """
             WITH
+            pricing_item_ids AS (
+                ${RecipeReagentPricingSql.allPricingItemIdsSql()}
+            ),
             sel_latest_history AS (
                 SELECT MAX(id) AS update_history_id
                 FROM connected_realm_update_history
@@ -210,7 +223,7 @@ class CraftingMarketSearchRepository(
                     INNER JOIN sel_latest_history lh ON lh.update_history_id = a.update_history_id
                 WHERE a.connected_realm_id = ?
                   AND a.buyout IS NOT NULL
-                  AND a.item_id IN (${RecipeReagentPricingSql.allPricingItemIdsSql()})
+                  AND EXISTS (SELECT 1 FROM pricing_item_ids pi WHERE pi.item_id = a.item_id)
             ),
             reagent_sel_ranked AS (
                 SELECT
@@ -236,7 +249,7 @@ class CraftingMarketSearchRepository(
                     INNER JOIN com_latest_history lh ON lh.update_history_id = a.update_history_id
                 WHERE a.connected_realm_id = ?
                   AND a.buyout IS NOT NULL
-                  AND a.item_id IN (${RecipeReagentPricingSql.allPricingItemIdsSql()})
+                  AND EXISTS (SELECT 1 FROM pricing_item_ids pi WHERE pi.item_id = a.item_id)
             ),
             reagent_com_ranked AS (
                 SELECT
@@ -252,7 +265,7 @@ class CraftingMarketSearchRepository(
                 SELECT item_id, price FROM reagent_com_ranked WHERE rn = 1
             ),
             reagent_items AS (
-                ${RecipeReagentPricingSql.allPricingItemIdsSql()}
+                SELECT item_id FROM pricing_item_ids
             ),
             reagent_unit AS (
                 SELECT
@@ -484,7 +497,6 @@ class CraftingMarketSearchRepository(
                         AND cp.pet_species_id <=> cc.pet_species_id
                     LEFT JOIN v_auction_market_item_details d
                         ON d.item_id = cc.crafted_item_id
-                        AND d.recipe_id = cc.recipe_id
                     LEFT JOIN tsm_region_metric tsm
                         ON tsm.region = ?
                         AND tsm.subject_type = 'ITEM'
@@ -502,12 +514,30 @@ class CraftingMarketSearchRepository(
             """.trimIndent()
     }
 
-    private fun buildPagedSql(
-        request: CraftingMarketSearchRequest,
+    private fun buildCountSql(
         withSql: String,
         whereSql: String,
     ): String =
         """
+        $withSql
+        SELECT COUNT(*)
+        FROM computed c
+        $whereSql
+        """.trimIndent()
+
+    private fun buildPagedSql(
+        request: CraftingMarketSearchRequest,
+        withSql: String,
+        whereSql: String,
+        includeTotalItems: Boolean = true,
+    ): String {
+        val totalItemsSql =
+            if (includeTotalItems) {
+                ",\n                COUNT(*) OVER () AS total_items"
+            } else {
+                ""
+            }
+        return """
         $withSql
         SELECT
             wrapped.recipe_id,
@@ -544,8 +574,7 @@ class CraftingMarketSearchRepository(
             wrapped.item_subclass_id,
             wrapped.item_subclass_name,
             wrapped.sale_rate,
-            wrapped.sold_per_day,
-            wrapped.total_items
+            wrapped.sold_per_day
         FROM (
             SELECT
                 c.recipe_id,
@@ -582,14 +611,14 @@ class CraftingMarketSearchRepository(
                 c.item_subclass_id,
                 c.item_subclass_name,
                 c.sale_rate,
-                c.sold_per_day,
-                COUNT(*) OVER () AS total_items
+                c.sold_per_day$totalItemsSql
             FROM computed c
             $whereSql
         ) wrapped
         ${buildOrderBySql(request)}
         LIMIT ? OFFSET ?
         """.trimIndent()
+    }
 
     private fun buildOrderBySql(request: CraftingMarketSearchRequest): String {
         val dir = if (request.sortDirection.equals("desc", ignoreCase = true)) "DESC" else "ASC"
@@ -779,5 +808,16 @@ class CraftingMarketSearchRepository(
     private fun ResultSet.getNullableDouble(column: String): Double? {
         val value = getDouble(column)
         return if (wasNull()) null else value
+    }
+
+    /** For integration tests: `EXPLAIN` / `ANALYZE` against real MariaDB. */
+    internal fun buildCraftingMarketSearchPagedSqlForExplain(request: CraftingMarketSearchRequest): Pair<String, Array<Any?>> {
+        val params = ArrayList<Any?>()
+        val withSql = buildWithSql(request, params)
+        val whereSql = buildWhereSql(request, params)
+        val offset = request.page * request.pageSize
+        params.add(request.pageSize)
+        params.add(offset)
+        return Pair(buildPagedSql(request, withSql, whereSql), params.toTypedArray())
     }
 }

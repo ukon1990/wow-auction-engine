@@ -88,12 +88,25 @@ FROM v_item i
          LEFT JOIN locale isc_l ON isc.display_name_id = isc_l.id
          LEFT JOIN (
             SELECT
-                output.recipe_id,
-                output.crafted_item_id,
-                recipe.media_url,
-                recipe.rank,
-                recipe.name_id
-            FROM v_recipe_crafted_output output
-                INNER JOIN v_recipe recipe ON recipe.id = output.recipe_id
+                recipe_id,
+                crafted_item_id,
+                media_url,
+                rank,
+                name_id
+            FROM (
+                SELECT
+                    output.recipe_id,
+                    output.crafted_item_id,
+                    recipe.media_url,
+                    recipe.rank,
+                    recipe.name_id,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY output.crafted_item_id
+                        ORDER BY output.sort_order, output.recipe_id
+                    ) AS rn
+                FROM v_recipe_crafted_output output
+                    INNER JOIN v_recipe recipe ON recipe.id = output.recipe_id
+            ) ranked_recipe
+            WHERE rn = 1
          ) reci ON reci.crafted_item_id = i.id
          LEFT JOIN locale reci_l ON reci.name_id = reci_l.id;

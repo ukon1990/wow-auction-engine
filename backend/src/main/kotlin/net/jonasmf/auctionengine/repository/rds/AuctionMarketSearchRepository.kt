@@ -103,42 +103,124 @@ class AuctionMarketSearchRepository(
 
     fun search(request: AuctionMarketSearchRequest): AuctionMarketSearchResult {
         val totalStartNanos = System.nanoTime()
-        val params = ArrayList<Any?>()
-        val (withSql, fromSql) = buildWithAndFromSql(request, params)
-        val whereSql = buildWhereSql(request, params)
-        val offset = request.page * request.pageSize
-        params.add(request.pageSize)
-        params.add(offset)
-
-        val sql = buildSearchPagedSql(request, withSql, fromSql, whereSql)
-        val queryStartNanos = System.nanoTime()
-        val pairs =
-            jdbcTemplate.query(
-                sql,
-                rowMapperWithTotal,
-                *params.toTypedArray(),
-            )
-        val queryMs = elapsedMs(queryStartNanos)
-        val totalItems = pairs.firstOrNull()?.second ?: 0L
-        val rows = pairs.map { it.first }
+        val result =
+            if (canUseLightweightMetricSortPath(request)) {
+                searchLightweightMetric(request)
+            } else {
+                searchFullProjection(request)
+            }
 
         logger.info(
             "Auction market search repository completed in {}ms (requestId={} query={}ms selectedRealm={} selectedDate={} selectedHour={} commodityRealm={} commodityDate={} commodityHour={} totalItems={} returnedRows={})",
             elapsedMs(totalStartNanos),
             requestId(),
-            queryMs,
+            result.queryMs,
             request.selectedConnectedRealmId,
             request.selectedDate,
             request.selectedHour,
             request.commodityConnectedRealmId,
             request.commodityDate,
             request.commodityHour,
-            totalItems,
-            rows.size,
+            result.totalItems,
+            result.rows.size,
         )
 
-        return AuctionMarketSearchResult(rows = rows, totalItems = totalItems)
+        return AuctionMarketSearchResult(rows = result.rows, totalItems = result.totalItems)
     }
+
+    private data class TimedSearchResult(
+        val rows: List<AuctionMarketRow>,
+        val totalItems: Long,
+        val queryMs: Long,
+    )
+
+    private fun searchFullProjection(request: AuctionMarketSearchRequest): TimedSearchResult {
+        val countParams = ArrayList<Any?>()
+        val (withSql, fromSql) = buildWithAndFromSql(request, countParams)
+        val whereSql = buildWhereSql(request, countParams)
+        val countSql = buildCountSql(withSql, fromSql, whereSql)
+
+        val queryStartNanos = System.nanoTime()
+        val totalItems =
+            jdbcTemplate.queryForObject(countSql, Long::class.java, *countParams.toTypedArray()) ?: 0L
+
+        val dataParams = ArrayList<Any?>()
+        val (dataWithSql, dataFromSql) = buildWithAndFromSql(request, dataParams)
+        val dataWhereSql = buildWhereSql(request, dataParams)
+        val offset = request.page * request.pageSize
+        dataParams.add(request.pageSize)
+        dataParams.add(offset)
+        val dataSql = buildSearchPagedSql(request, dataWithSql, dataFromSql, dataWhereSql, includeTotalItems = false)
+
+        val rows =
+            jdbcTemplate.query(
+                dataSql,
+                rowMapper,
+                *dataParams.toTypedArray(),
+            )
+        val queryMs = elapsedMs(queryStartNanos)
+        return TimedSearchResult(rows = rows, totalItems = totalItems, queryMs = queryMs)
+    }
+
+    private fun searchLightweightMetric(request: AuctionMarketSearchRequest): TimedSearchResult {
+        val countParams = ArrayList<Any?>()
+        val withSql = buildCurrentAuctionSnapshotCtes(request, countParams)
+        val countWhereParams = ArrayList<Any?>()
+        val countWhereSql = buildWhereSql(request, countWhereParams)
+        countParams.add(request.region.name)
+        countParams.addAll(countWhereParams)
+        val countSql = buildLightweightCountSql(withSql, countWhereSql)
+
+        val queryStartNanos = System.nanoTime()
+        val totalItems =
+            jdbcTemplate.queryForObject(countSql, Long::class.java, *countParams.toTypedArray()) ?: 0L
+
+        val dataParams = ArrayList<Any?>()
+        val dataWithSql = buildCurrentAuctionSnapshotCtes(request, dataParams)
+        val dataWhereParams = ArrayList<Any?>()
+        val dataWhereSql = buildWhereSql(request, dataWhereParams)
+        dataParams.add(request.region.name)
+        dataParams.addAll(dataWhereParams)
+        dataParams.add(request.pageSize)
+        dataParams.add(request.page * request.pageSize)
+        val dataSql = buildLightweightPagedSql(request, dataWithSql, dataWhereSql)
+
+        val rows =
+            jdbcTemplate.query(
+                dataSql,
+                rowMapper,
+                *dataParams.toTypedArray(),
+            )
+        val queryMs = elapsedMs(queryStartNanos)
+        return TimedSearchResult(rows = rows, totalItems = totalItems, queryMs = queryMs)
+    }
+
+    private fun canUseLightweightMetricSortPath(request: AuctionMarketSearchRequest): Boolean =
+        request.query.isNullOrBlank() &&
+            request.qualityIds.isEmpty() &&
+            request.itemClassIds.isEmpty() &&
+            request.itemSubclassIds.isEmpty() &&
+            request.expansionIds.isEmpty() &&
+            request.recipeOnly != true &&
+            request.minPrice == null &&
+            request.maxPrice == null &&
+            request.minQuantity == null &&
+            request.maxQuantity == null &&
+            request.minSaleRatePercent == null &&
+            request.maxSaleRatePercent == null &&
+            request.minSoldPerDay == null &&
+            request.maxSoldPerDay == null &&
+            request.sortBy in lightweightMetricSortColumns
+
+    private val lightweightMetricSortColumns =
+        setOf(
+            "saleRate",
+            "soldPerDay",
+            "selectedPrice",
+            "commodityPrice",
+            "selectedQuantity",
+            "commodityQuantity",
+        )
 
     fun qualityOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
         qualityOptions(request.localeColumnSuffix)
@@ -214,8 +296,15 @@ class AuctionMarketSearchRepository(
         withSql: String,
         fromSql: String,
         whereSql: String,
-    ): String =
-        """
+        includeTotalItems: Boolean = true,
+    ): String {
+        val totalItemsSql =
+            if (includeTotalItems) {
+                ",\n                COUNT(*) OVER () AS total_items"
+            } else {
+                ""
+            }
+        return """
         $withSql
         SELECT
             wrapped.item_id,
@@ -244,8 +333,7 @@ class AuctionMarketSearchRepository(
             wrapped.commodity_p75_price,
             wrapped.commodity_quantity,
             wrapped.sale_rate,
-            wrapped.sold_per_day,
-            wrapped.total_items
+            wrapped.sold_per_day
         FROM (
             SELECT
                 d.item_id,
@@ -276,14 +364,134 @@ class AuctionMarketSearchRepository(
                 p.commodity_p75_price,
                 p.commodity_quantity,
                 tsm.sale_rate,
-                tsm.sold_per_day,
-                COUNT(*) OVER () AS total_items
+                tsm.sold_per_day$totalItemsSql
             $fromSql
             $whereSql
         ) wrapped
         ${buildOrderBySql(request)}
         LIMIT ? OFFSET ?
         """.trimIndent()
+    }
+
+    private fun buildCountSql(
+        withSql: String,
+        fromSql: String,
+        whereSql: String,
+    ): String =
+        """
+        $withSql
+        SELECT COUNT(*)
+        $fromSql
+        $whereSql
+        """.trimIndent()
+
+    private fun buildLightweightCountSql(
+        withSql: String,
+        whereSql: String,
+    ): String =
+        """
+        $withSql
+        SELECT COUNT(*)
+        FROM market_prices p
+            LEFT JOIN tsm_region_metric tsm
+                ON tsm.region = ?
+                AND tsm.subject_type = 'ITEM'
+                AND tsm.subject_id = p.item_id
+        $whereSql
+        """.trimIndent()
+
+    private fun buildLightweightPagedSql(
+        request: AuctionMarketSearchRequest,
+        withSql: String,
+        whereSql: String,
+    ): String {
+        val orderBy = buildLightweightOrderBySql(request, "p")
+        return """
+        $withSql
+        SELECT
+            d.item_id,
+            COALESCE(d.item_name_${request.localeColumnSuffix}, d.item_name_en_gb, d.item_name_en_us) AS item_name,
+            d.item_media_url,
+            d.quality_id,
+            d.quality_type,
+            COALESCE(d.quality_name_${request.localeColumnSuffix}, d.quality_name_en_gb, d.quality_name_en_us) AS quality_name,
+            d.item_class_id,
+            COALESCE(d.item_class_name_${request.localeColumnSuffix}, d.item_class_name_en_gb, d.item_class_name_en_us) AS item_class_name,
+            d.item_subclass_id,
+            COALESCE(d.item_subclass_name_${request.localeColumnSuffix}, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
+            d.recipe_id,
+            d.recipe_rank,
+            COALESCE(d.recipe_name_${request.localeColumnSuffix}, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
+            d.recipe_media_url,
+            page.selected_bonus_key,
+            page.selected_modifier_key,
+            page.selected_pet_species_id,
+            page.selected_price,
+            page.selected_p25_price,
+            page.selected_p75_price,
+            page.selected_quantity,
+            page.commodity_price,
+            page.commodity_p25_price,
+            page.commodity_p75_price,
+            page.commodity_quantity,
+            page.sale_rate,
+            page.sold_per_day
+        FROM (
+            SELECT
+                p.item_id,
+                p.selected_bonus_key,
+                p.selected_modifier_key,
+                p.selected_pet_species_id,
+                p.selected_price,
+                p.selected_p25_price,
+                p.selected_p75_price,
+                p.selected_quantity,
+                p.commodity_price,
+                p.commodity_p25_price,
+                p.commodity_p75_price,
+                p.commodity_quantity,
+                tsm.sale_rate,
+                tsm.sold_per_day
+            FROM market_prices p
+                LEFT JOIN tsm_region_metric tsm
+                    ON tsm.region = ?
+                    AND tsm.subject_type = 'ITEM'
+                    AND tsm.subject_id = p.item_id
+            $whereSql
+            $orderBy
+            LIMIT ? OFFSET ?
+        ) page
+            STRAIGHT_JOIN v_auction_market_item_details d ON d.item_id = page.item_id
+        ${buildLightweightOrderBySql(request, "page")}
+        """.trimIndent()
+    }
+
+    private fun buildLightweightOrderBySql(
+        request: AuctionMarketSearchRequest,
+        alias: String,
+    ): String {
+        val dir = if (request.sortDirection.equals("desc", ignoreCase = true)) "DESC" else "ASC"
+        val primary =
+            when (request.sortBy) {
+                "selectedPrice", "commodityPrice" -> {
+                    val expr = "COALESCE($alias.selected_price, $alias.commodity_price)"
+                    "(($expr) IS NULL) ASC, $expr $dir"
+                }
+                "selectedQuantity", "commodityQuantity" -> {
+                    val expr = "COALESCE($alias.selected_quantity, $alias.commodity_quantity)"
+                    "(($expr) IS NULL) ASC, $expr $dir"
+                }
+                "saleRate", "soldPerDay" -> {
+                    val col = sortColumns.getValue(request.sortBy)
+                    "(($alias.$col) IS NULL) ASC, $alias.$col $dir"
+                }
+                else -> {
+                    val col = sortColumns[request.sortBy] ?: sortColumns.getValue("itemName")
+                    "$alias.$col $dir"
+                }
+            }
+        return "ORDER BY $primary, $alias.item_id ASC"
+    }
 
     /**
      * Single listing price/quantity for sort: realm and commodity are mutually exclusive in the UI,

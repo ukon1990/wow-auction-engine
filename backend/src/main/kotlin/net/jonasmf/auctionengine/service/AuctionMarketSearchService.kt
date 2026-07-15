@@ -540,6 +540,8 @@ class AuctionMarketSearchService(
                 "commodityPrice",
                 "selectedQuantity",
                 "commodityQuantity",
+                "saleRate",
+                "soldPerDay",
             )
     }
 
