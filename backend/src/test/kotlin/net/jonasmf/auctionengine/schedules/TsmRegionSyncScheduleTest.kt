@@ -34,7 +34,7 @@ class TsmRegionSyncScheduleTest {
         val started = CountDownLatch(1)
         val release = CountDownLatch(1)
         val executor = Executors.newSingleThreadExecutor()
-        val listAppender = attachAppender()
+        val listAppender = attachAppender(BackgroundWorkLauncher::class.java)
 
         every { service.syncConfiguredRegions() } answers {
             started.countDown()
@@ -42,14 +42,14 @@ class TsmRegionSyncScheduleTest {
         }
 
         try {
-            val schedule = TsmRegionSyncSchedule(properties, service, true)
+            val schedule = TsmRegionSyncSchedule(properties, service, immediateBackgroundWorkLauncher(), true)
             val future = executor.submit<Unit> { schedule.syncTsmRegion() }
             assertTrue(started.await(5, TimeUnit.SECONDS))
 
             schedule.syncTsmRegion()
 
             val messages = listAppender.list.map(ILoggingEvent::getFormattedMessage)
-            assertTrue(messages.any { it.contains("Skipping manual TSM region sync because sync already running.") })
+            assertTrue(messages.any { it.contains("Skipping tsm-region-sync because a run is already in progress.") })
             verify(exactly = 1) { service.syncConfiguredRegions() }
 
             release.countDown()
@@ -57,7 +57,7 @@ class TsmRegionSyncScheduleTest {
         } finally {
             release.countDown()
             executor.shutdownNow()
-            detachAppender(listAppender)
+            detachAppender(listAppender, BackgroundWorkLauncher::class.java)
         }
     }
 
@@ -65,7 +65,7 @@ class TsmRegionSyncScheduleTest {
     fun `scheduled sync skips when static data sync is disabled`() {
         val service = mockk<TsmRegionSyncService>()
         val listAppender = attachAppender()
-        val schedule = TsmRegionSyncSchedule(properties, service, false)
+        val schedule = TsmRegionSyncSchedule(properties, service, immediateBackgroundWorkLauncher(), false)
 
         try {
             schedule.syncTsmRegionOnSchedule()
@@ -89,22 +89,27 @@ class TsmRegionSyncScheduleTest {
         val service = mockk<TsmRegionSyncService>()
         every { service.syncConfiguredRegions() } just runs
 
-        val schedule = TsmRegionSyncSchedule(properties, service, true)
+        val schedule = TsmRegionSyncSchedule(properties, service, immediateBackgroundWorkLauncher(), true)
         schedule.syncTsmRegion()
 
         verify(exactly = 1) { service.syncConfiguredRegions() }
     }
 
-    private fun attachAppender(): ListAppender<ILoggingEvent> {
-        val logger = LoggerFactory.getLogger(TsmRegionSyncSchedule::class.java) as Logger
+    private fun attachAppender(
+        loggerClass: Class<*> = TsmRegionSyncSchedule::class.java,
+    ): ListAppender<ILoggingEvent> {
+        val logger = LoggerFactory.getLogger(loggerClass) as Logger
         return ListAppender<ILoggingEvent>().also {
             it.start()
             logger.addAppender(it)
         }
     }
 
-    private fun detachAppender(appender: ListAppender<ILoggingEvent>) {
-        val logger = LoggerFactory.getLogger(TsmRegionSyncSchedule::class.java) as Logger
+    private fun detachAppender(
+        appender: ListAppender<ILoggingEvent>,
+        loggerClass: Class<*> = TsmRegionSyncSchedule::class.java,
+    ) {
+        val logger = LoggerFactory.getLogger(loggerClass) as Logger
         logger.detachAppender(appender)
         appender.stop()
     }

@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 import java.time.OffsetDateTime
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
@@ -26,7 +27,9 @@ class AdminProfessionSyncServiceTest {
     private val adminJobRepository = mockk<AdminJobRepository>(relaxed = true)
     private val professionRecipeSyncService = mockk<ProfessionRecipeSyncService>()
     private val guard = mockk<ProfessionRecipeSyncGuard>(relaxed = true)
-    private val service = AdminProfessionSyncService(adminJobRepository, professionRecipeSyncService, guard)
+    private val directExecutor = Executor(Runnable::run)
+    private val service =
+        AdminProfessionSyncService(adminJobRepository, professionRecipeSyncService, guard, directExecutor)
     private val syncLock = mockk<ProfessionRecipeSyncLock>(relaxed = true)
 
     @Test

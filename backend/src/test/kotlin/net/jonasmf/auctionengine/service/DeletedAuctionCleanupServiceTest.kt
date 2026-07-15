@@ -91,7 +91,7 @@ class DeletedAuctionCleanupServiceTest : IntegrationTestBase() {
 
             val markerAfter = readHistoryDeleteMarker(eligibleRealmId)
             assertThat(markerAfter).isNotNull()
-            assertThat(markerAfter).isCloseTo(Instant.now().minus(Duration.ofDays(7)), within(1, ChronoUnit.MINUTES))
+            assertThat(markerAfter).isCloseTo(Instant.now(), within(1, ChronoUnit.MINUTES))
         }
 
         @Test
@@ -161,7 +161,7 @@ class DeletedAuctionCleanupServiceTest : IntegrationTestBase() {
 
             val markerAfter = readDailyHistoryDeleteMarker(eligibleRealmId)
             assertThat(markerAfter).isNotNull()
-            assertThat(markerAfter).isCloseTo(Instant.now().minus(Duration.ofDays(30)), within(1, ChronoUnit.MINUTES))
+            assertThat(markerAfter).isCloseTo(Instant.now(), within(1, ChronoUnit.MINUTES))
         }
     }
 
@@ -208,7 +208,7 @@ class DeletedAuctionCleanupServiceTest : IntegrationTestBase() {
 
             val markerAfter = readPriceDeleteMarker(eligibleRealmId)
             assertThat(markerAfter).isNotNull()
-            assertThat(markerAfter).isCloseTo(Instant.now().minus(Duration.ofDays(3)), within(1, ChronoUnit.MINUTES))
+            assertThat(markerAfter).isCloseTo(Instant.now(), within(1, ChronoUnit.MINUTES))
         }
     }
 

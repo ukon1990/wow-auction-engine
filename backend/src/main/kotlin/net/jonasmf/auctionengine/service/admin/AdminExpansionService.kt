@@ -12,10 +12,12 @@ import net.jonasmf.auctionengine.repository.rds.AdminJobRepository
 import net.jonasmf.auctionengine.service.ItemSyncResult
 import net.jonasmf.auctionengine.service.ItemSyncService
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
 import java.util.concurrent.atomic.AtomicBoolean
 
 @Service
@@ -23,6 +25,8 @@ class AdminExpansionService(
     private val adminExpansionRepository: AdminExpansionRepository,
     private val adminJobRepository: AdminJobRepository,
     private val itemSyncService: ItemSyncService,
+    @Qualifier("backgroundWorkExecutor")
+    private val backgroundWorkExecutor: Executor,
 ) {
     private val log = LoggerFactory.getLogger(AdminExpansionService::class.java)
     private val applyRunning = AtomicBoolean(false)
@@ -117,30 +121,44 @@ class AdminExpansionService(
         if (!applyRunning.compareAndSet(false, true)) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Expansion range apply job is already running")
         }
-        val job =
-            adminJobRepository.createJob(
-                domain = AdminJobDomain.ITEM,
-                operation = AdminJobOperations.APPLY_EXPANSION_RANGES,
-                requestedBy = requestedBy,
-            )
-        log.info("Accepted apply expansion ranges job id={} requestedBy={}", job.id, requestedBy)
-        CompletableFuture.runAsync { runApplyJob(job.id) }
-        return job
+        var job: AdminJob? = null
+        try {
+            job =
+                adminJobRepository.createJob(
+                    domain = AdminJobDomain.ITEM,
+                    operation = AdminJobOperations.APPLY_EXPANSION_RANGES,
+                    requestedBy = requestedBy,
+                )
+            log.info("Accepted apply expansion ranges job id={} requestedBy={}", job.id, requestedBy)
+            CompletableFuture.runAsync({ runApplyJob(job.id) }, backgroundWorkExecutor)
+            return job
+        } catch (error: Throwable) {
+            applyRunning.set(false)
+            job?.let { adminJobRepository.failJob(it.id, error) }
+            throw error
+        }
     }
 
     fun fetchMissingExpansionRangeItems(requestedBy: String?): AdminJob {
         if (!fetchMissingRunning.compareAndSet(false, true)) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Expansion range item fetch job is already running")
         }
-        val job =
-            adminJobRepository.createJob(
-                domain = AdminJobDomain.ITEM,
-                operation = AdminJobOperations.FETCH_EXPANSION_RANGE_ITEMS,
-                requestedBy = requestedBy,
-            )
-        log.info("Accepted fetch missing expansion range items job id={} requestedBy={}", job.id, requestedBy)
-        CompletableFuture.runAsync { runFetchMissingJob(job.id) }
-        return job
+        var job: AdminJob? = null
+        try {
+            job =
+                adminJobRepository.createJob(
+                    domain = AdminJobDomain.ITEM,
+                    operation = AdminJobOperations.FETCH_EXPANSION_RANGE_ITEMS,
+                    requestedBy = requestedBy,
+                )
+            log.info("Accepted fetch missing expansion range items job id={} requestedBy={}", job.id, requestedBy)
+            CompletableFuture.runAsync({ runFetchMissingJob(job.id) }, backgroundWorkExecutor)
+            return job
+        } catch (error: Throwable) {
+            fetchMissingRunning.set(false)
+            job?.let { adminJobRepository.failJob(it.id, error) }
+            throw error
+        }
     }
 
     fun runApplyJob(jobId: Long) {

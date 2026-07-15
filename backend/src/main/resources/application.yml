@@ -40,6 +40,10 @@ server:
     context-path: /api
 
 app:
+  background-work:
+    pool-size: 4
+    thread-name-prefix: background-work-
+    await-shutdown-seconds: 60
   scheduling:
     enabled: true
     static-data-sync-enabled: ${WAE_STATIC_DATA_SYNC_ENABLED:true}

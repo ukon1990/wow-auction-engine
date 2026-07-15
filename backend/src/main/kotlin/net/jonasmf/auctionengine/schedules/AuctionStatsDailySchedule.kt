@@ -18,6 +18,7 @@ class AuctionStatsDailySchedule(
     private val properties: BlizzardApiProperties,
     private val auctionHouseService: AuctionHouseService,
     private val auctionStatsDailyService: AuctionStatsDailyService,
+    private val backgroundWorkLauncher: BackgroundWorkLauncher,
 ) {
     private val log = LoggerFactory.getLogger(AuctionStatsDailySchedule::class.java)
     private val updateRunning = AtomicBoolean(false)
@@ -28,12 +29,7 @@ class AuctionStatsDailySchedule(
         initialDelayString = "\${app.scheduling.initial-delay:PT30S}",
     )
     fun updateDailyPriceStatistics() {
-        if (!updateRunning.compareAndSet(false, true)) {
-            log.info("Skipping daily price statistics update because an update is already running.")
-            return
-        }
-
-        try {
+        backgroundWorkLauncher.launchSingleFlight(updateRunning, "daily-price-statistics-update") {
             log.info("Starting daily price statistics update for configured regions {}.", properties.configuredRegions)
             properties.configuredRegions.forEach { region ->
                 val auctionHouses = auctionHouseService.findAllByRegion(region)
@@ -50,8 +46,6 @@ class AuctionStatsDailySchedule(
                 auctionHouses.forEach(::updateAuctionHouse)
             }
             log.info("Completed daily price statistics update for configured regions {}.", properties.configuredRegions)
-        } finally {
-            updateRunning.set(false)
         }
     }
 

@@ -7,16 +7,19 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import java.util.concurrent.atomic.AtomicBoolean
 
 @Component
 class ProfessionRecipeSchedule(
     private val properties: BlizzardApiProperties,
     private val professionRecipeSyncService: ProfessionRecipeSyncService,
     private val professionRecipeSyncGuard: ProfessionRecipeSyncGuard,
+    private val backgroundWorkLauncher: BackgroundWorkLauncher,
     @Value("\${app.scheduling.static-data-sync-enabled:true}")
     private val staticDataSyncEnabled: Boolean,
 ) {
     private val log = LoggerFactory.getLogger(ProfessionRecipeSchedule::class.java)
+    private val syncRunning = AtomicBoolean(false)
 
     @Scheduled(
         cron = "\${app.scheduling.profession-recipe-sync-cron:0 0 8 ? * WED}",
@@ -58,29 +61,31 @@ class ProfessionRecipeSchedule(
     }
 
     private fun runSync(trigger: String) {
-        val syncLock = professionRecipeSyncGuard.tryAcquire()
-        if (syncLock == null) {
-            log.info("Skipping {} profession/recipe sync because sync already running.", trigger)
-            return
-        }
+        backgroundWorkLauncher.launchSingleFlight(syncRunning, "profession-recipe-sync") {
+            val syncLock = professionRecipeSyncGuard.tryAcquire()
+            if (syncLock == null) {
+                log.info("Skipping {} profession/recipe sync because sync already running.", trigger)
+                return@launchSingleFlight
+            }
 
-        try {
-            log.info(
-                "Starting {} profession/recipe sync for region {} (configured regions={})",
-                trigger,
-                properties.staticDataRegion,
-                properties.configuredRegions,
-            )
-            professionRecipeSyncService.syncConfiguredStaticDataRegion(syncLock::ensureActive)
-            syncLock.ensureActive()
-            log.info(
-                "Completed {} profession/recipe sync for region {} (configured regions={})",
-                trigger,
-                properties.staticDataRegion,
-                properties.configuredRegions,
-            )
-        } finally {
-            professionRecipeSyncGuard.release(syncLock)
+            try {
+                log.info(
+                    "Starting {} profession/recipe sync for region {} (configured regions={})",
+                    trigger,
+                    properties.staticDataRegion,
+                    properties.configuredRegions,
+                )
+                professionRecipeSyncService.syncConfiguredStaticDataRegion(syncLock::ensureActive)
+                syncLock.ensureActive()
+                log.info(
+                    "Completed {} profession/recipe sync for region {} (configured regions={})",
+                    trigger,
+                    properties.staticDataRegion,
+                    properties.configuredRegions,
+                )
+            } finally {
+                professionRecipeSyncGuard.release(syncLock)
+            }
         }
     }
 }

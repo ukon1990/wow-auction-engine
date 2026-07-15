@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component
 class ConnectedRealmSchedule (
     private val authService: AuthService,
     private val connectedRealmService: ConnectedRealmService,
+    private val backgroundWorkLauncher: BackgroundWorkLauncher,
 ) : ApplicationRunner {
     val log: Logger = LoggerFactory.getLogger(ConnectedRealmSchedule::class.java.name)
     private val seededAt: Instant = Instant.EPOCH
@@ -29,28 +30,32 @@ class ConnectedRealmSchedule (
         initialDelayString = "\${app.scheduling.initial-delay:PT30S}",
     )
     fun updateRealms() {
-        if (!syncInProgress.compareAndSet(false, true)) {
-            log.info("Skipping connected realm update because a previous sync is still running.")
-            return
-        }
-
-        try {
-            connectedRealmService.updateRealms()
-        } catch (error: Exception) {
-            log.warn("Connected realm update failed: ${error.localizedMessage}")
-        } finally {
-            syncInProgress.set(false)
+        backgroundWorkLauncher.launchSingleFlight(syncInProgress, "connected-realm-update") {
+            try {
+                connectedRealmService.updateRealms()
+            } catch (error: Exception) {
+                log.warn("Connected realm update failed: ${error.localizedMessage}")
+            }
         }
     }
 
     override fun run(args: ApplicationArguments) {
-        runCatching {
-            authService.ensureToken().block()
-            connectedRealmService.updateRealms()
-        }.onFailure { error ->
-            log.warn(
-                "Connected realm startup synchronization failed. Continuing application startup: ${error.localizedMessage}",
-            )
+        if (!syncInProgress.compareAndSet(false, true)) {
+            log.info("Skipping connected realm startup synchronization because an update is already running.")
+            return
+        }
+
+        try {
+            runCatching {
+                authService.ensureToken().block()
+                connectedRealmService.updateRealms()
+            }.onFailure { error ->
+                log.warn(
+                    "Connected realm startup synchronization failed. Continuing application startup: ${error.localizedMessage}",
+                )
+            }
+        } finally {
+            syncInProgress.set(false)
         }
     }
 }
