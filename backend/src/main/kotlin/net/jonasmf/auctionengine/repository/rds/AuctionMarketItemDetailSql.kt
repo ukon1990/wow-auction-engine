@@ -428,13 +428,16 @@ internal object AuctionMarketItemDetailSql {
         val sql =
             """
             WITH
+            pricing_item_ids AS (
+                ${RecipeReagentPricingSql.pricingItemIdsForCraftedItemSql()}
+            ),
             reagent_sel_base AS (
                 SELECT ash.item_id, ash.price$hourSuffix AS price, ash.bonus_key, ash.modifier_key, ash.pet_species_id
                 FROM auction_stats_hourly ash
                 WHERE ash.connected_realm_id = ?
                   AND ash.date = ?
                   AND ash.price$hourSuffix IS NOT NULL
-                  AND ash.item_id IN (${RecipeReagentPricingSql.allPricingItemIdsSql()})
+                  AND EXISTS (SELECT 1 FROM pricing_item_ids pi WHERE pi.item_id = ash.item_id)
             ),
             reagent_sel_ranked AS (
                 SELECT item_id, price,
@@ -450,7 +453,7 @@ internal object AuctionMarketItemDetailSql {
                 WHERE ash.connected_realm_id = ?
                   AND ash.date = ?
                   AND ash.price$commodityHourSuffix IS NOT NULL
-                  AND ash.item_id IN (${RecipeReagentPricingSql.allPricingItemIdsSql()})
+                  AND EXISTS (SELECT 1 FROM pricing_item_ids pi WHERE pi.item_id = ash.item_id)
             ),
             reagent_com_ranked AS (
                 SELECT item_id, price,
@@ -462,7 +465,7 @@ internal object AuctionMarketItemDetailSql {
             ),
             reagent_price AS (
                 SELECT items.item_id, COALESCE(rs.price, rc.price) AS price
-                FROM (${RecipeReagentPricingSql.allPricingItemIdsSql()}) items
+                FROM pricing_item_ids items
                 LEFT JOIN reagent_sel rs ON rs.item_id = items.item_id
                 LEFT JOIN reagent_com rc ON rc.item_id = items.item_id
             ),
@@ -586,6 +589,8 @@ internal object AuctionMarketItemDetailSql {
             }
         return sql to
             arrayOf(
+                itemId,
+                itemId,
                 connectedRealmId,
                 Date.valueOf(statDate),
                 commodityConnectedRealmId,

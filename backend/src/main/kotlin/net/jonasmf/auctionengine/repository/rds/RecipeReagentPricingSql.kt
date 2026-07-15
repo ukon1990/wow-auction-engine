@@ -20,6 +20,56 @@ internal object RecipeReagentPricingSql {
         ) pricing_items
         """.trimIndent()
 
+    /** Reagent item ids for all recipes that craft [crafted_item_id] (bound twice in SQL). */
+    fun pricingItemIdsForCraftedItemSql(): String =
+        """
+        SELECT DISTINCT pricing_item_id AS item_id
+        FROM (
+            SELECT rr.item_id AS pricing_item_id
+            FROM v_recipe_reagent rr
+                INNER JOIN v_recipe_crafted_output ro ON ro.recipe_id = rr.recipe_id
+            WHERE ro.crafted_item_id = ?
+            UNION ALL
+            SELECT rrk.item_id AS pricing_item_id
+            FROM recipe_reagent_rank rrk
+                INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+                INNER JOIN v_recipe_crafted_output ro ON ro.recipe_id = rr.recipe_id
+            WHERE ro.crafted_item_id = ?
+        ) scoped_items
+        """.trimIndent()
+
+    /** Reagent item ids for a single recipe (bound twice in SQL). */
+    fun pricingItemIdsForRecipeSql(): String =
+        """
+        SELECT DISTINCT pricing_item_id AS item_id
+        FROM (
+            SELECT rr.item_id AS pricing_item_id
+            FROM v_recipe_reagent rr
+            WHERE rr.recipe_id = ?
+            UNION ALL
+            SELECT rrk.item_id AS pricing_item_id
+            FROM recipe_reagent_rank rrk
+                INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+            WHERE rr.recipe_id = ?
+        ) scoped_items
+        """.trimIndent()
+
+    /** Reagent item ids for recipes in an `IN (...)` clause (no extra binds). */
+    fun pricingItemIdsForRecipesInClauseSql(recipeIdPlaceholders: String): String =
+        """
+        SELECT DISTINCT pricing_item_id AS item_id
+        FROM (
+            SELECT rr.item_id AS pricing_item_id
+            FROM v_recipe_reagent rr
+            WHERE rr.recipe_id IN ($recipeIdPlaceholders)
+            UNION ALL
+            SELECT rrk.item_id AS pricing_item_id
+            FROM recipe_reagent_rank rrk
+                INNER JOIN v_recipe_reagent rr ON rr.internal_id = rrk.recipe_reagent_id
+            WHERE rr.recipe_id IN ($recipeIdPlaceholders)
+        ) scoped_items
+        """.trimIndent()
+
     fun targetRankExpr(recipeAlias: String = "r"): String = "COALESCE(NULLIF($recipeAlias.rank, 0), 1)"
 
     fun craftingTargetRankExpr(
