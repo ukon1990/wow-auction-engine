@@ -2,7 +2,12 @@ openapi: 3.0.3
 info:
   title: WoW Auction Engine API
   version: 0.0.1
-  description: Public API for WoW Auction Engine.
+  description: >-
+    Public API for WoW Auction Engine. Every operation accepts an optional
+    X-Correlation-ID and X-Client-Session-ID request header. Responses always
+    include X-Correlation-ID and include X-Client-Session-ID when the supplied
+    session identifier was accepted. Both identifiers use canonical UUID text;
+    the client-session identifier is observability metadata, not authentication.
 servers:
   - url: /api
     description: Same origin
@@ -107,6 +112,16 @@ paths:
   /profile/characters/{characterId}/professions/{professionId}:
     $ref: ./paths/profile.yml#/characterProfessionProfile
 components:
+  parameters:
+    CorrelationId:
+      $ref: ./components/parameters/correlation-id.yml
+    ClientSessionId:
+      $ref: ./components/parameters/client-session-id.yml
+  headers:
+    CorrelationId:
+      $ref: ./components/headers/correlation-id.yml
+    ClientSessionId:
+      $ref: ./components/headers/client-session-id.yml
   schemas:
     User:
       $ref: ./components/schemas/admin/user.yml

@@ -111,9 +111,9 @@ class AuctionMarketSearchRepository(
             }
 
         logger.info(
-            "Auction market search repository completed in {}ms (requestId={} query={}ms selectedRealm={} selectedDate={} selectedHour={} commodityRealm={} commodityDate={} commodityHour={} totalItems={} returnedRows={})",
+            "Auction market search repository completed in {}ms (correlationId={} query={}ms selectedRealm={} selectedDate={} selectedHour={} commodityRealm={} commodityDate={} commodityHour={} totalItems={} returnedRows={})",
             elapsedMs(totalStartNanos),
-            requestId(),
+            correlationId(),
             result.queryMs,
             request.selectedConnectedRealmId,
             request.selectedDate,
@@ -846,7 +846,7 @@ class AuctionMarketSearchRepository(
         return if (wasNull()) null else value
     }
 
-    private fun requestId(): String = MDC.get("requestId") ?: "-"
+    private fun correlationId(): String = MDC.get("correlationId") ?: "-"
 
     /** For integration tests: `EXPLAIN` / `EXPLAIN ANALYZE` against real MariaDB. */
     internal fun buildMarketSearchPagedSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> {

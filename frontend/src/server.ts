@@ -5,7 +5,6 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
-import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { appLocaleFromPath, stripLocalePrefix } from './app/core/services/locale-support';
@@ -15,6 +14,13 @@ import { readAuthConfig } from './server/auth/auth-session';
 import { formatErrorForLogSafe, registerCompactProcessErrorLogging } from './server/server-log';
 import { resolveBackendOrigin } from './backend-origin';
 import { resolveLocaleRedirect } from './server/locale-redirect';
+import {
+  getRequestIdentifiers,
+  requestIdentifierMiddleware,
+  setIdentifierResponseHeaders,
+  type RequestIdentifiers,
+} from './server/request-identifiers';
+import { CLIENT_SESSION_ID_HEADER, CORRELATION_ID_HEADER } from './request-identifiers';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 const backendOrigin = resolveBackendOrigin();
@@ -35,9 +41,8 @@ app.set('trust proxy', 1);
 const angularApp = new AngularNodeAppEngine();
 const authConfig = readAuthConfig();
 
+app.use(requestIdentifierMiddleware);
 app.use('/auth', createAuthRouter(authConfig));
-
-const requestIdHeader = 'x-request-id';
 
 registerCompactProcessErrorLogging();
 
@@ -52,7 +57,7 @@ function readRequestBody(req: express.Request): Promise<Buffer> {
 
 app.use('/api', async (req, res) => {
   const proxyStart = performance.now();
-  const requestId = readRequestId(req) ?? randomUUID();
+  const identifiers = getRequestIdentifiers(res);
   let backendHeadersMs = 0;
   let bodyReadMs = 0;
 
@@ -61,7 +66,16 @@ app.use('/api', async (req, res) => {
     const headers = new Headers();
 
     for (const [key, value] of Object.entries(req.headers)) {
-      if (!value || ['host', 'cookie', 'authorization'].includes(key.toLowerCase())) {
+      if (
+        !value ||
+        [
+          'host',
+          'cookie',
+          'authorization',
+          CORRELATION_ID_HEADER.toLowerCase(),
+          CLIENT_SESSION_ID_HEADER.toLowerCase(),
+        ].includes(key.toLowerCase())
+      ) {
         continue;
       }
       if (Array.isArray(value)) {
@@ -72,12 +86,14 @@ app.use('/api', async (req, res) => {
         headers.set(key, value);
       }
     }
-    headers.set(requestIdHeader, requestId);
+    headers.set(CORRELATION_ID_HEADER, identifiers.correlationId);
+    if (identifiers.clientSessionId) {
+      headers.set(CLIENT_SESSION_ID_HEADER, identifiers.clientSessionId);
+    }
     const session = await resolveValidSession(req, res, authConfig);
     if (session) {
       headers.set('Authorization', `Bearer ${session.accessToken}`);
     }
-    res.setHeader('X-Request-Id', requestId);
 
     const bodyBuffer = ['GET', 'HEAD'].includes(req.method)
       ? undefined
@@ -98,11 +114,17 @@ app.use('/api', async (req, res) => {
 
     res.status(response.status);
     response.headers.forEach((value, key) => {
-      if (hopByHopHeaders.has(key.toLowerCase())) {
+      if (
+        hopByHopHeaders.has(key.toLowerCase()) ||
+        [CORRELATION_ID_HEADER.toLowerCase(), CLIENT_SESSION_ID_HEADER.toLowerCase()].includes(
+          key.toLowerCase(),
+        )
+      ) {
         return;
       }
       res.setHeader(key, value);
     });
+    setIdentifierResponseHeaders(res, identifiers);
 
     if (response.body) {
       const bodyReadStart = performance.now();
@@ -111,7 +133,7 @@ app.use('/api', async (req, res) => {
       const responseSendStart = performance.now();
       res.once('finish', () => {
         logApiProxyTimingSafe({
-          requestId,
+          ...identifiers,
           method: req.method,
           path: targetUrl.pathname,
           status: response.status,
@@ -126,7 +148,7 @@ app.use('/api', async (req, res) => {
       const responseSendStart = performance.now();
       res.once('finish', () => {
         logApiProxyTimingSafe({
-          requestId,
+          ...identifiers,
           method: req.method,
           path: targetUrl.pathname,
           status: response.status,
@@ -141,7 +163,7 @@ app.use('/api', async (req, res) => {
   } catch (error) {
     logApiProxyFailureSafe({
       proxyStartMs: proxyStart,
-      requestId,
+      ...identifiers,
       method: req.method,
       path: req.path,
       error,
@@ -151,7 +173,7 @@ app.use('/api', async (req, res) => {
       // cannot attempt another write and crash the process.
       return;
     }
-    sendBadGatewayResponse(res, requestId);
+    sendBadGatewayResponse(res, identifiers);
   }
 });
 
@@ -169,20 +191,13 @@ app.use(async (req, res, next) => {
   }
 });
 
-function readRequestId(req: express.Request): string | null {
-  const value = req.headers[requestIdHeader];
-  if (Array.isArray(value)) {
-    return value.find((item) => item.trim()) ?? null;
-  }
-  return value?.trim() || null;
-}
-
 function elapsedMs(start: number): number {
   return Math.round(performance.now() - start);
 }
 
 function logApiProxyTiming(timing: {
-  requestId: string;
+  correlationId: string;
+  clientSessionId: string | null;
   method: string;
   path: string;
   status: number;
@@ -193,7 +208,8 @@ function logApiProxyTiming(timing: {
 }): void {
   console.info(
     `API proxy completed in ${timing.totalMs}ms ` +
-      `(requestId=${timing.requestId} method=${timing.method} path=${timing.path} ` +
+      `(correlationId=${timing.correlationId} clientSessionId=${timing.clientSessionId ?? 'none'} ` +
+      `method=${timing.method} path=${timing.path} ` +
       `status=${timing.status} backendHeaders=${timing.backendHeadersMs}ms ` +
       `bodyRead=${timing.bodyReadMs}ms responseSend=${timing.responseSendMs}ms)`,
   );
@@ -209,7 +225,8 @@ function logApiProxyTimingSafe(timing: Parameters<typeof logApiProxyTiming>[0]):
 
 function logApiProxyFailureSafe(context: {
   proxyStartMs: number;
-  requestId: string;
+  correlationId: string;
+  clientSessionId: string | null;
   method: string;
   path: string;
   error: unknown;
@@ -217,19 +234,22 @@ function logApiProxyFailureSafe(context: {
   try {
     console.error(
       `API proxy failed in ${elapsedMs(context.proxyStartMs)}ms ` +
-        `(requestId=${context.requestId} method=${context.method} path=${context.path} ` +
+        `(correlationId=${context.correlationId} ` +
+        `clientSessionId=${context.clientSessionId ?? 'none'} method=${context.method} ` +
+        `path=${context.path} ` +
         `error=${formatErrorForLogSafe(context.error)})`,
     );
   } catch (logError) {
     console.error(
       `API proxy failed (logging error: ${formatErrorForLogSafe(logError)}) ` +
-        `requestId=${context.requestId}`,
+        `correlationId=${context.correlationId} clientSessionId=${context.clientSessionId ?? 'none'}`,
     );
   }
 }
 
 function logSsrRequestStartSafe(context: {
-  requestId: string;
+  correlationId: string;
+  clientSessionId: string | null;
   method: string;
   path: string;
   host: string | undefined;
@@ -237,7 +257,9 @@ function logSsrRequestStartSafe(context: {
   try {
     console.info(
       `SSR request started ` +
-        `(requestId=${context.requestId} method=${context.method} path=${context.path} ` +
+        `(correlationId=${context.correlationId} ` +
+        `clientSessionId=${context.clientSessionId ?? 'none'} method=${context.method} ` +
+        `path=${context.path} ` +
         `host=${context.host ?? 'unknown'})`,
     );
   } catch (logError) {
@@ -247,7 +269,8 @@ function logSsrRequestStartSafe(context: {
 
 function logSsrCompletionSafe(context: {
   ssrStartMs: number;
-  requestId: string;
+  correlationId: string;
+  clientSessionId: string | null;
   method: string;
   path: string;
   status: number;
@@ -255,7 +278,9 @@ function logSsrCompletionSafe(context: {
   try {
     console.info(
       `SSR request completed in ${elapsedMs(context.ssrStartMs)}ms ` +
-        `(requestId=${context.requestId} method=${context.method} path=${context.path} ` +
+        `(correlationId=${context.correlationId} ` +
+        `clientSessionId=${context.clientSessionId ?? 'none'} method=${context.method} ` +
+        `path=${context.path} ` +
         `status=${context.status})`,
     );
   } catch (logError) {
@@ -265,7 +290,8 @@ function logSsrCompletionSafe(context: {
 
 function logSsrFailureSafe(context: {
   ssrStartMs: number;
-  requestId: string;
+  correlationId: string;
+  clientSessionId: string | null;
   method: string;
   path: string;
   error: unknown;
@@ -273,19 +299,25 @@ function logSsrFailureSafe(context: {
   try {
     console.error(
       `SSR request failed in ${elapsedMs(context.ssrStartMs)}ms ` +
-        `(requestId=${context.requestId} method=${context.method} path=${context.path} ` +
+        `(correlationId=${context.correlationId} ` +
+        `clientSessionId=${context.clientSessionId ?? 'none'} method=${context.method} ` +
+        `path=${context.path} ` +
         `error=${formatErrorForLogSafe(context.error)})`,
     );
   } catch (logError) {
     console.error(
       `SSR request failed (logging error: ${formatErrorForLogSafe(logError)}) ` +
-        `requestId=${context.requestId}`,
+        `correlationId=${context.correlationId} clientSessionId=${context.clientSessionId ?? 'none'}`,
     );
   }
 }
 
-function sendBadGatewayResponse(res: express.Response, requestId: string): void {
-  const payload = { error: 'Bad Gateway', requestId };
+function sendBadGatewayResponse(res: express.Response, identifiers: RequestIdentifiers): void {
+  const payload = {
+    error: 'Bad Gateway',
+    correlationId: identifiers.correlationId,
+    ...(identifiers.clientSessionId ? { clientSessionId: identifiers.clientSessionId } : {}),
+  };
   if (res.headersSent) {
     return;
   }
@@ -340,22 +372,21 @@ app.use(
  */
 app.use((req, res, next) => {
   const ssrStart = performance.now();
-  const requestId = readRequestId(req) ?? randomUUID();
+  const identifiers = getRequestIdentifiers(res);
   const requestedLocale = appLocaleFromOriginalUrl(req.originalUrl);
   const localizedDevRewrite = rewriteLocalePrefixForSingleLocaleDev(req);
   const responseLocale = localizedDevRewrite.locale ?? requestedLocale;
-  res.setHeader('X-Request-Id', requestId);
   res.once('finish', () => {
     logSsrCompletionSafe({
       ssrStartMs: ssrStart,
-      requestId,
+      ...identifiers,
       method: req.method,
       path: req.originalUrl,
       status: res.statusCode,
     });
   });
   logSsrRequestStartSafe({
-    requestId,
+    ...identifiers,
     method: req.method,
     path: req.originalUrl,
     host: req.headers.host,
@@ -373,7 +404,7 @@ app.use((req, res, next) => {
     .catch((error: unknown) => {
       logSsrFailureSafe({
         ssrStartMs: ssrStart,
-        requestId,
+        ...identifiers,
         method: req.method,
         path: req.originalUrl,
         error,

@@ -7,8 +7,10 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { PageFrameComponent, SkeletonDirective } from '@ui';
+import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '@core/services/auth.service';
 import {
@@ -28,6 +30,7 @@ import {
 })
 export class ProfilePage {
   private readonly auth = inject(AuthService);
+  private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
 
   protected readonly user = this.auth.user;
@@ -87,7 +90,7 @@ export class ProfilePage {
 
     this.changingPassword.set(true);
     try {
-      await requestAuth('/auth/change-password', {
+      await requestAuth(this.http, '/auth/change-password', {
         currentPassword: this.currentPassword(),
         newPassword: this.newPassword(),
       });
@@ -106,9 +109,15 @@ export class ProfilePage {
     }
   }
 
-  protected signOut(): void {
+  protected async signOut(): Promise<void> {
     this.auth.setSignedOut();
-    window.location.assign('/auth/logout');
+    try {
+      await firstValueFrom(this.http.post<void>('/auth/logout', null));
+      window.location.assign('/');
+    } catch {
+      // Direct navigation remains a compatibility fallback if the POST cannot reach the BFF.
+      window.location.assign('/auth/logout');
+    }
   }
 
   private async loadUser(): Promise<void> {
@@ -136,19 +145,18 @@ export class ProfilePage {
   }
 }
 
-async function requestAuth<T = unknown>(url: string, body: unknown): Promise<T> {
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  });
-  const payload = (await response.json().catch(() => ({}))) as { error?: string } & T;
-  if (!response.ok) {
-    throw new Error(
-      payload.error ?? $localize`:@@profile.error.authRequest:Authentication request failed`,
-    );
+async function requestAuth<T = unknown>(http: HttpClient, url: string, body: unknown): Promise<T> {
+  try {
+    return await firstValueFrom(http.post<T>(url, body));
+  } catch (error) {
+    if (
+      error instanceof HttpErrorResponse &&
+      typeof error.error === 'object' &&
+      error.error !== null &&
+      typeof (error.error as { error?: unknown }).error === 'string'
+    ) {
+      throw new Error((error.error as { error: string }).error);
+    }
+    throw new Error($localize`:@@profile.error.authRequest:Authentication request failed`);
   }
-  return payload;
 }

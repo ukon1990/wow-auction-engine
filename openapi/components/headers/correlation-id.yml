@@ -1,0 +1,11 @@
+description: >-
+  Canonical UUID used to correlate this request across services. The backend
+  echoes an accepted request value or returns the replacement it generated.
+required: true
+schema:
+  type: string
+  format: uuid
+  minLength: 36
+  maxLength: 36
+  pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+example: 0198c728-8f4b-7ccb-9953-d23cc1976587

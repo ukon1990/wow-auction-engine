@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.config
 
+import net.jonasmf.auctionengine.interceptor.correlationHeadersFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
@@ -14,5 +15,6 @@ class TsmWebClientConfig {
             .builder()
             .codecs { codecs ->
                 codecs.defaultCodecs().maxInMemorySize(TSM_PUBLIC_DATA_MAX_IN_MEMORY_BYTES)
-            }.build()
+            }.filter(correlationHeadersFilter())
+            .build()
 }

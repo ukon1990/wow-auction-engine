@@ -1,0 +1,11 @@
+description: >-
+  Accepted browser-tab session UUID echoed for observability. Omitted when the
+  request did not contain a valid X-Client-Session-ID value.
+required: false
+schema:
+  type: string
+  format: uuid
+  minLength: 36
+  maxLength: 36
+  pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+example: 0198c728-a27c-7286-a24e-230ea6be5045

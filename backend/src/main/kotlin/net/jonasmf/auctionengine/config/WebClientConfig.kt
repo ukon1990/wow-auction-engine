@@ -1,6 +1,7 @@
 package net.jonasmf.auctionengine.config
 
 import net.jonasmf.auctionengine.interceptor.authHeaderFilterFunction
+import net.jonasmf.auctionengine.interceptor.correlationHeadersFilter
 import net.jonasmf.auctionengine.service.AuthService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,6 +22,7 @@ class WebClientConfig(
     @Bean
     fun webClientWithAuth(authService: AuthService): WebClient =
         webClientBuilder()
+            .filter(correlationHeadersFilter())
             .filter(authHeaderFilterFunction(authService, blizzardApiProperties))
             .build()
 }

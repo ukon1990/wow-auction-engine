@@ -331,7 +331,7 @@ inspectNormalizedAuctionHelperProfessionData:
             encoded addon payloads are never accepted. The endpoint validates recipe, item, reagent,
             skill, and talent associations and stores an idempotent normalized snapshot. Incomplete
             addon associations are reported as diagnostics rather than rejecting otherwise safe data. Requests are limited to
-            32 MiB before JSON deserialization and receive an X-Request-Id correlation header.
+            32 MiB before JSON deserialization and receive an X-Correlation-ID header.
         requestBody:
             required: true
             content:

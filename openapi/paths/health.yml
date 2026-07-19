@@ -8,5 +8,15 @@ health:
     responses:
       "204":
         description: The application is healthy.
+        headers:
+          X-Correlation-ID:
+            $ref: ../components/headers/correlation-id.yml
+          X-Client-Session-ID:
+            $ref: ../components/headers/client-session-id.yml
       "503":
         description: The application is running but unhealthy.
+        headers:
+          X-Correlation-ID:
+            $ref: ../components/headers/correlation-id.yml
+          X-Client-Session-ID:
+            $ref: ../components/headers/client-session-id.yml

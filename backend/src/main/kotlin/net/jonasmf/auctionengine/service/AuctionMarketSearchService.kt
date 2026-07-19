@@ -229,9 +229,9 @@ class AuctionMarketSearchService(
             )
         val mappingMs = elapsedMs(mappingStartNanos)
         log.info(
-            "Auction market search service completed in {}ms (requestId={} resolveContext={}ms repository={}ms mapping={}ms region={} realmSlug={} page={} pageSize={} totalItems={} returnedRows={})",
+            "Auction market search service completed in {}ms (correlationId={} resolveContext={}ms repository={}ms mapping={}ms region={} realmSlug={} page={} pageSize={} totalItems={} returnedRows={})",
             elapsedMs(totalStartNanos),
-            requestId(),
+            correlationId(),
             resolveContextMs,
             repositoryMs,
             mappingMs,
@@ -258,9 +258,9 @@ class AuctionMarketSearchService(
         val now = Instant.now()
         filtersCache[cacheKey]?.takeIf { now.isBefore(it.expiresAt) }?.let { cached ->
             log.info(
-                "Auction market filters service cache hit in {}ms (requestId={} region={} realmSlug={} locale={})",
+                "Auction market filters service cache hit in {}ms (correlationId={} region={} realmSlug={} locale={})",
                 elapsedMs(totalStartNanos),
-                requestId(),
+                correlationId(),
                 regionCode,
                 realmSlug,
                 context.locale.value,
@@ -404,9 +404,9 @@ class AuctionMarketSearchService(
                     ),
             )
         log.info(
-            "Auction market filters service completed in {}ms (requestId={} resolveContext={}ms parallelFilters={}ms region={} realmSlug={} qualityOptionsCount={} itemClassOptionsCount={} itemSubclassOptionsCount={} expansionOptionsCount={})",
+            "Auction market filters service completed in {}ms (correlationId={} resolveContext={}ms parallelFilters={}ms region={} realmSlug={} qualityOptionsCount={} itemClassOptionsCount={} itemSubclassOptionsCount={} expansionOptionsCount={})",
             elapsedMs(totalStartNanos),
-            requestId(),
+            correlationId(),
             resolveContextMs,
             parallelFiltersMs,
             regionCode,
@@ -476,7 +476,7 @@ class AuctionMarketSearchService(
 
     private fun elapsedMs(startNanos: Long): Long = (System.nanoTime() - startNanos) / 1_000_000
 
-    private fun requestId(): String = MDC.get("requestId") ?: "-"
+    private fun correlationId(): String = MDC.get("correlationId") ?: "-"
 
     private fun preferredScopeFor(
         selectedPrice: Long?,

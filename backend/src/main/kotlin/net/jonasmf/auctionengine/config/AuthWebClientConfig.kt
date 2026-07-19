@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.config
 
+import net.jonasmf.auctionengine.interceptor.correlationHeadersFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
@@ -13,5 +14,6 @@ class AuthWebClientConfig(
         WebClient
             .builder()
             .baseUrl(blizzardApiProperties.tokenUrl) // You can set a base URL specific to auth if needed
+            .filter(correlationHeadersFilter())
             .build()
 }

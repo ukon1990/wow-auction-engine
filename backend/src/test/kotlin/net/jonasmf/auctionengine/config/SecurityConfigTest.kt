@@ -2,6 +2,8 @@ package net.jonasmf.auctionengine.config
 
 import net.jonasmf.auctionengine.controller.AdminController
 import net.jonasmf.auctionengine.controller.HealthController
+import net.jonasmf.auctionengine.interceptor.CORRELATION_ID_HEADER
+import net.jonasmf.auctionengine.interceptor.RequestCorrelationFilter
 import net.jonasmf.auctionengine.service.RuntimeHealthSnapshot
 import net.jonasmf.auctionengine.service.RuntimeHealthTracker
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
@@ -30,6 +32,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(
@@ -42,7 +45,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     ServletWebSecurityAutoConfiguration::class,
     SecurityFilterAutoConfiguration::class,
 )
-@Import(SecurityConfig::class)
+@Import(SecurityConfig::class, RequestCorrelationFilter::class)
 @TestPropertySource(
     properties = [
         "spring.security.oauth2.resourceserver.jwt.issuer-uri=https://issuer.example.test",
@@ -91,15 +94,19 @@ class SecurityConfigTest {
     @Test
     fun `health remains public`() {
         `when`(runtimeHealthTracker.snapshot(anyLong())).thenReturn(RuntimeHealthSnapshot(healthy = true))
+        val correlationId = "30bc30e8-ace7-47dc-b94a-34df764d6c13"
 
         val result =
             mockMvc
-                .get("/health")
+                .get("/health") {
+                    header(CORRELATION_ID_HEADER, correlationId)
+                }
                 .andReturn()
 
         mockMvc
             .perform(asyncDispatch(result))
             .andExpect(status().isNoContent)
+            .andExpect(header().string(CORRELATION_ID_HEADER, correlationId))
     }
 
     /*

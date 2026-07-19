@@ -94,23 +94,23 @@ class AdminProfessionSyncServiceTest {
     fun `propagates request MDC to asynchronous sync job`() {
         val job = adminJob()
         val started = CountDownLatch(1)
-        val requestId = AtomicReference<String?>()
+        val correlationId = AtomicReference<String?>()
         val jobId = AtomicReference<String?>()
         every { guard.tryAcquire() } returns syncLock
         every { adminJobRepository.createJob(any(), any(), any()) } returns job
         every { professionRecipeSyncService.syncConfiguredStaticDataRegion(any(), any()) } answers {
-            requestId.set(MDC.get("requestId"))
+            correlationId.set(MDC.get("correlationId"))
             jobId.set(MDC.get("adminJobId"))
             started.countDown()
             syncResult()
         }
-        MDC.put("requestId", "request-123")
+        MDC.put("correlationId", "30bc30e8-ace7-47dc-b94a-34df764d6c13")
 
         try {
             service.syncProfessionRecipes("admin")
 
             assertThat(started.await(5, TimeUnit.SECONDS)).isTrue()
-            assertThat(requestId.get()).isEqualTo("request-123")
+            assertThat(correlationId.get()).isEqualTo("30bc30e8-ace7-47dc-b94a-34df764d6c13")
             assertThat(jobId.get()).isEqualTo(job.id.toString())
         } finally {
             MDC.clear()

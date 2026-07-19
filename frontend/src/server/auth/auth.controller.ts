@@ -1,6 +1,7 @@
 import express from 'express';
 
 import { formatErrorForLogSafe } from '../server-log';
+import { getRequestIdentifiers } from '../request-identifiers';
 import { resolveValidSession } from './auth-session-resolver';
 import {
   authErrorResponse,
@@ -278,6 +279,11 @@ export function createAuthRouter(authConfig: AuthConfig | null): express.Router 
     res.redirect('/');
   });
 
+  router.post('/logout', (req, res) => {
+    clearSessionCookie(res, req);
+    res.status(204).end();
+  });
+
   router.get('/me', async (req, res) => {
     const session = await resolveValidSession(req, res, authConfig);
     if (!session) {
@@ -355,11 +361,14 @@ function logAuthRequest(
   next: express.NextFunction,
 ): void {
   const start = performance.now();
+  const identifiers = getRequestIdentifiers(res);
   res.once('finish', () => {
     try {
       console.info(
         `Auth request completed in ${elapsedMs(start)}ms ` +
-          `(method=${req.method} path=${req.originalUrl} status=${res.statusCode})`,
+          `(correlationId=${identifiers.correlationId} ` +
+          `clientSessionId=${identifiers.clientSessionId ?? 'none'} method=${req.method} ` +
+          `path=${req.originalUrl} status=${res.statusCode})`,
       );
     } catch (error) {
       console.error(`Auth request log failed ${formatErrorForLogSafe(error)}`);
