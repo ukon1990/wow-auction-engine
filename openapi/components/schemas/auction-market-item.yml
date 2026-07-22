@@ -16,5 +16,7 @@ properties:
     $ref: "../../openapi.yml#/components/schemas/AuctionMarketNamedId"
   itemSubclass:
     $ref: "../../openapi.yml#/components/schemas/AuctionMarketNamedId"
+  expansion:
+    $ref: "../../openapi.yml#/components/schemas/AuctionMarketNamedId"
   recipe:
     $ref: "../../openapi.yml#/components/schemas/AuctionMarketRecipe"

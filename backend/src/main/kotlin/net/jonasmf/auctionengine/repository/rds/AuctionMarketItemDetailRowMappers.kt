@@ -19,12 +19,16 @@ internal object AuctionMarketItemDetailRowMappers {
                 itemClassName = rs.getString("item_class_name"),
                 itemSubclassId = rs.getNullableInt("item_subclass_id"),
                 itemSubclassName = rs.getString("item_subclass_name"),
+                expansionId = rs.getNullableInt("expansion_id"),
+                expansionName = rs.getString("expansion_name"),
                 recipeId = rs.getNullableInt("recipe_id"),
                 recipeRank = rs.getNullableInt("recipe_rank"),
                 recipeName = rs.getString("recipe_name"),
                 recipeMediaUrl = rs.getString("recipe_media_url"),
                 saleRate = rs.getNullableDouble("sale_rate"),
                 soldPerDay = rs.getNullableDouble("sold_per_day"),
+                craftedByRecipeCount = rs.getInt("crafted_by_recipe_count"),
+                reagentInRecipeCount = rs.getInt("reagent_in_recipe_count"),
             )
         }
 

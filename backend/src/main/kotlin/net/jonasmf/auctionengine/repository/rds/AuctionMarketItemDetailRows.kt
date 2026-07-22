@@ -44,12 +44,16 @@ data class AuctionMarketItemHeaderRow(
     val itemClassName: String?,
     val itemSubclassId: Int?,
     val itemSubclassName: String?,
+    val expansionId: Int?,
+    val expansionName: String?,
     val recipeId: Int?,
     val recipeRank: Int?,
     val recipeName: String?,
     val recipeMediaUrl: String?,
     val saleRate: Double?,
     val soldPerDay: Double?,
+    val craftedByRecipeCount: Int,
+    val reagentInRecipeCount: Int,
 )
 
 data class AuctionMarketItemCurrentListingRow(

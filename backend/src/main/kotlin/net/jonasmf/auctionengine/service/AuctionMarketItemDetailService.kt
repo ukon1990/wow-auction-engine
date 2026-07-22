@@ -391,6 +391,8 @@ class AuctionMarketItemDetailService(
             craftings = craftingDtos,
             saleRate = header.saleRate,
             soldPerDay = header.soldPerDay,
+            craftedByRecipeCount = header.craftedByRecipeCount,
+            reagentInRecipeCount = header.reagentInRecipeCount,
         )
     }
 
@@ -487,6 +489,13 @@ class AuctionMarketItemDetailService(
                     AuctionMarketNamedId(
                         it,
                         itemSubclassName.orEmpty(),
+                    )
+                },
+            expansion =
+                expansionId?.let {
+                    AuctionMarketNamedId(
+                        it,
+                        expansionName.orEmpty(),
                     )
                 },
             recipe =

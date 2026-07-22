@@ -29,13 +29,30 @@ class AuctionMarketItemDetailRepository(
                     COALESCE(d.item_class_name_$localeColumnSuffix, d.item_class_name_en_gb, d.item_class_name_en_us) AS item_class_name,
                     d.item_subclass_id,
                     COALESCE(d.item_subclass_name_$localeColumnSuffix, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
+                    d.expansion_id,
+                    COALESCE(e_l.$localeColumnSuffix, e_l.en_gb, e_l.en_us, e.slug) AS expansion_name,
                     d.recipe_id,
                     d.recipe_rank,
                     COALESCE(d.recipe_name_$localeColumnSuffix, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
                     d.recipe_media_url,
                     tsm.sale_rate,
-                    tsm.sold_per_day
+                    tsm.sold_per_day,
+                    (
+                        SELECT COUNT(DISTINCT output.recipe_id)
+                        FROM v_recipe_crafted_output output
+                        WHERE output.crafted_item_id = d.item_id
+                    ) AS crafted_by_recipe_count,
+                    (
+                        SELECT COUNT(DISTINCT rr.recipe_id)
+                        FROM v_recipe_reagent rr
+                            LEFT JOIN recipe_reagent_rank rrk
+                                ON rrk.recipe_reagent_id = rr.internal_id
+                        WHERE rr.item_id = d.item_id
+                           OR rrk.item_id = d.item_id
+                    ) AS reagent_in_recipe_count
                 FROM v_auction_market_item_details d
+                    LEFT JOIN expansion e ON e.id = d.expansion_id
+                    LEFT JOIN locale e_l ON e_l.id = e.name_id
                     LEFT JOIN tsm_region_metric tsm
                         ON tsm.region = ?
                         AND tsm.subject_type = 'ITEM'

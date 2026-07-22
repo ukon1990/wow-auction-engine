@@ -2,6 +2,10 @@ import { Route } from '@angular/router';
 
 import { realmSelectedGuard } from '@core/guards/realm-selected.guard';
 import {
+  legacyAuctionItemRedirectGuard,
+  legacyCraftingItemRedirectGuard,
+} from '@core/guards/item-detail-legacy-redirect.guard';
+import {
   readCraftingBrowserQueryState,
   toCraftingBrowserQueryParams,
 } from '@core/mappers/crafting-browser-query.mapper';
@@ -128,6 +132,14 @@ export const routes: TitledRoutes = [
         pathMatch: 'full',
       },
       {
+        path: 'item/:itemId',
+        title: $localize`:@@route.itemDetail:Item`,
+        loadComponent: () =>
+          import('./features/market-browser/market-item-detail.page').then(
+            (m) => m.MarketItemDetailPage,
+          ),
+      },
+      {
         path: 'auctions',
         title: $localize`:@@route.auctions:Auctions`,
         icon: 'travel_explore',
@@ -155,10 +167,7 @@ export const routes: TitledRoutes = [
           },
           {
             path: 'item/:itemId',
-            data: {
-              marketListSegment: 'auctions',
-              marketListLabel: $localize`:@@route.auctions:Auctions`,
-            },
+            canActivate: [legacyAuctionItemRedirectGuard],
             loadComponent: () =>
               import('./features/market-browser/market-item-detail.page').then(
                 (m) => m.MarketItemDetailPage,
@@ -194,10 +203,7 @@ export const routes: TitledRoutes = [
           },
           {
             path: ':recipeId/:itemId',
-            data: {
-              marketListSegment: 'crafting',
-              marketListLabel: $localize`:@@route.crafting:Crafting`,
-            },
+            canActivate: [legacyCraftingItemRedirectGuard],
             loadComponent: () =>
               import('./features/market-browser/market-item-detail.page').then(
                 (m) => m.MarketItemDetailPage,

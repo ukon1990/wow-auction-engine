@@ -16,6 +16,8 @@ required:
     - quantityPieCommodity
     - currentListings
     - craftings
+    - craftedByRecipeCount
+    - reagentInRecipeCount
 properties:
     item:
         $ref: "../../openapi.yml#/components/schemas/AuctionMarketItem"
@@ -87,3 +89,11 @@ properties:
         description: |
             TSM regional average units sold per day for this item in the request region.
             Null when no TSM metric row exists for the region/item.
+    craftedByRecipeCount:
+        type: integer
+        minimum: 0
+        description: Number of distinct recipes that craft this item as an output.
+    reagentInRecipeCount:
+        type: integer
+        minimum: 0
+        description: Number of distinct recipes that list this item as a reagent (base or ranked).

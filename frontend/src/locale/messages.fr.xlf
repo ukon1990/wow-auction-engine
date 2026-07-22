@@ -269,19 +269,19 @@
       </trans-unit>
       <trans-unit id="admin.expansions.jobs.apply.running" datatype="html">
         <source>Applying expansion ranges…</source>
-        <target>Applying expansion ranges…</target>
+        <target state="translated">Application des plages d'extensions…</target>
       </trans-unit>
       <trans-unit id="admin.expansions.jobs.apply.done" datatype="html">
         <source>Apply expansion ranges finished</source>
-        <target>Apply expansion ranges finished</target>
+        <target state="translated">Application des plages d'extensions terminée</target>
       </trans-unit>
       <trans-unit id="admin.expansions.jobs.fetch.running" datatype="html">
         <source>Fetching missing items…</source>
-        <target>Fetching missing items…</target>
+        <target state="translated">Récupération des objets manquants…</target>
       </trans-unit>
       <trans-unit id="admin.expansions.jobs.fetch.done" datatype="html">
         <source>Fetch missing items finished</source>
-        <target>Fetch missing items finished</target>
+        <target state="translated">Récupération des objets manquants terminée</target>
       </trans-unit>
       <trans-unit id="admin.expansions.jobs.generic" datatype="html">
         <source>Admin item job</source>
@@ -289,43 +289,43 @@
       </trans-unit>
       <trans-unit id="admin.expansions.jobs.failed" datatype="html">
         <source>Job failed.</source>
-        <target>Job failed.</target>
+        <target state="translated">Échec de la tâche.</target>
       </trans-unit>
       <trans-unit id="admin.expansions.catalog.name" datatype="html">
         <source>Name</source>
-        <target>Name</target>
+        <target state="translated">Nom</target>
       </trans-unit>
       <trans-unit id="admin.expansions.catalog.slug" datatype="html">
         <source>Slug</source>
-        <target>Slug</target>
+        <target state="translated">Slug</target>
       </trans-unit>
       <trans-unit id="admin.expansions.catalog.majorVersion" datatype="html">
         <source>Major version</source>
-        <target>Major version</target>
+        <target state="translated">Version majeure</target>
       </trans-unit>
       <trans-unit id="admin.expansions.catalog.displayOrder" datatype="html">
         <source>Display order</source>
-        <target>Display order</target>
+        <target state="translated">Ordre d'affichage</target>
       </trans-unit>
       <trans-unit id="admin.expansions.ranges.expansion" datatype="html">
         <source>Expansion</source>
-        <target>Expansion</target>
+        <target state="translated">Extension</target>
       </trans-unit>
       <trans-unit id="admin.expansions.ranges.startItemId" datatype="html">
         <source>Start item ID</source>
-        <target>Start item ID</target>
+        <target state="translated">ID d'objet de début</target>
       </trans-unit>
       <trans-unit id="admin.expansions.ranges.endItemId" datatype="html">
         <source>End item ID</source>
-        <target>End item ID</target>
+        <target state="translated">ID d’objet de fin</target>
       </trans-unit>
       <trans-unit id="admin.expansions.ranges.source" datatype="html">
         <source>Source</source>
-        <target>Source</target>
+        <target state="translated">Source</target>
       </trans-unit>
       <trans-unit id="admin.expansions.ranges.note" datatype="html">
         <source>Note</source>
-        <target>Note</target>
+        <target state="translated">Note</target>
       </trans-unit>
       <trans-unit id="route.auctions" datatype="html">
         <source>Auctions</source>
@@ -1765,32 +1765,32 @@
       </trans-unit>
       <trans-unit id="admin.items.loadError" datatype="html">
         <source>Unable to load items.</source>
-        <target>Unable to load items.</target>
+        <target state="translated">Impossible de charger les objets.</target>
       </trans-unit>
       <trans-unit id="admin.items.detailError" datatype="html">
         <source>Unable to load item details.</source>
-        <target>Unable to load item details.</target>
+        <target state="translated">Impossible de charger les détails de l'objet.</target>
       </trans-unit>
       <trans-unit id="admin.items.compareError" datatype="html">
         <source>Unable to compare item with Blizzard API.</source>
-        <target>Unable to compare item with Blizzard API.</target>
+        <target state="translated">Impossible de comparer l'objet avec l'API Blizzard.</target>
       </trans-unit>
       <trans-unit id="admin.items.mutationError" datatype="html">
         <source>Item request failed.</source>
-        <target>Item request failed.</target>
+        <target state="translated">Échec de la requête d'objet.</target>
       </trans-unit>
 
       <trans-unit id="admin.items.recipeSearchError" datatype="html">
         <source>Unable to search recipes.</source>
-        <target>Unable to search recipes.</target>
+        <target state="translated">Impossible de rechercher les recettes.</target>
       </trans-unit>
       <trans-unit id="admin.items.create.englishRequired" datatype="html">
         <source>English (US) or English (GB) name is required.</source>
-        <target>English (US) or English (GB) name is required.</target>
+        <target state="translated">Le nom en anglais (US) ou en anglais (GB) est obligatoire.</target>
       </trans-unit>
       <trans-unit id="admin.items.table.id" datatype="html">
         <source>Item ID</source>
-        <target>Item ID</target>
+        <target state="translated">ID de l'objet</target>
       </trans-unit>
       <trans-unit id="admin.items.unnamed" datatype="html">
         <source>Unnamed item</source>
@@ -1798,90 +1798,90 @@
       </trans-unit>
       <trans-unit id="admin.items.table.name" datatype="html">
         <source>Name</source>
-        <target>Name</target>
+        <target state="translated">Nom</target>
       </trans-unit>
       <trans-unit id="admin.items.table.quality" datatype="html">
         <source>Quality</source>
-        <target>Quality</target>
+        <target state="translated">Qualité</target>
       </trans-unit>
       <trans-unit id="admin.items.table.class" datatype="html">
         <source>Class</source>
-        <target>Class</target>
+        <target state="translated">Classe</target>
       </trans-unit>
       <trans-unit id="admin.items.table.expansion" datatype="html">
         <source>Expansion</source>
-        <target>Expansion</target>
+        <target state="translated">Extension</target>
       </trans-unit>
       <trans-unit id="admin.items.table.state" datatype="html">
         <source>State</source>
-        <target>State</target>
+        <target state="translated">État</target>
       </trans-unit>
       <trans-unit id="admin.items.table.actions" datatype="html">
         <source>Actions</source>
-        <target>Actions</target>
+        <target state="translated">Actions</target>
       </trans-unit>
       <trans-unit id="admin.items.filter.anyOverride" datatype="html">
         <source>All override states</source>
-        <target>All override states</target>
+        <target state="translated">Tous les états de surcharge</target>
       </trans-unit>
       <trans-unit id="admin.items.filter.hasOverride" datatype="html">
         <source>Has override</source>
-        <target>Has override</target>
+        <target state="translated">Avec surcharge</target>
       </trans-unit>
       <trans-unit id="admin.items.filter.noOverride" datatype="html">
         <source>No override</source>
-        <target>No override</target>
+        <target state="translated">Aucune surcharge</target>
       </trans-unit>
 
       <trans-unit id="admin.items.filter.anyRecipe" datatype="html">
         <source>All recipe states</source>
-        <target>All recipe states</target>
+        <target state="translated">Tous les états de recette</target>
       </trans-unit>
       <trans-unit id="admin.items.filter.hasRecipe" datatype="html">
         <source>Has recipe</source>
-        <target>Has recipe</target>
+        <target state="translated">Avec recette</target>
       </trans-unit>
       <trans-unit id="admin.items.filter.noRecipe" datatype="html">
         <source>No recipe</source>
-        <target>No recipe</target>
+        <target state="translated">Sans recette</target>
       </trans-unit>
       <trans-unit id="admin.items.filter.anyExpansion" datatype="html">
         <source>All expansions</source>
-        <target>All expansions</target>
+        <target state="translated">Toutes les extensions</target>
       </trans-unit>
 
       <trans-unit id="admin.items.filter.anyClass" datatype="html">
         <source>All classes</source>
-        <target>All classes</target>
+        <target state="translated">Toutes les classes</target>
       </trans-unit>
       <trans-unit id="admin.items.filter.anySubclass" datatype="html">
         <source>All subclasses</source>
-        <target>All subclasses</target>
+        <target state="translated">Toutes les sous-classes</target>
       </trans-unit>
       <trans-unit id="admin.items.panel.create" datatype="html">
         <source>Create manual item</source>
-        <target>Create manual item</target>
+        <target state="translated">Créer un objet manuel</target>
       </trans-unit>
       <trans-unit id="admin.items.panel.compare" datatype="html">
         <source>Compare Blizzard API</source>
-        <target>Compare Blizzard API</target>
+        <target state="translated">Comparer l'API Blizzard</target>
       </trans-unit>
       <trans-unit id="admin.items.panel.edit" datatype="html">
         <source>Edit item override</source>
-        <target>Edit item override</target>
+        <target state="translated">Modifier le remplacement d'objet</target>
       </trans-unit>
 
       <trans-unit id="admin.items.panel.recipe" datatype="html">
         <source>Associate recipe</source>
-        <target>Associate recipe</target>
+        <target state="translated">Associer une recette</target>
       </trans-unit>
       <trans-unit id="admin.items.deleteConfirm" datatype="html">
         <source>Delete this item override? Base item data will be inherited again.</source>
-        <target>Delete this item override? Base item data will be inherited again.</target>
+        <target state="translated">Supprimer cette surcharge d'objet ? Les données de l'objet de base seront à nouveau héritées.</target>
       </trans-unit>
       <trans-unit id="admin.items.form.classSubclassRequired" datatype="html">
         <source>Class ID and subclass ID are required together.</source>
-        <target>Class ID and subclass ID are required together.</target>
+        <target state="translated">L'ID de classe et l'ID de sous-classe sont requis ensemble.</target>
       </trans-unit>
       <trans-unit id="route.admin.recipes" datatype="html">
         <source>Recipes</source>
@@ -2577,6 +2577,78 @@
       <trans-unit id="professionProfiles.source.manual" datatype="html">
         <source>Manual</source>
         <target>Manual</target>
+      </trans-unit>
+      <trans-unit id="route.itemDetail" datatype="html">
+        <source>Item</source>
+        <target>Objet</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.copyLink" datatype="html">
+        <source>Copy link</source>
+        <target>Copier le lien</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.openPage" datatype="html">
+        <source>Open page</source>
+        <target>Ouvrir la page</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.modal.close" datatype="html">
+        <source>Close item detail</source>
+        <target>Fermer le détail de l'objet</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.modal.loadingTitle" datatype="html">
+        <source>Item</source>
+        <target>Objet</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.linkCopied" datatype="html">
+        <source>Item link copied to clipboard.</source>
+        <target>Lien de l'objet copié dans le presse-papiers.</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.linkCopyFailed" datatype="html">
+        <source>Could not copy link.</source>
+        <target>Impossible de copier le lien.</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.priceSpread" datatype="html">
+        <source>Price spread</source>
+        <target>Fourchette de prix</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.p25Price" datatype="html">
+        <source>p25</source>
+        <target>p25</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.midPrice" datatype="html">
+        <source>mid</source>
+        <target>médian</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.p75Price" datatype="html">
+        <source>p75</source>
+        <target>p75</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.itemInfo" datatype="html">
+        <source>Item info</source>
+        <target>Infos objet</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.quality" datatype="html">
+        <source>Quality</source>
+        <target>Qualité</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.itemClass" datatype="html">
+        <source>Item class</source>
+        <target>Classe d'objet</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.itemSubclass" datatype="html">
+        <source>Item subclass</source>
+        <target>Sous-classe d'objet</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.expansion" datatype="html">
+        <source>Expansion</source>
+        <target>Extension</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.craftedByRecipes" datatype="html">
+        <source>Crafted by recipes</source>
+        <target>Fabriqué par recettes</target>
+      </trans-unit>
+      <trans-unit id="itemDetail.reagentInRecipes" datatype="html">
+        <source>Used as reagent</source>
+        <target>Utilisé comme réactif</target>
       </trans-unit>
     </body>
   </file>

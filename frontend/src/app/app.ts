@@ -17,6 +17,7 @@ import { RealmSelectionService } from '@core/services/realm-selection.service';
 import { LocaleService } from '@core/services/locale.service';
 import { AppLocale, isAppLocale } from '@core/services/locale-support';
 import { ToastRegion } from '@core/components/toast-region/toast-region';
+import { ItemDetailModalHostComponent } from '@shared/item-detail-modal/item-detail-modal.host';
 
 const FALLBACK_CHARACTER: CharacterSummary = {
   name: $localize`:@@app.fallbackCharacter.name:Adventurer`,
@@ -28,11 +29,18 @@ const FALLBACK_CHARACTER: CharacterSummary = {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TopNavComponent, WowheadTooltipLayer, ToastRegion],
+  imports: [
+    RouterOutlet,
+    TopNavComponent,
+    WowheadTooltipLayer,
+    ToastRegion,
+    ItemDetailModalHostComponent,
+  ],
   template: `
     <div class="flex h-dvh flex-col overflow-hidden bg-background text-on-surface">
       <app-wowhead-tooltip-layer />
       <app-toast-region />
+      <app-item-detail-modal-host />
       <a
         href="#page-main"
         class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-[200] focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:font-medium focus:text-on-primary focus:shadow-lg"

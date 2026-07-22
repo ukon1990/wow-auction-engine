@@ -6,6 +6,7 @@ import {
   hourlyPriceHeatmapCellsFromPoints,
   quantityAxisLabel,
   shouldFallbackToCommodityFetch,
+  shouldUseCommodityScopeByDefault,
 } from './market-item-detail.helpers';
 
 describe('market-item-detail helpers', () => {
@@ -21,6 +22,48 @@ describe('market-item-detail helpers', () => {
     } as never;
 
     expect(shouldFallbackToCommodityFetch(detail)).toBe(true);
+  });
+
+  it('defaults to commodity scope when realm metrics are redundant', () => {
+    const detail = {
+      regionalMetricsRedundant: true,
+      summary: {
+        selectedRealmPrice: 55,
+        selectedRealmQuantity: 100,
+        commodityPrice: 55,
+        commodityQuantity: 100,
+      },
+    } as never;
+
+    expect(shouldUseCommodityScopeByDefault(detail)).toBe(true);
+  });
+
+  it('defaults to commodity scope when realm metrics are missing', () => {
+    const detail = {
+      regionalMetricsRedundant: false,
+      summary: {
+        selectedRealmPrice: null,
+        selectedRealmQuantity: null,
+        commodityPrice: 55,
+        commodityQuantity: 100,
+      },
+    } as never;
+
+    expect(shouldUseCommodityScopeByDefault(detail)).toBe(true);
+  });
+
+  it('keeps realm scope when realm metrics exist and are not redundant', () => {
+    const detail = {
+      regionalMetricsRedundant: false,
+      summary: {
+        selectedRealmPrice: 40,
+        selectedRealmQuantity: 10,
+        commodityPrice: 55,
+        commodityQuantity: 100,
+      },
+    } as never;
+
+    expect(shouldUseCommodityScopeByDefault(detail)).toBe(false);
   });
 
   it('does not duplicate overlapping daily price lines', () => {

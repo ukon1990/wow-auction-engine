@@ -7,7 +7,8 @@
       "@ui": ["./ethereal-ui/src/public-api.ts"],
       "@api/*": ["./src/app/api/*"],
       "@core/*": ["./src/app/core/*"],
-      "@features/*": ["./src/app/features/*"]
+      "@features/*": ["./src/app/features/*"],
+      "@shared/*": ["./src/app/shared/*"]
     },
     "strict": true,
     "noImplicitOverride": true,
