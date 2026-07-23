@@ -1,5 +1,7 @@
 package net.jonasmf.auctionengine.mapper.realm
 
+import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.generated.model.Realm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm as RealmDbo
 import net.jonasmf.auctionengine.domain.realm.Realm as RealmDomain
 
@@ -24,5 +26,15 @@ fun RealmDbo.toDomain() =
         category = category,
         gameBuild = gameBuild,
         region = region.toDomain(),
+        timezone = timezone,
+    )
+
+fun RealmDomain.toDto() =
+    Realm(
+        locale = locale.value,
+        name = name,
+        slug = slug,
+        category = category,
+        region = Region.toDto(region.type),
         timezone = timezone,
     )

@@ -99,6 +99,10 @@ class AuctionHouseService(
 
     fun findAllByRegion(region: Region) = repository.findAllByRegion(region)
 
+    fun findAll() = repository.findAll()
+
+    fun findById(id: Int) = repository.findById(id)
+
     @Transactional
     fun updateLastDailyPriceUpdate(
         connectedRealmId: Int,
@@ -118,12 +122,6 @@ class AuctionHouseService(
             connectedRealmId,
             lastTsmRegionSync.toJavaInstant(),
         )
-
-    @Transactional
-    fun updateLastHistoryDeleted(
-        connectedRealmId: Int,
-        lastDeletedTime: Instant,
-    ) = auctionHouseEntityRepository.updateLastHistoryDeleteEvent(connectedRealmId, lastDeletedTime.toJavaInstant())
 
     @Transactional
     fun updateLastHistoryDeleted(

@@ -29,6 +29,10 @@ tags:
 paths:
   /health:
     $ref: ./paths/health.yml#/health
+  /admin/auction-houses:
+    $ref: ./paths/admin.yml#/listAuctionHouses
+  /admin/auction-houses/{id}:
+    $ref: ./paths/admin.yml#/getAuctionHouseById
   /admin/users:
     $ref: ./paths/admin.yml#/getUsers
   /admin/status:
@@ -213,6 +217,8 @@ components:
       $ref: ./components/schemas/admin/admin-recipe-reagent-rank.yml
     AdminItemOverrideRequest:
       $ref: ./components/schemas/admin/admin-item-override-request.yml
+    AuctionHouse:
+        $ref: ./components/schemas/auction-house.yml
     AuctionHouseStatus:
       $ref: ./components/schemas/auction-house-status.yml
     AuctionListingKey:

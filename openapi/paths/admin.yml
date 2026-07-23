@@ -1,3 +1,43 @@
+listAuctionHouses:
+    get:
+        tags:
+            - Admin
+        operationId: listAuctionHouses
+        summary: Lists all auction houses
+        description: Allows an administrator to get an overview over the current status of all the auction houses
+        responses:
+            "200":
+                description: A list of all the auction houses
+                content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                $ref: "../openapi.yml#/components/schemas/AuctionHouse"
+getAuctionHouseById:
+    get:
+        tags:
+            - Admin
+        operationId: getAuctionHouseById
+        summary: Get information about an auction house's status by id
+        description: Allows an administrator to gets a spesific auction houses
+        parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+                format: int32
+        responses:
+            "200":
+                description: A gets a spesific auction house
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AuctionHouse"
+            "404":
+                description: There is no auction house with this id
+
 getUsers:
     get:
         tags:

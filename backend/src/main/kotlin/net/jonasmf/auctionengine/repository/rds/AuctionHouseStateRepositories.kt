@@ -6,6 +6,7 @@ import net.jonasmf.auctionengine.mapper.realm.toDomain
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
 import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 import kotlin.time.toJavaInstant
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse as AuctionHouseDomain
 import net.jonasmf.auctionengine.domain.realm.Realm as RealmDomain
@@ -20,11 +21,16 @@ class AuctionHouseStateRepositoryImpl(
         if (id == null) return null
 
         val entity =
-            auctionHouseRepository.findByConnectedId(id).orElse(null)
-                ?: connectedRealmRepository.findById(id).orElse(null)?.auctionHouse
+            auctionHouseRepository.findByConnectedId(id).getOrNull()
+                ?: connectedRealmRepository.findById(id).getOrNull()?.auctionHouse
                 ?: return null
         return entity.toDomain()
     }
+
+    override fun findAll(): List<AuctionHouseDomain> =
+        auctionHouseRepository
+            .findAll()
+            .map { it.toDomain() }
 
     override fun findAllByRegion(region: Region): List<AuctionHouseDomain> =
         auctionHouseRepository.findAllByRegion(region).map { it.toDomain() }
