@@ -1,0 +1,14 @@
+type: object
+required:
+    - items
+    - page
+    - sort
+properties:
+    items:
+        type: array
+        items:
+            $ref: "../../../openapi.yml#/components/schemas/AuctionHouse"
+    page:
+        $ref: "../../../openapi.yml#/components/schemas/PageMetadata"
+    sort:
+        $ref: "../../../openapi.yml#/components/schemas/AuctionMarketSort"
