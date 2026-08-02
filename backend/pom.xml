@@ -51,6 +51,8 @@
         <ktlint.plugin.version>3.5.0</ktlint.plugin.version>
         <testcontainers.version>2.0.5</testcontainers.version>
         <exec.maven.plugin.version>3.6.3</exec.maven.plugin.version>
+        <maven.antrun.plugin.version>3.2.0</maven.antrun.plugin.version>
+        <detekt.version>2.0.0-alpha.5</detekt.version>
         <openapi.generator.version>7.22.0</openapi.generator.version>
         <node.executable>node</node.executable>
         <refresh.fixtures.args/>
@@ -367,6 +369,44 @@
                         <phase>verify</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven.antrun.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <!-- Intentionally not bound to verify; CI invokes this execution through the root lint command. -->
+                        <id>detekt</id>
+                        <configuration>
+                            <target name="detekt">
+                                <java taskname="detekt"
+                                      dir="${project.basedir}"
+                                      fork="true"
+                                      failonerror="true"
+                                      classname="dev.detekt.cli.Main"
+                                      classpathref="maven.plugin.classpath">
+                                    <!-- Only hand-written Kotlin roots are analyzed; generated OpenAPI sources live under target/. -->
+                                    <arg value="--input"/>
+                                    <arg value="${project.basedir}/src/main/kotlin:${project.basedir}/src/test/kotlin"/>
+                                    <arg value="--config"/>
+                                    <arg value="${project.basedir}/config/detekt/detekt.yml"/>
+                                    <arg value="--build-upon-default-config"/>
+                                </java>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>dev.detekt</groupId>
+                        <artifactId>detekt-cli</artifactId>
+                        <version>${detekt.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
