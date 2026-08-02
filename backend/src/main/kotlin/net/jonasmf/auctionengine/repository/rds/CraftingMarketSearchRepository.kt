@@ -54,7 +54,7 @@ class CraftingMarketSearchRepository(
         val rows =
             jdbcTemplate.query(
                 dataSql,
-                CraftingMarketSearchRowMappers.row,
+                craftingMarketRowMapper,
                 *dataParams.toTypedArray(),
             )
         logger.debug(
@@ -77,7 +77,7 @@ class CraftingMarketSearchRepository(
                 LEFT JOIN locale l ON l.id = p.name_id
             ORDER BY label
             """.trimIndent(),
-            CraftingMarketSearchRowMappers.option,
+            craftingMarketOptionRowMapper,
         )
 
     fun expansionOptions(localeColumnSuffix: String): List<AuctionMarketFilterOptionRow> =
@@ -91,7 +91,7 @@ class CraftingMarketSearchRepository(
                 LEFT JOIN locale l ON l.id = e.name_id
             ORDER BY e.display_order, e.id
             """.trimIndent(),
-            CraftingMarketSearchRowMappers.option,
+            craftingMarketOptionRowMapper,
         )
 
     private fun buildWithSql(

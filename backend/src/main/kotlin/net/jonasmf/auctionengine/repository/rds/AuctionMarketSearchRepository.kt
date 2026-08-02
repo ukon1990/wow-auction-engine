@@ -66,7 +66,7 @@ class AuctionMarketSearchRepository(
         val rows =
             jdbcTemplate.query(
                 dataSql,
-                AuctionMarketSearchRowMappers.row,
+                auctionMarketRowMapper,
                 *dataParams.toTypedArray(),
             )
         val queryMs = elapsedMs(queryStartNanos)
@@ -99,7 +99,7 @@ class AuctionMarketSearchRepository(
         val rows =
             jdbcTemplate.query(
                 dataSql,
-                AuctionMarketSearchRowMappers.row,
+                auctionMarketRowMapper,
                 *dataParams.toTypedArray(),
             )
         val queryMs = elapsedMs(queryStartNanos)
@@ -141,7 +141,7 @@ class AuctionMarketSearchRepository(
                 WHERE iq.type IS NOT NULL
                 ORDER BY $qualityOrderSql, iq.internal_id
                 """.trimIndent(),
-                AuctionMarketSearchRowMappers.qualityOption,
+                auctionMarketQualityOptionRowMapper,
             )
         return rows
             .groupBy { it.qualityType?.uppercase() }
@@ -161,7 +161,7 @@ class AuctionMarketSearchRepository(
                 LEFT JOIN locale l ON l.id = ic.name_id
             ORDER BY label
             """.trimIndent(),
-            AuctionMarketSearchRowMappers.option,
+            auctionMarketOptionRowMapper,
         )
 
     fun itemSubclassOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
@@ -175,7 +175,7 @@ class AuctionMarketSearchRepository(
                 LEFT JOIN locale l ON l.id = isc.display_name_id
             ORDER BY label
             """.trimIndent(),
-            AuctionMarketSearchRowMappers.option,
+            auctionMarketOptionRowMapper,
         )
 
     fun expansionOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
@@ -189,7 +189,7 @@ class AuctionMarketSearchRepository(
                 LEFT JOIN locale l ON l.id = e.name_id
             ORDER BY e.display_order, e.id
             """.trimIndent(),
-            AuctionMarketSearchRowMappers.option,
+            auctionMarketOptionRowMapper,
         )
 
     private fun buildCountSql(

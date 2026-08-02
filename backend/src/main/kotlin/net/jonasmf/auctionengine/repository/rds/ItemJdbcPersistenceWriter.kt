@@ -576,4 +576,3 @@ private data class LocaleRecord(
     val sourceField: String,
     val locale: LocaleDTO,
 )
-
