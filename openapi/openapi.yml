@@ -219,6 +219,8 @@ components:
       $ref: ./components/schemas/admin/admin-item-override-request.yml
     AuctionHouse:
         $ref: ./components/schemas/auction-house.yml
+    AuctionHousePage:
+        $ref: ./components/schemas/auction-house-page.yml
     AuctionHouseStatus:
       $ref: ./components/schemas/auction-house-status.yml
     AuctionListingKey:

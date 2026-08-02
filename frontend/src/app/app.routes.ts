@@ -89,6 +89,15 @@ export const routes: TitledRoutes = [
           ),
       },
       {
+        path: 'auction-houses',
+        title: $localize`:@@route.admin.auction-house:Auction houses`,
+        icon: 'manage_accounts',
+        loadComponent: () =>
+          import('@features/admin/auction-house/auction-house.page').then(
+            (module) => module.AuctionHousePage,
+          ),
+      },
+      {
         path: 'expansions',
         title: $localize`:@@route.admin.expansions:Expansions`,
         icon: 'category',

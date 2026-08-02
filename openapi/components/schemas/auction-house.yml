@@ -12,7 +12,7 @@ properties:
     realms:
         type: array
         items:
-            $ref: "../../../openapi.yml#/components/schemas/Realm"
+            $ref: "../../openapi.yml#/components/schemas/Realm"
     lowestDelay:
         type: integer
         format: int64

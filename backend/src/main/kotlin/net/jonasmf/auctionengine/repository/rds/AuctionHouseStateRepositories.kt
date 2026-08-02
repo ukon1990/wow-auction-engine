@@ -77,11 +77,6 @@ class AuctionHouseStateRepositoryImpl(
 
         return saved.toDomain()
     }
-
-    private fun resolveRealms(connectedId: Int): List<RealmDomain> {
-        val connectedRealm = connectedRealmRepository.findById(connectedId).orElse(null) ?: return emptyList()
-        return connectedRealm.realms.map { it -> it.toDomain() }
-    }
 }
 
 private fun AuctionHouse.applyDomain(domain: AuctionHouseDomain): AuctionHouse {

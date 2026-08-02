@@ -7,8 +7,8 @@ properties:
     items:
         type: array
         items:
-            $ref: "../../../openapi.yml#/components/schemas/AuctionHouse"
+            $ref: "../../openapi.yml#/components/schemas/AuctionHouse"
     page:
-        $ref: "../../../openapi.yml#/components/schemas/PageMetadata"
+        $ref: "../../openapi.yml#/components/schemas/PageMetadata"
     sort:
-        $ref: "../../../openapi.yml#/components/schemas/AuctionMarketSort"
+        $ref: "../../openapi.yml#/components/schemas/AuctionMarketSort"
