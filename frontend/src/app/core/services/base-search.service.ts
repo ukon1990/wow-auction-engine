@@ -112,7 +112,7 @@ export abstract class BaseSearchService<
 
   protected constructor(
     defaultQueryParams: QueryParams,
-    private getFiltersCallback: (
+    private getFiltersCallback?: (
       region: 'us' | 'eu' | 'kr' | 'tw',
       realmSlug: string,
       locale?: string,

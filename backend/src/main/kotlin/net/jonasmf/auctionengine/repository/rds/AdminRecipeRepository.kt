@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.repository.rds
 
 import net.jonasmf.auctionengine.generated.model.AdminItemCompareField
-import net.jonasmf.auctionengine.generated.model.AdminRecipe1
+import net.jonasmf.auctionengine.generated.model.AdminRecipe
 import net.jonasmf.auctionengine.generated.model.AdminRecipeFields
 import net.jonasmf.auctionengine.generated.model.AdminRecipeOutput
 import net.jonasmf.auctionengine.generated.model.AdminRecipeOverrideRequest
@@ -17,7 +17,7 @@ import java.time.ZoneOffset
 import kotlin.math.ceil
 
 data class AdminRecipeSearchRows(
-    val recipes: List<AdminRecipe1>,
+    val recipes: List<AdminRecipe>,
     val totalItems: Long,
 )
 
@@ -29,8 +29,8 @@ data class AdminRecipeRows(
     fun toAdminRecipe(
         includeBase: Boolean,
         includeOverride: Boolean,
-    ): AdminRecipe1 =
-        AdminRecipe1(
+    ): AdminRecipe =
+        AdminRecipe(
             id = effective.id ?: error("Effective recipe id is missing"),
             hasBase = base != null,
             hasOverride = override != null,
@@ -131,7 +131,7 @@ class AdminRecipeRepository(
                 LIMIT ? OFFSET ?
                 """.trimIndent(),
                 { rs, _ ->
-                    AdminRecipe1(
+                    AdminRecipe(
                         id = rs.getInt("id"),
                         hasBase = rs.getBoolean("has_base"),
                         hasOverride = rs.getBoolean("has_override"),

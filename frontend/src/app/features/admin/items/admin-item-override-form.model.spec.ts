@@ -1,4 +1,4 @@
-import { AdminItem1 } from '@api/generated';
+import { AdminItem } from '@api/generated';
 
 import {
   createItemOverrideRequest,
@@ -159,7 +159,7 @@ function formValues(overrides: Partial<ItemOverrideFormValues> = {}): ItemOverri
   };
 }
 
-function itemFixture(): AdminItem1 {
+function itemFixture(): AdminItem {
   const inheritedFields = {
     name: 'Inherited item',
     itemClass: { id: 2, name: 'Armor' },

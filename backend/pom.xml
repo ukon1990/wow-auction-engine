@@ -322,7 +322,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/../openapi/openapi.yml</inputSpec>
+                            <inputSpec>${project.basedir}/../openapi/openapi.bundled.yml</inputSpec>
                             <generatorName>kotlin-spring</generatorName>
                             <output>${project.build.directory}/generated-sources/openapi</output>
                             <apiPackage>net.jonasmf.auctionengine.generated.api</apiPackage>
@@ -331,6 +331,8 @@
                             <generateModelTests>false</generateModelTests>
                             <generateApiDocumentation>true</generateApiDocumentation>
                             <generateModelDocumentation>true</generateModelDocumentation>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <cleanupOutput>true</cleanupOutput>
                             <nameMappings>
                                 <nameMapping>isCommodity=commodityOnly</nameMapping>
                             </nameMappings>

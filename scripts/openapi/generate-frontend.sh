@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 set -eu
 
-cd "$(dirname "$0")/../../frontend"
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR/../../frontend"
 bun run generate:api

@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import net.jonasmf.auctionengine.generated.model.AdminItem1
+import net.jonasmf.auctionengine.generated.model.AdminItem
 import net.jonasmf.auctionengine.generated.model.AdminItemCreateRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
@@ -8,7 +8,7 @@ import net.jonasmf.auctionengine.generated.model.AdminRecipeSearchResult
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 
 data class AdminItemSearchResult(
-    val items: List<AdminItem1>,
+    val items: List<AdminItem>,
     val totalItems: Long,
 )
 
@@ -20,8 +20,8 @@ data class AdminItemRows(
     fun toAdminItem(
         includeBase: Boolean,
         includeOverride: Boolean,
-    ): AdminItem1 =
-        AdminItem1(
+    ): AdminItem =
+        AdminItem(
             id = effective.id ?: error("Effective item id is missing"),
             hasBase = base != null,
             hasOverride = override != null,

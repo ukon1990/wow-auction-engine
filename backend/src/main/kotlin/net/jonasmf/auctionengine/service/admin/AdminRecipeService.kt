@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.service.admin
 
 import net.jonasmf.auctionengine.generated.model.AdminItemCompareField
-import net.jonasmf.auctionengine.generated.model.AdminRecipe1
+import net.jonasmf.auctionengine.generated.model.AdminRecipe
 import net.jonasmf.auctionengine.generated.model.AdminRecipeBulkOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminRecipeCompareResponse
 import net.jonasmf.auctionengine.generated.model.AdminRecipeFields
@@ -67,7 +67,7 @@ class AdminRecipeService(
         locale: String?,
         includeBase: Boolean,
         includeOverride: Boolean,
-    ): AdminRecipe1 =
+    ): AdminRecipe =
         findRecipe(id, locale)
             .toAdminRecipe(includeBase = includeBase, includeOverride = includeOverride)
 
@@ -75,7 +75,7 @@ class AdminRecipeService(
     fun upsertOverride(
         id: Int,
         request: AdminRecipeOverrideRequest,
-    ): AdminRecipe1 {
+    ): AdminRecipe {
         if (!adminRecipeRepository.hasBaseRecipe(id)) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Base recipe not found: $id")
         }
@@ -85,7 +85,7 @@ class AdminRecipeService(
     }
 
     @Transactional
-    fun bulkUpsertOverrides(request: AdminRecipeBulkOverrideRequest): List<AdminRecipe1> {
+    fun bulkUpsertOverrides(request: AdminRecipeBulkOverrideRequest): List<AdminRecipe> {
         if (request.overrides.size > MAX_ADMIN_RECIPE_PAGE_SIZE) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Bulk override request cannot exceed 100 recipes")
         }

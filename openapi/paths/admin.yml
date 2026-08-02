@@ -11,9 +11,8 @@ listAuctionHouses:
                 content:
                     application/json:
                         schema:
-                            type: array
-                            items:
-                                $ref: "../openapi.yml#/components/schemas/AuctionHousePage"
+                            type: object
+                            $ref: "../openapi.yml#/components/schemas/AuctionHousePage"
 getAuctionHouseById:
     get:
         tags:

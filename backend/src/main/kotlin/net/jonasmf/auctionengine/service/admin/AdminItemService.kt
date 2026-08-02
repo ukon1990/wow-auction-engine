@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.service.admin
 
 import net.jonasmf.auctionengine.domain.item.Item
-import net.jonasmf.auctionengine.generated.model.AdminItem1
+import net.jonasmf.auctionengine.generated.model.AdminItem
 import net.jonasmf.auctionengine.generated.model.AdminItemBulkOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemCompareField
 import net.jonasmf.auctionengine.generated.model.AdminItemCompareResponse
@@ -71,7 +71,7 @@ class AdminItemService(
         locale: String?,
         includeBase: Boolean,
         includeOverride: Boolean,
-    ): AdminItem1 =
+    ): AdminItem =
         findItem(id, locale)
             .toAdminItem(includeBase = includeBase, includeOverride = includeOverride)
 
@@ -94,7 +94,7 @@ class AdminItemService(
     fun upsertOverride(
         id: Int,
         request: AdminItemOverrideRequest,
-    ): AdminItem1 {
+    ): AdminItem {
         if (!adminItemRepository.hasAnyItemRow(id)) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found: $id")
         }
@@ -112,7 +112,7 @@ class AdminItemService(
         id: Int,
         recipeId: Int,
         request: AdminRecipeAssociationRequest,
-    ): AdminItem1 {
+    ): AdminItem {
         if (!adminItemRepository.hasAnyItemRow(id)) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found: $id")
         }
@@ -140,7 +140,7 @@ class AdminItemService(
     }
 
     @Transactional
-    fun bulkUpsertOverrides(request: AdminItemBulkOverrideRequest): List<AdminItem1> {
+    fun bulkUpsertOverrides(request: AdminItemBulkOverrideRequest): List<AdminItem> {
         if (request.overrides.size > MAX_ADMIN_ITEM_PAGE_SIZE) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Bulk override request cannot exceed 100 items")
         }
@@ -172,7 +172,7 @@ class AdminItemService(
     }
 
     @Transactional
-    fun createOverrideOnly(request: AdminItemCreateRequest): AdminItem1 {
+    fun createOverrideOnly(request: AdminItemCreateRequest): AdminItem {
         validateCreateRequest(request)
         if (adminItemRepository.hasAnyItemRow(request.id)) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Item already exists: ${request.id}")

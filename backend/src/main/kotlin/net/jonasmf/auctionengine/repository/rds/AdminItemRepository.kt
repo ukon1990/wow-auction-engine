@@ -1,8 +1,8 @@
 package net.jonasmf.auctionengine.repository.rds
 
 import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
-import net.jonasmf.auctionengine.generated.model.AdminExpansion1
-import net.jonasmf.auctionengine.generated.model.AdminItem1
+import net.jonasmf.auctionengine.generated.model.AdminExpansion
+import net.jonasmf.auctionengine.generated.model.AdminItem
 import net.jonasmf.auctionengine.generated.model.AdminItemCreateRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
@@ -78,7 +78,7 @@ class AdminItemRepository(
                 LIMIT ? OFFSET ?
                 """.trimIndent(),
                 { rs, _ ->
-                    AdminItem1(
+                    AdminItem(
                         id = rs.getInt("id"),
                         hasBase = rs.getBoolean("has_base"),
                         hasOverride = rs.getBoolean("has_override"),
@@ -388,7 +388,7 @@ class AdminItemRepository(
     private fun AdminItemFields.withRecipes(localeColumnSuffix: String): AdminItemFields =
         copy(recipes = recipesByItemId(listOf(id ?: return this), localeColumnSuffix)[id].orEmpty())
 
-    private fun List<AdminItem1>.withRecipes(localeColumnSuffix: String): List<AdminItem1> {
+    private fun List<AdminItem>.withRecipes(localeColumnSuffix: String): List<AdminItem> {
         val recipesByItemId = recipesByItemId(map { it.id }, localeColumnSuffix)
         return map { item ->
             item.copy(effective = item.effective.copy(recipes = recipesByItemId[item.id].orEmpty()))

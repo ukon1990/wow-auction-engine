@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 set -eu
 
-cd "$(dirname "$0")/../../backend"
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
+"$SCRIPT_DIR/bundle.sh"
+
+cd "$SCRIPT_DIR/../../backend"
 ./mvnw generate-sources

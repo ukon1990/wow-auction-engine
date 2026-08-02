@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  AdminRecipe1,
+  AdminRecipe,
   AdminRecipeOutput,
   AdminRecipeOverrideRequest,
   AdminRecipeReagent,
@@ -251,7 +251,7 @@ export class AdminRecipeOverrideFormComponent {
   protected readonly itemSearchPlaceholder = $localize`:@@admin.recipes.form.itemSearchPlaceholder:Search items by name or ID`;
   protected readonly reagentRanks = REAGENT_RANKS;
 
-  readonly recipe = input.required<AdminRecipe1>();
+  readonly recipe = input.required<AdminRecipe>();
   readonly submitting = input(false);
   readonly submitError = input<string | null>(null);
   readonly submitted = output<AdminRecipeOverrideRequest>();
@@ -297,7 +297,7 @@ export class AdminRecipeOverrideFormComponent {
     });
   }
 
-  protected recipeTitle(recipe: AdminRecipe1): string {
+  protected recipeTitle(recipe: AdminRecipe): string {
     return recipe.effective.name ?? $localize`:@@admin.recipes.unnamed:Unnamed recipe`;
   }
 
@@ -508,7 +508,7 @@ export class AdminRecipeOverrideFormComponent {
     };
   }
 
-  private initialize(recipe: AdminRecipe1): void {
+  private initialize(recipe: AdminRecipe): void {
     const override = recipe.override ?? {};
     const sourceOutputs = override.outputs ?? recipe.effective.outputs ?? [];
     const sourceReagents = override.reagents ?? recipe.effective.reagents ?? [];

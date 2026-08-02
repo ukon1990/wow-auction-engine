@@ -12,7 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  AdminItem1,
+  AdminItem,
   AdminItemCreateRequest,
   AdminItemOverrideRequest,
   AdminRecipeAssociationRequest,
@@ -129,7 +129,7 @@ export class ItemsPage {
       label: expansion.name,
     })),
   ]);
-  protected readonly rowId = (item: AdminItem1): string => String(item.id);
+  protected readonly rowId = (item: AdminItem): string => String(item.id);
 
   protected readonly columns = signal(
     createAdminItemColumns({
@@ -223,7 +223,7 @@ export class ItemsPage {
     this.syncFilters({ ...this.filters(), page });
   }
 
-  protected async openEditPanel(item: AdminItem1): Promise<void> {
+  protected async openEditPanel(item: AdminItem): Promise<void> {
     this.formError.set(null);
     this.panelMode.set('edit');
     await this.loadItem(item.id);
@@ -235,14 +235,14 @@ export class ItemsPage {
     this.panelMode.set('create');
   }
 
-  protected async openComparePanel(item: AdminItem1): Promise<void> {
+  protected async openComparePanel(item: AdminItem): Promise<void> {
     this.formError.set(null);
     this.panelMode.set('compare');
     await this.loadItem(item.id);
     await firstValueFrom(this.service.compareWithApi(item.id)).catch(() => undefined);
   }
 
-  protected async openRecipePanel(item: AdminItem1): Promise<void> {
+  protected async openRecipePanel(item: AdminItem): Promise<void> {
     this.formError.set(null);
     this.recipeResults.set([]);
     this.panelMode.set('recipe');
@@ -320,7 +320,7 @@ export class ItemsPage {
     });
   }
 
-  protected async deleteOverride(item: AdminItem1): Promise<void> {
+  protected async deleteOverride(item: AdminItem): Promise<void> {
     if (!item.hasOverride) return;
     const confirmed = window.confirm(
       $localize`:@@admin.items.deleteConfirm:Delete this item override? Base item data will be inherited again.`,

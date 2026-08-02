@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import net.jonasmf.auctionengine.generated.model.AdminExpansion1
+import net.jonasmf.auctionengine.generated.model.AdminExpansion
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemReference
 import net.jonasmf.auctionengine.generated.model.GameLocale
@@ -32,9 +32,9 @@ private fun ResultSet.reference(idColumn: String, nameColumn: String, typeColumn
     return AdminItemReference(id = id, name = getString(nameColumn), type = typeColumn?.let { getString(it) })
 }
 
-private fun ResultSet.expansion(): AdminExpansion1? {
+private fun ResultSet.expansion(): AdminExpansion? {
     val id = nullableInt("expansion_id") ?: return null
-    return AdminExpansion1(
+    return AdminExpansion(
         id = id, slug = getString("expansion_slug"), name = getString("expansion_name"),
         nameLocales = GameLocale(enUS = getString("expansion_en_us"), enGB = getString("expansion_en_gb"), deDE = getString("expansion_de_de"), esES = getString("expansion_es_es"), esMX = getString("expansion_es_mx"), frFR = getString("expansion_fr_fr"), itIT = getString("expansion_it_it"), koKR = getString("expansion_ko_kr"), ptBR = getString("expansion_pt_br"), ptPT = getString("expansion_pt_pt"), ruRU = getString("expansion_ru_ru"), zhCN = getString("expansion_zh_cn"), zhTW = getString("expansion_zh_tw")),
         majorVersion = getInt("expansion_major_version"), displayOrder = getInt("expansion_display_order"),

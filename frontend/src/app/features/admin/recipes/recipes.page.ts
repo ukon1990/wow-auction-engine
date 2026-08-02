@@ -13,7 +13,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AdminJob, AdminRecipe1, AdminRecipeOverrideRequest } from '@api/generated';
+import { AdminJob, AdminRecipe, AdminRecipeOverrideRequest } from '@api/generated';
 import { AdminModalComponent } from '@features/admin/shared/admin-modal.component';
 import { AdminItemTypeaheadComponent } from '@features/admin/shared/admin-item-typeahead.component';
 import { AdminExpansionService } from '@features/admin/expansions/admin-expansion.service';
@@ -162,7 +162,7 @@ export class RecipesPage {
     { id: '50', label: '50' },
     { id: '100', label: '100' },
   ];
-  protected readonly rowId = (recipe: AdminRecipe1): string => String(recipe.id);
+  protected readonly rowId = (recipe: AdminRecipe): string => String(recipe.id);
   protected readonly columns = signal(
     createAdminRecipeColumns({
       onEdit: (recipe) => void this.openEditPanel(recipe),
@@ -286,13 +286,13 @@ export class RecipesPage {
     this.syncFilters({ ...this.filters(), page });
   }
 
-  protected async openEditPanel(recipe: AdminRecipe1): Promise<void> {
+  protected async openEditPanel(recipe: AdminRecipe): Promise<void> {
     this.formError.set(null);
     this.panelMode.set('edit');
     await this.loadRecipe(recipe.id);
   }
 
-  protected async openComparePanel(recipe: AdminRecipe1): Promise<void> {
+  protected async openComparePanel(recipe: AdminRecipe): Promise<void> {
     this.formError.set(null);
     this.panelMode.set('compare');
     this.service.clearSelection();
@@ -320,7 +320,7 @@ export class RecipesPage {
       });
   }
 
-  protected async deleteOverride(recipe: AdminRecipe1): Promise<void> {
+  protected async deleteOverride(recipe: AdminRecipe): Promise<void> {
     if (!recipe.hasOverride) return;
     const confirmed = window.confirm(
       $localize`:@@admin.recipes.deleteConfirm:Delete this recipe override? Base recipe data will be inherited again.`,
@@ -380,11 +380,11 @@ export class RecipesPage {
     });
   }
 
-  private reload(): Promise<readonly AdminRecipe1[] | undefined> {
+  private reload(): Promise<readonly AdminRecipe[] | undefined> {
     return firstValueFrom(this.service.search(this.filters())).catch(() => undefined);
   }
 
-  private loadRecipe(id: number): Promise<AdminRecipe1 | undefined> {
+  private loadRecipe(id: number): Promise<AdminRecipe | undefined> {
     return firstValueFrom(this.service.loadRecipe(id)).catch(() => undefined);
   }
 }

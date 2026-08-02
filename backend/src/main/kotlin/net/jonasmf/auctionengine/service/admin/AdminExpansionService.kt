@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.service.admin
 
-import net.jonasmf.auctionengine.generated.model.AdminExpansion1
+import net.jonasmf.auctionengine.generated.model.AdminExpansion
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
@@ -32,10 +32,10 @@ class AdminExpansionService(
     private val applyRunning = AtomicBoolean(false)
     private val fetchMissingRunning = AtomicBoolean(false)
 
-    fun listExpansions(locale: String? = null): List<AdminExpansion1> =
+    fun listExpansions(locale: String? = null): List<AdminExpansion> =
         adminExpansionRepository.listExpansions(AdminExpansionRepository.resolveLocaleColumnSuffix(locale))
 
-    fun createExpansion(request: AdminExpansionRequest): AdminExpansion1 {
+    fun createExpansion(request: AdminExpansionRequest): AdminExpansion {
         validateExpansionRequest(request, idToIgnore = null, requireId = true)
         if (adminExpansionRepository.expansionExists(request.id)) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Expansion already exists: ${request.id}")
@@ -55,7 +55,7 @@ class AdminExpansionService(
     fun updateExpansion(
         id: Int,
         request: AdminExpansionRequest,
-    ): AdminExpansion1 {
+    ): AdminExpansion {
         if (adminExpansionRepository.findExpansion(id) == null) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Expansion not found: $id")
         }

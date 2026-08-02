@@ -1,4 +1,4 @@
-import { AdminItem1, AdminItemFields, AdminItemOverrideRequest, GameLocale } from '@api/generated';
+import { AdminItem, AdminItemFields, AdminItemOverrideRequest, GameLocale } from '@api/generated';
 import { valueString } from './admin-item-override-form.options';
 
 export interface ItemOverrideFormValues {
@@ -59,7 +59,7 @@ class NonNegativeIntegerParser {
 
 export function createItemOverrideRequest(
   values: ItemOverrideFormValues,
-  item: AdminItem1,
+  item: AdminItem,
 ): ItemOverrideRequestResult {
   const parser = new NonNegativeIntegerParser();
   const itemClassId = parser.parseOptional(values.itemClassId, 'Class ID');
@@ -110,7 +110,7 @@ function buildCoreFields(
 
 function buildClassificationFields(
   values: ItemOverrideFormValues,
-  item: AdminItem1,
+  item: AdminItem,
   itemClassId: number | null,
   itemSubclassId: number | null,
 ): Pick<
@@ -161,7 +161,7 @@ function buildFlagFields(
 
 export function initialItemOverrideFormValues(
   override: AdminItemFields,
-  item: AdminItem1,
+  item: AdminItem,
 ): ItemOverrideFormValues {
   return {
     ...initialCoreValues(override),
@@ -189,7 +189,7 @@ function initialCoreValues(override: AdminItemFields) {
   };
 }
 
-function initialClassificationValues(item: AdminItem1) {
+function initialClassificationValues(item: AdminItem) {
   return {
     itemClassId: valueString(item.effective.itemClass?.id),
     itemSubclassId: valueString(item.effective.itemSubclass?.id),
@@ -198,7 +198,7 @@ function initialClassificationValues(item: AdminItem1) {
   };
 }
 
-function initialEconomyValues(override: AdminItemFields, item: AdminItem1) {
+function initialEconomyValues(override: AdminItemFields, item: AdminItem) {
   return {
     purchasePriceOverride: override.purchasePrice !== undefined && override.purchasePrice !== null,
     purchasePrice: valueString(override.purchasePrice),
@@ -223,7 +223,7 @@ function initialFlagValues(override: AdminItemFields) {
   };
 }
 
-export function inheritedItemName(item: AdminItem1): string {
+export function inheritedItemName(item: AdminItem): string {
   return item.effective.name ?? $localize`:@@admin.items.unnamed:Unnamed item`;
 }
 

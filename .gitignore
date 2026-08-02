@@ -6,6 +6,8 @@ frontend/dist/
 frontend/.angular/
 frontend/coverage/
 frontend/src/app/api/generated/
+openapi/openapi.bundled.yml
+
 !.mvn/wrapper/maven-wrapper.jar
 !backend/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

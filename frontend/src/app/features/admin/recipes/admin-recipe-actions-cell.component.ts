@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AdminRecipe1 } from '@api/generated';
+import { AdminRecipe } from '@api/generated';
 import { injectFlexRenderContext } from '@tanstack/angular-table';
 import type { CellContext } from '@tanstack/table-core';
 import { IconButtonComponent } from '@ui';
 
 type AdminRecipeActionsMeta = {
-  readonly onEdit?: (recipe: AdminRecipe1) => void;
-  readonly onCompare?: (recipe: AdminRecipe1) => void;
-  readonly onDeleteOverride?: (recipe: AdminRecipe1) => void;
+  readonly onEdit?: (recipe: AdminRecipe) => void;
+  readonly onCompare?: (recipe: AdminRecipe) => void;
+  readonly onDeleteOverride?: (recipe: AdminRecipe) => void;
 };
 
 @Component({
@@ -41,9 +41,9 @@ export class AdminRecipeActionsCellComponent {
   protected readonly deleteLabel = $localize`:@@admin.recipes.actions.delete:Delete override`;
   protected readonly deleteTooltip = $localize`:@@admin.recipes.actions.deleteTooltip:Remove this recipe override and inherit base recipe data again.`;
 
-  private readonly ctx = injectFlexRenderContext<CellContext<AdminRecipe1, unknown>>();
+  private readonly ctx = injectFlexRenderContext<CellContext<AdminRecipe, unknown>>();
 
-  protected recipe(): AdminRecipe1 {
+  protected recipe(): AdminRecipe {
     return this.ctx.row.original;
   }
 

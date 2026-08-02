@@ -2,12 +2,12 @@ package net.jonasmf.auctionengine.controller
 
 import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.config.SecurityConfig
-import net.jonasmf.auctionengine.generated.model.AdminExpansion1
+import net.jonasmf.auctionengine.generated.model.AdminExpansion
 import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.generated.model.AdminConnectionStatus
 import net.jonasmf.auctionengine.generated.model.AdminServerStatus
-import net.jonasmf.auctionengine.generated.model.AdminItem1
+import net.jonasmf.auctionengine.generated.model.AdminItem
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemPage
@@ -609,7 +609,7 @@ class AdminControllerTest {
         fun `should list expansions if Cognito Admin group`() {
             `when`(adminExpansionService.listExpansions(null)).thenReturn(
                 listOf(
-                    AdminExpansion1(
+                    AdminExpansion(
                         id = 1,
                         slug = "vanilla",
                         name = "Vanilla",
@@ -815,7 +815,7 @@ class AdminControllerTest {
                 AdminItemPage(
                     items =
                         listOf(
-                            AdminItem1(
+                            AdminItem(
                                 id = 171374,
                                 hasBase = true,
                                 hasOverride = true,
@@ -858,7 +858,7 @@ class AdminControllerTest {
         @Test
         fun `should upsert sparse item override if Cognito Admin group`() {
             val response =
-                AdminItem1(
+                AdminItem(
                     id = 171374,
                     hasBase = true,
                     hasOverride = true,

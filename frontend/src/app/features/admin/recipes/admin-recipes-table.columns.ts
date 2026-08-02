@@ -1,5 +1,5 @@
 import { ColumnDef, createColumnHelper, flexRenderComponent } from '@tanstack/angular-table';
-import { AdminRecipe1 } from '@api/generated';
+import { AdminRecipe } from '@api/generated';
 import { AdminRecipeActionsCellComponent } from './admin-recipe-actions-cell.component';
 
 type AdminRecipeColumnMeta = {
@@ -11,15 +11,15 @@ type AdminRecipeColumnMeta = {
 } & AdminRecipeTableActions;
 
 export type AdminRecipeTableActions = {
-  readonly onEdit: (recipe: AdminRecipe1) => void;
-  readonly onCompare: (recipe: AdminRecipe1) => void;
-  readonly onDeleteOverride: (recipe: AdminRecipe1) => void;
+  readonly onEdit: (recipe: AdminRecipe) => void;
+  readonly onCompare: (recipe: AdminRecipe) => void;
+  readonly onDeleteOverride: (recipe: AdminRecipe) => void;
 };
 
 export const createAdminRecipeColumns = (actions: AdminRecipeTableActions) => {
   const stateOverrideLabel = $localize`:@@admin.recipes.table.stateOverride:Override`;
   const stateBaseLabel = $localize`:@@admin.recipes.table.stateBase:Base`;
-  const helper = createColumnHelper<AdminRecipe1>();
+  const helper = createColumnHelper<AdminRecipe>();
   return [
     helper.accessor('id', {
       header: $localize`:@@admin.recipes.table.id:Recipe ID`,
@@ -77,10 +77,10 @@ export const createAdminRecipeColumns = (actions: AdminRecipeTableActions) => {
       meta: { align: 'right', gridTrack: 'minmax(9rem, 0.7fr)', ...actions },
       cell: () => flexRenderComponent(AdminRecipeActionsCellComponent),
     }),
-  ] as ColumnDef<AdminRecipe1, unknown>[];
+  ] as ColumnDef<AdminRecipe, unknown>[];
 };
 
-function outputSummary(recipe: AdminRecipe1): string {
+function outputSummary(recipe: AdminRecipe): string {
   const outputs = recipe.effective.outputs ?? [];
   if (outputs.length === 0) return '—';
   return outputs
