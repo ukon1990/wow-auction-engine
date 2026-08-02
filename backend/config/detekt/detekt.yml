@@ -1,0 +1,105 @@
+# Focused complexity, class-size, and identifier-name gates. ktlint owns formatting.
+config:
+  validation: true
+  warningsAsErrors: true
+
+complexity:
+  active: true
+  CognitiveComplexMethod:
+    active: true
+    allowedComplexity: 15
+  CyclomaticComplexMethod:
+    active: true
+    allowedComplexity: 15
+  LargeClass:
+    active: true
+    allowedLines: 600
+    excludes: ['**/src/test/**']
+  ComplexCondition:
+    active: false
+  ComplexInterface:
+    active: false
+  LabeledExpression:
+    active: false
+  LongMethod:
+    active: false
+  LongParameterList:
+    active: false
+  MethodOverloading:
+    active: false
+  NamedArguments:
+    active: false
+  NestedBlockDepth:
+    active: false
+  NestedScopeFunctions:
+    active: false
+  ReplaceSafeCallChainWithRun:
+    active: false
+  StringLiteralDuplication:
+    active: false
+  TooManyFunctions:
+    active: false
+
+naming:
+  active: true
+  FunctionParameterNaming:
+    active: true
+    parameterPattern: '(_|[a-z][A-Za-z0-9]+)'
+  LambdaParameterNaming:
+    active: true
+    parameterPattern: '(_|[a-z][A-Za-z0-9]+)'
+  VariableNaming:
+    active: true
+    variablePattern: '(_|[a-z][A-Za-z0-9]+)'
+    privateVariablePattern: '(_|_?[a-z][A-Za-z0-9]+)'
+  BooleanPropertyNaming:
+    active: false
+  ClassNaming:
+    active: false
+  ConstructorParameterNaming:
+    active: false
+  EnumNaming:
+    active: false
+  ForbiddenClassName:
+    active: false
+  FunctionNameMaxLength:
+    active: false
+  FunctionNameMinLength:
+    active: false
+  FunctionNaming:
+    active: false
+  InvalidPackageDeclaration:
+    active: false
+  MatchingDeclarationName:
+    active: false
+  MemberNameEqualsClassName:
+    active: false
+  NoNameShadowing:
+    active: false
+  NonBooleanPropertyPrefixedWithIs:
+    active: false
+  ObjectPropertyNaming:
+    active: false
+  PackageNaming:
+    active: false
+  TopLevelPropertyNaming:
+    active: false
+  VariableMaxLength:
+    active: false
+  VariableMinLength:
+    active: false
+
+style:
+  active: false
+potential-bugs:
+  active: false
+performance:
+  active: false
+exceptions:
+  active: false
+empty-blocks:
+  active: false
+comments:
+  active: false
+coroutines:
+  active: false

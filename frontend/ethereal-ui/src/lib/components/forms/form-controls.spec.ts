@@ -68,9 +68,9 @@ class ErrorStateHostComponent {}
 })
 class SignalFormTextHostComponent {
   readonly loginModel = signal({ email: '' });
-  readonly loginForm = form(this.loginModel, (p) => {
-    required(p.email, { message: 'Email is required' });
-    email(p.email, { message: 'Enter a valid email' });
+  readonly loginForm = form(this.loginModel, (formPath) => {
+    required(formPath.email, { message: 'Email is required' });
+    email(formPath.email, { message: 'Enter a valid email' });
   });
 }
 

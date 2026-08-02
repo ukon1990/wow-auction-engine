@@ -105,13 +105,24 @@ function astToValue(
     case 'NilLiteral':
       return null;
     case 'UnaryExpression':
-      if (node.operator === '-' && isNode(node.argument)) {
-        const value = astToValue(node.argument, context, depth + 1);
-        if (typeof value === 'number') return -value;
-      }
-      break;
+      return unaryAstToValue(node, context, depth);
     case 'TableConstructorExpression':
       return tableToValue(nodes(node.fields), context, depth + 1);
+  }
+  throw new LuaProcessingError(
+    'UNSUPPORTED_LUA',
+    `Unsupported executable Lua expression: ${node.type}.`,
+  );
+}
+
+function unaryAstToValue(
+  node: AstNode,
+  context: { nodes: number; limits: LuaProcessingLimits },
+  depth: number,
+): LuaValue {
+  if (node.operator === '-' && isNode(node.argument)) {
+    const value = astToValue(node.argument, context, depth + 1);
+    if (typeof value === 'number') return -value;
   }
   throw new LuaProcessingError(
     'UNSUPPORTED_LUA',

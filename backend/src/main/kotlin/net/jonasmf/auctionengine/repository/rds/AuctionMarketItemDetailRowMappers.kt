@@ -141,16 +141,16 @@ internal object AuctionMarketItemDetailRowMappers {
 }
 
 internal fun ResultSet.getNullableInt(column: String): Int? {
-    val v = getInt(column)
-    return if (wasNull()) null else v
+    val value = getInt(column)
+    return if (wasNull()) null else value
 }
 
 internal fun ResultSet.getNullableLong(column: String): Long? {
-    val v = getLong(column)
-    return if (wasNull()) null else v
+    val value = getLong(column)
+    return if (wasNull()) null else value
 }
 
 internal fun ResultSet.getNullableDouble(column: String): Double? {
-    val v = getDouble(column)
-    return if (wasNull()) null else v
+    val value = getDouble(column)
+    return if (wasNull()) null else value
 }

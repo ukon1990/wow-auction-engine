@@ -49,24 +49,26 @@ describe('WowheadTooltipLayer', () => {
   });
 
   it('renders role="tooltip" when the service has active HTML', async () => {
-    const p = tooltips.show({
+    const showPromise = tooltips.show({
       wowheadType: 'item',
       id: 7,
       isClassic: false,
       event: new MouseEvent('mousemove', { clientX: 1, clientY: 2 }),
       describedById: 'tid',
     });
-    httpMock.expectOne((r) => r.url.includes('/tooltip/item/7')).flush({ tooltip: '<b>x</b>' });
-    await p;
+    httpMock
+      .expectOne((request) => request.url.includes('/tooltip/item/7'))
+      .flush({ tooltip: '<b>x</b>' });
+    await showPromise;
 
     fixture.detectChanges();
-    const el = (fixture.nativeElement as HTMLElement).querySelector('[role="tooltip"]');
-    expect(el).toBeTruthy();
-    expect(el?.id).toBe('tid');
+    const tooltipElement = (fixture.nativeElement as HTMLElement).querySelector('[role="tooltip"]');
+    expect(tooltipElement).toBeTruthy();
+    expect(tooltipElement?.id).toBe('tid');
   });
 
   it('renders the app current buyout when supplied', async () => {
-    const p = tooltips.show({
+    const showPromise = tooltips.show({
       wowheadType: 'item',
       id: 7,
       isClassic: false,
@@ -74,14 +76,22 @@ describe('WowheadTooltipLayer', () => {
       event: new MouseEvent('mousemove', { clientX: 1, clientY: 2 }),
       describedById: 'tid',
     });
-    httpMock.expectOne((r) => r.url.includes('/tooltip/item/7')).flush({ tooltip: '<b>x</b>' });
-    await p;
+    httpMock
+      .expectOne((request) => request.url.includes('/tooltip/item/7'))
+      .flush({ tooltip: '<b>x</b>' });
+    await showPromise;
 
     fixture.detectChanges();
-    const el = (fixture.nativeElement as HTMLElement).querySelector('[role="tooltip"]');
-    expect(el?.textContent).toContain('Current Buyout: 1,2345678');
-    expect(el?.querySelector('.whtt-current-buyout .moneygold')?.textContent).toBe('1,234');
-    expect(el?.querySelector('.whtt-current-buyout .moneysilver')?.textContent).toBe('56');
-    expect(el?.querySelector('.whtt-current-buyout .moneycopper')?.textContent).toBe('78');
+    const tooltipElement = (fixture.nativeElement as HTMLElement).querySelector('[role="tooltip"]');
+    expect(tooltipElement?.textContent).toContain('Current Buyout: 1,2345678');
+    expect(tooltipElement?.querySelector('.whtt-current-buyout .moneygold')?.textContent).toBe(
+      '1,234',
+    );
+    expect(tooltipElement?.querySelector('.whtt-current-buyout .moneysilver')?.textContent).toBe(
+      '56',
+    );
+    expect(tooltipElement?.querySelector('.whtt-current-buyout .moneycopper')?.textContent).toBe(
+      '78',
+    );
   });
 });

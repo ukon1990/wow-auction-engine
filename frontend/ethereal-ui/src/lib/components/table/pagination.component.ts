@@ -153,7 +153,7 @@ export class PaginationComponent {
       for (let page = 0; page < totalPages; page += 1) pages.add(page);
     }
 
-    const sortedPages = [...pages].sort((a, b) => a - b);
+    const sortedPages = [...pages].sort((firstPage, secondPage) => firstPage - secondPage);
     const items: PaginationItem[] = [];
     for (const page of sortedPages) {
       const previous = items.at(-1);

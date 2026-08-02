@@ -54,7 +54,7 @@ export class WowheadTooltipService {
 
   constructor() {
     this.router.events
-      .pipe(filter((e): e is NavigationStart => e instanceof NavigationStart))
+      .pipe(filter((event): event is NavigationStart => event instanceof NavigationStart))
       .subscribe(() => this.clear());
   }
 
@@ -91,7 +91,7 @@ export class WowheadTooltipService {
       this.localeService.apiLocaleOverride() ?? this.realmSelection.selected()?.locale,
     );
     let url = getWowheadTooltipUrl(options.isClassic, options.id, options.wowheadType, locale);
-    const bonus = options.bonusIds?.filter((b) => b > 0) ?? [];
+    const bonus = options.bonusIds?.filter((bonusId) => bonusId > 0) ?? [];
     if (bonus.length) {
       url += `&bonus=${bonus.join(':')}`;
     }

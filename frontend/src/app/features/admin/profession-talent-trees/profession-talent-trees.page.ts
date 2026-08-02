@@ -451,38 +451,12 @@ export function savedVariablesInspectionError(cause: unknown): string | null {
 export function buildProfessionRecipeOverview(
   preview: AuctionHelperLocalPreview,
 ): ProfessionRecipeOverview[] {
-  const professions = new Map<
-    number,
-    {
-      name: string;
-      characters: Set<string>;
-      recipes: Map<number, ProfessionRecipeOverview['recipes'][number]>;
-      talents: ProfessionRecipeOverview['talents'];
-    }
-  >();
+  const professions = new Map<number, ProfessionOverviewAggregate>();
   for (const character of preview.payload.characters) {
     for (const profession of character.professions) {
-      const aggregate = professions.get(profession.professionId) ?? {
-        name: profession.name,
-        characters: new Set<string>(),
-        recipes: new Map(),
-        talents: null,
-      };
-      aggregate.characters.add(character.characterKey);
-      for (const recipe of profession.recipes) {
-        if (!aggregate.recipes.has(recipe.recipeId)) {
-          aggregate.recipes.set(recipe.recipeId, {
-            recipeId: recipe.recipeId,
-            name: recipe.name,
-            ...(recipe.craftedItemId !== undefined ? { craftedItemId: recipe.craftedItemId } : {}),
-            reagentSlotCount: recipe.reagentSlots.length,
-            ...(recipe.baseDifficulty !== undefined
-              ? { baseDifficulty: recipe.baseDifficulty }
-              : {}),
-          });
-        }
-      }
-      if (!aggregate.talents && profession.talents) aggregate.talents = profession.talents;
+      const aggregate =
+        professions.get(profession.professionId) ?? createOverviewAggregate(profession);
+      addProfessionToAggregate(aggregate, profession, character.characterKey);
       professions.set(profession.professionId, aggregate);
     }
   }
@@ -493,7 +467,46 @@ export function buildProfessionRecipeOverview(
       characterCount: profession.characters.size,
       recipeCount: profession.recipes.size,
       talents: profession.talents,
-      recipes: [...profession.recipes.values()].sort((a, b) => a.name.localeCompare(b.name)),
+      recipes: [...profession.recipes.values()].sort((left, right) =>
+        left.name.localeCompare(right.name),
+      ),
     }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((left, right) => left.name.localeCompare(right.name));
+}
+
+type PreviewProfession =
+  AuctionHelperLocalPreview['payload']['characters'][number]['professions'][number];
+type ProfessionOverviewAggregate = {
+  name: string;
+  characters: Set<string>;
+  recipes: Map<number, ProfessionRecipeOverview['recipes'][number]>;
+  talents: ProfessionRecipeOverview['talents'];
+};
+
+function createOverviewAggregate(profession: PreviewProfession): ProfessionOverviewAggregate {
+  return {
+    name: profession.name,
+    characters: new Set<string>(),
+    recipes: new Map(),
+    talents: null,
+  };
+}
+
+function addProfessionToAggregate(
+  aggregate: ProfessionOverviewAggregate,
+  profession: PreviewProfession,
+  characterKey: string,
+): void {
+  aggregate.characters.add(characterKey);
+  profession.recipes.forEach((recipe) => {
+    if (aggregate.recipes.has(recipe.recipeId)) return;
+    aggregate.recipes.set(recipe.recipeId, {
+      recipeId: recipe.recipeId,
+      name: recipe.name,
+      ...(recipe.craftedItemId !== undefined ? { craftedItemId: recipe.craftedItemId } : {}),
+      reagentSlotCount: recipe.reagentSlots.length,
+      ...(recipe.baseDifficulty !== undefined ? { baseDifficulty: recipe.baseDifficulty } : {}),
+    });
+  });
+  if (!aggregate.talents && profession.talents) aggregate.talents = profession.talents;
 }

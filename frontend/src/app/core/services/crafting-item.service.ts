@@ -112,29 +112,45 @@ export class CraftingItemService extends BaseSearchService<
         pageSize,
         sortBy,
         sortDirection,
-        query || undefined,
-        professionIds.length ? [...professionIds] : undefined,
-        expansionIds.length ? [...expansionIds] : undefined,
-        qualityIds.length ? [...qualityIds] : undefined,
-        minProfit ?? undefined,
-        maxProfit ?? undefined,
-        minRoiPercent ?? undefined,
-        maxRoiPercent ?? undefined,
-        minSaleRatePercent ?? undefined,
-        maxSaleRatePercent ?? undefined,
-        minSoldPerDay ?? undefined,
-        maxSoldPerDay ?? undefined,
-        minReagentCost ?? undefined,
-        maxReagentCost ?? undefined,
-        minOutputPrice ?? undefined,
-        maxOutputPrice ?? undefined,
-        minOutputPriceChangePercent ?? undefined,
-        maxOutputPriceChangePercent ?? undefined,
-        requireCompleteReagentPricing ? true : undefined,
+        optionalText(query),
+        optionalArray(professionIds),
+        optionalArray(expansionIds),
+        optionalArray(qualityIds),
+        optionalValue(minProfit),
+        optionalValue(maxProfit),
+        optionalValue(minRoiPercent),
+        optionalValue(maxRoiPercent),
+        optionalValue(minSaleRatePercent),
+        optionalValue(maxSaleRatePercent),
+        optionalValue(minSoldPerDay),
+        optionalValue(maxSoldPerDay),
+        optionalValue(minReagentCost),
+        optionalValue(maxReagentCost),
+        optionalValue(minOutputPrice),
+        optionalValue(maxOutputPrice),
+        optionalValue(minOutputPriceChangePercent),
+        optionalValue(maxOutputPriceChangePercent),
+        optionalTrue(requireCompleteReagentPricing),
         'body',
         false,
         { transferCache: false },
       ),
     );
   }
+}
+
+function optionalText(value: string): string | undefined {
+  return value || undefined;
+}
+
+function optionalArray<T>(values: readonly T[]): T[] | undefined {
+  return values.length ? [...values] : undefined;
+}
+
+function optionalValue<T>(value: T | null): T | undefined {
+  return value ?? undefined;
+}
+
+function optionalTrue(value: boolean): true | undefined {
+  return value ? true : undefined;
 }

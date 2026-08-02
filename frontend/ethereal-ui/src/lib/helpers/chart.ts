@@ -61,12 +61,12 @@ export function etherealColorVar(token: EtherealColorToken): string {
 
 export function buildXDomain(series: readonly ChartSeries[]): readonly number[] {
   const xs = new Set<number>();
-  for (const s of series) {
-    for (const p of s.points) {
-      xs.add(p.x);
+  for (const chartSeries of series) {
+    for (const point of chartSeries.points) {
+      xs.add(point.x);
     }
   }
-  return [...xs].sort((a, b) => a - b);
+  return [...xs].sort((firstValue, secondValue) => firstValue - secondValue);
 }
 
 export function buildYDomainsByKey(
@@ -74,15 +74,15 @@ export function buildYDomainsByKey(
   paddingFraction: number = DEFAULT_PADDING,
 ): Record<string, YDomain> {
   const byKey = new Map<string, number[]>();
-  for (const s of series) {
-    const ys = byKey.get(s.yScaleKey) ?? [];
-    if (s.kind === 'column') {
-      ys.push(0);
+  for (const chartSeries of series) {
+    const values = byKey.get(chartSeries.yScaleKey) ?? [];
+    if (chartSeries.kind === 'column') {
+      values.push(0);
     }
-    for (const p of s.points) {
-      ys.push(p.y);
+    for (const point of chartSeries.points) {
+      values.push(point.y);
     }
-    byKey.set(s.yScaleKey, ys);
+    byKey.set(chartSeries.yScaleKey, values);
   }
   const out: Record<string, YDomain> = {};
   for (const [key, values] of byKey) {
@@ -102,12 +102,12 @@ export function buildYDomainsByKey(
   return out;
 }
 
-export function indexInXDomain(x: number, xDomain: readonly number[]): number {
-  const exact = xDomain.indexOf(x);
+export function indexInXDomain(domainCandidate: number, xDomain: readonly number[]): number {
+  const exact = xDomain.indexOf(domainCandidate);
   if (exact >= 0) {
     return exact;
   }
-  return xDomain.findIndex((v) => Math.abs(v - x) < 1e-9);
+  return xDomain.findIndex((domainValue) => Math.abs(domainValue - domainCandidate) < 1e-9);
 }
 
 /** Y value per series at the x category (column index in `xDomain`). */
@@ -117,9 +117,11 @@ export function valuesAtCategoryIndex(
   categoryIndex: number,
 ): Readonly<Record<string, number | undefined>> {
   const out: Record<string, number | undefined> = {};
-  for (const s of series) {
-    const j = s.points.findIndex((p) => indexInXDomain(p.x, xDomain) === categoryIndex);
-    out[s.id] = j >= 0 ? s.points[j]!.y : undefined;
+  for (const chartSeries of series) {
+    const pointIndex = chartSeries.points.findIndex(
+      (point) => indexInXDomain(point.x, xDomain) === categoryIndex,
+    );
+    out[chartSeries.id] = pointIndex >= 0 ? chartSeries.points[pointIndex]!.y : undefined;
   }
   return out;
 }

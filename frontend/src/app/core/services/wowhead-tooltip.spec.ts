@@ -56,12 +56,12 @@ describe('WowheadTooltipService', () => {
       describedById: 'tip-1',
     });
 
-    const req = httpMock.expectOne(
-      (r) =>
-        r.url.startsWith('https://nether.wowhead.com/tooltip/item/1') &&
-        r.url.includes('locale=en'),
+    const request = httpMock.expectOne(
+      (httpRequest) =>
+        httpRequest.url.startsWith('https://nether.wowhead.com/tooltip/item/1') &&
+        httpRequest.url.includes('locale=en'),
     );
-    req.flush({ tooltip: '<b>Hello</b>' });
+    request.flush({ tooltip: '<b>Hello</b>' });
 
     await promise;
 
@@ -72,16 +72,18 @@ describe('WowheadTooltipService', () => {
   });
 
   it('reuses cache for the same URL', async () => {
-    const ev = new MouseEvent('mouseenter', { clientX: 0, clientY: 0 });
+    const event = new MouseEvent('mouseenter', { clientX: 0, clientY: 0 });
 
     const first = service.show({
       wowheadType: 'item',
       id: 99,
       isClassic: false,
-      event: ev,
+      event,
       describedById: 'a',
     });
-    httpMock.expectOne((r) => r.url.includes('/tooltip/item/99')).flush({ tooltip: 'x' });
+    httpMock
+      .expectOne((request) => request.url.includes('/tooltip/item/99'))
+      .flush({ tooltip: 'x' });
     await first;
 
     service.clear();
@@ -90,7 +92,7 @@ describe('WowheadTooltipService', () => {
       wowheadType: 'item',
       id: 99,
       isClassic: false,
-      event: ev,
+      event,
       describedById: 'b',
     });
 
@@ -107,9 +109,11 @@ describe('WowheadTooltipService', () => {
       describedById: 'tip-1',
     });
 
-    const req = httpMock.expectOne((r) => r.url.includes('/tooltip/item/1'));
+    const request = httpMock.expectOne((httpRequest) =>
+      httpRequest.url.includes('/tooltip/item/1'),
+    );
     service.clear();
-    req.flush({ tooltip: '<b>late</b>' });
+    request.flush({ tooltip: '<b>late</b>' });
 
     await promise;
 
@@ -127,8 +131,10 @@ describe('WowheadTooltipService', () => {
         describedById: 'tip-1',
       });
 
-      const req = httpMock.expectOne((r) => r.url.includes('/tooltip/item/1'));
-      req.flush({ tooltip: '<b>Hello</b>' });
+      const request = httpMock.expectOne((httpRequest) =>
+        httpRequest.url.includes('/tooltip/item/1'),
+      );
+      request.flush({ tooltip: '<b>Hello</b>' });
       await promise;
 
       expect(service.active()).not.toBeNull();

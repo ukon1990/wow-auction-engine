@@ -118,8 +118,8 @@ export const selectedRangeValue = (
 };
 
 export const nonemptyName = (value: string | null | undefined): string | undefined => {
-  const t = value?.trim();
-  return t && t.length > 0 ? t : undefined;
+  const trimmedValue = value?.trim();
+  return trimmedValue && trimmedValue.length > 0 ? trimmedValue : undefined;
 };
 
 /** Normalizes OpenAPI int64 (number or occasional string) for copper/qty math. */
@@ -127,8 +127,8 @@ export const toOptionalFiniteNumber = (value: unknown): number | undefined => {
   if (value == null) return undefined;
   if (typeof value === 'number') return Number.isFinite(value) ? value : undefined;
   if (typeof value === 'string') {
-    const n = Number(value);
-    return Number.isFinite(n) ? n : undefined;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : undefined;
   }
   return undefined;
 };
@@ -285,24 +285,45 @@ export const craftingSelectedRangeValue = (
   bound: 'min' | 'max',
   state: CraftingBrowserQueryState,
 ): number | undefined => {
-  if (filterId === 'profit')
-    return (bound === 'min' ? state.minProfit : state.maxProfit) ?? undefined;
-  if (filterId === 'roiPercent')
-    return (bound === 'min' ? state.minRoiPercent : state.maxRoiPercent) ?? undefined;
-  if (filterId === 'saleRatePercent')
-    return (bound === 'min' ? state.minSaleRatePercent : state.maxSaleRatePercent) ?? undefined;
-  if (filterId === 'soldPerDay')
-    return (bound === 'min' ? state.minSoldPerDay : state.maxSoldPerDay) ?? undefined;
-  if (filterId === 'reagentCost')
-    return (bound === 'min' ? state.minReagentCost : state.maxReagentCost) ?? undefined;
-  if (filterId === 'outputPrice')
-    return (bound === 'min' ? state.minOutputPrice : state.maxOutputPrice) ?? undefined;
-  if (filterId === 'outputPriceChangePercent')
-    return (
-      (bound === 'min' ? state.minOutputPriceChangePercent : state.maxOutputPriceChangePercent) ??
-      undefined
-    );
-  return undefined;
+  const key = CRAFTING_RANGE_STATE_KEYS[bound][filterId];
+  return key ? (state[key] ?? undefined) : undefined;
+};
+
+type CraftingRangeStateKey =
+  | 'minProfit'
+  | 'maxProfit'
+  | 'minRoiPercent'
+  | 'maxRoiPercent'
+  | 'minSaleRatePercent'
+  | 'maxSaleRatePercent'
+  | 'minSoldPerDay'
+  | 'maxSoldPerDay'
+  | 'minReagentCost'
+  | 'maxReagentCost'
+  | 'minOutputPrice'
+  | 'maxOutputPrice'
+  | 'minOutputPriceChangePercent'
+  | 'maxOutputPriceChangePercent';
+
+const CRAFTING_RANGE_STATE_KEYS: Record<'min' | 'max', Record<string, CraftingRangeStateKey>> = {
+  min: {
+    profit: 'minProfit',
+    roiPercent: 'minRoiPercent',
+    saleRatePercent: 'minSaleRatePercent',
+    soldPerDay: 'minSoldPerDay',
+    reagentCost: 'minReagentCost',
+    outputPrice: 'minOutputPrice',
+    outputPriceChangePercent: 'minOutputPriceChangePercent',
+  },
+  max: {
+    profit: 'maxProfit',
+    roiPercent: 'maxRoiPercent',
+    saleRatePercent: 'maxSaleRatePercent',
+    soldPerDay: 'maxSoldPerDay',
+    reagentCost: 'maxReagentCost',
+    outputPrice: 'maxOutputPrice',
+    outputPriceChangePercent: 'maxOutputPriceChangePercent',
+  },
 };
 
 export function applyCraftingFilterToggle(

@@ -203,29 +203,30 @@ function normalizeRecipe(
   diagnostics: ProcessingDiagnostic[],
 ): NormalizedRecipe | null {
   const info = record(source['info']);
-  const recipeId =
-    integer(source['skillLineAbilityID']) ??
-    integer(info['skillLineAbilityID']) ??
-    integerValue(recipeKey) ??
-    integer(info['recipeID']);
+  const recipeId = firstInteger(
+    source['skillLineAbilityID'],
+    info['skillLineAbilityID'],
+    integerValue(recipeKey),
+    info['recipeID'],
+  );
   if (recipeId === null) return null;
   const outputs = record(source['outputs']);
   const schematic = record(source['schematic']);
   const outputQualityItemIds = values(outputs['qualityVariants'])
     .map(record)
     .map((variant) => ({
-      quality: craftingQuality(variant['qualityIndex']) ?? craftingQuality(variant['quality']),
+      quality: firstCraftingQuality(variant['qualityIndex'], variant['quality']),
       itemId: integer(variant['itemID']),
     }))
     .filter(
       (variant): variant is { quality: number | null; itemId: number } => variant.itemId !== null,
     );
-  const craftedItemId =
-    integer(schematic['outputItemID']) ??
-    integer(outputs['itemID']) ??
-    integer(record(outputs['raw'])['itemID']) ??
-    outputQualityItemIds[0]?.itemId ??
-    null;
+  const craftedItemId = firstInteger(
+    schematic['outputItemID'],
+    outputs['itemID'],
+    record(outputs['raw'])['itemID'],
+    outputQualityItemIds[0]?.itemId,
+  );
   const supportsQualities = boolean(info['supportsQualities']);
   const hasCraftingOperationInfo = boolean(schematic['hasCraftingOperationInfo']);
   const isGatheringRecipe = boolean(info['isGatheringRecipe']);
@@ -250,13 +251,12 @@ function normalizeRecipe(
     .map(number)
     .filter((value): value is number => value !== null);
   const skillValues = {
-    baseDifficulty: integer(crafting['baseDifficulty']) ?? integer(base['baseDifficulty']),
-    baseSkill: integer(crafting['baseSkill']) ?? integer(base['baseSkill']),
-    bonusSkill: integer(crafting['bonusSkill']) ?? integer(base['bonusSkill']),
+    baseDifficulty: firstInteger(crafting['baseDifficulty'], base['baseDifficulty']),
+    baseSkill: firstInteger(crafting['baseSkill'], base['baseSkill']),
+    bonusSkill: firstInteger(crafting['bonusSkill'], base['bonusSkill']),
     requiredReagentSkillDelta: integer(crafting['requiredReagentSkillDelta']),
     lowerSkillThreshold: integer(base['lowerSkillThreshold']),
-    upperSkillThreshold:
-      integer(base['upperSkillThreshold']) ?? integer(base['upperSkillTreshold']),
+    upperSkillThreshold: firstInteger(base['upperSkillThreshold'], base['upperSkillTreshold']),
     qualityThresholds,
   };
   if (
@@ -277,12 +277,12 @@ function normalizeRecipe(
     name: text(info['name']),
     learned: boolean(info['learned']),
     categoryId: integer(info['categoryID']),
-    recipeType: integer(schematic['recipeType']) ?? integer(outputs['recipeType']),
+    recipeType: firstInteger(schematic['recipeType'], outputs['recipeType']),
     supportsQualities,
     isGatheringRecipe,
     isEnchantingRecipe,
     isSalvageRecipe,
-    isRecraft: boolean(info['isRecraft']) ?? boolean(schematic['isRecraft']),
+    isRecraft: firstBoolean(info['isRecraft'], schematic['isRecraft']),
     hasCraftingOperationInfo,
     craftedItemId,
     outputQualityItemIds,
@@ -307,6 +307,35 @@ function normalizeRecipe(
       ),
     crafting: skillValues,
   };
+}
+
+function firstInteger(...valuesToCheck: unknown[]): number | null {
+  for (const value of valuesToCheck) {
+    const parsed =
+      typeof value === 'number'
+        ? Number.isInteger(value)
+          ? value
+          : null
+        : integer(value as LuaValue);
+    if (parsed !== null) return parsed;
+  }
+  return null;
+}
+
+function firstCraftingQuality(...valuesToCheck: LuaValue[]): number | null {
+  for (const value of valuesToCheck) {
+    const quality = craftingQuality(value);
+    if (quality !== null) return quality;
+  }
+  return null;
+}
+
+function firstBoolean(...valuesToCheck: LuaValue[]): boolean | null {
+  for (const value of valuesToCheck) {
+    const parsed = boolean(value);
+    if (parsed !== null) return parsed;
+  }
+  return null;
 }
 
 function normalizeEmbeddedTalents(

@@ -63,30 +63,7 @@ app.use('/api', async (req, res) => {
 
   try {
     const targetUrl = new URL(req.originalUrl, backendOrigin);
-    const headers = new Headers();
-
-    for (const [key, value] of Object.entries(req.headers)) {
-      if (
-        !value ||
-        [
-          'host',
-          'cookie',
-          'authorization',
-          CORRELATION_ID_HEADER.toLowerCase(),
-          CLIENT_SESSION_ID_HEADER.toLowerCase(),
-        ].includes(key.toLowerCase())
-      ) {
-        continue;
-      }
-      if (Array.isArray(value)) {
-        for (const item of value) {
-          headers.append(key, item);
-        }
-      } else {
-        headers.set(key, value);
-      }
-    }
-    headers.set(CORRELATION_ID_HEADER, identifiers.correlationId);
+    const headers = proxyRequestHeaders(req, identifiers);
     if (identifiers.clientSessionId) {
       headers.set(CLIENT_SESSION_ID_HEADER, identifiers.clientSessionId);
     }
@@ -113,17 +90,7 @@ app.use('/api', async (req, res) => {
     backendHeadersMs = elapsedMs(backendFetchStart);
 
     res.status(response.status);
-    response.headers.forEach((value, key) => {
-      if (
-        hopByHopHeaders.has(key.toLowerCase()) ||
-        [CORRELATION_ID_HEADER.toLowerCase(), CLIENT_SESSION_ID_HEADER.toLowerCase()].includes(
-          key.toLowerCase(),
-        )
-      ) {
-        return;
-      }
-      res.setHeader(key, value);
-    });
+    copyProxyResponseHeaders(response, res);
     setIdentifierResponseHeaders(res, identifiers);
 
     if (response.body) {
@@ -176,6 +143,38 @@ app.use('/api', async (req, res) => {
     sendBadGatewayResponse(res, identifiers);
   }
 });
+
+function proxyRequestHeaders(
+  req: express.Request,
+  identifiers: ReturnType<typeof getRequestIdentifiers>,
+): Headers {
+  const headers = new Headers();
+  const blockedHeaders = new Set([
+    'host',
+    'cookie',
+    'authorization',
+    CORRELATION_ID_HEADER.toLowerCase(),
+    CLIENT_SESSION_ID_HEADER.toLowerCase(),
+  ]);
+  for (const [key, value] of Object.entries(req.headers)) {
+    if (!value || blockedHeaders.has(key.toLowerCase())) continue;
+    if (Array.isArray(value)) value.forEach((item) => headers.append(key, item));
+    else headers.set(key, value);
+  }
+  headers.set(CORRELATION_ID_HEADER, identifiers.correlationId);
+  return headers;
+}
+
+function copyProxyResponseHeaders(response: Response, res: express.Response): void {
+  const blockedHeaders = new Set([
+    CORRELATION_ID_HEADER.toLowerCase(),
+    CLIENT_SESSION_ID_HEADER.toLowerCase(),
+  ]);
+  response.headers.forEach((value, key) => {
+    if (hopByHopHeaders.has(key.toLowerCase()) || blockedHeaders.has(key.toLowerCase())) return;
+    res.setHeader(key, value);
+  });
+}
 
 app.use(async (req, res, next) => {
   try {

@@ -13,6 +13,7 @@ import net.jonasmf.auctionengine.generated.model.ProfileCharacterRequest
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.integration.blizzard.CharacterProfessionApiClient
 import net.jonasmf.auctionengine.repository.rds.ProfileRepository
+import net.jonasmf.auctionengine.repository.rds.AllocationRule
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -116,10 +117,25 @@ class ProfileService(
         val rules = profileRepository.allocationRules(request.treeId).associateBy { it.entryId }
         if (rules.isEmpty()) badRequest("Profession skill tree not found")
         val allocations = request.allocations.associate { it.entryId to it.rank }
+        validateAllocationEntries(request, rules)
+        validateAllocationNodes(request, rules, allocations)
+    }
+
+    private fun validateAllocationEntries(
+        request: ProfessionProfileRequest,
+        rules: Map<Long, AllocationRule>,
+    ) {
         request.allocations.forEach { allocation ->
             val rule = rules[allocation.entryId] ?: badRequest("Allocation entry ${allocation.entryId} does not belong to tree ${request.treeId}")
             if (allocation.rank > rule.rankLimit) badRequest("Allocation rank for entry ${allocation.entryId} exceeds its rank limit")
         }
+    }
+
+    private fun validateAllocationNodes(
+        request: ProfessionProfileRequest,
+        rules: Map<Long, AllocationRule>,
+        allocations: Map<Long, Int>,
+    ) {
         val rankByNode = rules.values.groupBy { it.nodeId }.mapValues { (_, entries) -> entries.sumOf { allocations[it.entryId] ?: 0 } }
         rules.values.forEach { rule ->
             val allocatedRanks = rankByNode[rule.nodeId] ?: 0

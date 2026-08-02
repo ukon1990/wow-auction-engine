@@ -1,105 +1,16 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.utility.ItemQualityOrder
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
-import java.sql.ResultSet
-import java.time.LocalDate
-
-data class AuctionMarketSearchRequest(
-    val region: Region,
-    val selectedConnectedRealmId: Int,
-    val selectedDate: LocalDate,
-    val selectedHour: Int,
-    val commodityConnectedRealmId: Int,
-    val commodityDate: LocalDate,
-    val commodityHour: Int,
-    val localeColumnSuffix: String,
-    val page: Int,
-    val pageSize: Int,
-    val sortBy: String,
-    val sortDirection: String,
-    val query: String?,
-    val qualityIds: List<Int>,
-    val itemClassIds: List<Int>,
-    val itemSubclassIds: List<Int>,
-    val expansionIds: List<Int>,
-    val recipeOnly: Boolean?,
-    val minPrice: Long?,
-    val maxPrice: Long?,
-    val minQuantity: Long?,
-    val maxQuantity: Long?,
-    val minSaleRatePercent: Double?,
-    val maxSaleRatePercent: Double?,
-    val minSoldPerDay: Double?,
-    val maxSoldPerDay: Double?,
-)
-
-data class AuctionMarketSearchResult(
-    val rows: List<AuctionMarketRow>,
-    val totalItems: Long,
-)
-
-data class AuctionMarketRow(
-    val itemId: Int,
-    val itemName: String,
-    val itemMediaUrl: String?,
-    val qualityId: Int?,
-    val qualityType: String?,
-    val qualityName: String?,
-    val itemClassId: Int?,
-    val itemClassName: String?,
-    val itemSubclassId: Int?,
-    val itemSubclassName: String?,
-    val recipeId: Int?,
-    val recipeRank: Int?,
-    val recipeName: String?,
-    val recipeMediaUrl: String?,
-    val selectedBonusKey: String,
-    val selectedModifierKey: String,
-    val selectedPetSpeciesId: Int,
-    val selectedPrice: Long?,
-    val selectedP25Price: Long?,
-    val selectedP75Price: Long?,
-    val selectedQuantity: Long?,
-    val commodityPrice: Long?,
-    val commodityP25Price: Long?,
-    val commodityP75Price: Long?,
-    val commodityQuantity: Long?,
-    val saleRate: Double?,
-    val soldPerDay: Double?,
-)
-
-data class AuctionMarketFilterOptionRow(
-    val id: String,
-    val label: String,
-    val parentId: String? = null,
-    val qualityType: String? = null,
-)
 
 @Repository
 class AuctionMarketSearchRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) {
     private val logger = LoggerFactory.getLogger(AuctionMarketSearchRepository::class.java)
-
-    private val sortColumns =
-        mapOf(
-            "itemName" to "item_name",
-            "quality" to "quality_name",
-            "itemClass" to "item_class_name",
-            "itemSubclass" to "item_subclass_name",
-            "selectedPrice" to "selected_price",
-            "commodityPrice" to "commodity_price",
-            "selectedQuantity" to "selected_quantity",
-            "commodityQuantity" to "commodity_quantity",
-            "saleRate" to "sale_rate",
-            "soldPerDay" to "sold_per_day",
-        )
 
     fun search(request: AuctionMarketSearchRequest): AuctionMarketSearchResult {
         val totalStartNanos = System.nanoTime()
@@ -150,12 +61,12 @@ class AuctionMarketSearchRepository(
         val offset = request.page * request.pageSize
         dataParams.add(request.pageSize)
         dataParams.add(offset)
-        val dataSql = buildSearchPagedSql(request, dataWithSql, dataFromSql, dataWhereSql, includeTotalItems = false)
+        val dataSql = buildMarketSearchPagedSql(request, dataWithSql, dataFromSql, dataWhereSql, buildOrderBySql(request), false)
 
         val rows =
             jdbcTemplate.query(
                 dataSql,
-                rowMapper,
+                auctionMarketRowMapper,
                 *dataParams.toTypedArray(),
             )
         val queryMs = elapsedMs(queryStartNanos)
@@ -188,7 +99,7 @@ class AuctionMarketSearchRepository(
         val rows =
             jdbcTemplate.query(
                 dataSql,
-                rowMapper,
+                auctionMarketRowMapper,
                 *dataParams.toTypedArray(),
             )
         val queryMs = elapsedMs(queryStartNanos)
@@ -210,17 +121,7 @@ class AuctionMarketSearchRepository(
             request.maxSaleRatePercent == null &&
             request.minSoldPerDay == null &&
             request.maxSoldPerDay == null &&
-            request.sortBy in lightweightMetricSortColumns
-
-    private val lightweightMetricSortColumns =
-        setOf(
-            "saleRate",
-            "soldPerDay",
-            "selectedPrice",
-            "commodityPrice",
-            "selectedQuantity",
-            "commodityQuantity",
-        )
+            request.sortBy in AUCTION_MARKET_LIGHTWEIGHT_SORT_COLUMNS
 
     fun qualityOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
         qualityOptions(request.localeColumnSuffix)
@@ -240,7 +141,7 @@ class AuctionMarketSearchRepository(
                 WHERE iq.type IS NOT NULL
                 ORDER BY $qualityOrderSql, iq.internal_id
                 """.trimIndent(),
-                qualityFilterOptionRowMapper,
+                auctionMarketQualityOptionRowMapper,
             )
         return rows
             .groupBy { it.qualityType?.uppercase() }
@@ -260,7 +161,7 @@ class AuctionMarketSearchRepository(
                 LEFT JOIN locale l ON l.id = ic.name_id
             ORDER BY label
             """.trimIndent(),
-            filterOptionRowMapper,
+            auctionMarketOptionRowMapper,
         )
 
     fun itemSubclassOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
@@ -274,7 +175,7 @@ class AuctionMarketSearchRepository(
                 LEFT JOIN locale l ON l.id = isc.display_name_id
             ORDER BY label
             """.trimIndent(),
-            filterOptionRowMapper,
+            auctionMarketOptionRowMapper,
         )
 
     fun expansionOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
@@ -288,90 +189,8 @@ class AuctionMarketSearchRepository(
                 LEFT JOIN locale l ON l.id = e.name_id
             ORDER BY e.display_order, e.id
             """.trimIndent(),
-            filterOptionRowMapper,
+            auctionMarketOptionRowMapper,
         )
-
-    private fun buildSearchPagedSql(
-        request: AuctionMarketSearchRequest,
-        withSql: String,
-        fromSql: String,
-        whereSql: String,
-        includeTotalItems: Boolean = true,
-    ): String {
-        val totalItemsSql =
-            if (includeTotalItems) {
-                ",\n                COUNT(*) OVER () AS total_items"
-            } else {
-                ""
-            }
-        return """
-        $withSql
-        SELECT
-            wrapped.item_id,
-            wrapped.item_name,
-            wrapped.item_media_url,
-            wrapped.quality_id,
-            wrapped.quality_type,
-            wrapped.quality_name,
-            wrapped.item_class_id,
-            wrapped.item_class_name,
-            wrapped.item_subclass_id,
-            wrapped.item_subclass_name,
-            wrapped.recipe_id,
-            wrapped.recipe_rank,
-            wrapped.recipe_name,
-            wrapped.recipe_media_url,
-            wrapped.selected_bonus_key,
-            wrapped.selected_modifier_key,
-            wrapped.selected_pet_species_id,
-            wrapped.selected_price,
-            wrapped.selected_p25_price,
-            wrapped.selected_p75_price,
-            wrapped.selected_quantity,
-            wrapped.commodity_price,
-            wrapped.commodity_p25_price,
-            wrapped.commodity_p75_price,
-            wrapped.commodity_quantity,
-            wrapped.sale_rate,
-            wrapped.sold_per_day
-        FROM (
-            SELECT
-                d.item_id,
-                COALESCE(d.item_name_${request.localeColumnSuffix},
-                d.item_name_en_gb, d.item_name_en_us) AS item_name,
-                d.item_media_url,
-                d.quality_id,
-                d.quality_type,
-                COALESCE(d.quality_name_${request.localeColumnSuffix},
-                d.quality_name_en_gb, d.quality_name_en_us) AS quality_name,
-                d.item_class_id,
-                COALESCE(d.item_class_name_${request.localeColumnSuffix}, d.item_class_name_en_gb, d.item_class_name_en_us) AS item_class_name,
-                d.item_subclass_id,
-                COALESCE(d.item_subclass_name_${request.localeColumnSuffix}, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
-                d.recipe_id,
-                d.recipe_rank,
-                COALESCE(d.recipe_name_${request.localeColumnSuffix}, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
-                d.recipe_media_url,
-                p.selected_bonus_key,
-                p.selected_modifier_key,
-                p.selected_pet_species_id,
-                p.selected_price,
-                p.selected_p25_price,
-                p.selected_p75_price,
-                p.selected_quantity,
-                p.commodity_price,
-                p.commodity_p25_price,
-                p.commodity_p75_price,
-                p.commodity_quantity,
-                tsm.sale_rate,
-                tsm.sold_per_day$totalItemsSql
-            $fromSql
-            $whereSql
-        ) wrapped
-        ${buildOrderBySql(request)}
-        LIMIT ? OFFSET ?
-        """.trimIndent()
-    }
 
     private fun buildCountSql(
         withSql: String,
@@ -482,11 +301,11 @@ class AuctionMarketSearchRepository(
                     "(($expr) IS NULL) ASC, $expr $dir"
                 }
                 "saleRate", "soldPerDay" -> {
-                    val col = sortColumns.getValue(request.sortBy)
+                    val col = AUCTION_MARKET_SORT_COLUMNS.getValue(request.sortBy)
                     "(($alias.$col) IS NULL) ASC, $alias.$col $dir"
                 }
                 else -> {
-                    val col = sortColumns[request.sortBy] ?: sortColumns.getValue("itemName")
+                    val col = AUCTION_MARKET_SORT_COLUMNS[request.sortBy] ?: AUCTION_MARKET_SORT_COLUMNS.getValue("itemName")
                     "$alias.$col $dir"
                 }
             }
@@ -511,11 +330,11 @@ class AuctionMarketSearchRepository(
                     "(($expr) IS NULL) ASC, $expr $dir"
                 }
                 "saleRate", "soldPerDay" -> {
-                    val col = sortColumns.getValue(request.sortBy)
+                    val col = AUCTION_MARKET_SORT_COLUMNS.getValue(request.sortBy)
                     "((wrapped.$col) IS NULL) ASC, wrapped.$col $dir"
                 }
                 else -> {
-                    val col = sortColumns[request.sortBy] ?: sortColumns.getValue("itemName")
+                    val col = AUCTION_MARKET_SORT_COLUMNS[request.sortBy] ?: AUCTION_MARKET_SORT_COLUMNS.getValue("itemName")
                     "wrapped.$col $dir"
                 }
             }
@@ -772,80 +591,6 @@ class AuctionMarketSearchRepository(
 
     private fun elapsedMs(startNanos: Long): Long = (System.nanoTime() - startNanos) / 1_000_000
 
-    private val rowMapper =
-        RowMapper { rs: ResultSet, _: Int ->
-            AuctionMarketRow(
-                itemId = rs.getInt("item_id"),
-                itemName = rs.getString("item_name"),
-                itemMediaUrl = rs.getString("item_media_url"),
-                qualityId = rs.getNullableInt("quality_id"),
-                qualityType = rs.getString("quality_type"),
-                qualityName = rs.getString("quality_name"),
-                itemClassId = rs.getNullableInt("item_class_id"),
-                itemClassName = rs.getString("item_class_name"),
-                itemSubclassId = rs.getNullableInt("item_subclass_id"),
-                itemSubclassName = rs.getString("item_subclass_name"),
-                recipeId = rs.getNullableInt("recipe_id"),
-                recipeRank = rs.getNullableInt("recipe_rank"),
-                recipeName = rs.getString("recipe_name"),
-                recipeMediaUrl = rs.getString("recipe_media_url"),
-                selectedBonusKey = rs.getString("selected_bonus_key") ?: "",
-                selectedModifierKey = rs.getString("selected_modifier_key") ?: "",
-                selectedPetSpeciesId = rs.getInt("selected_pet_species_id"),
-                selectedPrice = rs.getNullableLong("selected_price"),
-                selectedP25Price = rs.getNullableLong("selected_p25_price"),
-                selectedP75Price = rs.getNullableLong("selected_p75_price"),
-                selectedQuantity = rs.getNullableLong("selected_quantity"),
-                commodityPrice = rs.getNullableLong("commodity_price"),
-                commodityP25Price = rs.getNullableLong("commodity_p25_price"),
-                commodityP75Price = rs.getNullableLong("commodity_p75_price"),
-                commodityQuantity = rs.getNullableLong("commodity_quantity"),
-                saleRate = rs.getNullableDouble("sale_rate"),
-                soldPerDay = rs.getNullableDouble("sold_per_day"),
-            )
-        }
-
-    private val rowMapperWithTotal =
-        RowMapper { rs: ResultSet, rowNum: Int ->
-            val totalItems = rs.getLong("total_items")
-            val row = requireNotNull(rowMapper.mapRow(rs, rowNum)) { "market search row expected" }
-            row to totalItems
-        }
-
-    private val qualityFilterOptionRowMapper =
-        RowMapper { rs: ResultSet, _: Int ->
-            AuctionMarketFilterOptionRow(
-                id = rs.getString("id"),
-                label = rs.getString("label") ?: rs.getString("id"),
-                parentId = rs.getString("parent_id"),
-                qualityType = rs.getString("quality_type"),
-            )
-        }
-
-    private val filterOptionRowMapper =
-        RowMapper { rs: ResultSet, _: Int ->
-            AuctionMarketFilterOptionRow(
-                id = rs.getString("id"),
-                label = rs.getString("label") ?: rs.getString("id"),
-                parentId = rs.getString("parent_id"),
-            )
-        }
-
-    private fun ResultSet.getNullableInt(column: String): Int? {
-        val value = getInt(column)
-        return if (wasNull()) null else value
-    }
-
-    private fun ResultSet.getNullableLong(column: String): Long? {
-        val value = getLong(column)
-        return if (wasNull()) null else value
-    }
-
-    private fun ResultSet.getNullableDouble(column: String): Double? {
-        val value = getDouble(column)
-        return if (wasNull()) null else value
-    }
-
     private fun correlationId(): String = MDC.get("correlationId") ?: "-"
 
     /** For integration tests: `EXPLAIN` / `EXPLAIN ANALYZE` against real MariaDB. */
@@ -857,7 +602,7 @@ class AuctionMarketSearchRepository(
         params.add(request.pageSize)
         params.add(offset)
         return Pair(
-            buildSearchPagedSql(request, withSql, fromSql, whereSql),
+            buildMarketSearchPagedSql(request, withSql, fromSql, whereSql, buildOrderBySql(request)),
             params.toTypedArray(),
         )
     }

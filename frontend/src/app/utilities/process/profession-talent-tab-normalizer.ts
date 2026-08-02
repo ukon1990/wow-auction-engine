@@ -135,21 +135,20 @@ function normalizePathNode(raw: Record<string, unknown>): {
 
   const name = boundedName(pathNodeName(raw));
   const description = boundedDescription(pathNodeDescription(raw));
-  const maxRanks = asInt(nodeInfo['maxRanks']) ?? asInt(nodeInfo['totalMaxRanks']) ?? undefined;
-  const requiredRank = asInt(raw['unlockRank']) ?? undefined;
+  const maxRanks = firstInt(nodeInfo['maxRanks'], nodeInfo['totalMaxRanks']);
+  const requiredRank = firstInt(raw['unlockRank']);
   const sourceEntries = asArray(raw['entries']).map(asRecord);
   const activeEntry = asRecord(nodeInfo['activeEntry']);
-  const defaultEntryId =
-    asInt(activeEntry['entryID']) ?? asInt(nodeInfo['activeEntryID']) ?? nodeId;
+  const defaultEntryId = firstInt(activeEntry['entryID'], nodeInfo['activeEntryID']) ?? nodeId;
   const entries =
     sourceEntries.length > 0
       ? sourceEntries.flatMap((entry) => normalizeEntry(entry, maxRanks))
       : [
           {
             entryId: defaultEntryId,
-            ...(name ? { name } : {}),
-            ...(maxRanks !== undefined ? { rankLimit: maxRanks } : {}),
-            ...(description ? { description } : {}),
+            ...optionalProperty('name', name),
+            ...optionalProperty('rankLimit', maxRanks),
+            ...optionalProperty('description', description),
           },
         ];
   const inferredMaxRanks = Math.max(0, ...entries.map((entry) => entry.rankLimit ?? 0));
@@ -159,19 +158,18 @@ function normalizePathNode(raw: Record<string, unknown>): {
       : inferredMaxRanks > 0
         ? normalizeSpendableLimit(inferredMaxRanks)
         : undefined;
-  const rank =
-    asInt(activeEntry['rank']) ?? asInt(nodeInfo['currentRank']) ?? asInt(nodeInfo['activeRank']);
+  const rank = firstInt(activeEntry['rank'], nodeInfo['currentRank'], nodeInfo['activeRank']);
   const allocationEntryId = entries[0]?.entryId ?? defaultEntryId;
-  const allocation = rank !== null ? { nodeId, entryId: allocationEntryId, rank } : null;
+  const allocation = rank !== undefined ? { nodeId, entryId: allocationEntryId, rank } : null;
 
   return {
     node: {
       nodeId,
       nodeKind: 'path',
-      ...(name ? { name } : {}),
-      ...(nodeMaxRanks !== undefined ? { maxRanks: nodeMaxRanks } : {}),
-      ...(requiredRank !== undefined ? { requiredRank } : {}),
-      ...(description ? { description } : {}),
+      ...optionalProperty('name', name),
+      ...optionalProperty('maxRanks', nodeMaxRanks),
+      ...optionalProperty('requiredRank', requiredRank),
+      ...optionalProperty('description', description),
       parentNodeIds: [],
       entries,
     },
@@ -195,18 +193,17 @@ function normalizeMilestoneNode(raw: Record<string, unknown>): {
   const name = boundedName(milestoneNodeName(raw));
   const description = boundedDescription(milestoneNodeDescription(raw));
   const parentPathId = asInt(raw['parentPathID']);
-  const requiredRank = asInt(raw['milestoneRank']) ?? asInt(raw['unlockRank']) ?? undefined;
+  const requiredRank = firstInt(raw['milestoneRank'], raw['unlockRank']);
   const maxRanks = asInt(nodeInfo['maxRanks']) ?? 1;
   const activeEntry = asRecord(nodeInfo['activeEntry']);
-  const entryId = asInt(activeEntry['entryID']) ?? asInt(nodeInfo['activeEntryID']) ?? nodeId;
-  const rank =
-    asInt(activeEntry['rank']) ?? asInt(nodeInfo['currentRank']) ?? asInt(nodeInfo['activeRank']);
+  const entryId = firstInt(activeEntry['entryID'], nodeInfo['activeEntryID']) ?? nodeId;
+  const rank = firstInt(activeEntry['rank'], nodeInfo['currentRank'], nodeInfo['activeRank']);
   const entries: NormalizedTalentEntry[] = [
     {
       entryId,
-      ...(name ? { name } : {}),
+      ...optionalProperty('name', name),
       rankLimit: maxRanks,
-      ...(description ? { description } : {}),
+      ...optionalProperty('description', description),
     },
   ];
 
@@ -214,14 +211,14 @@ function normalizeMilestoneNode(raw: Record<string, unknown>): {
     node: {
       nodeId,
       nodeKind: 'milestone',
-      ...(name ? { name } : {}),
+      ...optionalProperty('name', name),
       maxRanks,
-      ...(requiredRank !== undefined ? { requiredRank } : {}),
-      ...(description ? { description } : {}),
+      ...optionalProperty('requiredRank', requiredRank),
+      ...optionalProperty('description', description),
       parentNodeIds: parentPathId !== null ? [parentPathId] : [],
       entries,
     },
-    allocation: rank !== null && rank > 0 ? { nodeId, entryId, rank } : null,
+    allocation: rank !== undefined && rank > 0 ? { nodeId, entryId, rank } : null,
   };
 }
 
@@ -241,38 +238,61 @@ function normalizeLegacyNode(raw: Record<string, unknown>): {
   const sourceEntries = asArray(raw['entries']).map(asRecord);
   const activeEntry = asRecord(nodeInfo['activeEntry']);
   const name = boundedName(
-    asText(raw['overrideName']) ??
-      asText(raw['name']) ??
-      asText(raw['nodeName']) ??
-      asText(nodeInfo['overrideName']) ??
-      asText(nodeInfo['name']) ??
-      sourceEntries.map(talentEntryName).find((value) => value !== undefined) ??
-      undefined,
+    firstText(
+      raw['overrideName'],
+      raw['name'],
+      raw['nodeName'],
+      nodeInfo['overrideName'],
+      nodeInfo['name'],
+    ) ?? sourceEntries.map(talentEntryName).find((value) => value !== undefined),
   );
   const description = boundedDescription(
     asText(raw['pathDescription']) ?? asText(raw['nodeDescription']) ?? undefined,
   );
-  const maxRanks = asInt(nodeInfo['maxRanks']) ?? asInt(nodeInfo['totalMaxRanks']) ?? undefined;
-  const requiredRank = asInt(raw['unlockRank']) ?? undefined;
+  const maxRanks = firstInt(nodeInfo['maxRanks'], nodeInfo['totalMaxRanks']);
+  const requiredRank = firstInt(raw['unlockRank']);
   const entries = sourceEntries.flatMap((entry) => normalizeEntry(entry, maxRanks));
-  const entryId = asInt(activeEntry['entryID']) ?? asInt(nodeInfo['activeEntryID']);
+  const entryId = firstInt(activeEntry['entryID'], nodeInfo['activeEntryID']) ?? null;
   const rank =
-    asInt(activeEntry['rank']) ?? asInt(nodeInfo['currentRank']) ?? asInt(nodeInfo['activeRank']);
+    firstInt(activeEntry['rank'], nodeInfo['currentRank'], nodeInfo['activeRank']) ?? null;
   const allocation = entryId !== null && rank !== null ? { nodeId, entryId, rank } : null;
 
   return {
     node: {
       nodeId,
       nodeKind: 'path',
-      ...(name ? { name } : {}),
-      ...(maxRanks !== undefined ? { maxRanks } : {}),
-      ...(requiredRank !== undefined ? { requiredRank } : {}),
-      ...(description ? { description } : {}),
+      ...optionalProperty('name', name),
+      ...optionalProperty('maxRanks', maxRanks),
+      ...optionalProperty('requiredRank', requiredRank),
+      ...optionalProperty('description', description),
       parentNodeIds: [],
       entries,
     },
     allocation,
   };
+}
+
+function firstInt(...values: unknown[]): number | undefined {
+  for (const value of values) {
+    const integer = asInt(value);
+    if (integer !== null) return integer;
+  }
+  return undefined;
+}
+
+function firstText(...values: unknown[]): string | undefined {
+  for (const value of values) {
+    const text = asText(value);
+    if (text !== null) return text;
+  }
+  return undefined;
+}
+
+function optionalProperty<Key extends string, Value>(
+  key: Key,
+  value: Value | undefined,
+): Partial<Record<Key, Value>> {
+  return value === undefined ? {} : ({ [key]: value } as Record<Key, Value>);
 }
 
 function normalizeEntry(

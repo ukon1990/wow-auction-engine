@@ -180,6 +180,23 @@ export class TopNavComponent implements OnDestroy {
       return;
     }
 
+    const nextUseMobileNavigation = this.shouldUseMobileNavigation(
+      header,
+      leftCluster,
+      brandBlock,
+      actionCluster,
+      measureNav,
+    );
+    this.applyNavigationMode(nextUseMobileNavigation);
+  }
+
+  private shouldUseMobileNavigation(
+    header: HTMLElement,
+    leftCluster: HTMLElement,
+    brandBlock: HTMLElement,
+    actionCluster: HTMLElement,
+    measureNav: HTMLElement,
+  ): boolean {
     const headerStyles = getComputedStyle(header);
     const leftStyles = getComputedStyle(leftCluster);
     const headerHorizontalPadding =
@@ -194,9 +211,12 @@ export class TopNavComponent implements OnDestroy {
       headerGap -
       TopNavComponent.FIT_BUFFER_PX;
     const requiredWidth = brandBlock.scrollWidth + measureNav.scrollWidth + leftGap;
-    const nextUseMobileNavigation =
-      header.clientWidth < TopNavComponent.MIN_DESKTOP_WIDTH_PX || requiredWidth > availableWidth;
+    return (
+      header.clientWidth < TopNavComponent.MIN_DESKTOP_WIDTH_PX || requiredWidth > availableWidth
+    );
+  }
 
+  private applyNavigationMode(nextUseMobileNavigation: boolean): void {
     if (this.useMobileNavigation() !== nextUseMobileNavigation) {
       this.useMobileNavigation.set(nextUseMobileNavigation);
       if (nextUseMobileNavigation) {

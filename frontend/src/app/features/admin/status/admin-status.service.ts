@@ -144,13 +144,13 @@ export class AdminStatusService {
       }
     }
 
-    return [...this.queriesByKey.values()].sort((a, b) => {
-      const aCompleted = a.state === 'Completed';
-      const bCompleted = b.state === 'Completed';
-      if (aCompleted !== bCompleted) {
-        return aCompleted ? 1 : -1;
+    return [...this.queriesByKey.values()].sort((leftQuery, rightQuery) => {
+      const leftCompleted = leftQuery.state === 'Completed';
+      const rightCompleted = rightQuery.state === 'Completed';
+      if (leftCompleted !== rightCompleted) {
+        return leftCompleted ? 1 : -1;
       }
-      return b.timeMs - a.timeMs;
+      return rightQuery.timeMs - leftQuery.timeMs;
     });
   }
 }

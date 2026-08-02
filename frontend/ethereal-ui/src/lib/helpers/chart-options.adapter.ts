@@ -23,7 +23,7 @@ export function chartSeriesToOptions(
   adapterOptions: ChartOptionsAdapterOptions = {},
 ): ChartOptionsAdapterResult {
   const xDomain = buildXDomain(series);
-  const yScaleKeys = [...new Set(series.map((s) => s.yScaleKey))];
+  const yScaleKeys = [...new Set(series.map((chartSeries) => chartSeries.yScaleKey))];
   const yDomains = buildYDomainsByKey(series);
   const yAxis: Highcharts.YAxisOptions[] = yScaleKeys.map((key, index) => ({
     id: key,
@@ -48,31 +48,33 @@ export function chartSeriesToOptions(
       panKey: 'alt',
     },
     xAxis: {
-      categories: xDomain.map((x) => String(x)),
+      categories: xDomain.map((domainValue) => String(domainValue)),
       crosshair: {
         color: 'rgba(255,255,255,0.12)',
         width: 1,
       },
     },
     yAxis,
-    series: series.map((s): Highcharts.SeriesOptionsType => {
-      const yAxisIndex = Math.max(0, yScaleKeys.indexOf(s.yScaleKey));
-      const data = xDomain.map((x, categoryIndex) => {
-        const point = s.points.find((p) => indexInXDomain(p.x, xDomain) === categoryIndex);
+    series: series.map((chartSeries): Highcharts.SeriesOptionsType => {
+      const yAxisIndex = Math.max(0, yScaleKeys.indexOf(chartSeries.yScaleKey));
+      const data = xDomain.map((domainValue, categoryIndex) => {
+        const point = chartSeries.points.find(
+          (candidate) => indexInXDomain(candidate.x, xDomain) === categoryIndex,
+        );
         return {
           x: categoryIndex,
           y: point?.y ?? null,
-          custom: { domainX: x },
+          custom: { domainX: domainValue },
         };
       });
       const common = {
-        id: s.id,
-        name: s.id,
-        color: etherealColorVar(s.color),
+        id: chartSeries.id,
+        name: chartSeries.id,
+        color: etherealColorVar(chartSeries.color),
         data,
         yAxis: yAxisIndex,
       };
-      return s.kind === 'column'
+      return chartSeries.kind === 'column'
         ? {
             ...common,
             type: 'column',

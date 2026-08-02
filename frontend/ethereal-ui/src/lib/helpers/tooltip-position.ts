@@ -37,8 +37,13 @@ export function pointerOffsetFromEvent(
 
   const el = event.target;
   if (el instanceof HTMLElement) {
-    const r = el.getBoundingClientRect();
-    return relativeToMode(r.left + r.width + focusOffsetX, r.top + focusOffsetY, mode, anchorRect);
+    const targetRect = el.getBoundingClientRect();
+    return relativeToMode(
+      targetRect.left + targetRect.width + focusOffsetX,
+      targetRect.top + focusOffsetY,
+      mode,
+      anchorRect,
+    );
   }
 
   return relativeToMode(0, 0, mode, anchorRect);

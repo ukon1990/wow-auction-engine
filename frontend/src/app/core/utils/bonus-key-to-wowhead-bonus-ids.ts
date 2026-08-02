@@ -4,13 +4,13 @@
  */
 export function bonusKeyToWowheadBonusIds(bonusKey: string | null | undefined): readonly number[] {
   if (bonusKey == null) return [];
-  const t = String(bonusKey).trim();
-  if (!t.length) return [];
-  const parts = t.split(':');
-  const out: number[] = [];
-  for (const p of parts) {
-    const n = Number.parseInt(p, 10);
-    if (Number.isFinite(n) && n > 0) out.push(n);
+  const trimmedKey = String(bonusKey).trim();
+  if (!trimmedKey.length) return [];
+  const parts = trimmedKey.split(':');
+  const bonusIds: number[] = [];
+  for (const part of parts) {
+    const bonusId = Number.parseInt(part, 10);
+    if (Number.isFinite(bonusId) && bonusId > 0) bonusIds.push(bonusId);
   }
-  return out;
+  return bonusIds;
 }

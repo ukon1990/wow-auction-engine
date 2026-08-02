@@ -366,47 +366,21 @@ private fun normalizeSql(sql: String): NormalizedSql {
         val next = sql.getOrNull(index + 1)
         when {
             current == '\'' || current == '"' || current == '`' -> {
-                val quote = current
                 cleaned.append(' ')
-                index += 1
-                while (index < sql.length) {
-                    if (sql[index] == '\\') {
-                        index += 2
-                        continue
-                    }
-                    if (sql[index] == quote) {
-                        if (sql.getOrNull(index + 1) == quote) {
-                            index += 2
-                            continue
-                        }
-                        index += 1
-                        break
-                    }
-                    index += 1
-                }
+                index = skipQuotedSql(sql, index, current)
                 cleaned.append(' ')
             }
             current == '-' && next == '-' -> {
                 cleaned.append(' ')
-                index += 2
-                while (index < sql.length && sql[index] != '\n') {
-                    index += 1
-                }
+                index = skipSqlLineComment(sql, index + 2)
             }
             current == '#' -> {
                 cleaned.append(' ')
-                index += 1
-                while (index < sql.length && sql[index] != '\n') {
-                    index += 1
-                }
+                index = skipSqlLineComment(sql, index + 1)
             }
             current == '/' && next == '*' -> {
                 cleaned.append(' ')
-                index += 2
-                while (index + 1 < sql.length && !(sql[index] == '*' && sql[index + 1] == '/')) {
-                    index += 1
-                }
-                index = (index + 2).coerceAtMost(sql.length)
+                index = skipSqlBlockComment(sql, index + 2)
             }
             else -> {
                 cleaned.append(current)
@@ -424,6 +398,44 @@ private fun normalizeSql(sql: String): NormalizedSql {
                 .map { it.value.uppercase() }
                 .toList(),
     )
+}
+
+private fun skipQuotedSql(
+    sql: String,
+    openingIndex: Int,
+    quote: Char,
+): Int {
+    var index = openingIndex + 1
+    while (index < sql.length) {
+        if (sql[index] == '\\') {
+            index += 2
+        } else if (sql[index] == quote && sql.getOrNull(index + 1) == quote) {
+            index += 2
+        } else if (sql[index] == quote) {
+            return index + 1
+        } else {
+            index += 1
+        }
+    }
+    return index
+}
+
+private fun skipSqlLineComment(
+    sql: String,
+    startIndex: Int,
+): Int {
+    var index = startIndex
+    while (index < sql.length && sql[index] != '\n') index += 1
+    return index
+}
+
+private fun skipSqlBlockComment(
+    sql: String,
+    startIndex: Int,
+): Int {
+    var index = startIndex
+    while (index + 1 < sql.length && !(sql[index] == '*' && sql[index + 1] == '/')) index += 1
+    return (index + 2).coerceAtMost(sql.length)
 }
 
 private fun Char?.isIdentifierPart(): Boolean = this != null && (isLetterOrDigit() || this == '_')

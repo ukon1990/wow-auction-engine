@@ -387,7 +387,7 @@ export class SideNavComponent {
     if (!this.isDesktop()) {
       return;
     }
-    this.collapsed.update((c) => !c);
+    this.collapsed.update((collapsed) => !collapsed);
   }
 
   protected closeMobile(): void {

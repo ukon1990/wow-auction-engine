@@ -136,7 +136,7 @@ export const routes: TitledRoutes = [
         title: $localize`:@@route.itemDetail:Item`,
         loadComponent: () =>
           import('./features/market-browser/market-item-detail.page').then(
-            (m) => m.MarketItemDetailPage,
+            (module) => module.MarketItemDetailPage,
           ),
       },
       {
@@ -144,7 +144,9 @@ export const routes: TitledRoutes = [
         title: $localize`:@@route.auctions:Auctions`,
         icon: 'travel_explore',
         loadComponent: () =>
-          import('./features/auctions/auctions-shell.page').then((m) => m.AuctionsShellPage),
+          import('./features/auctions/auctions-shell.page').then(
+            (module) => module.AuctionsShellPage,
+          ),
         providers: [
           QueryService,
           {
@@ -170,7 +172,7 @@ export const routes: TitledRoutes = [
             canActivate: [legacyAuctionItemRedirectGuard],
             loadComponent: () =>
               import('./features/market-browser/market-item-detail.page').then(
-                (m) => m.MarketItemDetailPage,
+                (module) => module.MarketItemDetailPage,
               ),
           },
         ],
@@ -180,7 +182,9 @@ export const routes: TitledRoutes = [
         title: $localize`:@@route.crafting:Crafting`,
         icon: 'handyman',
         loadComponent: () =>
-          import('./features/crafting/crafting-shell.page').then((m) => m.CraftingShellPage),
+          import('./features/crafting/crafting-shell.page').then(
+            (module) => module.CraftingShellPage,
+          ),
         providers: [
           QueryService,
           {
@@ -198,7 +202,7 @@ export const routes: TitledRoutes = [
             path: '',
             loadComponent: () =>
               import('./features/crafting/crafting-browser.page').then(
-                (m) => m.CraftingBrowserPage,
+                (module) => module.CraftingBrowserPage,
               ),
           },
           {
@@ -206,7 +210,7 @@ export const routes: TitledRoutes = [
             canActivate: [legacyCraftingItemRedirectGuard],
             loadComponent: () =>
               import('./features/market-browser/market-item-detail.page').then(
-                (m) => m.MarketItemDetailPage,
+                (module) => module.MarketItemDetailPage,
               ),
           },
         ],

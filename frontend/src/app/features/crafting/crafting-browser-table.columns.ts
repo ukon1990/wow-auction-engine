@@ -35,15 +35,15 @@ export function craftingBrowserSkeletonRowClass(): string {
 }
 
 export function craftingBrowserRowGridTemplateColumns(
-  cols: readonly ColumnDef<CraftingTableRow, unknown>[],
+  columns: readonly ColumnDef<CraftingTableRow, unknown>[],
 ): string {
-  return cols.map((col) => (col.meta as ColumnMeta).gridTrack).join(' ');
+  return columns.map((column) => (column.meta as ColumnMeta).gridTrack).join(' ');
 }
 
 function textCell(value: unknown): string {
   if (value === null || value === undefined) return '—';
-  const s = String(value).trim();
-  return s.length > 0 ? s : '—';
+  const text = String(value).trim();
+  return text.length > 0 ? text : '—';
 }
 
 export function createCraftingBrowserTableColumns(): ColumnDef<CraftingTableRow, unknown>[] {

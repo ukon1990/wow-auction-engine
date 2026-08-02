@@ -478,6 +478,29 @@ private fun recipeWhereSql(
     params: MutableList<Any?>,
 ): String {
     val clauses = mutableListOf<String>()
+    appendRecipeBaseFilters(clauses, params, query, hasOverride, professionId, localeColumnSuffix)
+    if (listOf(itemClassId, itemSubclassId, expansionId, associatedItemId).any { it != null } || associationType != null) {
+        clauses +=
+            recipeAssociationClause(
+                itemClassId,
+                itemSubclassId,
+                expansionId,
+                associatedItemId,
+                associationType,
+                params,
+            )
+    }
+    return if (clauses.isEmpty()) "" else clauses.joinToString(prefix = "WHERE ", separator = "\n  AND ")
+}
+
+private fun appendRecipeBaseFilters(
+    clauses: MutableList<String>,
+    params: MutableList<Any?>,
+    query: String?,
+    hasOverride: Boolean?,
+    professionId: Int?,
+    localeColumnSuffix: String,
+) {
     query?.trim()?.takeIf(String::isNotEmpty)?.let { term ->
         clauses +=
             """
@@ -498,41 +521,41 @@ private fun recipeWhereSql(
         clauses += "st.profession_id = ?"
         params += it
     }
-    if (
-        itemClassId != null ||
-            itemSubclassId != null ||
-            expansionId != null ||
-            associatedItemId != null ||
-            associationType != null
-    ) {
-        val associationTypes = associationType?.let(::listOf) ?: listOf("crafted", "reagent")
-        val associationClauses =
-            associationTypes.map { type ->
-                val itemIdExpression = if (type == "crafted") "association.crafted_item_id" else "association.item_id"
-                val source = if (type == "crafted") "v_recipe_crafted_output" else "v_recipe_reagent"
-                val predicates = mutableListOf("association.recipe_id = r.id")
-                associatedItemId?.let {
-                    predicates += "$itemIdExpression = ?"
-                    params += it
-                }
-                itemClassId?.let {
-                    predicates += "associated_item.item_class_id = ?"
-                    params += it
-                }
-                itemSubclassId?.let {
-                    predicates +=
-                        "EXISTS (SELECT 1 FROM item_subclass associated_subclass WHERE associated_subclass.internal_id = associated_item.item_subclass_id AND associated_subclass.subclass_id = ?)"
-                    params += it
-                }
-                expansionId?.let {
-                    predicates += "associated_item.expansion_id = ?"
-                    params += it
-                }
-                "EXISTS (SELECT 1 FROM $source association JOIN v_item associated_item ON associated_item.id = $itemIdExpression WHERE ${predicates.joinToString(" AND ")})"
+}
+
+private fun recipeAssociationClause(
+    itemClassId: Int?,
+    itemSubclassId: Int?,
+    expansionId: Int?,
+    associatedItemId: Int?,
+    associationType: String?,
+    params: MutableList<Any?>,
+): String {
+    val associationTypes = associationType?.let(::listOf) ?: listOf("crafted", "reagent")
+    val associationClauses =
+        associationTypes.map { type ->
+            val itemIdExpression = if (type == "crafted") "association.crafted_item_id" else "association.item_id"
+            val source = if (type == "crafted") "v_recipe_crafted_output" else "v_recipe_reagent"
+            val predicates = mutableListOf("association.recipe_id = r.id")
+            associatedItemId?.let {
+                predicates += "$itemIdExpression = ?"
+                params += it
             }
-        clauses += "(${associationClauses.joinToString(" OR ")})"
-    }
-    return if (clauses.isEmpty()) "" else clauses.joinToString(prefix = "WHERE ", separator = "\n  AND ")
+            itemClassId?.let {
+                predicates += "associated_item.item_class_id = ?"
+                params += it
+            }
+            itemSubclassId?.let {
+                predicates += "EXISTS (SELECT 1 FROM item_subclass associated_subclass WHERE associated_subclass.internal_id = associated_item.item_subclass_id AND associated_subclass.subclass_id = ?)"
+                params += it
+            }
+            expansionId?.let {
+                predicates += "associated_item.expansion_id = ?"
+                params += it
+            }
+            "EXISTS (SELECT 1 FROM $source association JOIN v_item associated_item ON associated_item.id = $itemIdExpression WHERE ${predicates.joinToString(" AND ")})"
+        }
+    return "(${associationClauses.joinToString(" OR ")})"
 }
 
 private fun ResultSet.toRecipeFields(): AdminRecipeFields =

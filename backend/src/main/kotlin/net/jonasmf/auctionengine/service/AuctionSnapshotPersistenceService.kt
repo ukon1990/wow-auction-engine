@@ -164,22 +164,7 @@ class AuctionSnapshotPersistenceService(
                     val fieldName = parser.currentName
                     parser.nextToken()
                     if (fieldName == "auctions") {
-                        require(parser.currentToken == JsonToken.START_ARRAY) {
-                            "Auction payload field 'auctions' must be an array"
-                        }
-                        while (parser.nextToken() != JsonToken.END_ARRAY) {
-                            val flatAuction =
-                                mapper
-                                    .readValue(
-                                        parser,
-                                        AuctionDTO::class.java,
-                                    ).toFlatObject(connectedRealmId)
-                            if (groupedAuctions[flatAuction.id] == null) {
-                                groupedAuctions[flatAuction.id] = mutableListOf()
-                            }
-                            groupedAuctions[flatAuction.id]?.add(flatAuction)
-                            auctionCount++
-                        }
+                        auctionCount += readAuctions(parser, mapper, connectedRealmId, groupedAuctions)
                     } else {
                         parser.skipChildren()
                     }
@@ -187,5 +172,23 @@ class AuctionSnapshotPersistenceService(
             }
         }
         return Pair(groupedAuctions, auctionCount)
+    }
+
+    private fun readAuctions(
+        parser: com.fasterxml.jackson.core.JsonParser,
+        mapper: com.fasterxml.jackson.databind.ObjectMapper,
+        connectedRealmId: Int,
+        groupedAuctions: MutableMap<String, MutableList<FlatAuction>>,
+    ): Int {
+        require(parser.currentToken == JsonToken.START_ARRAY) {
+            "Auction payload field 'auctions' must be an array"
+        }
+        var auctionCount = 0
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            val flatAuction = mapper.readValue(parser, AuctionDTO::class.java).toFlatObject(connectedRealmId)
+            groupedAuctions.getOrPut(flatAuction.id, ::mutableListOf).add(flatAuction)
+            auctionCount++
+        }
+        return auctionCount
     }
 }

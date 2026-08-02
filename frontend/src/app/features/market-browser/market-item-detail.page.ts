@@ -111,26 +111,26 @@ export class MarketItemDetailPage {
 
     combineLatest([realmRoute.paramMap, this.route.paramMap, this.route.queryParamMap])
       .pipe(
-        map(([realmPm, itemPm, q]) => {
-          const recipeRaw = q.get('recipeId');
+        map(([realmParameters, itemParameters, queryParameters]) => {
+          const recipeRaw = queryParameters.get('recipeId');
           const recipeId = recipeRaw != null ? Number(recipeRaw) : null;
           return {
-            region: realmPm.get('region'),
-            realmSlug: realmPm.get('realm'),
-            itemId: Number(itemPm.get('itemId')),
-            variant: variantFromQuery(q),
-            initialScope: scopeFromQuery(q),
+            region: realmParameters.get('region'),
+            realmSlug: realmParameters.get('realm'),
+            itemId: Number(itemParameters.get('itemId')),
+            variant: variantFromQuery(queryParameters),
+            initialScope: scopeFromQuery(queryParameters),
             recipeId: recipeId != null && Number.isFinite(recipeId) ? recipeId : null,
           };
         }),
         distinctUntilChanged(
-          (a, b) =>
-            a.region === b.region &&
-            a.realmSlug === b.realmSlug &&
-            a.itemId === b.itemId &&
-            a.initialScope === b.initialScope &&
-            a.recipeId === b.recipeId &&
-            variantEqual(a.variant, b.variant),
+          (previousContext, nextContext) =>
+            previousContext.region === nextContext.region &&
+            previousContext.realmSlug === nextContext.realmSlug &&
+            previousContext.itemId === nextContext.itemId &&
+            previousContext.initialScope === nextContext.initialScope &&
+            previousContext.recipeId === nextContext.recipeId &&
+            variantEqual(previousContext.variant, nextContext.variant),
         ),
         takeUntilDestroyed(this.destroyRef),
       )

@@ -148,12 +148,12 @@ const STORY_MARKET_TABLE_BODY_ROW =
   'grid w-full grid-cols-[minmax(14rem,3fr)_7rem_minmax(7rem,1.5fr)_minmax(7rem,1.5fr)_minmax(7rem,1.5fr)_6rem] items-center gap-4 px-6 py-3 text-left transition hover:bg-white/5';
 
 function storyCurrencyLabel(amount: CurrencyAmount): string {
-  const g = amount.gold ?? 0;
-  const s = amount.silver ?? 0;
-  const c = amount.copper ?? 0;
-  if (g) return `${g}g`;
-  if (s) return `${s}s`;
-  if (c) return `${c}c`;
+  const gold = amount.gold ?? 0;
+  const silver = amount.silver ?? 0;
+  const copper = amount.copper ?? 0;
+  if (gold) return `${gold}g`;
+  if (silver) return `${silver}s`;
+  if (copper) return `${copper}c`;
   return '—';
 }
 
@@ -398,28 +398,37 @@ export class ChartPanelStoryHostComponent {
   }
 
   readonly chartSeries: readonly ChartSeries[] = (() => {
-    const xs = Array.from({ length: 30 }, (_, i) => i);
+    const domainValues = Array.from({ length: 30 }, (_, index) => index);
     return [
       {
         id: 'price',
         kind: 'line' as const,
         yScaleKey: 'gold',
         color: 'primary-container' as const,
-        points: xs.map((x, i) => ({ x, y: 2100 + i * 18 + (i % 5) * 12 })),
+        points: domainValues.map((domainValue, index) => ({
+          x: domainValue,
+          y: 2100 + index * 18 + (index % 5) * 12,
+        })),
       },
       {
         id: 'quantity',
         kind: 'column' as const,
         yScaleKey: 'qty',
         color: 'tertiary-container' as const,
-        points: xs.map((x, i) => ({ x, y: 40 + i * 3 + (i % 4) * 8 })),
+        points: domainValues.map((domainValue, index) => ({
+          x: domainValue,
+          y: 40 + index * 3 + (index % 4) * 8,
+        })),
       },
       {
         id: 'roi',
         kind: 'line' as const,
         yScaleKey: 'roi',
         color: 'secondary' as const,
-        points: xs.map((x, i) => ({ x, y: 10 + (i % 6) * 1.1 + (i % 3) * 0.4 })),
+        points: domainValues.map((domainValue, index) => ({
+          x: domainValue,
+          y: 10 + (index % 6) * 1.1 + (index % 3) * 0.4,
+        })),
       },
     ];
   })();

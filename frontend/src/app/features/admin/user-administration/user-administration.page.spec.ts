@@ -67,7 +67,7 @@ function clickHeader(fixture: ComponentFixture<UserAdministrationPage>, label: s
   const buttons = Array.from(
     fixture.nativeElement.querySelectorAll('button'),
   ) as HTMLButtonElement[];
-  const button = buttons.find((b) => b.textContent?.includes(label));
+  const button = buttons.find((candidate) => candidate.textContent?.includes(label));
   expect(button).toBeTruthy();
   button?.click();
 }

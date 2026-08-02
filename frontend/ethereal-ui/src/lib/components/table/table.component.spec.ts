@@ -281,7 +281,7 @@ function clickHeader<T>(fixture: ComponentFixture<T>, label: string): void {
   const buttons = Array.from(
     fixture.nativeElement.querySelectorAll('button'),
   ) as HTMLButtonElement[];
-  const button = buttons.find((b) => b.textContent?.includes(label));
+  const button = buttons.find((candidate) => candidate.textContent?.includes(label));
   expect(button).toBeTruthy();
   button?.click();
 }
@@ -290,7 +290,7 @@ function clickButton<T>(fixture: ComponentFixture<T>, ariaLabel: string): void {
   const buttons = Array.from(
     fixture.nativeElement.querySelectorAll('button'),
   ) as HTMLButtonElement[];
-  const button = buttons.find((b) => b.getAttribute('aria-label') === ariaLabel);
+  const button = buttons.find((candidate) => candidate.getAttribute('aria-label') === ariaLabel);
   expect(button).toBeTruthy();
   button?.click();
 }

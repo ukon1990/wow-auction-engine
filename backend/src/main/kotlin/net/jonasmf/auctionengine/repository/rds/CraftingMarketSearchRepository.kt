@@ -8,85 +8,6 @@ import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 import java.time.LocalDate
 
-data class CraftingMarketSearchRequest(
-    val region: Region,
-    val selectedConnectedRealmId: Int,
-    val selectedDate: LocalDate,
-    val selectedHour: Int,
-    val commodityConnectedRealmId: Int,
-    val commodityDate: LocalDate,
-    val commodityHour: Int,
-    val previousDate: LocalDate,
-    val commodityPreviousDate: LocalDate,
-    val localeColumnSuffix: String,
-    val page: Int,
-    val pageSize: Int,
-    val sortBy: String,
-    val sortDirection: String,
-    val query: String?,
-    val professionIds: List<Int>,
-    val expansionIds: List<Int>,
-    val qualityIds: List<Int>,
-    val minProfit: Long?,
-    val maxProfit: Long?,
-    val minRoiPercent: Double?,
-    val maxRoiPercent: Double?,
-    val minSaleRatePercent: Double?,
-    val maxSaleRatePercent: Double?,
-    val minSoldPerDay: Double?,
-    val maxSoldPerDay: Double?,
-    val minReagentCost: Long?,
-    val maxReagentCost: Long?,
-    val minOutputPrice: Long?,
-    val maxOutputPrice: Long?,
-    val minOutputPriceChangePercent: Double?,
-    val maxOutputPriceChangePercent: Double?,
-    val requireCompleteReagentPricing: Boolean,
-)
-
-data class CraftingMarketSearchResult(
-    val rows: List<CraftingMarketSqlRow>,
-    val totalItems: Long,
-)
-
-data class CraftingMarketSqlRow(
-    val recipeId: Int,
-    val recipeRank: Int?,
-    val craftedItemId: Int,
-    val bonusKey: String,
-    val modifierKey: String,
-    val petSpeciesId: Int,
-    val craftedQuantity: Int,
-    val listingQuantity: Long?,
-    val outputUnitPrice: Long?,
-    val outputP25Price: Long?,
-    val outputP75Price: Long?,
-    val reagentCost: Long?,
-    val profitCopper: Long?,
-    val roiPercent: Double?,
-    val outputPriceChangePercent: Double?,
-    val profitChangePercent: Double?,
-    val reagentsFullyPriced: Boolean,
-    val recipeName: String?,
-    val recipeMediaUrl: String?,
-    val itemName: String,
-    val itemMediaUrl: String?,
-    val qualityId: Int?,
-    val qualityType: String?,
-    val qualityName: String?,
-    val itemClassId: Int?,
-    val itemClassName: String?,
-    val itemSubclassId: Int?,
-    val itemSubclassName: String?,
-    val professionId: Int?,
-    val professionName: String?,
-    val expansionId: Int?,
-    val skillTierName: String?,
-    val professionCategoryName: String?,
-    val saleRate: Double?,
-    val soldPerDay: Double?,
-)
-
 @Repository
 class CraftingMarketSearchRepository(
     private val jdbcTemplate: JdbcTemplate,
@@ -128,12 +49,12 @@ class CraftingMarketSearchRepository(
         dataParams.addAll(dataWhereParams)
         dataParams.add(request.pageSize)
         dataParams.add(request.page * request.pageSize)
-        val dataSql = buildPagedSql(request, dataWithSql, dataWhereSql, includeTotalItems = false)
+        val dataSql = buildCraftingMarketPagedSql(dataWithSql, dataWhereSql, buildOrderBySql(request), false)
 
         val rows =
             jdbcTemplate.query(
                 dataSql,
-                rowMapper,
+                craftingMarketRowMapper,
                 *dataParams.toTypedArray(),
             )
         logger.debug(
@@ -156,7 +77,7 @@ class CraftingMarketSearchRepository(
                 LEFT JOIN locale l ON l.id = p.name_id
             ORDER BY label
             """.trimIndent(),
-            filterOptionRowMapper,
+            craftingMarketOptionRowMapper,
         )
 
     fun expansionOptions(localeColumnSuffix: String): List<AuctionMarketFilterOptionRow> =
@@ -170,7 +91,7 @@ class CraftingMarketSearchRepository(
                 LEFT JOIN locale l ON l.id = e.name_id
             ORDER BY e.display_order, e.id
             """.trimIndent(),
-            filterOptionRowMapper,
+            craftingMarketOptionRowMapper,
         )
 
     private fun buildWithSql(
@@ -525,101 +446,6 @@ class CraftingMarketSearchRepository(
         $whereSql
         """.trimIndent()
 
-    private fun buildPagedSql(
-        request: CraftingMarketSearchRequest,
-        withSql: String,
-        whereSql: String,
-        includeTotalItems: Boolean = true,
-    ): String {
-        val totalItemsSql =
-            if (includeTotalItems) {
-                ",\n                COUNT(*) OVER () AS total_items"
-            } else {
-                ""
-            }
-        return """
-        $withSql
-        SELECT
-            wrapped.recipe_id,
-            wrapped.crafted_item_id,
-            wrapped.bonus_key,
-            wrapped.modifier_key,
-            wrapped.pet_species_id,
-            wrapped.crafted_quantity,
-            wrapped.listing_quantity,
-            wrapped.output_unit_price,
-            wrapped.output_p25_price,
-            wrapped.output_p75_price,
-            wrapped.reagent_cost,
-            wrapped.profit_copper,
-            wrapped.roi_percent,
-            wrapped.output_price_change_percent,
-            wrapped.profit_change_percent,
-            wrapped.reagents_fully_priced,
-            wrapped.recipe_name,
-            wrapped.recipe_media_url,
-            wrapped.recipe_rank,
-            wrapped.profession_id,
-            wrapped.profession_name,
-            wrapped.expansion_id,
-            wrapped.skill_tier_name,
-            wrapped.profession_category_name,
-            wrapped.item_name,
-            wrapped.item_media_url,
-            wrapped.quality_id,
-            wrapped.quality_type,
-            wrapped.quality_name,
-            wrapped.item_class_id,
-            wrapped.item_class_name,
-            wrapped.item_subclass_id,
-            wrapped.item_subclass_name,
-            wrapped.sale_rate,
-            wrapped.sold_per_day
-        FROM (
-            SELECT
-                c.recipe_id,
-                c.crafted_item_id,
-                c.bonus_key,
-                c.modifier_key,
-                c.pet_species_id,
-                c.crafted_quantity,
-                c.listing_quantity,
-                c.output_unit_price,
-                c.output_p25_price,
-                c.output_p75_price,
-                c.reagent_cost,
-                CASE WHEN c.reagents_fully_priced THEN c.profit_copper ELSE NULL END AS profit_copper,
-                CASE WHEN c.reagents_fully_priced THEN c.roi_percent ELSE NULL END AS roi_percent,
-                c.output_price_change_percent,
-                CASE WHEN c.reagents_fully_priced THEN c.profit_change_percent ELSE NULL END AS profit_change_percent,
-                c.reagents_fully_priced,
-                c.recipe_name,
-                c.recipe_media_url,
-                c.recipe_rank,
-                c.profession_id,
-                c.profession_name,
-                c.expansion_id,
-                c.skill_tier_name,
-                c.profession_category_name,
-                c.item_name,
-                c.item_media_url,
-                c.quality_id,
-                c.quality_type,
-                c.quality_name,
-                c.item_class_id,
-                c.item_class_name,
-                c.item_subclass_id,
-                c.item_subclass_name,
-                c.sale_rate,
-                c.sold_per_day$totalItemsSql
-            FROM computed c
-            $whereSql
-        ) wrapped
-        ${buildOrderBySql(request)}
-        LIMIT ? OFFSET ?
-        """.trimIndent()
-    }
-
     private fun buildOrderBySql(request: CraftingMarketSearchRequest): String {
         val dir = if (request.sortDirection.equals("desc", ignoreCase = true)) "DESC" else "ASC"
         val primary =
@@ -645,86 +471,14 @@ class CraftingMarketSearchRepository(
         params: MutableList<Any?>,
     ): String {
         val predicates = mutableListOf<String>()
-        val itemNameCol = "c.item_name"
-        val recipeNameCol = "c.recipe_name"
-
-        request.query?.trim()?.takeIf { it.isNotEmpty() }?.let {
-            predicates.add("($itemNameCol LIKE ? ESCAPE '!' OR $recipeNameCol LIKE ? ESCAPE '!')")
-            val like = "%${it.escapeLike()}%"
-            params.add(like)
-            params.add(like)
-        }
-        if (request.professionIds.isNotEmpty()) {
-            predicates.add("c.profession_id IN (${request.professionIds.joinToString(",") { "?" }})")
-            params.addAll(request.professionIds)
-        }
-        if (request.expansionIds.isNotEmpty()) {
-            predicates.add("c.expansion_id IN (${request.expansionIds.joinToString(",") { "?" }})")
-            params.addAll(request.expansionIds)
-        }
-        if (request.qualityIds.isNotEmpty()) {
-            predicates.add("c.quality_id IN (${request.qualityIds.joinToString(",") { "?" }})")
-            params.addAll(request.qualityIds)
-        }
+        appendCraftingQueryPredicate(predicates, params, request.query)
+        appendCraftingInPredicate(predicates, params, "c.profession_id", request.professionIds)
+        appendCraftingInPredicate(predicates, params, "c.expansion_id", request.expansionIds)
+        appendCraftingInPredicate(predicates, params, "c.quality_id", request.qualityIds)
         if (request.requireCompleteReagentPricing) {
             predicates.add("c.reagents_fully_priced = 1")
         }
-        request.minProfit?.let {
-            predicates.add("c.profit_copper IS NOT NULL AND c.profit_copper >= ?")
-            params.add(it)
-        }
-        request.maxProfit?.let {
-            predicates.add("c.profit_copper IS NOT NULL AND c.profit_copper <= ?")
-            params.add(it)
-        }
-        request.minRoiPercent?.let {
-            predicates.add("c.roi_percent IS NOT NULL AND c.roi_percent >= ?")
-            params.add(it)
-        }
-        request.maxRoiPercent?.let {
-            predicates.add("c.roi_percent IS NOT NULL AND c.roi_percent <= ?")
-            params.add(it)
-        }
-        request.minSaleRatePercent?.let {
-            predicates.add("c.sale_rate IS NOT NULL AND c.sale_rate >= ?")
-            params.add(it / 100.0)
-        }
-        request.maxSaleRatePercent?.let {
-            predicates.add("c.sale_rate IS NOT NULL AND c.sale_rate <= ?")
-            params.add(it / 100.0)
-        }
-        request.minSoldPerDay?.let {
-            predicates.add("c.sold_per_day IS NOT NULL AND c.sold_per_day >= ?")
-            params.add(it)
-        }
-        request.maxSoldPerDay?.let {
-            predicates.add("c.sold_per_day IS NOT NULL AND c.sold_per_day <= ?")
-            params.add(it)
-        }
-        request.minReagentCost?.let {
-            predicates.add("c.reagent_cost IS NOT NULL AND c.reagent_cost >= ?")
-            params.add(it)
-        }
-        request.maxReagentCost?.let {
-            predicates.add("c.reagent_cost IS NOT NULL AND c.reagent_cost <= ?")
-            params.add(it)
-        }
-        request.minOutputPrice?.let {
-            predicates.add("c.output_unit_price IS NOT NULL AND c.output_unit_price >= ?")
-            params.add(it)
-        }
-        request.maxOutputPrice?.let {
-            predicates.add("c.output_unit_price IS NOT NULL AND c.output_unit_price <= ?")
-            params.add(it)
-        }
-        request.minOutputPriceChangePercent?.let {
-            predicates.add("c.output_price_change_percent IS NOT NULL AND c.output_price_change_percent >= ?")
-            params.add(it)
-        }
-        request.maxOutputPriceChangePercent?.let {
-            predicates.add("c.output_price_change_percent IS NOT NULL AND c.output_price_change_percent <= ?")
-            params.add(it)
-        }
+        appendCraftingRangePredicates(predicates, params, request)
         return if (predicates.isEmpty()) "" else "WHERE " + predicates.joinToString(" AND ")
     }
 
@@ -738,78 +492,6 @@ class CraftingMarketSearchRepository(
             .replace("%", "!%")
             .replace("_", "!_")
 
-    private val rowMapper =
-        RowMapper { rs: ResultSet, _: Int ->
-            CraftingMarketSqlRow(
-                recipeId = rs.getInt("recipe_id"),
-                recipeRank = rs.getNullableInt("recipe_rank"),
-                craftedItemId = rs.getInt("crafted_item_id"),
-                bonusKey = rs.getString("bonus_key") ?: "",
-                modifierKey = rs.getString("modifier_key") ?: "",
-                petSpeciesId = rs.getInt("pet_species_id"),
-                craftedQuantity = rs.getInt("crafted_quantity"),
-                listingQuantity = rs.getNullableLong("listing_quantity"),
-                outputUnitPrice = rs.getNullableLong("output_unit_price"),
-                outputP25Price = rs.getNullableLong("output_p25_price"),
-                outputP75Price = rs.getNullableLong("output_p75_price"),
-                reagentCost = rs.getNullableLong("reagent_cost"),
-                profitCopper = rs.getNullableLong("profit_copper"),
-                roiPercent = rs.getNullableDouble("roi_percent"),
-                outputPriceChangePercent = rs.getNullableDouble("output_price_change_percent"),
-                profitChangePercent = rs.getNullableDouble("profit_change_percent"),
-                reagentsFullyPriced = rs.getBoolean("reagents_fully_priced"),
-                recipeName = rs.getString("recipe_name"),
-                recipeMediaUrl = rs.getString("recipe_media_url"),
-                itemName = rs.getString("item_name") ?: "",
-                itemMediaUrl = rs.getString("item_media_url"),
-                qualityId = rs.getNullableInt("quality_id"),
-                qualityType = rs.getString("quality_type"),
-                qualityName = rs.getString("quality_name"),
-                itemClassId = rs.getNullableInt("item_class_id"),
-                itemClassName = rs.getString("item_class_name"),
-                itemSubclassId = rs.getNullableInt("item_subclass_id"),
-                itemSubclassName = rs.getString("item_subclass_name"),
-                professionId = rs.getNullableInt("profession_id"),
-                professionName = rs.getString("profession_name"),
-                expansionId = rs.getNullableInt("expansion_id"),
-                skillTierName = rs.getString("skill_tier_name"),
-                professionCategoryName = rs.getString("profession_category_name"),
-                saleRate = rs.getNullableDouble("sale_rate"),
-                soldPerDay = rs.getNullableDouble("sold_per_day"),
-            )
-        }
-
-    private val rowMapperWithTotal =
-        RowMapper { rs: ResultSet, rowNum: Int ->
-            val totalItems = rs.getLong("total_items")
-            val row = requireNotNull(rowMapper.mapRow(rs, rowNum)) { "crafting row expected" }
-            row to totalItems
-        }
-
-    private val filterOptionRowMapper =
-        RowMapper { rs: ResultSet, _: Int ->
-            AuctionMarketFilterOptionRow(
-                id = rs.getString("id"),
-                label = rs.getString("label") ?: rs.getString("id"),
-                parentId = rs.getString("parent_id"),
-            )
-        }
-
-    private fun ResultSet.getNullableInt(column: String): Int? {
-        val value = getInt(column)
-        return if (wasNull()) null else value
-    }
-
-    private fun ResultSet.getNullableLong(column: String): Long? {
-        val value = getLong(column)
-        return if (wasNull()) null else value
-    }
-
-    private fun ResultSet.getNullableDouble(column: String): Double? {
-        val value = getDouble(column)
-        return if (wasNull()) null else value
-    }
-
     /** For integration tests: `EXPLAIN` / `ANALYZE` against real MariaDB. */
     internal fun buildCraftingMarketSearchPagedSqlForExplain(request: CraftingMarketSearchRequest): Pair<String, Array<Any?>> {
         val params = ArrayList<Any?>()
@@ -818,6 +500,6 @@ class CraftingMarketSearchRepository(
         val offset = request.page * request.pageSize
         params.add(request.pageSize)
         params.add(offset)
-        return Pair(buildPagedSql(request, withSql, whereSql), params.toTypedArray())
+        return Pair(buildCraftingMarketPagedSql(withSql, whereSql, buildOrderBySql(request)), params.toTypedArray())
     }
 }
