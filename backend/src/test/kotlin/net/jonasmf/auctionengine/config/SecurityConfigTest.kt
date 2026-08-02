@@ -6,6 +6,7 @@ import net.jonasmf.auctionengine.interceptor.CORRELATION_ID_HEADER
 import net.jonasmf.auctionengine.interceptor.RequestCorrelationFilter
 import net.jonasmf.auctionengine.service.RuntimeHealthSnapshot
 import net.jonasmf.auctionengine.service.RuntimeHealthTracker
+import net.jonasmf.auctionengine.service.AuctionHouseService
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
@@ -60,6 +61,9 @@ class SecurityConfigTest {
 
     @MockitoBean
     private lateinit var userService: UserService
+
+    @MockitoBean
+    private lateinit var auctionHouseService: AuctionHouseService
 
     @MockitoBean
     private lateinit var adminStatusService: AdminStatusService

@@ -21,6 +21,7 @@ import net.jonasmf.auctionengine.generated.model.AdminSqlTable
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
+import net.jonasmf.auctionengine.service.AuctionHouseService
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
@@ -61,6 +62,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.server.ResponseStatusException
 import java.time.OffsetDateTime
+import net.jonasmf.auctionengine.domain.realm.AuctionHouse as AuctionHouseDomain
 
 private val normalizedProfessionJson =
     """
@@ -94,6 +96,9 @@ class AdminControllerTest {
     private lateinit var userService: UserService
 
     @MockitoBean
+    private lateinit var auctionHouseService: AuctionHouseService
+
+    @MockitoBean
     private lateinit var adminStatusService: AdminStatusService
 
     @MockitoBean
@@ -125,6 +130,44 @@ class AdminControllerTest {
 
     @Autowired
     private lateinit var cognitoGroupsGrantedAuthoritiesConverter: Converter<Jwt, Collection<GrantedAuthority>>
+
+    @Nested
+    inner class AuctionHouseAdmin {
+        @Test
+        fun `lists auction houses in a page for an administrator`() {
+            `when`(auctionHouseService.findAll()).thenReturn(
+                listOf(
+                    AuctionHouseDomain(id = 2, connectedId = 2),
+                    AuctionHouseDomain(id = 1, connectedId = 1),
+                ),
+            )
+
+            val result =
+                mockMvc
+                    .perform(
+                        get("/api/admin/auction-houses")
+                            .contextPath("/api")
+                            .with(
+                                jwt()
+                                    .jwt { token -> token.claim("cognito:groups", listOf("admin")) }
+                                    .authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                            ),
+                    ).andExpect(request().asyncStarted())
+                    .andReturn()
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.items[0].connectedRealmId").value(1))
+                .andExpect(jsonPath("$.items[1].connectedRealmId").value(2))
+                .andExpect(jsonPath("$.page.page").value(0))
+                .andExpect(jsonPath("$.page.pageSize").value(2))
+                .andExpect(jsonPath("$.page.totalItems").value(2))
+                .andExpect(jsonPath("$.page.totalPages").value(1))
+                .andExpect(jsonPath("$.sort.sortBy").value("connectedRealmId"))
+                .andExpect(jsonPath("$.sort.sortDirection").value("asc"))
+        }
+    }
 
     @Nested
     inner class GetAdminStatus {

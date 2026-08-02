@@ -1,7 +1,9 @@
 package net.jonasmf.auctionengine.mapper.realm
 
-import java.time.ZoneOffset
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.TimeZone
+import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 import kotlin.time.toKotlinInstant
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as Dbo
@@ -69,7 +71,6 @@ fun Domain.toDbo() =
 fun Domain.toDto(): Dto {
     val firstRealm = realms.firstOrNull()
     val zoneId = TimeZone.getTimeZone(firstRealm?.timezone ?: "UTC").toZoneId()
-    val offset = ZoneOffset.of(zoneId.id)
 
     return Dto(
         id = id,
@@ -78,11 +79,16 @@ fun Domain.toDto(): Dto {
         realms = realms.map { it.toDto() },
         avgDelay = avgDelay,
         highestDelay = highestDelay,
-        lastDailyPriceUpdate = lastDailyPriceUpdate?.toJavaInstant()?.atOffset(offset),
-        lastHistoryDeleteEvent = lastHistoryDeleteEvent?.toJavaInstant()?.atOffset(offset),
-        lastHistoryDeleteEventDaily = lastHistoryDeleteEventDaily?.toJavaInstant()?.atOffset(offset),
-        lastModified = lastModified?.toJavaInstant()?.atOffset(offset),
+        lastDailyPriceUpdate = lastDailyPriceUpdate?.toOffsetDateTime(zoneId),
+        lastHistoryDeleteEvent = lastHistoryDeleteEvent?.toOffsetDateTime(zoneId),
+        lastHistoryDeleteEventDaily = lastHistoryDeleteEventDaily?.toOffsetDateTime(zoneId),
+        lastModified = lastModified?.toOffsetDateTime(zoneId),
         lowestDelay = lowestDelay,
-        nextUpdate = nextUpdate?.toJavaInstant()?.atOffset(offset),
+        nextUpdate = nextUpdate?.toOffsetDateTime(zoneId),
     )
 }
+
+private fun Instant.toOffsetDateTime(zoneId: ZoneId): OffsetDateTime =
+    toJavaInstant()
+        .atZone(zoneId)
+        .toOffsetDateTime()

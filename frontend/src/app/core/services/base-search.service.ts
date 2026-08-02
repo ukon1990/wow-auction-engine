@@ -268,10 +268,11 @@ export abstract class BaseSearchService<
     const region = this.queryService.region();
     const slug = this.queryService.realmSlug();
     const locale = this.queryService.locale();
-    if (!region || !slug) return of(null);
+    const getFilters = this.getFiltersCallback;
+    if (!region || !slug || !getFilters) return of(null);
 
     this.isLoadingFilters.set(true);
-    return this.getFiltersCallback(region, slug, locale).pipe(
+    return getFilters(region, slug, locale).pipe(
       tap((response) => this.filterDefinitions.set(response.filters ?? [])),
       catchError((error) => {
         this.toast.error(

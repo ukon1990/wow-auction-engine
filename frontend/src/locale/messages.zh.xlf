@@ -259,6 +259,10 @@
           <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="route.admin.auction-house" datatype="html">
+        <source>Auction houses</source>
+        <target>拍卖行</target>
+      </trans-unit>
       <trans-unit id="route.admin.expansions" datatype="html">
         <source>Expansions</source>
         <target>Expansions</target>

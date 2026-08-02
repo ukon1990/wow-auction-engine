@@ -25,8 +25,11 @@ import net.jonasmf.auctionengine.generated.model.AdminSqlMetadata
 import net.jonasmf.auctionengine.generated.model.AdminSqlResult
 import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.AuctionHouse
+import net.jonasmf.auctionengine.generated.model.AuctionHousePage
+import net.jonasmf.auctionengine.generated.model.AuctionMarketSort
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
+import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.ProfessionTalentTreeImportRequest
 import net.jonasmf.auctionengine.generated.model.User
 import net.jonasmf.auctionengine.mapper.realm.toDto
@@ -84,12 +87,30 @@ class AdminController(
     }
 
     @PreAuthorize("hasAuthority('admin')")
-    override suspend fun listAuctionHouses(): ResponseEntity<List<AuctionHouse>> =
-        ResponseEntity.ok(
-            auctionHouseService.findAll().map {
-                it.toDto()
-            },
+    override suspend fun listAuctionHouses(): ResponseEntity<AuctionHousePage> {
+        val auctionHouses =
+            auctionHouseService
+                .findAll()
+                .map { it.toDto() }
+                .sortedBy { it.connectedRealmId }
+        return ResponseEntity.ok(
+            AuctionHousePage(
+                items = auctionHouses,
+                page =
+                    PageMetadata(
+                        page = 0,
+                        pageSize = auctionHouses.size,
+                        totalItems = auctionHouses.size.toLong(),
+                        totalPages = if (auctionHouses.isEmpty()) 0 else 1,
+                    ),
+                sort =
+                    AuctionMarketSort(
+                        sortBy = "connectedRealmId",
+                        sortDirection = AuctionMarketSort.SortDirection.ASC,
+                    ),
+            ),
         )
+    }
 
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun listExpansions(locale: String?): ResponseEntity<List<AdminExpansion>> =
