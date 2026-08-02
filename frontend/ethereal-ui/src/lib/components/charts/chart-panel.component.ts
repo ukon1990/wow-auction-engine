@@ -117,9 +117,9 @@ export class ChartPanelComponent {
   protected readonly hoverContext = signal<ChartCategoryHoverContext | null>(null);
 
   protected readonly effectiveSeries = computed(() => {
-    const s = this.series();
-    if (s.length > 0) {
-      return s;
+    const series = this.series();
+    if (series.length > 0) {
+      return series;
     }
     const legacy = this.points();
     if (legacy && legacy.length > 0) {
@@ -141,11 +141,11 @@ export class ChartPanelComponent {
     if (desc) {
       return desc;
     }
-    const n = this.effectiveSeries().length;
-    if (n === 0) {
+    const seriesCount = this.effectiveSeries().length;
+    if (seriesCount === 0) {
       return `${this.title()}: no data`;
     }
-    return `${this.title()}: chart with ${n} series`;
+    return `${this.title()}: chart with ${seriesCount} series`;
   });
 
   protected onCategoryHover(ctx: ChartCategoryHoverContext): void {
@@ -173,9 +173,9 @@ export class ChartPanelComponent {
   protected defaultTooltipRows(ctx: ChartCategoryHoverContext): readonly TooltipRow[] {
     const labels = this.seriesLabels();
     return this.effectiveSeries()
-      .map((s) => ({
-        label: labels[s.id] ?? s.id,
-        value: ctx.valuesBySeriesId[s.id],
+      .map((series) => ({
+        label: labels[series.id] ?? series.id,
+        value: ctx.valuesBySeriesId[series.id],
       }))
       .filter((row) => row.value !== undefined);
   }

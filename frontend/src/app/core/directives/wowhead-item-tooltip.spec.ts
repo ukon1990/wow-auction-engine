@@ -58,8 +58,10 @@ describe('WowheadItemTooltipDirective', () => {
     const span = (fixture.nativeElement as HTMLElement).querySelector('span')!;
     span.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, clientX: 5, clientY: 6 }));
 
-    const req = httpMock.expectOne((r) => r.url.includes('/tooltip/item/42'));
-    req.flush({ tooltip: '<span>Tip</span>' });
+    const request = httpMock.expectOne((httpRequest) =>
+      httpRequest.url.includes('/tooltip/item/42'),
+    );
+    request.flush({ tooltip: '<span>Tip</span>' });
 
     await fixture.whenStable();
     expect(TestBed.inject(WowheadTooltipService).active()).not.toBeNull();
@@ -97,10 +99,11 @@ describe('WowheadItemTooltipDirective', () => {
     const span = (fixture.nativeElement as HTMLElement).querySelector('span')!;
     span.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, clientX: 5, clientY: 6 }));
 
-    const req = httpMock.expectOne(
-      (r) => r.url.includes('/tooltip/item/42') && r.url.includes('bonus=6652:7'),
+    const request = httpMock.expectOne(
+      (httpRequest) =>
+        httpRequest.url.includes('/tooltip/item/42') && httpRequest.url.includes('bonus=6652:7'),
     );
-    req.flush({ tooltip: '<span>Tip</span>' });
+    request.flush({ tooltip: '<span>Tip</span>' });
 
     await fixture.whenStable();
     expect(TestBed.inject(WowheadTooltipService).active()).not.toBeNull();

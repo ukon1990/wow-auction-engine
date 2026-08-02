@@ -15,35 +15,38 @@ import type {
 export type RegionCode = 'us' | 'eu' | 'kr' | 'tw';
 
 export function realmAncestorRoute(route: ActivatedRoute): ActivatedRoute {
-  let r: ActivatedRoute | null = route;
-  while (r) {
-    const m = r.snapshot.paramMap;
-    if (m.has('region') && m.has('realm')) {
-      return r;
+  let ancestorRoute: ActivatedRoute | null = route;
+  while (ancestorRoute) {
+    const parameters = ancestorRoute.snapshot.paramMap;
+    if (parameters.has('region') && parameters.has('realm')) {
+      return ancestorRoute;
     }
-    r = r.parent;
+    ancestorRoute = ancestorRoute.parent;
   }
   return route;
 }
 
-export function variantFromQuery(q: ParamMap): ItemDetailVariantParams {
+export function variantFromQuery(queryParameters: ParamMap): ItemDetailVariantParams {
   return {
-    bonusKey: q.get('bonusKey') ?? '',
-    modifierKey: q.get('modifierKey') ?? '',
-    petSpeciesId: Number(q.get('petSpeciesId') ?? 0) || 0,
+    bonusKey: queryParameters.get('bonusKey') ?? '',
+    modifierKey: queryParameters.get('modifierKey') ?? '',
+    petSpeciesId: Number(queryParameters.get('petSpeciesId') ?? 0) || 0,
   };
 }
 
-export function variantEqual(a: ItemDetailVariantParams, b: ItemDetailVariantParams): boolean {
+export function variantEqual(
+  firstVariant: ItemDetailVariantParams,
+  secondVariant: ItemDetailVariantParams,
+): boolean {
   return (
-    a.bonusKey === b.bonusKey &&
-    a.modifierKey === b.modifierKey &&
-    a.petSpeciesId === b.petSpeciesId
+    firstVariant.bonusKey === secondVariant.bonusKey &&
+    firstVariant.modifierKey === secondVariant.modifierKey &&
+    firstVariant.petSpeciesId === secondVariant.petSpeciesId
   );
 }
 
-export function scopeFromQuery(q: ParamMap): ItemDetailScope {
-  return q.get('scope') === 'commodity' ? 'commodity' : 'realm';
+export function scopeFromQuery(queryParameters: ParamMap): ItemDetailScope {
+  return queryParameters.get('scope') === 'commodity' ? 'commodity' : 'realm';
 }
 
 export function isRegion(value: string | null | undefined): value is RegionCode {
@@ -51,23 +54,23 @@ export function isRegion(value: string | null | undefined): value is RegionCode 
 }
 
 export function formatRealmLabel(slug: string): string {
-  const t = slug.replace(/-/g, ' ');
-  return t.length ? t.charAt(0).toUpperCase() + t.slice(1) : slug;
+  const label = slug.replace(/-/g, ' ');
+  return label.length ? label.charAt(0).toUpperCase() + label.slice(1) : slug;
 }
 
-export function showChartScopeToggleFn(d: AuctionMarketItemDetailResponse): boolean {
-  return !d.regionalMetricsRedundant && hasRealmScopeMetrics(d.summary);
+export function showChartScopeToggleFn(detail: AuctionMarketItemDetailResponse): boolean {
+  return !detail.regionalMetricsRedundant && hasRealmScopeMetrics(detail.summary);
 }
 
-export function shouldUseCommodityScopeByDefault(d: AuctionMarketItemDetailResponse): boolean {
-  return d.regionalMetricsRedundant || !hasRealmScopeMetrics(d.summary);
+export function shouldUseCommodityScopeByDefault(detail: AuctionMarketItemDetailResponse): boolean {
+  return detail.regionalMetricsRedundant || !hasRealmScopeMetrics(detail.summary);
 }
 
-export function shouldFallbackToCommodityFetch(d: AuctionMarketItemDetailResponse): boolean {
+export function shouldFallbackToCommodityFetch(detail: AuctionMarketItemDetailResponse): boolean {
   return (
-    !d.regionalMetricsRedundant &&
-    !hasRealmScopeMetrics(d.summary) &&
-    !hasCommodityScopeMetrics(d.summary)
+    !detail.regionalMetricsRedundant &&
+    !hasRealmScopeMetrics(detail.summary) &&
+    !hasCommodityScopeMetrics(detail.summary)
   );
 }
 
@@ -151,83 +154,113 @@ export function dailyPointsToChartSeries(
 ): ChartSeries[] {
   if (rows.length === 0) return [];
 
-  const qtyPts: ChartPoint[] = [];
-  const lowerPts: ChartPoint[] = [];
-  const midPts: ChartPoint[] = [];
-  const upperPts: ChartPoint[] = [];
+  const quantityPoints: ChartPoint[] = [];
+  const lowerPoints: ChartPoint[] = [];
+  const middlePoints: ChartPoint[] = [];
+  const upperPoints: ChartPoint[] = [];
 
-  for (let i = 0; i < rows.length; i++) {
-    const p = rows[i]!;
-    const x = i;
-    const q = p.avgQuantity;
-    qtyPts.push({
-      x,
-      y: q != null && Number.isFinite(q) && q >= 0 ? q : 0,
-    });
+  rows.forEach((row, index) => {
+    const points = dailyChartPoints(row, index);
+    quantityPoints.push(points.quantity);
+    if (points.lower) lowerPoints.push(points.lower);
+    if (points.middle) middlePoints.push(points.middle);
+    if (points.upper) upperPoints.push(points.upper);
+  });
 
-    const hasPctiles =
-      p.p25Price != null &&
-      p.p75Price != null &&
-      Number.isFinite(p.p25Price) &&
-      Number.isFinite(p.p75Price);
-    const lo = hasPctiles ? p.p25Price! : p.minPrice;
-    const hi = hasPctiles ? p.p75Price! : p.maxPrice;
-    const mid = p.avgPrice;
-
-    if (lo != null && Number.isFinite(lo)) lowerPts.push({ x, y: lo });
-    if (mid != null && Number.isFinite(mid)) midPts.push({ x, y: mid });
-    if (hi != null && Number.isFinite(hi)) upperPts.push({ x, y: hi });
+  if (lowerPoints.length === 0 && middlePoints.length === 0 && upperPoints.length === 0) {
+    return quantitySeries(quantityPoints);
   }
 
-  if (lowerPts.length === 0 && midPts.length === 0 && upperPts.length === 0) {
-    return qtyPts.length
-      ? [
-          {
-            id: 'quantity',
-            kind: 'column',
-            yScaleKey: 'quantity',
-            color: 'tertiary-container',
-            points: qtyPts,
-          },
-        ]
-      : [];
-  }
+  const series = quantitySeries(quantityPoints);
 
-  const series: ChartSeries[] = [];
-  if (qtyPts.length > 0) {
-    series.push({
-      id: 'quantity',
-      kind: 'column',
-      yScaleKey: 'quantity',
-      color: 'tertiary-container',
-      points: qtyPts,
-    });
-  }
-  const sameLine = (a: readonly ChartPoint[], b: readonly ChartPoint[]) =>
-    a.length === b.length && a.every((p, i) => p.x === b[i]?.x && p.y === b[i]?.y);
-
-  if (lowerPts.length > 0) {
+  if (lowerPoints.length > 0) {
     series.push({
       id: 'low',
       kind: 'line',
       yScaleKey: 'price',
       color: 'secondary',
-      points: lowerPts,
+      points: lowerPoints,
     });
   }
-  if (midPts.length > 0 && !sameLine(midPts, lowerPts)) {
+  if (middlePoints.length > 0 && !sameChartLine(middlePoints, lowerPoints)) {
     series.push({
       id: 'mid',
       kind: 'line',
       yScaleKey: 'price',
       color: 'primary-container',
-      points: midPts,
+      points: middlePoints,
     });
   }
-  if (upperPts.length > 0 && !sameLine(upperPts, lowerPts) && !sameLine(upperPts, midPts)) {
-    series.push({ id: 'high', kind: 'line', yScaleKey: 'price', color: 'error', points: upperPts });
+  if (
+    upperPoints.length > 0 &&
+    !sameChartLine(upperPoints, lowerPoints) &&
+    !sameChartLine(upperPoints, middlePoints)
+  ) {
+    series.push({
+      id: 'high',
+      kind: 'line',
+      yScaleKey: 'price',
+      color: 'error',
+      points: upperPoints,
+    });
   }
   return series;
+}
+
+function dailyChartPoints(
+  row: AuctionMarketItemDetailPoint,
+  index: number,
+): {
+  quantity: ChartPoint;
+  lower?: ChartPoint;
+  middle?: ChartPoint;
+  upper?: ChartPoint;
+} {
+  const quantity = row.avgQuantity;
+  const hasPercentiles =
+    row.p25Price != null &&
+    row.p75Price != null &&
+    Number.isFinite(row.p25Price) &&
+    Number.isFinite(row.p75Price);
+  return {
+    quantity: {
+      x: index,
+      y: quantity != null && Number.isFinite(quantity) && quantity >= 0 ? quantity : 0,
+    },
+    lower: finiteChartPoint(hasPercentiles ? row.p25Price : row.minPrice, index),
+    middle: finiteChartPoint(row.avgPrice, index),
+    upper: finiteChartPoint(hasPercentiles ? row.p75Price : row.maxPrice, index),
+  };
+}
+
+function finiteChartPoint(value: number | null | undefined, index: number): ChartPoint | undefined {
+  return value != null && Number.isFinite(value) ? { x: index, y: value } : undefined;
+}
+
+function quantitySeries(points: readonly ChartPoint[]): ChartSeries[] {
+  return points.length
+    ? [
+        {
+          id: 'quantity',
+          kind: 'column',
+          yScaleKey: 'quantity',
+          color: 'tertiary-container',
+          points,
+        },
+      ]
+    : [];
+}
+
+function sameChartLine(
+  firstLine: readonly ChartPoint[],
+  secondLine: readonly ChartPoint[],
+): boolean {
+  return (
+    firstLine.length === secondLine.length &&
+    firstLine.every(
+      (point, index) => point.x === secondLine[index]?.x && point.y === secondLine[index]?.y,
+    )
+  );
 }
 
 export function craftingAnalyticsToChartSeries(
@@ -260,13 +293,15 @@ export function craftingAnalyticsToChartSeries(
 export function sortHourlyPoints(
   rows: readonly AuctionMarketItemHourlyPoint[],
 ): AuctionMarketItemHourlyPoint[] {
-  return [...rows].sort((a, b) => {
-    const ta = Date.parse(a.timestamp ?? '');
-    const tb = Date.parse(b.timestamp ?? '');
-    if (Number.isFinite(ta) && Number.isFinite(tb)) return ta - tb;
-    if (Number.isFinite(ta)) return -1;
-    if (Number.isFinite(tb)) return 1;
-    return a.hourOfDay - b.hourOfDay;
+  return [...rows].sort((firstPoint, secondPoint) => {
+    const firstTimestamp = Date.parse(firstPoint.timestamp ?? '');
+    const secondTimestamp = Date.parse(secondPoint.timestamp ?? '');
+    if (Number.isFinite(firstTimestamp) && Number.isFinite(secondTimestamp)) {
+      return firstTimestamp - secondTimestamp;
+    }
+    if (Number.isFinite(firstTimestamp)) return -1;
+    if (Number.isFinite(secondTimestamp)) return 1;
+    return firstPoint.hourOfDay - secondPoint.hourOfDay;
   });
 }
 
@@ -276,53 +311,35 @@ export function hourlyPointsToChartSeries(
   if (rows.length === 0) return [];
 
   const sorted = sortHourlyPoints(rows);
-  const qtyPts: ChartPoint[] = [];
-  const midPts: ChartPoint[] = [];
+  const quantityPoints: ChartPoint[] = [];
+  const middlePoints: ChartPoint[] = [];
 
-  for (let i = 0; i < sorted.length; i++) {
-    const p = sorted[i]!;
-    const x = i;
+  for (let index = 0; index < sorted.length; index++) {
+    const point = sorted[index]!;
 
-    const q = p.totalQuantity;
-    qtyPts.push({
-      x,
-      y: q != null && Number.isFinite(q) && q >= 0 ? q : 0,
+    const quantity = point.totalQuantity;
+    quantityPoints.push({
+      x: index,
+      y: quantity != null && Number.isFinite(quantity) && quantity >= 0 ? quantity : 0,
     });
 
-    const mid = p.avgPrice;
-    if (mid != null && Number.isFinite(mid)) midPts.push({ x, y: mid });
+    const middle = point.avgPrice;
+    if (middle != null && Number.isFinite(middle)) {
+      middlePoints.push({ x: index, y: middle });
+    }
   }
 
-  if (midPts.length === 0) {
-    return qtyPts.length
-      ? [
-          {
-            id: 'quantity',
-            kind: 'column',
-            yScaleKey: 'quantity',
-            color: 'tertiary-container',
-            points: qtyPts,
-          },
-        ]
-      : [];
+  if (middlePoints.length === 0) {
+    return quantitySeries(quantityPoints);
   }
 
-  const series: ChartSeries[] = [];
-  if (qtyPts.length > 0) {
-    series.push({
-      id: 'quantity',
-      kind: 'column',
-      yScaleKey: 'quantity',
-      color: 'tertiary-container',
-      points: qtyPts,
-    });
-  }
+  const series = quantitySeries(quantityPoints);
   series.push({
     id: 'mid',
     kind: 'line',
     yScaleKey: 'price',
     color: 'primary-container',
-    points: midPts,
+    points: middlePoints,
   });
   return series;
 }
@@ -332,15 +349,15 @@ export function hourlyPriceHeatmapCellsFromPoints(
 ): HeatmapCell[] {
   type Bucket = { sum: number; count: number };
   const buckets = new Map<string, Bucket>();
-  for (const p of points) {
-    if (p.avgPrice == null || !Number.isFinite(p.avgPrice)) continue;
-    const dayOfWeek = dayOfWeekFromTimestamp(p.timestamp);
+  for (const point of points) {
+    if (point.avgPrice == null || !Number.isFinite(point.avgPrice)) continue;
+    const dayOfWeek = dayOfWeekFromTimestamp(point.timestamp);
     if (dayOfWeek == null) continue;
-    const hour = p.hourOfDay;
+    const hour = point.hourOfDay;
     if (!Number.isFinite(hour) || hour < 0 || hour > 23) continue;
     const key = `${dayOfWeek}-${hour}`;
     const current = buckets.get(key) ?? { sum: 0, count: 0 };
-    current.sum += p.avgPrice;
+    current.sum += point.avgPrice;
     current.count += 1;
     buckets.set(key, current);
   }

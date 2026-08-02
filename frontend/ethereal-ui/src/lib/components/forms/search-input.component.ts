@@ -116,14 +116,16 @@ export class SearchInputComponent implements ControlValueAccessor, FormValueCont
   readonly errorLines = computed(() => {
     const fieldErrors = this.errors();
     if (fieldErrors.length > 0) {
-      return fieldErrors.map((e) => e.message).filter((m): m is string => !!m);
+      return fieldErrors
+        .map((fieldError) => fieldError.message)
+        .filter((message): message is string => !!message);
     }
     const manual = this.error();
     return manual ? [manual] : [];
   });
 
-  writeValue(v: string | null): void {
-    this.value.set(v ?? '');
+  writeValue(value: string | null): void {
+    this.value.set(value ?? '');
   }
 
   registerOnChange(fn: (value: string) => void): void {

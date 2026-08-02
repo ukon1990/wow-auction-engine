@@ -334,7 +334,7 @@ export function layoutGraph(nodes: readonly SkillTreeGraphNode[]): GraphLayout {
 function layoutSubtree(
   node: SkillTreeGraphNode,
   offsetX: number,
-  y: number,
+  offsetY: number,
   nodes: readonly SkillTreeGraphNode[],
 ): SubtreeLayout {
   const children = visibleChildNodes(node, nodes);
@@ -343,7 +343,7 @@ function layoutSubtree(
   if (!children.length) {
     return {
       width: graphNodeWidth,
-      positions: [{ node, x: offsetX, y, width: graphNodeWidth, height }],
+      positions: [{ node, x: offsetX, y: offsetY, width: graphNodeWidth, height }],
       connectors: [],
     };
   }
@@ -351,7 +351,7 @@ function layoutSubtree(
   let childX = offsetX;
   const childLayouts: SubtreeLayout[] = [];
   for (const child of children) {
-    const layout = layoutSubtree(child, childX, y + height + rowGap, nodes);
+    const layout = layoutSubtree(child, childX, offsetY + height + rowGap, nodes);
     childLayouts.push(layout);
     childX += layout.width + columnGap;
   }
@@ -361,7 +361,7 @@ function layoutSubtree(
   const parentPosition: PositionedNode = {
     node,
     x: offsetX + (subtreeWidth - graphNodeWidth) / 2,
-    y,
+    y: offsetY,
     width: graphNodeWidth,
     height,
   };

@@ -88,7 +88,7 @@ describe('market-item-detail helpers', () => {
       { timestamp: '2026-05-04T11:00:00Z', hourOfDay: 11, avgPrice: 300 },
     ] as never);
 
-    const mondayTen = cells.find((c) => c.row === 0 && c.col === 10);
+    const mondayTen = cells.find((cell) => cell.row === 0 && cell.col === 10);
     expect(mondayTen?.value).toBe(150);
     expect(cells.length).toBe(2);
   });

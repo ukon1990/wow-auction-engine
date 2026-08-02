@@ -34,10 +34,10 @@ class SignalFormStoryHostComponent {
     acceptTerms: false,
   });
 
-  readonly registrationForm = form(this.registrationModel, (p) => {
-    required(p.email, { message: 'Email is required' });
-    email(p.email, { message: 'Enter a valid email' });
-    required(p.acceptTerms, { message: 'You must accept the terms' });
+  readonly registrationForm = form(this.registrationModel, (formPath) => {
+    required(formPath.email, { message: 'Email is required' });
+    email(formPath.email, { message: 'Enter a valid email' });
+    required(formPath.acceptTerms, { message: 'You must accept the terms' });
   });
 }
 

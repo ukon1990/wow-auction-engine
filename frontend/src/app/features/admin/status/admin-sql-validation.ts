@@ -84,54 +84,22 @@ function normalizeSql(sql: string): NormalizedSql {
     const current = sql[index];
     const next = sql[index + 1];
 
-    if (current === "'" || current === '"' || current === '`') {
-      const quote = current;
+    if (isQuote(current)) {
       cleaned += ' ';
-      index += 1;
-      while (index < sql.length) {
-        if (sql[index] === '\\') {
-          index += 2;
-          continue;
-        }
-        if (sql[index] === quote) {
-          if (sql[index + 1] === quote) {
-            index += 2;
-            continue;
-          }
-          index += 1;
-          break;
-        }
-        index += 1;
-      }
+      index = skipQuotedValue(sql, index, current);
       cleaned += ' ';
       continue;
     }
 
-    if (current === '-' && next === '-') {
+    if ((current === '-' && next === '-') || current === '#') {
       cleaned += ' ';
-      index += 2;
-      while (index < sql.length && sql[index] !== '\n') {
-        index += 1;
-      }
-      continue;
-    }
-
-    if (current === '#') {
-      cleaned += ' ';
-      index += 1;
-      while (index < sql.length && sql[index] !== '\n') {
-        index += 1;
-      }
+      index = skipLineComment(sql, index + (current === '#' ? 1 : 2));
       continue;
     }
 
     if (current === '/' && next === '*') {
       cleaned += ' ';
-      index += 2;
-      while (index + 1 < sql.length && !(sql[index] === '*' && sql[index + 1] === '/')) {
-        index += 1;
-      }
-      index = Math.min(index + 2, sql.length);
+      index = skipBlockComment(sql, index + 2);
       continue;
     }
 
@@ -145,4 +113,34 @@ function normalizeSql(sql: string): NormalizedSql {
       match[0].toUpperCase(),
     ),
   };
+}
+
+function isQuote(value: string | undefined): value is "'" | '"' | '`' {
+  return value === "'" || value === '"' || value === '`';
+}
+
+function skipQuotedValue(sql: string, start: number, quote: string): number {
+  let index = start + 1;
+  while (index < sql.length) {
+    if (sql[index] === '\\') {
+      index += 2;
+    } else if (sql[index] !== quote) {
+      index += 1;
+    } else if (sql[index + 1] === quote) {
+      index += 2;
+    } else {
+      return index + 1;
+    }
+  }
+  return index;
+}
+
+function skipLineComment(sql: string, start: number): number {
+  const newline = sql.indexOf('\n', start);
+  return newline === -1 ? sql.length : newline;
+}
+
+function skipBlockComment(sql: string, start: number): number {
+  const commentEnd = sql.indexOf('*/', start);
+  return commentEnd === -1 ? sql.length : commentEnd + 2;
 }

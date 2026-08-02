@@ -105,14 +105,16 @@ export class CheckboxInputComponent implements ControlValueAccessor, FormCheckbo
   readonly errorLines = computed(() => {
     const fieldErrors = this.errors();
     if (fieldErrors.length > 0) {
-      return fieldErrors.map((e) => e.message).filter((m): m is string => !!m);
+      return fieldErrors
+        .map((fieldError) => fieldError.message)
+        .filter((message): message is string => !!message);
     }
     const manual = this.error();
     return manual ? [manual] : [];
   });
 
-  writeValue(v: boolean | null): void {
-    this.checked.set(v === true);
+  writeValue(value: boolean | null): void {
+    this.checked.set(value === true);
   }
 
   registerOnChange(fn: (value: boolean) => void): void {

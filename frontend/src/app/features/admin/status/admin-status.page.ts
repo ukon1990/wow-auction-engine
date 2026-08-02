@@ -299,7 +299,7 @@ export class AdminStatusPage {
       series: config.series.map((series) => ({
         type: 'line',
         name: series.name,
-        data: series.data.map(([x, y]) => [x, y]),
+        data: series.data.map(([timestamp, value]) => [timestamp, value]),
         color: series.color,
         connectNulls: false,
       })),

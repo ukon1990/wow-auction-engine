@@ -57,7 +57,7 @@ export class RealmSelectionService {
     if (isPlatformBrowser(this.platformId)) {
       this.router.events
         .pipe(
-          filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+          filter((event): event is NavigationEnd => event instanceof NavigationEnd),
           takeUntilDestroyed(this.destroyRef),
         )
         .subscribe(() => {
@@ -102,15 +102,15 @@ export class RealmSelectionService {
     if (!isPlatformBrowser(this.platformId)) {
       return Promise.resolve(false);
     }
-    const r = toRegionEnum(region);
-    if (!r) return Promise.resolve(false);
+    const normalizedRegion = toRegionEnum(region);
+    if (!normalizedRegion) return Promise.resolve(false);
 
-    const key = `${r}:${slug.toLowerCase()}`;
+    const key = `${normalizedRegion}:${slug.toLowerCase()}`;
     if (this.inflightHydrate && this.inflightHydrateKey === key) {
       return this.inflightHydrate;
     }
 
-    const promise = firstValueFrom(this.realmApi.getRealm(r, slug))
+    const promise = firstValueFrom(this.realmApi.getRealm(normalizedRegion, slug))
       .then((detail) => {
         this.selectedSignal.set(detail.realm);
         this.commodityDetails.set(detail.commodity);
@@ -143,9 +143,9 @@ export class RealmSelectionService {
    * SSR-only: set selection from URL so shell/menu can render without calling the API.
    */
   selectPlaceholderFromUrl(region: string, slug: string): void {
-    const r = toRegionEnum(region);
-    if (!r) return;
-    this.selectedSignal.set(this.placeholderRealm(r, slug));
+    const normalizedRegion = toRegionEnum(region);
+    if (!normalizedRegion) return;
+    this.selectedSignal.set(this.placeholderRealm(normalizedRegion, slug));
     this.marketDataVersionSignal.set(null);
   }
 

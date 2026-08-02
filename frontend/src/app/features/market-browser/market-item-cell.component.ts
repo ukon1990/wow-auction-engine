@@ -35,8 +35,8 @@ export class MarketItemCellComponent {
   }
 
   protected itemId(): number {
-    const n = Number.parseInt(this.row().id, 10);
-    return Number.isFinite(n) ? n : 0;
+    const itemId = Number.parseInt(this.row().id, 10);
+    return Number.isFinite(itemId) ? itemId : 0;
   }
 
   protected rankLabel(rank: number): string {

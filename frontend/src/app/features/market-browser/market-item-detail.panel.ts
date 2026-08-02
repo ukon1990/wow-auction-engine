@@ -13,15 +13,12 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import {
   ChartPanelComponent,
   CopperToCurrencyPipe,
-  copperToCurrencyAmount,
   CurrencyAmountComponent,
   formatCopperCurrency,
   HeatmapGridComponent,
-  type ChartSeries,
   type HeatmapCell,
   ItemStatCardComponent,
   PaginationComponent,
-  type PaginationState,
   SkeletonDirective,
   SymbolIconComponent,
   TooltipCardComponent,
@@ -54,15 +51,24 @@ import {
   hourlyPointsToChartSeries,
   hourlyPriceHeatmapCellsFromPoints,
   mergeCommodityScope,
-  priceChangeCaptionStatic,
-  quantityAxisLabel,
   shouldFallbackToCommodityFetch,
   shouldUseCommodityScopeByDefault,
   showChartScopeToggleFn,
   sortHourlyPoints,
   type RegionCode,
-  variantEqual,
 } from './market-item-detail.helpers';
+import {
+  activeScopePrice,
+  activeScopePriceCaption,
+  activeScopeQuantity,
+  currentListingsPagination,
+  dailyTooltipRows,
+  hourlyTooltipRows,
+  itemInfoRows,
+  marketDetailChartOptions,
+  marketDetailPanelContextsEqual,
+  pagedCurrentListings,
+} from './market-item-detail-panel.helpers';
 
 @Component({
   selector: 'app-market-item-detail-panel',
@@ -130,8 +136,8 @@ export class MarketItemDetailPanelComponent {
   protected readonly analyticsError = signal(false);
   private analyticsRequestId = 0;
   protected readonly heatmapRowLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
-  protected readonly heatmapColumnLabels = Array.from({ length: 24 }, (_, h) =>
-    String(h).padStart(2, '0'),
+  protected readonly heatmapColumnLabels = Array.from({ length: 24 }, (_, hour) =>
+    String(hour).padStart(2, '0'),
   );
   protected readonly currentListingsRowLabel = $localize`:@@itemDetail.listingsCount:listings`;
   protected readonly currentListingsEmptySummary = $localize`:@@itemDetail.noCurrentListings:No current listings for this item.`;
@@ -154,8 +160,8 @@ export class MarketItemDetailPanelComponent {
   });
 
   protected readonly hourlyChartSeries = computed(() => {
-    const pts = this.hourlyPointsForActiveScope();
-    return hourlyPointsToChartSeries(pts);
+    const points = this.hourlyPointsForActiveScope();
+    return hourlyPointsToChartSeries(points);
   });
 
   protected readonly dailyChartOptions = computed<Highcharts.Options>(() => {
@@ -175,7 +181,9 @@ export class MarketItemDetailPanelComponent {
   protected readonly selectedCrafting = computed<AuctionMarketItemCraftingDetail | null>(() => {
     const craftings = this.detail()?.craftings ?? [];
     if (!craftings.length) return null;
-    return craftings.find((c) => c.recipeId === this.selectedRecipeId()) ?? craftings[0];
+    return (
+      craftings.find((crafting) => crafting.recipeId === this.selectedRecipeId()) ?? craftings[0]
+    );
   });
 
   protected readonly craftingAnalyticsSeries = computed(() => {
@@ -214,37 +222,25 @@ export class MarketItemDetailPanelComponent {
     return this.realmCurrentListings();
   });
 
-  protected readonly currentListingsPagination = computed<PaginationState>(() => {
-    const totalItems = this.currentListingsForActiveScope().length;
-    const totalPages = Math.ceil(totalItems / this.currentListingsPageSize);
-    const page = totalPages > 0 ? Math.min(this.currentListingsPage(), totalPages - 1) : 0;
-    return {
-      page,
-      pageSize: this.currentListingsPageSize,
-      totalItems,
-      totalPages,
-    };
-  });
+  protected readonly currentListingsPagination = computed(() =>
+    currentListingsPagination(
+      this.currentListingsForActiveScope().length,
+      this.currentListingsPage(),
+      this.currentListingsPageSize,
+    ),
+  );
 
   protected readonly pagedCurrentListings = computed(() => {
-    const listings = this.currentListingsForActiveScope();
-    const page = this.currentListingsPagination().page;
-    const start = page * this.currentListingsPageSize;
-    return listings.slice(start, start + this.currentListingsPageSize);
+    return pagedCurrentListings(
+      this.currentListingsForActiveScope(),
+      this.currentListingsPagination(),
+    );
   });
 
   constructor() {
     toObservable(this.panelCtx)
       .pipe(
-        distinctUntilChanged(
-          (a, b) =>
-            a.region === b.region &&
-            a.realmSlug === b.realmSlug &&
-            a.itemId === b.itemId &&
-            a.initialScope === b.initialScope &&
-            a.recipeId === b.recipeId &&
-            variantEqual(a.variant, b.variant),
-        ),
+        distinctUntilChanged(marketDetailPanelContextsEqual),
         switchMap((ctx) => {
           if (!Number.isFinite(ctx.itemId)) {
             this.loading.set(false);
@@ -285,23 +281,23 @@ export class MarketItemDetailPanelComponent {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((res) => {
-        if (res) {
-          this.detail.set(res);
-          this.titleChange.emit(res.item.name);
-          this.selectedRecipeId.set(res.craftings[0]?.recipeId ?? null);
+      .subscribe((response) => {
+        if (response) {
+          this.detail.set(response);
+          this.titleChange.emit(response.item.name);
+          this.selectedRecipeId.set(response.craftings[0]?.recipeId ?? null);
           this.loadSelectedRecipeAnalytics();
-          if (shouldFallbackToCommodityFetch(res)) {
-            this.storeCurrentListings(res.currentListings, this.chartScope());
+          if (shouldFallbackToCommodityFetch(response)) {
+            this.storeCurrentListings(response.currentListings, this.chartScope());
             this.onScopeSelected('commodity');
             return;
           }
-          const scope: ItemDetailScope = shouldUseCommodityScopeByDefault(res)
+          const scope: ItemDetailScope = shouldUseCommodityScopeByDefault(response)
             ? 'commodity'
             : 'realm';
           this.chartScope.set(scope);
-          this.storeCurrentListings(res.currentListings, scope);
-          if (scope === 'commodity' && res.regionalMetricsRedundant) {
+          this.storeCurrentListings(response.currentListings, scope);
+          if (scope === 'commodity' && response.regionalMetricsRedundant) {
             this.commodityLoaded.set(true);
           }
         }
@@ -336,7 +332,7 @@ export class MarketItemDetailPanelComponent {
     const current = this.selectedRecipeId();
     const currentIndex = Math.max(
       0,
-      craftings.findIndex((r) => r.recipeId === current),
+      craftings.findIndex((crafting) => crafting.recipeId === current),
     );
     let nextIndex = currentIndex;
     switch (event.key) {
@@ -461,9 +457,9 @@ export class MarketItemDetailPanelComponent {
     return `${this.formatDecimal(pct, '1.1-1')}%`;
   }
 
-  protected quantityLabel(q: number | null | undefined): string {
-    if (q == null || !Number.isFinite(q)) return '—';
-    return this.formatDecimal(Math.round(q), '1.0-0');
+  protected quantityLabel(quantity: number | null | undefined): string {
+    if (quantity == null || !Number.isFinite(quantity)) return '—';
+    return this.formatDecimal(Math.round(quantity), '1.0-0');
   }
 
   protected saleRateLabel(rate: number | null | undefined): string {
@@ -480,93 +476,46 @@ export class MarketItemDetailPanelComponent {
     this.currentListingsPage.set(page);
   }
 
-  protected dailyTooltipTitle(d: AuctionMarketItemDetailResponse, x: number): string {
-    const point = this.dailyTooltipPoint(d, x);
+  protected dailyTooltipTitle(
+    detail: AuctionMarketItemDetailResponse,
+    domainValue: number,
+  ): string {
+    const point = this.dailyTooltipPoint(detail, domainValue);
     return point?.statDate
       ? point.statDate
-      : $localize`:@@itemDetail.dayLabel:Day ${Math.round(x) + 1}`;
+      : $localize`:@@itemDetail.dayLabel:Day ${Math.round(domainValue) + 1}`;
   }
 
-  protected dailyTooltipRows(d: AuctionMarketItemDetailResponse, x: number): TooltipRow[] {
-    const point = this.dailyTooltipPoint(d, x);
-    if (!point) return [];
-    return [
-      { label: $localize`:@@itemDetail.tooltip.date:date`, value: point.statDate ?? '—' },
-      {
-        label: $localize`:@@itemDetail.tooltip.avgQuantity:avg quantity`,
-        value: this.numberDisplay(point.avgQuantity),
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.minQuantity:min quantity`,
-        value: this.numberDisplay(point.minQuantity),
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.maxQuantity:max quantity`,
-        value: this.numberDisplay(point.maxQuantity),
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.minPrice:min price`,
-        amount: copperToCurrencyAmount(point.minPrice),
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.p25Price:p25 price`,
-        amount: copperToCurrencyAmount(point.p25Price),
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.avgPrice:avg price`,
-        amount: copperToCurrencyAmount(point.avgPrice),
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.p75Price:p75 price`,
-        amount: copperToCurrencyAmount(point.p75Price),
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.maxPrice:max price`,
-        amount: copperToCurrencyAmount(point.maxPrice),
-      },
-    ];
+  protected dailyTooltipRows(
+    detail: AuctionMarketItemDetailResponse,
+    domainValue: number,
+  ): TooltipRow[] {
+    return dailyTooltipRows(this.dailyTooltipPoint(detail, domainValue), (value) =>
+      this.numberDisplay(value),
+    );
   }
 
-  protected hourlyTooltipTitle(d: AuctionMarketItemDetailResponse, x: number): string {
-    const point = this.hourlyTooltipPoint(d, x);
+  protected hourlyTooltipTitle(
+    detail: AuctionMarketItemDetailResponse,
+    domainValue: number,
+  ): string {
+    const point = this.hourlyTooltipPoint(detail, domainValue);
     const hour = point?.hourOfDay ?? 0;
     const prefix = `${String(hour).padStart(2, '0')}:00`;
     return point?.timestamp ? `${point.timestamp} · ${prefix}` : prefix;
   }
 
-  protected hourlyTooltipRows(d: AuctionMarketItemDetailResponse, x: number): TooltipRow[] {
-    const point = this.hourlyTooltipPoint(d, x);
-    if (!point) return [];
-    return [
-      {
-        label: $localize`:@@itemDetail.tooltip.hour:hour`,
-        value: `${String(point.hourOfDay).padStart(2, '0')}:00`,
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.timestamp:timestamp`,
-        value: point.timestamp ?? '—',
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.quantityPerHour:quantity / hour`,
-        value: this.numberDisplay(point.totalQuantity),
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.minPrice:min price`,
-        amount: copperToCurrencyAmount(point.minPrice),
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.avgPrice:avg price`,
-        amount: copperToCurrencyAmount(point.avgPrice),
-      },
-      {
-        label: $localize`:@@itemDetail.tooltip.maxPrice:max price`,
-        amount: copperToCurrencyAmount(point.maxPrice),
-      },
-    ];
+  protected hourlyTooltipRows(
+    detail: AuctionMarketItemDetailResponse,
+    domainValue: number,
+  ): TooltipRow[] {
+    return hourlyTooltipRows(this.hourlyTooltipPoint(detail, domainValue), (value) =>
+      this.numberDisplay(value),
+    );
   }
 
-  protected showChartScopeToggle(d: AuctionMarketItemDetailResponse): boolean {
-    return showChartScopeToggleFn(d);
+  protected showChartScopeToggle(detail: AuctionMarketItemDetailResponse): boolean {
+    return showChartScopeToggleFn(detail);
   }
 
   protected activeScopeLabel(): string {
@@ -585,66 +534,52 @@ export class MarketItemDetailPanelComponent {
     return $localize`:@@itemDetail.scopeQuantity:${scope} quantity`;
   }
 
-  protected activeScopePrice(s: AuctionMarketItemDetailSummary): number | null | undefined {
-    return this.chartScope() === 'commodity' ? s.commodityPrice : s.selectedRealmPrice;
+  protected activeScopePrice(summary: AuctionMarketItemDetailSummary): number | null | undefined {
+    return activeScopePrice(summary, this.chartScope());
   }
 
-  protected activeScopeQuantity(s: AuctionMarketItemDetailSummary): number | null | undefined {
-    return this.chartScope() === 'commodity' ? s.commodityQuantity : s.selectedRealmQuantity;
+  protected activeScopeQuantity(
+    summary: AuctionMarketItemDetailSummary,
+  ): number | null | undefined {
+    return activeScopeQuantity(summary, this.chartScope());
   }
 
-  protected activeScopePriceCaption(s: AuctionMarketItemDetailSummary): string {
-    return this.chartScope() === 'commodity'
-      ? priceChangeCaptionStatic(s.commodityPriceChangePercent)
-      : priceChangeCaptionStatic(s.selectedRealmPriceChangePercent);
+  protected activeScopePriceCaption(summary: AuctionMarketItemDetailSummary): string {
+    return activeScopePriceCaption(summary, this.chartScope());
   }
 
   protected readonly activeScopeMidPrice = computed(() => {
-    const d = this.detail();
-    if (!d) return null;
-    const price = this.activeScopePrice(d.summary);
+    const detail = this.detail();
+    if (!detail) return null;
+    const price = this.activeScopePrice(detail.summary);
     return price != null && Number.isFinite(price) ? price : null;
   });
 
   protected readonly activeScopeP25 = computed(() => {
     const metrics = this.activeScopeMetrics();
-    const p = metrics?.p25Price;
-    return p != null && Number.isFinite(p) ? p : null;
+    const price = metrics?.p25Price;
+    return price != null && Number.isFinite(price) ? price : null;
   });
 
   protected readonly activeScopeP75 = computed(() => {
     const metrics = this.activeScopeMetrics();
-    const p = metrics?.p75Price;
-    return p != null && Number.isFinite(p) ? p : null;
+    const price = metrics?.p75Price;
+    return price != null && Number.isFinite(price) ? price : null;
   });
 
   protected readonly itemInfoRows = computed(() => {
-    const d = this.detail();
-    if (!d) {
-      return [
-        { label: this.qualityLabel, value: '—' },
-        { label: this.itemClassLabel, value: '—' },
-        { label: this.itemSubclassLabel, value: '—' },
-        { label: this.expansionLabel, value: '—' },
-        { label: this.craftedByLabel, value: '—' },
-        { label: this.reagentInLabel, value: '—' },
-      ];
-    }
-    const item = d.item;
-    return [
-      { label: this.qualityLabel, value: item.quality?.name?.trim() || '—' },
-      { label: this.itemClassLabel, value: item.itemClass?.name?.trim() || '—' },
-      { label: this.itemSubclassLabel, value: item.itemSubclass?.name?.trim() || '—' },
-      { label: this.expansionLabel, value: item.expansion?.name?.trim() || '—' },
+    return itemInfoRows(
+      this.detail(),
       {
-        label: this.craftedByLabel,
-        value: this.numberDisplay(d.craftedByRecipeCount),
+        quality: this.qualityLabel,
+        itemClass: this.itemClassLabel,
+        itemSubclass: this.itemSubclassLabel,
+        expansion: this.expansionLabel,
+        craftedBy: this.craftedByLabel,
+        reagentIn: this.reagentInLabel,
       },
-      {
-        label: this.reagentInLabel,
-        value: this.numberDisplay(d.reagentInRecipeCount),
-      },
-    ];
+      (value) => this.numberDisplay(value),
+    );
   });
 
   protected readonly qualityLabel = $localize`:@@itemDetail.quality:Quality`;
@@ -655,88 +590,44 @@ export class MarketItemDetailPanelComponent {
   protected readonly reagentInLabel = $localize`:@@itemDetail.reagentInRecipes:Used as reagent`;
 
   private activeScopeMetrics() {
-    const d = this.detail();
-    if (!d) return null;
-    return d.regionalMetricsRedundant || this.chartScope() === 'realm'
-      ? d.selectedRealm
-      : d.commodity;
+    const detail = this.detail();
+    if (!detail) return null;
+    return detail.regionalMetricsRedundant || this.chartScope() === 'realm'
+      ? detail.selectedRealm
+      : detail.commodity;
   }
 
   private chartOptionsForSeries(
-    series: readonly ChartSeries[],
+    series: Parameters<typeof marketDetailChartOptions>[0],
     labels: { readonly xLabelAt?: (index: number) => string } = {},
   ): Highcharts.Options {
-    const yScaleKeys = [...new Set(series.map((s) => s.yScaleKey))];
-    return {
-      xAxis: labels.xLabelAt
-        ? {
-            labels: {
-              formatter: (ctx) => labels.xLabelAt?.(this.axisIndex(ctx.value)) || ctx.text || '',
-            },
-          }
-        : undefined,
-      yAxis: yScaleKeys.map((key) => ({
-        min: key === 'quantity' ? 0 : undefined,
-        labels: {
-          formatter: (ctx) => this.yAxisLabel(key, ctx.value, ctx.text),
-        },
-      })),
-    };
-  }
-
-  private yAxisLabel(key: string, value: number | string, fallback: string | undefined): string {
-    if (key === 'price' || key === 'profit') {
-      return this.copperAxisLabel(value);
-    }
-    if (key === 'quantity') {
-      return this.quantityAxisLabel(value);
-    }
-    if (key === 'roi') {
-      return `${this.axisNumber(value).toLocaleString(this.locale.formatLocale())}%`;
-    }
-    return fallback ?? String(value);
-  }
-
-  private copperAxisLabel(value: number | string): string {
-    return formatCopperCurrency(this.axisNumber(value));
-  }
-
-  private quantityAxisLabel(value: number | string): string {
-    return quantityAxisLabel(this.axisNumber(value), this.locale.formatLocale());
-  }
-
-  private axisNumber(value: number | string): number {
-    return typeof value === 'number' ? value : Number(value);
-  }
-
-  private axisIndex(value: number | string): number {
-    return Math.round(this.axisNumber(value));
+    return marketDetailChartOptions(series, this.locale.formatLocale(), labels);
   }
 
   private dailyTooltipPoint(
-    d: AuctionMarketItemDetailResponse,
-    x: number,
+    detail: AuctionMarketItemDetailResponse,
+    domainValue: number,
   ): AuctionMarketItemDetailPoint | undefined {
-    return this.dailyPointsForActiveScope(d)[Math.round(x)];
+    return this.dailyPointsForActiveScope(detail)[Math.round(domainValue)];
   }
 
   private hourlyTooltipPoint(
-    _d: AuctionMarketItemDetailResponse,
-    x: number,
+    _detail: AuctionMarketItemDetailResponse,
+    domainValue: number,
   ): AuctionMarketItemHourlyPoint | undefined {
     const points = this.hourlyPointsForActiveScope();
     if (points.length === 0) return undefined;
-    const i = Math.max(0, Math.min(points.length - 1, Math.round(x)));
-    return points[i];
+    const index = Math.max(0, Math.min(points.length - 1, Math.round(domainValue)));
+    return points[index];
   }
 
   private hourlyPointsForActiveScope(): AuctionMarketItemHourlyPoint[] {
-    const d = this.detail();
-    if (!d) return [];
+    const detail = this.detail();
+    if (!detail) return [];
     const points =
-      d.regionalMetricsRedundant || this.chartScope() === 'realm'
-        ? d.hourlySeriesRealm
-        : d.hourlySeriesCommodity;
+      detail.regionalMetricsRedundant || this.chartScope() === 'realm'
+        ? detail.hourlySeriesRealm
+        : detail.hourlySeriesCommodity;
     return sortHourlyPoints(points);
   }
 

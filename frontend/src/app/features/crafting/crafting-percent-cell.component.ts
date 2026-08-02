@@ -52,16 +52,16 @@ export class CraftingPercentCellComponent {
   }
 
   protected value(): number | null {
-    const r = this.ctx.row.original;
+    const row = this.ctx.row.original;
     switch (this.columnId()) {
       case 'roiPercent':
-        return r.roiPercent;
+        return row.roiPercent;
       case 'outputPriceChangePercent':
-        return r.outputPriceChangePercent;
+        return row.outputPriceChangePercent;
       case 'saleRate':
-        return r.saleRate;
+        return row.saleRate;
       case 'soldPerDay':
-        return r.soldPerDay;
+        return row.soldPerDay;
       default:
         return null;
     }

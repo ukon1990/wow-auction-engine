@@ -22,7 +22,7 @@ const meta: Meta<HeatmapGridComponent> = {
     rangeLabel: '14 days',
     description: 'Average profit by day and hour.',
     rowLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    columnLabels: Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0')),
+    columnLabels: Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, '0')),
     cells,
   },
 };

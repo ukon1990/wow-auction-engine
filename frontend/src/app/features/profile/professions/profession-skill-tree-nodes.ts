@@ -26,20 +26,26 @@ export function isMilestoneNode(
   if (node.nodeKind === 'milestone') return true;
   if (node.nodeKind === 'path') return false;
 
-  if (node.maxRanks !== 1 || node.requiredRank <= 0) return false;
-  if (hasGraphChildren(node, allNodes)) return false;
-
-  const parentIds = node.prerequisites.map((prerequisite) => prerequisite.parentNodeId);
-  if (parentIds.length !== 1) return false;
-
-  const parent = findGraphNode(allNodes, parentIds[0]);
-  if (!parent || parent.maxRanks <= 1) return false;
+  if (!hasMilestoneGraphShape(node, allNodes)) return false;
 
   const name = node.name?.trim() ?? '';
   const description = node.description?.trim() ?? '';
   if (!name && description.length > 0) return true;
   if (/^gain\s*\+/i.test(name) || name.length > 48) return true;
   return false;
+}
+
+function hasMilestoneGraphShape(
+  node: SkillTreeGraphNodeShape,
+  allNodes: readonly SkillTreeGraphNodeShape[],
+): boolean {
+  if (node.maxRanks !== 1 || node.requiredRank <= 0 || hasGraphChildren(node, allNodes)) {
+    return false;
+  }
+  const parentIds = node.prerequisites.map((prerequisite) => prerequisite.parentNodeId);
+  if (parentIds.length !== 1) return false;
+  const parent = findGraphNode(allNodes, parentIds[0]);
+  return Boolean(parent && parent.maxRanks > 1);
 }
 
 export function milestoneNodesForParent(

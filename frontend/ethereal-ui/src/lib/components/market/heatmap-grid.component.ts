@@ -148,7 +148,7 @@ export class HeatmapGridComponent {
   private readonly domain = computed(() => {
     const values = this.cells()
       .map((cell) => cell.value)
-      .filter((v): v is number => v != null && Number.isFinite(v));
+      .filter((value): value is number => value != null && Number.isFinite(value));
     const min = this.min() ?? Math.min(0, ...values);
     const max = this.max() ?? Math.max(0, ...values);
     return { min, max: max === min ? min + 1 : max };

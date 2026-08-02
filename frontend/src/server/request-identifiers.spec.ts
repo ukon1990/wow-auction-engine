@@ -65,7 +65,7 @@ describe(acceptRequestIdentifiers.name, () => {
         'x-correlation-id': validCorrelationId,
         'x-client-session-id': validClientSessionId,
       },
-    } as express.Request;
+    } as unknown as express.Request;
     const res = {
       locals: {},
       setHeader: (name: string, value: number | string | readonly string[]) =>

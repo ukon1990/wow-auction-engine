@@ -57,24 +57,7 @@ export async function processAuctionHelperFiles(
       : result.diagnostics,
   );
   const talentResult = results.find((result) => result.adapterId === 'auction-helper-export-v1');
-  let decodedTalents: ReturnType<typeof decodeAuctionHelperTalentExport> | null = null;
-  if (talentResult) {
-    const talent = talentResult.data as NormalizedTalentExport;
-    if (talent.encodedPayload) {
-      try {
-        decodedTalents = decodeAuctionHelperTalentExport(talent.encodedPayload, talent.scope);
-      } catch (cause) {
-        diagnostics.push({
-          code:
-            cause instanceof Error && cause.message.startsWith('Unsupported')
-              ? 'TALENT_SCOPE_UNSUPPORTED'
-              : 'TALENT_EXPORT_INVALID',
-          detail: cause instanceof Error ? cause.message : 'Unable to decode talent export.',
-          fileName: talentResult.fileName,
-        });
-      }
-    }
-  }
+  const decodedTalents = decodeTalentResult(talentResult, diagnostics);
   const payload: NormalizedAuctionHelperProfessionData = {
     contractVersion: 1,
     source: {
@@ -121,6 +104,28 @@ export async function processAuctionHelperFiles(
   };
 }
 
+function decodeTalentResult(
+  talentResult: ReturnType<typeof auctionHelperLuaProcessor.process> | undefined,
+  diagnostics: ProcessingDiagnostic[],
+): ReturnType<typeof decodeAuctionHelperTalentExport> | null {
+  if (!talentResult) return null;
+  const talent = talentResult.data as NormalizedTalentExport;
+  if (!talent.encodedPayload) return null;
+  try {
+    return decodeAuctionHelperTalentExport(talent.encodedPayload, talent.scope);
+  } catch (cause) {
+    diagnostics.push({
+      code:
+        cause instanceof Error && cause.message.startsWith('Unsupported')
+          ? 'TALENT_SCOPE_UNSUPPORTED'
+          : 'TALENT_EXPORT_INVALID',
+      detail: cause instanceof Error ? cause.message : 'Unable to decode talent export.',
+      fileName: talentResult.fileName,
+    });
+    return null;
+  }
+}
+
 function aggregateDiagnostics(
   diagnostics: readonly ProcessingDiagnostic[],
 ): ProcessingDiagnostic[] {
@@ -138,6 +143,37 @@ function aggregateDiagnostics(
 }
 
 function toApiRecipe(recipe: NormalizedRecipe): NormalizedAuctionHelperRecipe {
+  const reagentSlots = toReagentSlots(recipe);
+  return {
+    recipeId: recipe.recipeId,
+    name: recipe.name ?? String(recipe.recipeId),
+    learned: recipe.learned ?? false,
+    ...optionalNullable('recipeType', recipe.recipeType),
+    ...optionalBoolean('supportsQualities', recipe.supportsQualities),
+    ...optionalBoolean('isGatheringRecipe', recipe.isGatheringRecipe),
+    ...optionalBoolean('isEnchantingRecipe', recipe.isEnchantingRecipe),
+    ...optionalBoolean('isSalvageRecipe', recipe.isSalvageRecipe),
+    ...optionalBoolean('isRecraft', recipe.isRecraft),
+    ...optionalBoolean('hasCraftingOperationInfo', recipe.hasCraftingOperationInfo),
+    ...optionalNullable('craftedItemId', recipe.craftedItemId),
+    qualityOutputItemIds: recipe.outputQualityItemIds.flatMap((output) =>
+      output.quality === null ? [] : [{ quality: output.quality, itemId: output.itemId }],
+    ),
+    ...craftingSkillFields(recipe),
+    qualityThresholds: [...recipe.crafting.qualityThresholds],
+    reagentSlots,
+    maxQualityRequiredReagents: recipe.maxQualityRequiredReagents
+      .filter((choice) => isApplicableReagentChoice(choice, reagentSlots))
+      .map((choice) => ({
+        ...optionalNullable('slotIndex', choice.slotIndex),
+        ...optionalNullable('dataSlotIndex', choice.dataSlotIndex),
+        itemId: choice.itemId,
+        quantity: choice.quantity,
+      })),
+  };
+}
+
+function toReagentSlots(recipe: NormalizedRecipe): NormalizedAuctionHelperReagentSlot[] {
   const slots = new Map<string, NormalizedAuctionHelperReagentSlot>();
   for (const reagent of recipe.reagents) {
     if (reagent.quantity === null || reagent.quantity <= 0) continue;
@@ -146,68 +182,50 @@ function toApiRecipe(recipe: NormalizedRecipe): NormalizedAuctionHelperRecipe {
     const key = `${slotIndex}:${reagent.dataSlotIndex ?? ''}:${reagent.slotType ?? ''}:${quantity}`;
     const slot = slots.get(key) ?? {
       slotIndex,
-      ...(reagent.dataSlotIndex !== null ? { dataSlotIndex: reagent.dataSlotIndex } : {}),
+      ...optionalNullable('dataSlotIndex', reagent.dataSlotIndex),
       ...(reagent.slotType ? { slotType: reagent.slotType } : {}),
       quantity,
       reagents: [],
     };
     slot.reagents.push({
       itemId: reagent.itemId,
-      ...(reagent.quality !== null ? { quality: reagent.quality } : {}),
+      ...optionalNullable('quality', reagent.quality),
       quantity,
     });
     slots.set(key, slot);
   }
-  const reagentSlots = [...slots.values()];
+  return [...slots.values()];
+}
+
+function craftingSkillFields(recipe: NormalizedRecipe) {
   return {
-    recipeId: recipe.recipeId,
-    name: recipe.name ?? String(recipe.recipeId),
-    learned: recipe.learned ?? false,
-    ...(recipe.recipeType !== null ? { recipeType: recipe.recipeType } : {}),
-    ...optionalBoolean('supportsQualities', recipe.supportsQualities),
-    ...optionalBoolean('isGatheringRecipe', recipe.isGatheringRecipe),
-    ...optionalBoolean('isEnchantingRecipe', recipe.isEnchantingRecipe),
-    ...optionalBoolean('isSalvageRecipe', recipe.isSalvageRecipe),
-    ...optionalBoolean('isRecraft', recipe.isRecraft),
-    ...optionalBoolean('hasCraftingOperationInfo', recipe.hasCraftingOperationInfo),
-    ...(recipe.craftedItemId !== null ? { craftedItemId: recipe.craftedItemId } : {}),
-    qualityOutputItemIds: recipe.outputQualityItemIds.flatMap((output) =>
-      output.quality === null ? [] : [{ quality: output.quality, itemId: output.itemId }],
-    ),
-    ...(recipe.crafting.baseDifficulty !== null
-      ? { baseDifficulty: recipe.crafting.baseDifficulty }
-      : {}),
-    ...(recipe.crafting.baseSkill !== null ? { baseSkill: recipe.crafting.baseSkill } : {}),
-    ...(recipe.crafting.bonusSkill !== null ? { bonusSkill: recipe.crafting.bonusSkill } : {}),
-    ...(recipe.crafting.requiredReagentSkillDelta !== null
-      ? { requiredReagentSkillDelta: recipe.crafting.requiredReagentSkillDelta }
-      : {}),
-    ...(recipe.crafting.lowerSkillThreshold !== null
-      ? { lowerSkillThreshold: recipe.crafting.lowerSkillThreshold }
-      : {}),
-    ...(recipe.crafting.upperSkillThreshold !== null
-      ? { upperSkillThreshold: recipe.crafting.upperSkillThreshold }
-      : {}),
-    qualityThresholds: [...recipe.crafting.qualityThresholds],
-    reagentSlots,
-    maxQualityRequiredReagents: recipe.maxQualityRequiredReagents
-      .filter(
-        (choice) =>
-          choice.quantity > 0 &&
-          reagentSlots.some(
-            (slot) =>
-              (choice.slotIndex === null || slot.slotIndex === choice.slotIndex) &&
-              (choice.dataSlotIndex === null || slot.dataSlotIndex === choice.dataSlotIndex) &&
-              slot.reagents.some((reagent) => reagent.itemId === choice.itemId),
-          ),
-      )
-      .map((choice) => ({
-        ...(choice.slotIndex !== null ? { slotIndex: choice.slotIndex } : {}),
-        ...(choice.dataSlotIndex !== null ? { dataSlotIndex: choice.dataSlotIndex } : {}),
-        itemId: choice.itemId,
-        quantity: choice.quantity,
-      })),
+    ...optionalNullable('baseDifficulty', recipe.crafting.baseDifficulty),
+    ...optionalNullable('baseSkill', recipe.crafting.baseSkill),
+    ...optionalNullable('bonusSkill', recipe.crafting.bonusSkill),
+    ...optionalNullable('requiredReagentSkillDelta', recipe.crafting.requiredReagentSkillDelta),
+    ...optionalNullable('lowerSkillThreshold', recipe.crafting.lowerSkillThreshold),
+    ...optionalNullable('upperSkillThreshold', recipe.crafting.upperSkillThreshold),
   };
+}
+
+function isApplicableReagentChoice(
+  choice: NormalizedRecipe['maxQualityRequiredReagents'][number],
+  reagentSlots: readonly NormalizedAuctionHelperReagentSlot[],
+): boolean {
+  if (choice.quantity <= 0) return false;
+  return reagentSlots.some(
+    (slot) =>
+      (choice.slotIndex === null || slot.slotIndex === choice.slotIndex) &&
+      (choice.dataSlotIndex === null || slot.dataSlotIndex === choice.dataSlotIndex) &&
+      slot.reagents.some((reagent) => reagent.itemId === choice.itemId),
+  );
+}
+
+function optionalNullable<Key extends string, Value>(
+  key: Key,
+  value: Value | null,
+): Partial<Record<Key, Value>> {
+  return value === null ? {} : ({ [key]: value } as Record<Key, Value>);
 }
 
 function optionalBoolean<K extends string>(

@@ -64,28 +64,11 @@ export function decodeAuctionHelperTalentExport(
       'Compressed talent export limit exceeded.',
     );
   }
-  let inflated: Uint8Array;
-  try {
-    inflated = inflateSync(compressed, { out: new Uint8Array(MAX_INFLATED_TALENT_BYTES) });
-  } catch (cause) {
-    throw new LuaProcessingError(
-      'MALFORMED_LUA',
-      cause instanceof Error ? cause.message : 'Unable to decompress talent export.',
-    );
-  }
+  const inflated = inflateTalentExport(compressed);
   if (inflated.byteLength > MAX_INFLATED_TALENT_BYTES) {
     throw new LuaProcessingError('INPUT_LIMIT_EXCEEDED', 'Inflated talent export limit exceeded.');
   }
-  let decoded: unknown;
-  try {
-    decoded = sanitizeDecodedValue(cborDecoder.decode(inflated), 0, { count: 0 });
-  } catch (cause) {
-    if (cause instanceof LuaProcessingError) throw cause;
-    throw new LuaProcessingError(
-      'MALFORMED_LUA',
-      cause instanceof Error ? cause.message : 'Unable to decode talent export.',
-    );
-  }
+  const decoded = decodeTalentExport(inflated);
   const root = object(decoded);
   const meta = object(root['meta']);
   const scope = string(meta['scope']);
@@ -118,6 +101,29 @@ export function decodeAuctionHelperTalentExport(
     },
     professions: professions.map(normalizeProfession).filter(isPresent),
   };
+}
+
+function inflateTalentExport(compressed: Uint8Array): Uint8Array {
+  try {
+    return inflateSync(compressed, { out: new Uint8Array(MAX_INFLATED_TALENT_BYTES) });
+  } catch (cause) {
+    throw new LuaProcessingError(
+      'MALFORMED_LUA',
+      cause instanceof Error ? cause.message : 'Unable to decompress talent export.',
+    );
+  }
+}
+
+function decodeTalentExport(inflated: Uint8Array): unknown {
+  try {
+    return sanitizeDecodedValue(cborDecoder.decode(inflated), 0, { count: 0 });
+  } catch (cause) {
+    if (cause instanceof LuaProcessingError) throw cause;
+    throw new LuaProcessingError(
+      'MALFORMED_LUA',
+      cause instanceof Error ? cause.message : 'Unable to decode talent export.',
+    );
+  }
 }
 
 function normalizeProfession(

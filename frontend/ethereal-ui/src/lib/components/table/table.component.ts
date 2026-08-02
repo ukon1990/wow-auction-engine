@@ -431,13 +431,15 @@ export class TableComponent<TData extends RowData> {
   );
 
   protected skeletonRowIndices(): number[] {
-    return Array.from({ length: this.skeletonRowCount() }, (_, i) => i);
+    return Array.from({ length: this.skeletonRowCount() }, (_, index) => index);
   }
 
   protected skeletonColumnMetas(): ReadonlyArray<{ align?: 'left' | 'right' } | undefined> {
     return this.table
       .getVisibleLeafColumns()
-      .map((c: Column<TData, unknown>) => c.columnDef.meta as { align?: 'left' | 'right' });
+      .map(
+        (column: Column<TData, unknown>) => column.columnDef.meta as { align?: 'left' | 'right' },
+      );
   }
 
   protected skeletonBarWidthClass(index: number): string {
@@ -490,7 +492,10 @@ export class TableComponent<TData extends RowData> {
           ((cell.column.columnDef.meta as TableColumnMeta | undefined)?.cardRole ?? 'detail') ===
           role,
       )
-      .sort((a, b) => this.cardPriority(a.column) - this.cardPriority(b.column));
+      .sort(
+        (firstCell, secondCell) =>
+          this.cardPriority(firstCell.column) - this.cardPriority(secondCell.column),
+      );
   }
 
   private cardPriority(column: Column<TData, unknown>): number {
@@ -521,38 +526,39 @@ export class TableComponent<TData extends RowData> {
     header: Header<TData, unknown>,
   ): 'ascending' | 'descending' | 'none' | null {
     if (!this.sortableHeader(header)) return null;
-    const s = header.column.getIsSorted();
-    if (s === 'asc') return 'ascending';
-    if (s === 'desc') return 'descending';
+    const sortingDirection = header.column.getIsSorted();
+    if (sortingDirection === 'asc') return 'ascending';
+    if (sortingDirection === 'desc') return 'descending';
     return 'none';
   }
 
   protected sortHeaderButtonClass(meta: unknown): string {
-    const m = meta as TableColumnMeta | undefined;
-    const align = m?.align === 'right' ? 'justify-end text-right' : 'justify-start text-left';
+    const columnMeta = meta as TableColumnMeta | undefined;
+    const align =
+      columnMeta?.align === 'right' ? 'justify-end text-right' : 'justify-start text-left';
     return `flex w-full min-w-0 cursor-pointer items-center gap-1 rounded px-0.5 py-0.5 ee-label outline-none transition hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/60 disabled:cursor-not-allowed disabled:opacity-50 ${align}`;
   }
 
   protected sortIconName(header: Header<TData, unknown>): string {
-    const s = header.column.getIsSorted();
-    if (s === 'asc') return 'keyboard_arrow_up';
-    if (s === 'desc') return 'keyboard_arrow_down';
+    const sortingDirection = header.column.getIsSorted();
+    if (sortingDirection === 'asc') return 'keyboard_arrow_up';
+    if (sortingDirection === 'desc') return 'keyboard_arrow_down';
     return 'import_export';
   }
 
   protected sortIconClass(header: Header<TData, unknown>): string {
-    const s = header.column.getIsSorted();
-    return s ? 'shrink-0 text-primary' : 'shrink-0 opacity-50';
+    const sortingDirection = header.column.getIsSorted();
+    return sortingDirection ? 'shrink-0 text-primary' : 'shrink-0 opacity-50';
   }
 
   protected headerColumnClass(meta: unknown): string {
-    const m = meta as TableColumnMeta | undefined;
-    return m?.align === 'right' ? 'min-w-0 text-right' : 'min-w-0 text-left';
+    const columnMeta = meta as TableColumnMeta | undefined;
+    return columnMeta?.align === 'right' ? 'min-w-0 text-right' : 'min-w-0 text-left';
   }
 
   protected bodyCellClass(meta: unknown): string {
-    const m = meta as TableColumnMeta | undefined;
-    return m?.align === 'right'
+    const columnMeta = meta as TableColumnMeta | undefined;
+    return columnMeta?.align === 'right'
       ? 'min-w-0 overflow-hidden text-right'
       : 'min-w-0 overflow-hidden text-ellipsis text-left';
   }

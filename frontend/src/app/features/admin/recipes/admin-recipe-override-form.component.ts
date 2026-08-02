@@ -445,12 +445,7 @@ export class AdminRecipeOverrideFormComponent {
           existingIndex >= 0 ? ranks[existingIndex] : { rank, itemId: 0, skillPoints: null };
 
         const nextItemId = patch.itemId !== undefined ? Number(patch.itemId) : current.itemId;
-        const nextSkillPoints =
-          patch.skillPoints === undefined
-            ? current.skillPoints
-            : patch.skillPoints === null || patch.skillPoints === ''
-              ? null
-              : Number(patch.skillPoints);
+        const nextSkillPoints = updatedSkillPoints(current.skillPoints, patch.skillPoints);
 
         if (!Number.isFinite(nextItemId) || nextItemId <= 0) {
           if (existingIndex >= 0) {
@@ -532,6 +527,15 @@ export class AdminRecipeOverrideFormComponent {
     );
     this.expandedReagentIndexes.set(new Set());
   }
+}
+
+function updatedSkillPoints(
+  current: number | null | undefined,
+  patch: number | string | null | undefined,
+): number | null {
+  if (patch === undefined) return current ?? null;
+  if (patch === null || patch === '') return null;
+  return Number(patch);
 }
 
 export function normalizeRequest(request: AdminRecipeOverrideRequest): AdminRecipeOverrideRequest {

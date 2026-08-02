@@ -162,8 +162,8 @@ describe('MenuService', () => {
         realmFixture,
       );
 
-      expect(links.map((l) => l.label)).toEqual(['Auctions', 'Crafting', 'Settings']);
-      expect(links.map((l) => l.routerLink)).toEqual([
+      expect(links.map((link) => link.label)).toEqual(['Auctions', 'Crafting', 'Settings']);
+      expect(links.map((link) => link.routerLink)).toEqual([
         '/eu/stormrage/auctions',
         '/eu/stormrage/crafting',
         '/settings',

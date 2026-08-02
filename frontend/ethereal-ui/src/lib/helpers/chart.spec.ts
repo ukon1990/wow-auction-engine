@@ -15,7 +15,7 @@ describe('chart helpers', () => {
 
   it('buildXDomain returns sorted unique x from all series', () => {
     expect(buildXDomain([])).toEqual([]);
-    const s = [
+    const series = [
       {
         id: 'a',
         kind: 'line' as const,
@@ -34,11 +34,11 @@ describe('chart helpers', () => {
         points: [{ x: 5, y: 3 }],
       },
     ];
-    expect(buildXDomain(s)).toEqual([0, 5, 10]);
+    expect(buildXDomain(series)).toEqual([0, 5, 10]);
   });
 
   it('buildYDomainsByKey groups by yScaleKey with padding', () => {
-    const s = [
+    const series = [
       {
         id: 'price',
         kind: 'line' as const,
@@ -60,15 +60,15 @@ describe('chart helpers', () => {
         ],
       },
     ];
-    const d = buildYDomainsByKey(s, 0.05);
-    expect(d['price']!.min).toBeLessThan(100);
-    expect(d['price']!.max).toBeGreaterThan(200);
-    expect(d['roi']!.min).toBeLessThan(0.1);
-    expect(d['roi']!.max).toBeGreaterThan(0.2);
+    const domains = buildYDomainsByKey(series, 0.05);
+    expect(domains['price']!.min).toBeLessThan(100);
+    expect(domains['price']!.max).toBeGreaterThan(200);
+    expect(domains['roi']!.min).toBeLessThan(0.1);
+    expect(domains['roi']!.max).toBeGreaterThan(0.2);
   });
 
   it('buildYDomainsByKey handles flat series', () => {
-    const s = [
+    const series = [
       {
         id: 'flat',
         kind: 'line' as const,
@@ -80,8 +80,8 @@ describe('chart helpers', () => {
         ],
       },
     ];
-    const d = buildYDomainsByKey(s);
-    expect(d['k']!.max).toBeGreaterThan(d['k']!.min);
+    const domains = buildYDomainsByKey(series);
+    expect(domains['k']!.max).toBeGreaterThan(domains['k']!.min);
   });
 
   it('indexInXDomain matches near-floats', () => {

@@ -74,11 +74,11 @@ export class TooltipCardComponent {
   readonly compact = input(false);
 
   protected contentRows(): readonly TooltipRow[] {
-    return this.rows().filter((r) => !r.amount);
+    return this.rows().filter((row) => !row.amount);
   }
 
   protected amountRows(): readonly TooltipRow[] {
-    return this.rows().filter((r) => !!r.amount);
+    return this.rows().filter((row) => !!row.amount);
   }
 
   protected hasInlineValue(row: TooltipRow): boolean {

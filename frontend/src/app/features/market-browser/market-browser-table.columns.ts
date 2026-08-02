@@ -45,15 +45,15 @@ export function marketBrowserSkeletonRowClass(): string {
 
 /** Builds `grid-template-columns` from column defs (pass the same array as `[columns]` on `ee-table`). */
 export function marketBrowserRowGridTemplateColumns(
-  cols: readonly ColumnDef<MarketItemRow, unknown>[],
+  columns: readonly ColumnDef<MarketItemRow, unknown>[],
 ): string {
-  return cols.map((col) => (col.meta as MarketColumnMeta).gridTrack).join(' ');
+  return columns.map((column) => (column.meta as MarketColumnMeta).gridTrack).join(' ');
 }
 
 function textCell(value: unknown): string {
   if (value === null || value === undefined) return '—';
-  const s = String(value).trim();
-  return s.length > 0 ? s : '—';
+  const text = String(value).trim();
+  return text.length > 0 ? text : '—';
 }
 
 export function createMarketBrowserTableColumns(): ColumnDef<MarketItemRow, unknown>[] {

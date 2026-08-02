@@ -81,11 +81,11 @@ export function appLocaleFromAcceptLanguage(
       .map((part) => {
         const [tag, ...params] = part.trim().split(';');
         const qParam = params.find((param) => param.trim().startsWith('q='));
-        const q = qParam ? Number(qParam.split('=')[1]) : 1;
-        return { locale: normalizeAppLocale(tag), q: Number.isFinite(q) ? q : 0 };
+        const quality = qParam ? Number(qParam.split('=')[1]) : 1;
+        return { locale: normalizeAppLocale(tag), q: Number.isFinite(quality) ? quality : 0 };
       })
       .filter((entry): entry is { locale: AppLocale; q: number } => Boolean(entry.locale))
-      .sort((a, b) => b.q - a.q)[0]?.locale ?? null
+      .sort((left, right) => right.q - left.q)[0]?.locale ?? null
   );
 }
 

@@ -64,9 +64,9 @@ class ChartPanelDashboardStoryComponent {
       kind: 'column',
       yScaleKey: 'gold',
       color: 'tertiary-container',
-      points: Array.from({ length: 14 }, (_, x) => ({
-        x,
-        y: 420 + x * 28 + (x % 4) * 95,
+      points: Array.from({ length: 14 }, (_, index) => ({
+        x: index,
+        y: 420 + index * 28 + (index % 4) * 95,
       })),
     },
     {
@@ -74,9 +74,9 @@ class ChartPanelDashboardStoryComponent {
       kind: 'line',
       yScaleKey: 'roi',
       color: 'secondary',
-      points: Array.from({ length: 14 }, (_, x) => ({
-        x,
-        y: 8 + (x % 5) * 1.4 + x * 0.15,
+      points: Array.from({ length: 14 }, (_, index) => ({
+        x: index,
+        y: 8 + (index % 5) * 1.4 + index * 0.15,
       })),
     },
   ];
@@ -343,21 +343,27 @@ export const RawChartComponent: StoryObj<RawChartStoryComponent> = {
 };
 
 function marketSeries(count: number): readonly ChartSeries[] {
-  const xs = Array.from({ length: count }, (_, i) => i);
+  const domainValues = Array.from({ length: count }, (_, index) => index);
   return [
     {
       id: 'quantity',
       kind: 'column',
       yScaleKey: 'quantity',
       color: 'tertiary-container',
-      points: xs.map((x, i) => ({ x, y: 70 + i * 5 + (i % 4) * 18 })),
+      points: domainValues.map((domainValue, index) => ({
+        x: domainValue,
+        y: 70 + index * 5 + (index % 4) * 18,
+      })),
     },
     {
       id: 'avgPrice',
       kind: 'line',
       yScaleKey: 'gold',
       color: 'primary-container',
-      points: xs.map((x, i) => ({ x, y: 1850 + i * 34 + (i % 5) * 90 })),
+      points: domainValues.map((domainValue, index) => ({
+        x: domainValue,
+        y: 1850 + index * 34 + (index % 5) * 90,
+      })),
     },
   ];
 }

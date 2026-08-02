@@ -42,14 +42,14 @@ export class CraftingCurrencyCellComponent {
   }
 
   protected copper(): number | null {
-    const r = this.row();
+    const row = this.row();
     switch (this.columnId()) {
       case 'outputPrice':
-        return r.outputPriceCopper;
+        return row.outputPriceCopper;
       case 'reagentCost':
-        return r.reagentCostCopper;
+        return row.reagentCostCopper;
       case 'profit':
-        return r.profitCopper;
+        return row.profitCopper;
       default:
         return null;
     }
