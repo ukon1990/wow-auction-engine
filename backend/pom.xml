@@ -53,6 +53,7 @@
         <exec.maven.plugin.version>3.6.3</exec.maven.plugin.version>
         <maven.antrun.plugin.version>3.2.0</maven.antrun.plugin.version>
         <detekt.version>2.0.0-alpha.5</detekt.version>
+        <detekt.input>${project.basedir}/src/main/kotlin:${project.basedir}/src/test/kotlin</detekt.input>
         <openapi.generator.version>7.22.0</openapi.generator.version>
         <node.executable>node</node.executable>
         <refresh.fixtures.args/>
@@ -388,7 +389,7 @@
                                       classpathref="maven.plugin.classpath">
                                     <!-- Only hand-written Kotlin roots are analyzed; generated OpenAPI sources live under target/. -->
                                     <arg value="--input"/>
-                                    <arg value="${project.basedir}/src/main/kotlin:${project.basedir}/src/test/kotlin"/>
+                                    <arg value="${detekt.input}"/>
                                     <arg value="--config"/>
                                     <arg value="${project.basedir}/config/detekt/detekt.yml"/>
                                     <arg value="--build-upon-default-config"/>
