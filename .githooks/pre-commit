@@ -28,13 +28,17 @@ fi
 has_kotlin_files=0
 has_frontend_files=0
 staged_kotlin_files=()
+staged_detekt_files=()
+staged_frontend_eslint_files=()
 
 while IFS= read -r -d '' file; do
   if [[ "$file" == "${backend_dir}/src/main/kotlin/"* && "$file" == *.kt ]]; then
     staged_kotlin_files+=("$file")
+    staged_detekt_files+=("${repo_root}/${file}")
     has_kotlin_files=1
   elif [[ "$file" == "${backend_dir}/src/test/kotlin/"* && "$file" == *.kt ]]; then
     staged_kotlin_files+=("$file")
+    staged_detekt_files+=("${repo_root}/${file}")
     has_kotlin_files=1
   elif [[ "$file" == "${backend_dir}/"* && "$file" == *.kts ]]; then
     staged_kotlin_files+=("$file")
@@ -42,6 +46,10 @@ while IFS= read -r -d '' file; do
   fi
   if [[ "$file" == "${frontend_dir}/"* ]]; then
     has_frontend_files=1
+
+    if [[ "$file" == *.ts && "$file" != "${frontend_dir}/src/app/api/generated/"* ]]; then
+      staged_frontend_eslint_files+=("${file#${frontend_dir}/}")
+    fi
   fi
 done < <(git diff --cached --name-only --diff-filter=ACMR -z)
 
@@ -60,6 +68,16 @@ if [ "$has_kotlin_files" -eq 1 ]; then
     echo "pre-commit: ktlint reported remaining violations. Review the output above and amend the staged changes." >&2
     exit 1
   fi
+
+  if [ "${#staged_detekt_files[@]}" -gt 0 ]; then
+    echo "pre-commit: analyzing staged Kotlin sources with Detekt"
+    for detekt_file in "${staged_detekt_files[@]}"; do
+      if ! run_maven "-B" "-ntp" "-Ddetekt.input=${detekt_file}" "antrun:run@detekt"; then
+        echo "pre-commit: Detekt reported violations in ${detekt_file}." >&2
+        exit 1
+      fi
+    done
+  fi
 fi
 
 if [ "$has_frontend_files" -eq 1 ]; then
@@ -71,6 +89,8 @@ if [ "$has_frontend_files" -eq 1 ]; then
   echo "pre-commit: checking frontend formatting"
   (cd "$frontend_dir" && bun run format:check)
 
-  echo "pre-commit: lint-checking frontend sources"
-  (cd "$frontend_dir" && bun run lint)
+  if [ "${#staged_frontend_eslint_files[@]}" -gt 0 ]; then
+    echo "pre-commit: lint-checking staged frontend sources"
+    (cd "$frontend_dir" && ./node_modules/.bin/eslint -- "${staged_frontend_eslint_files[@]}")
+  fi
 fi
