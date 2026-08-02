@@ -71,90 +71,125 @@ class NormalizedAuctionHelperProfessionInspectionService(
 
         val professions = payload.characters.flatMap { it.professions }
         validateCollectionLimits(professions)
-        val missingProfessionIds = repository.missingProfessionIds(professions.map { it.professionId }.toSet())
-        if (missingProfessionIds.isNotEmpty()) {
-            badRequest("Profession IDs are missing from the catalog: ${missingProfessionIds.sorted().joinToString()}")
-        }
-        val talentTrees = professions.flatMap { it.talents?.trees.orEmpty() }
-        val missingSkillLineIds = repository.missingSkillLineIds(talentTrees.map { it.skillLineId }.toSet())
-        if (missingSkillLineIds.isNotEmpty()) {
-            badRequest("Profession skill-line IDs are missing from the catalog: ${missingSkillLineIds.sorted().joinToString()}")
-        }
-        val missingExpansionIds = repository.missingExpansionIds(talentTrees.map { it.expansionId }.toSet())
-        if (missingExpansionIds.isNotEmpty()) {
-            badRequest("Expansion IDs are missing from the catalog: ${missingExpansionIds.sorted().joinToString()}")
-        }
+        validateCatalogReferences(professions)
 
         val diagnostics = linkedMapOf<NormalizedAuctionHelperProfessionDiagnostic.Code, DiagnosticAccumulator>()
-        var recipesFound = 0
-        var recipesWithOutputItemFound = 0
-        var missingOutputItemAssociations = 0
-        var missingReagentItemAssociations = 0
-        var missingCraftingSkillData = 0
-
+        val counts = InspectionCounts()
         professions.forEach { profession ->
-            validateProfession(profession)
-            if (profession.talents == null || profession.talents.trees.isEmpty()) {
-                diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_DATA_MISSING)
-            }
-            profession.recipes.forEach { recipe ->
-                recipesFound++
-                validateRecipe(recipe)
-                if (recipe.hasOutputItemAssociation()) {
-                    recipesWithOutputItemFound++
-                } else if (recipe.expectsCraftedItem()) {
-                    missingOutputItemAssociations++
-                    diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.CRAFTED_ITEM_MISSING, recipe.recipeId)
-                }
-                recipe.reagentSlots.filter { it.reagents.isEmpty() }.forEach { slot ->
-                    missingReagentItemAssociations++
-                    diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.REAGENT_ITEM_MISSING, recipe.recipeId)
-                }
-                if (recipe.expectsCraftingSkillData() && !recipe.hasCraftingSkillData()) {
-                    missingCraftingSkillData++
-                    diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.CRAFTING_SKILL_DATA_MISSING, recipe.recipeId)
-                }
-                recipe.maxQualityRequiredReagents.forEach { association ->
-                    if (!recipe.hasMatchingReagentAssociation(association.slotIndex, association.dataSlotIndex, association.itemId)) {
-                        diagnostics.record(
-                            NormalizedAuctionHelperProfessionDiagnostic.Code.MAX_QUALITY_REAGENT_ASSOCIATION_INCOMPLETE,
-                            recipe.recipeId,
-                        )
-                    }
-                }
-            }
-            profession.talents?.let { talents ->
-                val nodes = talents.trees.flatMap { tree -> tree.tabs.flatMap { it.nodes } }.associateBy { it.nodeId }
-                talents.allocations.forEach { allocation ->
-                    val node = nodes[allocation.nodeId]
-                    if (node == null) {
-                        diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_ALLOCATION_MISSING_NODE)
-                    } else if (node.propertyEntries.none { it.entryId == allocation.entryId }) {
-                        diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_ALLOCATION_MISSING_ENTRY)
-                    } else {
-                        val entry = node.propertyEntries.first { it.entryId == allocation.entryId }
-                        val rankLimit = listOfNotNull(entry.rankLimit, node.maxRanks).maxOrNull()
-                        if (rankLimit != null && allocation.rank > rankLimit) {
-                            badRequest("Talent allocation rank exceeds the limit for entry ${allocation.entryId}")
-                        }
-                    }
-                }
-            }
+            inspectProfession(profession, diagnostics, counts)
         }
 
-        repository.save(payload, professions.size, recipesFound, ownerSubject)
+        repository.save(payload, professions.size, counts.recipesFound, ownerSubject)
 
         return NormalizedAuctionHelperProfessionInspection(
             imported = true,
             charactersFound = payload.characters.size,
             professionsFound = professions.size,
-            recipesFound = recipesFound,
-            recipesWithOutputItemFound = recipesWithOutputItemFound,
-            missingOutputItemAssociations = missingOutputItemAssociations,
-            missingReagentItemAssociations = missingReagentItemAssociations,
-            missingCraftingSkillData = missingCraftingSkillData,
+            recipesFound = counts.recipesFound,
+            recipesWithOutputItemFound = counts.recipesWithOutputItemFound,
+            missingOutputItemAssociations = counts.missingOutputItemAssociations,
+            missingReagentItemAssociations = counts.missingReagentItemAssociations,
+            missingCraftingSkillData = counts.missingCraftingSkillData,
             diagnostics = diagnostics.map { (code, accumulator) -> accumulator.toDiagnostic(code) },
         )
+    }
+
+    private fun validateCatalogReferences(professions: List<NormalizedAuctionHelperProfession>) {
+        rejectMissingIds(
+            repository.missingProfessionIds(professions.map { it.professionId }.toSet()),
+            "Profession IDs are missing from the catalog",
+        )
+        val talentTrees = professions.flatMap { it.talents?.trees.orEmpty() }
+        rejectMissingIds(
+            repository.missingSkillLineIds(talentTrees.map { it.skillLineId }.toSet()),
+            "Profession skill-line IDs are missing from the catalog",
+        )
+        rejectMissingIds(
+            repository.missingExpansionIds(talentTrees.map { it.expansionId }.toSet()),
+            "Expansion IDs are missing from the catalog",
+        )
+    }
+}
+
+private data class InspectionCounts(
+    var recipesFound: Int = 0,
+    var recipesWithOutputItemFound: Int = 0,
+    var missingOutputItemAssociations: Int = 0,
+    var missingReagentItemAssociations: Int = 0,
+    var missingCraftingSkillData: Int = 0,
+)
+
+private fun rejectMissingIds(
+    missingIds: Set<Int>,
+    message: String,
+) {
+    if (missingIds.isNotEmpty()) badRequest("$message: ${missingIds.sorted().joinToString()}")
+}
+
+private fun inspectProfession(
+    profession: NormalizedAuctionHelperProfession,
+    diagnostics: MutableMap<NormalizedAuctionHelperProfessionDiagnostic.Code, DiagnosticAccumulator>,
+    counts: InspectionCounts,
+) {
+    validateProfession(profession)
+    if (profession.talents == null || profession.talents.trees.isEmpty()) {
+        diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_DATA_MISSING)
+    }
+    profession.recipes.forEach { recipe -> inspectRecipe(recipe, diagnostics, counts) }
+    validateTalentAllocations(profession, diagnostics)
+}
+
+private fun inspectRecipe(
+    recipe: NormalizedAuctionHelperRecipe,
+    diagnostics: MutableMap<NormalizedAuctionHelperProfessionDiagnostic.Code, DiagnosticAccumulator>,
+    counts: InspectionCounts,
+) {
+    counts.recipesFound++
+    validateRecipe(recipe)
+    if (recipe.hasOutputItemAssociation()) {
+        counts.recipesWithOutputItemFound++
+    } else if (recipe.expectsCraftedItem()) {
+        counts.missingOutputItemAssociations++
+        diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.CRAFTED_ITEM_MISSING, recipe.recipeId)
+    }
+    recipe.reagentSlots.filter { it.reagents.isEmpty() }.forEach {
+        counts.missingReagentItemAssociations++
+        diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.REAGENT_ITEM_MISSING, recipe.recipeId)
+    }
+    if (recipe.expectsCraftingSkillData() && !recipe.hasCraftingSkillData()) {
+        counts.missingCraftingSkillData++
+        diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.CRAFTING_SKILL_DATA_MISSING, recipe.recipeId)
+    }
+    recipe.maxQualityRequiredReagents
+        .filterNot { recipe.hasMatchingReagentAssociation(it.slotIndex, it.dataSlotIndex, it.itemId) }
+        .forEach {
+            diagnostics.record(
+                NormalizedAuctionHelperProfessionDiagnostic.Code.MAX_QUALITY_REAGENT_ASSOCIATION_INCOMPLETE,
+                recipe.recipeId,
+            )
+        }
+}
+
+private fun validateTalentAllocations(
+    profession: NormalizedAuctionHelperProfession,
+    diagnostics: MutableMap<NormalizedAuctionHelperProfessionDiagnostic.Code, DiagnosticAccumulator>,
+) {
+    val talents = profession.talents ?: return
+    val nodes = talents.trees.flatMap { tree -> tree.tabs.flatMap { it.nodes } }.associateBy { it.nodeId }
+    talents.allocations.forEach { allocation ->
+        val node = nodes[allocation.nodeId]
+        when {
+            node == null -> diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_ALLOCATION_MISSING_NODE)
+            node.propertyEntries.none { it.entryId == allocation.entryId } ->
+                diagnostics.record(NormalizedAuctionHelperProfessionDiagnostic.Code.TALENT_ALLOCATION_MISSING_ENTRY)
+            else -> {
+                val entry = node.propertyEntries.first { it.entryId == allocation.entryId }
+                val rankLimit = listOfNotNull(entry.rankLimit, node.maxRanks).maxOrNull()
+                if (rankLimit != null && allocation.rank > rankLimit) {
+                    badRequest("Talent allocation rank exceeds the limit for entry ${allocation.entryId}")
+                }
+            }
+        }
     }
 }
 
@@ -189,23 +224,32 @@ private fun validateProfession(profession: NormalizedAuctionHelperProfession) {
     if (profession.skillLevel != null && profession.maxSkillLevel != null && profession.skillLevel > profession.maxSkillLevel) {
         badRequest("Profession ${profession.professionId} skill level exceeds its maximum")
     }
-    profession.talents?.trees?.forEach { tree ->
-        val tabIds = tree.tabs.map { it.tabId }
-        if (tabIds.distinct().size != tabIds.size) badRequest("Talent tab IDs must be unique within config ${tree.treeId}")
-        val nodeIds = tree.tabs.flatMap { it.nodes }.map { it.nodeId }
-        if (nodeIds.distinct().size != nodeIds.size) badRequest("Talent node IDs must be unique within tree ${tree.treeId}")
-        tree.tabs.flatMap { it.nodes }.forEach { node ->
-            val entryIds = node.propertyEntries.map { it.entryId }
-            if (entryIds.distinct().size != entryIds.size) badRequest("Talent entry IDs must be unique within node ${node.nodeId}")
-            if (node.parentNodeIds.orEmpty().distinct().size != node.parentNodeIds.orEmpty().size) {
-                badRequest("Talent parent node IDs must be unique within node ${node.nodeId}")
-            }
-            if (node.nodeId in node.parentNodeIds.orEmpty()) badRequest("Talent node ${node.nodeId} cannot be its own parent")
-            val missingParentNodeIds = node.parentNodeIds.orEmpty().filterNot { it in nodeIds }
-            if (missingParentNodeIds.isNotEmpty()) {
-                badRequest("Talent node ${node.nodeId} references missing parent node ${missingParentNodeIds.first()}")
-            }
-        }
+    profession.talents?.trees?.forEach(::validateTalentTree)
+}
+
+private fun validateTalentTree(tree: net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTree) {
+    val tabIds = tree.tabs.map { it.tabId }
+    if (tabIds.distinct().size != tabIds.size) badRequest("Talent tab IDs must be unique within config ${tree.treeId}")
+    val nodes = tree.tabs.flatMap { it.nodes }
+    val nodeIds = nodes.map { it.nodeId }
+    if (nodeIds.distinct().size != nodeIds.size) badRequest("Talent node IDs must be unique within tree ${tree.treeId}")
+    nodes.forEach { node -> validateTalentNode(node, nodeIds) }
+}
+
+private fun validateTalentNode(
+    node: net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentNode,
+    nodeIds: List<Int>,
+) {
+    val entryIds = node.propertyEntries.map { it.entryId }
+    if (entryIds.distinct().size != entryIds.size) badRequest("Talent entry IDs must be unique within node ${node.nodeId}")
+    val parentNodeIds = node.parentNodeIds.orEmpty()
+    if (parentNodeIds.distinct().size != parentNodeIds.size) {
+        badRequest("Talent parent node IDs must be unique within node ${node.nodeId}")
+    }
+    if (node.nodeId in parentNodeIds) badRequest("Talent node ${node.nodeId} cannot be its own parent")
+    val missingParentNodeId = parentNodeIds.firstOrNull { it !in nodeIds }
+    if (missingParentNodeId != null) {
+        badRequest("Talent node ${node.nodeId} references missing parent node $missingParentNodeId")
     }
 }
 

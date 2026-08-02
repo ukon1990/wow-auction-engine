@@ -32,49 +32,14 @@ object BlizzardFixtures {
 
         val resourcePath =
             when {
-                blizzardPath == "profession" || blizzardPath == "profession/index" -> {
-                    "profession/index"
-                }
-
-                blizzardPath == "modified-crafting" || blizzardPath == "modified-crafting/index" -> {
-                    "modified-crafting/index"
-                }
-
-                blizzardPath == "modified-crafting/category" || blizzardPath == "modified-crafting/category/index" -> {
-                    "modified-crafting/category/index"
-                }
-
-                blizzardPath == "modified-crafting/reagent-slot-type" ||
-                    blizzardPath == "modified-crafting/reagent-slot-type/index" -> {
-                    "modified-crafting/reagent-slot-type/index"
-                }
-
-                blizzardPath == "connected-realm/index" -> {
-                    "connected-realm/index"
-                }
-
-                blizzardPath.matches(Regex("connected-realm/\\d+")) -> {
-                    "connected-realm/connected-realm"
-                }
-
-                blizzardPath.matches(Regex("connected-realm/\\d+/auctions(/index)?")) -> {
-                    auctionFixturePath(request)
-                }
-
+                blizzardPath in INDEX_FIXTURE_PATHS -> INDEX_FIXTURE_PATHS.getValue(blizzardPath)
+                CONNECTED_REALM_PATH.matches(blizzardPath) -> "connected-realm/connected-realm"
+                CONNECTED_REALM_AUCTIONS_PATH.matches(blizzardPath) -> auctionFixturePath(request)
                 blizzardPath == "auctions/commodities" -> {
                     auctionFixturePath(request)
                 }
-
                 blizzardPath.startsWith("media/") -> error("Unsupported Blizzard media fixture route: $uri")
-                blizzardPath.matches(Regex("item/\\d+")) -> blizzardPath
-                blizzardPath.matches(Regex("item-class/\\d+")) -> blizzardPath
-                blizzardPath.matches(Regex("item-class/\\d+/item-subclass/\\d+")) -> blizzardPath
-                blizzardPath.matches(Regex("item-appearance/\\d+")) -> blizzardPath
-                blizzardPath.matches(Regex("profession/\\d+")) -> blizzardPath
-                blizzardPath.matches(Regex("profession/\\d+/skill-tier/\\d+")) -> blizzardPath
-                blizzardPath.matches(Regex("recipe/\\d+")) -> blizzardPath
-                blizzardPath.matches(Regex("modified-crafting/category/\\d+")) -> blizzardPath
-                blizzardPath.matches(Regex("modified-crafting/reagent-slot-type/\\d+")) -> blizzardPath
+                DETAIL_FIXTURE_PATHS.any { it.matches(blizzardPath) } -> blizzardPath
                 else -> error("Unexpected Blizzard request path: $uri")
             }
 
@@ -118,6 +83,33 @@ object BlizzardFixtures {
             "eu.api.blizzard.test",
             "kr.api.blizzard.test",
             "tw.api.blizzard.test",
+        )
+
+    private val INDEX_FIXTURE_PATHS =
+        mapOf(
+            "profession" to "profession/index",
+            "profession/index" to "profession/index",
+            "modified-crafting" to "modified-crafting/index",
+            "modified-crafting/index" to "modified-crafting/index",
+            "modified-crafting/category" to "modified-crafting/category/index",
+            "modified-crafting/category/index" to "modified-crafting/category/index",
+            "modified-crafting/reagent-slot-type" to "modified-crafting/reagent-slot-type/index",
+            "modified-crafting/reagent-slot-type/index" to "modified-crafting/reagent-slot-type/index",
+            "connected-realm/index" to "connected-realm/index",
+        )
+    private val CONNECTED_REALM_PATH = Regex("connected-realm/\\d+")
+    private val CONNECTED_REALM_AUCTIONS_PATH = Regex("connected-realm/\\d+/auctions(/index)?")
+    private val DETAIL_FIXTURE_PATHS =
+        listOf(
+            Regex("item/\\d+"),
+            Regex("item-class/\\d+"),
+            Regex("item-class/\\d+/item-subclass/\\d+"),
+            Regex("item-appearance/\\d+"),
+            Regex("profession/\\d+"),
+            Regex("profession/\\d+/skill-tier/\\d+"),
+            Regex("recipe/\\d+"),
+            Regex("modified-crafting/category/\\d+"),
+            Regex("modified-crafting/reagent-slot-type/\\d+"),
         )
 
     private const val AUCTION_METADATA_FIXTURE = "/blizzard/auction/auction-dump-metadata-response.json"

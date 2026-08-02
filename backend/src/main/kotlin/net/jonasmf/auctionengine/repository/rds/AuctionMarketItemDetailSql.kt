@@ -602,32 +602,4 @@ internal object AuctionMarketItemDetailSql {
             )
     }
 
-    private fun hourColumnSuffix(hourOfDay: Int): String = hourOfDay.coerceIn(0, 23).toString().padStart(2, '0')
-
-    private fun hoursCteSql(): String = (0..23).joinToString(separator = " UNION ALL ") { "SELECT $it AS hour_of_day" }
-
-    /**
-     * Returns a `CASE h.hour_of_day WHEN 0 THEN ash.price00 ... WHEN 23 THEN ash.price23 END` expression
-     * used to unpivot the 24 hourly price columns of `auction_stats_hourly` into a single column when
-     * cross-joined with the `hours_t` 0..23 table.
-     */
-    private fun hourlyPriceCaseExpression(
-        tableAlias: String = "ash",
-        hourCol: String = "h.hour_of_day",
-    ): String =
-        (0..23).joinToString(
-            prefix = "CASE $hourCol ",
-            separator = " ",
-            postfix = " END",
-        ) { "WHEN $it THEN $tableAlias.price${hourColumnSuffix(it)}" }
-
-    private fun hourlyQuantityCaseExpression(
-        tableAlias: String = "ash",
-        hourCol: String = "h.hour_of_day",
-    ): String =
-        (0..23).joinToString(
-            prefix = "CASE $hourCol ",
-            separator = " ",
-            postfix = " END",
-        ) { "WHEN $it THEN $tableAlias.quantity${hourColumnSuffix(it)}" }
 }

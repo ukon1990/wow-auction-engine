@@ -33,6 +33,9 @@ import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemCraftingReagent
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemCraftingRow
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemCurrentListingRow
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketItemHeaderRow
+import net.jonasmf.auctionengine.repository.rds.loadItemHeader
+import net.jonasmf.auctionengine.repository.rds.loadSnapshotPriceQuantity
+import net.jonasmf.auctionengine.repository.rds.recipeProducesItem
 import org.slf4j.MDC
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -53,6 +56,27 @@ private data class AuctionMarketItemDetailRepositoryRows(
     val currentListings: List<AuctionMarketItemCurrentListingRow>,
     val craftingRows: List<AuctionMarketItemCraftingRow>,
     val reagentRows: Map<Int, List<AuctionMarketItemCraftingReagentRow>>,
+)
+
+private data class MarketSeriesRows(
+    val dailyRealm: List<AuctionMarketItemDetailDailyRow>,
+    val dailyCommodity: List<AuctionMarketItemDetailDailyRow>,
+    val hourlyRealm: List<AuctionMarketItemDetailHourlyRow>,
+    val hourlyCommodity: List<AuctionMarketItemDetailHourlyRow>,
+    val pieRealm: List<AuctionMarketItemDetailPieRow>,
+    val pieCommodity: List<AuctionMarketItemDetailPieRow>,
+)
+
+private data class DetailLoadParameters(
+    val context: MarketContext,
+    val itemId: Int,
+    val variant: Boolean,
+    val bonusKey: String,
+    val modifierKey: String,
+    val petSpeciesId: Int,
+    val loadCommodity: Boolean,
+    val preferredRecipeId: Int?,
+    val mdcSnapshot: Map<String, String>?,
 )
 
 @Service
@@ -90,238 +114,13 @@ class AuctionMarketItemDetailService(
         val commodityFrom = context.commoditySnapshot.date.minusDays(13)
         val commodityTo = context.commoditySnapshot.date
 
-        val mdcSnapshot = MDC.getCopyOfContextMap()
         val repositoryRows =
-            runBlocking {
-                coroutineScope {
-                    val headerDef =
-                        async {
-                            withAuctionMdc(mdcSnapshot) {
-                                detailRepository.loadItemHeader(itemId, localeSuffix, context.region)
-                            }
-                        }
-                    val dailyRealmDef =
-                        async {
-                            if (loadCommodity) {
-                                emptyList()
-                            } else {
-                                withAuctionMdc(mdcSnapshot) {
-                                    detailRepository.loadDailySeries(
-                                        context.selectedSnapshot.connectedRealmId,
-                                        itemId,
-                                        realmFrom,
-                                        realmTo,
-                                        variant,
-                                        bonusKey,
-                                        modifierKey,
-                                        petSpeciesId,
-                                    )
-                                }
-                            }
-                        }
-                    val dailyCommodityDef =
-                        async {
-                            if (loadCommodity) {
-                                withAuctionMdc(mdcSnapshot) {
-                                    detailRepository.loadDailySeries(
-                                        context.commoditySnapshot.connectedRealmId,
-                                        itemId,
-                                        commodityFrom,
-                                        commodityTo,
-                                        variant,
-                                        bonusKey,
-                                        modifierKey,
-                                        petSpeciesId,
-                                    )
-                                }
-                            } else {
-                                emptyList()
-                            }
-                        }
-                    val hourlyRealmDef =
-                        async {
-                            if (loadCommodity) {
-                                emptyList()
-                            } else {
-                                withAuctionMdc(mdcSnapshot) {
-                                    detailRepository.loadHourlySeries(
-                                        context.selectedSnapshot.connectedRealmId,
-                                        itemId,
-                                        realmFrom,
-                                        realmTo,
-                                        variant,
-                                        bonusKey,
-                                        modifierKey,
-                                        petSpeciesId,
-                                    )
-                                }
-                            }
-                        }
-                    val hourlyCommodityDef =
-                        async {
-                            if (loadCommodity) {
-                                withAuctionMdc(mdcSnapshot) {
-                                    detailRepository.loadHourlySeries(
-                                        context.commoditySnapshot.connectedRealmId,
-                                        itemId,
-                                        commodityFrom,
-                                        commodityTo,
-                                        variant,
-                                        bonusKey,
-                                        modifierKey,
-                                        petSpeciesId,
-                                    )
-                                }
-                            } else {
-                                emptyList()
-                            }
-                        }
-                    val pieRealmDef =
-                        async {
-                            if (loadCommodity) {
-                                emptyList()
-                            } else {
-                                withAuctionMdc(mdcSnapshot) {
-                                    detailRepository.loadQuantityPie(
-                                        context.selectedSnapshot.connectedRealmId,
-                                        itemId,
-                                        context.selectedSnapshot.date,
-                                        variant,
-                                        bonusKey,
-                                        modifierKey,
-                                        petSpeciesId,
-                                    )
-                                }
-                            }
-                        }
-                    val pieCommodityDef =
-                        async {
-                            if (loadCommodity) {
-                                withAuctionMdc(mdcSnapshot) {
-                                    detailRepository.loadQuantityPie(
-                                        context.commoditySnapshot.connectedRealmId,
-                                        itemId,
-                                        context.commoditySnapshot.date,
-                                        variant,
-                                        bonusKey,
-                                        modifierKey,
-                                        petSpeciesId,
-                                    )
-                                }
-                            } else {
-                                emptyList()
-                            }
-                        }
-                    val selectedSnapshotDef =
-                        async {
-                            if (loadCommodity) {
-                                null to null
-                            } else {
-                                withAuctionMdc(mdcSnapshot) {
-                                    detailRepository.loadSnapshotPriceQuantity(
-                                        context.selectedSnapshot.connectedRealmId,
-                                        itemId,
-                                        context.selectedSnapshot.date,
-                                        context.selectedSnapshot.hour,
-                                        variant,
-                                        bonusKey,
-                                        modifierKey,
-                                        petSpeciesId,
-                                    )
-                                }
-                            }
-                        }
-                    val commoditySnapshotDef =
-                        async {
-                            if (loadCommodity) {
-                                withAuctionMdc(mdcSnapshot) {
-                                    detailRepository.loadSnapshotPriceQuantity(
-                                        context.commoditySnapshot.connectedRealmId,
-                                        itemId,
-                                        context.commoditySnapshot.date,
-                                        context.commoditySnapshot.hour,
-                                        variant,
-                                        bonusKey,
-                                        modifierKey,
-                                        petSpeciesId,
-                                    )
-                                }
-                            } else {
-                                null to null
-                            }
-                        }
-                    val currentListingsDef =
-                        async {
-                            withAuctionMdc(mdcSnapshot) {
-                                val snapshot =
-                                    if (loadCommodity) {
-                                        context.commoditySnapshot
-                                    } else {
-                                        context.selectedSnapshot
-                                    }
-                                detailRepository.loadCurrentListings(
-                                    snapshot.connectedRealmId,
-                                    itemId,
-                                    variant,
-                                    bonusKey,
-                                    modifierKey,
-                                    petSpeciesId,
-                                )
-                            }
-                        }
-                    val craftingDef =
-                        async {
-                            withAuctionMdc(mdcSnapshot) {
-                                val craftingRows =
-                                    detailRepository.loadCraftings(
-                                        context.selectedSnapshot.connectedRealmId,
-                                        context.commoditySnapshot.connectedRealmId,
-                                        itemId,
-                                        context.selectedSnapshot.date,
-                                        context.commoditySnapshot.date,
-                                        context.selectedSnapshot.hour,
-                                        context.commoditySnapshot.hour,
-                                        variant,
-                                        bonusKey,
-                                        modifierKey,
-                                        petSpeciesId,
-                                        preferredRecipeId,
-                                        localeSuffix,
-                                    )
-                                val reagentRows =
-                                    detailRepository
-                                        .loadCraftingReagents(
-                                            context.selectedSnapshot.connectedRealmId,
-                                            context.commoditySnapshot.connectedRealmId,
-                                            itemId,
-                                            craftingRows.map { it.recipeId },
-                                            context.selectedSnapshot.date,
-                                            context.commoditySnapshot.date,
-                                            context.selectedSnapshot.hour,
-                                            context.commoditySnapshot.hour,
-                                            localeSuffix,
-                                        ).groupBy { it.recipeId }
-                                craftingRows to reagentRows
-                            }
-                        }
-
-                    val (craftingRows, reagentRows) = craftingDef.await()
-                    AuctionMarketItemDetailRepositoryRows(
-                        header = headerDef.await(),
-                        dailyRealm = dailyRealmDef.await(),
-                        dailyCommodity = dailyCommodityDef.await(),
-                        hourlyRealm = hourlyRealmDef.await(),
-                        hourlyCommodity = hourlyCommodityDef.await(),
-                        pieRealm = pieRealmDef.await(),
-                        pieCommodity = pieCommodityDef.await(),
-                        selectedSnapshot = selectedSnapshotDef.await(),
-                        commoditySnapshot = commoditySnapshotDef.await(),
-                        currentListings = currentListingsDef.await(),
-                        craftingRows = craftingRows,
-                        reagentRows = reagentRows,
-                    )
-                }
-            }
+            loadRepositoryRows(
+                DetailLoadParameters(
+                    context, itemId, variant, bonusKey, modifierKey, petSpeciesId, loadCommodity,
+                    preferredRecipeId, MDC.getCopyOfContextMap(),
+                ),
+            )
 
         val header =
             repositoryRows.header
@@ -396,6 +195,96 @@ class AuctionMarketItemDetailService(
         )
     }
 
+    private fun loadRepositoryRows(parameters: DetailLoadParameters): AuctionMarketItemDetailRepositoryRows =
+        runBlocking {
+            coroutineScope {
+                val header = async { withAuctionMdc(parameters.mdcSnapshot) { loadHeader(parameters) } }
+                val series = async { loadMarketSeries(parameters) }
+                val snapshots = async { withAuctionMdc(parameters.mdcSnapshot) { loadSnapshotMetrics(parameters) } }
+                val listings = async { withAuctionMdc(parameters.mdcSnapshot) { loadCurrentListings(parameters) } }
+                val crafting = async { withAuctionMdc(parameters.mdcSnapshot) { loadCraftingRows(parameters) } }
+                val loadedSeries = series.await()
+                val loadedSnapshots = snapshots.await()
+                val (craftingRows, reagentRows) = crafting.await()
+                AuctionMarketItemDetailRepositoryRows(
+                    header = header.await(),
+                    dailyRealm = loadedSeries.dailyRealm,
+                    dailyCommodity = loadedSeries.dailyCommodity,
+                    hourlyRealm = loadedSeries.hourlyRealm,
+                    hourlyCommodity = loadedSeries.hourlyCommodity,
+                    pieRealm = loadedSeries.pieRealm,
+                    pieCommodity = loadedSeries.pieCommodity,
+                    selectedSnapshot = loadedSnapshots.first,
+                    commoditySnapshot = loadedSnapshots.second,
+                    currentListings = listings.await(),
+                    craftingRows = craftingRows,
+                    reagentRows = reagentRows,
+                )
+            }
+        }
+
+    private fun loadHeader(parameters: DetailLoadParameters): AuctionMarketItemHeaderRow? =
+        detailRepository.loadItemHeader(parameters.itemId, parameters.context.localeColumnSuffix, parameters.context.region)
+
+    private suspend fun loadMarketSeries(parameters: DetailLoadParameters): MarketSeriesRows =
+        coroutineScope {
+            val snapshot = if (parameters.loadCommodity) parameters.context.commoditySnapshot else parameters.context.selectedSnapshot
+            val fromDate = snapshot.date.minusDays(13)
+            val daily = async { withAuctionMdc(parameters.mdcSnapshot) { loadDailySeries(parameters, snapshot.connectedRealmId, fromDate, snapshot.date) } }
+            val hourly = async { withAuctionMdc(parameters.mdcSnapshot) { loadHourlySeries(parameters, snapshot.connectedRealmId, fromDate, snapshot.date) } }
+            val pie = async { withAuctionMdc(parameters.mdcSnapshot) { loadQuantityPie(parameters, snapshot.connectedRealmId, snapshot.date) } }
+            if (parameters.loadCommodity) {
+                MarketSeriesRows(emptyList(), daily.await(), emptyList(), hourly.await(), emptyList(), pie.await())
+            } else {
+                MarketSeriesRows(daily.await(), emptyList(), hourly.await(), emptyList(), pie.await(), emptyList())
+            }
+        }
+
+    private fun loadDailySeries(parameters: DetailLoadParameters, connectedRealmId: Int, fromDate: java.time.LocalDate, toDate: java.time.LocalDate) =
+        detailRepository.loadDailySeries(connectedRealmId, parameters.itemId, fromDate, toDate, parameters.variant, parameters.bonusKey, parameters.modifierKey, parameters.petSpeciesId)
+
+    private fun loadHourlySeries(parameters: DetailLoadParameters, connectedRealmId: Int, fromDate: java.time.LocalDate, toDate: java.time.LocalDate) =
+        detailRepository.loadHourlySeries(connectedRealmId, parameters.itemId, fromDate, toDate, parameters.variant, parameters.bonusKey, parameters.modifierKey, parameters.petSpeciesId)
+
+    private fun loadQuantityPie(parameters: DetailLoadParameters, connectedRealmId: Int, date: java.time.LocalDate) =
+        detailRepository.loadQuantityPie(connectedRealmId, parameters.itemId, date, parameters.variant, parameters.bonusKey, parameters.modifierKey, parameters.petSpeciesId)
+
+    private fun loadSnapshotMetrics(parameters: DetailLoadParameters): Pair<Pair<Long?, Long?>, Pair<Long?, Long?>> {
+        val snapshot = if (parameters.loadCommodity) parameters.context.commoditySnapshot else parameters.context.selectedSnapshot
+        val metrics =
+            detailRepository.loadSnapshotPriceQuantity(
+                snapshot.connectedRealmId, parameters.itemId, snapshot.date, snapshot.hour, parameters.variant,
+                parameters.bonusKey, parameters.modifierKey, parameters.petSpeciesId,
+            )
+        return if (parameters.loadCommodity) (null to null) to metrics else metrics to (null to null)
+    }
+
+    private fun loadCurrentListings(parameters: DetailLoadParameters): List<AuctionMarketItemCurrentListingRow> {
+        val snapshot = if (parameters.loadCommodity) parameters.context.commoditySnapshot else parameters.context.selectedSnapshot
+        return detailRepository.loadCurrentListings(
+            snapshot.connectedRealmId, parameters.itemId, parameters.variant,
+            parameters.bonusKey, parameters.modifierKey, parameters.petSpeciesId,
+        )
+    }
+
+    private fun loadCraftingRows(parameters: DetailLoadParameters): Pair<List<AuctionMarketItemCraftingRow>, Map<Int, List<AuctionMarketItemCraftingReagentRow>>> {
+        val context = parameters.context
+        val craftingRows =
+            detailRepository.loadCraftings(
+                context.selectedSnapshot.connectedRealmId, context.commoditySnapshot.connectedRealmId, parameters.itemId,
+                context.selectedSnapshot.date, context.commoditySnapshot.date, context.selectedSnapshot.hour,
+                context.commoditySnapshot.hour, parameters.variant, parameters.bonusKey, parameters.modifierKey,
+                parameters.petSpeciesId, parameters.preferredRecipeId, context.localeColumnSuffix,
+            )
+        val reagentRows =
+            detailRepository.loadCraftingReagents(
+                context.selectedSnapshot.connectedRealmId, context.commoditySnapshot.connectedRealmId, parameters.itemId,
+                craftingRows.map { it.recipeId }, context.selectedSnapshot.date, context.commoditySnapshot.date,
+                context.selectedSnapshot.hour, context.commoditySnapshot.hour, context.localeColumnSuffix,
+            ).groupBy { it.recipeId }
+        return craftingRows to reagentRows
+    }
+
     private fun marketDataSources(
         context: MarketContext,
         redundant: Boolean,
@@ -456,97 +345,13 @@ class AuctionMarketItemDetailService(
     }
 
     private fun dayOverDayPercent(daily: List<AuctionMarketItemDetailPoint>): Double? {
-        val withAvg = daily.mapNotNull { p -> p.avgPrice?.let { p to it } }
+        val withAvg = daily.mapNotNull { point -> point.avgPrice?.let { point to it } }
         if (withAvg.size < 2) return null
         val prev = withAvg[withAvg.size - 2].second
         val cur = withAvg.last().second
         if (prev == 0.0) return null
         return 100.0 * (cur - prev) / prev
     }
-
-    private fun AuctionMarketItemHeaderRow.toAuctionMarketItem(): AuctionMarketItem =
-        AuctionMarketItem(
-            id = itemId,
-            name = itemName,
-            mediaUrl = itemMediaUrl,
-            quality =
-                qualityId?.let {
-                    AuctionMarketNamedId(
-                        it,
-                        qualityName.orEmpty(),
-                        qualityType,
-                    )
-                },
-            itemClass =
-                itemClassId?.let {
-                    AuctionMarketNamedId(
-                        it,
-                        itemClassName.orEmpty(),
-                    )
-                },
-            itemSubclass =
-                itemSubclassId?.let {
-                    AuctionMarketNamedId(
-                        it,
-                        itemSubclassName.orEmpty(),
-                    )
-                },
-            expansion =
-                expansionId?.let {
-                    AuctionMarketNamedId(
-                        it,
-                        expansionName.orEmpty(),
-                    )
-                },
-            recipe =
-                recipeId?.let {
-                    AuctionMarketRecipe(
-                        id = it,
-                        name = recipeName.orEmpty(),
-                        mediaUrl = recipeMediaUrl,
-                        rank = recipeRank,
-                    )
-                },
-        )
-
-    private fun AuctionMarketItemDetailDailyRow.toDetailPoint(): AuctionMarketItemDetailPoint =
-        AuctionMarketItemDetailPoint(
-            statDate = statDate,
-            pointTimestamp = pointTimestamp,
-            minPrice = minPrice,
-            avgPrice = avgPrice,
-            p25Price = p25Price,
-            p75Price = p75Price,
-            maxPrice = maxPrice,
-            minQuantity = minQuantity,
-            avgQuantity = avgQuantity,
-            maxQuantity = maxQuantity,
-        )
-
-    private fun AuctionMarketItemDetailHourlyRow.toHourlyPoint(): AuctionMarketItemHourlyPoint =
-        AuctionMarketItemHourlyPoint(
-            timestamp = timestamp,
-            hourOfDay = hourOfDay,
-            minPrice = minPrice,
-            avgPrice = avgPrice,
-            p25Price = p25Price,
-            p75Price = p75Price,
-            maxPrice = maxPrice,
-            totalQuantity = totalQuantity,
-        )
-
-    private fun AuctionMarketItemDetailPieRow.toPieSlice(): AuctionMarketQuantityPieSlice =
-        AuctionMarketQuantityPieSlice(
-            hourOfDay = hourOfDay,
-            fraction = fraction,
-            quantity = quantity,
-        )
-
-    private fun AuctionMarketItemCurrentListingRow.toCurrentListingDto(): AuctionMarketItemCurrentListing =
-        AuctionMarketItemCurrentListing(
-            price = price,
-            quantity = quantity,
-        )
 
     fun craftingAnalytics(
         regionCode: String,
