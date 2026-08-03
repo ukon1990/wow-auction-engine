@@ -106,7 +106,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.PROD_GHCR_PULL_TOKEN || secrets.GHCR_PULL_TOKEN }}
+          password: ${{ github.token }}
 
       - name: Publish images to GHCR
         id: images
