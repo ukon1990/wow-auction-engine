@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.controller
+package net.jonasmf.auctionengine.controller.admin
 
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
 
-@RestControllerAdvice(basePackageClasses = [AdminController::class])
+@RestControllerAdvice(basePackageClasses = [AdminController::class, AdminAuctionHouseController::class])
 class AdminControllerAdvice {
     private val log = LoggerFactory.getLogger(AdminControllerAdvice::class.java)
 
@@ -26,9 +26,7 @@ class AdminControllerAdvice {
             )
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValid(
-        exception: MethodArgumentNotValidException,
-    ): ResponseEntity<ProblemDetail> {
+    fun handleMethodArgumentNotValid(exception: MethodArgumentNotValidException): ResponseEntity<ProblemDetail> {
         val fieldErrors = exception.bindingResult.fieldErrors
         val summary = validationSummary(fieldErrors)
         log.warn("Admin request validation failed (errorCount={}): {}", fieldErrors.size, summary)

@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.service.admin
 
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperRecipe
-import net.jonasmf.auctionengine.repository.rds.AdminRecipeRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminRecipeRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 

@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.service.admin
 
 import net.jonasmf.auctionengine.generated.model.AdminJob
-import net.jonasmf.auctionengine.repository.rds.AdminJobRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminJobRepository
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncGuard
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncLock
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncResult
@@ -73,12 +73,13 @@ class AdminProfessionSyncService(
         val startTime = System.currentTimeMillis()
         log.info("Starting profession/recipe sync job id={}", jobId)
         try {
-            val result = professionRecipeSyncService.syncConfiguredStaticDataRegion(
-                lockCheck = syncLock::ensureActive,
-                onProgress = { progress ->
-                    adminJobRepository.updateJobProgress(jobId, progress.toSummaryMap())
-                },
-            )
+            val result =
+                professionRecipeSyncService.syncConfiguredStaticDataRegion(
+                    lockCheck = syncLock::ensureActive,
+                    onProgress = { progress ->
+                        adminJobRepository.updateJobProgress(jobId, progress.toSummaryMap())
+                    },
+                )
             syncLock.ensureActive()
             adminJobRepository.completeJob(jobId, result.toSummaryMap())
             log.info(
@@ -92,14 +93,19 @@ class AdminProfessionSyncService(
                 result.recipeFailures,
             )
         } catch (error: Throwable) {
-            log.error("Failed profession/recipe sync job id={} in {}ms", jobId, System.currentTimeMillis() - startTime, error)
+            log.error(
+                "Failed profession/recipe sync job id={} in {}ms",
+                jobId,
+                System.currentTimeMillis() - startTime,
+                error,
+            )
             adminJobRepository.failJob(jobId, "Profession/recipe sync failed")
         } finally {
             professionRecipeSyncGuard.release(syncLock)
         }
     }
-
 }
+
 private fun <T> withJobMdc(
     mdc: Map<String, String>?,
     jobId: Long,

@@ -4,8 +4,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import net.jonasmf.auctionengine.generated.model.AdminJob
-import net.jonasmf.auctionengine.repository.rds.AdminExpansionRepository
-import net.jonasmf.auctionengine.repository.rds.AdminJobRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminExpansionRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminJobRepository
 import net.jonasmf.auctionengine.service.ItemSyncService
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test

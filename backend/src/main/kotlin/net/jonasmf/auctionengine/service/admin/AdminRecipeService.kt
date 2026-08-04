@@ -8,8 +8,8 @@ import net.jonasmf.auctionengine.generated.model.AdminRecipeFields
 import net.jonasmf.auctionengine.generated.model.AdminRecipeOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminRecipePage
 import net.jonasmf.auctionengine.integration.blizzard.RecipeApiLookup
-import net.jonasmf.auctionengine.repository.rds.AdminExpansionRepository
-import net.jonasmf.auctionengine.repository.rds.AdminRecipeRepositoryPort
+import net.jonasmf.auctionengine.repository.rds.admin.AdminExpansionRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminRecipeRepositoryPort
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -178,7 +178,10 @@ class AdminRecipeService(
             val sortOrders = mutableSetOf<Int>()
             outputs.forEach { output ->
                 if (!sortOrders.add(output.sortOrder)) {
-                    throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Duplicate output sortOrder: ${output.sortOrder}")
+                    throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Duplicate output sortOrder: ${output.sortOrder}",
+                    )
                 }
                 validatePositive("output.craftedQuantity", output.craftedQuantity)
                 validateNonNegative("output.sortOrder", output.sortOrder)
@@ -189,7 +192,10 @@ class AdminRecipeService(
             val sortOrders = mutableSetOf<Int>()
             reagents.forEach { reagent ->
                 if (!sortOrders.add(reagent.sortOrder)) {
-                    throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Duplicate reagent sortOrder: ${reagent.sortOrder}")
+                    throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Duplicate reagent sortOrder: ${reagent.sortOrder}",
+                    )
                 }
                 validatePositive("reagent.quantity", reagent.quantity)
                 validateNonNegative("reagent.sortOrder", reagent.sortOrder)

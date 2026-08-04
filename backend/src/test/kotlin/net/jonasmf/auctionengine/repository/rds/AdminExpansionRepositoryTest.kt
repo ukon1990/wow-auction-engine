@@ -8,6 +8,7 @@ import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
 import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.mapper.toDomain
+import net.jonasmf.auctionengine.repository.rds.admin.AdminExpansionRepository
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

@@ -7,8 +7,8 @@ import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
 import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.mapper.hasEnglishName
 import net.jonasmf.auctionengine.mapper.toLocaleDTO
-import net.jonasmf.auctionengine.repository.rds.AdminExpansionRepository
-import net.jonasmf.auctionengine.repository.rds.AdminJobRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminExpansionRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminJobRepository
 import net.jonasmf.auctionengine.service.ItemSyncResult
 import net.jonasmf.auctionengine.service.ItemSyncService
 import org.slf4j.LoggerFactory
@@ -242,7 +242,10 @@ class AdminExpansionService(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "displayOrder must be non-negative")
         }
         if (!request.nameLocales.toLocaleDTO().hasEnglishName()) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "At least one English name (en_US or en_GB) is required")
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "At least one English name (en_US or en_GB) is required",
+            )
         }
     }
 

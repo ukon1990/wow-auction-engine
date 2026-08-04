@@ -1,14 +1,15 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.repository.rds.admin
 
 import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
-import net.jonasmf.auctionengine.dto.LocaleDTO
 import net.jonasmf.auctionengine.generated.model.AdminExpansion
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
 import net.jonasmf.auctionengine.mapper.toGameLocale
 import net.jonasmf.auctionengine.mapper.toLocaleDTO
+import net.jonasmf.auctionengine.repository.rds.LocaleJdbcRepository
+import net.jonasmf.auctionengine.repository.rds.toLocaleDTO
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
@@ -197,11 +198,12 @@ class AdminExpansionRepository(
         request: AdminExpansionItemRangeRequest,
     ): Boolean {
         if (!request.enabled) return false
-        val params = mutableListOf<Any?>(
-            request.expansionId,
-            request.endItemId,
-            request.startItemId,
-        )
+        val params =
+            mutableListOf<Any?>(
+                request.expansionId,
+                request.endItemId,
+                request.startItemId,
+            )
         val ignoreSql =
             if (idToIgnore == null) {
                 ""

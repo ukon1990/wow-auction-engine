@@ -2,25 +2,26 @@ package net.jonasmf.auctionengine.controller
 
 import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.config.SecurityConfig
-import net.jonasmf.auctionengine.generated.model.AdminExpansion
-import net.jonasmf.auctionengine.generated.model.GameLocale
-import net.jonasmf.auctionengine.generated.model.AdminJob
+import net.jonasmf.auctionengine.controller.admin.AdminController
 import net.jonasmf.auctionengine.generated.model.AdminConnectionStatus
-import net.jonasmf.auctionengine.generated.model.AdminServerStatus
+import net.jonasmf.auctionengine.generated.model.AdminExpansion
 import net.jonasmf.auctionengine.generated.model.AdminItem
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemPage
+import net.jonasmf.auctionengine.generated.model.AdminJob
+import net.jonasmf.auctionengine.generated.model.AdminServerStatus
 import net.jonasmf.auctionengine.generated.model.AdminSqlColumn
 import net.jonasmf.auctionengine.generated.model.AdminSqlExecuteRequest
 import net.jonasmf.auctionengine.generated.model.AdminSqlIndex
 import net.jonasmf.auctionengine.generated.model.AdminSqlMetadata
 import net.jonasmf.auctionengine.generated.model.AdminSqlResult
-import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.AdminSqlTable
+import net.jonasmf.auctionengine.generated.model.AdminStatus
+import net.jonasmf.auctionengine.generated.model.GameLocale
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.User
-import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
 import net.jonasmf.auctionengine.service.AuctionHouseService
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminItemService
@@ -29,13 +30,13 @@ import net.jonasmf.auctionengine.service.admin.AdminProfessionSyncService
 import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
-import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
 import net.jonasmf.auctionengine.service.admin.NormalizedAuctionHelperProfessionInspectionService
+import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
 import net.jonasmf.auctionengine.service.admin.UserService
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
@@ -44,6 +45,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.core.convert.converter.Converter
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
@@ -56,7 +58,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delet
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -123,7 +124,8 @@ class AdminControllerTest {
     private lateinit var professionTalentTreeImportService: ProfessionTalentTreeImportService
 
     @MockitoBean
-    private lateinit var normalizedAuctionHelperProfessionInspectionService: NormalizedAuctionHelperProfessionInspectionService
+    private lateinit var normalizedAuctionHelperProfessionInspectionService:
+        NormalizedAuctionHelperProfessionInspectionService
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder
@@ -481,7 +483,12 @@ class AdminControllerTest {
                         rowLimit = null,
                     ),
                 ),
-            ).thenThrow(ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "DELETE statements are not allowed"))
+            ).thenThrow(
+                ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "DELETE statements are not allowed",
+                ),
+            )
 
             val result =
                 mockMvc

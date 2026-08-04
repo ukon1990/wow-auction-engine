@@ -15,8 +15,8 @@ import net.jonasmf.auctionengine.integration.blizzard.ItemApiLookup
 import net.jonasmf.auctionengine.mapper.hasEnglishName
 import net.jonasmf.auctionengine.mapper.toGameLocale
 import net.jonasmf.auctionengine.mapper.toLocaleDTO
-import net.jonasmf.auctionengine.repository.rds.AdminExpansionRepository
-import net.jonasmf.auctionengine.repository.rds.AdminItemRepositoryPort
+import net.jonasmf.auctionengine.repository.rds.admin.AdminExpansionRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminItemRepositoryPort
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -397,9 +397,8 @@ class AdminItemService(
         validateNonNegative(field, value ?: missingOverrideOnlyField(field))
     }
 
-    private fun missingOverrideOnlyField(field: String): Nothing {
+    private fun missingOverrideOnlyField(field: String): Nothing =
         throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Override-only items require $field")
-    }
 }
 
 private fun AdminItemFields.toCompareValues(): Map<String, Any?> =
