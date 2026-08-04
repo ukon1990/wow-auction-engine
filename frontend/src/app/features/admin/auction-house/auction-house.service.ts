@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AdminApiService, AuctionHouse, AuctionHousePage } from '@api/generated';
 import { BaseSearchService } from '@core/services/base-search.service';
+import { Observable } from 'rxjs';
 
 type AuctionHouseQueryState = {
   query: string;
@@ -29,5 +30,9 @@ export class AuctionHouseService extends BaseSearchService<
 > {
   constructor(private api: AdminApiService) {
     super(defaultAuctionHouseQueryState);
+  }
+
+  getPageByQuery(queryParams: AuctionHouseQueryState): Observable<AuctionHousePage | null> {
+    return super.search(queryParams, () => this.api.listAuctionHouses());
   }
 }

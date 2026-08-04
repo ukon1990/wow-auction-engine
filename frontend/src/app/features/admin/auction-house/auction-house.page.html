@@ -1,1 +1,11 @@
-<p>auction-house works!</p>
+<ee-page-frame title="Auction houses">
+  <em>TODO: Husk å legg inn "detalje" visning med logger ved klikk på rad</em>
+  <ee-table
+    [columns]="columns"
+    [data]="data()"
+    emptyMessage="No auction houses were found"
+    i18n-emptyMessage="@@market.pagination.empty"
+    i18n-sectionAriaLabel="@@market.table.aria"
+    sectionAriaLabel="Market items"
+  />
+</ee-page-frame>
