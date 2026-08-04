@@ -3,7 +3,7 @@
 Pass this file to **backend workers**, **frontend workers** (mutation forms), and **maintainability reviewer**.
 
 wow-auction-engine uses Spring `ResponseStatusException` and controller advice for error responses.
-Admin endpoints use `AdminControllerAdvice` (`backend/src/main/kotlin/net/jonasmf/auctionengine/controller/AdminControllerAdvice.kt`).
+Admin endpoints use `AdminControllerAdvice` (`../../../../backend/src/main/kotlin/net/jonasmf/auctionengine/controller/admin/AdminControllerAdvice.kt`).
 
 ## Backend
 
