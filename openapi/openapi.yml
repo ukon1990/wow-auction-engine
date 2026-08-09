@@ -30,7 +30,7 @@ paths:
   /health:
     $ref: ./paths/health.yml#/health
   /admin/auction-houses:
-    $ref: ./paths/admin.yml#/listAuctionHouses
+    $ref: ./paths/admin.yml#/searchAuctionHouses
   /admin/auction-houses/{id}:
     $ref: ./paths/admin.yml#/getAuctionHouseById
   /admin/users:
@@ -267,8 +267,6 @@ components:
       $ref: ./components/schemas/auction-market-search-page.yml
     AuctionMarketSearchRow:
       $ref: ./components/schemas/auction-market-search-row.yml
-    AuctionMarketSort:
-      $ref: ./components/schemas/auction-market-sort.yml
     CraftingMarketFilterResponse:
       $ref: ./components/schemas/crafting-market-filter-response.yml
     CraftingMarketSearchPage:
@@ -319,3 +317,5 @@ components:
       $ref: ./components/schemas/profession-skill-tree-entry.yml
     ProfessionSkillTreePrerequisite:
       $ref: ./components/schemas/profession-skill-tree-prerequisite.yml
+    Sorting:
+      $ref: ./components/schemas/sorting.yml
