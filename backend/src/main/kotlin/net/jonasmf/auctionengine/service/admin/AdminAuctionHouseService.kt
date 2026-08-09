@@ -1,9 +1,9 @@
 package net.jonasmf.auctionengine.service.admin
 
-import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
-import net.jonasmf.auctionengine.generated.model.AuctionHousePage
+import net.jonasmf.auctionengine.dbo.rds.admin.toAuctionHouseDomain
+import net.jonasmf.auctionengine.domain.realm.AuctionHouse
 import net.jonasmf.auctionengine.generated.model.AuctionMarketSort
-import net.jonasmf.auctionengine.generated.model.PageMetadata
+import net.jonasmf.auctionengine.generated.model.Sorting
 import net.jonasmf.auctionengine.mapper.realm.toDomain
 import net.jonasmf.auctionengine.repository.rds.admin.AdminAuctionHouseRepository
 import org.slf4j.LoggerFactory
@@ -17,25 +17,30 @@ class AdminAuctionHouseService(
 
     fun getByid(id: Int): AuctionHouse? {
         val house = repository.findById(id).orElse(null)
-        return house
+        return house.toDomain()
     }
 
     fun search(
         page: Int,
         limit: Int,
         sortBy: String,
-        sortDirection: AuctionMarketSort.SortDirection,
-    ): AuctionHousePage {
-        val houses = repository.findAll()
-        return AuctionHousePage(
-            items = houses.map { it.toDomain() },
-            page = PageMetadata(
-                page = page,
-                pageSize = limit,
-                totalItems = houses.,
-                totalPages = TODO(),
-            ),
-            sort = sortDirection,
-        )
+        sortDirection: Sorting.SortDirection,
+    ): Pair<List<AuctionHouse>, Long> {
+        val rows =
+            repository.findAllWithQuery(
+                offset = 0,
+                pageSize = page,
+                orderBy = "", // TODO: liten sjekk
+            )
+        val totalRows =
+            rows.firstOrNull().let {
+                it?.pageTotalItems ?: 0L
+            }
+        val items =
+            rows
+                .groupBy { row -> row.auctionHouseId }
+                .map { (_, rows) -> rows.first().toAuctionHouseDomain(rows) }
+
+        return Pair(items, totalRows)
     }
 }

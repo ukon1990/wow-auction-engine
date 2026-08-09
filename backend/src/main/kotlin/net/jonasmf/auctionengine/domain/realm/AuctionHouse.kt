@@ -1,6 +1,5 @@
 package net.jonasmf.auctionengine.domain.realm
 
-import jdk.internal.org.jline.reader.LineReader
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
 import kotlin.time.Instant
@@ -15,6 +14,7 @@ class AuctionHouse(
     var gameBuild: Int = 0,
     var highestDelay: Long = 0,
     var lastDailyPriceUpdate: Instant? = null,
+    var lastAuctionPriceDeleteEvent: Instant? = null,
     var lastHistoryDeleteEvent: Instant? = null,
     var lastHistoryDeleteEventDaily: Instant? = null,
     var lastModified: Instant? = null,
