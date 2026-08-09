@@ -7,22 +7,22 @@ import net.jonasmf.auctionengine.generated.model.AuctionMarketFilterResponse
 import net.jonasmf.auctionengine.generated.model.AuctionMarketItem
 import net.jonasmf.auctionengine.generated.model.AuctionMarketNamedId
 import net.jonasmf.auctionengine.generated.model.AuctionMarketRecipe
-import net.jonasmf.auctionengine.generated.model.AuctionMarketSort
 import net.jonasmf.auctionengine.generated.model.CraftingMarketSearchPage
 import net.jonasmf.auctionengine.generated.model.CraftingMarketSearchRow
 import net.jonasmf.auctionengine.generated.model.CraftingProfileCandidate
 import net.jonasmf.auctionengine.generated.model.CraftingProfileFit
 import net.jonasmf.auctionengine.generated.model.PageMetadata
+import net.jonasmf.auctionengine.generated.model.Sorting
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketSearchRepository
 import net.jonasmf.auctionengine.repository.rds.CraftingMarketSearchRepository
 import net.jonasmf.auctionengine.repository.rds.CraftingMarketSearchRequest
 import net.jonasmf.auctionengine.repository.rds.CraftingMarketSqlRow
-import net.jonasmf.auctionengine.repository.rds.CraftingProfileCandidate as StoredCraftingProfileCandidate
 import net.jonasmf.auctionengine.repository.rds.ProfileRepository
 import net.jonasmf.auctionengine.repository.rds.RecipeCraftingRuleRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import net.jonasmf.auctionengine.repository.rds.CraftingProfileCandidate as StoredCraftingProfileCandidate
 
 @Service
 class CraftingMarketSearchService(
@@ -134,13 +134,16 @@ class CraftingMarketSearchService(
             actorSubject
                 ?.let { subject ->
                     profileRepository
-                        .findCraftingCandidates(subject, result.rows.mapNotNull(CraftingMarketSqlRow::professionId).toSet())
-                        .groupBy { candidate -> candidate.professionId to candidate.expansionId }
+                        .findCraftingCandidates(
+                            subject,
+                            result.rows.mapNotNull(CraftingMarketSqlRow::professionId).toSet(),
+                        ).groupBy { candidate -> candidate.professionId to candidate.expansionId }
                 }.orEmpty()
         val recipeRulesById =
-            actorSubject?.let {
-                recipeCraftingRuleRepository.findByRecipeIds(result.rows.map { it.recipeId }.toSet())
-            }.orEmpty()
+            actorSubject
+                ?.let {
+                    recipeCraftingRuleRepository.findByRecipeIds(result.rows.map { it.recipeId }.toSet())
+                }.orEmpty()
         val totalPages =
             if (result.totalItems == 0L) {
                 0
@@ -217,7 +220,12 @@ class CraftingMarketSearchService(
                         profitChangePercent = row.profitChangePercent,
                         reagentsFullyPriced = row.reagentsFullyPriced,
                         outputPriced = row.outputUnitPrice != null,
-                        profileFit = row.profileFit(candidatesByRecipeProfession, recipeRulesById, actorSubject != null),
+                        profileFit =
+                            row.profileFit(
+                                candidatesByRecipeProfession,
+                                recipeRulesById,
+                                actorSubject != null,
+                            ),
                         saleRate = row.saleRate,
                         soldPerDay = row.soldPerDay,
                     )
@@ -230,9 +238,9 @@ class CraftingMarketSearchService(
                     totalPages = totalPages,
                 ),
             sort =
-                AuctionMarketSort(
+                Sorting(
                     sortBy = normalizedSortBy,
-                    sortDirection = AuctionMarketSort.SortDirection.forValue(normalizedSortDirection),
+                    sortDirection = Sorting.SortDirection.forValue(normalizedSortDirection),
                 ),
         )
     }
@@ -267,8 +275,10 @@ class CraftingMarketSearchService(
         val rankedCandidates =
             evaluatedCandidates
                 .sortedWith(
-                    compareByDescending<Pair<StoredCraftingProfileCandidate, ProfileCraftabilityEvaluation>> { it.first.predictedQuality ?: -1 }
-                        .thenByDescending { it.first.skillLevel ?: -1 }
+                    compareByDescending<Pair<StoredCraftingProfileCandidate, ProfileCraftabilityEvaluation>> {
+                        it.first.predictedQuality
+                            ?: -1
+                    }.thenByDescending { it.first.skillLevel ?: -1 }
                         .thenBy { it.first.characterName.lowercase() },
                 ).map { it.first.toApi() }
         val bestEvaluation = evaluatedCandidates.maxByOrNull { it.second.predictedQuality }?.second
