@@ -1,6 +1,7 @@
 package net.jonasmf.auctionengine.controller
 
 import kotlinx.coroutines.runBlocking
+import net.jonasmf.auctionengine.config.MVCIntegrationTest
 import net.jonasmf.auctionengine.config.SecurityConfig
 import net.jonasmf.auctionengine.controller.admin.AdminController
 import net.jonasmf.auctionengine.generated.model.AdminConnectionStatus
@@ -79,17 +80,7 @@ private val normalizedProfessionJson =
     """.trimIndent()
 
 @WebMvcTest(AdminController::class)
-@ImportAutoConfiguration(
-    ServletWebSecurityAutoConfiguration::class,
-    SecurityFilterAutoConfiguration::class,
-)
-@Import(SecurityConfig::class)
-@TestPropertySource(
-    properties = [
-        "spring.security.oauth2.resourceserver.jwt.issuer-uri=https://issuer.example.test",
-    ],
-)
-class AdminControllerTest {
+class AdminControllerTest : MVCIntegrationTest() {
     @Autowired
     private lateinit var mockMvc: MockMvc
 

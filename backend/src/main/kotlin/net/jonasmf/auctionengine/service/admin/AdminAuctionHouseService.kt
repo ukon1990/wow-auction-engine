@@ -2,7 +2,6 @@ package net.jonasmf.auctionengine.service.admin
 
 import net.jonasmf.auctionengine.dbo.rds.admin.toAuctionHouseDomain
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
-import net.jonasmf.auctionengine.generated.model.AuctionMarketSort
 import net.jonasmf.auctionengine.generated.model.Sorting
 import net.jonasmf.auctionengine.mapper.realm.toDomain
 import net.jonasmf.auctionengine.repository.rds.admin.AdminAuctionHouseRepository

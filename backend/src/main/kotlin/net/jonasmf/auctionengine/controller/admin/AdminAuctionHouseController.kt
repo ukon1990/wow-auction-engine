@@ -3,7 +3,6 @@ package net.jonasmf.auctionengine.controller.admin
 import net.jonasmf.auctionengine.generated.api.AdminApi
 import net.jonasmf.auctionengine.generated.model.AuctionHouse
 import net.jonasmf.auctionengine.generated.model.AuctionHousePage
-import net.jonasmf.auctionengine.generated.model.AuctionMarketSort
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.Sorting
 import net.jonasmf.auctionengine.mapper.realm.toDto
