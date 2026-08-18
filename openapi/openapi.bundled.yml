@@ -1,0 +1,5173 @@
+openapi: 3.0.3
+info:
+  title: WoW Auction Engine API
+  version: 0.0.1
+  description: Public API for WoW Auction Engine. Every operation accepts an optional X-Correlation-ID and X-Client-Session-ID request header. Responses always include X-Correlation-ID and include X-Client-Session-ID when the supplied session identifier was accepted. Both identifiers use canonical UUID text; the client-session identifier is observability metadata, not authentication.
+servers:
+  - url: /api
+    description: Same origin
+  - url: http://localhost:8080/api
+    description: Local backend (direct)
+tags:
+  - name: Health
+    description: Runtime health endpoints.
+  - name: Admin
+    description: Endpoints for administrating users and data.
+  - name: Realm
+    description: Realm catalog and per-realm auction house status.
+  - name: AuctionMarket
+    description: Auction market search and filter metadata.
+  - name: CraftingMarket
+    description: Crafting market search and filter metadata.
+  - name: Profile
+    description: Authenticated character profession profiles.
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      operationId: health
+      summary: Check runtime health
+      description: Returns no content when the service is healthy, or a bare 503 when runtime health checks fail.
+      responses:
+        '204':
+          description: The application is healthy.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/correlation-id'
+            X-Client-Session-ID:
+              $ref: '#/components/headers/client-session-id'
+        '503':
+          description: The application is running but unhealthy.
+          headers:
+            X-Correlation-ID:
+              $ref: '#/components/headers/correlation-id'
+            X-Client-Session-ID:
+              $ref: '#/components/headers/client-session-id'
+  /admin/auction-houses:
+    get:
+      tags:
+        - Admin
+      operationId: searchAuctionHouses
+      summary: Lists all auction houses
+      description: Allows an administrator to get an overview over the current status of all the auction houses
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+        - name: sortBy
+          in: query
+          required: false
+          schema:
+            type: string
+            default: name
+          enum:
+            - name
+        - name: sortDirection
+          in: query
+          required: false
+          schema:
+            type: string
+            default: asc
+            enum:
+              - asc
+              - desc
+      responses:
+        '200':
+          description: A list of all the auction houses
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/auction-house-page'
+  /admin/auction-houses/{id}:
+    get:
+      tags:
+        - Admin
+      operationId: getAuctionHouseById
+      summary: Get information about an auction house's status by id
+      description: Allows an administrator to gets a spesific auction houses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: A gets a spesific auction house
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/auction-house'
+        '404':
+          description: There is no auction house with this id
+  /admin/users:
+    get:
+      tags:
+        - Admin
+      operationId: listUsers
+      summary: Lists all registered users and their current status
+      description: Allows an administrator to review the current users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+  /admin/status:
+    get:
+      tags:
+        - Admin
+      operationId: getAdminStatus
+      summary: Gets database and server diagnostic metrics
+      description: Allows an administrator to review current database and server status.
+      responses:
+        '200':
+          description: Database and server status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-status'
+  /admin/sql/execute:
+    post:
+      tags:
+        - Admin
+      operationId: executeAdminSql
+      summary: Executes an admin read-only SQL diagnostic query
+      description: Allows an administrator to run read-only SQL diagnostics, explain plans, and confirmed analyze plans.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin-sql-execute-request'
+      responses:
+        '200':
+          description: SQL execution result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-sql-result'
+        '400':
+          description: Invalid or blocked SQL
+  /admin/sql/metadata:
+    get:
+      tags:
+        - Admin
+      operationId: getAdminSqlMetadata
+      summary: Gets available SQL tables, columns, and indexes
+      description: Allows an administrator to inspect read-only database metadata for the SQL editor.
+      responses:
+        '200':
+          description: SQL metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-sql-metadata'
+  /admin/expansions:
+    get:
+      tags:
+        - Admin
+      operationId: listExpansions
+      summary: Lists configured item expansions
+      parameters:
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional locale override for resolved expansion names.
+      responses:
+        '200':
+          description: Expansions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/admin-expansion'
+    post:
+      tags:
+        - Admin
+      operationId: createExpansion
+      summary: Creates an expansion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin-expansion-request'
+      responses:
+        '200':
+          description: Created expansion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-expansion'
+        '400':
+          description: Invalid expansion
+        '409':
+          description: Expansion id, slug, or major version already exists
+  /admin/expansions/{id}:
+    put:
+      tags:
+        - Admin
+      operationId: updateExpansion
+      summary: Updates an expansion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin-expansion-request'
+      responses:
+        '200':
+          description: Updated expansion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-expansion'
+        '400':
+          description: Invalid expansion
+        '404':
+          description: Expansion not found
+        '409':
+          description: Slug or major version already exists
+    delete:
+      tags:
+        - Admin
+      operationId: deleteExpansion
+      summary: Deletes an expansion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Expansion deleted
+        '404':
+          description: Expansion not found
+        '409':
+          description: Expansion is referenced by ranges or items
+  /admin/expansion-ranges:
+    get:
+      tags:
+        - Admin
+      operationId: listExpansionRanges
+      summary: Lists configured item expansion ranges
+      parameters:
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional locale override for resolved expansion names.
+      responses:
+        '200':
+          description: Expansion ranges
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/admin-expansion-item-range'
+    post:
+      tags:
+        - Admin
+      operationId: createExpansionRange
+      summary: Creates an item expansion range
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin-expansion-item-range-request'
+      responses:
+        '200':
+          description: Created range
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-expansion-item-range'
+        '400':
+          description: Invalid range
+  /admin/expansion-ranges/{id}:
+    put:
+      tags:
+        - Admin
+      operationId: updateExpansionRange
+      summary: Updates an item expansion range
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin-expansion-item-range-request'
+      responses:
+        '200':
+          description: Updated range
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-expansion-item-range'
+        '400':
+          description: Invalid range
+        '404':
+          description: Range not found
+    delete:
+      tags:
+        - Admin
+      operationId: deleteExpansionRange
+      summary: Deletes an item expansion range
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Range deleted
+        '404':
+          description: Range not found
+  /admin/expansion-ranges/apply:
+    post:
+      tags:
+        - Admin
+      operationId: applyExpansionRanges
+      summary: Starts a job that applies enabled expansion ranges to existing items
+      responses:
+        '202':
+          description: Job accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-job'
+        '409':
+          description: A job of this type is already running
+  /admin/expansion-ranges/fetch-missing-items:
+    post:
+      tags:
+        - Admin
+      operationId: fetchMissingExpansionRangeItems
+      summary: Starts a job that fetches missing items covered by enabled expansion ranges
+      responses:
+        '202':
+          description: Job accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-job'
+        '409':
+          description: A job of this type is already running
+  /admin/professions/sync:
+    post:
+      tags:
+        - Admin
+      operationId: syncProfessionRecipes
+      summary: Starts a profession and recipe synchronization job
+      responses:
+        '202':
+          description: Job accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-job'
+        '409':
+          description: A profession and recipe synchronization is already running
+  /admin/professions/sync/active:
+    get:
+      tags:
+        - Admin
+      operationId: getActiveProfessionSyncJob
+      summary: Gets the running profession and recipe synchronization job
+      responses:
+        '200':
+          description: Running profession and recipe synchronization job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-job'
+        '404':
+          description: No profession and recipe synchronization job is running
+  /admin/profession-talent-trees/import:
+    post:
+      tags:
+        - Admin
+      operationId: importProfessionTalentTrees
+      summary: Replace versioned profession talent tree definitions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/profession-talent-tree-import-request'
+      responses:
+        '204':
+          description: Imported.
+        '400':
+          description: Unsupported or malformed versioned talent export.
+        '403':
+          description: Administrator role required.
+  /admin/profession-talent-trees/inspect-normalized:
+    post:
+      tags:
+        - Admin
+      operationId: inspectNormalizedAuctionHelperProfessionData
+      summary: Import locally normalized AuctionHelper profession data
+      description: Accepts bounded, versioned JSON produced by the browser-side Lua processors. Raw Lua and encoded addon payloads are never accepted. The endpoint validates recipe, item, reagent, skill, and talent associations and stores an idempotent normalized snapshot. Incomplete addon associations are reported as diagnostics rather than rejecting otherwise safe data. Requests are limited to 32 MiB before JSON deserialization and receive an X-Correlation-ID header.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/normalized-auction-helper-profession-data'
+      responses:
+        '200':
+          description: Normalized data inspection result returned after persistence.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/normalized-auction-helper-profession-inspection'
+        '400':
+          description: Unsupported contract version or structurally invalid normalized data.
+        '403':
+          description: Administrator role required.
+        '413':
+          description: Normalized JSON request exceeds 32 MiB.
+  /admin/jobs/{id}:
+    get:
+      tags:
+        - Admin
+      operationId: getAdminJob
+      summary: Gets an admin job
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Admin job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-job'
+        '404':
+          description: Job not found
+  /admin/items:
+    get:
+      tags:
+        - Admin
+      operationId: searchAdminItems
+      summary: Searches effective item rows for admin editing
+      parameters:
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional search text matched against item id and localized names.
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional locale override for resolved labels.
+        - name: hasBase
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter to items with or without a Blizzard/base row.
+        - name: hasOverride
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter to items with or without an admin override row.
+        - name: itemClassId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter to an item class id.
+        - name: itemSubclassId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter to an item subclass id within the selected/effective class.
+        - name: expansionId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter to an expansion id.
+        - name: hasRecipe
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter to items with or without an associated crafting recipe.
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          description: Paginated admin items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-item-page'
+        '400':
+          description: Invalid search or pagination request
+    post:
+      tags:
+        - Admin
+      operationId: createAdminItem
+      summary: Creates an override-only manual item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin-item-create-request'
+      responses:
+        '200':
+          description: Created admin item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-item'
+        '400':
+          description: Invalid item
+        '409':
+          description: Item already has a base or override row
+  /admin/items/{id}:
+    get:
+      tags:
+        - Admin
+      operationId: getAdminItem
+      summary: Gets an effective admin item row
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional locale override for resolved labels.
+        - name: includeBase
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Include raw Blizzard/base row fields when present.
+        - name: includeOverride
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Include raw sparse override row fields when present.
+      responses:
+        '200':
+          description: Admin item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-item'
+        '404':
+          description: Item not found
+  /admin/items/{id}/override:
+    put:
+      tags:
+        - Admin
+      operationId: upsertAdminItemOverride
+      summary: Upserts a sparse admin override for an existing item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin-item-override-request'
+      responses:
+        '200':
+          description: Updated admin item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-item'
+        '400':
+          description: Invalid override
+        '404':
+          description: Base item not found
+    delete:
+      tags:
+        - Admin
+      operationId: deleteAdminItemOverride
+      summary: Deletes the sparse admin override row
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Override deleted
+        '404':
+          description: Override not found
+  /admin/items/{id}/recipes/{recipeId}:
+    put:
+      tags:
+        - Admin
+      operationId: upsertAdminItemRecipeAssociation
+      summary: Associates a recipe with an item by updating recipe crafted output fields
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin-recipe-association-request'
+      responses:
+        '200':
+          description: Updated admin item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-item'
+        '400':
+          description: Invalid recipe association
+        '404':
+          description: Item or recipe not found
+  /admin/items/{id}/compare-api:
+    post:
+      tags:
+        - Admin
+      operationId: compareAdminItemWithApi
+      summary: Fetches the Blizzard API item and compares it to base, override, and effective fields
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Item API comparison
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-item-compare-response'
+        '404':
+          description: Item not found locally or in Blizzard API
+  /admin/items/bulk-overrides:
+    put:
+      tags:
+        - Admin
+      operationId: bulkUpsertAdminItemOverrides
+      summary: Upserts sparse admin overrides in bulk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin-item-bulk-override-request'
+      responses:
+        '200':
+          description: Updated admin items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/admin-item'
+        '400':
+          description: Invalid bulk override request
+        '404':
+          description: One or more base items were not found
+  /admin/recipes:
+    get:
+      tags:
+        - Admin
+      operationId: searchAdminRecipes
+      summary: Searches effective recipe rows for admin editing
+      parameters:
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional search text matched against recipe id and localized recipe names.
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional locale override for resolved labels.
+        - name: professionId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter to a profession id.
+        - name: hasOverride
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter to recipes with or without an admin override row.
+        - name: itemClassId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by the class of an associated crafted output or reagent.
+        - name: itemSubclassId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by the subclass of an associated crafted output or reagent.
+        - name: expansionId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by the expansion of an associated crafted output or reagent.
+        - name: associatedItemId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter to recipes associated with this item as an output or reagent.
+        - name: associationType
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - crafted
+              - reagent
+          description: Restrict associated item filters to crafted outputs or reagents; omit for either.
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          description: Paginated admin recipes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-recipe-page'
+        '400':
+          description: Invalid search request
+  /admin/recipes/{id}:
+    get:
+      tags:
+        - Admin
+      operationId: getAdminRecipe
+      summary: Gets an effective admin recipe row
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: includeBase
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: includeOverride
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Admin recipe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-recipe'
+        '404':
+          description: Recipe not found
+  /admin/recipes/{id}/override:
+    put:
+      tags:
+        - Admin
+      operationId: upsertAdminRecipeOverride
+      summary: Upserts sparse scalar and optional collection overrides for an existing recipe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin-recipe-override-request'
+      responses:
+        '200':
+          description: Updated admin recipe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-recipe'
+        '400':
+          description: Invalid override
+        '404':
+          description: Base recipe not found
+    delete:
+      tags:
+        - Admin
+      operationId: deleteAdminRecipeOverride
+      summary: Deletes all admin overrides for the recipe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Override deleted
+        '404':
+          description: Override not found
+  /admin/recipes/{id}/compare-api:
+    post:
+      tags:
+        - Admin
+      operationId: compareAdminRecipeWithApi
+      summary: Fetches the Blizzard API recipe and compares it to base, override, and effective fields
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Recipe API comparison
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin-recipe-compare-response'
+        '404':
+          description: Recipe not found locally or in Blizzard API
+  /admin/recipes/bulk-overrides:
+    put:
+      tags:
+        - Admin
+      operationId: bulkUpsertAdminRecipeOverrides
+      summary: Upserts sparse admin recipe overrides in bulk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin-recipe-bulk-override-request'
+      responses:
+        '200':
+          description: Updated admin recipes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/admin-recipe'
+        '400':
+          description: Invalid bulk override request
+        '404':
+          description: One or more base recipes were not found
+  /realms:
+    get:
+      tags:
+        - Realm
+      operationId: listRealms
+      summary: List all known realms across configured regions
+      description: Returns a flat list with one entry per individual realm.
+      responses:
+        '200':
+          description: Flat list of realms (one entry per individual realm).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/realm'
+  /realms/{region}/{slug}:
+    get:
+      tags:
+        - Realm
+      operationId: getRealm
+      summary: Get a single realm with its connected-realm and commodity auction-house status
+      parameters:
+        - name: region
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - us
+              - eu
+              - kr
+              - tw
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Realm detail including the parent connected realm's auction house status and the regional commodity auction house status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/realm-detail'
+        '404':
+          description: No realm exists for the given region and slug, or the regional commodity placeholder has not been seeded yet.
+  /auctions/search:
+    get:
+      tags:
+        - AuctionMarket
+      operationId: search
+      summary: Search auction market items for a selected realm
+      description: Returns paginated item market rows. Snapshot date and hour are derived from auction house state.
+      parameters:
+        - name: region
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - us
+              - eu
+              - kr
+              - tw
+        - name: realmSlug
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional locale override. Defaults to the selected realm locale.
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+        - name: sortBy
+          in: query
+          required: false
+          schema:
+            type: string
+            default: itemName
+            enum:
+              - itemName
+              - quality
+              - itemClass
+              - itemSubclass
+              - selectedPrice
+              - commodityPrice
+              - selectedQuantity
+              - commodityQuantity
+              - saleRate
+              - soldPerDay
+        - name: sortDirection
+          in: query
+          required: false
+          schema:
+            type: string
+            default: asc
+            enum:
+              - asc
+              - desc
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: qualityIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+        - name: itemClassIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+        - name: itemSubclassIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+        - name: expansionIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+        - name: recipeOnly
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: minPrice
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+        - name: maxPrice
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+        - name: minQuantity
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+        - name: maxQuantity
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+        - name: minSaleRatePercent
+          in: query
+          required: false
+          description: Minimum TSM sale rate as a percent (25 means 25%). Bound as fraction against tsm.sale_rate.
+          schema:
+            type: number
+            format: double
+        - name: maxSaleRatePercent
+          in: query
+          required: false
+          description: Maximum TSM sale rate as a percent (25 means 25%). Bound as fraction against tsm.sale_rate.
+          schema:
+            type: number
+            format: double
+        - name: minSoldPerDay
+          in: query
+          required: false
+          description: Minimum TSM average sold per day.
+          schema:
+            type: number
+            format: double
+        - name: maxSoldPerDay
+          in: query
+          required: false
+          description: Maximum TSM average sold per day.
+          schema:
+            type: number
+            format: double
+      responses:
+        '200':
+          description: Paginated market search results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/auction-market-search-page'
+        '400':
+          description: Invalid search request.
+        '404':
+          description: Realm was not found.
+  /auctions/search/filters:
+    get:
+      tags:
+        - AuctionMarket
+      operationId: filters
+      summary: Return market search filter definitions
+      description: Returns database-derived filters for the selected realm and locale.
+      parameters:
+        - name: region
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - us
+              - eu
+              - kr
+              - tw
+        - name: realmSlug
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional locale override. Defaults to the selected realm locale.
+      responses:
+        '200':
+          description: Filter definitions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/auction-market-filter-response'
+        '400':
+          description: Invalid filter request.
+        '404':
+          description: Realm was not found.
+  /auctions/items/detail:
+    get:
+      tags:
+        - AuctionMarket
+      operationId: getAuctionMarketItemDetail
+      summary: Item Codex detail for one market listing bucket
+      description: |
+        Returns charts, summary metrics, and optional crafting economics for one item. Snapshot date/hour match market search. Variant query params scope stats to one auction_stats_hourly row; omit them for item-wide rollup.
+      parameters:
+        - name: region
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - us
+              - eu
+              - kr
+              - tw
+        - name: realmSlug
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: itemId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: bonusKey
+          in: query
+          required: false
+          schema:
+            type: string
+            default: ''
+        - name: modifierKey
+          in: query
+          required: false
+          schema:
+            type: string
+            default: ''
+        - name: petSpeciesId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: scope
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - realm
+              - commodity
+            default: realm
+        - name: preferredRecipeId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Item detail payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/auction-market-item-detail-response'
+        '400':
+          description: Invalid request.
+        '404':
+          description: Realm or item context not found.
+  /crafting/items/analytics:
+    get:
+      tags:
+        - AuctionMarket
+      operationId: getAuctionMarketItemCraftingAnalytics
+      summary: 14-day crafting economics for one item recipe
+      parameters:
+        - name: region
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - us
+              - eu
+              - kr
+              - tw
+        - name: realmSlug
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: itemId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: recipeId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: bonusKey
+          in: query
+          required: false
+          schema:
+            type: string
+            default: ''
+        - name: modifierKey
+          in: query
+          required: false
+          schema:
+            type: string
+            default: ''
+        - name: petSpeciesId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Crafting analytics payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/auction-market-item-crafting-analytics-response'
+        '400':
+          description: Invalid request.
+        '404':
+          description: Realm, item, or recipe context not found.
+  /crafting/search:
+    get:
+      tags:
+        - CraftingMarket
+      operationId: search
+      summary: Search crafting recipes with per-variant pricing and ROI
+      description: Returns paginated recipe rows, one per crafted output AH variant at the realm snapshot hour.
+      parameters:
+        - name: region
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - us
+              - eu
+              - kr
+              - tw
+        - name: realmSlug
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+        - name: sortBy
+          in: query
+          required: false
+          schema:
+            type: string
+            default: itemName
+            enum:
+              - itemName
+              - recipeName
+              - professionName
+              - reagentCost
+              - outputPrice
+              - profit
+              - roiPercent
+              - outputPriceChangePercent
+              - profitChangePercent
+              - listingQuantity
+              - saleRate
+              - soldPerDay
+        - name: sortDirection
+          in: query
+          required: false
+          schema:
+            type: string
+            default: asc
+            enum:
+              - asc
+              - desc
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: professionIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+          style: form
+          explode: true
+        - name: expansionIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+          style: form
+          explode: true
+        - name: qualityIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+          style: form
+          explode: true
+        - name: minProfit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: maxProfit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: minRoiPercent
+          in: query
+          required: false
+          schema:
+            type: number
+            format: double
+        - name: maxRoiPercent
+          in: query
+          required: false
+          schema:
+            type: number
+            format: double
+        - name: minSaleRatePercent
+          in: query
+          required: false
+          description: Minimum TSM sale rate as a percent (25 means 25%). Bound as fraction against c.sale_rate.
+          schema:
+            type: number
+            format: double
+        - name: maxSaleRatePercent
+          in: query
+          required: false
+          description: Maximum TSM sale rate as a percent (25 means 25%). Bound as fraction against c.sale_rate.
+          schema:
+            type: number
+            format: double
+        - name: minSoldPerDay
+          in: query
+          required: false
+          description: Minimum TSM average sold per day.
+          schema:
+            type: number
+            format: double
+        - name: maxSoldPerDay
+          in: query
+          required: false
+          description: Maximum TSM average sold per day.
+          schema:
+            type: number
+            format: double
+        - name: minReagentCost
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: maxReagentCost
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: minOutputPrice
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: maxOutputPrice
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: minOutputPriceChangePercent
+          in: query
+          required: false
+          schema:
+            type: number
+            format: double
+        - name: maxOutputPriceChangePercent
+          in: query
+          required: false
+          schema:
+            type: number
+            format: double
+        - name: requireCompleteReagentPricing
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Paginated crafting search results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/crafting-market-search-page'
+        '400':
+          description: Invalid search request.
+        '404':
+          description: Realm was not found.
+  /crafting/filters:
+    get:
+      tags:
+        - CraftingMarket
+      operationId: filters
+      summary: Return crafting search filter definitions
+      description: Returns profession, expansion, and quality options for crafting market filters.
+      parameters:
+        - name: region
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - us
+              - eu
+              - kr
+              - tw
+        - name: realmSlug
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Filter definitions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/auction-market-filter-response'
+        '400':
+          description: Invalid filter request.
+        '404':
+          description: Realm was not found.
+  /profile/professions/trees:
+    get:
+      tags:
+        - Profile
+      operationId: listProfessionTrees
+      summary: List imported profession skill trees
+      parameters:
+        - name: expansionId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+        - name: professionId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+      responses:
+        '200':
+          description: Imported trees for the requested expansion and profession.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/profession-skill-tree'
+        '401':
+          description: Authentication required.
+  /profile/characters:
+    get:
+      tags:
+        - Profile
+      operationId: listProfileCharacters
+      summary: List the authenticated user's characters
+      responses:
+        '200':
+          description: User-owned characters only.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/profile-character'
+        '401':
+          description: Authentication required.
+    post:
+      tags:
+        - Profile
+      operationId: createProfileCharacter
+      summary: Create an authenticated user's character
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/profile-character-request'
+      responses:
+        '201':
+          description: Created character.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile-character'
+        '400':
+          description: Invalid character data.
+        '401':
+          description: Authentication required.
+        '409':
+          description: Duplicate owned character or source GUID.
+  /profile/characters/professions-preview:
+    get:
+      tags:
+        - Profile
+      operationId: getCharacterProfessionPreview
+      summary: Preview a character's professions from Blizzard
+      description: Fetches public character profession data from Blizzard. The response is not persisted by this endpoint.
+      parameters:
+        - name: region
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - us
+              - eu
+              - kr
+              - tw
+        - name: realmSlug
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 255
+        - name: characterName
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 255
+      responses:
+        '200':
+          description: Current professions, tiers, and known recipes for the requested character.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/character-profession-preview'
+        '400':
+          description: Invalid region
+          realm slug: null
+          or character name.: null
+        '401':
+          description: Authentication required.
+  /profile/characters/{characterId}:
+    delete:
+      tags:
+        - Profile
+      operationId: deleteProfileCharacter
+      summary: Delete an authenticated user's character and allocations
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+      responses:
+        '204':
+          description: Deleted.
+        '401':
+          description: Authentication required.
+        '404':
+          description: Character is missing or not owned by the caller.
+  /profile/characters/{characterId}/professions:
+    get:
+      tags:
+        - Profile
+      operationId: listProfileCharacterProfessions
+      summary: List known professions for a character
+      description: Returns professions persisted from Blizzard sync, addon import, or manual skill-tree saves.
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+      responses:
+        '200':
+          description: Known professions for the owned character.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/profile-character-profession'
+        '401':
+          description: Authentication required.
+        '404':
+          description: Character is missing or not owned by the caller.
+  /profile/characters/{characterId}/sync-blizzard:
+    post:
+      tags:
+        - Profile
+      operationId: syncProfileCharacterBlizzard
+      summary: Import a character's professions from Blizzard
+      description: Fetches current profession data from Blizzard and merges it with any existing addon or manual profile data.
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+      responses:
+        '200':
+          description: Synced professions and known recipes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/profile-character-profession'
+        '400':
+          description: Blizzard lookup failed because of invalid character data.
+        '401':
+          description: Authentication required.
+        '404':
+          description: Character is missing or not owned by the caller.
+  /profile/characters/{characterId}/professions/{professionId}:
+    get:
+      tags:
+        - Profile
+      operationId: getProfessionProfile
+      summary: Get a character profession allocation
+      description: Returns an empty default allocation when the owned character has no saved profile for the profession.
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/ProfessionId'
+      responses:
+        '200':
+          description: Saved or empty default allocation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profession-profile'
+        '401':
+          description: Authentication required.
+        '404':
+          description: Character is missing or not owned by the caller.
+    put:
+      tags:
+        - Profile
+      operationId: putProfessionProfile
+      summary: Create or replace a character profession allocation
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/ProfessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/profession-profile-request'
+      responses:
+        '200':
+          description: Saved allocation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profession-profile'
+        '400':
+          description: Invalid ranks or unmet prerequisites.
+        '401':
+          description: Authentication required.
+        '404':
+          description: Character is missing or not owned by the caller.
+    delete:
+      tags:
+        - Profile
+      operationId: deleteProfessionProfile
+      summary: Delete a character profession allocation
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/ProfessionId'
+      responses:
+        '204':
+          description: Deleted.
+        '401':
+          description: Authentication required.
+        '404':
+          description: Character is missing or not owned by the caller.
+components:
+  parameters:
+    CorrelationId:
+      $ref: '#/components/parameters/correlation-id'
+    ClientSessionId:
+      $ref: '#/components/parameters/client-session-id'
+    CharacterId:
+      name: characterId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    ProfessionId:
+      name: professionId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+    correlation-id:
+      name: X-Correlation-ID
+      in: header
+      required: false
+      description: Canonical UUID used to correlate one request across the frontend, BFF, backend, and downstream services. A missing or invalid value is replaced.
+      schema:
+        type: string
+        format: uuid
+        minLength: 36
+        maxLength: 36
+        pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$
+      example: 0198c728-8f4b-7ccb-9953-d23cc1976587
+    client-session-id:
+      name: X-Client-Session-ID
+      in: header
+      required: false
+      description: Canonical UUID identifying one browser tab session for observability. The value is optional, is never generated by the backend, and is not an authentication or authorization credential.
+      schema:
+        type: string
+        format: uuid
+        minLength: 36
+        maxLength: 36
+        pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$
+      example: 0198c728-a27c-7286-a24e-230ea6be5045
+  headers:
+    CorrelationId:
+      $ref: '#/components/headers/correlation-id'
+    ClientSessionId:
+      $ref: '#/components/headers/client-session-id'
+    correlation-id:
+      description: Canonical UUID used to correlate this request across services. The backend echoes an accepted request value or returns the replacement it generated.
+      required: true
+      schema:
+        type: string
+        format: uuid
+        minLength: 36
+        maxLength: 36
+        pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$
+      example: 0198c728-8f4b-7ccb-9953-d23cc1976587
+    client-session-id:
+      description: Accepted browser-tab session UUID echoed for observability. Omitted when the request did not contain a valid X-Client-Session-ID value.
+      required: false
+      schema:
+        type: string
+        format: uuid
+        minLength: 36
+        maxLength: 36
+        pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$
+      example: 0198c728-a27c-7286-a24e-230ea6be5045
+  schemas:
+    User:
+      $ref: '#/components/schemas/user'
+    AdminStatus:
+      $ref: '#/components/schemas/admin-status'
+    AdminConnectionStatus:
+      $ref: '#/components/schemas/admin-connection-status'
+    AdminServerStatus:
+      $ref: '#/components/schemas/admin-server-status'
+    AdminRunningQuery:
+      $ref: '#/components/schemas/admin-running-query'
+    AdminTableSize:
+      $ref: '#/components/schemas/admin-table-size'
+    AdminSqlExecuteRequest:
+      $ref: '#/components/schemas/admin-sql-execute-request'
+    AdminSqlResult:
+      $ref: '#/components/schemas/admin-sql-result'
+    AdminSqlMetadata:
+      $ref: '#/components/schemas/admin-sql-metadata'
+    AdminSqlTable:
+      $ref: '#/components/schemas/admin-sql-table'
+    AdminSqlColumn:
+      $ref: '#/components/schemas/admin-sql-column'
+    AdminSqlIndex:
+      $ref: '#/components/schemas/admin-sql-index'
+    AdminExpansion:
+      $ref: '#/components/schemas/admin-expansion'
+    AdminExpansionRequest:
+      $ref: '#/components/schemas/admin-expansion-request'
+    GameLocale:
+      $ref: '#/components/schemas/game-locale'
+    AdminExpansionItemRange:
+      $ref: '#/components/schemas/admin-expansion-item-range'
+    AdminExpansionItemRangeRequest:
+      $ref: '#/components/schemas/admin-expansion-item-range-request'
+    AdminJob:
+      $ref: '#/components/schemas/admin-job'
+    ProfessionTalentTreeImportRequest:
+      $ref: '#/components/schemas/profession-talent-tree-import-request'
+    NormalizedAuctionHelperProfessionData:
+      $ref: '#/components/schemas/normalized-auction-helper-profession-data'
+    NormalizedAuctionHelperProfessionInspection:
+      $ref: '#/components/schemas/normalized-auction-helper-profession-inspection'
+    AdminItem:
+      $ref: '#/components/schemas/admin-item'
+    AdminItemBulkOverride:
+      $ref: '#/components/schemas/admin-item-bulk-override'
+    AdminItemBulkOverrideRequest:
+      $ref: '#/components/schemas/admin-item-bulk-override-request'
+    AdminItemCompareField:
+      $ref: '#/components/schemas/admin-item-compare-field'
+    AdminItemCompareResponse:
+      $ref: '#/components/schemas/admin-item-compare-response'
+    AdminItemCreateRequest:
+      $ref: '#/components/schemas/admin-item-create-request'
+    AdminItemFields:
+      $ref: '#/components/schemas/admin-item-fields'
+    AdminItemPage:
+      $ref: '#/components/schemas/admin-item-page'
+    AdminItemReference:
+      $ref: '#/components/schemas/admin-item-reference'
+    AdminItemRecipe:
+      $ref: '#/components/schemas/admin-item-recipe'
+    AdminRecipeAssociationRequest:
+      $ref: '#/components/schemas/admin-recipe-association-request'
+    AdminRecipeSearchResult:
+      $ref: '#/components/schemas/admin-recipe-search-result'
+    AdminRecipe:
+      $ref: '#/components/schemas/admin-recipe'
+    AdminRecipeBulkOverride:
+      $ref: '#/components/schemas/admin-recipe-bulk-override'
+    AdminRecipeBulkOverrideRequest:
+      $ref: '#/components/schemas/admin-recipe-bulk-override-request'
+    AdminRecipeCollectionOverrideRequest:
+      $ref: '#/components/schemas/admin-recipe-collection-override-request'
+    AdminRecipeCompareResponse:
+      $ref: '#/components/schemas/admin-recipe-compare-response'
+    AdminRecipeFields:
+      $ref: '#/components/schemas/admin-recipe-fields'
+    AdminRecipeOutput:
+      $ref: '#/components/schemas/admin-recipe-output'
+    AdminRecipeOverrideRequest:
+      $ref: '#/components/schemas/admin-recipe-override-request'
+    AdminRecipePage:
+      $ref: '#/components/schemas/admin-recipe-page'
+    AdminRecipeReagent:
+      $ref: '#/components/schemas/admin-recipe-reagent'
+    AdminRecipeReagentRank:
+      $ref: '#/components/schemas/admin-recipe-reagent-rank'
+    AdminItemOverrideRequest:
+      $ref: '#/components/schemas/admin-item-override-request'
+    AuctionHouse:
+      $ref: '#/components/schemas/auction-house'
+    AuctionHousePage:
+      $ref: '#/components/schemas/auction-house-page'
+    AuctionHouseStatus:
+      $ref: '#/components/schemas/auction-house-status'
+    AuctionListingKey:
+      $ref: '#/components/schemas/auction-listing-key'
+    AuctionMarketFilter:
+      $ref: '#/components/schemas/auction-market-filter'
+    AuctionMarketFilterOption:
+      $ref: '#/components/schemas/auction-market-filter-option'
+    AuctionMarketFilterResponse:
+      $ref: '#/components/schemas/auction-market-filter-response'
+    AuctionMarketItem:
+      $ref: '#/components/schemas/auction-market-item'
+    AuctionMarketItemCrafting:
+      $ref: '#/components/schemas/auction-market-item-crafting'
+    AuctionMarketItemCraftingAnalyticsPoint:
+      $ref: '#/components/schemas/auction-market-item-crafting-analytics-point'
+    AuctionMarketItemCraftingAnalyticsResponse:
+      $ref: '#/components/schemas/auction-market-item-crafting-analytics-response'
+    AuctionMarketItemCraftingDetail:
+      $ref: '#/components/schemas/auction-market-item-crafting-detail'
+    AuctionMarketItemCraftingHeatmapCell:
+      $ref: '#/components/schemas/auction-market-item-crafting-heatmap-cell'
+    AuctionMarketItemCraftingReagent:
+      $ref: '#/components/schemas/auction-market-item-crafting-reagent'
+    AuctionMarketItemCurrentListing:
+      $ref: '#/components/schemas/auction-market-item-current-listing'
+    AuctionMarketItemDetailPoint:
+      $ref: '#/components/schemas/auction-market-item-detail-point'
+    AuctionMarketItemDetailResponse:
+      $ref: '#/components/schemas/auction-market-item-detail-response'
+    AuctionMarketItemDetailSummary:
+      $ref: '#/components/schemas/auction-market-item-detail-summary'
+    AuctionMarketItemHourlyPoint:
+      $ref: '#/components/schemas/auction-market-item-hourly-point'
+    AuctionMarketMetrics:
+      $ref: '#/components/schemas/auction-market-metrics'
+    AuctionMarketNamedId:
+      $ref: '#/components/schemas/auction-market-named-id'
+    AuctionMarketQuantityPieSlice:
+      $ref: '#/components/schemas/auction-market-quantity-pie-slice'
+    AuctionMarketRecipe:
+      $ref: '#/components/schemas/auction-market-recipe'
+    AuctionMarketSearchPage:
+      $ref: '#/components/schemas/auction-market-search-page'
+    AuctionMarketSearchRow:
+      $ref: '#/components/schemas/auction-market-search-row'
+    CraftingMarketFilterResponse:
+      $ref: '#/components/schemas/crafting-market-filter-response'
+    CraftingMarketSearchPage:
+      $ref: '#/components/schemas/crafting-market-search-page'
+    CraftingMarketSearchRow:
+      $ref: '#/components/schemas/crafting-market-search-row'
+    CraftingProfileCandidate:
+      $ref: '#/components/schemas/crafting-profile-candidate'
+    CraftingProfileFit:
+      $ref: '#/components/schemas/crafting-profile-fit'
+    MarketDataSource:
+      $ref: '#/components/schemas/market-data-source'
+    PageMetadata:
+      $ref: '#/components/schemas/page-metadata'
+    Realm:
+      $ref: '#/components/schemas/realm'
+    RealmDetail:
+      $ref: '#/components/schemas/realm-detail'
+    ProfileCharacter:
+      $ref: '#/components/schemas/profile-character'
+    ProfileCharacterRequest:
+      $ref: '#/components/schemas/profile-character-request'
+    ProfileCharacterProfession:
+      $ref: '#/components/schemas/profile-character-profession'
+    ProfileCharacterProfessionSource:
+      $ref: '#/components/schemas/profile-character-profession-source'
+    CharacterProfessionPreview:
+      $ref: '#/components/schemas/character-profession-preview'
+    CharacterProfessionPreviewProfession:
+      $ref: '#/components/schemas/character-profession-preview-profession'
+    CharacterProfessionPreviewTier:
+      $ref: '#/components/schemas/character-profession-preview-tier'
+    CharacterProfessionPreviewRecipe:
+      $ref: '#/components/schemas/character-profession-preview-recipe'
+    ProfessionProfile:
+      $ref: '#/components/schemas/profession-profile'
+    ProfessionProfileRequest:
+      $ref: '#/components/schemas/profession-profile-request'
+    ProfessionAllocation:
+      $ref: '#/components/schemas/profession-allocation'
+    ProfessionSkillTree:
+      $ref: '#/components/schemas/profession-skill-tree'
+    ProfessionSkillTreeTab:
+      $ref: '#/components/schemas/profession-skill-tree-tab'
+    ProfessionSkillTreeNode:
+      $ref: '#/components/schemas/profession-skill-tree-node'
+    ProfessionSkillTreeEntry:
+      $ref: '#/components/schemas/profession-skill-tree-entry'
+    ProfessionSkillTreePrerequisite:
+      $ref: '#/components/schemas/profession-skill-tree-prerequisite'
+    Sorting:
+      $ref: '#/components/schemas/sorting'
+    realm:
+      type: object
+      required:
+        - region
+        - name
+        - category
+        - slug
+        - locale
+        - timezone
+      properties:
+        region:
+          type: string
+          enum:
+            - us
+            - eu
+            - kr
+            - tw
+        name:
+          type: string
+        category:
+          type: string
+        slug:
+          type: string
+          description: Unique within a region; combined with `region` forms the natural key.
+        locale:
+          type: string
+          description: Blizzard locale, e.g. en_US
+        timezone:
+          type: string
+    auction-house:
+      type: object
+      required:
+        - connectedRealmId
+      properties:
+        id:
+          type: integer
+          format: int32
+        connectedRealmId:
+          type: integer
+          format: int32
+        region:
+          type: string
+        realms:
+          type: array
+          items:
+            $ref: '#/components/schemas/realm'
+        lowestDelay:
+          type: integer
+          format: int64
+        avgDelay:
+          type: integer
+          format: int64
+        highestDelay:
+          type: integer
+          format: int64
+        lastDailyPriceUpdate:
+          type: string
+          format: date-time
+          nullable: true
+        lastHistoryDeleteEvent:
+          type: string
+          format: date-time
+          nullable: true
+        lastHistoryDeleteEventDaily:
+          type: string
+          format: date-time
+          nullable: true
+        nextUpdate:
+          type: string
+          format: date-time
+          nullable: true
+        lastModified:
+          type: string
+          format: date-time
+          nullable: true
+    page-metadata:
+      type: object
+      required:
+        - page
+        - pageSize
+        - totalItems
+        - totalPages
+      properties:
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalItems:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+    sorting:
+      type: object
+      required:
+        - sortBy
+        - sortDirection
+      properties:
+        sortBy:
+          type: string
+        sortDirection:
+          type: string
+          enum:
+            - asc
+            - desc
+    auction-house-page:
+      type: object
+      required:
+        - items
+        - page
+        - sort
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-house'
+        page:
+          $ref: '#/components/schemas/page-metadata'
+        sort:
+          $ref: '#/components/schemas/sorting'
+    user:
+      type: object
+      properties:
+        sub:
+          type: string
+          description: This is the users GUID id.
+        username:
+          type: string
+        email:
+          type: string
+        email_verified:
+          type: boolean
+        status:
+          type: string
+        created:
+          type: string
+          format: date-time
+        lastModified:
+          type: string
+          format: date-time
+    admin-connection-status:
+      type: object
+      required:
+        - maxUsedConnections
+        - threadsConnected
+        - uptimeSeconds
+      properties:
+        maxUsedConnections:
+          type: integer
+          format: int64
+        threadsConnected:
+          type: integer
+          format: int64
+        uptimeSeconds:
+          type: integer
+          format: int64
+    admin-server-status:
+      type: object
+      required:
+        - usedMemoryMb
+        - totalMemoryMb
+        - freeMemoryMb
+        - maxMemoryMb
+      properties:
+        usedMemoryMb:
+          type: integer
+          format: int64
+        totalMemoryMb:
+          type: integer
+          format: int64
+        freeMemoryMb:
+          type: integer
+          format: int64
+        maxMemoryMb:
+          type: integer
+          format: int64
+        processCpuLoad:
+          type: number
+          format: double
+          nullable: true
+        systemCpuLoad:
+          type: number
+          format: double
+          nullable: true
+    admin-running-query:
+      type: object
+      required:
+        - id
+        - queryId
+        - tid
+        - command
+        - time
+        - timeMs
+        - startedAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        queryId:
+          type: integer
+          format: int64
+        tid:
+          type: integer
+          format: int64
+        command:
+          type: string
+        state:
+          type: string
+          nullable: true
+        time:
+          type: integer
+          format: int64
+        timeMs:
+          type: number
+          format: double
+        startedAt:
+          type: string
+          format: date-time
+        info:
+          type: string
+          nullable: true
+        stage:
+          type: integer
+          format: int64
+          nullable: true
+        maxStage:
+          type: integer
+          format: int64
+          nullable: true
+        progress:
+          type: number
+          format: double
+          nullable: true
+        memoryUsed:
+          type: integer
+          format: int64
+          nullable: true
+        examinedRows:
+          type: integer
+          format: int64
+          nullable: true
+    admin-table-size:
+      type: object
+      required:
+        - name
+        - rows
+        - tableSizeInMb
+        - indexSizeInMb
+        - sizeInMb
+        - freeTableSizeInMb
+        - allocatedTableSize
+      properties:
+        name:
+          type: string
+        rows:
+          type: integer
+          format: int64
+        tableSizeInMb:
+          type: integer
+          format: int64
+        indexSizeInMb:
+          type: integer
+          format: int64
+        sizeInMb:
+          type: integer
+          format: int64
+        freeTableSizeInMb:
+          type: integer
+          format: int64
+        allocatedTableSize:
+          type: integer
+          format: int64
+    admin-status:
+      type: object
+      required:
+        - connections
+        - server
+        - runningQueries
+        - tableSizes
+      properties:
+        connections:
+          $ref: '#/components/schemas/admin-connection-status'
+        server:
+          $ref: '#/components/schemas/admin-server-status'
+        runningQueries:
+          type: array
+          items:
+            $ref: '#/components/schemas/admin-running-query'
+        tableSizes:
+          type: array
+          items:
+            $ref: '#/components/schemas/admin-table-size'
+    admin-sql-execute-request:
+      type: object
+      required:
+        - sql
+        - mode
+        - limitRows
+      properties:
+        sql:
+          type: string
+        mode:
+          type: string
+          enum:
+            - QUERY
+            - EXPLAIN
+            - ANALYZE
+        limitRows:
+          type: boolean
+        rowLimit:
+          type: integer
+          minimum: 1
+          maximum: 500
+          nullable: true
+    admin-sql-result:
+      type: object
+      required:
+        - mode
+        - effectiveSql
+        - columns
+        - rows
+        - rowCount
+        - truncated
+        - durationMs
+      properties:
+        mode:
+          type: string
+          enum:
+            - QUERY
+            - EXPLAIN
+            - ANALYZE
+        effectiveSql:
+          type: string
+        columns:
+          type: array
+          items:
+            type: string
+        rows:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+              nullable: true
+        rowCount:
+          type: integer
+        truncated:
+          type: boolean
+        durationMs:
+          type: integer
+          format: int64
+    admin-sql-column:
+      type: object
+      required:
+        - name
+        - dataType
+        - ordinalPosition
+        - nullable
+      properties:
+        name:
+          type: string
+        dataType:
+          type: string
+        columnType:
+          type: string
+          nullable: true
+        nullable:
+          type: boolean
+        defaultValue:
+          type: string
+          nullable: true
+        extra:
+          type: string
+          nullable: true
+        ordinalPosition:
+          type: integer
+    admin-sql-index:
+      type: object
+      required:
+        - name
+        - unique
+        - columns
+      properties:
+        name:
+          type: string
+        unique:
+          type: boolean
+        columns:
+          type: array
+          items:
+            type: string
+    admin-sql-table:
+      type: object
+      required:
+        - name
+        - columns
+        - indexes
+      properties:
+        name:
+          type: string
+        engine:
+          type: string
+          nullable: true
+        tableRows:
+          type: integer
+          format: int64
+          nullable: true
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/admin-sql-column'
+        indexes:
+          type: array
+          items:
+            $ref: '#/components/schemas/admin-sql-index'
+    admin-sql-metadata:
+      type: object
+      required:
+        - tables
+      properties:
+        tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/admin-sql-table'
+    game-locale:
+      type: object
+      properties:
+        en_US:
+          type: string
+          nullable: true
+        en_GB:
+          type: string
+          nullable: true
+        de_DE:
+          type: string
+          nullable: true
+        es_ES:
+          type: string
+          nullable: true
+        es_MX:
+          type: string
+          nullable: true
+        fr_FR:
+          type: string
+          nullable: true
+        it_IT:
+          type: string
+          nullable: true
+        ko_KR:
+          type: string
+          nullable: true
+        pt_BR:
+          type: string
+          nullable: true
+        pt_PT:
+          type: string
+          nullable: true
+        ru_RU:
+          type: string
+          nullable: true
+        zh_CN:
+          type: string
+          nullable: true
+        zh_TW:
+          type: string
+          nullable: true
+    admin-expansion:
+      type: object
+      required:
+        - id
+        - slug
+        - name
+        - nameLocales
+        - majorVersion
+        - displayOrder
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+        name:
+          type: string
+        nameLocales:
+          $ref: '#/components/schemas/game-locale'
+        majorVersion:
+          type: integer
+        displayOrder:
+          type: integer
+    admin-expansion-request:
+      type: object
+      required:
+        - id
+        - slug
+        - nameLocales
+        - majorVersion
+        - displayOrder
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+        majorVersion:
+          type: integer
+        displayOrder:
+          type: integer
+        nameLocales:
+          $ref: '#/components/schemas/game-locale'
+    admin-expansion-item-range:
+      type: object
+      required:
+        - id
+        - expansion
+        - startItemId
+        - endItemId
+        - source
+        - enabled
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        expansion:
+          $ref: '#/components/schemas/admin-expansion'
+        startItemId:
+          type: integer
+        endItemId:
+          type: integer
+        source:
+          type: string
+        enabled:
+          type: boolean
+        note:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    admin-expansion-item-range-request:
+      type: object
+      required:
+        - expansionId
+        - startItemId
+        - endItemId
+        - source
+        - enabled
+      properties:
+        expansionId:
+          type: integer
+        startItemId:
+          type: integer
+          minimum: 1
+        endItemId:
+          type: integer
+          minimum: 1
+        source:
+          type: string
+          default: manual
+        enabled:
+          type: boolean
+          default: true
+        note:
+          type: string
+          nullable: true
+    admin-job:
+      type: object
+      required:
+        - id
+        - domain
+        - operation
+        - status
+        - startedAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        domain:
+          type: string
+          enum:
+            - item
+            - recipe
+            - profession
+            - media
+            - system
+        operation:
+          type: string
+        status:
+          type: string
+          enum:
+            - running
+            - completed
+            - failed
+        requestedBy:
+          type: string
+          nullable: true
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+          nullable: true
+        summary:
+          type: object
+          additionalProperties: true
+          nullable: true
+        errorMessage:
+          type: string
+          nullable: true
+    profession-talent-tree-import-request:
+      type: object
+      required:
+        - formatVersion
+        - source
+        - sourceVersion
+        - trees
+      properties:
+        formatVersion:
+          type: integer
+          enum:
+            - 1
+        source:
+          type: string
+          minLength: 1
+        sourceVersion:
+          type: string
+          minLength: 1
+        addonVersion:
+          type: string
+        schemaVersion:
+          type: integer
+        gameBuild:
+          type: string
+        trees:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+              - expansionId
+              - professionId
+              - externalTreeId
+              - name
+              - tabs
+            properties:
+              expansionId:
+                type: integer
+              professionId:
+                type: integer
+              externalTreeId:
+                type: integer
+              name:
+                type: string
+              description:
+                type: string
+              tabs:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - externalTabId
+                    - name
+                    - nodes
+                  properties:
+                    externalTabId:
+                      type: integer
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    nodes:
+                      type: array
+                      items:
+                        type: object
+                        required:
+                          - externalNodeId
+                          - name
+                          - maxRanks
+                          - entries
+                        properties:
+                          externalNodeId:
+                            type: integer
+                          name:
+                            type: string
+                          description:
+                            type: string
+                          maxRanks:
+                            type: integer
+                            minimum: 1
+                          requiredRank:
+                            type: integer
+                            minimum: 0
+                            description: Minimum total ranks allocated to this node before it can be allocated.
+                          entries:
+                            type: array
+                            minItems: 1
+                            items:
+                              type: object
+                              required:
+                                - externalEntryId
+                                - name
+                                - rankLimit
+                              properties:
+                                externalEntryId:
+                                  type: integer
+                                name:
+                                  type: string
+                                description:
+                                  type: string
+                                rankLimit:
+                                  type: integer
+                                  minimum: 1
+    normalized-auction-helper-source:
+      type: object
+      additionalProperties: false
+      required:
+        - addon
+        - processorVersion
+        - files
+      properties:
+        addon:
+          type: string
+          enum:
+            - AuctionHelper
+        addonVersion:
+          type: string
+          maxLength: 64
+        processorVersion:
+          type: string
+          minLength: 1
+          maxLength: 64
+        files:
+          type: array
+          minItems: 1
+          maxItems: 8
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - fileName
+              - sha256
+            properties:
+              fileName:
+                type: string
+                minLength: 1
+                maxLength: 128
+              sha256:
+                type: string
+                pattern: ^[a-fA-F0-9]{64}$
+    normalized-auction-helper-quality-output:
+      type: object
+      additionalProperties: false
+      required:
+        - quality
+        - itemId
+      properties:
+        quality:
+          type: integer
+          minimum: 1
+          maximum: 10
+        itemId:
+          type: integer
+          minimum: 1
+    normalized-auction-helper-reagent:
+      type: object
+      additionalProperties: false
+      required:
+        - itemId
+        - quantity
+      properties:
+        itemId:
+          type: integer
+          minimum: 1
+        quality:
+          type: integer
+          minimum: 1
+          maximum: 10
+        quantity:
+          type: number
+          minimum: 0
+          description: Exported reagent quantity. Zero means the addon did not expose a reliable quantity.
+    normalized-auction-helper-reagent-slot:
+      type: object
+      additionalProperties: false
+      required:
+        - slotIndex
+        - quantity
+        - reagents
+      properties:
+        slotIndex:
+          type: integer
+          minimum: 1
+        dataSlotIndex:
+          type: integer
+          minimum: 0
+        slotType:
+          type: string
+          maxLength: 64
+        quantity:
+          type: number
+          minimum: 0
+          description: Exported slot quantity. Zero means the addon did not expose a reliable quantity.
+        reagents:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-reagent'
+    normalized-auction-helper-max-quality-reagent:
+      type: object
+      additionalProperties: false
+      required:
+        - itemId
+        - quantity
+      properties:
+        slotIndex:
+          type: integer
+          minimum: 1
+        dataSlotIndex:
+          type: integer
+          minimum: 0
+        itemId:
+          type: integer
+          minimum: 1
+        quantity:
+          type: number
+          minimum: 0
+          description: Exported quantity. Zero means the addon did not expose a reliable quantity.
+    normalized-auction-helper-recipe:
+      type: object
+      additionalProperties: false
+      required:
+        - recipeId
+        - name
+        - learned
+        - reagentSlots
+        - qualityThresholds
+        - qualityOutputItemIds
+        - maxQualityRequiredReagents
+      properties:
+        recipeId:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 256
+        learned:
+          type: boolean
+        recipeType:
+          type: integer
+          minimum: 0
+          description: Numeric Enum.TSchematicType value exported by World of Warcraft; value 1 creates an item.
+        supportsQualities:
+          type: boolean
+        isGatheringRecipe:
+          type: boolean
+        isEnchantingRecipe:
+          type: boolean
+        isSalvageRecipe:
+          type: boolean
+        isRecraft:
+          type: boolean
+        hasCraftingOperationInfo:
+          type: boolean
+        craftedItemId:
+          type: integer
+          minimum: 1
+        outputItemId:
+          type: integer
+          minimum: 1
+        qualityOutputItemIds:
+          type: array
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-quality-output'
+        baseDifficulty:
+          type: number
+          minimum: 0
+        baseSkill:
+          type: number
+          minimum: 0
+        bonusSkill:
+          type: number
+        requiredReagentSkillDelta:
+          type: number
+          description: Additional aggregate reagent skill needed to reach the recipe's maximum output quality.
+        lowerSkillThreshold:
+          type: number
+          minimum: 0
+        upperSkillThreshold:
+          type: number
+          minimum: 0
+        qualityThresholds:
+          type: array
+          maxItems: 10
+          items:
+            type: number
+            minimum: 0
+        reagentSlots:
+          type: array
+          maxItems: 64
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-reagent-slot'
+        maxQualityRequiredReagents:
+          type: array
+          maxItems: 256
+          description: Concrete reagent choices associated with the recipe's maximum-quality calculation.
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-max-quality-reagent'
+    normalized-auction-helper-talent-entry:
+      type: object
+      additionalProperties: false
+      required:
+        - entryId
+      properties:
+        entryId:
+          type: integer
+          minimum: 1
+        rankLimit:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          maxLength: 128
+        description:
+          type: string
+          maxLength: 4096
+    normalized-auction-helper-talent-node:
+      type: object
+      additionalProperties: false
+      required:
+        - nodeId
+        - entries
+      properties:
+        nodeId:
+          type: integer
+          minimum: 1
+        maxRanks:
+          type: integer
+          minimum: 1
+        requiredRank:
+          type: integer
+          minimum: 0
+          description: Knowledge points required to unlock this node.
+        name:
+          type: string
+          maxLength: 128
+        description:
+          type: string
+          maxLength: 4096
+        parentNodeIds:
+          type: array
+          maxItems: 32
+          description: External node IDs that must be connected to this node as its parents.
+          items:
+            type: integer
+            minimum: 1
+        entries:
+          type: array
+          maxItems: 32
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-talent-entry'
+    normalized-auction-helper-talent-tab:
+      type: object
+      additionalProperties: false
+      required:
+        - tabId
+        - nodes
+      properties:
+        tabId:
+          type: integer
+          minimum: 1
+          description: C_Traits tree ID.
+        name:
+          type: string
+          maxLength: 128
+        description:
+          type: string
+          maxLength: 4096
+        nodes:
+          type: array
+          maxItems: 1000
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-talent-node'
+    normalized-auction-helper-talent-tree:
+      type: object
+      additionalProperties: false
+      required:
+        - treeId
+        - skillLineId
+        - expansionId
+        - tabs
+      properties:
+        treeId:
+          type: integer
+          minimum: 1
+          description: C_Traits configuration ID for this expansion-tier specialization.
+        skillLineId:
+          type: integer
+          minimum: 1
+          description: Expansion-tier profession skill line ID.
+        expansionId:
+          type: integer
+          minimum: 1
+          description: Auction Engine expansion ID when authoritatively known.
+        name:
+          type: string
+          maxLength: 128
+        tabs:
+          type: array
+          maxItems: 32
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-talent-tab'
+    normalized-auction-helper-talent-allocation:
+      type: object
+      additionalProperties: false
+      required:
+        - nodeId
+        - entryId
+        - rank
+      properties:
+        nodeId:
+          type: integer
+          minimum: 1
+        entryId:
+          type: integer
+          minimum: 1
+        rank:
+          type: integer
+          minimum: 0
+    normalized-auction-helper-talents:
+      type: object
+      additionalProperties: false
+      required:
+        - trees
+        - allocations
+      properties:
+        trees:
+          type: array
+          maxItems: 32
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-talent-tree'
+        allocations:
+          type: array
+          maxItems: 5000
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-talent-allocation'
+    normalized-auction-helper-profession:
+      type: object
+      additionalProperties: false
+      required:
+        - professionId
+        - name
+        - recipes
+      properties:
+        professionId:
+          type: integer
+          minimum: 1
+        skillLineId:
+          type: integer
+          minimum: 1
+        activeSkillLineId:
+          type: integer
+          minimum: 1
+          description: Expansion-tier skill line currently active for this character.
+        name:
+          type: string
+          minLength: 1
+          maxLength: 128
+        skillLevel:
+          type: integer
+          minimum: 0
+        maxSkillLevel:
+          type: integer
+          minimum: 0
+        recipes:
+          type: array
+          maxItems: 100000
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-recipe'
+        talents:
+          $ref: '#/components/schemas/normalized-auction-helper-talents'
+    normalized-auction-helper-character:
+      type: object
+      additionalProperties: false
+      required:
+        - characterKey
+        - name
+        - realm
+        - region
+        - professions
+      properties:
+        characterKey:
+          type: string
+          minLength: 1
+          maxLength: 256
+        name:
+          type: string
+          minLength: 1
+          maxLength: 64
+        realm:
+          type: string
+          minLength: 1
+          maxLength: 128
+        region:
+          type: string
+          minLength: 1
+          maxLength: 16
+        professions:
+          type: array
+          maxItems: 32
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-profession'
+    normalized-auction-helper-profession-data:
+      type: object
+      additionalProperties: false
+      required:
+        - contractVersion
+        - source
+        - characters
+      properties:
+        contractVersion:
+          type: integer
+          enum:
+            - 1
+        source:
+          $ref: '#/components/schemas/normalized-auction-helper-source'
+        characters:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-character'
+    normalized-auction-helper-profession-diagnostic:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - detail
+        - count
+        - exampleRecipeIds
+      properties:
+        code:
+          type: string
+          enum:
+            - CRAFTED_ITEM_MISSING
+            - REAGENT_ITEM_MISSING
+            - CRAFTING_SKILL_DATA_MISSING
+            - MAX_QUALITY_REAGENT_ASSOCIATION_INCOMPLETE
+            - TALENT_DATA_MISSING
+            - TALENT_ALLOCATION_MISSING_NODE
+            - TALENT_ALLOCATION_MISSING_ENTRY
+        detail:
+          type: string
+          minLength: 1
+          maxLength: 512
+        count:
+          type: integer
+          minimum: 1
+        exampleRecipeIds:
+          type: array
+          maxItems: 10
+          items:
+            type: integer
+            minimum: 1
+    normalized-auction-helper-profession-inspection:
+      type: object
+      additionalProperties: false
+      required:
+        - imported
+        - charactersFound
+        - professionsFound
+        - recipesFound
+        - recipesWithOutputItemFound
+        - missingOutputItemAssociations
+        - missingReagentItemAssociations
+        - missingCraftingSkillData
+        - diagnostics
+      properties:
+        imported:
+          type: boolean
+          enum:
+            - true
+          description: True after the validated normalized snapshot has been persisted.
+        charactersFound:
+          type: integer
+          minimum: 0
+        professionsFound:
+          type: integer
+          minimum: 0
+        recipesFound:
+          type: integer
+          minimum: 0
+        recipesWithOutputItemFound:
+          type: integer
+          minimum: 0
+        missingOutputItemAssociations:
+          type: integer
+          minimum: 0
+        missingReagentItemAssociations:
+          type: integer
+          minimum: 0
+        missingCraftingSkillData:
+          type: integer
+          minimum: 0
+        diagnostics:
+          type: array
+          maxItems: 1000
+          items:
+            $ref: '#/components/schemas/normalized-auction-helper-profession-diagnostic'
+    admin-item-reference:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+    admin-item-recipe:
+      type: object
+      required:
+        - recipeId
+        - name
+        - professionName
+      properties:
+        recipeId:
+          type: integer
+        name:
+          type: string
+        professionName:
+          type: string
+    admin-item-fields:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          nullable: true
+        nameLocales:
+          $ref: '#/components/schemas/game-locale'
+        quality:
+          $ref: '#/components/schemas/admin-item-reference'
+        level:
+          type: integer
+          nullable: true
+        rank:
+          type: integer
+          nullable: true
+        requiredLevel:
+          type: integer
+          nullable: true
+        mediaUrl:
+          type: string
+          nullable: true
+        mediaSourceUrl:
+          type: string
+          nullable: true
+        itemClass:
+          $ref: '#/components/schemas/admin-item-reference'
+        itemSubclass:
+          $ref: '#/components/schemas/admin-item-reference'
+        inventoryType:
+          $ref: '#/components/schemas/admin-item-reference'
+        binding:
+          $ref: '#/components/schemas/admin-item-reference'
+        purchasePrice:
+          type: integer
+          nullable: true
+        sellPrice:
+          type: integer
+          nullable: true
+        maxCount:
+          type: integer
+          nullable: true
+        isEquippable:
+          type: boolean
+          nullable: true
+        isStackable:
+          type: boolean
+          nullable: true
+        purchaseQuantity:
+          type: integer
+          nullable: true
+        expansion:
+          $ref: '#/components/schemas/admin-expansion'
+        recipes:
+          type: array
+          items:
+            $ref: '#/components/schemas/admin-item-recipe'
+          default: []
+        overrideNote:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    admin-item:
+      type: object
+      required:
+        - id
+        - hasBase
+        - hasOverride
+        - effective
+      properties:
+        id:
+          type: integer
+        hasBase:
+          type: boolean
+        hasOverride:
+          type: boolean
+        effective:
+          $ref: '#/components/schemas/admin-item-fields'
+        base:
+          $ref: '#/components/schemas/admin-item-fields'
+        override:
+          $ref: '#/components/schemas/admin-item-fields'
+    admin-item-page:
+      type: object
+      required:
+        - items
+        - page
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/admin-item'
+        page:
+          $ref: '#/components/schemas/page-metadata'
+    admin-item-create-request:
+      type: object
+      required:
+        - id
+        - nameLocales
+        - qualityType
+        - level
+        - requiredLevel
+        - mediaUrl
+        - itemClassId
+        - itemSubclassId
+        - inventoryType
+        - purchasePrice
+        - sellPrice
+        - maxCount
+        - isEquippable
+        - isStackable
+        - purchaseQuantity
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        nameLocales:
+          $ref: '#/components/schemas/game-locale'
+        qualityType:
+          type: string
+        level:
+          type: integer
+        requiredLevel:
+          type: integer
+        mediaUrl:
+          type: string
+        mediaSourceUrl:
+          type: string
+          nullable: true
+        itemClassId:
+          type: integer
+        itemSubclassId:
+          type: integer
+        inventoryType:
+          type: string
+        bindingType:
+          type: string
+          nullable: true
+        purchasePrice:
+          type: integer
+        sellPrice:
+          type: integer
+        maxCount:
+          type: integer
+        isEquippable:
+          type: boolean
+        isStackable:
+          type: boolean
+        purchaseQuantity:
+          type: integer
+        expansionId:
+          type: integer
+          nullable: true
+        overrideNote:
+          type: string
+          nullable: true
+          maxLength: 512
+    admin-item-override-request:
+      type: object
+      properties:
+        nameLocales:
+          $ref: '#/components/schemas/game-locale'
+        qualityType:
+          type: string
+          nullable: true
+        level:
+          type: integer
+          nullable: true
+        requiredLevel:
+          type: integer
+          nullable: true
+        mediaUrl:
+          type: string
+          nullable: true
+        mediaSourceUrl:
+          type: string
+          nullable: true
+        itemClassId:
+          type: integer
+          nullable: true
+        itemSubclassId:
+          type: integer
+          nullable: true
+        inventoryType:
+          type: string
+          nullable: true
+        bindingType:
+          type: string
+          nullable: true
+        purchasePrice:
+          type: integer
+          nullable: true
+        sellPrice:
+          type: integer
+          nullable: true
+        maxCount:
+          type: integer
+          nullable: true
+        isEquippable:
+          type: boolean
+          nullable: true
+        isStackable:
+          type: boolean
+          nullable: true
+        purchaseQuantity:
+          type: integer
+          nullable: true
+        expansionId:
+          type: integer
+          nullable: true
+        overrideNote:
+          type: string
+          nullable: true
+          maxLength: 512
+    admin-recipe-association-request:
+      type: object
+      properties:
+        craftedItemId:
+          type: integer
+          nullable: true
+          description: Item id to set as recipe.crafted_item_id. Null clears the association.
+        craftedQuantity:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Quantity produced by the recipe. Required when craftedItemId is set.
+    admin-item-compare-field:
+      type: object
+      properties:
+        base:
+          nullable: true
+        override:
+          nullable: true
+        api:
+          nullable: true
+        effective:
+          nullable: true
+    admin-item-compare-response:
+      type: object
+      required:
+        - itemId
+        - fields
+      properties:
+        itemId:
+          type: integer
+        fields:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/admin-item-compare-field'
+    admin-item-bulk-override:
+      type: object
+      required:
+        - id
+        - override
+      properties:
+        id:
+          type: integer
+        override:
+          $ref: '#/components/schemas/admin-item-override-request'
+    admin-item-bulk-override-request:
+      type: object
+      required:
+        - overrides
+      properties:
+        overrides:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/admin-item-bulk-override'
+    admin-recipe-output:
+      type: object
+      required:
+        - craftedItemId
+        - craftedQuantity
+        - sortOrder
+      properties:
+        id:
+          type: integer
+          format: int64
+          nullable: true
+        craftedItemId:
+          type: integer
+        craftedItemName:
+          type: string
+          nullable: true
+        craftedQuantity:
+          type: integer
+          minimum: 1
+        requiredSkillLevel:
+          type: integer
+          nullable: true
+        sortOrder:
+          type: integer
+          minimum: 0
+    admin-recipe-reagent-rank:
+      type: object
+      required:
+        - rank
+        - itemId
+      properties:
+        rank:
+          type: integer
+          minimum: 1
+          maximum: 3
+        itemId:
+          type: integer
+        skillPoints:
+          type: integer
+          nullable: true
+    admin-recipe-reagent:
+      type: object
+      required:
+        - itemId
+        - quantity
+        - sortOrder
+      properties:
+        id:
+          type: integer
+          format: int64
+          nullable: true
+        itemId:
+          type: integer
+        itemName:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+          minimum: 1
+        sortOrder:
+          type: integer
+          minimum: 0
+        ranks:
+          type: array
+          items:
+            $ref: '#/components/schemas/admin-recipe-reagent-rank'
+          default: []
+    admin-recipe-fields:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          nullable: true
+        professionName:
+          type: string
+          nullable: true
+        skillTierName:
+          type: string
+          nullable: true
+        professionCategoryName:
+          type: string
+          nullable: true
+        craftedItemId:
+          type: integer
+          nullable: true
+        craftedItemName:
+          type: string
+          nullable: true
+        craftedQuantity:
+          type: integer
+          nullable: true
+        rank:
+          type: integer
+          nullable: true
+        requiredSkillLevel:
+          type: integer
+          nullable: true
+        mediaUrl:
+          type: string
+          nullable: true
+        mediaSourceUrl:
+          type: string
+          nullable: true
+        outputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/admin-recipe-output'
+          default: []
+        reagents:
+          type: array
+          items:
+            $ref: '#/components/schemas/admin-recipe-reagent'
+          default: []
+        overrideNote:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    admin-recipe:
+      type: object
+      required:
+        - id
+        - hasBase
+        - hasOverride
+        - effective
+      properties:
+        id:
+          type: integer
+        hasBase:
+          type: boolean
+        hasOverride:
+          type: boolean
+        effective:
+          $ref: '#/components/schemas/admin-recipe-fields'
+        base:
+          $ref: '#/components/schemas/admin-recipe-fields'
+        override:
+          $ref: '#/components/schemas/admin-recipe-fields'
+    admin-recipe-page:
+      type: object
+      required:
+        - recipes
+        - page
+      properties:
+        recipes:
+          type: array
+          items:
+            $ref: '#/components/schemas/admin-recipe'
+        page:
+          $ref: '#/components/schemas/page-metadata'
+    admin-recipe-collection-override-request:
+      type: object
+      properties:
+        outputs:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/admin-recipe-output'
+        reagents:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/admin-recipe-reagent'
+    admin-recipe-override-request:
+      allOf:
+        - $ref: '#/components/schemas/admin-recipe-collection-override-request'
+        - type: object
+          properties:
+            craftedItemId:
+              type: integer
+              nullable: true
+            craftedQuantity:
+              type: integer
+              nullable: true
+            rank:
+              type: integer
+              nullable: true
+            requiredSkillLevel:
+              type: integer
+              nullable: true
+            overrideNote:
+              type: string
+              nullable: true
+              maxLength: 512
+    admin-recipe-compare-response:
+      type: object
+      required:
+        - recipeId
+        - fields
+      properties:
+        recipeId:
+          type: integer
+        fields:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/admin-item-compare-field'
+    admin-recipe-bulk-override:
+      type: object
+      required:
+        - id
+        - override
+      properties:
+        id:
+          type: integer
+        override:
+          $ref: '#/components/schemas/admin-recipe-override-request'
+    admin-recipe-bulk-override-request:
+      type: object
+      required:
+        - overrides
+      properties:
+        overrides:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/admin-recipe-bulk-override'
+    auction-house-status:
+      type: object
+      required:
+        - connectedRealmId
+      properties:
+        connectedRealmId:
+          type: integer
+          format: int32
+        lastDailyPriceUpdate:
+          type: string
+          format: date-time
+          nullable: true
+        lastModified:
+          type: string
+          format: date-time
+          nullable: true
+        nextUpdate:
+          type: string
+          format: date-time
+          nullable: true
+    realm-detail:
+      type: object
+      required:
+        - realm
+        - auctionHouse
+        - commodity
+      properties:
+        realm:
+          $ref: '#/components/schemas/realm'
+        auctionHouse:
+          $ref: '#/components/schemas/auction-house-status'
+        commodity:
+          $ref: '#/components/schemas/auction-house-status'
+    auction-market-named-id:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          nullable: true
+    auction-market-recipe:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        mediaUrl:
+          type: string
+          nullable: true
+        rank:
+          type: integer
+          nullable: true
+    auction-market-item:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        mediaUrl:
+          type: string
+          nullable: true
+        quality:
+          $ref: '#/components/schemas/auction-market-named-id'
+        itemClass:
+          $ref: '#/components/schemas/auction-market-named-id'
+        itemSubclass:
+          $ref: '#/components/schemas/auction-market-named-id'
+        expansion:
+          $ref: '#/components/schemas/auction-market-named-id'
+        recipe:
+          $ref: '#/components/schemas/auction-market-recipe'
+    auction-listing-key:
+      type: object
+      required:
+        - bonusKey
+        - modifierKey
+        - petSpeciesId
+      description: Identifies one row in auction_stats_hourly / v_auction_house_prices.
+      properties:
+        bonusKey:
+          type: string
+        modifierKey:
+          type: string
+        petSpeciesId:
+          type: integer
+          format: int32
+    auction-market-metrics:
+      type: object
+      required:
+        - connectedRealmId
+      properties:
+        connectedRealmId:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+          nullable: true
+        date:
+          type: string
+          format: date
+          nullable: true
+        hourOfDay:
+          type: integer
+          nullable: true
+        price:
+          type: integer
+          format: int64
+          nullable: true
+        p25Price:
+          type: integer
+          format: int64
+          nullable: true
+          description: 25th percentile buyout for the same current auction variant.
+        p75Price:
+          type: integer
+          format: int64
+          nullable: true
+          description: 75th percentile buyout for the same current auction variant.
+        quantity:
+          type: integer
+          format: int64
+          nullable: true
+    auction-market-search-row:
+      type: object
+      required:
+        - item
+        - preferredScope
+      properties:
+        item:
+          $ref: '#/components/schemas/auction-market-item'
+        preferredScope:
+          type: string
+          description: Preferred detail scope for this row (`realm` or `commodity`).
+        listingPrice:
+          type: integer
+          format: int64
+          description: Unified listing unit price in copper (realm snapshot if present, else commodity).
+        listingQuantity:
+          type: integer
+          format: int64
+          description: Total quantity for the unified listing price bucket.
+        isCommodity:
+          type: boolean
+          description: True when the unified listing values come from commodity only (no realm snapshot row).
+        listingKey:
+          $ref: '#/components/schemas/auction-listing-key'
+          description: Bucket that supplied selectedRealm price (lowest unit price at snapshot hour).
+        selectedRealm:
+          $ref: '#/components/schemas/auction-market-metrics'
+        commodity:
+          $ref: '#/components/schemas/auction-market-metrics'
+        saleRate:
+          type: number
+          format: double
+          nullable: true
+          description: |
+            TSM regional sale rate for this item in the request region, as a fraction in [0, 1]
+            (e.g. 0.25 means 25%). Null when no TSM metric row exists for the region/item.
+        soldPerDay:
+          type: number
+          format: double
+          nullable: true
+          description: |
+            TSM regional average units sold per day for this item in the request region.
+            Null when no TSM metric row exists for the region/item.
+    auction-market-search-page:
+      type: object
+      required:
+        - items
+        - page
+        - sort
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-search-row'
+        page:
+          $ref: '#/components/schemas/page-metadata'
+        sort:
+          $ref: '#/components/schemas/sorting'
+    auction-market-filter-option:
+      type: object
+      required:
+        - id
+        - label
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        parentId:
+          type: string
+          nullable: true
+        qualityType:
+          type: string
+          nullable: true
+          description: Blizzard item quality type (for example RARE) when the option represents item quality.
+    auction-market-filter:
+      type: object
+      required:
+        - id
+        - label
+        - type
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        type:
+          type: string
+          enum:
+            - text
+            - select
+            - multiSelect
+            - boolean
+            - range
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-filter-option'
+        min:
+          type: integer
+          format: int64
+          nullable: true
+        max:
+          type: integer
+          format: int64
+          nullable: true
+    auction-market-filter-response:
+      type: object
+      required:
+        - filters
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-filter'
+    market-data-source:
+      type: object
+      required:
+        - connectedRealmId
+      properties:
+        connectedRealmId:
+          type: integer
+          format: int32
+        auctionHouseLastModified:
+          type: string
+          format: date-time
+          nullable: true
+          description: Blizzard auction dump lastModified for this connected realm (cache invalidation).
+    auction-market-item-detail-summary:
+      type: object
+      description: Card metrics and day-over-day hints for the selected snapshot.
+      properties:
+        selectedRealmPrice:
+          type: integer
+          format: int64
+          nullable: true
+        selectedRealmQuantity:
+          type: integer
+          format: int64
+          nullable: true
+        commodityPrice:
+          type: integer
+          format: int64
+          nullable: true
+        commodityQuantity:
+          type: integer
+          format: int64
+          nullable: true
+        selectedRealmPriceChangePercent:
+          type: number
+          format: double
+          nullable: true
+          description: vs previous day aggregate (null if not computable).
+        commodityPriceChangePercent:
+          type: number
+          format: double
+          nullable: true
+        realmVsCommodityPricePercent:
+          type: number
+          format: double
+          nullable: true
+          description: Positive if realm price above commodity.
+    auction-market-item-detail-point:
+      type: object
+      required:
+        - statDate
+        - pointTimestamp
+      properties:
+        statDate:
+          type: string
+          format: date
+          description: Calendar date in realm-local sense for this bucket.
+        pointTimestamp:
+          type: string
+          format: date-time
+          description: Chart x-axis instant (start of statDate in UTC or documented convention).
+        minPrice:
+          type: integer
+          format: int64
+          nullable: true
+        avgPrice:
+          type: number
+          format: double
+          nullable: true
+        p25Price:
+          type: integer
+          format: int64
+          nullable: true
+        p75Price:
+          type: integer
+          format: int64
+          nullable: true
+        maxPrice:
+          type: integer
+          format: int64
+          nullable: true
+        minQuantity:
+          type: integer
+          format: int64
+          nullable: true
+        avgQuantity:
+          type: number
+          format: double
+          nullable: true
+        maxQuantity:
+          type: integer
+          format: int64
+          nullable: true
+    auction-market-item-hourly-point:
+      type: object
+      required:
+        - timestamp
+        - hourOfDay
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        hourOfDay:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 23
+        minPrice:
+          type: integer
+          format: int64
+          nullable: true
+        avgPrice:
+          type: number
+          format: double
+          nullable: true
+        p25Price:
+          type: integer
+          format: int64
+          nullable: true
+        p75Price:
+          type: integer
+          format: int64
+          nullable: true
+        maxPrice:
+          type: integer
+          format: int64
+          nullable: true
+        totalQuantity:
+          type: integer
+          format: int64
+          nullable: true
+    auction-market-quantity-pie-slice:
+      type: object
+      required:
+        - hourOfDay
+        - fraction
+      properties:
+        hourOfDay:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 23
+        quantity:
+          type: integer
+          format: int64
+          nullable: true
+        fraction:
+          type: number
+          format: double
+          description: Share of total quantity for the day (0..1).
+    auction-market-item-current-listing:
+      type: object
+      required:
+        - price
+        - quantity
+      properties:
+        price:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+    auction-market-item-crafting:
+      type: object
+      required:
+        - recipeId
+      properties:
+        recipeId:
+          type: integer
+          format: int32
+        recipeName:
+          type: string
+        recipeRank:
+          type: integer
+          nullable: true
+        reagentCost:
+          type: integer
+          format: int64
+          nullable: true
+        buyout:
+          type: integer
+          format: int64
+          nullable: true
+          description: Crafted item unit price at snapshot (variant or rollup).
+        profit:
+          type: integer
+          format: int64
+          nullable: true
+        roiPercent:
+          type: number
+          format: double
+          nullable: true
+    auction-market-item-crafting-reagent:
+      type: object
+      required:
+        - itemId
+        - name
+        - quantity
+        - priced
+      properties:
+        itemId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        mediaUrl:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+          format: int32
+        unitPrice:
+          type: integer
+          format: int64
+          nullable: true
+        lineTotal:
+          type: integer
+          format: int64
+          nullable: true
+        purchaseRank:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 1
+          maximum: 3
+          description: Quality rank of the reagent variant to purchase for this recipe output rank.
+        priced:
+          type: boolean
+    auction-market-item-crafting-detail:
+      type: object
+      required:
+        - recipeId
+        - recipeName
+        - craftedQuantity
+        - reagents
+        - reagentsFullyPriced
+      properties:
+        recipeId:
+          type: integer
+          format: int32
+        recipeName:
+          type: string
+        recipeMediaUrl:
+          type: string
+          nullable: true
+        recipeRank:
+          type: integer
+          nullable: true
+        craftedQuantity:
+          type: integer
+          format: int32
+        reagents:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-item-crafting-reagent'
+        reagentCost:
+          type: integer
+          format: int64
+          nullable: true
+        reagentsFullyPriced:
+          type: boolean
+        outputUnitPrice:
+          type: integer
+          format: int64
+          nullable: true
+        buyout:
+          type: integer
+          format: int64
+          nullable: true
+          description: Deprecated alias of outputUnitPrice.
+        profit:
+          type: integer
+          format: int64
+          nullable: true
+        roiPercent:
+          type: number
+          format: double
+          nullable: true
+    auction-market-item-detail-response:
+      type: object
+      required:
+        - item
+        - listingKey
+        - rollupListing
+        - regionalMetricsRedundant
+        - marketDataSources
+        - selectedRealm
+        - commodity
+        - summary
+        - dailySeriesRealm
+        - dailySeriesCommodity
+        - hourlySeriesRealm
+        - hourlySeriesCommodity
+        - quantityPieRealm
+        - quantityPieCommodity
+        - currentListings
+        - craftings
+        - craftedByRecipeCount
+        - reagentInRecipeCount
+      properties:
+        item:
+          $ref: '#/components/schemas/auction-market-item'
+        listingKey:
+          $ref: '#/components/schemas/auction-listing-key'
+          description: Effective listing key used for all queries (defaults applied when query omitted).
+        rollupListing:
+          type: boolean
+          description: True when bonus/modifier/pet defaults mean item-wide rollup (no explicit variant in request).
+        regionalMetricsRedundant:
+          type: boolean
+        marketDataSources:
+          type: array
+          items:
+            $ref: '#/components/schemas/market-data-source'
+        selectedRealm:
+          $ref: '#/components/schemas/auction-market-metrics'
+        commodity:
+          $ref: '#/components/schemas/auction-market-metrics'
+        summary:
+          $ref: '#/components/schemas/auction-market-item-detail-summary'
+        dailySeriesRealm:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-item-detail-point'
+        dailySeriesCommodity:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-item-detail-point'
+        hourlySeriesRealm:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-item-hourly-point'
+        hourlySeriesCommodity:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-item-hourly-point'
+        quantityPieRealm:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-quantity-pie-slice'
+        quantityPieCommodity:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-quantity-pie-slice'
+        currentListings:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-item-current-listing'
+        crafting:
+          $ref: '#/components/schemas/auction-market-item-crafting'
+          nullable: true
+          deprecated: true
+        craftings:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-item-crafting-detail'
+        saleRate:
+          type: number
+          format: double
+          nullable: true
+          description: |
+            TSM regional sale rate for this item in the request region, as a fraction in [0, 1]
+            (e.g. 0.25 means 25%). Null when no TSM metric row exists for the region/item.
+        soldPerDay:
+          type: number
+          format: double
+          nullable: true
+          description: |
+            TSM regional average units sold per day for this item in the request region.
+            Null when no TSM metric row exists for the region/item.
+        craftedByRecipeCount:
+          type: integer
+          minimum: 0
+          description: Number of distinct recipes that craft this item as an output.
+        reagentInRecipeCount:
+          type: integer
+          minimum: 0
+          description: Number of distinct recipes that list this item as a reagent (base or ranked).
+    auction-market-item-crafting-analytics-point:
+      type: object
+      required:
+        - statDate
+      properties:
+        statDate:
+          type: string
+          format: date
+        profit:
+          type: integer
+          format: int64
+          nullable: true
+        roiPercent:
+          type: number
+          format: double
+          nullable: true
+        reagentCost:
+          type: integer
+          format: int64
+          nullable: true
+        outputUnitPrice:
+          type: integer
+          format: int64
+          nullable: true
+    auction-market-item-crafting-heatmap-cell:
+      type: object
+      required:
+        - dayOfWeek
+        - hourOfDay
+        - sampleCount
+      properties:
+        dayOfWeek:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 6
+          description: ISO day index, Monday=0.
+        hourOfDay:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 23
+        profit:
+          type: number
+          format: double
+          nullable: true
+        outputUnitPrice:
+          type: number
+          format: double
+          nullable: true
+        roiPercent:
+          type: number
+          format: double
+          nullable: true
+        sampleCount:
+          type: integer
+          format: int32
+    auction-market-item-crafting-analytics-response:
+      type: object
+      required:
+        - dailySeries
+        - heatmap
+      properties:
+        dailySeries:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-item-crafting-analytics-point'
+        heatmap:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-item-crafting-heatmap-cell'
+    crafting-profile-candidate:
+      type: object
+      required:
+        - characterId
+        - characterName
+        - region
+        - realmName
+        - professionId
+        - allocationCount
+      properties:
+        characterId:
+          type: integer
+          format: int64
+        characterName:
+          type: string
+        region:
+          type: string
+        realmName:
+          type: string
+        professionId:
+          type: integer
+          format: int32
+        skillLevel:
+          type: integer
+          format: int32
+          nullable: true
+        allocationCount:
+          type: integer
+          format: int32
+          description: Number of configured skill-tree entries. Used as a tie-breaker after predicted output quality.
+        predictedQuality:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 0
+          description: Highest output quality tier predicted from saved allocations and imported recipe rules.
+    crafting-profile-fit:
+      type: object
+      required:
+        - state
+        - craftable
+        - diagnostic
+        - alternatives
+      description: |
+        Personal crafting context for the authenticated caller only. When imported recipe rules and talent
+        effects exist, craftable and predicted output quality are computed from saved profile allocations.
+      properties:
+        state:
+          type: string
+          enum:
+            - configured
+            - default
+        craftable:
+          type: boolean
+          nullable: true
+          description: Null when the imported recipe data has no requirement or talent-effect rules.
+        diagnostic:
+          type: string
+          enum:
+            - anonymous_default
+            - no_matching_profile_default
+            - recipe_rules_unavailable_heuristic_ranking
+            - recipe_rules_missing
+            - talent_effects_missing
+            - profile_evaluated
+        bestCandidate:
+          allOf:
+            - $ref: '#/components/schemas/crafting-profile-candidate'
+          nullable: true
+        alternatives:
+          type: array
+          description: Other matching user-owned candidates in deterministic heuristic order.
+          items:
+            $ref: '#/components/schemas/crafting-profile-candidate'
+    crafting-market-search-row:
+      type: object
+      required:
+        - rowId
+        - recipeId
+        - listingKey
+        - craftedQuantity
+        - reagentsFullyPriced
+        - outputPriced
+      properties:
+        rowId:
+          type: string
+          description: Stable id for table rows (recipe + listing variant).
+        recipeId:
+          type: integer
+          format: int32
+        recipe:
+          $ref: '#/components/schemas/auction-market-recipe'
+        item:
+          $ref: '#/components/schemas/auction-market-item'
+        listingKey:
+          $ref: '#/components/schemas/auction-listing-key'
+        professionId:
+          type: integer
+          format: int32
+          nullable: true
+          description: |
+            Profession id for the recipe, taken from `profession.id` via
+            `profession_category` and `skill_tier`. Nullable because recipes can be
+            orphaned from their profession metadata when reference data sync is in
+            progress, in which case the row is still surfaced with a null profession.
+        professionName:
+          type: string
+          nullable: true
+          description: Localized profession name. Nullable for the same reason as `professionId`.
+        skillTierName:
+          type: string
+          nullable: true
+        professionCategoryName:
+          type: string
+          nullable: true
+        craftedQuantity:
+          type: integer
+          format: int32
+        listingQuantity:
+          type: integer
+          format: int64
+          nullable: true
+          description: Quantity at the snapshot for this crafted listing bucket.
+        reagentCostCopper:
+          type: integer
+          format: int64
+          nullable: true
+        outputPriceCopper:
+          type: integer
+          format: int64
+          nullable: true
+          description: Unit buyout for this listing variant at the snapshot hour.
+        outputP25PriceCopper:
+          type: integer
+          format: int64
+          nullable: true
+          description: 25th percentile buyout for this listing variant at the current snapshot.
+        outputP75PriceCopper:
+          type: integer
+          format: int64
+          nullable: true
+          description: 75th percentile buyout for this listing variant at the current snapshot.
+        profitCopper:
+          type: integer
+          format: int64
+          nullable: true
+        roiPercent:
+          type: number
+          format: double
+          nullable: true
+        outputPriceChangePercent:
+          type: number
+          format: double
+          nullable: true
+          description: vs prior calendar day same hour for this variant.
+        profitChangePercent:
+          type: number
+          format: double
+          nullable: true
+        reagentsFullyPriced:
+          type: boolean
+        outputPriced:
+          type: boolean
+        profileFit:
+          allOf:
+            - $ref: '#/components/schemas/crafting-profile-fit'
+          nullable: true
+          description: Present only when the request has an authenticated user. It never exposes another user's profiles.
+        saleRate:
+          type: number
+          format: double
+          nullable: true
+          description: |
+            TSM regional sale rate for the crafted item in the request region, as a fraction in [0, 1]
+            (e.g. 0.25 means 25%). Null when no TSM metric row exists for the region/item.
+        soldPerDay:
+          type: number
+          format: double
+          nullable: true
+          description: |
+            TSM regional average units sold per day for the crafted item in the request region.
+            Null when no TSM metric row exists for the region/item.
+    crafting-market-search-page:
+      type: object
+      required:
+        - items
+        - page
+        - sort
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/crafting-market-search-row'
+        page:
+          $ref: '#/components/schemas/page-metadata'
+        sort:
+          $ref: '#/components/schemas/sorting'
+    profession-skill-tree-prerequisite:
+      type: object
+      required:
+        - parentNodeId
+        - requiredParentRanks
+      properties:
+        parentNodeId:
+          type: integer
+          format: int64
+        requiredParentRanks:
+          type: integer
+          format: int32
+    profession-skill-tree-entry:
+      type: object
+      required:
+        - id
+        - externalEntryId
+        - rankLimit
+        - displayOrder
+      properties:
+        id:
+          type: integer
+          format: int64
+        externalEntryId:
+          type: integer
+          format: int32
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        rankLimit:
+          type: integer
+          format: int32
+        displayOrder:
+          type: integer
+          format: int32
+    profession-skill-tree-node:
+      type: object
+      required:
+        - id
+        - externalNodeId
+        - maxRanks
+        - requiredRank
+        - displayOrder
+        - prerequisites
+        - entries
+      properties:
+        id:
+          type: integer
+          format: int64
+        externalNodeId:
+          type: integer
+          format: int32
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        maxRanks:
+          type: integer
+          format: int32
+        requiredRank:
+          type: integer
+          format: int32
+        displayOrder:
+          type: integer
+          format: int32
+        prerequisites:
+          type: array
+          items:
+            $ref: '#/components/schemas/profession-skill-tree-prerequisite'
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/profession-skill-tree-entry'
+    profession-skill-tree-tab:
+      type: object
+      required:
+        - id
+        - externalTabId
+        - name
+        - displayOrder
+        - nodes
+      properties:
+        id:
+          type: integer
+          format: int64
+        externalTabId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        displayOrder:
+          type: integer
+          format: int32
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/profession-skill-tree-node'
+    profession-skill-tree:
+      type: object
+      required:
+        - id
+        - expansionId
+        - professionId
+        - externalTreeId
+        - name
+        - tabs
+      properties:
+        id:
+          type: integer
+          format: int64
+        expansionId:
+          type: integer
+          format: int32
+        professionId:
+          type: integer
+          format: int32
+        externalTreeId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        tabs:
+          type: array
+          items:
+            $ref: '#/components/schemas/profession-skill-tree-tab'
+    profile-character:
+      type: object
+      required:
+        - id
+        - region
+        - realmName
+        - characterName
+      properties:
+        id:
+          type: integer
+          format: int64
+        region:
+          type: string
+        realmName:
+          type: string
+        characterName:
+          type: string
+        sourceGuid:
+          type: string
+          nullable: true
+    profile-character-request:
+      type: object
+      required:
+        - region
+        - realmName
+        - characterName
+      properties:
+        region:
+          type: string
+          minLength: 1
+          maxLength: 32
+        realmName:
+          type: string
+          minLength: 1
+          maxLength: 255
+        characterName:
+          type: string
+          minLength: 1
+          maxLength: 255
+        sourceGuid:
+          type: string
+          nullable: true
+          maxLength: 64
+    character-profession-preview-recipe:
+      type: object
+      required:
+        - recipeId
+        - recipeName
+      properties:
+        recipeId:
+          type: integer
+          format: int32
+        recipeName:
+          type: string
+    character-profession-preview-tier:
+      type: object
+      required:
+        - skillTierId
+        - skillTierName
+        - skillPoints
+        - maxSkillPoints
+        - knownRecipes
+      properties:
+        skillTierId:
+          type: integer
+          format: int32
+        skillTierName:
+          type: string
+        skillPoints:
+          type: integer
+          format: int32
+        maxSkillPoints:
+          type: integer
+          format: int32
+        knownRecipes:
+          type: array
+          items:
+            $ref: '#/components/schemas/character-profession-preview-recipe'
+    character-profession-preview-profession:
+      type: object
+      required:
+        - professionId
+        - professionName
+        - tiers
+      properties:
+        professionId:
+          type: integer
+          format: int32
+        professionName:
+          type: string
+        tiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/character-profession-preview-tier'
+    character-profession-preview:
+      type: object
+      required:
+        - region
+        - realmSlug
+        - characterName
+        - professions
+      properties:
+        region:
+          type: string
+          enum:
+            - us
+            - eu
+            - kr
+            - tw
+        realmSlug:
+          type: string
+        characterName:
+          type: string
+        professions:
+          type: array
+          items:
+            $ref: '#/components/schemas/character-profession-preview-profession'
+    profile-character-profession-source:
+      type: string
+      enum:
+        - blizzard
+        - addon
+        - manual
+    profile-character-profession:
+      type: object
+      required:
+        - professionId
+        - knownRecipeCount
+        - allocationCount
+        - sources
+      properties:
+        professionId:
+          type: integer
+          format: int32
+        skillLevel:
+          type: integer
+          format: int32
+          nullable: true
+        knownRecipeCount:
+          type: integer
+          format: int32
+          minimum: 0
+        allocationCount:
+          type: integer
+          format: int32
+          minimum: 0
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/profile-character-profession-source'
+    profession-allocation:
+      type: object
+      required:
+        - entryId
+        - rank
+      properties:
+        entryId:
+          type: integer
+          format: int64
+          minimum: 1
+        rank:
+          type: integer
+          format: int32
+          minimum: 1
+    profession-profile:
+      type: object
+      required:
+        - characterId
+        - professionId
+        - allocations
+      properties:
+        characterId:
+          type: integer
+          format: int64
+        professionId:
+          type: integer
+          format: int32
+        treeId:
+          type: integer
+          format: int64
+          nullable: true
+        skillLevel:
+          type: integer
+          format: int32
+          nullable: true
+        allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/profession-allocation'
+    profession-profile-request:
+      type: object
+      required:
+        - treeId
+        - allocations
+      properties:
+        treeId:
+          type: integer
+          format: int64
+          minimum: 1
+        skillLevel:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 0
+        allocations:
+          type: array
+          maxItems: 500
+          items:
+            $ref: '#/components/schemas/profession-allocation'
+    admin-recipe-search-result:
+      type: object
+      required:
+        - recipeId
+        - name
+        - professionName
+        - skillTierName
+        - professionCategoryName
+      properties:
+        recipeId:
+          type: integer
+        name:
+          type: string
+        professionName:
+          type: string
+        skillTierName:
+          type: string
+        professionCategoryName:
+          type: string
+        craftedItemId:
+          type: integer
+          nullable: true
+        craftedItemName:
+          type: string
+          nullable: true
+        craftedQuantity:
+          type: integer
+          nullable: true
+    crafting-market-filter-response:
+      type: object
+      required:
+        - filters
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/auction-market-filter'
