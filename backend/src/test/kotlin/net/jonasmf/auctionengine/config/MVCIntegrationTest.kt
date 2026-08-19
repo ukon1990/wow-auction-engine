@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.core.convert.converter.Converter
@@ -13,13 +14,14 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.web.servlet.MockMvc
 
 /**
  * A helper for writing integration tests for MVC(controllers).
  * It uses test containers for storage.
  *
- * Note: Remember to declare @WebMvcTest(AdminController::class)
  */
+@AutoConfigureMockMvc
 @ImportAutoConfiguration(
     ServletWebSecurityAutoConfiguration::class,
     SecurityFilterAutoConfiguration::class,
@@ -31,6 +33,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean
     ],
 )
 abstract class MVCIntegrationTest : IntegrationTestBase() {
+    @Autowired
+    protected lateinit var mockMvc: MockMvc
+
     @MockitoBean
     protected lateinit var jwtDecoder: JwtDecoder
 

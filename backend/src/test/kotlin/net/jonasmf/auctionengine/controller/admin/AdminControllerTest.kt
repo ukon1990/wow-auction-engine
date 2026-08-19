@@ -68,11 +68,7 @@ private val normalizedProfessionJson =
     }
     """.trimIndent()
 
-@WebMvcTest(AdminController::class)
 class AdminControllerTest : MVCIntegrationTest() {
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
     @MockitoBean
     private lateinit var userService: UserService
 

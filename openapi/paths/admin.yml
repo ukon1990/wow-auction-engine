@@ -1,7 +1,7 @@
 searchAuctionHouses:
     get:
         tags:
-            - Admin
+            - AdminAuctionHouse
         operationId: searchAuctionHouses
         summary: Lists all auction houses
         description: Allows an administrator to get an overview over the current status of all the auction houses
@@ -46,7 +46,7 @@ searchAuctionHouses:
 getAuctionHouseById:
     get:
         tags:
-            - Admin
+            - AdminAuctionHouse
         operationId: getAuctionHouseById
         summary: Get information about an auction house's status by id
         description: Allows an administrator to gets a spesific auction houses

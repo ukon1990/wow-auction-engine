@@ -1,26 +1,17 @@
 package net.jonasmf.auctionengine.controller.admin
 
 import net.jonasmf.auctionengine.config.MVCIntegrationTest
-import net.jonasmf.auctionengine.domain.realm.AuctionHouse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(AdminAuctionHouseControllerTest::class)
 class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
     @Test
     fun getAuctionHouseById() {
         assertEquals(1, 2)

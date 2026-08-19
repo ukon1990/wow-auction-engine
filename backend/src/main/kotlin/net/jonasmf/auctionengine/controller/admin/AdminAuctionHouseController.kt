@@ -1,6 +1,7 @@
 package net.jonasmf.auctionengine.controller.admin
 
 import net.jonasmf.auctionengine.generated.api.AdminApi
+import net.jonasmf.auctionengine.generated.api.AdminAuctionHouseApi
 import net.jonasmf.auctionengine.generated.model.AuctionHouse
 import net.jonasmf.auctionengine.generated.model.AuctionHousePage
 import net.jonasmf.auctionengine.generated.model.PageMetadata
@@ -19,7 +20,7 @@ import kotlin.math.roundToInt
 @RestController
 class AdminAuctionHouseController(
     private val service: AdminAuctionHouseService,
-) : AdminApi {
+) : AdminAuctionHouseApi {
     override suspend fun getAuctionHouseById(id: Int): ResponseEntity<AuctionHouse> {
         val auctionHouse =
             service.getByid(id)
