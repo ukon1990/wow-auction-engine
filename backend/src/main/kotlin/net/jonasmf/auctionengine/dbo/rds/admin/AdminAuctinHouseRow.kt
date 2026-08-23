@@ -20,7 +20,7 @@ data class AdminAuctinHouseRow(
     val auctionHouseAvgDelay: Long,
     val auctionHouseHighestDelay: Long,
 
-    val auctionHouseLastAuctionPriceDeleteEvent: Instant,
+    val auctionHouseLastAuctionPriceDeleteEvent: Instant? = null,
     val auctionHouseLastHistoryDeleteEvent: Instant,
     val auctionHouseLastHistoryDeleteEventDaily: Instant,
 
@@ -62,9 +62,9 @@ fun AdminAuctinHouseRow.toAuctionHouseDomain(rows: List<AdminAuctinHouseRow>): A
         lowestDelay = auctionHouseLowestDelay,
         avgDelay = auctionHouseAvgDelay,
         highestDelay = auctionHouseHighestDelay,
-        lastAuctionPriceDeleteEvent = auctionHouseLastAuctionPriceDeleteEvent.toKotlinInstant(),
+        lastAuctionPriceDeleteEvent = auctionHouseLastAuctionPriceDeleteEvent?.toKotlinInstant(),
         lastHistoryDeleteEvent = auctionHouseLastHistoryDeleteEvent.toKotlinInstant(),
-        lastHistoryDeleteEventDaily = auctionHouseLastAuctionPriceDeleteEvent.toKotlinInstant(),
+        lastHistoryDeleteEventDaily = auctionHouseLastAuctionPriceDeleteEvent?.toKotlinInstant(),
         lastModified = auctionHouseLastModified.toKotlinInstant(),
         nextUpdate = auctionHouseNextUpdate.toKotlinInstant(),
         realms = rows.map { it.toRealmDomain() },

@@ -1,9 +1,15 @@
 package net.jonasmf.auctionengine.controller.admin
 
 import net.jonasmf.auctionengine.config.MVCIntegrationTest
+import net.jonasmf.auctionengine.mapper.realm.toDbo
+import net.jonasmf.auctionengine.service.AuctionHouseService
+import net.jonasmf.auctionengine.testsupport.builder.buildConnectedRealm
+import net.jonasmf.auctionengine.testsupport.builder.buildRealm
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -12,6 +18,37 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
+    @Autowired
+    lateinit var autionHouseService: AuctionHouseService
+
+    @BeforeEach
+    fun setupData() {
+        var connectedRealmA =
+            buildConnectedRealm(
+                id = 1,
+                realms =
+                    mutableListOf(
+                        buildRealm(
+                            id = 1,
+                            name = "a",
+                        ),
+                    ),
+            )
+        var connectedRealmB =
+            buildConnectedRealm(
+                id = 2,
+                realms =
+                    mutableListOf(
+                        buildRealm(
+                            id = 2,
+                            name = "b",
+                        ),
+                    ),
+            )
+        autionHouseService.createIfMissing(connectedRealmA.toDbo())
+        autionHouseService.createIfMissing(connectedRealmB.toDbo())
+    }
+
     @Test
     fun getAuctionHouseById() {
         assertEquals(1, 2)
