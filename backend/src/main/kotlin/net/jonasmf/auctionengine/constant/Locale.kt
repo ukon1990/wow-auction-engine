@@ -38,5 +38,23 @@ enum class Locale(
                 "zhCN" -> ZH_CN
                 else -> throw IllegalArgumentException("Unknown locale: $value")
             }
+
+        fun fromOrdinalInt(value: Int): Locale =
+            when (value) {
+                0 -> EN_US
+                1 -> PT_BR
+                2 -> PT_PT
+                3 -> ES_MX
+                4 -> DE_DE
+                5 -> EN_GB
+                6 -> ES_ES
+                7 -> FR_FR
+                9 -> IT_IT
+                10 -> RU_RU
+                11 -> KO_KR
+                12 -> ZH_TW
+                13 -> ZH_CN
+                else -> throw IllegalArgumentException("Unknown locale: $value")
+            }
     }
 }

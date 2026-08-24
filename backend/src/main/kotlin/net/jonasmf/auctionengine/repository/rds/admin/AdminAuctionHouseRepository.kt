@@ -42,12 +42,12 @@ interface AdminAuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
             ah.avg_delay AS auction_house_avg_delay,
             ah.highest_delay AS auction_house_highest_delay,
 
-            ah.last_history_delete_event AS auction_house_last_auction_price_delete_event,
+            ah.last_auction_price_delete_event AS auction_house_last_auction_price_delete_event,
             ah.last_history_delete_event AS auction_house_last_history_delete_event,
             ah.last_history_delete_event_daily AS auction_house_last_history_delete_event_daily,
 
-            ah.last_modified AS auction_house_updated_at,
-            ah.next_update AS auction_house_next_update_at,
+            ah.last_modified AS auction_house_last_modified,
+            ah.next_update AS auction_house_next_update,
 
             r.id AS realm_id,
             r.slug AS realm_slug,

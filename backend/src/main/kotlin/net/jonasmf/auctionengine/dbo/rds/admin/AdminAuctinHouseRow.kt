@@ -30,9 +30,9 @@ data class AdminAuctinHouseRow(
     val realmId: Int,
     val realmSlug: String,
     val realmName: String,
-    val realmLocale: String,
+    val realmLocale: Int,
     val realmCategory: String,
-    val realmGameBuild: String,
+    val realmGameBuild: Int,
     val realmTimeZone: String,
 )
 
@@ -47,9 +47,9 @@ fun AdminAuctinHouseRow.toRealmDomain(): Realm =
             ),
         name = realmName,
         category = realmCategory,
-        locale = Locale.fromCompactString(realmLocale),
+        locale = Locale.fromOrdinalInt(realmLocale),
         timezone = realmTimeZone,
-        gameBuild = GameBuildVersion.valueOf(realmGameBuild),
+        gameBuild = GameBuildVersion.RETAIL, // TODO:Create helper .valueOf(realmGameBuild),
         slug = realmSlug,
     )
 
