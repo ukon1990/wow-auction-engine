@@ -57,9 +57,9 @@ interface AdminAuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
             r.game_build AS realm_game_build,
             r.timezone AS realm_timezone
         FROM ah
-            LEFT JOIN connected_realm cr ON cr.id = ah.connected_id
-            LEFT JOIN connected_realm_realms crr ON crr.connected_realm_id = cr.id
-            LEFT JOIN realm r ON r.id = crr.realms_id
+            JOIN connected_realm cr ON cr.id = ah.connected_id
+            JOIN connected_realm_realms crr ON crr.connected_realm_id = cr.id
+            JOIN realm r ON r.id = crr.realms_id
         ORDER BY :orderBy
     """,
     )

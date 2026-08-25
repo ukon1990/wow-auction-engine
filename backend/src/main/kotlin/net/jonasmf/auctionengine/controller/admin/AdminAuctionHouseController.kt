@@ -35,12 +35,13 @@ class AdminAuctionHouseController(
         sortDirection: String,
     ): ResponseEntity<AuctionHousePage> {
         val pageSize = 20
+        val sortDirectionMapped = Sorting.SortDirection.forValue(sortDirection)
         val (items, totalRows) =
             service.search(
                 page = 1,
                 limit = pageSize,
-                sortBy = "",
-                sortDirection = Sorting.SortDirection.ASC,
+                sortBy = sortBy,
+                sortDirection = sortDirectionMapped,
             )
         val totalNumberOfPages = ceil(totalRows.toDouble() / pageSize.toDouble()).toInt()
 
@@ -56,8 +57,8 @@ class AdminAuctionHouseController(
                     ),
                 sort =
                     Sorting(
-                        sortBy = "connectedRealmId",
-                        sortDirection = Sorting.SortDirection.ASC,
+                        sortBy = sortBy,
+                        sortDirection = sortDirectionMapped,
                     ),
             ),
         )

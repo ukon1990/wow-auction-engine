@@ -23,7 +23,7 @@ app:
 blizzard:
     client-id: dummy-client-id
     client-secret: dummy-client-secret
-    regions: ${WAE_BLIZZARD_REGIONS:${WAE_BLIZZARD_REGION:Europe}}
+    regions: Europe
     token-url: http://localhost/mock-blizzard/token
     base-url: http://localhost/mock-blizzard/api/
 wae:

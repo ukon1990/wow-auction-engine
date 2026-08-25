@@ -27,8 +27,17 @@ searchAuctionHouses:
                 schema:
                     type: string
                     default: name
-                enum:
-                    - name
+                    enum:
+                        - name
+                        - region
+                        - lowestDelay
+                        - avgDelay
+                        - highestDelay
+                        - lastModified
+                        - lastAuctionPriceDeleteEvent
+                        - lastHistoryDeleteEvent
+                        - lastHistoryDeleteEventDaily
+                        - nextUpdate
             -   name: sortDirection
                 in: query
                 required: false

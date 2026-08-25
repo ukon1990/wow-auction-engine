@@ -3,6 +3,7 @@ package net.jonasmf.auctionengine.controller.admin
 import net.jonasmf.auctionengine.config.MVCIntegrationTest
 import net.jonasmf.auctionengine.mapper.realm.toDbo
 import net.jonasmf.auctionengine.service.AuctionHouseService
+import net.jonasmf.auctionengine.service.ConnectedRealmService
 import net.jonasmf.auctionengine.testsupport.builder.buildConnectedRealm
 import net.jonasmf.auctionengine.testsupport.builder.buildRealm
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -21,8 +22,13 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
     @Autowired
     lateinit var autionHouseService: AuctionHouseService
 
+    @Autowired
+    lateinit var connectedRealmService: ConnectedRealmService
+
     @BeforeEach
     fun setupData() {
+        connectedRealmService.updateRealms()
+        /*
         var connectedRealmA =
             buildConnectedRealm(
                 id = 1,
@@ -46,7 +52,7 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
                     ),
             )
         autionHouseService.createIfMissing(connectedRealmA.toDbo())
-        autionHouseService.createIfMissing(connectedRealmB.toDbo())
+        autionHouseService.createIfMissing(connectedRealmB.toDbo())*/
     }
 
     @Test
@@ -58,6 +64,13 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
     inner class SearchAuctionHouses {
         @Test
         fun `lists auction houses in a page for an administrator`() {
+            val page = 1
+            val pageSize = 10
+            val totalItems = 41
+            val totalPages = 5
+            val sortDirection = "asc"
+            val sortBy = "ah.id"
+
             val result =
                 mockMvc
                     .perform(
@@ -74,14 +87,14 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
             mockMvc
                 .perform(asyncDispatch(result))
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.items[0].connectedRealmId").value(1))
-                .andExpect(jsonPath("$.items[1].connectedRealmId").value(2))
-                .andExpect(jsonPath("$.page.page").value(0))
-                .andExpect(jsonPath("$.page.pageSize").value(2))
-                .andExpect(jsonPath("$.page.totalItems").value(2))
-                .andExpect(jsonPath("$.page.totalPages").value(1))
-                .andExpect(jsonPath("$.sort.sortBy").value("connectedRealmId"))
-                .andExpect(jsonPath("$.sort.sortDirection").value("asc"))
+                // It shoud be -2, due to the default sorting
+                .andExpect(jsonPath("$.items[0].connectedRealmId").value(-2))
+                .andExpect(jsonPath("$.page.page").value(page))
+                .andExpect(jsonPath("$.page.pageSize").value(pageSize))
+                .andExpect(jsonPath("$.page.totalItems").value(totalItems))
+                .andExpect(jsonPath("$.page.totalPages").value(totalPages))
+                .andExpect(jsonPath("$.sort.sortBy").value(sortBy))
+                .andExpect(jsonPath("$.sort.sortDirection").value(sortDirection))
         }
     }
 }

@@ -27,9 +27,9 @@ class AdminAuctionHouseService(
     ): Pair<List<AuctionHouse>, Long> {
         val rows =
             repository.findAllWithQuery(
-                offset = 0,
-                pageSize = page,
-                orderBy = "", // TODO: liten sjekk
+                offset = (page - 1) * limit,
+                pageSize = limit,
+                orderBy = "ah.id", // TODO: liten sjekk
             )
         val totalRows =
             rows.firstOrNull().let {

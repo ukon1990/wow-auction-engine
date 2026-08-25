@@ -6,12 +6,14 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
 import net.jonasmf.auctionengine.domain.realm.Realm
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlin.time.toKotlinInstant
 import net.jonasmf.auctionengine.domain.realm.Region as RegionDomain
 
 data class AdminAuctinHouseRow(
     val pageTotalItems: Long,
-    val auctionHouseId: Int,
+    val auctionHouseId: Int? = null,
     val auctionHouseConnectedId: Int,
     val auctionHouseAutoUpdate: Boolean,
     val auctionHouseRegion: String,
@@ -20,12 +22,12 @@ data class AdminAuctinHouseRow(
     val auctionHouseAvgDelay: Long,
     val auctionHouseHighestDelay: Long,
 
-    val auctionHouseLastAuctionPriceDeleteEvent: Instant? = null,
-    val auctionHouseLastHistoryDeleteEvent: Instant,
-    val auctionHouseLastHistoryDeleteEventDaily: Instant,
+    val auctionHouseLastAuctionPriceDeleteEvent: LocalDateTime? = null,
+    val auctionHouseLastHistoryDeleteEvent: LocalDateTime? = null,
+    val auctionHouseLastHistoryDeleteEventDaily: LocalDateTime? = null,
 
-    val auctionHouseLastModified: Instant,
-    val auctionHouseNextUpdate: Instant,
+    val auctionHouseLastModified: LocalDateTime? = null,
+    val auctionHouseNextUpdate: LocalDateTime? = null,
 
     val realmId: Int,
     val realmSlug: String,
@@ -62,10 +64,13 @@ fun AdminAuctinHouseRow.toAuctionHouseDomain(rows: List<AdminAuctinHouseRow>): A
         lowestDelay = auctionHouseLowestDelay,
         avgDelay = auctionHouseAvgDelay,
         highestDelay = auctionHouseHighestDelay,
-        lastAuctionPriceDeleteEvent = auctionHouseLastAuctionPriceDeleteEvent?.toKotlinInstant(),
-        lastHistoryDeleteEvent = auctionHouseLastHistoryDeleteEvent.toKotlinInstant(),
-        lastHistoryDeleteEventDaily = auctionHouseLastAuctionPriceDeleteEvent?.toKotlinInstant(),
-        lastModified = auctionHouseLastModified.toKotlinInstant(),
-        nextUpdate = auctionHouseNextUpdate.toKotlinInstant(),
+        lastAuctionPriceDeleteEvent = kotlinTimeFromLocalDateTime(auctionHouseLastAuctionPriceDeleteEvent),
+        lastHistoryDeleteEvent = kotlinTimeFromLocalDateTime(auctionHouseLastHistoryDeleteEvent),
+        lastHistoryDeleteEventDaily = kotlinTimeFromLocalDateTime(auctionHouseLastAuctionPriceDeleteEvent),
+        lastModified = kotlinTimeFromLocalDateTime(auctionHouseLastModified),
+        nextUpdate = kotlinTimeFromLocalDateTime(auctionHouseNextUpdate),
         realms = rows.map { it.toRealmDomain() },
     )
+
+private fun kotlinTimeFromLocalDateTime(time: LocalDateTime?): kotlin.time.Instant? =
+    time?.toInstant(ZoneOffset.UTC)?.toKotlinInstant()
