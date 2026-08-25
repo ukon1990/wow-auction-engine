@@ -25,19 +25,9 @@ searchAuctionHouses:
                 in: query
                 required: false
                 schema:
-                    type: string
+                    allOf:
+                        - $ref: "../openapi.yml#/components/schemas/AdminAuctionHousePageSortBy"
                     default: name
-                    enum:
-                        - name
-                        - region
-                        - lowestDelay
-                        - avgDelay
-                        - highestDelay
-                        - lastModified
-                        - lastAuctionPriceDeleteEvent
-                        - lastHistoryDeleteEvent
-                        - lastHistoryDeleteEventDaily
-                        - nextUpdate
             -   name: sortDirection
                 in: query
                 required: false
@@ -51,7 +41,7 @@ searchAuctionHouses:
                 content:
                     application/json:
                         schema:
-                            $ref: "../openapi.yml#/components/schemas/AuctionHousePage"
+                            $ref: "../openapi.yml#/components/schemas/AdminAuctionHousePage"
 getAuctionHouseById:
     get:
         tags:

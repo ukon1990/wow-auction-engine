@@ -1,20 +1,19 @@
 package net.jonasmf.auctionengine.controller.admin
 
-import net.jonasmf.auctionengine.generated.api.AdminApi
+import net.jonasmf.auctionengine.constant.admin.AdminAuctionHousePageSortBy
+import net.jonasmf.auctionengine.constant.admin.toDomain
 import net.jonasmf.auctionengine.generated.api.AdminAuctionHouseApi
 import net.jonasmf.auctionengine.generated.model.AuctionHouse
 import net.jonasmf.auctionengine.generated.model.AuctionHousePage
+import net.jonasmf.auctionengine.generated.model.AuctionHousePageSortBy
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.Sorting
 import net.jonasmf.auctionengine.mapper.realm.toDto
-import net.jonasmf.auctionengine.service.AuctionHouseService
 import net.jonasmf.auctionengine.service.admin.AdminAuctionHouseService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.RestControllerAdvice
 import kotlin.math.ceil
-import kotlin.math.roundToInt
 
 @PreAuthorize("hasAuthority('admin')")
 @RestController
@@ -31,7 +30,7 @@ class AdminAuctionHouseController(
     override suspend fun searchAuctionHouses(
         page: Int,
         pageSize: Int,
-        sortBy: String,
+        sortBy: AuctionHousePageSortBy?,
         sortDirection: String,
     ): ResponseEntity<AuctionHousePage> {
         val pageSize = 20
@@ -40,7 +39,7 @@ class AdminAuctionHouseController(
             service.search(
                 page = 1,
                 limit = pageSize,
-                sortBy = sortBy,
+                sortBy = sortBy.toDomain() ?: AdminAuctionHousePageSortBy.NAME,
                 sortDirection = sortDirectionMapped,
             )
         val totalNumberOfPages = ceil(totalRows.toDouble() / pageSize.toDouble()).toInt()

@@ -71,10 +71,9 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            allOf:
+              - $ref: '#/components/schemas/auction-house-page-sort-by'
             default: name
-          enum:
-            - name
         - name: sortDirection
           in: query
           required: false
@@ -1958,6 +1957,10 @@ components:
   schemas:
     User:
       $ref: '#/components/schemas/user'
+    AdminAuctionHousePage:
+      $ref: '#/components/schemas/auction-house-page'
+    AdminAuctionHousePageSortBy:
+      $ref: '#/components/schemas/auction-house-page-sort-by'
     AdminStatus:
       $ref: '#/components/schemas/admin-status'
     AdminConnectionStatus:
@@ -2048,8 +2051,6 @@ components:
       $ref: '#/components/schemas/admin-item-override-request'
     AuctionHouse:
       $ref: '#/components/schemas/auction-house'
-    AuctionHousePage:
-      $ref: '#/components/schemas/auction-house-page'
     AuctionHouseStatus:
       $ref: '#/components/schemas/auction-house-status'
     AuctionListingKey:
@@ -2148,6 +2149,19 @@ components:
       $ref: '#/components/schemas/profession-skill-tree-prerequisite'
     Sorting:
       $ref: '#/components/schemas/sorting'
+    auction-house-page-sort-by:
+      type: string
+      enum:
+        - name
+        - region
+        - lowestDelay
+        - avgDelay
+        - highestDelay
+        - lastModified
+        - lastAuctionPriceDeleteEvent
+        - lastHistoryDeleteEvent
+        - lastHistoryDeleteEventDaily
+        - nextUpdate
     realm:
       type: object
       required:

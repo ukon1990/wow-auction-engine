@@ -129,6 +129,10 @@ components:
   schemas:
     User:
       $ref: ./components/schemas/admin/user.yml
+    AdminAuctionHousePage:
+        $ref: "./components/schemas/admin/auction-house/auction-house-page.yml"
+    AdminAuctionHousePageSortBy:
+        $ref: ./components/schemas/admin/auction-house/auction-house-page-sort-by.yml
     AdminStatus:
       $ref: ./components/schemas/admin/admin-status.yml
     AdminConnectionStatus:
@@ -218,9 +222,7 @@ components:
     AdminItemOverrideRequest:
       $ref: ./components/schemas/admin/admin-item-override-request.yml
     AuctionHouse:
-        $ref: ./components/schemas/auction-house.yml
-    AuctionHousePage:
-        $ref: ./components/schemas/auction-house-page.yml
+      $ref: ./components/schemas/auction-house.yml
     AuctionHouseStatus:
       $ref: ./components/schemas/auction-house-status.yml
     AuctionListingKey:

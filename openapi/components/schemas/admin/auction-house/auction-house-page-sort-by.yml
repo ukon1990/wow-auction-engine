@@ -1,0 +1,12 @@
+type: string
+enum:
+    - name
+    - region
+    - lowestDelay
+    - avgDelay
+    - highestDelay
+    - lastModified
+    - lastAuctionPriceDeleteEvent
+    - lastHistoryDeleteEvent
+    - lastHistoryDeleteEventDaily
+    - nextUpdate

@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.service.admin
 
+import net.jonasmf.auctionengine.constant.admin.AdminAuctionHousePageSortBy
 import net.jonasmf.auctionengine.dbo.rds.admin.toAuctionHouseDomain
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
 import net.jonasmf.auctionengine.generated.model.Sorting
@@ -22,7 +23,7 @@ class AdminAuctionHouseService(
     fun search(
         page: Int,
         limit: Int,
-        sortBy: String,
+        sortBy: AdminAuctionHousePageSortBy,
         sortDirection: Sorting.SortDirection,
     ): Pair<List<AuctionHouse>, Long> {
         val rows =
