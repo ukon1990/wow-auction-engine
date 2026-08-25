@@ -16,6 +16,13 @@ export { planManagedFilePrunes } from "./plan/prune.mjs";
 export { applyPlan, formatCompletionSummary } from "./plan/apply.mjs";
 export { resolveSelectedProfessions } from "./resources/profession/selection.mjs";
 export { buildProfessionFixturePlan } from "./resources/profession/plan.mjs";
+export {
+    collectConnectedRealmIdsFromIndex,
+    filterConnectedRealmIndex,
+    parseConnectedRealmIdFromHref,
+    pickConnectedRealmIds,
+} from "./resources/connected-realm/selection.mjs";
+export { buildConnectedRealmFixturePlan } from "./resources/connected-realm/plan.mjs";
 export { getResourceDefinition, listResourceNames, getResourceDefinitions } from "./resources/registry.mjs";
 export { ROOT_SELECTIONS, blizzardConfig } from "./config.mjs";
 

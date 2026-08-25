@@ -1,4 +1,5 @@
 import { buildProfessionFixturePlan } from "./profession/plan.mjs";
+import { buildConnectedRealmFixturePlan } from "./connected-realm/plan.mjs";
 
 function createProfessionResource() {
     return {
@@ -7,9 +8,16 @@ function createProfessionResource() {
     };
 }
 
+function createConnectedRealmResource() {
+    return {
+        name: "connected-realm",
+        buildPlan: buildConnectedRealmFixturePlan,
+    };
+}
+
 const definitions = {
     profession: createProfessionResource(),
-    // item: createItemResource(),
+    "connected-realm": createConnectedRealmResource(),
 };
 
 export function getResourceDefinition(name) {

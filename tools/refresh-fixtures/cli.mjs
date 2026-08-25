@@ -9,6 +9,7 @@ function parseIdList(value) {
 
 export function parseArgs(argv) {
     const args = {
+        connectedRealmIds: null,
         dryRun: false,
         full: false,
         help: false,
@@ -16,7 +17,7 @@ export function parseArgs(argv) {
         professionIds: null,
         skillTierIds: null,
         resource: "profession",
-        sampleSize: blizzardConfig.samplePerTier,
+        sampleSize: null,
     };
 
     for (let index = 0; index < argv.length; index += 1) {
@@ -37,6 +38,13 @@ export function parseArgs(argv) {
             }
             index += 1;
             args.professionIds = (args.professionIds ?? []).concat(parseIdList(value));
+        } else if (arg === "--connected-realm-id") {
+            const value = argv[index + 1];
+            if (!value) {
+                throw new Error("Missing value for --connected-realm-id");
+            }
+            index += 1;
+            args.connectedRealmIds = (args.connectedRealmIds ?? []).concat(parseIdList(value));
         } else if (arg === "--skill-tier-id") {
             const value = argv[index + 1];
             if (!value) {
@@ -71,13 +79,15 @@ export function formatHelpText() {
         "Usage: node ./tools/refresh-fixtures.mjs [options]",
         "",
         "Options:",
-        "  --dry-run                  Show planned writes/deletes without modifying files",
-        "  --resource <name>          Resource definition to run (default: profession)",
-        "  --profession-id <ids>      Refresh listed professions from Blizzard",
-        "  --skill-tier-id <ids>      Limit to these skill tiers (requires --profession-id)",
-        "  --sample-size <n>          Max recipes per skill tier (default: 6)",
-        "  --full                     All skill tiers and recipes (ignores --sample-size; can be very slow)",
-        "  --quiet, -q                Suppress progress messages on stderr",
-        "  --help, -h                 Show this help",
+        "  --dry-run                      Show planned writes/deletes without modifying files",
+        "  --resource <name>              Resource definition to run (default: profession)",
+        "  --profession-id <ids>          Refresh listed professions from Blizzard",
+        "  --skill-tier-id <ids>          Limit to these skill tiers (requires --profession-id)",
+        "  --connected-realm-id <ids>     Refresh listed connected realms (skips lowest-id sampling)",
+        "  --sample-size <n>              Profession: max recipes per tier (default: " +
+            `${blizzardConfig.samplePerTier}). Connected-realm: lowest N ids (default: ${blizzardConfig.connectedRealmSampleSize})`,
+        "  --full                         Profession: all tiers/recipes. Connected-realm: entire regional index",
+        "  --quiet, -q                    Suppress progress messages on stderr",
+        "  --help, -h                     Show this help",
     ].join("\n");
 }

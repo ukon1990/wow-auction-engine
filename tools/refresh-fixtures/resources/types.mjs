@@ -1,11 +1,12 @@
 /**
  * @typedef {object} ParsedArgs
+ * @property {number[] | null} connectedRealmIds
  * @property {boolean} dryRun
  * @property {boolean} help
  * @property {number[] | null} professionIds
  * @property {number[] | null} skillTierIds
  * @property {string} resource
- * @property {number} sampleSize
+ * @property {number | null} sampleSize
  */
 
 /**

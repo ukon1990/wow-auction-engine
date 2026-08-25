@@ -9,6 +9,9 @@ export const blizzardConfig = {
     tokenUrl: process.env.BLIZZARD_TOKEN_URL ?? "https://eu.battle.net/oauth/token",
     namespace: process.env.BLIZZARD_NAMESPACE ?? "static-us",
     samplePerTier: parseInt(process.env.PROFESSION_FIXTURE_SAMPLE_SIZE ?? "6", 10),
+    connectedRealmSampleSize: parseInt(process.env.CONNECTED_REALM_FIXTURE_SAMPLE_SIZE ?? "40", 10),
+    connectedRealmBaseUrl: process.env.BLIZZARD_CONNECTED_REALM_BASE_URL ?? "https://eu.api.blizzard.com/data/wow",
+    connectedRealmNamespace: process.env.BLIZZARD_CONNECTED_REALM_NAMESPACE ?? "dynamic-eu",
 };
 
 export const ROOT_SELECTIONS = {
@@ -21,5 +24,10 @@ export const ROOT_SELECTIONS = {
             {id: 356, name: "Fishing", skillTierIds: [2911, 2826]},
             {id: 755, name: "Jewelcrafting", skillTierIds: [2521, 2914]},
         ],
+    },
+    connectedRealm: {
+        sampleSize: blizzardConfig.connectedRealmSampleSize,
+        baseUrl: blizzardConfig.connectedRealmBaseUrl,
+        namespace: blizzardConfig.connectedRealmNamespace,
     },
 };

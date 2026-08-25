@@ -11,10 +11,6 @@ object BlizzardFixtures {
     fun handleRequest(request: ClientRequest): Mono<ClientResponse> {
         validateBlizzardRequest(request.url())
 
-        if (request.url().path.endsWith("/connected-realm/index")) {
-            return okJson(connectedRealmIndex())
-        }
-
         val fixturePath = fixturePathFor(request)
         val body = loadFixture(this, fixturePath)
         return okJson(
@@ -33,7 +29,6 @@ object BlizzardFixtures {
         val resourcePath =
             when {
                 blizzardPath in INDEX_FIXTURE_PATHS -> INDEX_FIXTURE_PATHS.getValue(blizzardPath)
-                CONNECTED_REALM_PATH.matches(blizzardPath) -> "connected-realm/connected-realm"
                 CONNECTED_REALM_AUCTIONS_PATH.matches(blizzardPath) -> auctionFixturePath(request)
                 blizzardPath == "auctions/commodities" -> {
                     auctionFixturePath(request)
@@ -62,17 +57,6 @@ object BlizzardFixtures {
         }
     }
 
-    private fun connectedRealmIndex(): String =
-        """
-        {
-          "connected_realms": [
-            {
-              "href": "https://eu.api.blizzard.test/data/wow/connected-realm/42?namespace=dynamic-eu"
-            }
-          ]
-        }
-        """.trimIndent()
-
     private val ALLOWED_BLIZZARD_HOSTS =
         setOf(
             "us.api.blizzard.com",
@@ -97,7 +81,6 @@ object BlizzardFixtures {
             "modified-crafting/reagent-slot-type/index" to "modified-crafting/reagent-slot-type/index",
             "connected-realm/index" to "connected-realm/index",
         )
-    private val CONNECTED_REALM_PATH = Regex("connected-realm/\\d+")
     private val CONNECTED_REALM_AUCTIONS_PATH = Regex("connected-realm/\\d+/auctions(/index)?")
     private val DETAIL_FIXTURE_PATHS =
         listOf(
@@ -110,6 +93,7 @@ object BlizzardFixtures {
             Regex("recipe/\\d+"),
             Regex("modified-crafting/category/\\d+"),
             Regex("modified-crafting/reagent-slot-type/\\d+"),
+            Regex("connected-realm/\\d+"),
         )
 
     private const val AUCTION_METADATA_FIXTURE = "/blizzard/auction/auction-dump-metadata-response.json"

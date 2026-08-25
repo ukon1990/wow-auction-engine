@@ -6,13 +6,17 @@ import path from 'node:path';
 
 import {
     applyPlan,
+    buildConnectedRealmFixturePlan,
     buildProfessionFixturePlan,
     collectLinkedEndpointPaths,
     endpointPathToFixturePath,
+    filterConnectedRealmIndex,
     normalizeEndpointPath,
     parseArgs,
+    parseConnectedRealmIdFromHref,
     pickAllRecipeIds,
     pickAllSkillTierIds,
+    pickConnectedRealmIds,
     pickDefaultSkillTierIds,
     pickRecipeIds,
     planManagedFilePrunes,
@@ -209,6 +213,171 @@ test('parseArgs keeps the current flags and supports resource selection', () => 
   assert.equal(parsed.resource, 'profession');
   assert.deepEqual(parsed.professionIds, [164, 333]);
   assert.equal(parsed.sampleSize, 8);
+});
+
+test('parseArgs defaults sampleSize to null and supports connected-realm-id', () => {
+  const parsed = parseArgs([
+    '--resource',
+    'connected-realm',
+    '--connected-realm-id',
+    '1084,1305',
+  ]);
+
+  assert.equal(parsed.resource, 'connected-realm');
+  assert.equal(parsed.sampleSize, null);
+  assert.deepEqual(parsed.connectedRealmIds, [1084, 1305]);
+});
+
+test('parseConnectedRealmIdFromHref extracts numeric ids from index hrefs', () => {
+  assert.equal(
+    parseConnectedRealmIdFromHref(
+      'https://eu.api.blizzard.com/data/wow/connected-realm/1084?namespace=dynamic-eu',
+    ),
+    1084,
+  );
+  assert.equal(parseConnectedRealmIdFromHref('https://eu.api.blizzard.com/data/wow/profession/164'), null);
+});
+
+test('pickConnectedRealmIds keeps the lowest sampleSize ids by default', () => {
+  const indexPayload = {
+    connected_realms: [
+      { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1305?namespace=dynamic-eu' },
+      { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1084?namespace=dynamic-eu' },
+      { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1403?namespace=dynamic-eu' },
+      { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1091?namespace=dynamic-eu' },
+    ],
+  };
+
+  assert.deepEqual(pickConnectedRealmIds(indexPayload, { sampleSize: 3 }), [1084, 1091, 1305]);
+  assert.deepEqual(pickConnectedRealmIds(indexPayload, { sampleSize: 40 }), [1084, 1091, 1305, 1403]);
+  assert.deepEqual(pickConnectedRealmIds(indexPayload, { full: true }), [1084, 1091, 1305, 1403]);
+  assert.deepEqual(
+    pickConnectedRealmIds(indexPayload, { connectedRealmIds: [1403, 1084] }),
+    [1084, 1403],
+  );
+});
+
+test('pickConnectedRealmIds rejects connected-realm ids missing from the index', () => {
+  assert.throws(
+    () =>
+      pickConnectedRealmIds(
+        {
+          connected_realms: [
+            { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1084?namespace=dynamic-eu' },
+          ],
+        },
+        { connectedRealmIds: [1084, 9999] },
+      ),
+    /9999/,
+  );
+});
+
+test('filterConnectedRealmIndex keeps only selected hrefs sorted by id', () => {
+  const filtered = filterConnectedRealmIndex(
+    {
+      _links: {
+        self: { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/index?namespace=dynamic-eu' },
+      },
+      connected_realms: [
+        { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1305?namespace=dynamic-eu' },
+        { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1084?namespace=dynamic-eu' },
+        { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1403?namespace=dynamic-eu' },
+      ],
+    },
+    [1305, 1084],
+  );
+
+  assert.deepEqual(
+    filtered.connected_realms.map((entry) => parseConnectedRealmIdFromHref(entry.href)),
+    [1084, 1305],
+  );
+});
+
+test('buildConnectedRealmFixturePlan writes filtered index and detail fixtures without auction links', async () => {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'connected-realm-refresh-'));
+  const paths = {
+    baseResources: path.join(tempRoot, 'src/test/resources/blizzard'),
+    manifestFile: path.join(tempRoot, 'src/test/resources/blizzard/unused-manifest.json'),
+  };
+  await fs.mkdir(path.join(paths.baseResources, 'connected-realm'), { recursive: true });
+  await fs.writeFile(
+    path.join(paths.baseResources, 'connected-realm', 'connected-realm-response.json'),
+    '{}\n',
+    'utf8',
+  );
+  await fs.writeFile(path.join(paths.baseResources, 'connected-realm', '999-response.json'), '{}\n', 'utf8');
+
+  const requested = [];
+  const apiClient = {
+    async fetchJson(endpointPath, _requestMeta, options = {}) {
+      requested.push({ endpointPath, options });
+      if (endpointPath === 'connected-realm/index') {
+        return {
+          _links: {
+            self: { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/index?namespace=dynamic-eu' },
+          },
+          connected_realms: [
+            { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1305?namespace=dynamic-eu' },
+            { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1084?namespace=dynamic-eu' },
+            { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1403?namespace=dynamic-eu' },
+          ],
+        };
+      }
+      if (endpointPath === 'connected-realm/1084') {
+        return {
+          id: 1084,
+          realms: [{ id: 1084, slug: 'kazzak' }],
+          auctions: { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1084/auctions' },
+        };
+      }
+      if (endpointPath === 'connected-realm/1305') {
+        return {
+          id: 1305,
+          realms: [{ id: 1305, slug: 'outland' }],
+          auctions: { href: 'https://eu.api.blizzard.com/data/wow/connected-realm/1305/auctions' },
+        };
+      }
+      throw new Error(`Unexpected endpoint: ${endpointPath}`);
+    },
+  };
+
+  const plan = await buildConnectedRealmFixturePlan({
+    apiClient,
+    args: {
+      sampleSize: 2,
+      connectedRealmIds: null,
+      full: false,
+    },
+    paths,
+    selectionConfig: {
+      sampleSize: 40,
+      baseUrl: 'https://eu.api.blizzard.com/data/wow',
+      namespace: 'dynamic-eu',
+    },
+  });
+
+  assert.deepEqual(
+    requested.map((entry) => entry.endpointPath),
+    ['connected-realm/index', 'connected-realm/1084', 'connected-realm/1305'],
+  );
+  assert.equal(requested[0].options.namespace, 'dynamic-eu');
+  assert.equal(requested[0].options.baseUrl, 'https://eu.api.blizzard.com/data/wow');
+  assert.equal(plan.summary.connectedRealms, 2);
+  assert.equal(plan.deletes.length, 2);
+
+  const writtenPaths = plan.writes.map((operation) => operation.filePath).sort();
+  assert.deepEqual(writtenPaths, [
+    path.join(paths.baseResources, 'connected-realm', '1084-response.json'),
+    path.join(paths.baseResources, 'connected-realm', '1305-response.json'),
+    path.join(paths.baseResources, 'connected-realm', 'index-response.json'),
+  ].sort());
+
+  const indexWrite = plan.writes.find((operation) => operation.filePath.endsWith('index-response.json'));
+  assert.deepEqual(
+    indexWrite.payload.connected_realms.map((entry) => parseConnectedRealmIdFromHref(entry.href)),
+    [1084, 1305],
+  );
+  assert.ok(!plan.writes.some((operation) => String(operation.filePath).includes('auctions')));
 });
 
 test('normalizeEndpointPath strips the Blizzard base path and query string', () => {

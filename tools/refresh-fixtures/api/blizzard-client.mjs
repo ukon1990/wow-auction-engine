@@ -1,20 +1,28 @@
 import { blizzardConfig } from "../config.mjs";
 
 /**
+ * @typedef {object} FetchJsonOptions
+ * @property {string} [baseUrl]
+ * @property {string} [namespace]
+ */
+
+/**
  * @typedef {object} ApiClient
- * @property {(endpointPath: string) => Promise<unknown>} fetchJson
+ * @property {(endpointPath: string, requestMeta?: object, options?: FetchJsonOptions) => Promise<unknown>} fetchJson
  */
 
 export function createApiClient({ fetchImpl = fetch, tokenProvider = fetchAccessToken, onRequest } = {}) {
     let cachedTokenPromise;
 
     return {
-        async fetchJson(endpointPath, requestMeta) {
+        async fetchJson(endpointPath, requestMeta, options = {}) {
             cachedTokenPromise ??= tokenProvider({ fetchImpl });
             const token = await cachedTokenPromise;
             return getJson(endpointPath, token, {
                 fetchImpl,
                 onRequest: (path) => onRequest?.(path, requestMeta),
+                baseUrl: options.baseUrl,
+                namespace: options.namespace,
             });
         },
     };
@@ -61,9 +69,13 @@ async function fetchAccessToken({ fetchImpl = fetch } = {}) {
 
 const REQUEST_TIMEOUT_MS = parseInt(process.env.BLIZZARD_REQUEST_TIMEOUT_MS ?? "120000", 10);
 
-async function getJson(endpointPath, token, { fetchImpl = fetch, onRequest } = {}) {
-    const url = new URL(`${blizzardConfig.baseUrl}/${endpointPath.replace(/^\//, "")}`);
-    url.searchParams.set("namespace", blizzardConfig.namespace);
+async function getJson(
+    endpointPath,
+    token,
+    { fetchImpl = fetch, onRequest, baseUrl = blizzardConfig.baseUrl, namespace = blizzardConfig.namespace } = {},
+) {
+    const url = new URL(`${baseUrl}/${endpointPath.replace(/^\//, "")}`);
+    url.searchParams.set("namespace", namespace);
     onRequest?.(endpointPath);
 
     const response = await fetchImpl(url, {

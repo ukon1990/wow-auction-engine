@@ -19,6 +19,11 @@ export {
     planManagedFilePrunes,
     resolveSelectedProfessions,
     buildProfessionFixturePlan,
+    collectConnectedRealmIdsFromIndex,
+    filterConnectedRealmIndex,
+    parseConnectedRealmIdFromHref,
+    pickConnectedRealmIds,
+    buildConnectedRealmFixturePlan,
     buildRefreshPlan,
     applyPlan,
 } from "./refresh-fixtures/index.mjs";

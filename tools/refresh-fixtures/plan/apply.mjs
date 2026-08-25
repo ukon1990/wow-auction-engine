@@ -49,6 +49,15 @@ export function formatCompletionSummary(plan) {
         .map(([family, count]) => `${family}=${count}`)
         .join(", ");
 
+    if (Number.isFinite(plan.summary.connectedRealms)) {
+        const pruneNote = plan.meta.fullSelection ? "" : ", prune=skipped-for-filtered-selection";
+        return (
+            `completed: connectedRealms=${plan.summary.connectedRealms}, ` +
+            `resources=${plan.summary.resources}, skipped=${plan.summary.skipped}` +
+            `${pruneNote}, families=[${familySummary}]`
+        );
+    }
+
     const metadataOnlySummary =
         plan.summary.metadataOnlyProfessions > 0
             ? `, metadataOnlyProfessions=${plan.summary.metadataOnlyProfessions}`

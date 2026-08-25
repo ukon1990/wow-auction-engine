@@ -1,0 +1,501 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1104?namespace=dynamic-eu"
+        }
+    },
+    "id": 1104,
+    "has_queue": false,
+    "status": {
+        "type": "UP",
+        "name": {
+            "en_US": "Up",
+            "es_MX": "Disponible",
+            "pt_BR": "Para Cima",
+            "de_DE": "Verfügbar",
+            "en_GB": "Up",
+            "es_ES": "Activo",
+            "fr_FR": "En ligne",
+            "it_IT": "Attivo",
+            "ru_RU": "Работает",
+            "ko_KR": "정상",
+            "zh_TW": "正常",
+            "zh_CN": "正常"
+        }
+    },
+    "population": {
+        "type": "LOW",
+        "name": {
+            "en_US": "Low",
+            "es_MX": "Bajo",
+            "pt_BR": "Baixo",
+            "de_DE": "Niedrig",
+            "en_GB": "Low",
+            "es_ES": "Bajo",
+            "fr_FR": "Faible",
+            "it_IT": "Bassa",
+            "ru_RU": "Низкая",
+            "ko_KR": "쾌적",
+            "zh_TW": "低",
+            "zh_CN": "低"
+        }
+    },
+    "realms": [
+        {
+            "id": 1104,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1104?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Anetheron",
+                "es_MX": "Anetheron",
+                "pt_BR": "Anetheron",
+                "de_DE": "Anetheron",
+                "en_GB": "Anetheron",
+                "es_ES": "Anetheron",
+                "fr_FR": "Anetheron",
+                "it_IT": "Anetheron",
+                "ru_RU": "Anetheron",
+                "ko_KR": "Anetheron",
+                "zh_TW": "安納塞隆",
+                "zh_CN": "安纳塞隆"
+            },
+            "category": {
+                "en_US": "German",
+                "es_MX": "Alemán",
+                "pt_BR": "Alemão",
+                "de_DE": "Deutsch",
+                "en_GB": "German",
+                "es_ES": "Alemán",
+                "fr_FR": "Allemand",
+                "it_IT": "Tedesco",
+                "ru_RU": "Нем.",
+                "ko_KR": "독일어",
+                "zh_TW": "德國",
+                "zh_CN": "德语"
+            },
+            "locale": "deDE",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "anetheron"
+        },
+        {
+            "id": 589,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1104?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Kil'jaeden",
+                "es_MX": "Kil'jaeden",
+                "pt_BR": "Kil'jaeden",
+                "de_DE": "Kil'jaeden",
+                "en_GB": "Kil'jaeden",
+                "es_ES": "Kil'jaeden",
+                "fr_FR": "Kil'jaeden",
+                "it_IT": "Kil'jaeden",
+                "ru_RU": "Kil'jaeden",
+                "ko_KR": "Kil'jaeden",
+                "zh_TW": "基爾加丹",
+                "zh_CN": "基尔加丹"
+            },
+            "category": {
+                "en_US": "German",
+                "es_MX": "Alemán",
+                "pt_BR": "Alemão",
+                "de_DE": "Deutsch",
+                "en_GB": "German",
+                "es_ES": "Alemán",
+                "fr_FR": "Allemand",
+                "it_IT": "Tedesco",
+                "ru_RU": "Нем.",
+                "ko_KR": "독일어",
+                "zh_TW": "德國",
+                "zh_CN": "德语"
+            },
+            "locale": "deDE",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "kiljaeden"
+        },
+        {
+            "id": 1322,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1104?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Rajaxx",
+                "es_MX": "Rajaxx",
+                "pt_BR": "Rajaxx",
+                "de_DE": "Rajaxx",
+                "en_GB": "Rajaxx",
+                "es_ES": "Rajaxx",
+                "fr_FR": "Rajaxx",
+                "it_IT": "Rajaxx",
+                "ru_RU": "Rajaxx",
+                "ko_KR": "Rajaxx",
+                "zh_TW": "拉賈克斯",
+                "zh_CN": "拉贾克斯"
+            },
+            "category": {
+                "en_US": "German",
+                "es_MX": "Alemán",
+                "pt_BR": "Alemão",
+                "de_DE": "Deutsch",
+                "en_GB": "German",
+                "es_ES": "Alemán",
+                "fr_FR": "Allemand",
+                "it_IT": "Tedesco",
+                "ru_RU": "Нем.",
+                "ko_KR": "독일어",
+                "zh_TW": "德國",
+                "zh_CN": "德语"
+            },
+            "locale": "deDE",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "rajaxx"
+        },
+        {
+            "id": 1611,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1104?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Festung der Stürme",
+                "es_MX": "Festung der Stürme",
+                "pt_BR": "Festung der Stürme",
+                "de_DE": "Festung der Stürme",
+                "en_GB": "Festung der Stürme",
+                "es_ES": "Festung der Stürme",
+                "fr_FR": "Festung der Stürme",
+                "it_IT": "Festung der Stürme",
+                "ru_RU": "Festung der Stürme",
+                "ko_KR": "Festung der Stürme",
+                "zh_TW": "Festung der Sturme",
+                "zh_CN": "Festung der Stürme"
+            },
+            "category": {
+                "en_US": "German",
+                "es_MX": "Alemán",
+                "pt_BR": "Alemão",
+                "de_DE": "Deutsch",
+                "en_GB": "German",
+                "es_ES": "Alemán",
+                "fr_FR": "Allemand",
+                "it_IT": "Tedesco",
+                "ru_RU": "Нем.",
+                "ko_KR": "독일어",
+                "zh_TW": "德國",
+                "zh_CN": "德语"
+            },
+            "locale": "deDE",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "festung-der-stürme"
+        },
+        {
+            "id": 587,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1104?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Gul'dan",
+                "es_MX": "Gul'dan",
+                "pt_BR": "Gul'dan",
+                "de_DE": "Gul'dan",
+                "en_GB": "Gul'dan",
+                "es_ES": "Gul'dan",
+                "fr_FR": "Gul'dan",
+                "it_IT": "Gul'dan",
+                "ru_RU": "Gul'dan",
+                "ko_KR": "Gul'dan",
+                "zh_TW": "古爾丹",
+                "zh_CN": "古尔丹"
+            },
+            "category": {
+                "en_US": "German",
+                "es_MX": "Alemán",
+                "pt_BR": "Alemão",
+                "de_DE": "Deutsch",
+                "en_GB": "German",
+                "es_ES": "Alemán",
+                "fr_FR": "Allemand",
+                "it_IT": "Tedesco",
+                "ru_RU": "Нем.",
+                "ko_KR": "독일어",
+                "zh_TW": "德國",
+                "zh_CN": "德语"
+            },
+            "locale": "deDE",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "guldan"
+        },
+        {
+            "id": 594,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1104?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Nathrezim",
+                "es_MX": "Nathrezim",
+                "pt_BR": "Nathrezim",
+                "de_DE": "Nathrezim",
+                "en_GB": "Nathrezim",
+                "es_ES": "Nathrezim",
+                "fr_FR": "Nathrezim",
+                "it_IT": "Nathrezim",
+                "ru_RU": "Nathrezim",
+                "ko_KR": "Nathrezim",
+                "zh_TW": "納斯雷茲姆",
+                "zh_CN": "纳斯雷兹姆"
+            },
+            "category": {
+                "en_US": "German",
+                "es_MX": "Alemán",
+                "pt_BR": "Alemão",
+                "de_DE": "Deutsch",
+                "en_GB": "German",
+                "es_ES": "Alemán",
+                "fr_FR": "Allemand",
+                "it_IT": "Tedesco",
+                "ru_RU": "Нем.",
+                "ko_KR": "독일어",
+                "zh_TW": "德國",
+                "zh_CN": "德语"
+            },
+            "locale": "deDE",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "nathrezim"
+        }
+    ],
+    "mythic_leaderboards": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1104/mythic-leaderboard/?namespace=dynamic-eu"
+    },
+    "auctions": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1104/auctions?namespace=dynamic-eu"
+    }
+}

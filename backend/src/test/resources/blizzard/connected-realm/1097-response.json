@@ -1,0 +1,201 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1097?namespace=dynamic-eu"
+        }
+    },
+    "id": 1097,
+    "has_queue": false,
+    "status": {
+        "type": "UP",
+        "name": {
+            "en_US": "Up",
+            "es_MX": "Disponible",
+            "pt_BR": "Para Cima",
+            "de_DE": "Verfügbar",
+            "en_GB": "Up",
+            "es_ES": "Activo",
+            "fr_FR": "En ligne",
+            "it_IT": "Attivo",
+            "ru_RU": "Работает",
+            "ko_KR": "정상",
+            "zh_TW": "正常",
+            "zh_CN": "正常"
+        }
+    },
+    "population": {
+        "type": "LOW",
+        "name": {
+            "en_US": "Low",
+            "es_MX": "Bajo",
+            "pt_BR": "Baixo",
+            "de_DE": "Niedrig",
+            "en_GB": "Low",
+            "es_ES": "Bajo",
+            "fr_FR": "Faible",
+            "it_IT": "Bassa",
+            "ru_RU": "Низкая",
+            "ko_KR": "쾌적",
+            "zh_TW": "低",
+            "zh_CN": "低"
+        }
+    },
+    "realms": [
+        {
+            "id": 1097,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1097?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Ysera",
+                "es_MX": "Ysera",
+                "pt_BR": "Ysera",
+                "de_DE": "Ysera",
+                "en_GB": "Ysera",
+                "es_ES": "Ysera",
+                "fr_FR": "Ysera",
+                "it_IT": "Ysera",
+                "ru_RU": "Ysera",
+                "ko_KR": "Ysera",
+                "zh_TW": "伊瑟拉",
+                "zh_CN": "伊瑟拉"
+            },
+            "category": {
+                "en_US": "German",
+                "es_MX": "Alemán",
+                "pt_BR": "Alemão",
+                "de_DE": "Deutsch",
+                "en_GB": "German",
+                "es_ES": "Alemán",
+                "fr_FR": "Allemand",
+                "it_IT": "Tedesco",
+                "ru_RU": "Нем.",
+                "ko_KR": "독일어",
+                "zh_TW": "德國",
+                "zh_CN": "德语"
+            },
+            "locale": "deDE",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "ysera"
+        },
+        {
+            "id": 1324,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1097?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Malorne",
+                "es_MX": "Malorne",
+                "pt_BR": "Malorne",
+                "de_DE": "Malorne",
+                "en_GB": "Malorne",
+                "es_ES": "Malorne",
+                "fr_FR": "Malorne",
+                "it_IT": "Malorne",
+                "ru_RU": "Malorne",
+                "ko_KR": "Malorne",
+                "zh_TW": "瑪洛尼",
+                "zh_CN": "玛洛恩"
+            },
+            "category": {
+                "en_US": "German",
+                "es_MX": "Alemán",
+                "pt_BR": "Alemão",
+                "de_DE": "Deutsch",
+                "en_GB": "German",
+                "es_ES": "Alemán",
+                "fr_FR": "Allemand",
+                "it_IT": "Tedesco",
+                "ru_RU": "Нем.",
+                "ko_KR": "독일어",
+                "zh_TW": "德國",
+                "zh_CN": "德语"
+            },
+            "locale": "deDE",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "malorne"
+        }
+    ],
+    "mythic_leaderboards": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1097/mythic-leaderboard/?namespace=dynamic-eu"
+    },
+    "auctions": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1097/auctions?namespace=dynamic-eu"
+    }
+}

@@ -46,10 +46,10 @@ class BlizzardConnectedRealmApiClientTest {
 
         val client = BlizzardConnectedRealmApiClient(createSupport(webClient))
 
-        val result = client.getConnectedRealm(Href("https://realm.test/connected-realm/42")).block()!!
+        val result = client.getConnectedRealm(Href("https://realm.test/connected-realm/1084")).block()!!
 
-        assertEquals(42, result.id)
-        assertEquals("https://realm.test/connected-realm/42", capturedRequest!!.url().toString())
+        assertEquals(1084, result.id)
+        assertEquals("https://realm.test/connected-realm/1084", capturedRequest!!.url().toString())
     }
 
     private fun response(body: String): Mono<ClientResponse> =
@@ -62,5 +62,5 @@ class BlizzardConnectedRealmApiClientTest {
         )
 
     private fun connectedRealmBody(): String =
-        loadFixture(this, "/blizzard/connected-realm/connected-realm-response.json")
+        loadFixture(this, "/blizzard/connected-realm/1084-response.json")
 }

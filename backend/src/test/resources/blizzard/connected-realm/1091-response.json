@@ -1,0 +1,501 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1091?namespace=dynamic-eu"
+        }
+    },
+    "id": 1091,
+    "has_queue": false,
+    "status": {
+        "type": "UP",
+        "name": {
+            "en_US": "Up",
+            "es_MX": "Disponible",
+            "pt_BR": "Para Cima",
+            "de_DE": "Verfügbar",
+            "en_GB": "Up",
+            "es_ES": "Activo",
+            "fr_FR": "En ligne",
+            "it_IT": "Attivo",
+            "ru_RU": "Работает",
+            "ko_KR": "정상",
+            "zh_TW": "正常",
+            "zh_CN": "正常"
+        }
+    },
+    "population": {
+        "type": "LOW",
+        "name": {
+            "en_US": "Low",
+            "es_MX": "Bajo",
+            "pt_BR": "Baixo",
+            "de_DE": "Niedrig",
+            "en_GB": "Low",
+            "es_ES": "Bajo",
+            "fr_FR": "Faible",
+            "it_IT": "Bassa",
+            "ru_RU": "Низкая",
+            "ko_KR": "쾌적",
+            "zh_TW": "低",
+            "zh_CN": "低"
+        }
+    },
+    "realms": [
+        {
+            "id": 1091,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1091?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Emeriss",
+                "es_MX": "Emeriss",
+                "pt_BR": "Emeriss",
+                "de_DE": "Emeriss",
+                "en_GB": "Emeriss",
+                "es_ES": "Emeriss",
+                "fr_FR": "Emeriss",
+                "it_IT": "Emeriss",
+                "ru_RU": "Emeriss",
+                "ko_KR": "Emeriss",
+                "zh_TW": "艾莫莉絲",
+                "zh_CN": "艾莫莉丝"
+            },
+            "category": {
+                "en_US": "English",
+                "es_MX": "Inglés",
+                "pt_BR": "Inglês",
+                "de_DE": "Englisch",
+                "en_GB": "English",
+                "es_ES": "Inglés",
+                "fr_FR": "Anglais",
+                "it_IT": "Inglese",
+                "ru_RU": "Англ.",
+                "ko_KR": "영어",
+                "zh_TW": "英國",
+                "zh_CN": "英语"
+            },
+            "locale": "enGB",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "emeriss"
+        },
+        {
+            "id": 513,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1091?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Twilight's Hammer",
+                "es_MX": "Twilight's Hammer",
+                "pt_BR": "Twilight's Hammer",
+                "de_DE": "Twilight's Hammer",
+                "en_GB": "Twilight's Hammer",
+                "es_ES": "Twilight's Hammer",
+                "fr_FR": "Twilight's Hammer",
+                "it_IT": "Twilight's Hammer",
+                "ru_RU": "Twilight's Hammer",
+                "ko_KR": "Twilight's Hammer",
+                "zh_TW": "暮光之錘",
+                "zh_CN": "暮光之锤"
+            },
+            "category": {
+                "en_US": "English",
+                "es_MX": "Inglés",
+                "pt_BR": "Inglês",
+                "de_DE": "Englisch",
+                "en_GB": "English",
+                "es_ES": "Inglés",
+                "fr_FR": "Anglais",
+                "it_IT": "Inglese",
+                "ru_RU": "Англ.",
+                "ko_KR": "영어",
+                "zh_TW": "英國",
+                "zh_CN": "英语"
+            },
+            "locale": "enGB",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "twilights-hammer"
+        },
+        {
+            "id": 522,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1091?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Bloodscalp",
+                "es_MX": "Bloodscalp",
+                "pt_BR": "Bloodscalp",
+                "de_DE": "Bloodscalp",
+                "en_GB": "Bloodscalp",
+                "es_ES": "Bloodscalp",
+                "fr_FR": "Bloodscalp",
+                "it_IT": "Bloodscalp",
+                "ru_RU": "Bloodscalp",
+                "ko_KR": "Bloodscalp",
+                "zh_TW": "血頂部族",
+                "zh_CN": "血顶"
+            },
+            "category": {
+                "en_US": "English",
+                "es_MX": "Inglés",
+                "pt_BR": "Inglês",
+                "de_DE": "Englisch",
+                "en_GB": "English",
+                "es_ES": "Inglés",
+                "fr_FR": "Anglais",
+                "it_IT": "Inglese",
+                "ru_RU": "Англ.",
+                "ko_KR": "영어",
+                "zh_TW": "英國",
+                "zh_CN": "英语"
+            },
+            "locale": "enGB",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "bloodscalp"
+        },
+        {
+            "id": 525,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1091?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Crushridge",
+                "es_MX": "Crushridge",
+                "pt_BR": "Crushridge",
+                "de_DE": "Crushridge",
+                "en_GB": "Crushridge",
+                "es_ES": "Crushridge",
+                "fr_FR": "Crushridge",
+                "it_IT": "Crushridge",
+                "ru_RU": "Crushridge",
+                "ko_KR": "Crushridge",
+                "zh_TW": "破碎之嶺",
+                "zh_CN": "破碎岭"
+            },
+            "category": {
+                "en_US": "English",
+                "es_MX": "Inglés",
+                "pt_BR": "Inglês",
+                "de_DE": "Englisch",
+                "en_GB": "English",
+                "es_ES": "Inglés",
+                "fr_FR": "Anglais",
+                "it_IT": "Inglese",
+                "ru_RU": "Англ.",
+                "ko_KR": "영어",
+                "zh_TW": "英國",
+                "zh_CN": "英语"
+            },
+            "locale": "enGB",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "crushridge"
+        },
+        {
+            "id": 518,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1091?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Agamaggan",
+                "es_MX": "Agamaggan",
+                "pt_BR": "Agamaggan",
+                "de_DE": "Agamaggan",
+                "en_GB": "Agamaggan",
+                "es_ES": "Agamaggan",
+                "fr_FR": "Agamaggan",
+                "it_IT": "Agamaggan",
+                "ru_RU": "Agamaggan",
+                "ko_KR": "Agamaggan",
+                "zh_TW": "阿迦瑪甘",
+                "zh_CN": "阿迦玛甘"
+            },
+            "category": {
+                "en_US": "English",
+                "es_MX": "Inglés",
+                "pt_BR": "Inglês",
+                "de_DE": "Englisch",
+                "en_GB": "English",
+                "es_ES": "Inglés",
+                "fr_FR": "Anglais",
+                "it_IT": "Inglese",
+                "ru_RU": "Англ.",
+                "ko_KR": "영어",
+                "zh_TW": "英國",
+                "zh_CN": "英语"
+            },
+            "locale": "enGB",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "agamaggan"
+        },
+        {
+            "id": 646,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1091?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Hakkar",
+                "es_MX": "Hakkar",
+                "pt_BR": "Hakkar",
+                "de_DE": "Hakkar",
+                "en_GB": "Hakkar",
+                "es_ES": "Hakkar",
+                "fr_FR": "Hakkar",
+                "it_IT": "Hakkar",
+                "ru_RU": "Hakkar",
+                "ko_KR": "Hakkar",
+                "zh_TW": "哈卡",
+                "zh_CN": "哈卡"
+            },
+            "category": {
+                "en_US": "English",
+                "es_MX": "Inglés",
+                "pt_BR": "Inglês",
+                "de_DE": "Englisch",
+                "en_GB": "English",
+                "es_ES": "Inglés",
+                "fr_FR": "Anglais",
+                "it_IT": "Inglese",
+                "ru_RU": "Англ.",
+                "ko_KR": "영어",
+                "zh_TW": "英國",
+                "zh_CN": "英语"
+            },
+            "locale": "enGB",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "hakkar"
+        }
+    ],
+    "mythic_leaderboards": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1091/mythic-leaderboard/?namespace=dynamic-eu"
+    },
+    "auctions": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1091/auctions?namespace=dynamic-eu"
+    }
+}

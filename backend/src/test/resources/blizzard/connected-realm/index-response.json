@@ -1,0 +1,129 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/?namespace=dynamic-eu"
+        }
+    },
+    "connected_realms": [
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/509?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/510?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/512?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/531?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/570?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/578?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/580?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/581?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/604?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/612?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/633?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1080?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1082?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1084?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1085?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1091?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1092?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1096?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1097?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1098?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1099?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1104?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1105?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1121?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1122?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1127?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1301?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1302?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1303?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1305?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1307?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1309?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1313?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1315?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1316?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1325?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1329?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1331?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1335?namespace=dynamic-eu"
+        },
+        {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1378?namespace=dynamic-eu"
+        }
+    ]
+}

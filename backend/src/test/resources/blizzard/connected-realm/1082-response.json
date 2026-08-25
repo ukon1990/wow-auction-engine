@@ -1,0 +1,276 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1082?namespace=dynamic-eu"
+        }
+    },
+    "id": 1082,
+    "has_queue": false,
+    "status": {
+        "type": "UP",
+        "name": {
+            "en_US": "Up",
+            "es_MX": "Disponible",
+            "pt_BR": "Para Cima",
+            "de_DE": "Verfügbar",
+            "en_GB": "Up",
+            "es_ES": "Activo",
+            "fr_FR": "En ligne",
+            "it_IT": "Attivo",
+            "ru_RU": "Работает",
+            "ko_KR": "정상",
+            "zh_TW": "正常",
+            "zh_CN": "正常"
+        }
+    },
+    "population": {
+        "type": "LOW",
+        "name": {
+            "en_US": "Low",
+            "es_MX": "Bajo",
+            "pt_BR": "Baixo",
+            "de_DE": "Niedrig",
+            "en_GB": "Low",
+            "es_ES": "Bajo",
+            "fr_FR": "Faible",
+            "it_IT": "Bassa",
+            "ru_RU": "Низкая",
+            "ko_KR": "쾌적",
+            "zh_TW": "低",
+            "zh_CN": "低"
+        }
+    },
+    "realms": [
+        {
+            "id": 1082,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1082?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Kul Tiras",
+                "es_MX": "Kul Tiras",
+                "pt_BR": "Kul Tiras",
+                "de_DE": "Kul Tiras",
+                "en_GB": "Kul Tiras",
+                "es_ES": "Kul Tiras",
+                "fr_FR": "Kul Tiras",
+                "it_IT": "Kul Tiras",
+                "ru_RU": "Kul Tiras",
+                "ko_KR": "Kul Tiras",
+                "zh_TW": "庫爾提拉斯",
+                "zh_CN": "库尔提拉斯"
+            },
+            "category": {
+                "en_US": "English",
+                "es_MX": "Inglés",
+                "pt_BR": "Inglês",
+                "de_DE": "Englisch",
+                "en_GB": "English",
+                "es_ES": "Inglés",
+                "fr_FR": "Anglais",
+                "it_IT": "Inglese",
+                "ru_RU": "Англ.",
+                "ko_KR": "영어",
+                "zh_TW": "英國",
+                "zh_CN": "英语"
+            },
+            "locale": "enGB",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "kul-tiras"
+        },
+        {
+            "id": 1391,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1082?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Alonsus",
+                "es_MX": "Alonsus",
+                "pt_BR": "Alonsus",
+                "de_DE": "Alonsus",
+                "en_GB": "Alonsus",
+                "es_ES": "Alonsus",
+                "fr_FR": "Alonsus",
+                "it_IT": "Alonsus",
+                "ru_RU": "Alonsus",
+                "ko_KR": "Alonsus",
+                "zh_TW": "阿隆索斯",
+                "zh_CN": "阿隆索斯"
+            },
+            "category": {
+                "en_US": "English",
+                "es_MX": "Inglés",
+                "pt_BR": "Inglês",
+                "de_DE": "Englisch",
+                "en_GB": "English",
+                "es_ES": "Inglés",
+                "fr_FR": "Anglais",
+                "it_IT": "Inglese",
+                "ru_RU": "Англ.",
+                "ko_KR": "영어",
+                "zh_TW": "英國",
+                "zh_CN": "英语"
+            },
+            "locale": "enGB",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "alonsus"
+        },
+        {
+            "id": 1394,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1082?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Anachronos",
+                "es_MX": "Anachronos",
+                "pt_BR": "Anachronos",
+                "de_DE": "Anachronos",
+                "en_GB": "Anachronos",
+                "es_ES": "Anachronos",
+                "fr_FR": "Anachronos",
+                "it_IT": "Anachronos",
+                "ru_RU": "Anachronos",
+                "ko_KR": "Anachronos",
+                "zh_TW": "安納克羅斯",
+                "zh_CN": "阿纳克洛斯"
+            },
+            "category": {
+                "en_US": "English",
+                "es_MX": "Inglés",
+                "pt_BR": "Inglês",
+                "de_DE": "Englisch",
+                "en_GB": "English",
+                "es_ES": "Inglés",
+                "fr_FR": "Anglais",
+                "it_IT": "Inglese",
+                "ru_RU": "Англ.",
+                "ko_KR": "영어",
+                "zh_TW": "英國",
+                "zh_CN": "英语"
+            },
+            "locale": "enGB",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "anachronos"
+        }
+    ],
+    "mythic_leaderboards": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1082/mythic-leaderboard/?namespace=dynamic-eu"
+    },
+    "auctions": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1082/auctions?namespace=dynamic-eu"
+    }
+}

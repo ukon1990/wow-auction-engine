@@ -1,0 +1,201 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1378?namespace=dynamic-eu"
+        }
+    },
+    "id": 1378,
+    "has_queue": false,
+    "status": {
+        "type": "UP",
+        "name": {
+            "en_US": "Up",
+            "es_MX": "Disponible",
+            "pt_BR": "Para Cima",
+            "de_DE": "Verfügbar",
+            "en_GB": "Up",
+            "es_ES": "Activo",
+            "fr_FR": "En ligne",
+            "it_IT": "Attivo",
+            "ru_RU": "Работает",
+            "ko_KR": "정상",
+            "zh_TW": "正常",
+            "zh_CN": "正常"
+        }
+    },
+    "population": {
+        "type": "HIGH",
+        "name": {
+            "en_US": "High",
+            "es_MX": "Alto",
+            "pt_BR": "Alto",
+            "de_DE": "Hoch",
+            "en_GB": "High",
+            "es_ES": "Alto",
+            "fr_FR": "Élevée",
+            "it_IT": "Alta",
+            "ru_RU": "Высокая",
+            "ko_KR": "혼잡",
+            "zh_TW": "高",
+            "zh_CN": "高"
+        }
+    },
+    "realms": [
+        {
+            "id": 1378,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1378?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Dun Modr",
+                "es_MX": "Dun Modr",
+                "pt_BR": "Dun Modr",
+                "de_DE": "Dun Modr",
+                "en_GB": "Dun Modr",
+                "es_ES": "Dun Modr",
+                "fr_FR": "Dun Modr",
+                "it_IT": "Dun Modr",
+                "ru_RU": "Dun Modr",
+                "ko_KR": "Dun Modr",
+                "zh_TW": "丹莫德",
+                "zh_CN": "丹莫德"
+            },
+            "category": {
+                "en_US": "Spanish",
+                "es_MX": "Español",
+                "pt_BR": "Espanhol",
+                "de_DE": "Spanisch",
+                "en_GB": "Spanish",
+                "es_ES": "Español",
+                "fr_FR": "Espagnol",
+                "it_IT": "Spagnolo",
+                "ru_RU": "Исп.",
+                "ko_KR": "스페인어",
+                "zh_TW": "西班牙",
+                "zh_CN": "西班牙语"
+            },
+            "locale": "esES",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "dun-modr"
+        },
+        {
+            "id": 1381,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1378?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "C'Thun",
+                "es_MX": "C'Thun",
+                "pt_BR": "C'Thun",
+                "de_DE": "C'Thun",
+                "en_GB": "C'Thun",
+                "es_ES": "C'Thun",
+                "fr_FR": "C'Thun",
+                "it_IT": "C'Thun",
+                "ru_RU": "C'Thun",
+                "ko_KR": "C'Thun",
+                "zh_TW": "克蘇恩",
+                "zh_CN": "克苏恩"
+            },
+            "category": {
+                "en_US": "Spanish",
+                "es_MX": "Español",
+                "pt_BR": "Espanhol",
+                "de_DE": "Spanisch",
+                "en_GB": "Spanish",
+                "es_ES": "Español",
+                "fr_FR": "Espagnol",
+                "it_IT": "Spagnolo",
+                "ru_RU": "Исп.",
+                "ko_KR": "스페인어",
+                "zh_TW": "西班牙",
+                "zh_CN": "西班牙语"
+            },
+            "locale": "esES",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "cthun"
+        }
+    ],
+    "mythic_leaderboards": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1378/mythic-leaderboard/?namespace=dynamic-eu"
+    },
+    "auctions": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1378/auctions?namespace=dynamic-eu"
+    }
+}

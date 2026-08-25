@@ -1,0 +1,201 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1092?namespace=dynamic-eu"
+        }
+    },
+    "id": 1092,
+    "has_queue": false,
+    "status": {
+        "type": "UP",
+        "name": {
+            "en_US": "Up",
+            "es_MX": "Disponible",
+            "pt_BR": "Para Cima",
+            "de_DE": "Verfügbar",
+            "en_GB": "Up",
+            "es_ES": "Activo",
+            "fr_FR": "En ligne",
+            "it_IT": "Attivo",
+            "ru_RU": "Работает",
+            "ko_KR": "정상",
+            "zh_TW": "正常",
+            "zh_CN": "正常"
+        }
+    },
+    "population": {
+        "type": "HIGH",
+        "name": {
+            "en_US": "High",
+            "es_MX": "Alto",
+            "pt_BR": "Alto",
+            "de_DE": "Hoch",
+            "en_GB": "High",
+            "es_ES": "Alto",
+            "fr_FR": "Élevée",
+            "it_IT": "Alta",
+            "ru_RU": "Высокая",
+            "ko_KR": "혼잡",
+            "zh_TW": "高",
+            "zh_CN": "高"
+        }
+    },
+    "realms": [
+        {
+            "id": 1092,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1092?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Drak'thul",
+                "es_MX": "Drak'thul",
+                "pt_BR": "Drak'thul",
+                "de_DE": "Drak'thul",
+                "en_GB": "Drak'thul",
+                "es_ES": "Drak'thul",
+                "fr_FR": "Drak'thul",
+                "it_IT": "Drak'thul",
+                "ru_RU": "Drak'thul",
+                "ko_KR": "Drak'thul",
+                "zh_TW": "德拉克蘇爾",
+                "zh_CN": "Drak'thul"
+            },
+            "category": {
+                "en_US": "English",
+                "es_MX": "Inglés",
+                "pt_BR": "Inglês",
+                "de_DE": "Englisch",
+                "en_GB": "English",
+                "es_ES": "Inglés",
+                "fr_FR": "Anglais",
+                "it_IT": "Inglese",
+                "ru_RU": "Англ.",
+                "ko_KR": "영어",
+                "zh_TW": "英國",
+                "zh_CN": "英语"
+            },
+            "locale": "enGB",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "drakthul"
+        },
+        {
+            "id": 523,
+            "region": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/region/3?namespace=dynamic-eu"
+                },
+                "name": {
+                    "en_US": "Europe",
+                    "es_MX": "Europa",
+                    "pt_BR": "Europa",
+                    "de_DE": "Europa",
+                    "en_GB": "Europe",
+                    "es_ES": "Europa",
+                    "fr_FR": "Europe",
+                    "it_IT": "Europa",
+                    "ru_RU": "Европа",
+                    "ko_KR": "유럽",
+                    "zh_TW": "歐洲",
+                    "zh_CN": "欧洲"
+                },
+                "id": 3
+            },
+            "connected_realm": {
+                "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1092?namespace=dynamic-eu"
+            },
+            "name": {
+                "en_US": "Burning Blade",
+                "es_MX": "Burning Blade",
+                "pt_BR": "Burning Blade",
+                "de_DE": "Burning Blade",
+                "en_GB": "Burning Blade",
+                "es_ES": "Burning Blade",
+                "fr_FR": "Burning Blade",
+                "it_IT": "Burning Blade",
+                "ru_RU": "Burning Blade",
+                "ko_KR": "Burning Blade",
+                "zh_TW": "燃刃",
+                "zh_CN": "燃烧之刃"
+            },
+            "category": {
+                "en_US": "English",
+                "es_MX": "Inglés",
+                "pt_BR": "Inglês",
+                "de_DE": "Englisch",
+                "en_GB": "English",
+                "es_ES": "Inglés",
+                "fr_FR": "Anglais",
+                "it_IT": "Inglese",
+                "ru_RU": "Англ.",
+                "ko_KR": "영어",
+                "zh_TW": "英國",
+                "zh_CN": "英语"
+            },
+            "locale": "enGB",
+            "timezone": "Europe/Paris",
+            "type": {
+                "type": "NORMAL",
+                "name": {
+                    "en_US": "Normal",
+                    "es_MX": "Normal",
+                    "pt_BR": "Normal",
+                    "de_DE": "Normal",
+                    "en_GB": "Normal",
+                    "es_ES": "Normal",
+                    "fr_FR": "Normal",
+                    "it_IT": "Normale",
+                    "ru_RU": "Обычный",
+                    "ko_KR": "일반",
+                    "zh_TW": "一般",
+                    "zh_CN": "普通"
+                }
+            },
+            "is_tournament": false,
+            "slug": "burning-blade"
+        }
+    ],
+    "mythic_leaderboards": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1092/mythic-leaderboard/?namespace=dynamic-eu"
+    },
+    "auctions": {
+        "href": "https://eu.api.blizzard.com/data/wow/connected-realm/1092/auctions?namespace=dynamic-eu"
+    }
+}

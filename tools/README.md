@@ -101,7 +101,10 @@ node --test .\tools\analyze-auction-field.test.mjs
 
 ## `refresh-fixtures.mjs`
 
-Fetches and refreshes profession/skill-tier/recipe fixture data for test resources using Blizzard Game Data APIs.
+Fetches and refreshes Blizzard Game Data fixtures for tests. Supported resources:
+
+- `profession` (default) — professions, skill tiers, recipes, and linked item / modified-crafting metadata
+- `connected-realm` — EU connected-realm index plus the lowest N detail payloads (default 40)
 
 [`refresh-fixtures.mjs`](refresh-fixtures.mjs) is a thin entrypoint; implementation lives under [`refresh-fixtures/`](refresh-fixtures/):
 
@@ -116,7 +119,9 @@ Fetches and refreshes profession/skill-tier/recipe fixture data for test resourc
 | Plan writes, prune, apply | `refresh-fixtures/plan/` |
 | Resource batches | `refresh-fixtures/resources/` |
 
-The refresher is config-driven internally and discovers dependent resources recursively from Blizzard `key.href` links. Today it manages filtered profession roots, sampled skill tiers, sampled recipes, and any non-media linked resources they reference, such as items, item classes, item appearances, and modified crafting metadata.
+The profession refresher is config-driven and discovers dependent resources recursively from Blizzard `key.href` links. It manages filtered profession roots, sampled skill tiers, sampled recipes, and any non-media linked resources they reference, such as items, item classes, item appearances, and modified crafting metadata.
+
+The connected-realm refresher uses `dynamic-eu` on `eu.api.blizzard.com`, parses ids from index hrefs, keeps the lowest `--sample-size` ids (default 40), writes those detail fixtures, and rewrites a filtered `connected-realm/index-response.json`. It does not follow auction or mythic-leaderboard links.
 
 ### Adding a resource batch
 
@@ -126,7 +131,7 @@ The refresher is config-driven internally and discovers dependent resources recu
 4. Extend [`refresh-fixtures/cli.mjs`](refresh-fixtures/cli.mjs) with flags such as `--<name>-id` when needed.
 5. Re-export any symbols tests need from [`refresh-fixtures/index.mjs`](refresh-fixtures/index.mjs) and the shim [`refresh-fixtures.mjs`](refresh-fixtures.mjs).
 
-By default it updates:
+Profession refresh updates:
 
 - `backend/src/test/resources/blizzard/profession/index-response.json`
 - `backend/src/test/resources/blizzard/profession/<professionId>-response.json`
@@ -136,9 +141,14 @@ By default it updates:
 - `backend/src/test/resources/blizzard/modified-crafting/reagent-slot-type/<slotTypeId>-response.json`
 - `backend/src/test/resources/blizzard/profession-recipe-sample-manifest.json`
 
+Connected-realm refresh updates:
+
+- `backend/src/test/resources/blizzard/connected-realm/index-response.json`
+- `backend/src/test/resources/blizzard/connected-realm/<connectedRealmId>-response.json`
+
 The on-disk layout mirrors the normalized Blizzard API path under `backend/src/test/resources/blizzard`. Media links are intentionally excluded, and broken child links discovered during recursion are skipped instead of failing the whole refresh.
 
-The refresh also writes a small set of deterministic supplemental test fixtures that are not fetched from Blizzard, such as client-error payloads and focused index responses used by isolated API client tests.
+The profession refresh also writes a small set of deterministic supplemental test fixtures that are not fetched from Blizzard, such as client-error payloads and focused index responses used by isolated API client tests.
 
 ### Authentication
 
@@ -154,6 +164,9 @@ Optional overrides:
 - `BLIZZARD_BASE_URL` (default: `https://us.api.blizzard.com/data/wow`)
 - `BLIZZARD_NAMESPACE` (default: `static-us`)
 - `BLIZZARD_LOCALE` (default: `en_US`)
+- `BLIZZARD_CONNECTED_REALM_BASE_URL` (default: `https://eu.api.blizzard.com/data/wow`)
+- `BLIZZARD_CONNECTED_REALM_NAMESPACE` (default: `dynamic-eu`)
+- `CONNECTED_REALM_FIXTURE_SAMPLE_SIZE` (default: `40`)
 
 ### Usage
 
@@ -193,6 +206,20 @@ Refresh only selected professions through Maven:
 
 ```powershell
 cd backend; .\mvnw exec:exec@refresh-fixtures '-Drefresh.fixtures.args=--profession-id 333,164 --sample-size 8'
+```
+
+Refresh connected realms (lowest 40 EU ids by default):
+
+```powershell
+node .\tools\refresh-fixtures.mjs --resource connected-realm
+```
+
+Dry run / override sample size / exact ids:
+
+```powershell
+node .\tools\refresh-fixtures.mjs --resource connected-realm --dry-run
+node .\tools\refresh-fixtures.mjs --resource connected-realm --sample-size 10
+node .\tools\refresh-fixtures.mjs --resource connected-realm --connected-realm-id 1084,1305
 ```
 
 The Maven entry point still requires a local `node` executable on `PATH`. Override it with `-Dnode.executable=<path-to-node>` if needed.
