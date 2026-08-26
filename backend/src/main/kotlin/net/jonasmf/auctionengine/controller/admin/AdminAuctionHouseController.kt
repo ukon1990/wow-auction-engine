@@ -20,14 +20,11 @@ import kotlin.math.ceil
 class AdminAuctionHouseController(
     private val service: AdminAuctionHouseService,
 ) : AdminAuctionHouseApi {
-    override suspend fun getAuctionHouseById(id: Int): ResponseEntity<AuctionHouse> {
-        val auctionHouse =
-            service.getByid(id)
-                ?: return ResponseEntity.notFound().build()
-        return ResponseEntity.ok(auctionHouse.toDto())
-    }
+    override suspend fun getById(id: Int): ResponseEntity<AuctionHouse> =
+        service.getByid(id)?.let { ResponseEntity.ok(it.toDto()) }
+            ?: return ResponseEntity.notFound().build()
 
-    override suspend fun searchAuctionHouses(
+    override suspend fun search(
         page: Int,
         pageSize: Int,
         sortBy: AuctionHousePageSortBy?,
@@ -37,9 +34,9 @@ class AdminAuctionHouseController(
         val sortDirectionMapped = Sorting.SortDirection.forValue(sortDirection)
         val (items, totalRows) =
             service.search(
-                page = 1,
+                page = page,
                 limit = pageSize,
-                sortBy = sortBy.toDomain() ?: AdminAuctionHousePageSortBy.NAME,
+                sortBy = sortBy?.toDomain() ?: AdminAuctionHousePageSortBy.NAME,
                 sortDirection = sortDirectionMapped,
             )
         val totalNumberOfPages = ceil(totalRows.toDouble() / pageSize.toDouble()).toInt()
@@ -49,14 +46,14 @@ class AdminAuctionHouseController(
                 items = items.map { it.toDto() },
                 page =
                     PageMetadata(
-                        page = 0,
+                        page = page,
                         pageSize = pageSize,
                         totalItems = totalRows,
                         totalPages = totalNumberOfPages,
                     ),
                 sort =
                     Sorting(
-                        sortBy = sortBy,
+                        sortBy = (sortBy ?: AuctionHousePageSortBy.NAME).value,
                         sortDirection = sortDirectionMapped,
                     ),
             ),

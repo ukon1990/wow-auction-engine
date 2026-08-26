@@ -2,7 +2,7 @@ searchAuctionHouses:
     get:
         tags:
             - AdminAuctionHouse
-        operationId: searchAuctionHouses
+        operationId: search
         summary: Lists all auction houses
         description: Allows an administrator to get an overview over the current status of all the auction houses
         parameters:
@@ -46,7 +46,7 @@ getAuctionHouseById:
     get:
         tags:
             - AdminAuctionHouse
-        operationId: getAuctionHouseById
+        operationId: getById
         summary: Get information about an auction house's status by id
         description: Allows an administrator to gets a spesific auction houses
         parameters:

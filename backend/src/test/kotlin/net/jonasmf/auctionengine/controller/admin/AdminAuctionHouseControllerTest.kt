@@ -1,6 +1,7 @@
 package net.jonasmf.auctionengine.controller.admin
 
 import net.jonasmf.auctionengine.config.MVCIntegrationTest
+import net.jonasmf.auctionengine.generated.model.AuctionHousePageSortBy
 import net.jonasmf.auctionengine.mapper.realm.toDbo
 import net.jonasmf.auctionengine.service.AuctionHouseService
 import net.jonasmf.auctionengine.service.ConnectedRealmService
@@ -28,61 +29,45 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
     @BeforeEach
     fun setupData() {
         connectedRealmService.updateRealms()
-        /*
-        var connectedRealmA =
-            buildConnectedRealm(
-                id = 1,
-                realms =
-                    mutableListOf(
-                        buildRealm(
-                            id = 1,
-                            name = "a",
-                        ),
-                    ),
-            )
-        var connectedRealmB =
-            buildConnectedRealm(
-                id = 2,
-                realms =
-                    mutableListOf(
-                        buildRealm(
-                            id = 2,
-                            name = "b",
-                        ),
-                    ),
-            )
-        autionHouseService.createIfMissing(connectedRealmA.toDbo())
-        autionHouseService.createIfMissing(connectedRealmB.toDbo())*/
     }
 
-    @Test
-    fun getAuctionHouseById() {
-        assertEquals(1, 2)
+    @Nested
+    inner class GetById {
+        @Test
+        fun `should return the auction house for a given id`() {
+            val connectedRealmId = 509
+            val result = mvcGet("/api/admin/auction-houses/$connectedRealmId", listOf("admin"))
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.id").value(connectedRealmId))
+                .andExpect { jsonPath("$.realms.length()").value(3) }
+        }
+
+        @Test
+        fun `should return 404 if there is no matching auction house for the given id`() {
+            val connectedRealmId = -9999
+            val result = mvcGet("/api/admin/auction-houses/$connectedRealmId", listOf("admin"))
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isNotFound)
+        }
     }
 
     @Nested
     inner class SearchAuctionHouses {
         @Test
         fun `lists auction houses in a page for an administrator`() {
-            val page = 1
+            val page = 0
             val pageSize = 10
             val totalItems = 41
             val totalPages = 5
             val sortDirection = "asc"
-            val sortBy = "ah.id"
+            val sortBy = AuctionHousePageSortBy.NAME
 
-            val result =
-                mockMvc
-                    .perform(
-                        get("/api/admin/auction-houses")
-                            .contextPath("/api")
-                            .with(
-                                jwt()
-                                    .jwt { token -> token.claim("cognito:groups", listOf("admin")) }
-                                    .authorities(cognitoGroupsGrantedAuthoritiesConverter),
-                            ),
-                    ).andExpect(request().asyncStarted())
-                    .andReturn()
+            val result = mvcGet("/api/admin/auction-houses", listOf("admin"))
 
             mockMvc
                 .perform(asyncDispatch(result))

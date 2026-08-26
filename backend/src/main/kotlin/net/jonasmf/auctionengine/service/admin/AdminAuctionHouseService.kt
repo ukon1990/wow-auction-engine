@@ -16,8 +16,8 @@ class AdminAuctionHouseService(
     val logger = LoggerFactory.getLogger(AdminAuctionHouseService::class.java)
 
     fun getByid(id: Int): AuctionHouse? {
-        val house = repository.findById(id).orElse(null)
-        return house.toDomain()
+        val house = repository.findByConnectedRealmId(id)
+        return house?.toDomain()
     }
 
     fun search(
@@ -28,9 +28,9 @@ class AdminAuctionHouseService(
     ): Pair<List<AuctionHouse>, Long> {
         val rows =
             repository.findAllWithQuery(
-                offset = (page - 1) * limit,
+                offset = (page) * limit,
                 pageSize = limit,
-                orderBy = "ah.id", // TODO: liten sjekk
+                orderBy = sortBy.value,
             )
         val totalRows =
             rows.firstOrNull().let {
