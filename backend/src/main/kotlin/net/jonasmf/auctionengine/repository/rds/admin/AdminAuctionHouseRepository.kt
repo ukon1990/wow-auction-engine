@@ -12,12 +12,10 @@ interface AdminAuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
     @Query(
         """
         FROM AuctionHouse a
-        LEFT JOIN ConnectedRealm
-        LEFT JOIN Realm
-        WHERE a.id = :id
+        WHERE a.connectedId = :connectedId
     """,
     )
-    fun getByid(id: Int): AuctionHouse?
+    fun findByConnectedRealmId(connectedId: Int): AuctionHouse?
 
     @Query(
         nativeQuery = true,
