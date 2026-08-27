@@ -30,7 +30,6 @@ class AdminAuctionHouseController(
         sortBy: AuctionHousePageSortBy?,
         sortDirection: String,
     ): ResponseEntity<AuctionHousePage> {
-        val pageSize = 20
         val sortDirectionMapped = Sorting.SortDirection.forValue(sortDirection)
         val (items, totalRows) =
             service.search(

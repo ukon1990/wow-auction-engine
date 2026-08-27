@@ -36,7 +36,11 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
         @Test
         fun `should return the auction house for a given id`() {
             val connectedRealmId = 509
-            val result = mvcGet("/api/admin/auction-houses/$connectedRealmId", listOf("admin"))
+            val result =
+                mvcGet(
+                    path = "/api/admin/auction-houses/$connectedRealmId",
+                    roles = listOf("admin"),
+                )
 
             mockMvc
                 .perform(asyncDispatch(result))
@@ -48,7 +52,11 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
         @Test
         fun `should return 404 if there is no matching auction house for the given id`() {
             val connectedRealmId = -9999
-            val result = mvcGet("/api/admin/auction-houses/$connectedRealmId", listOf("admin"))
+            val result =
+                mvcGet(
+                    path = "/api/admin/auction-houses/$connectedRealmId",
+                    roles = listOf("admin"),
+                )
 
             mockMvc
                 .perform(asyncDispatch(result))
@@ -67,7 +75,11 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
             val sortDirection = "asc"
             val sortBy = AuctionHousePageSortBy.NAME
 
-            val result = mvcGet("/api/admin/auction-houses", listOf("admin"))
+            val result =
+                mvcGet(
+                    path = "/api/admin/auction-houses?pageSize=$pageSize&page=$page",
+                    roles = listOf("admin"),
+                )
 
             mockMvc
                 .perform(asyncDispatch(result))
