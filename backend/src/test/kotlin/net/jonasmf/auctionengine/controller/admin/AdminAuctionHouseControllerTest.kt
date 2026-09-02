@@ -73,7 +73,7 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
             val totalItems = 41
             val totalPages = 5
             val sortDirection = "asc"
-            val sortBy = AuctionHousePageSortBy.NAME
+            val sortBy = AuctionHousePageSortBy.NAME.value
 
             val result =
                 mvcGet(
