@@ -32,7 +32,7 @@ paths:
   /admin/auction-houses:
     $ref: ./paths/admin.yml#/searchAuctionHouses
   /admin/auction-houses/{id}:
-    $ref: ./paths/admin.yml#/getAuctionHouseById
+    $ref: ./paths/admin.yml#/auctionHouseById
   /admin/users:
     $ref: ./paths/admin.yml#/getUsers
   /admin/status:
@@ -131,6 +131,8 @@ components:
       $ref: ./components/schemas/admin/user.yml
     AdminAuctionHousePage:
         $ref: "./components/schemas/admin/auction-house/auction-house-page.yml"
+    AdminUpdateAuctionHouse:
+        $ref: "./components/schemas/admin/auction-house/update-auction-house.yml"
     AdminAuctionHousePageSortBy:
         $ref: ./components/schemas/admin/auction-house/auction-house-page-sort-by.yml
     AdminStatus:

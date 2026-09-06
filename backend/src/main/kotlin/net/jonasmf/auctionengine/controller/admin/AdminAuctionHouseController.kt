@@ -8,6 +8,7 @@ import net.jonasmf.auctionengine.generated.model.AuctionHousePage
 import net.jonasmf.auctionengine.generated.model.AuctionHousePageSortBy
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.Sorting
+import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
 import net.jonasmf.auctionengine.mapper.realm.toDto
 import net.jonasmf.auctionengine.service.admin.AdminAuctionHouseService
 import org.springframework.http.ResponseEntity
@@ -21,8 +22,16 @@ class AdminAuctionHouseController(
     private val service: AdminAuctionHouseService,
 ) : AdminAuctionHouseApi {
     override suspend fun getById(id: Int): ResponseEntity<AuctionHouse> =
-        service.getByid(id)?.let { ResponseEntity.ok(it.toDto()) }
+        service.getById(id)?.let { ResponseEntity.ok(it.toDto()) }
             ?: return ResponseEntity.notFound().build()
+
+    override suspend fun update(
+        id: Int,
+        updateAuctionHouse: UpdateAuctionHouse,
+    ): ResponseEntity<AuctionHouse> =
+        service.update(id, updateAuctionHouse)?.let {
+            ResponseEntity.ok(it.toDto())
+        } ?: ResponseEntity.notFound()
 
     override suspend fun search(
         page: Int,

@@ -26,6 +26,8 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
     @Autowired
     lateinit var connectedRealmService: ConnectedRealmService
 
+    protected var basePath = "/api/admin/auction-houses"
+
     @BeforeEach
     fun setupData() {
         connectedRealmService.updateRealms()
@@ -38,7 +40,7 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
             val connectedRealmId = 509
             val result =
                 mvcGet(
-                    path = "/api/admin/auction-houses/$connectedRealmId",
+                    path = "$basePath/$connectedRealmId",
                     roles = listOf("admin"),
                 )
 
@@ -54,7 +56,7 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
             val connectedRealmId = -9999
             val result =
                 mvcGet(
-                    path = "/api/admin/auction-houses/$connectedRealmId",
+                    path = "$basePath/$connectedRealmId",
                     roles = listOf("admin"),
                 )
 
@@ -77,7 +79,7 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
 
             val result =
                 mvcGet(
-                    path = "/api/admin/auction-houses?pageSize=$pageSize&page=$page",
+                    path = "$basePath?pageSize=$pageSize&page=$page",
                     roles = listOf("admin"),
                 )
 
@@ -93,5 +95,15 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
                 .andExpect(jsonPath("$.sort.sortBy").value(sortBy))
                 .andExpect(jsonPath("$.sort.sortDirection").value(sortDirection))
         }
+    }
+
+    @Nested
+    inner class Path {
+        val connectedRealmId = 509
+        val result =
+            mvcPatch(
+                "$basePath/$connectedRealmId",
+                roles = listOf("admin"),
+            )
     }
 }

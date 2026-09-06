@@ -3,9 +3,43 @@ package net.jonasmf.auctionengine.repository.rds.admin
 import jakarta.persistence.OrderBy
 import net.jonasmf.auctionengine.dbo.rds.admin.AdminAuctinHouseRow
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
+import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
+import org.apache.coyote.BadRequestException
+import org.slf4j.LoggerFactory
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+
+@Repository
+class AdminAuctionHouseJdbcRepository(
+    private val jdbcTemplate: JdbcTemplate,
+) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
+    fun update(
+        id: Int,
+        auctionHouse: UpdateAuctionHouse,
+    ) {
+        val setSql = mutableListOf<String>()
+
+        if (auctionHouse.nextUpdate != null) setSql.add("nextUpdate = '${auctionHouse.nextUpdate}'")
+        if (auctionHouse.autoUpdate != null) setSql.add("autoUpdate = '${auctionHouse.autoUpdate}'")
+
+        if (setSql.isEmpty()) {
+            logger.info("At least one field needs to be passed for updating")
+            throw BadRequestException("At least one field needs to be passed for updating")
+        }
+
+        jdbcTemplate.update(
+            """
+            UPDATE auction_house
+            SET ${setSql.joinToString(", ")}
+            WHERE id = $id
+            """.trimIndent(),
+        )
+    }
+}
 
 @Repository
 interface AdminAuctionHouseRepository : JpaRepository<AuctionHouse, Int> {

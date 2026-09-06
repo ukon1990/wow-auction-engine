@@ -1,12 +1,10 @@
 package net.jonasmf.auctionengine.config
 
-import net.jonasmf.auctionengine.controller.admin.AdminController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.core.convert.converter.Converter
 import org.springframework.security.core.GrantedAuthority
@@ -16,8 +14,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 
 /**
@@ -52,6 +50,22 @@ abstract class MVCIntegrationTest : IntegrationTestBase() {
     ) = mockMvc
         .perform(
             get(path)
+                .contextPath("/api")
+                .with(
+                    jwt()
+                        .jwt { token -> token.claim("cognito:groups", roles) }
+                        .authorities(cognitoGroupsGrantedAuthoritiesConverter),
+                ),
+        ).andExpect(request().asyncStarted())
+        .andReturn()
+
+    protected fun mvcPatch(
+        path: String,
+        body: Any? = null,
+        roles: List<String> = listOf(),
+    ) = mockMvc
+        .perform(
+            patch(path, body)
                 .contextPath("/api")
                 .with(
                     jwt()

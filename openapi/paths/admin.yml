@@ -42,13 +42,13 @@ searchAuctionHouses:
                     application/json:
                         schema:
                             $ref: "../openapi.yml#/components/schemas/AdminAuctionHousePage"
-getAuctionHouseById:
+auctionHouseById:
     get:
         tags:
             - AdminAuctionHouse
         operationId: getById
         summary: Get information about an auction house's status by id
-        description: Allows an administrator to gets a spesific auction houses
+        description: Allows an administrator to gets a specific auction house
         parameters:
             -   name: id
                 in: path
@@ -56,6 +56,34 @@ getAuctionHouseById:
                 schema:
                     type: integer
                     format: int32
+        responses:
+            "200":
+                description: A gets a spesific auction house
+                content:
+                    application/json:
+                        schema:
+                            $ref: "../openapi.yml#/components/schemas/AuctionHouse"
+            "404":
+                description: There is no auction house with this id
+    patch:
+        tags:
+            - AdminAuctionHouse
+        operationId: update
+        summary: Updates an auction house
+        description: Allows an administrator to update a specific auction house
+        parameters:
+            -   name: id
+                in: path
+                required: true
+                schema:
+                    type: integer
+                    format: int32
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: "../openapi.yml#/components/schemas/AdminUpdateAuctionHouse"
         responses:
             "200":
                 description: A gets a spesific auction house
