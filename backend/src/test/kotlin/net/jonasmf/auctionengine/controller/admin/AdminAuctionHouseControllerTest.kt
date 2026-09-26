@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -94,6 +95,23 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
                 .andExpect(jsonPath("$.page.totalPages").value(totalPages))
                 .andExpect(jsonPath("$.sort.sortBy").value(sortBy))
                 .andExpect(jsonPath("$.sort.sortDirection").value(sortDirection))
+        }
+
+        @Test
+        fun `Will return 403 forbidden if the user does not have the correct access`() {
+            val page = 0
+            val pageSize = 10
+
+            val result =
+                mvcGet(
+                    path = "/api/admin/auction-houses?pageSize=$pageSize&page=$page",
+                    roles = listOf("some_other_role"),
+                )
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isForbidden)
+                .andExpect { noContent() }
         }
     }
 
