@@ -2,6 +2,7 @@ package net.jonasmf.auctionengine.controller.admin
 
 import net.jonasmf.auctionengine.config.MVCIntegrationTest
 import net.jonasmf.auctionengine.generated.model.AuctionHousePageSortBy
+import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
 import net.jonasmf.auctionengine.mapper.realm.toDbo
 import net.jonasmf.auctionengine.service.AuctionHouseService
 import net.jonasmf.auctionengine.service.ConnectedRealmService
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
 
 class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
     @Autowired
@@ -120,9 +122,15 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
         @Test
         fun `should be able to update an auction house, and get the updated version back`() {
             val connectedRealmId = 509
+            val nextUpdate = OffsetDateTime.now()
+            val requestBody =
+                UpdateAuctionHouse(
+                    nextUpdate = nextUpdate,
+                )
             val result =
                 mvcPatch(
                     path = "$basePath/$connectedRealmId",
+                    body = requestBody,
                     roles = listOf("admin"),
                 )
 
