@@ -105,12 +105,13 @@ interface AdminAuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
             JOIN connected_realm cr ON cr.id = ah.connected_id
             JOIN connected_realm_realms crr ON crr.connected_realm_id = cr.id
             JOIN realm r ON r.id = crr.realms_id
-        ORDER BY :orderBy
+        ORDER BY :orderBy [:sortDirection]
     """,
     )
     fun findAllWithQuery(
         offset: Int,
         pageSize: Int,
         orderBy: String,
+        sortDirection: String,
     ): List<AdminAuctinHouseRow>
 }

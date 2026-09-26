@@ -45,6 +45,7 @@ class AdminAuctionHouseService(
                 offset = (page) * limit,
                 pageSize = limit,
                 orderBy = sortBy.value,
+                sortDirection = sortDirection.value,
             )
         val totalRows =
             rows.firstOrNull().let {
