@@ -22,21 +22,32 @@ class AdminAuctionHouseJdbcRepository(
         auctionHouse: UpdateAuctionHouse,
     ) {
         val setSql = mutableListOf<String>()
+        val params = mutableListOf<Any>()
 
-        if (auctionHouse.nextUpdate != null) setSql.add("nextUpdate = '${auctionHouse.nextUpdate}'")
-        if (auctionHouse.autoUpdate != null) setSql.add("autoUpdate = '${auctionHouse.autoUpdate}'")
+        auctionHouse.nextUpdate?.let {
+            setSql += "next_update = ?"
+            params.add(it)
+        }
+
+        auctionHouse.autoUpdate?.let {
+            setSql += "auto_update = ?"
+            params.add(it)
+        }
 
         if (setSql.isEmpty()) {
             logger.info("At least one field needs to be passed for updating")
             throw BadRequestException("At least one field needs to be passed for updating")
         }
 
+        params.add(id)
+
         jdbcTemplate.update(
             """
             UPDATE auction_house
             SET ${setSql.joinToString(", ")}
-            WHERE id = $id
+            WHERE id = ?
             """.trimIndent(),
+            *params.toTypedArray(),
         )
     }
 }
