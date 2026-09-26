@@ -3,12 +3,12 @@ package net.jonasmf.auctionengine.service.admin
 import net.jonasmf.auctionengine.constant.admin.AdminAuctionHousePageSortBy
 import net.jonasmf.auctionengine.dbo.rds.admin.toAuctionHouseDomain
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
-import net.jonasmf.auctionengine.generated.model.Sorting
 import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
 import net.jonasmf.auctionengine.mapper.realm.toDomain
 import net.jonasmf.auctionengine.repository.rds.admin.AdminAuctionHouseJdbcRepository
 import net.jonasmf.auctionengine.repository.rds.admin.AdminAuctionHouseRepository
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
@@ -38,14 +38,14 @@ class AdminAuctionHouseService(
         page: Int,
         limit: Int,
         sortBy: AdminAuctionHousePageSortBy,
-        sortDirection: Sorting.SortDirection,
+        sortDirection: Sort.Direction,
     ): Pair<List<AuctionHouse>, Long> {
+        val sorting = Sort.by(sortDirection, sortBy.value)
         val rows =
             repository.findAllWithQuery(
                 offset = (page) * limit,
                 pageSize = limit,
-                orderBy = sortBy.value,
-                sortDirection = sortDirection.value,
+                sorting,
             )
         val totalRows =
             rows.firstOrNull().let {

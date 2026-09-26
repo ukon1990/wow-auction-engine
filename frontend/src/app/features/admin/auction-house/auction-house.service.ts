@@ -19,7 +19,7 @@ export type AuctionHouseQueryState = {
 export const defaultAuctionHouseQueryState: AuctionHouseQueryState = {
   page: 0,
   pageSize: 25,
-  sortBy: 'name',
+  sortBy: AuctionHousePageSortBy.NextUpdate,
   sortDirection: 'asc',
 };
 

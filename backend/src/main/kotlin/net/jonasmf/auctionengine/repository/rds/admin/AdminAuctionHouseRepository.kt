@@ -4,7 +4,9 @@ import net.jonasmf.auctionengine.dbo.rds.admin.AdminAuctinHouseRow
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
 import org.apache.coyote.BadRequestException
+import org.hibernate.query.SortDirection
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.jdbc.core.JdbcTemplate
@@ -105,13 +107,11 @@ interface AdminAuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
             JOIN connected_realm cr ON cr.id = ah.connected_id
             JOIN connected_realm_realms crr ON crr.connected_realm_id = cr.id
             JOIN realm r ON r.id = crr.realms_id
-        ORDER BY :orderBy [:sortDirection]
     """,
     )
     fun findAllWithQuery(
         offset: Int,
         pageSize: Int,
-        orderBy: String,
-        sortDirection: String,
+        sort: Sort,
     ): List<AdminAuctinHouseRow>
 }

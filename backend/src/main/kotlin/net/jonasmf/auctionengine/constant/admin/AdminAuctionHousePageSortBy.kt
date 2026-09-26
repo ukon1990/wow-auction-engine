@@ -5,16 +5,16 @@ import net.jonasmf.auctionengine.generated.model.AuctionHousePageSortBy
 enum class AdminAuctionHousePageSortBy(
     val value: String,
 ) {
-    NAME("name"),
-    REGION("ah.region"),
-    LOWEST_DELAY("ah.lowest_delay"),
-    AVG_DELAY("ah.avg_delay"),
-    HIGHEST_DELAY("ah.highest_delay"),
-    LAST_MODIFIED("ah.last_modified"),
-    LAST_AUCTION_PRICE_DELETE_EVENT("ah.last_auction_price_delete_event"),
-    LAST_HISTORY_DELETE_EVENT("ah.last_history_delete_event"),
-    LAST_HISTORY_DELETE_EVENT_DAILY("ah.last_history_delete_event_daily"),
-    NEXT_UPDATE("ah.next_update"),
+    NAME("realm_name"),
+    REGION("auction_house_region"),
+    LOWEST_DELAY("auction_house_lowest_delay"),
+    AVG_DELAY("auction_house_avg_delay"),
+    HIGHEST_DELAY("auction_house_highest_delay"),
+    LAST_MODIFIED("auction_house_last_modified"),
+    LAST_AUCTION_PRICE_DELETE_EVENT("auction_house_last_auction_price_delete_event"),
+    LAST_HISTORY_DELETE_EVENT("auction_house_last_history_delete_event"),
+    LAST_HISTORY_DELETE_EVENT_DAILY("auction_house_last_history_delete_event_daily"),
+    NEXT_UPDATE("auction_house_next_update"),
 }
 
 fun AuctionHousePageSortBy.toDomain(): AdminAuctionHousePageSortBy =

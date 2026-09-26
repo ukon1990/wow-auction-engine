@@ -83,7 +83,7 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
                 .perform(asyncDispatch(result))
                 .andExpect(status().isOk)
                 // It shoud be -2, due to the default sorting
-                .andExpect(jsonPath("$.items[0].connectedRealmId").value(-2))
+                .andExpect(jsonPath("$.items[0].connectedRealmId").value(604))
                 .andExpect(jsonPath("$.page.page").value(page))
                 .andExpect(jsonPath("$.page.pageSize").value(pageSize))
                 .andExpect(jsonPath("$.page.totalItems").value(totalItems))

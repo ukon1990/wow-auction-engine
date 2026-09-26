@@ -11,6 +11,7 @@ import net.jonasmf.auctionengine.generated.model.Sorting
 import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
 import net.jonasmf.auctionengine.mapper.realm.toDto
 import net.jonasmf.auctionengine.service.admin.AdminAuctionHouseService
+import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.RestController
@@ -39,7 +40,13 @@ class AdminAuctionHouseController(
         sortBy: AuctionHousePageSortBy?,
         sortDirection: String,
     ): ResponseEntity<AuctionHousePage> {
-        val sortDirectionMapped = Sorting.SortDirection.forValue(sortDirection)
+        val sortDirectionEnum = Sorting.SortDirection.forValue(sortDirection)
+        val sortDirectionMapped =
+            if (sortDirectionEnum == Sorting.SortDirection.ASC) {
+                Sort.Direction.ASC
+            } else {
+                Sort.Direction.DESC
+            }
         val (items, totalRows) =
             service.search(
                 page = page,
@@ -62,7 +69,7 @@ class AdminAuctionHouseController(
                 sort =
                     Sorting(
                         sortBy = (sortBy ?: AuctionHousePageSortBy.NAME).value,
-                        sortDirection = sortDirectionMapped,
+                        sortDirection = sortDirectionEnum,
                     ),
             ),
         )
