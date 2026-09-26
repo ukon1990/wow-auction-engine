@@ -31,7 +31,7 @@ class AdminAuctionHouseController(
     ): ResponseEntity<AuctionHouse> =
         service.update(id, updateAuctionHouse)?.let {
             ResponseEntity.ok(it.toDto())
-        } ?: ResponseEntity.notFound()
+        } ?: ResponseEntity.notFound().build()
 
     override suspend fun search(
         page: Int,
