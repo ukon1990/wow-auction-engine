@@ -116,12 +116,21 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
     }
 
     @Nested
-    inner class Path {
-        val connectedRealmId = 509
-        val result =
-            mvcPatch(
-                "$basePath/$connectedRealmId",
-                roles = listOf("admin"),
-            )
+    inner class Patch {
+        @Test
+        fun `should be able to update an auction house, and get the updated version back`() {
+            val connectedRealmId = 509
+            val result =
+                mvcPatch(
+                    path = "$basePath/$connectedRealmId",
+                    roles = listOf("admin"),
+                )
+
+            mockMvc
+                .perform(asyncDispatch(result))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.id").value(connectedRealmId))
+                .andExpect { jsonPath("$.realms.length()").value(3) }
+        }
     }
 }
