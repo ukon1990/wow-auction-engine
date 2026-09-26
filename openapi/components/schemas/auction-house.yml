@@ -44,3 +44,7 @@ properties:
         type: string
         format: date-time
         nullable: true
+    updateAttempts:
+        type: integer
+        format: int32
+        nullable: true

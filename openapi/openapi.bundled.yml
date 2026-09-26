@@ -2238,6 +2238,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/realm'
+        autoUpdate:
+          type: boolean
         lowestDelay:
           type: integer
           format: int64
@@ -2266,6 +2268,10 @@ components:
         lastModified:
           type: string
           format: date-time
+          nullable: true
+        updateAttempts:
+          type: integer
+          format: int32
           nullable: true
     page-metadata:
       type: object

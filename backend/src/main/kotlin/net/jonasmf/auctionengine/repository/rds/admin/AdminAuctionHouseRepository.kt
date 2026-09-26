@@ -1,6 +1,5 @@
 package net.jonasmf.auctionengine.repository.rds.admin
 
-import jakarta.persistence.OrderBy
 import net.jonasmf.auctionengine.dbo.rds.admin.AdminAuctinHouseRow
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
@@ -18,7 +17,7 @@ class AdminAuctionHouseJdbcRepository(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun update(
-        id: Int,
+        connedtedRealmId: Int,
         auctionHouse: UpdateAuctionHouse,
     ) {
         val setSql = mutableListOf<String>()
@@ -26,12 +25,15 @@ class AdminAuctionHouseJdbcRepository(
 
         auctionHouse.nextUpdate?.let {
             setSql += "next_update = ?"
-            params.add(it)
+            params += it
+
+            setSql += "update_attempts = ?"
+            params += 0
         }
 
         auctionHouse.autoUpdate?.let {
             setSql += "auto_update = ?"
-            params.add(it)
+            params += it
         }
 
         if (setSql.isEmpty()) {
@@ -39,13 +41,13 @@ class AdminAuctionHouseJdbcRepository(
             throw BadRequestException("At least one field needs to be passed for updating")
         }
 
-        params.add(id)
+        params.add(connedtedRealmId)
 
         jdbcTemplate.update(
             """
             UPDATE auction_house
             SET ${setSql.joinToString(", ")}
-            WHERE id = ?
+            WHERE connected_id = ?
             """.trimIndent(),
             *params.toTypedArray(),
         )

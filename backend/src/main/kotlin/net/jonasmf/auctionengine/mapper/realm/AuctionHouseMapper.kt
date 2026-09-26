@@ -76,6 +76,7 @@ fun Domain.toDto(): Dto {
         id = id,
         connectedRealmId = connectedId,
         region = region.toString(),
+        autoUpdate = autoUpdate,
         realms = realms.map { it.toDto() },
         avgDelay = avgDelay,
         highestDelay = highestDelay,
@@ -85,6 +86,7 @@ fun Domain.toDto(): Dto {
         lastModified = lastModified?.toOffsetDateTime(zoneId),
         lowestDelay = lowestDelay,
         nextUpdate = nextUpdate?.toOffsetDateTime(zoneId),
+        updateAttempts = updateAttempts,
     )
 }
 
