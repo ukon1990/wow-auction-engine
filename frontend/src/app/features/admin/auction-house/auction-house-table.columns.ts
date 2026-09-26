@@ -1,6 +1,7 @@
 import { ColumnDef, flexRenderComponent } from '@tanstack/angular-table';
-import { AuctionHouse } from '@api/generated';
+import { AuctionHouse, Realm } from '@api/generated';
 import { DateTimeColumnComponent } from '@ui';
+import { CheckboxColumn } from '../../../../../ethereal-ui/src/lib/components/table/columns/checkbox-column/checkbox-column';
 
 export function createAuctionHouseColumns(): ColumnDef<AuctionHouse, unknown>[] {
   return [
@@ -39,7 +40,10 @@ export function createAuctionHouseColumns(): ColumnDef<AuctionHouse, unknown>[] 
         cardLabel: $localize`:@@admin.auction-house.column.region:Region`,
         cardPriority: 10,
       },
-      cell: (info) => info.getValue(),
+      cell: (info) => {
+        const realms = info.getValue() as Realm[];
+        return realms.map((realm) => realm.name).join(', ');
+      },
     },
     {
       id: 'lastModified',
@@ -141,6 +145,19 @@ export function createAuctionHouseColumns(): ColumnDef<AuctionHouse, unknown>[] 
         cardPriority: 10,
       },
       cell: () => flexRenderComponent(DateTimeColumnComponent),
+    },
+    {
+      id: 'autoUpdate',
+      accessorKey: 'autoUpdate',
+      header: $localize`:@@admin.auction-house.column.autoUpdate:Auto update`,
+      meta: {
+        align: 'left',
+        gridTrack: '10rem',
+        cardRole: 'detail',
+        cardLabel: $localize`:@@admin.auction-house.column.autoUpdate:Auto update`,
+        cardPriority: 10,
+      },
+      cell: () => flexRenderComponent(CheckboxColumn),
     },
   ];
 }

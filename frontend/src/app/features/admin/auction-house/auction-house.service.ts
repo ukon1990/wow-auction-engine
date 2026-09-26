@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { AdminApiService, AuctionHouse, AuctionHousePage } from '@api/generated';
+import {
+  AdminApiService,
+  AdminAuctionHouseApiService,
+  AuctionHouse,
+  AuctionHousePage,
+  AuctionHousePageSortBy,
+  UpdateAuctionHouse,
+} from '@api/generated';
 import { BaseSearchService } from '@core/services/base-search.service';
 import { Observable } from 'rxjs';
 
@@ -7,7 +14,7 @@ type AuctionHouseQueryState = {
   query: string;
   page: number;
   pageSize: number;
-  sortBy: string;
+  sortBy: AuctionHousePageSortBy;
   sortDirection: 'asc' | 'desc';
 };
 
@@ -28,11 +35,22 @@ export class AuctionHouseService extends BaseSearchService<
   never,
   AuctionHouseQueryState
 > {
-  constructor(private api: AdminApiService) {
+  constructor(private api: AdminAuctionHouseApiService) {
     super(defaultAuctionHouseQueryState);
   }
 
   getPageByQuery(queryParams: AuctionHouseQueryState): Observable<AuctionHousePage | null> {
-    return super.search(queryParams, () => this.api.listAuctionHouses());
+    return super.search(queryParams, () =>
+      this.api.search(
+        queryParams.page,
+        queryParams.pageSize,
+        queryParams.sortBy,
+        queryParams.sortDirection,
+      ),
+    );
+  }
+
+  upddate(id: number, updateAuctionHouse: UpdateAuctionHouse) {
+    return this.api.update(id, updateAuctionHouse);
   }
 }
