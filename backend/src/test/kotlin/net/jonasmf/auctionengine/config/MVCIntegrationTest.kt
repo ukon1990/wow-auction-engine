@@ -7,6 +7,7 @@ import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSec
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.context.annotation.Import
 import org.springframework.core.convert.converter.Converter
+import org.springframework.http.MediaType
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
+import tools.jackson.databind.ObjectMapper
 
 /**
  * A helper for writing integration tests for MVC(controllers).
@@ -44,6 +46,9 @@ abstract class MVCIntegrationTest : IntegrationTestBase() {
     @Autowired
     protected lateinit var cognitoGroupsGrantedAuthoritiesConverter: Converter<Jwt, Collection<GrantedAuthority>>
 
+    @Autowired
+    protected lateinit var objectMapper: ObjectMapper
+
     protected fun mvcGet(
         path: String,
         roles: List<String> = listOf(),
@@ -65,7 +70,12 @@ abstract class MVCIntegrationTest : IntegrationTestBase() {
         roles: List<String> = listOf(),
     ) = mockMvc
         .perform(
-            patch(path, body)
+            patch(path)
+                .apply {
+                    if (body != null) {
+                        content(objectMapper.writeValueAsString(body))
+                    }
+                }.contentType(MediaType.APPLICATION_JSON)
                 .contextPath("/api")
                 .with(
                     jwt()
