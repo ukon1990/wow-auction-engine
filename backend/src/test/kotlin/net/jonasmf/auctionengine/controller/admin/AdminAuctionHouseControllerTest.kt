@@ -75,7 +75,7 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
 
             val result =
                 mvcGet(
-                    path = "$basePath?pageSize=$pageSize&page=$page",
+                    path = "$basePath?pageSize=$pageSize&page=$page&sortBy=$sortBy&sortDirection=$sortDirection",
                     roles = listOf("admin"),
                 )
 

@@ -2182,16 +2182,16 @@ components:
     auction-house-page-sort-by:
       type: string
       enum:
-        - name
-        - region
-        - lowestDelay
-        - avgDelay
-        - highestDelay
-        - lastModified
-        - lastAuctionPriceDeleteEvent
-        - lastHistoryDeleteEvent
-        - lastHistoryDeleteEventDaily
-        - nextUpdate
+        - NAME
+        - REGION
+        - LOWEST_DELAY
+        - AVG_DELAY
+        - HIGHEST_DELAY
+        - LAST_MODIFIED
+        - LAST_AUCTION_PRICE_DELETE_EVENT
+        - LAST_HISTORY_DELETE_EVENT
+        - LAST_HISTORY_DELETE_EVENT_DAILY
+        - NEXT_UPDATE
     realm:
       type: object
       required:
