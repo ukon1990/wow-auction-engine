@@ -2654,6 +2654,45 @@
         <source>Used as reagent</source>
         <target>Usato come reagente</target>
       </trans-unit>
+      <trans-unit id="admin.auction-house.title" datatype="html"><source>Auction houses</source><target>Case d’asta</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.id" datatype="html"><source>ID</source><target>ID</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.region" datatype="html"><source>Region</source><target>Regione</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.realms" datatype="html"><source>Realms</source><target>Reami</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.lastModified" datatype="html"><source>Updated at</source><target>Aggiornato il</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.nextUpdate" datatype="html"><source>Next update</source><target>Prossimo aggiornamento</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.delays" datatype="html"><source>Delay (min / avg / max)</source><target>Ritardo (min / med / max)</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.autoUpdate" datatype="html"><source>Auto update</source><target>Aggiornamento automatico</target></trans-unit>
+      <trans-unit id="admin.auction-house.enabled" datatype="html"><source>Enabled</source><target>Attivato</target></trans-unit>
+      <trans-unit id="admin.auction-house.disabled" datatype="html"><source>Disabled</source><target>Disattivato</target></trans-unit>
+      <trans-unit id="admin.auction-house.actions" datatype="html"><source>Actions</source><target>Azioni</target></trans-unit>
+      <trans-unit id="admin.auction-house.openActions" datatype="html"><source>Open auction house actions</source><target>Apri azioni casa d’asta</target></trans-unit>
+      <trans-unit id="admin.auction-house.viewEdit" datatype="html"><source>View and edit</source><target>Visualizza e modifica</target></trans-unit>
+      <trans-unit id="admin.auction-house.updateNow" datatype="html"><source>Update now</source><target>Aggiorna ora</target></trans-unit>
+      <trans-unit id="admin.auction-house.enableAutoUpdate" datatype="html"><source>Enable auto update</source><target>Attiva aggiornamento automatico</target></trans-unit>
+      <trans-unit id="admin.auction-house.disableAutoUpdate" datatype="html"><source>Disable auto update</source><target>Disattiva aggiornamento automatico</target></trans-unit>
+      <trans-unit id="admin.auction-house.connectedRealmId" datatype="html"><source>Connected realm ID</source><target>ID reame connesso</target></trans-unit>
+      <trans-unit id="admin.auction-house.updateAttempts" datatype="html"><source>Update attempts</source><target>Tentativi di aggiornamento</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastDailyPriceUpdate" datatype="html"><source>Daily price update</source><target>Aggiornamento giornaliero prezzi</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastHistoryDeleteEvent" datatype="html"><source>Hourly history deletion</source><target>Eliminazione oraria cronologia</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastHistoryDeleteEventDaily" datatype="html"><source>Daily history deletion</source><target>Eliminazione giornaliera cronologia</target></trans-unit>
+      <trans-unit id="admin.auction-house.detailsTitle" datatype="html"><source>Auction house details</source><target>Dettagli casa d’asta</target></trans-unit>
+      <trans-unit id="admin.auction-house.loadingDetails" datatype="html"><source>Loading details...</source><target>Caricamento dettagli...</target></trans-unit>
+      <trans-unit id="admin.auction-house.save" datatype="html"><source>Save changes</source><target>Salva modifiche</target></trans-unit>
+      <trans-unit id="admin.auction-house.empty" datatype="html"><source>No auction houses were found</source><target>Nessuna casa d’asta trovata</target></trans-unit>
+      <trans-unit id="admin.auction-house.tableAria" datatype="html"><source>Auction houses</source><target>Case d’asta</target></trans-unit>
+      <trans-unit id="admin.auction-house.paginationLabel" datatype="html"><source>auction houses</source><target>case d’asta</target></trans-unit>
+      <trans-unit id="admin.auction-house.detailError" datatype="html"><source>Could not load auction house details.</source><target>Impossibile caricare i dettagli.</target></trans-unit>
+      <trans-unit id="admin.auction-house.invalidDate" datatype="html"><source>Enter a valid next update time.</source><target>Inserisci un orario valido per il prossimo aggiornamento.</target></trans-unit>
+      <trans-unit id="admin.auction-house.loadError" datatype="html"><source>Could not load auction houses.</source><target>Impossibile caricare le case d’asta.</target></trans-unit>
+      <trans-unit id="admin.auction-house.saveError" datatype="html"><source>Could not update auction house. Please try again.</source><target>Impossibile aggiornare la casa d’asta. Riprova.</target></trans-unit>
+      <trans-unit id="admin.auction-house.saved" datatype="html"><source>Auction house updated.</source><target>Casa d’asta aggiornata.</target></trans-unit>
+      <trans-unit id="admin.auction-house.retry" datatype="html"><source>Retry</source><target>Riprova</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmSlug" datatype="html"><source>Slug</source><target>Identificativo</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmRegion" datatype="html"><source>Region</source><target>Regione</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmCategory" datatype="html"><source>Category</source><target>Categoria</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmLocale" datatype="html"><source>Locale</source><target>Impostazioni locali</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmTimezone" datatype="html"><source>Time zone</source><target>Fuso orario</target></trans-unit>
+      <trans-unit id="admin.auction-house.defaultOrder" datatype="html"><source>Default order</source><target>Ordine predefinito</target></trans-unit>
     </body>
   </file>
 </xliff>

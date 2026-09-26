@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {
-  AdminApiService,
   AdminAuctionHouseApiService,
   AuctionHouse,
   AuctionHousePage,
@@ -10,16 +9,14 @@ import {
 import { BaseSearchService } from '@core/services/base-search.service';
 import { Observable } from 'rxjs';
 
-type AuctionHouseQueryState = {
-  query: string;
+export type AuctionHouseQueryState = {
   page: number;
   pageSize: number;
   sortBy: AuctionHousePageSortBy;
   sortDirection: 'asc' | 'desc';
 };
 
-const defaultAuctionHouseQueryState: AuctionHouseQueryState = {
-  query: '',
+export const defaultAuctionHouseQueryState: AuctionHouseQueryState = {
   page: 0,
   pageSize: 25,
   sortBy: 'name',
@@ -50,7 +47,15 @@ export class AuctionHouseService extends BaseSearchService<
     );
   }
 
-  upddate(id: number, updateAuctionHouse: UpdateAuctionHouse) {
+  update(id: number, updateAuctionHouse: UpdateAuctionHouse) {
     return this.api.update(id, updateAuctionHouse);
+  }
+
+  fetchById(id: number): Observable<AuctionHouse> {
+    return this.api.getById(id);
+  }
+
+  clearPages(): void {
+    this.cache.set(new Map());
   }
 }

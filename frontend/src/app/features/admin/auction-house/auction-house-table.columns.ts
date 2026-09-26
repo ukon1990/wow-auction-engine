@@ -1,48 +1,51 @@
+import { AuctionHouse } from '@api/generated';
 import { ColumnDef, flexRenderComponent } from '@tanstack/angular-table';
-import { AuctionHouse, Realm } from '@api/generated';
 import { DateTimeColumnComponent } from '@ui';
-import { CheckboxColumn } from '../../../../../ethereal-ui/src/lib/components/table/columns/checkbox-column/checkbox-column';
+import { AuctionHouseActionsCellComponent } from './auction-house-actions-cell.component';
 
-export function createAuctionHouseColumns(): ColumnDef<AuctionHouse, unknown>[] {
+export interface AuctionHouseActions {
+  onDetails: (house: AuctionHouse) => void;
+  onUpdateNow: (house: AuctionHouse) => void;
+  onToggleAutoUpdate: (house: AuctionHouse) => void;
+  isSaving: (house: AuctionHouse) => boolean;
+}
+
+export function createAuctionHouseColumns(
+  actions: AuctionHouseActions,
+): ColumnDef<AuctionHouse, unknown>[] {
   return [
     {
       id: 'connectedRealmId',
       accessorKey: 'connectedRealmId',
-      header: $localize`:@@admin.auction-house.column.id:Id`,
+      header: $localize`:@@admin.auction-house.column.id:ID`,
+      enableSorting: false,
       meta: {
-        align: 'left',
-        gridTrack: '4rem',
+        gridTrack: '3.5rem',
         cardRole: 'detail',
-        cardLabel: $localize`:@@admin.auction-house.column.id:Id`,
-        cardPriority: 40,
+        cardLabel: $localize`:@@admin.auction-house.column.id:ID`,
       },
     },
     {
       id: 'region',
       accessorKey: 'region',
-      header: 'Region',
+      header: $localize`:@@admin.auction-house.column.region:Region`,
       meta: {
-        align: 'left',
         gridTrack: '5rem',
         cardRole: 'detail',
         cardLabel: $localize`:@@admin.auction-house.column.region:Region`,
-        cardPriority: 10,
       },
     },
     {
       id: 'realms',
-      accessorKey: 'realms',
-      header: 'Realms',
-      meta: {
-        align: 'left',
-        gridTrack: 'minmax(5rem, 10rem)',
-        cardRole: 'detail',
-        cardLabel: $localize`:@@admin.auction-house.column.region:Region`,
-        cardPriority: 10,
-      },
+      header: $localize`:@@admin.auction-house.column.realms:Realms`,
+      accessorFn: (house) => house.realms,
+      enableSorting: false,
+      meta: { gridTrack: 'minmax(9rem, 2fr)', cardRole: 'primary' },
       cell: (info) => {
-        const realms = info.getValue() as Realm[];
-        return realms.map((realm) => realm.name).join(', ');
+        const names = (info.row.original.realms ?? []).map((realm) => realm.name);
+        return names.length > 2
+          ? `${names.slice(0, 2).join(', ')} +${names.length - 2}`
+          : names.join(', ') || '—';
       },
     },
     {
@@ -50,11 +53,9 @@ export function createAuctionHouseColumns(): ColumnDef<AuctionHouse, unknown>[] 
       accessorKey: 'lastModified',
       header: $localize`:@@admin.auction-house.column.lastModified:Updated at`,
       meta: {
-        align: 'left',
-        gridTrack: '10rem',
+        gridTrack: '8rem',
         cardRole: 'detail',
         cardLabel: $localize`:@@admin.auction-house.column.lastModified:Updated at`,
-        cardPriority: 10,
       },
       cell: () => flexRenderComponent(DateTimeColumnComponent),
     },
@@ -63,101 +64,47 @@ export function createAuctionHouseColumns(): ColumnDef<AuctionHouse, unknown>[] 
       accessorKey: 'nextUpdate',
       header: $localize`:@@admin.auction-house.column.nextUpdate:Next update`,
       meta: {
-        align: 'left',
-        gridTrack: '10rem',
+        gridTrack: '8rem',
         cardRole: 'detail',
         cardLabel: $localize`:@@admin.auction-house.column.nextUpdate:Next update`,
-        cardPriority: 10,
       },
       cell: () => flexRenderComponent(DateTimeColumnComponent),
-    },
-    {
-      id: 'lowestDelay',
-      accessorKey: 'lowestDelay',
-      header: $localize`:@@admin.auction-house.column.lowestDelay:Lowest delay`,
-      meta: {
-        align: 'left',
-        gridTrack: '5rem',
-        cardRole: 'detail',
-        cardLabel: $localize`:@@admin.auction-house.column.lowestDelay:Lowest delay`,
-        cardPriority: 40,
-      },
     },
     {
       id: 'avgDelay',
       accessorKey: 'avgDelay',
-      header: $localize`:@@admin.auction-house.column.avgDelay:Avg delay`,
+      header: $localize`:@@admin.auction-house.column.delays:Delay (min / avg / max)`,
       meta: {
-        align: 'left',
-        gridTrack: '5rem',
+        gridTrack: '9rem',
         cardRole: 'detail',
-        cardLabel: $localize`:@@admin.auction-house.column.avgDelay:Avg delay`,
-        cardPriority: 40,
+        cardLabel: $localize`:@@admin.auction-house.column.delays:Delay (min / avg / max)`,
       },
-    },
-    {
-      id: 'highestDelay',
-      accessorKey: 'highestDelay',
-      header: $localize`:@@admin.auction-house.column.highestDelay:Highest delay`,
-      meta: {
-        align: 'left',
-        gridTrack: '5rem',
-        cardRole: 'detail',
-        cardLabel: $localize`:@@admin.auction-house.column.highestDelay:Highest delay`,
-        cardPriority: 40,
+      cell: (info) => {
+        const house = info.row.original;
+        return `${house.lowestDelay ?? '—'} / ${house.avgDelay ?? '—'} / ${house.highestDelay ?? '—'}`;
       },
-    },
-    {
-      id: 'lastDailyPriceUpdate',
-      accessorKey: 'lastDailyPriceUpdate',
-      header: $localize`:@@admin.auction-house.column.lastDailyPriceUpdate:Daily updated`,
-      meta: {
-        align: 'left',
-        gridTrack: '10rem',
-        cardRole: 'detail',
-        cardLabel: $localize`:@@admin.auction-house.column.lastDailyPriceUpdate:Daily updated`,
-        cardPriority: 10,
-      },
-      cell: () => flexRenderComponent(DateTimeColumnComponent),
-    },
-    {
-      id: 'lastHistoryDeleteEvent',
-      accessorKey: 'lastHistoryDeleteEvent',
-      header: $localize`:@@admin.auction-house.column.lastHistoryDeleteEvent:Deleted hourly`,
-      meta: {
-        align: 'left',
-        gridTrack: '10rem',
-        cardRole: 'detail',
-        cardLabel: $localize`:@@admin.auction-house.column.lastHistoryDeleteEvent:Deleted hourly`,
-        cardPriority: 10,
-      },
-      cell: () => flexRenderComponent(DateTimeColumnComponent),
-    },
-    {
-      id: 'lastHistoryDeleteEventDaily',
-      accessorKey: 'lastHistoryDeleteEventDaily',
-      header: $localize`:@@admin.auction-house.column.lastHistoryDeleteEventDaily:Deleted daily`,
-      meta: {
-        align: 'left',
-        gridTrack: '10rem',
-        cardRole: 'detail',
-        cardLabel: $localize`:@@admin.auction-house.column.lastHistoryDeleteEventDaily:Deleted daily`,
-        cardPriority: 10,
-      },
-      cell: () => flexRenderComponent(DateTimeColumnComponent),
     },
     {
       id: 'autoUpdate',
       accessorKey: 'autoUpdate',
       header: $localize`:@@admin.auction-house.column.autoUpdate:Auto update`,
+      enableSorting: false,
       meta: {
-        align: 'left',
-        gridTrack: '10rem',
+        gridTrack: '5rem',
         cardRole: 'detail',
         cardLabel: $localize`:@@admin.auction-house.column.autoUpdate:Auto update`,
-        cardPriority: 10,
       },
-      cell: () => flexRenderComponent(CheckboxColumn),
+      cell: (info) =>
+        info.row.original.autoUpdate
+          ? $localize`:@@admin.auction-house.enabled:Enabled`
+          : $localize`:@@admin.auction-house.disabled:Disabled`,
+    },
+    {
+      id: 'actions',
+      header: $localize`:@@admin.auction-house.actions:Actions`,
+      enableSorting: false,
+      meta: { gridTrack: '3.5rem', cardRole: 'detail', ...actions },
+      cell: () => flexRenderComponent(AuctionHouseActionsCellComponent),
     },
   ];
 }

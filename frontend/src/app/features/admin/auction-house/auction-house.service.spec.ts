@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { AdminApiService } from '@api/generated';
+import { AdminAuctionHouseApiService } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
 import { QueryService } from '@core/services/query.service';
 import { RealmSelectionService } from '@core/services/realm-selection.service';
@@ -14,7 +14,7 @@ describe('AuctionHouseService', () => {
     TestBed.configureTestingModule({
       providers: [
         AuctionHouseService,
-        { provide: AdminApiService, useValue: {} },
+        { provide: AdminAuctionHouseApiService, useValue: {} },
         {
           provide: QueryService,
           useValue: {

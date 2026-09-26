@@ -2654,6 +2654,45 @@
         <source>Used as reagent</source>
         <target>Используется как реагент</target>
       </trans-unit>
+      <trans-unit id="admin.auction-house.title" datatype="html"><source>Auction houses</source><target>Аукционные дома</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.id" datatype="html"><source>ID</source><target>ID</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.region" datatype="html"><source>Region</source><target>Регион</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.realms" datatype="html"><source>Realms</source><target>Игровые миры</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.lastModified" datatype="html"><source>Updated at</source><target>Обновлено</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.nextUpdate" datatype="html"><source>Next update</source><target>Следующее обновление</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.delays" datatype="html"><source>Delay (min / avg / max)</source><target>Задержка (мин / сред / макс)</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.autoUpdate" datatype="html"><source>Auto update</source><target>Автообновление</target></trans-unit>
+      <trans-unit id="admin.auction-house.enabled" datatype="html"><source>Enabled</source><target>Включено</target></trans-unit>
+      <trans-unit id="admin.auction-house.disabled" datatype="html"><source>Disabled</source><target>Выключено</target></trans-unit>
+      <trans-unit id="admin.auction-house.actions" datatype="html"><source>Actions</source><target>Действия</target></trans-unit>
+      <trans-unit id="admin.auction-house.openActions" datatype="html"><source>Open auction house actions</source><target>Открыть действия аукционного дома</target></trans-unit>
+      <trans-unit id="admin.auction-house.viewEdit" datatype="html"><source>View and edit</source><target>Просмотр и изменение</target></trans-unit>
+      <trans-unit id="admin.auction-house.updateNow" datatype="html"><source>Update now</source><target>Обновить сейчас</target></trans-unit>
+      <trans-unit id="admin.auction-house.enableAutoUpdate" datatype="html"><source>Enable auto update</source><target>Включить автообновление</target></trans-unit>
+      <trans-unit id="admin.auction-house.disableAutoUpdate" datatype="html"><source>Disable auto update</source><target>Выключить автообновление</target></trans-unit>
+      <trans-unit id="admin.auction-house.connectedRealmId" datatype="html"><source>Connected realm ID</source><target>ID связанного мира</target></trans-unit>
+      <trans-unit id="admin.auction-house.updateAttempts" datatype="html"><source>Update attempts</source><target>Попытки обновления</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastDailyPriceUpdate" datatype="html"><source>Daily price update</source><target>Ежедневное обновление цен</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastHistoryDeleteEvent" datatype="html"><source>Hourly history deletion</source><target>Ежечасное удаление истории</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastHistoryDeleteEventDaily" datatype="html"><source>Daily history deletion</source><target>Ежедневное удаление истории</target></trans-unit>
+      <trans-unit id="admin.auction-house.detailsTitle" datatype="html"><source>Auction house details</source><target>Сведения об аукционном доме</target></trans-unit>
+      <trans-unit id="admin.auction-house.loadingDetails" datatype="html"><source>Loading details...</source><target>Загрузка сведений...</target></trans-unit>
+      <trans-unit id="admin.auction-house.save" datatype="html"><source>Save changes</source><target>Сохранить изменения</target></trans-unit>
+      <trans-unit id="admin.auction-house.empty" datatype="html"><source>No auction houses were found</source><target>Аукционные дома не найдены</target></trans-unit>
+      <trans-unit id="admin.auction-house.tableAria" datatype="html"><source>Auction houses</source><target>Аукционные дома</target></trans-unit>
+      <trans-unit id="admin.auction-house.paginationLabel" datatype="html"><source>auction houses</source><target>аукционных домов</target></trans-unit>
+      <trans-unit id="admin.auction-house.detailError" datatype="html"><source>Could not load auction house details.</source><target>Не удалось загрузить сведения.</target></trans-unit>
+      <trans-unit id="admin.auction-house.invalidDate" datatype="html"><source>Enter a valid next update time.</source><target>Введите правильное время следующего обновления.</target></trans-unit>
+      <trans-unit id="admin.auction-house.loadError" datatype="html"><source>Could not load auction houses.</source><target>Не удалось загрузить аукционные дома.</target></trans-unit>
+      <trans-unit id="admin.auction-house.saveError" datatype="html"><source>Could not update auction house. Please try again.</source><target>Не удалось обновить аукционный дом. Повторите попытку.</target></trans-unit>
+      <trans-unit id="admin.auction-house.saved" datatype="html"><source>Auction house updated.</source><target>Аукционный дом обновлён.</target></trans-unit>
+      <trans-unit id="admin.auction-house.retry" datatype="html"><source>Retry</source><target>Повторить</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmSlug" datatype="html"><source>Slug</source><target>Идентификатор</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmRegion" datatype="html"><source>Region</source><target>Регион</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmCategory" datatype="html"><source>Category</source><target>Категория</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmLocale" datatype="html"><source>Locale</source><target>Локаль</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmTimezone" datatype="html"><source>Time zone</source><target>Часовой пояс</target></trans-unit>
+      <trans-unit id="admin.auction-house.defaultOrder" datatype="html"><source>Default order</source><target>Порядок по умолчанию</target></trans-unit>
     </body>
   </file>
 </xliff>

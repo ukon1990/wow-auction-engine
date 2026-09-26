@@ -25,6 +25,10 @@ import { userHasRoleGuard } from '@core/guards/user-has-role-guard';
 import { authenticatedGuard } from '@core/guards/authenticated.guard';
 import { pendingProfessionProfileChangesGuard } from '@features/profile/professions/profession-profiles.guard';
 import { AuctionHouseService } from '@features/admin/auction-house/auction-house.service';
+import {
+  readAuctionHouseQueryState,
+  toAuctionHouseQueryParams,
+} from '@features/admin/auction-house/auction-house-query.mapper';
 
 export type TitledRoutes = (Route & {
   icon?: string;
@@ -100,14 +104,12 @@ export const routes: TitledRoutes = [
         providers: [
           QueryService,
           {
-            // TODO: Custom query param mapper
             provide: QUERY_PARAM_MAPPER,
-            useValue: readMarketBrowserQueryState,
+            useValue: readAuctionHouseQueryState,
           },
           {
-            // TODO: Custom query param mapper
             provide: TO_QUERY_PARAMS_MAPPER,
-            useValue: toMarketBrowserQueryParams,
+            useValue: toAuctionHouseQueryParams,
           },
           AuctionHouseService,
         ],

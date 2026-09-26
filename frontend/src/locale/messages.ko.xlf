@@ -2654,6 +2654,45 @@
         <source>Used as reagent</source>
         <target>재료로 사용</target>
       </trans-unit>
+      <trans-unit id="admin.auction-house.title" datatype="html"><source>Auction houses</source><target>경매장</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.id" datatype="html"><source>ID</source><target>ID</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.region" datatype="html"><source>Region</source><target>지역</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.realms" datatype="html"><source>Realms</source><target>서버</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.lastModified" datatype="html"><source>Updated at</source><target>업데이트 시간</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.nextUpdate" datatype="html"><source>Next update</source><target>다음 업데이트</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.delays" datatype="html"><source>Delay (min / avg / max)</source><target>지연 (최소 / 평균 / 최대)</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.autoUpdate" datatype="html"><source>Auto update</source><target>자동 업데이트</target></trans-unit>
+      <trans-unit id="admin.auction-house.enabled" datatype="html"><source>Enabled</source><target>활성화</target></trans-unit>
+      <trans-unit id="admin.auction-house.disabled" datatype="html"><source>Disabled</source><target>비활성화</target></trans-unit>
+      <trans-unit id="admin.auction-house.actions" datatype="html"><source>Actions</source><target>작업</target></trans-unit>
+      <trans-unit id="admin.auction-house.openActions" datatype="html"><source>Open auction house actions</source><target>경매장 작업 열기</target></trans-unit>
+      <trans-unit id="admin.auction-house.viewEdit" datatype="html"><source>View and edit</source><target>보기 및 편집</target></trans-unit>
+      <trans-unit id="admin.auction-house.updateNow" datatype="html"><source>Update now</source><target>지금 업데이트</target></trans-unit>
+      <trans-unit id="admin.auction-house.enableAutoUpdate" datatype="html"><source>Enable auto update</source><target>자동 업데이트 활성화</target></trans-unit>
+      <trans-unit id="admin.auction-house.disableAutoUpdate" datatype="html"><source>Disable auto update</source><target>자동 업데이트 비활성화</target></trans-unit>
+      <trans-unit id="admin.auction-house.connectedRealmId" datatype="html"><source>Connected realm ID</source><target>연결된 서버 ID</target></trans-unit>
+      <trans-unit id="admin.auction-house.updateAttempts" datatype="html"><source>Update attempts</source><target>업데이트 시도 횟수</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastDailyPriceUpdate" datatype="html"><source>Daily price update</source><target>일일 가격 업데이트</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastHistoryDeleteEvent" datatype="html"><source>Hourly history deletion</source><target>시간별 기록 삭제</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastHistoryDeleteEventDaily" datatype="html"><source>Daily history deletion</source><target>일일 기록 삭제</target></trans-unit>
+      <trans-unit id="admin.auction-house.detailsTitle" datatype="html"><source>Auction house details</source><target>경매장 상세 정보</target></trans-unit>
+      <trans-unit id="admin.auction-house.loadingDetails" datatype="html"><source>Loading details...</source><target>상세 정보 불러오는 중...</target></trans-unit>
+      <trans-unit id="admin.auction-house.save" datatype="html"><source>Save changes</source><target>변경 사항 저장</target></trans-unit>
+      <trans-unit id="admin.auction-house.empty" datatype="html"><source>No auction houses were found</source><target>경매장을 찾을 수 없습니다</target></trans-unit>
+      <trans-unit id="admin.auction-house.tableAria" datatype="html"><source>Auction houses</source><target>경매장</target></trans-unit>
+      <trans-unit id="admin.auction-house.paginationLabel" datatype="html"><source>auction houses</source><target>경매장</target></trans-unit>
+      <trans-unit id="admin.auction-house.detailError" datatype="html"><source>Could not load auction house details.</source><target>경매장 상세 정보를 불러올 수 없습니다.</target></trans-unit>
+      <trans-unit id="admin.auction-house.invalidDate" datatype="html"><source>Enter a valid next update time.</source><target>올바른 다음 업데이트 시간을 입력하세요.</target></trans-unit>
+      <trans-unit id="admin.auction-house.loadError" datatype="html"><source>Could not load auction houses.</source><target>경매장을 불러올 수 없습니다.</target></trans-unit>
+      <trans-unit id="admin.auction-house.saveError" datatype="html"><source>Could not update auction house. Please try again.</source><target>경매장을 업데이트할 수 없습니다. 다시 시도하세요.</target></trans-unit>
+      <trans-unit id="admin.auction-house.saved" datatype="html"><source>Auction house updated.</source><target>경매장이 업데이트되었습니다.</target></trans-unit>
+      <trans-unit id="admin.auction-house.retry" datatype="html"><source>Retry</source><target>다시 시도</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmSlug" datatype="html"><source>Slug</source><target>슬러그</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmRegion" datatype="html"><source>Region</source><target>지역</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmCategory" datatype="html"><source>Category</source><target>분류</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmLocale" datatype="html"><source>Locale</source><target>로캘</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmTimezone" datatype="html"><source>Time zone</source><target>시간대</target></trans-unit>
+      <trans-unit id="admin.auction-house.defaultOrder" datatype="html"><source>Default order</source><target>기본 순서</target></trans-unit>
     </body>
   </file>
 </xliff>
