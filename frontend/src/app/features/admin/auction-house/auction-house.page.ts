@@ -56,6 +56,10 @@ export class AuctionHousePage {
   readonly cardView = computed(() => this.viewportWidth() <= 767);
   readonly mobileSortOptions = [
     {
+      id: AuctionHousePageSortBy.Name,
+      label: $localize`:@@admin.auction-house.column.realms:Realms`,
+    },
+    {
       id: AuctionHousePageSortBy.Region,
       label: $localize`:@@admin.auction-house.column.region:Region`,
     },

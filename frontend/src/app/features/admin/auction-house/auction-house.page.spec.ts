@@ -123,7 +123,7 @@ describe('AuctionHousePage', () => {
   it('only enables sorting for backend-supported visible columns', () => {
     const byId = (id: string) => page.columns.find((column) => column.id === id);
     expect(byId('connectedRealmId')?.enableSorting).toBe(false);
-    expect(byId(AuctionHousePageSortBy.Name)?.enableSorting).toBe(false);
+    expect(byId(AuctionHousePageSortBy.Name)?.enableSorting).not.toBe(false);
     expect(byId('autoUpdate')?.enableSorting).toBe(false);
     expect(byId('actions')?.enableSorting).toBe(false);
     expect(byId(AuctionHousePageSortBy.AvgDelay)?.enableSorting).not.toBe(false);
@@ -131,11 +131,25 @@ describe('AuctionHousePage', () => {
 
   it('uses generated enum values for every mobile sort option', () => {
     expect(page.mobileSortOptions.map((option) => option.id)).toEqual([
+      AuctionHousePageSortBy.Name,
       AuctionHousePageSortBy.Region,
       AuctionHousePageSortBy.LastModified,
       AuctionHousePageSortBy.NextUpdate,
       AuctionHousePageSortBy.AvgDelay,
     ]);
+  });
+
+  it('requests realm-name sorting from the backend', () => {
+    page.onPageChange(1);
+    TestBed.flushEffects();
+    page.onSortingChange([{ id: AuctionHousePageSortBy.Name, desc: true }]);
+    TestBed.flushEffects();
+    expect(service.getPageByQuery).toHaveBeenLastCalledWith({
+      ...defaultAuctionHouseQueryState,
+      page: 0,
+      sortBy: AuctionHousePageSortBy.Name,
+      sortDirection: 'desc',
+    });
   });
 
   it('ignores unsupported sorting columns', () => {
