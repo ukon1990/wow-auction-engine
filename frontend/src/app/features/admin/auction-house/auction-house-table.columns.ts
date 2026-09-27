@@ -1,4 +1,4 @@
-import { AuctionHouse } from '@api/generated';
+import { AuctionHouse, AuctionHousePageSortBy } from '@api/generated';
 import { ColumnDef, flexRenderComponent } from '@tanstack/angular-table';
 import { DateTimeColumnComponent } from '@ui';
 import { AuctionHouseActionsCellComponent } from './auction-house-actions-cell.component';
@@ -26,7 +26,7 @@ export function createAuctionHouseColumns(
       },
     },
     {
-      id: 'region',
+      id: AuctionHousePageSortBy.Region,
       accessorKey: 'region',
       header: $localize`:@@admin.auction-house.column.region:Region`,
       meta: {
@@ -36,10 +36,9 @@ export function createAuctionHouseColumns(
       },
     },
     {
-      id: 'realms',
+      id: AuctionHousePageSortBy.Name,
       header: $localize`:@@admin.auction-house.column.realms:Realms`,
       accessorFn: (house) => house.realms,
-      enableSorting: false,
       meta: { gridTrack: 'minmax(9rem, 2fr)', cardRole: 'primary' },
       cell: (info) => {
         const names = (info.row.original.realms ?? []).map((realm) => realm.name);
@@ -49,7 +48,7 @@ export function createAuctionHouseColumns(
       },
     },
     {
-      id: 'lastModified',
+      id: AuctionHousePageSortBy.LastModified,
       accessorKey: 'lastModified',
       header: $localize`:@@admin.auction-house.column.lastModified:Updated at`,
       meta: {
@@ -60,7 +59,7 @@ export function createAuctionHouseColumns(
       cell: () => flexRenderComponent(DateTimeColumnComponent),
     },
     {
-      id: 'nextUpdate',
+      id: AuctionHousePageSortBy.NextUpdate,
       accessorKey: 'nextUpdate',
       header: $localize`:@@admin.auction-house.column.nextUpdate:Next update`,
       meta: {
@@ -71,7 +70,7 @@ export function createAuctionHouseColumns(
       cell: () => flexRenderComponent(DateTimeColumnComponent),
     },
     {
-      id: 'avgDelay',
+      id: AuctionHousePageSortBy.AvgDelay,
       accessorKey: 'avgDelay',
       header: $localize`:@@admin.auction-house.column.delays:Delay (min / avg / max)`,
       meta: {

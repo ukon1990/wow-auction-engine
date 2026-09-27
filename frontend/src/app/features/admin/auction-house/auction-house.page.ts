@@ -55,12 +55,20 @@ export class AuctionHousePage {
   readonly viewportWidth = signal(1280);
   readonly cardView = computed(() => this.viewportWidth() <= 767);
   readonly mobileSortOptions = [
-    { id: 'name', label: $localize`:@@admin.auction-house.defaultOrder:Default order` },
-    { id: 'region', label: $localize`:@@admin.auction-house.column.region:Region` },
-    { id: 'lastModified', label: $localize`:@@admin.auction-house.column.lastModified:Updated at` },
-    { id: 'nextUpdate', label: $localize`:@@admin.auction-house.column.nextUpdate:Next update` },
     {
-      id: 'avgDelay',
+      id: AuctionHousePageSortBy.Region,
+      label: $localize`:@@admin.auction-house.column.region:Region`,
+    },
+    {
+      id: AuctionHousePageSortBy.LastModified,
+      label: $localize`:@@admin.auction-house.column.lastModified:Updated at`,
+    },
+    {
+      id: AuctionHousePageSortBy.NextUpdate,
+      label: $localize`:@@admin.auction-house.column.nextUpdate:Next update`,
+    },
+    {
+      id: AuctionHousePageSortBy.AvgDelay,
       label: $localize`:@@admin.auction-house.column.delays:Delay (min / avg / max)`,
     },
   ];
@@ -110,7 +118,7 @@ export class AuctionHousePage {
   }
 
   onPageChange(page: number): void {
-    this.queryService.navigateWithState({ ...this.query(), page });
+    this.queryService.navigateWithState({ ...this.query(), page }, false);
   }
 
   retryLoad(): void {
@@ -120,13 +128,21 @@ export class AuctionHousePage {
   onSortingChange(sorting: SortingState): void {
     const sort = sorting[0];
     if (!sort) return;
-    const sortBy = sort.id as AuctionHousePageSortBy;
-    this.queryService.navigateWithState({
-      ...this.query(),
-      page: 0,
-      sortBy,
-      sortDirection: sort.desc ? 'desc' : 'asc',
-    });
+    const sortBy = Object.values(AuctionHousePageSortBy).find((value) => value === sort.id);
+    if (
+      !sortBy ||
+      !this.columns.some((column) => column.id === sortBy && column.enableSorting !== false)
+    )
+      return;
+    this.queryService.navigateWithState(
+      {
+        ...this.query(),
+        page: 0,
+        sortBy,
+        sortDirection: sort.desc ? 'desc' : 'asc',
+      },
+      false,
+    );
   }
 
   async openDetails(house: AuctionHouse): Promise<void> {
@@ -186,6 +202,7 @@ export class AuctionHousePage {
     const requestId = ++this.loadId;
     this.isLoading.set(true);
     this.loadError.set(null);
+    this.page.set(null);
     try {
       const page = await firstValueFrom(this.service.getPageByQuery(query));
       if (requestId === this.loadId && page) this.page.set(page);

@@ -1,6 +1,10 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { AuctionHouse, AuctionHousePage as AuctionHousePageDto } from '@api/generated';
+import {
+  AuctionHouse,
+  AuctionHousePage as AuctionHousePageDto,
+  AuctionHousePageSortBy,
+} from '@api/generated';
 import { QueryService } from '@core/services/query.service';
 import { ToastService } from '@core/services/toast.service';
 import { of, throwError } from 'rxjs';
@@ -35,7 +39,7 @@ describe('AuctionHousePage', () => {
   const result: AuctionHousePageDto = {
     items: [house],
     page: { page: 0, pageSize: 25, totalItems: 41, totalPages: 2 },
-    sort: { sortBy: 'name', sortDirection: 'asc' },
+    sort: { sortBy: AuctionHousePageSortBy.NextUpdate, sortDirection: 'asc' },
   };
   let query: ReturnType<typeof signal<AuctionHouseQueryState>>;
   let service: {
@@ -84,23 +88,59 @@ describe('AuctionHousePage', () => {
       ...defaultAuctionHouseQueryState,
       page: 1,
     });
-    page.onSortingChange([{ id: 'avgDelay', desc: true }]);
+    page.onSortingChange([{ id: AuctionHousePageSortBy.AvgDelay, desc: true }]);
     TestBed.flushEffects();
     expect(service.getPageByQuery).toHaveBeenLastCalledWith({
       ...defaultAuctionHouseQueryState,
       page: 0,
-      sortBy: 'avgDelay',
+      sortBy: AuctionHousePageSortBy.AvgDelay,
       sortDirection: 'desc',
     });
+  });
+
+  it('displays the requested page and clears old rows when a new page fails', async () => {
+    const secondPage = {
+      ...result,
+      items: [{ ...house, connectedRealmId: 604 }],
+      page: { ...result.page, page: 1 },
+    };
+    service.getPageByQuery.mockReturnValueOnce(of(secondPage));
+    page.onPageChange(1);
+    TestBed.flushEffects();
+    await Promise.resolve();
+    expect(page.page()?.page.page).toBe(1);
+    expect(page.rows()[0]?.connectedRealmId).toBe(604);
+
+    service.getPageByQuery.mockImplementationOnce(() => throwError(() => new Error('failed')));
+    page.onPageChange(2);
+    TestBed.flushEffects();
+    await Promise.resolve();
+    expect(page.page()).toBeNull();
+    expect(page.rows()).toEqual([]);
+    expect(page.loadError()).not.toBeNull();
   });
 
   it('only enables sorting for backend-supported visible columns', () => {
     const byId = (id: string) => page.columns.find((column) => column.id === id);
     expect(byId('connectedRealmId')?.enableSorting).toBe(false);
-    expect(byId('realms')?.enableSorting).toBe(false);
+    expect(byId(AuctionHousePageSortBy.Name)?.enableSorting).toBe(false);
     expect(byId('autoUpdate')?.enableSorting).toBe(false);
     expect(byId('actions')?.enableSorting).toBe(false);
-    expect(byId('avgDelay')?.enableSorting).not.toBe(false);
+    expect(byId(AuctionHousePageSortBy.AvgDelay)?.enableSorting).not.toBe(false);
+  });
+
+  it('uses generated enum values for every mobile sort option', () => {
+    expect(page.mobileSortOptions.map((option) => option.id)).toEqual([
+      AuctionHousePageSortBy.Region,
+      AuctionHousePageSortBy.LastModified,
+      AuctionHousePageSortBy.NextUpdate,
+      AuctionHousePageSortBy.AvgDelay,
+    ]);
+  });
+
+  it('ignores unsupported sorting columns', () => {
+    page.onSortingChange([{ id: 'connectedRealmId', desc: false }]);
+    expect(query()).toEqual(defaultAuctionHouseQueryState);
   });
 
   it('disables Update now when auto update is off and refreshes after a successful action', async () => {
