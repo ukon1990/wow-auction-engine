@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AdminRecipe1 } from '@api/generated';
+import { AdminRecipe } from '@api/generated';
 import {
   AdminRecipeOverrideFormComponent,
   normalizeRequest,
 } from './admin-recipe-override-form.component';
 
-const sampleRecipe: AdminRecipe1 = {
+const sampleRecipe: AdminRecipe = {
   id: 42,
   hasBase: true,
   hasOverride: false,

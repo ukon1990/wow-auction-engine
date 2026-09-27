@@ -1,19 +1,24 @@
 package net.jonasmf.auctionengine.mapper.realm
 
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.util.TimeZone
+import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 import kotlin.time.toKotlinInstant
-import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as AuctionHouseDbo
-import net.jonasmf.auctionengine.domain.realm.AuctionHouse as AuctionHouseDomain
+import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse as Dbo
+import net.jonasmf.auctionengine.domain.realm.AuctionHouse as Domain
 import net.jonasmf.auctionengine.domain.realm.Realm as RealmDomain
+import net.jonasmf.auctionengine.generated.model.AuctionHouse as Dto
 
-fun AuctionHouseDbo.toDomain() =
-    AuctionHouseDomain(
+fun Dbo.toDomain() =
+    Domain(
         id = connectedId,
         connectedId = connectedId,
         region = region,
         autoUpdate = autoUpdate,
-        avgDelay = avgDelay ?: 0L,
-        gameBuild = gameBuild ?: 0,
+        avgDelay = avgDelay,
+        gameBuild = gameBuild,
         highestDelay = highestDelay,
         lastDailyPriceUpdate = lastDailyPriceUpdate?.toKotlinInstant(),
         lastHistoryDeleteEvent = lastHistoryDeleteEvent?.toKotlinInstant(),
@@ -25,8 +30,8 @@ fun AuctionHouseDbo.toDomain() =
         updateAttempts = updateAttempts,
     )
 
-fun AuctionHouseDbo.toDomain(realms: List<RealmDomain>): AuctionHouseDomain =
-    AuctionHouseDomain(
+fun Dbo.toDomain(realms: List<RealmDomain>): Domain =
+    Domain(
         id = connectedId,
         region = region,
         autoUpdate = autoUpdate,
@@ -45,8 +50,8 @@ fun AuctionHouseDbo.toDomain(realms: List<RealmDomain>): AuctionHouseDomain =
         updateAttempts = updateAttempts,
     )
 
-fun AuctionHouseDomain.toDbo() =
-    AuctionHouseDbo(
+fun Domain.toDbo() =
+    Dbo(
         connectedId = connectedId.takeIf { it != 0 } ?: id ?: 0,
         region = region,
         autoUpdate = autoUpdate,
@@ -62,3 +67,30 @@ fun AuctionHouseDomain.toDbo() =
         nextUpdate = nextUpdate?.toJavaInstant(),
         updateAttempts = updateAttempts,
     )
+
+fun Domain.toDto(): Dto {
+    val firstRealm = realms.firstOrNull()
+    val zoneId = TimeZone.getTimeZone(firstRealm?.timezone ?: "UTC").toZoneId()
+
+    return Dto(
+        id = id,
+        connectedRealmId = connectedId,
+        region = region.toString(),
+        autoUpdate = autoUpdate,
+        realms = realms.map { it.toDto() },
+        avgDelay = avgDelay,
+        highestDelay = highestDelay,
+        lastDailyPriceUpdate = lastDailyPriceUpdate?.toOffsetDateTime(zoneId),
+        lastHistoryDeleteEvent = lastHistoryDeleteEvent?.toOffsetDateTime(zoneId),
+        lastHistoryDeleteEventDaily = lastHistoryDeleteEventDaily?.toOffsetDateTime(zoneId),
+        lastModified = lastModified?.toOffsetDateTime(zoneId),
+        lowestDelay = lowestDelay,
+        nextUpdate = nextUpdate?.toOffsetDateTime(zoneId),
+        updateAttempts = updateAttempts,
+    )
+}
+
+private fun Instant.toOffsetDateTime(zoneId: ZoneId): OffsetDateTime =
+    toJavaInstant()
+        .atZone(zoneId)
+        .toOffsetDateTime()

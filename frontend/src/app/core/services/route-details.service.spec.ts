@@ -5,6 +5,8 @@ import { Subject } from 'rxjs';
 
 import { readMarketBrowserQueryState } from '@core/mappers/market-browser-query.mapper';
 import { QUERY_PARAM_MAPPER, QueryService } from './query.service';
+import { readAuctionHouseQueryState } from '@features/admin/auction-house/auction-house-query.mapper';
+import { AuctionHousePageSortBy } from '@api/generated';
 import { RealmSelectionService } from '@core/services/realm-selection.service';
 
 describe('RouteDetailsService', () => {
@@ -118,6 +120,65 @@ describe('RouteDetailsService', () => {
     expect(filteredService.queryParams()).toMatchObject({
       qualityIds: [4],
       minPrice: 100,
+    });
+  });
+
+  it('updates admin query state without a region or realm on navigation', () => {
+    const events = new Subject<NavigationEnd>();
+    const adminRoute = {
+      snapshot: {
+        paramMap: convertToParamMap({}),
+        queryParamMap: convertToParamMap({ page: '2', sortBy: 'LAST_MODIFIED' }),
+      },
+      firstChild: null,
+    };
+    const rootRoute = {
+      snapshot: {
+        paramMap: convertToParamMap({}),
+        queryParamMap: convertToParamMap({}),
+      },
+      firstChild: adminRoute,
+    };
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        QueryService,
+        { provide: QUERY_PARAM_MAPPER, useValue: readAuctionHouseQueryState },
+        { provide: ActivatedRoute, useValue: rootRoute },
+        {
+          provide: Router,
+          useValue: {
+            events,
+            routerState: { root: rootRoute },
+            navigate: vitest.fn(),
+          },
+        },
+        {
+          provide: RealmSelectionService,
+          useValue: { selected: signal(undefined) },
+        },
+      ],
+    });
+
+    const adminService = TestBed.inject(QueryService);
+    expect(adminService.queryParams()).toMatchObject({
+      page: 2,
+      sortBy: AuctionHousePageSortBy.LastModified,
+    });
+
+    adminRoute.snapshot.queryParamMap = convertToParamMap({
+      page: '1',
+      sortBy: 'AVG_DELAY',
+      sortDirection: 'desc',
+    });
+    events.next(
+      new NavigationEnd(1, '/en/admin/auction-houses?page=1', '/en/admin/auction-houses?page=1'),
+    );
+    expect(adminService.queryParams()).toMatchObject({
+      page: 1,
+      sortBy: AuctionHousePageSortBy.AvgDelay,
+      sortDirection: 'desc',
     });
   });
 

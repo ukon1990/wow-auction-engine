@@ -1,0 +1,117 @@
+package net.jonasmf.auctionengine.repository.rds.admin
+
+import net.jonasmf.auctionengine.dbo.rds.admin.AdminAuctinHouseRow
+import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
+import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
+import org.apache.coyote.BadRequestException
+import org.hibernate.query.SortDirection
+import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Sort
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Repository
+
+@Repository
+class AdminAuctionHouseJdbcRepository(
+    private val jdbcTemplate: JdbcTemplate,
+) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
+    fun update(
+        connedtedRealmId: Int,
+        auctionHouse: UpdateAuctionHouse,
+    ) {
+        val setSql = mutableListOf<String>()
+        val params = mutableListOf<Any>()
+
+        auctionHouse.nextUpdate?.let {
+            setSql += "next_update = ?"
+            params += it
+
+            setSql += "update_attempts = ?"
+            params += 0
+        }
+
+        auctionHouse.autoUpdate?.let {
+            setSql += "auto_update = ?"
+            params += it
+        }
+
+        if (setSql.isEmpty()) {
+            logger.info("At least one field needs to be passed for updating")
+            throw BadRequestException("At least one field needs to be passed for updating")
+        }
+
+        params.add(connedtedRealmId)
+
+        jdbcTemplate.update(
+            """
+            UPDATE auction_house
+            SET ${setSql.joinToString(", ")}
+            WHERE connected_id = ?
+            """.trimIndent(),
+            *params.toTypedArray(),
+        )
+    }
+}
+
+@Repository
+interface AdminAuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
+    @Query(
+        """
+        FROM AuctionHouse a
+        WHERE a.connectedId = :connectedId
+    """,
+    )
+    fun findByConnectedRealmId(connectedId: Int): AuctionHouse?
+
+    @Query(
+        nativeQuery = true,
+        value =
+            """
+        WITH ah AS (
+            SElECT
+                a.*,
+                (SELECT COUNT(*) FROM auction_house) AS total_items
+            FROM auction_house a
+            LIMIT :pageSize
+            OFFSET :offset
+        )
+        SELECT
+            ah.total_items AS page_total_items,
+            ah.id AS auction_house_id,
+            ah.connected_id AS auction_house_connected_id,
+            ah.auto_update AS auction_house_auto_update,
+            ah.region AS auction_house_region,
+
+            ah.lowest_delay AS auction_house_lowest_delay,
+            ah.avg_delay AS auction_house_avg_delay,
+            ah.highest_delay AS auction_house_highest_delay,
+
+            ah.last_auction_price_delete_event AS auction_house_last_auction_price_delete_event,
+            ah.last_history_delete_event AS auction_house_last_history_delete_event,
+            ah.last_history_delete_event_daily AS auction_house_last_history_delete_event_daily,
+
+            ah.last_modified AS auction_house_last_modified,
+            ah.next_update AS auction_house_next_update,
+
+            r.id AS realm_id,
+            r.slug AS realm_slug,
+            r.name AS realm_name,
+            r.locale AS realm_locale,
+            r.category AS realm_category,
+            r.game_build AS realm_game_build,
+            r.timezone AS realm_timezone
+        FROM ah
+            JOIN connected_realm cr ON cr.id = ah.connected_id
+            JOIN connected_realm_realms crr ON crr.connected_realm_id = cr.id
+            JOIN realm r ON r.id = crr.realms_id
+    """,
+    )
+    fun findAllWithQuery(
+        offset: Int,
+        pageSize: Int,
+        sort: Sort,
+    ): List<AdminAuctinHouseRow>
+}

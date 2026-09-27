@@ -8,7 +8,9 @@ Source: [touch-map.md](../../github-issue-planning/touch-map.md).
 ## Contract-first flow
 
 1. Edit split YAML — `openapi/paths/`, `openapi/components/schemas/`, `openapi/openapi.yml`
-2. Run `bash scripts/openapi/generate-all.sh` (from repo root)
+2. Run `bash scripts/openapi/generate-all.sh` (from repo root).
+   Generators consume a Redocly bundle (`openapi/openapi.bundled.yml`) so multi-file `$ref`
+   paths do not produce duplicate `*1` models (`AuctionHouse1`, `AdminItem1`, …).
 3. Review generated artifacts:
    - Backend Kotlin interfaces (via Maven `generate-sources`)
    - `frontend/src/app/api/generated/**`

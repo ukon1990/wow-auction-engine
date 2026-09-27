@@ -1,14 +1,15 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.repository.rds.admin
 
 import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
-import net.jonasmf.auctionengine.dto.LocaleDTO
-import net.jonasmf.auctionengine.generated.model.AdminExpansion1
+import net.jonasmf.auctionengine.generated.model.AdminExpansion
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
 import net.jonasmf.auctionengine.mapper.toGameLocale
 import net.jonasmf.auctionengine.mapper.toLocaleDTO
+import net.jonasmf.auctionengine.repository.rds.LocaleJdbcRepository
+import net.jonasmf.auctionengine.repository.rds.toLocaleDTO
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
@@ -27,7 +28,7 @@ class AdminExpansionRepository(
     private val jdbcTemplate: JdbcTemplate,
     private val localeJdbcRepository: LocaleJdbcRepository,
 ) {
-    fun listExpansions(localeColumnSuffix: String = DEFAULT_LOCALE_COLUMN_SUFFIX): List<AdminExpansion1> =
+    fun listExpansions(localeColumnSuffix: String = DEFAULT_LOCALE_COLUMN_SUFFIX): List<AdminExpansion> =
         jdbcTemplate.query(
             expansionSelectSql("ORDER BY e.display_order, e.id", localeColumnSuffix),
         ) { rs, _ -> rs.toAdminExpansion(localeColumnSuffix) }
@@ -35,7 +36,7 @@ class AdminExpansionRepository(
     fun findExpansion(
         id: Int,
         localeColumnSuffix: String = DEFAULT_LOCALE_COLUMN_SUFFIX,
-    ): AdminExpansion1? =
+    ): AdminExpansion? =
         jdbcTemplate
             .query(
                 expansionSelectSql("WHERE e.id = ?", localeColumnSuffix),
@@ -88,7 +89,7 @@ class AdminExpansionRepository(
         )!! > 0
     }
 
-    fun createExpansion(request: AdminExpansionRequest): AdminExpansion1 {
+    fun createExpansion(request: AdminExpansionRequest): AdminExpansion {
         val nameId =
             localeJdbcRepository.upsert(
                 LocaleSourceType.EXPANSION,
@@ -113,7 +114,7 @@ class AdminExpansionRepository(
     fun updateExpansion(
         id: Int,
         request: AdminExpansionRequest,
-    ): AdminExpansion1? {
+    ): AdminExpansion? {
         val existing =
             jdbcTemplate
                 .query(
@@ -197,11 +198,12 @@ class AdminExpansionRepository(
         request: AdminExpansionItemRangeRequest,
     ): Boolean {
         if (!request.enabled) return false
-        val params = mutableListOf<Any?>(
-            request.expansionId,
-            request.endItemId,
-            request.startItemId,
-        )
+        val params =
+            mutableListOf<Any?>(
+                request.expansionId,
+                request.endItemId,
+                request.startItemId,
+            )
         val ignoreSql =
             if (idToIgnore == null) {
                 ""
@@ -413,9 +415,9 @@ class AdminExpansionRepository(
     }
 }
 
-private fun ResultSet.toAdminExpansion(localeColumnSuffix: String): AdminExpansion1 {
+private fun ResultSet.toAdminExpansion(localeColumnSuffix: String): AdminExpansion {
     val locale = toLocaleDTO()
-    return AdminExpansion1(
+    return AdminExpansion(
         id = getInt("id"),
         slug = getString("slug"),
         name = getString("expansion_name"),
@@ -438,9 +440,9 @@ private fun ResultSet.toAdminExpansionItemRange(localeColumnSuffix: String): Adm
         updatedAt = getTimestamp("updated_at").toOffsetDateTime(),
     )
 
-private fun ResultSet.toNestedAdminExpansion(): AdminExpansion1 {
+private fun ResultSet.toNestedAdminExpansion(): AdminExpansion {
     val locale = toLocaleDTO()
-    return AdminExpansion1(
+    return AdminExpansion(
         id = getInt("expansion_id"),
         slug = getString("expansion_slug"),
         name = getString("expansion_name"),

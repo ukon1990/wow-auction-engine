@@ -4,6 +4,9 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.repository.AuctionHouseRepository
 import net.jonasmf.auctionengine.repository.rds.ConnectedRealmUpdateHistoryRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
@@ -25,6 +28,8 @@ class AuctionHouseService(
         private const val MINIMUM_DELAY_FLOOR_MINUTES = 30L
         private const val MAXIMUM_DELAY_CEILING_MINUTES = 120L
     }
+
+    val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     fun createIfMissing(connectedRealm: ConnectedRealm) {
         if (connectedRealm.realms.isEmpty()) return
@@ -48,9 +53,13 @@ class AuctionHouseService(
         auctionHouse.highestDelay = auctionHouse.highestDelay
         auctionHouse.updateAttempts = auctionHouse.updateAttempts
 
-        val savedAuctionHouse = auctionHouseEntityRepository.save(auctionHouse)
-        if (connectedRealm.auctionHouse.id != savedAuctionHouse.id) {
-            connectedRealm.auctionHouse = savedAuctionHouse
+        try {
+            val savedAuctionHouse = auctionHouseEntityRepository.save(auctionHouse)
+            if (connectedRealm.auctionHouse.id != savedAuctionHouse.id) {
+                connectedRealm.auctionHouse = savedAuctionHouse
+            }
+        } catch (e: Exception) {
+            log.error("Error creating a new Auction House for $id", e)
         }
     }
 
@@ -99,6 +108,10 @@ class AuctionHouseService(
 
     fun findAllByRegion(region: Region) = repository.findAllByRegion(region)
 
+    fun findAll() = repository.findAll()
+
+    fun findById(id: Int) = repository.findById(id)
+
     @Transactional
     fun updateLastDailyPriceUpdate(
         connectedRealmId: Int,
@@ -118,12 +131,6 @@ class AuctionHouseService(
             connectedRealmId,
             lastTsmRegionSync.toJavaInstant(),
         )
-
-    @Transactional
-    fun updateLastHistoryDeleted(
-        connectedRealmId: Int,
-        lastDeletedTime: Instant,
-    ) = auctionHouseEntityRepository.updateLastHistoryDeleteEvent(connectedRealmId, lastDeletedTime.toJavaInstant())
 
     @Transactional
     fun updateLastHistoryDeleted(

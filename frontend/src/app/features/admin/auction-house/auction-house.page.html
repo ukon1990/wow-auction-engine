@@ -1,0 +1,188 @@
+<ee-page-frame title="Auction houses" i18n-title="@@admin.auction-house.title">
+  @if (loadError(); as error) {
+    <div
+      role="alert"
+      class="flex items-center gap-3 rounded border border-error/40 bg-error/10 p-3 text-error"
+    >
+      <span>{{ error }}</span>
+      <button
+        type="button"
+        class="underline"
+        (click)="retryLoad()"
+        i18n="@@admin.auction-house.retry"
+      >
+        Retry
+      </button>
+    </div>
+  }
+  <ee-table
+    [columns]="columns"
+    [data]="rows()"
+    [loading]="isLoading()"
+    [skeletonRowCount]="8"
+    [showFooter]="true"
+    [showPagination]="true"
+    [paginationState]="pagination()"
+    [manualSorting]="true"
+    [sorting]="sorting()"
+    [cardView]="cardView()"
+    [mobileSortOptions]="mobileSortOptions"
+    [getRowId]="rowId"
+    contentMinWidthClass="min-w-[61rem] w-full"
+    paginationRowLabel="auction houses"
+    i18n-paginationRowLabel="@@admin.auction-house.paginationLabel"
+    emptyMessage="No auction houses were found"
+    i18n-emptyMessage="@@admin.auction-house.empty"
+    sectionAriaLabel="Auction houses"
+    i18n-sectionAriaLabel="@@admin.auction-house.tableAria"
+    (pageChange)="onPageChange($event)"
+    (sortingChange)="onSortingChange($event)"
+  />
+</ee-page-frame>
+
+<ee-slide-over
+  [open]="selectedHouse() !== null"
+  title="Auction house details"
+  i18n-title="@@admin.auction-house.detailsTitle"
+  titleId="auction-house-details-title"
+  (closed)="closeDetails()"
+>
+  @if (detailLoading()) {
+    <p role="status" i18n="@@admin.auction-house.loadingDetails">Loading details...</p>
+  }
+  @if (formError(); as error) {
+    <p role="alert" class="mb-4 rounded border border-error/40 bg-error/10 p-3 text-error">
+      {{ error }}
+    </p>
+  }
+  @if (selectedHouse(); as house) {
+    <form class="space-y-5" (ngSubmit)="saveDetails()">
+      <dl class="grid grid-cols-2 gap-3 text-sm">
+        <div>
+          <dt class="text-outline" i18n="@@admin.auction-house.column.id">ID</dt>
+          <dd>{{ house.id ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt class="text-outline" i18n="@@admin.auction-house.connectedRealmId">
+            Connected realm ID
+          </dt>
+          <dd>{{ house.connectedRealmId }}</dd>
+        </div>
+        <div>
+          <dt class="text-outline" i18n="@@admin.auction-house.column.region">Region</dt>
+          <dd>{{ house.region ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt class="text-outline" i18n="@@admin.auction-house.updateAttempts">Update attempts</dt>
+          <dd>{{ house.updateAttempts ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt class="text-outline" i18n="@@admin.auction-house.column.delays">
+            Delay (min / avg / max)
+          </dt>
+          <dd>
+            {{ house.lowestDelay ?? '—' }} / {{ house.avgDelay ?? '—' }} /
+            {{ house.highestDelay ?? '—' }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-outline" i18n="@@admin.auction-house.column.lastModified">Updated at</dt>
+          <dd>{{ house.lastModified ? (house.lastModified | date: 'medium') : '—' }}</dd>
+        </div>
+        <div>
+          <dt class="text-outline" i18n="@@admin.auction-house.lastDailyPriceUpdate">
+            Daily price update
+          </dt>
+          <dd>
+            {{ house.lastDailyPriceUpdate ? (house.lastDailyPriceUpdate | date: 'medium') : '—' }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-outline" i18n="@@admin.auction-house.lastHistoryDeleteEvent">
+            Hourly history deletion
+          </dt>
+          <dd>
+            {{
+              house.lastHistoryDeleteEvent ? (house.lastHistoryDeleteEvent | date: 'medium') : '—'
+            }}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-outline" i18n="@@admin.auction-house.lastHistoryDeleteEventDaily">
+            Daily history deletion
+          </dt>
+          <dd>
+            {{
+              house.lastHistoryDeleteEventDaily
+                ? (house.lastHistoryDeleteEventDaily | date: 'medium')
+                : '—'
+            }}
+          </dd>
+        </div>
+      </dl>
+      <div>
+        <h3 class="mb-2 font-semibold" i18n="@@admin.auction-house.column.realms">Realms</h3>
+        <ul class="max-h-56 space-y-2 overflow-y-auto rounded border border-white/10 p-3 text-sm">
+          @for (realm of house.realms ?? []; track realm.name) {
+            <li class="border-b border-white/10 pb-2 last:border-0">
+              <strong>{{ realm.name }}</strong>
+              <dl class="mt-1 grid grid-cols-2 gap-x-2 text-xs text-outline">
+                <div>
+                  <dt i18n="@@admin.auction-house.realmSlug">Slug</dt>
+                  <dd>{{ realm.slug }}</dd>
+                </div>
+                <div>
+                  <dt i18n="@@admin.auction-house.realmRegion">Region</dt>
+                  <dd>{{ realm.region }}</dd>
+                </div>
+                <div>
+                  <dt i18n="@@admin.auction-house.realmCategory">Category</dt>
+                  <dd>{{ realm.category }}</dd>
+                </div>
+                <div>
+                  <dt i18n="@@admin.auction-house.realmLocale">Locale</dt>
+                  <dd>{{ realm.locale }}</dd>
+                </div>
+                <div>
+                  <dt i18n="@@admin.auction-house.realmTimezone">Time zone</dt>
+                  <dd>{{ realm.timezone }}</dd>
+                </div>
+              </dl>
+            </li>
+          }
+        </ul>
+      </div>
+      <label class="flex items-center gap-3">
+        <input
+          type="checkbox"
+          [ngModel]="autoUpdateInput()"
+          (ngModelChange)="autoUpdateInput.set($event)"
+          name="autoUpdate"
+          [disabled]="savingId() !== null"
+        />
+        <span i18n="@@admin.auction-house.column.autoUpdate">Auto update</span>
+      </label>
+      <label class="block space-y-2">
+        <span class="block text-sm text-outline" i18n="@@admin.auction-house.column.nextUpdate"
+          >Next update</span
+        >
+        <input
+          type="datetime-local"
+          class="w-full rounded border border-white/10 bg-surface-container p-3 text-on-surface"
+          [ngModel]="nextUpdateInput()"
+          (ngModelChange)="nextUpdateInput.set($event)"
+          name="nextUpdate"
+          [disabled]="savingId() !== null"
+        />
+      </label>
+      <button
+        type="submit"
+        class="rounded bg-primary px-4 py-2 text-on-primary disabled:opacity-40"
+        [disabled]="!canSave()"
+        i18n="@@admin.auction-house.save"
+      >
+        Save changes
+      </button>
+    </form>
+  }
+</ee-slide-over>

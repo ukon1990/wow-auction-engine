@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AdminApiService, AdminItem1 } from '@api/generated';
+import { AdminApiService, AdminItem } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
 import {
   catchError,
@@ -105,7 +105,7 @@ export class AdminItemTypeaheadComponent {
   readonly itemChange = output<AdminItemSelection | null>();
 
   protected readonly query = signal('');
-  protected readonly results = signal<readonly AdminItem1[]>([]);
+  protected readonly results = signal<readonly AdminItem[]>([]);
   protected readonly open = signal(false);
   protected readonly listboxId = `admin-item-typeahead-${nextTypeaheadId++}`;
   protected readonly noResultsLabel = $localize`:@@admin.recipes.itemTypeahead.empty:No items found`;
@@ -139,7 +139,7 @@ export class AdminItemTypeaheadComponent {
             )
             .pipe(
               map((result) => result.items),
-              catchError(() => of([] as readonly AdminItem1[])),
+              catchError(() => of([] as readonly AdminItem[])),
             ),
         ),
         takeUntilDestroyed(this.destroyRef),
@@ -177,7 +177,7 @@ export class AdminItemTypeaheadComponent {
     this.searchQueries.next(normalizedQuery);
   }
 
-  protected select(item: AdminItem1): void {
+  protected select(item: AdminItem): void {
     this.selectedId = item.id;
     this.selectedName = item.effective.name ?? null;
     this.query.set(this.selectedName || `#${item.id}`);

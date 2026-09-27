@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "generate:api": "openapi-generator-cli generate -g typescript-angular -i ../openapi/openapi.yml -o src/app/api/generated --additional-properties=ngVersion=21.2.0,providedInRoot=true,serviceSuffix=ApiService",
+    "generate:api": "bash ../scripts/openapi/bundle.sh && rm -rf src/app/api/generated && openapi-generator-cli generate -g typescript-angular -i ../openapi/openapi.bundled.yml -o src/app/api/generated --skip-validate-spec --additional-properties=ngVersion=21.2.0,providedInRoot=true,serviceSuffix=ApiService",
     "extract-i18n": "ng extract-i18n EE",
     "prebuild": "bun run generate:api",
     "build": "ng build",
@@ -65,6 +65,7 @@
     "@angular/localize": "^21.2.11",
     "@ethereal/angular-unit-test-alias": "file:tools/angular-unit-test-alias",
     "@openapitools/openapi-generator-cli": "^2.25.2",
+    "@redocly/cli": "^2.40.0",
     "@storybook/addon-docs": "^10.3.6",
     "@storybook/angular": "^10.3.6",
     "@tailwindcss/postcss": "^4.1.12",

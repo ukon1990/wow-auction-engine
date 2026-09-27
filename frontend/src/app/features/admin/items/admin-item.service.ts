@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import {
   AdminApiService,
-  AdminItem1,
+  AdminItem,
   AdminItemCompareResponse,
   AdminItemCreateRequest,
   AdminItemOverrideRequest,
@@ -30,9 +30,9 @@ export class AdminItemService {
   readonly mutationLoading = signal(false);
   readonly detailLoading = signal(false);
   readonly compareLoading = signal(false);
-  readonly items = signal<readonly AdminItem1[]>([]);
+  readonly items = signal<readonly AdminItem[]>([]);
   readonly page = signal<PageMetadata>(EMPTY_PAGE);
-  readonly selectedItem = signal<AdminItem1 | null>(null);
+  readonly selectedItem = signal<AdminItem | null>(null);
   readonly compare = signal<AdminItemCompareResponse | null>(null);
   readonly error = signal<string | null>(null);
   readonly detailError = signal<string | null>(null);
@@ -42,7 +42,7 @@ export class AdminItemService {
   private readonly localeService = inject(LocaleService);
   private readonly toast = inject(ToastService);
 
-  search(filters: AdminItemFilterState): Observable<readonly AdminItem1[]> {
+  search(filters: AdminItemFilterState): Observable<readonly AdminItem[]> {
     this.loading.set(true);
     this.error.set(null);
     const params = toAdminItemSearchParams(filters);
@@ -81,7 +81,7 @@ export class AdminItemService {
       );
   }
 
-  loadItem(id: number): Observable<AdminItem1> {
+  loadItem(id: number): Observable<AdminItem> {
     this.detailLoading.set(true);
     this.detailError.set(null);
     const locale = this.localeService.apiLocaleOverride();
@@ -106,7 +106,7 @@ export class AdminItemService {
     id: number,
     request: AdminItemOverrideRequest,
     filters: AdminItemFilterState,
-  ): Observable<AdminItem1> {
+  ): Observable<AdminItem> {
     return this.mutate(() => this.api.upsertAdminItemOverride(id, request), filters).pipe(
       switchMap(() => this.loadItem(id)),
     );
@@ -115,7 +115,7 @@ export class AdminItemService {
   createItem(
     request: AdminItemCreateRequest,
     filters: AdminItemFilterState,
-  ): Observable<AdminItem1> {
+  ): Observable<AdminItem> {
     return this.mutate(() => this.api.createAdminItem(request), filters).pipe(
       tap((item) => this.selectedItem.set(item)),
     );
@@ -174,7 +174,7 @@ export class AdminItemService {
     recipeId: number,
     request: AdminRecipeAssociationRequest,
     filters: AdminItemFilterState,
-  ): Observable<AdminItem1> {
+  ): Observable<AdminItem> {
     return this.mutate(
       () => this.api.upsertAdminItemRecipeAssociation(id, recipeId, request),
       filters,

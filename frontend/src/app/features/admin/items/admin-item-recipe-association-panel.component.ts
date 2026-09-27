@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AdminItem1, AdminRecipeAssociationRequest, AdminRecipeSearchResult } from '@api/generated';
+import { AdminItem, AdminRecipeAssociationRequest, AdminRecipeSearchResult } from '@api/generated';
 import { SearchInputComponent, TextInputComponent } from '@ui';
 
 const standaloneModel = { standalone: true };
@@ -139,7 +139,7 @@ const standaloneModel = { standalone: true };
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminItemRecipeAssociationPanelComponent {
-  readonly item = input.required<AdminItem1>();
+  readonly item = input.required<AdminItem>();
   readonly results = input<readonly AdminRecipeSearchResult[]>([]);
   readonly searching = input(false);
   readonly submitting = input(false);

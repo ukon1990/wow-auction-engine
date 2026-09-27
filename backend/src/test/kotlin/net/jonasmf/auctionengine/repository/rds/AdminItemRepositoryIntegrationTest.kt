@@ -1,6 +1,8 @@
 package net.jonasmf.auctionengine.repository.rds
 
 import net.jonasmf.auctionengine.config.IntegrationTestBase
+import net.jonasmf.auctionengine.repository.rds.admin.AdminItemRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminItemSearchResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,8 +30,16 @@ class AdminItemRepositoryIntegrationTest : IntegrationTestBase() {
         assertThat(result.items)
             .extracting<Int> { it.id }
             .containsExactly(224_025, 224_026)
-        assertThat(result.items.first().effective.name).isEqualTo("Core Alloy")
-        assertThat(result.items.first().effective.rank).isEqualTo(2)
+        assertThat(
+            result.items
+                .first()
+                .effective.name,
+        ).isEqualTo("Core Alloy")
+        assertThat(
+            result.items
+                .first()
+                .effective.rank,
+        ).isEqualTo(2)
     }
 
     @Test
@@ -38,8 +48,16 @@ class AdminItemRepositoryIntegrationTest : IntegrationTestBase() {
 
         assertThat(result.totalItems).isEqualTo(1)
         assertThat(result.items.single().id).isEqualTo(224_025)
-        assertThat(result.items.single().effective.name).isEqualTo("Core Alloy")
-        assertThat(result.items.single().effective.rank).isEqualTo(2)
+        assertThat(
+            result.items
+                .single()
+                .effective.name,
+        ).isEqualTo("Core Alloy")
+        assertThat(
+            result.items
+                .single()
+                .effective.rank,
+        ).isEqualTo(2)
     }
 
     private fun searchItems(query: String): AdminItemSearchResult =

@@ -1,9 +1,10 @@
 package net.jonasmf.auctionengine.config
 
-import net.jonasmf.auctionengine.controller.AdminController
 import net.jonasmf.auctionengine.controller.HealthController
+import net.jonasmf.auctionengine.controller.admin.AdminController
 import net.jonasmf.auctionengine.interceptor.CORRELATION_ID_HEADER
 import net.jonasmf.auctionengine.interceptor.RequestCorrelationFilter
+import net.jonasmf.auctionengine.service.AuctionHouseService
 import net.jonasmf.auctionengine.service.RuntimeHealthSnapshot
 import net.jonasmf.auctionengine.service.RuntimeHealthTracker
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
@@ -26,7 +27,6 @@ import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSec
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.security.oauth2.jwt.JwtDecoder
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
@@ -62,6 +62,9 @@ class SecurityConfigTest {
     private lateinit var userService: UserService
 
     @MockitoBean
+    private lateinit var auctionHouseService: AuctionHouseService
+
+    @MockitoBean
     private lateinit var adminStatusService: AdminStatusService
 
     @MockitoBean
@@ -86,7 +89,8 @@ class SecurityConfigTest {
     private lateinit var professionTalentTreeImportService: ProfessionTalentTreeImportService
 
     @MockitoBean
-    private lateinit var normalizedAuctionHelperProfessionInspectionService: NormalizedAuctionHelperProfessionInspectionService
+    private lateinit var normalizedAuctionHelperProfessionInspectionService:
+        NormalizedAuctionHelperProfessionInspectionService
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder
@@ -100,8 +104,7 @@ class SecurityConfigTest {
             mockMvc
                 .get("/health") {
                     header(CORRELATION_ID_HEADER, correlationId)
-                }
-                .andReturn()
+                }.andReturn()
 
         mockMvc
             .perform(asyncDispatch(result))

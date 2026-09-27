@@ -7,6 +7,8 @@ import java.time.OffsetDateTime
 interface AuctionHouseRepository {
     fun findById(id: Int?): AuctionHouse?
 
+    fun findAll(): List<AuctionHouse>
+
     fun findAllByRegion(region: Region): List<AuctionHouse>
 
     fun findReadyForUpdateByRegion(region: Region): List<AuctionHouse>

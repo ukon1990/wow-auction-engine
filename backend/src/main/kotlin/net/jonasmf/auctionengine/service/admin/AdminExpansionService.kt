@@ -1,14 +1,14 @@
 package net.jonasmf.auctionengine.service.admin
 
-import net.jonasmf.auctionengine.generated.model.AdminExpansion1
+import net.jonasmf.auctionengine.generated.model.AdminExpansion
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
 import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.mapper.hasEnglishName
 import net.jonasmf.auctionengine.mapper.toLocaleDTO
-import net.jonasmf.auctionengine.repository.rds.AdminExpansionRepository
-import net.jonasmf.auctionengine.repository.rds.AdminJobRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminExpansionRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminJobRepository
 import net.jonasmf.auctionengine.service.ItemSyncResult
 import net.jonasmf.auctionengine.service.ItemSyncService
 import org.slf4j.LoggerFactory
@@ -32,10 +32,10 @@ class AdminExpansionService(
     private val applyRunning = AtomicBoolean(false)
     private val fetchMissingRunning = AtomicBoolean(false)
 
-    fun listExpansions(locale: String? = null): List<AdminExpansion1> =
+    fun listExpansions(locale: String? = null): List<AdminExpansion> =
         adminExpansionRepository.listExpansions(AdminExpansionRepository.resolveLocaleColumnSuffix(locale))
 
-    fun createExpansion(request: AdminExpansionRequest): AdminExpansion1 {
+    fun createExpansion(request: AdminExpansionRequest): AdminExpansion {
         validateExpansionRequest(request, idToIgnore = null, requireId = true)
         if (adminExpansionRepository.expansionExists(request.id)) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Expansion already exists: ${request.id}")
@@ -55,7 +55,7 @@ class AdminExpansionService(
     fun updateExpansion(
         id: Int,
         request: AdminExpansionRequest,
-    ): AdminExpansion1 {
+    ): AdminExpansion {
         if (adminExpansionRepository.findExpansion(id) == null) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Expansion not found: $id")
         }
@@ -242,7 +242,10 @@ class AdminExpansionService(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "displayOrder must be non-negative")
         }
         if (!request.nameLocales.toLocaleDTO().hasEnglishName()) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "At least one English name (en_US or en_GB) is required")
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "At least one English name (en_US or en_GB) is required",
+            )
         }
     }
 

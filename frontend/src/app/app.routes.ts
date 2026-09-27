@@ -24,6 +24,11 @@ import { UserRole } from '@api/auth/auth.model';
 import { userHasRoleGuard } from '@core/guards/user-has-role-guard';
 import { authenticatedGuard } from '@core/guards/authenticated.guard';
 import { pendingProfessionProfileChangesGuard } from '@features/profile/professions/profession-profiles.guard';
+import { AuctionHouseService } from '@features/admin/auction-house/auction-house.service';
+import {
+  readAuctionHouseQueryState,
+  toAuctionHouseQueryParams,
+} from '@features/admin/auction-house/auction-house-query.mapper';
 
 export type TitledRoutes = (Route & {
   icon?: string;
@@ -87,6 +92,27 @@ export const routes: TitledRoutes = [
           import('@features/admin/user-administration/user-administration.page').then(
             (module) => module.UserAdministrationPage,
           ),
+      },
+      {
+        path: 'auction-houses',
+        title: $localize`:@@route.admin.auction-house:Auction houses`,
+        icon: 'manage_accounts',
+        loadComponent: () =>
+          import('@features/admin/auction-house/auction-house.page').then(
+            (module) => module.AuctionHousePage,
+          ),
+        providers: [
+          QueryService,
+          {
+            provide: QUERY_PARAM_MAPPER,
+            useValue: readAuctionHouseQueryState,
+          },
+          {
+            provide: TO_QUERY_PARAMS_MAPPER,
+            useValue: toAuctionHouseQueryParams,
+          },
+          AuctionHouseService,
+        ],
       },
       {
         path: 'expansions',

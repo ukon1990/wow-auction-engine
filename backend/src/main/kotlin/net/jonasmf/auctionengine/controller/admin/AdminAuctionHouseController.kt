@@ -1,0 +1,77 @@
+package net.jonasmf.auctionengine.controller.admin
+
+import net.jonasmf.auctionengine.constant.admin.AdminAuctionHousePageSortBy
+import net.jonasmf.auctionengine.constant.admin.toDomain
+import net.jonasmf.auctionengine.generated.api.AdminAuctionHouseApi
+import net.jonasmf.auctionengine.generated.model.AuctionHouse
+import net.jonasmf.auctionengine.generated.model.AuctionHousePage
+import net.jonasmf.auctionengine.generated.model.AuctionHousePageSortBy
+import net.jonasmf.auctionengine.generated.model.PageMetadata
+import net.jonasmf.auctionengine.generated.model.Sorting
+import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
+import net.jonasmf.auctionengine.mapper.realm.toDto
+import net.jonasmf.auctionengine.service.admin.AdminAuctionHouseService
+import org.springframework.data.domain.Sort
+import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.RestController
+import kotlin.math.ceil
+
+@PreAuthorize("hasAuthority('admin')")
+@RestController
+class AdminAuctionHouseController(
+    private val service: AdminAuctionHouseService,
+) : AdminAuctionHouseApi {
+    override suspend fun getById(id: Int): ResponseEntity<AuctionHouse> =
+        service.getById(id)?.let { ResponseEntity.ok(it.toDto()) }
+            ?: return ResponseEntity.notFound().build()
+
+    override suspend fun update(
+        id: Int,
+        updateAuctionHouse: UpdateAuctionHouse,
+    ): ResponseEntity<AuctionHouse> =
+        service.update(id, updateAuctionHouse)?.let {
+            ResponseEntity.ok(it.toDto())
+        } ?: ResponseEntity.notFound().build()
+
+    override suspend fun search(
+        page: Int,
+        pageSize: Int,
+        sortBy: AuctionHousePageSortBy?,
+        sortDirection: String,
+    ): ResponseEntity<AuctionHousePage> {
+        val sortDirectionEnum = Sorting.SortDirection.forValue(sortDirection)
+        val sortDirectionMapped =
+            if (sortDirectionEnum == Sorting.SortDirection.ASC) {
+                Sort.Direction.ASC
+            } else {
+                Sort.Direction.DESC
+            }
+        val (items, totalRows) =
+            service.search(
+                page = page,
+                limit = pageSize,
+                sortBy = sortBy?.toDomain() ?: AdminAuctionHousePageSortBy.NAME,
+                sortDirection = sortDirectionMapped,
+            )
+        val totalNumberOfPages = ceil(totalRows.toDouble() / pageSize.toDouble()).toInt()
+
+        return ResponseEntity.ok(
+            AuctionHousePage(
+                items = items.map { it.toDto() },
+                page =
+                    PageMetadata(
+                        page = page,
+                        pageSize = pageSize,
+                        totalItems = totalRows,
+                        totalPages = totalNumberOfPages,
+                    ),
+                sort =
+                    Sorting(
+                        sortBy = (sortBy ?: AuctionHousePageSortBy.NAME).value,
+                        sortDirection = sortDirectionEnum,
+                    ),
+            ),
+        )
+    }
+}

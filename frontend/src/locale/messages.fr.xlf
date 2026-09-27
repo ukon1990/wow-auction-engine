@@ -259,6 +259,10 @@
           <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="route.admin.auction-house" datatype="html">
+        <source>Auction houses</source>
+        <target>Hôtels des ventes</target>
+      </trans-unit>
       <trans-unit id="route.admin.expansions" datatype="html">
         <source>Expansions</source>
         <target>Expansions</target>
@@ -2650,6 +2654,45 @@
         <source>Used as reagent</source>
         <target>Utilisé comme réactif</target>
       </trans-unit>
+      <trans-unit id="admin.auction-house.title" datatype="html"><source>Auction houses</source><target>Hôtels des ventes</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.id" datatype="html"><source>ID</source><target>ID</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.region" datatype="html"><source>Region</source><target>Région</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.realms" datatype="html"><source>Realms</source><target>Royaumes</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.lastModified" datatype="html"><source>Updated at</source><target>Mis à jour le</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.nextUpdate" datatype="html"><source>Next update</source><target>Prochaine mise à jour</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.delays" datatype="html"><source>Delay (min / avg / max)</source><target>Délai (min / moy / max)</target></trans-unit>
+      <trans-unit id="admin.auction-house.column.autoUpdate" datatype="html"><source>Auto update</source><target>Mise à jour automatique</target></trans-unit>
+      <trans-unit id="admin.auction-house.enabled" datatype="html"><source>Enabled</source><target>Activé</target></trans-unit>
+      <trans-unit id="admin.auction-house.disabled" datatype="html"><source>Disabled</source><target>Désactivé</target></trans-unit>
+      <trans-unit id="admin.auction-house.actions" datatype="html"><source>Actions</source><target>Actions</target></trans-unit>
+      <trans-unit id="admin.auction-house.openActions" datatype="html"><source>Open auction house actions</source><target>Ouvrir les actions de l’hôtel des ventes</target></trans-unit>
+      <trans-unit id="admin.auction-house.viewEdit" datatype="html"><source>View and edit</source><target>Voir et modifier</target></trans-unit>
+      <trans-unit id="admin.auction-house.updateNow" datatype="html"><source>Update now</source><target>Mettre à jour maintenant</target></trans-unit>
+      <trans-unit id="admin.auction-house.enableAutoUpdate" datatype="html"><source>Enable auto update</source><target>Activer la mise à jour automatique</target></trans-unit>
+      <trans-unit id="admin.auction-house.disableAutoUpdate" datatype="html"><source>Disable auto update</source><target>Désactiver la mise à jour automatique</target></trans-unit>
+      <trans-unit id="admin.auction-house.connectedRealmId" datatype="html"><source>Connected realm ID</source><target>ID du royaume connecté</target></trans-unit>
+      <trans-unit id="admin.auction-house.updateAttempts" datatype="html"><source>Update attempts</source><target>Tentatives de mise à jour</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastDailyPriceUpdate" datatype="html"><source>Daily price update</source><target>Mise à jour quotidienne des prix</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastHistoryDeleteEvent" datatype="html"><source>Hourly history deletion</source><target>Suppression horaire de l’historique</target></trans-unit>
+      <trans-unit id="admin.auction-house.lastHistoryDeleteEventDaily" datatype="html"><source>Daily history deletion</source><target>Suppression quotidienne de l’historique</target></trans-unit>
+      <trans-unit id="admin.auction-house.detailsTitle" datatype="html"><source>Auction house details</source><target>Détails de l’hôtel des ventes</target></trans-unit>
+      <trans-unit id="admin.auction-house.loadingDetails" datatype="html"><source>Loading details...</source><target>Chargement des détails...</target></trans-unit>
+      <trans-unit id="admin.auction-house.save" datatype="html"><source>Save changes</source><target>Enregistrer les modifications</target></trans-unit>
+      <trans-unit id="admin.auction-house.empty" datatype="html"><source>No auction houses were found</source><target>Aucun hôtel des ventes trouvé</target></trans-unit>
+      <trans-unit id="admin.auction-house.tableAria" datatype="html"><source>Auction houses</source><target>Hôtels des ventes</target></trans-unit>
+      <trans-unit id="admin.auction-house.paginationLabel" datatype="html"><source>auction houses</source><target>hôtels des ventes</target></trans-unit>
+      <trans-unit id="admin.auction-house.detailError" datatype="html"><source>Could not load auction house details.</source><target>Impossible de charger les détails.</target></trans-unit>
+      <trans-unit id="admin.auction-house.invalidDate" datatype="html"><source>Enter a valid next update time.</source><target>Saisissez une heure de mise à jour valide.</target></trans-unit>
+      <trans-unit id="admin.auction-house.loadError" datatype="html"><source>Could not load auction houses.</source><target>Impossible de charger les hôtels des ventes.</target></trans-unit>
+      <trans-unit id="admin.auction-house.saveError" datatype="html"><source>Could not update auction house. Please try again.</source><target>Impossible de mettre à jour l’hôtel des ventes. Réessayez.</target></trans-unit>
+      <trans-unit id="admin.auction-house.saved" datatype="html"><source>Auction house updated.</source><target>Hôtel des ventes mis à jour.</target></trans-unit>
+      <trans-unit id="admin.auction-house.retry" datatype="html"><source>Retry</source><target>Réessayer</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmSlug" datatype="html"><source>Slug</source><target>Identifiant</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmRegion" datatype="html"><source>Region</source><target>Région</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmCategory" datatype="html"><source>Category</source><target>Catégorie</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmLocale" datatype="html"><source>Locale</source><target>Paramètres régionaux</target></trans-unit>
+      <trans-unit id="admin.auction-house.realmTimezone" datatype="html"><source>Time zone</source><target>Fuseau horaire</target></trans-unit>
+      <trans-unit id="admin.auction-house.defaultOrder" datatype="html"><source>Default order</source><target>Ordre par défaut</target></trans-unit>
     </body>
   </file>
 </xliff>

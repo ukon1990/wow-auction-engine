@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.service.admin
 
 import net.jonasmf.auctionengine.generated.model.AdminJob
-import net.jonasmf.auctionengine.repository.rds.AdminJobRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminJobRepository
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncGuard
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
@@ -72,4 +72,3 @@ class AdminJobService(
             }
     }
 }
-
