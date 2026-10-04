@@ -35,11 +35,12 @@ class AuctionHouseStateRepositoryImpl(
     override fun findAllByRegion(region: Region): List<AuctionHouseDomain> =
         auctionHouseRepository.findAllByRegion(region).map { it.toDomain() }
 
-    override fun findReadyForUpdateByRegion(region: Region): List<AuctionHouseDomain> =
+    override fun findReadyForUpdateByRegionAndAutoUpdate(region: Region): List<AuctionHouseDomain> =
         auctionHouseRepository
-            .findAllByRegionAndNextUpdateLessThanEqualOrderByNextUpdateAsc(
+            .findAllByRegionAndNextUpdateLessThanEqualAndAutoUpdateOrderByNextUpdateAsc(
                 region,
                 java.time.Instant.now(),
+                true,
                 PageRequest.of(0, 50),
             ).map { it.toDomain() }
 

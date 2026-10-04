@@ -9,6 +9,7 @@ import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm
 import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
+import net.jonasmf.auctionengine.mapper.realm.toDbo
 import net.jonasmf.auctionengine.repository.AuctionHouseRepository
 import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
 import net.jonasmf.auctionengine.repository.rds.RegionRepository
@@ -139,37 +140,38 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
 
     @Nested
     inner class CreateIfMissing {
+        val connectedRealm =
+            ConnectedRealm(
+                id = 999,
+                auctionHouse =
+                    RealmAuctionHouse(
+                        connectedId = 999,
+                        region = Region.Europe,
+                        lastModified = null,
+                        lastRequested = null,
+                        nextUpdate = java.time.Instant.EPOCH,
+                        lowestDelay = 60,
+                        avgDelay = 60,
+                        highestDelay = 60,
+                        updateAttempts = 0,
+                    ),
+                realms =
+                    mutableListOf(
+                        Realm(
+                            id = 999,
+                            region = RegionDBO(id = 2, name = "Europe", type = Region.Europe),
+                            name = "Test Realm",
+                            category = "Normal",
+                            locale = Locale.EN_GB,
+                            timezone = "UTC",
+                            gameBuild = GameBuildVersion.RETAIL,
+                            slug = "test-realm",
+                        ),
+                    ),
+            )
+
         @Test
         fun `should seed new auction houses as immediately ready for update`() {
-            val connectedRealm =
-                ConnectedRealm(
-                    id = 999,
-                    auctionHouse =
-                        RealmAuctionHouse(
-                            connectedId = 999,
-                            region = Region.Europe,
-                            lastModified = null,
-                            lastRequested = null,
-                            nextUpdate = java.time.Instant.EPOCH,
-                            lowestDelay = 60,
-                            avgDelay = 60,
-                            highestDelay = 60,
-                            updateAttempts = 0,
-                        ),
-                    realms =
-                        mutableListOf(
-                            Realm(
-                                id = 999,
-                                region = RegionDBO(id = 2, name = "Europe", type = Region.Europe),
-                                name = "Test Realm",
-                                category = "Normal",
-                                locale = Locale.EN_GB,
-                                timezone = "UTC",
-                                gameBuild = GameBuildVersion.RETAIL,
-                                slug = "test-realm",
-                            ),
-                        ),
-                )
             connectedRealmRepository.save(connectedRealm)
 
             auctionHouseService.createIfMissing(connectedRealm)
@@ -178,6 +180,22 @@ class AuctionHouseServiceTest : IntegrationTestBase() {
             assertEquals(999, saved?.connectedId ?: 0)
             assertNotNull(saved?.nextUpdate)
             assertEquals(0L, saved?.nextUpdate!!.epochSeconds)
+            assertEquals(1, auctionHouseService.getReadyForUpdate(Region.Europe).count { it.id == 999 })
+        }
+
+        @Test
+        fun `should not consider auction house with auto update off as ready for update`() {
+            connectedRealmRepository.save(connectedRealm)
+
+            auctionHouseService.createIfMissing(connectedRealm)
+
+            var saved = repository.findById(999)
+            saved?.autoUpdate = false
+            var updated = repository.save(saved!!)
+
+            assertEquals(999, updated.connectedId ?: 0)
+            assertNotNull(updated.nextUpdate)
+            assertEquals(0L, updated.nextUpdate!!.epochSeconds)
             assertEquals(1, auctionHouseService.getReadyForUpdate(Region.Europe).count { it.id == 999 })
         }
 

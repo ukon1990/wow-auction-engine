@@ -11,7 +11,7 @@ interface AuctionHouseRepository {
 
     fun findAllByRegion(region: Region): List<AuctionHouse>
 
-    fun findReadyForUpdateByRegion(region: Region): List<AuctionHouse>
+    fun findReadyForUpdateByRegionAndAutoUpdate(region: Region): List<AuctionHouse>
 
     fun findAllByLastHistoryDeleteEventBefore(hourlyTTL: OffsetDateTime): List<AuctionHouse>
 

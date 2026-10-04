@@ -44,18 +44,21 @@ class AuctionHouseService(
                 .findByConnectedId(connectedRealm.id)
                 .orElse(connectedRealm.auctionHouse)
 
-        auctionHouse.connectedId = connectedRealm.id
-        auctionHouse.region = region
-        auctionHouse.lastModified = auctionHouse.lastModified ?: seededAt
-        auctionHouse.nextUpdate = auctionHouse.nextUpdate ?: seededAt
-        auctionHouse.lowestDelay = auctionHouse.lowestDelay
-        auctionHouse.avgDelay = auctionHouse.avgDelay
-        auctionHouse.highestDelay = auctionHouse.highestDelay
-        auctionHouse.updateAttempts = auctionHouse.updateAttempts
+        auctionHouse?.let {
+            it.connectedId = connectedRealm.id
+            it.region = region
+            it.lastModified = auctionHouse.lastModified ?: seededAt
+            it.nextUpdate = auctionHouse.nextUpdate ?: seededAt
+            it.lowestDelay = auctionHouse.lowestDelay
+            it.avgDelay = auctionHouse.avgDelay
+            it.highestDelay = auctionHouse.highestDelay
+            it.updateAttempts = auctionHouse.updateAttempts
+        }
 
         try {
+            auctionHouse?.autoUpdate = true
             val savedAuctionHouse = auctionHouseEntityRepository.save(auctionHouse)
-            if (connectedRealm.auctionHouse.id != savedAuctionHouse.id) {
+            if (savedAuctionHouse !== null && connectedRealm.auctionHouse.id != savedAuctionHouse.id) {
                 connectedRealm.auctionHouse = savedAuctionHouse
             }
         } catch (e: Exception) {
@@ -144,7 +147,7 @@ class AuctionHouseService(
         lastDeletedTime: OffsetDateTime,
     ) = auctionHouseEntityRepository.updateLastHistoryDeleteEventDaily(connectedRealmId, lastDeletedTime.toInstant())
 
-    fun getReadyForUpdate(region: Region) = repository.findReadyForUpdateByRegion(region)
+    fun getReadyForUpdate(region: Region) = repository.findReadyForUpdateByRegionAndAutoUpdate(region)
 
     fun getReadyForHourlyStatsCleanup(hourlyTTL: OffsetDateTime) =
         repository.findAllByLastHistoryDeleteEventBefore(hourlyTTL)
