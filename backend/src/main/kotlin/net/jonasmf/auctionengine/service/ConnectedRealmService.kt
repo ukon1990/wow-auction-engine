@@ -35,7 +35,7 @@ class ConnectedRealmService(
     private val connectedRealmBulkSyncService: ConnectedRealmBulkSyncService,
     private val auctionHouseEntityRepository: AuctionHouseEntityRepository,
 ) {
-    val log: Logger = LoggerFactory.getLogger(ConnectedRealmService::class.java)
+    val log: Logger = LoggerFactory.getLogger(this.javaClass)
     private val seededAt: Instant = Instant.EPOCH
     private val syncInProgress = AtomicBoolean(false)
 

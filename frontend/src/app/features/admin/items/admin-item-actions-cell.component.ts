@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AdminItem1 } from '@api/generated';
+import { AdminItem } from '@api/generated';
 import { injectFlexRenderContext } from '@tanstack/angular-table';
 import type { CellContext } from '@tanstack/table-core';
 import { IconButtonComponent } from '@ui';
 
 type AdminItemActionsMeta = {
-  readonly onEdit?: (item: AdminItem1) => void;
-  readonly onAssociateRecipe?: (item: AdminItem1) => void;
-  readonly onCompare?: (item: AdminItem1) => void;
-  readonly onDeleteOverride?: (item: AdminItem1) => void;
+  readonly onEdit?: (item: AdminItem) => void;
+  readonly onAssociateRecipe?: (item: AdminItem) => void;
+  readonly onCompare?: (item: AdminItem) => void;
+  readonly onDeleteOverride?: (item: AdminItem) => void;
 };
 
 @Component({
@@ -46,9 +46,9 @@ type AdminItemActionsMeta = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminItemActionsCellComponent {
-  private readonly ctx = injectFlexRenderContext<CellContext<AdminItem1, unknown>>();
+  private readonly ctx = injectFlexRenderContext<CellContext<AdminItem, unknown>>();
 
-  protected item(): AdminItem1 {
+  protected item(): AdminItem {
     return this.ctx.row.original;
   }
 

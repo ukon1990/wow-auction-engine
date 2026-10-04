@@ -16,8 +16,8 @@ import net.jonasmf.auctionengine.generated.model.AuctionMarketNamedId
 import net.jonasmf.auctionengine.generated.model.AuctionMarketRecipe
 import net.jonasmf.auctionengine.generated.model.AuctionMarketSearchPage
 import net.jonasmf.auctionengine.generated.model.AuctionMarketSearchRow
-import net.jonasmf.auctionengine.generated.model.AuctionMarketSort
 import net.jonasmf.auctionengine.generated.model.PageMetadata
+import net.jonasmf.auctionengine.generated.model.Sorting
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketSearchRepository
 import net.jonasmf.auctionengine.repository.rds.AuctionMarketSearchRequest
 import org.slf4j.LoggerFactory
@@ -222,9 +222,9 @@ class AuctionMarketSearchService(
                         totalPages = totalPages,
                     ),
                 sort =
-                    AuctionMarketSort(
+                    Sorting(
                         sortBy = normalizedSortBy,
-                        sortDirection = AuctionMarketSort.SortDirection.forValue(normalizedSortDirection),
+                        sortDirection = Sorting.SortDirection.forValue(normalizedSortDirection),
                     ),
             )
         val mappingMs = elapsedMs(mappingStartNanos)

@@ -4,6 +4,9 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.repository.AuctionHouseRepository
 import net.jonasmf.auctionengine.repository.rds.ConnectedRealmUpdateHistoryRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
@@ -26,6 +29,8 @@ class AuctionHouseService(
         private const val MAXIMUM_DELAY_CEILING_MINUTES = 120L
     }
 
+    val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
     fun createIfMissing(connectedRealm: ConnectedRealm) {
         if (connectedRealm.realms.isEmpty()) return
 
@@ -39,18 +44,25 @@ class AuctionHouseService(
                 .findByConnectedId(connectedRealm.id)
                 .orElse(connectedRealm.auctionHouse)
 
-        auctionHouse.connectedId = connectedRealm.id
-        auctionHouse.region = region
-        auctionHouse.lastModified = auctionHouse.lastModified ?: seededAt
-        auctionHouse.nextUpdate = auctionHouse.nextUpdate ?: seededAt
-        auctionHouse.lowestDelay = auctionHouse.lowestDelay
-        auctionHouse.avgDelay = auctionHouse.avgDelay
-        auctionHouse.highestDelay = auctionHouse.highestDelay
-        auctionHouse.updateAttempts = auctionHouse.updateAttempts
+        auctionHouse?.let {
+            it.connectedId = connectedRealm.id
+            it.region = region
+            it.lastModified = auctionHouse.lastModified ?: seededAt
+            it.nextUpdate = auctionHouse.nextUpdate ?: seededAt
+            it.lowestDelay = auctionHouse.lowestDelay
+            it.avgDelay = auctionHouse.avgDelay
+            it.highestDelay = auctionHouse.highestDelay
+            it.updateAttempts = auctionHouse.updateAttempts
+        }
 
-        val savedAuctionHouse = auctionHouseEntityRepository.save(auctionHouse)
-        if (connectedRealm.auctionHouse.id != savedAuctionHouse.id) {
-            connectedRealm.auctionHouse = savedAuctionHouse
+        try {
+            auctionHouse?.autoUpdate = true
+            val savedAuctionHouse = auctionHouseEntityRepository.save(auctionHouse)
+            if (savedAuctionHouse !== null && connectedRealm.auctionHouse.id != savedAuctionHouse.id) {
+                connectedRealm.auctionHouse = savedAuctionHouse
+            }
+        } catch (e: Exception) {
+            log.error("Error creating a new Auction House for $id", e)
         }
     }
 
@@ -99,6 +111,10 @@ class AuctionHouseService(
 
     fun findAllByRegion(region: Region) = repository.findAllByRegion(region)
 
+    fun findAll() = repository.findAll()
+
+    fun findById(id: Int) = repository.findById(id)
+
     @Transactional
     fun updateLastDailyPriceUpdate(
         connectedRealmId: Int,
@@ -122,12 +138,6 @@ class AuctionHouseService(
     @Transactional
     fun updateLastHistoryDeleted(
         connectedRealmId: Int,
-        lastDeletedTime: Instant,
-    ) = auctionHouseEntityRepository.updateLastHistoryDeleteEvent(connectedRealmId, lastDeletedTime.toJavaInstant())
-
-    @Transactional
-    fun updateLastHistoryDeleted(
-        connectedRealmId: Int,
         lastDeletedTime: OffsetDateTime,
     ) = auctionHouseEntityRepository.updateLastHistoryDeleteEvent(connectedRealmId, lastDeletedTime.toInstant())
 
@@ -137,7 +147,7 @@ class AuctionHouseService(
         lastDeletedTime: OffsetDateTime,
     ) = auctionHouseEntityRepository.updateLastHistoryDeleteEventDaily(connectedRealmId, lastDeletedTime.toInstant())
 
-    fun getReadyForUpdate(region: Region) = repository.findReadyForUpdateByRegion(region)
+    fun getReadyForUpdate(region: Region) = repository.findReadyForUpdateByRegionAndAutoUpdate(region)
 
     fun getReadyForHourlyStatsCleanup(hourlyTTL: OffsetDateTime) =
         repository.findAllByLastHistoryDeleteEventBefore(hourlyTTL)

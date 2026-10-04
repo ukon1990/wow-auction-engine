@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import net.jonasmf.auctionengine.generated.model.AdminJob
-import net.jonasmf.auctionengine.repository.rds.AdminJobRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminJobRepository
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncGuard
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -45,7 +45,9 @@ class AdminJobServiceTest {
 
         val job = service.getActiveProfessionSyncJob()
 
-        org.assertj.core.api.Assertions.assertThat(job).isEqualTo(runningJob)
+        org.assertj.core.api.Assertions
+            .assertThat(job)
+            .isEqualTo(runningJob)
         verify(exactly = 0) { adminJobRepository.failJob(any<Long>(), any<String>()) }
     }
 

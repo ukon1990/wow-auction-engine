@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import {
   AdminApiService,
-  AdminRecipe1,
+  AdminRecipe,
   AdminRecipeCompareResponse,
   AdminRecipeOverrideRequest,
   AdminJob,
@@ -26,9 +26,9 @@ export class AdminRecipeService {
   readonly mutationLoading = signal(false);
   readonly detailLoading = signal(false);
   readonly compareLoading = signal(false);
-  readonly recipes = signal<readonly AdminRecipe1[]>([]);
+  readonly recipes = signal<readonly AdminRecipe[]>([]);
   readonly page = signal<PageMetadata>(EMPTY_PAGE);
-  readonly selectedRecipe = signal<AdminRecipe1 | null>(null);
+  readonly selectedRecipe = signal<AdminRecipe | null>(null);
   readonly compare = signal<AdminRecipeCompareResponse | null>(null);
   readonly error = signal<string | null>(null);
   readonly detailError = signal<string | null>(null);
@@ -38,7 +38,7 @@ export class AdminRecipeService {
   private readonly localeService = inject(LocaleService);
   private readonly toast = inject(ToastService);
 
-  search(filters: AdminRecipeFilterState): Observable<readonly AdminRecipe1[]> {
+  search(filters: AdminRecipeFilterState): Observable<readonly AdminRecipe[]> {
     this.loading.set(true);
     this.error.set(null);
     const params = toAdminRecipeSearchParams(filters);
@@ -78,7 +78,7 @@ export class AdminRecipeService {
       );
   }
 
-  loadRecipe(id: number): Observable<AdminRecipe1> {
+  loadRecipe(id: number): Observable<AdminRecipe> {
     this.detailLoading.set(true);
     this.detailError.set(null);
     const locale = this.localeService.apiLocaleOverride();
@@ -103,7 +103,7 @@ export class AdminRecipeService {
     id: number,
     request: AdminRecipeOverrideRequest,
     filters: AdminRecipeFilterState,
-  ): Observable<AdminRecipe1> {
+  ): Observable<AdminRecipe> {
     return this.mutate(() => this.api.upsertAdminRecipeOverride(id, request), filters).pipe(
       switchMap(() => this.loadRecipe(id)),
     );

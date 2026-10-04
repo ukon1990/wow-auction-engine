@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AdminItem1 } from '@api/generated';
+import { AdminItem } from '@api/generated';
 import { injectFlexRenderContext } from '@tanstack/angular-table';
 import type { CellContext } from '@tanstack/table-core';
 import { BadgeComponent } from '@ui';
@@ -23,9 +23,9 @@ import { BadgeComponent } from '@ui';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminItemStateCellComponent {
-  private readonly ctx = injectFlexRenderContext<CellContext<AdminItem1, unknown>>();
+  private readonly ctx = injectFlexRenderContext<CellContext<AdminItem, unknown>>();
 
-  protected item(): AdminItem1 {
+  protected item(): AdminItem {
     return this.ctx.row.original;
   }
 }

@@ -6,6 +6,7 @@ import net.jonasmf.auctionengine.mapper.realm.toDomain
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
 import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 import kotlin.time.toJavaInstant
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse as AuctionHouseDomain
 import net.jonasmf.auctionengine.domain.realm.Realm as RealmDomain
@@ -20,20 +21,26 @@ class AuctionHouseStateRepositoryImpl(
         if (id == null) return null
 
         val entity =
-            auctionHouseRepository.findByConnectedId(id).orElse(null)
-                ?: connectedRealmRepository.findById(id).orElse(null)?.auctionHouse
+            auctionHouseRepository.findByConnectedId(id).getOrNull()
+                ?: connectedRealmRepository.findById(id).getOrNull()?.auctionHouse
                 ?: return null
         return entity.toDomain()
     }
 
+    override fun findAll(): List<AuctionHouseDomain> =
+        auctionHouseRepository
+            .findAll()
+            .map { it.toDomain() }
+
     override fun findAllByRegion(region: Region): List<AuctionHouseDomain> =
         auctionHouseRepository.findAllByRegion(region).map { it.toDomain() }
 
-    override fun findReadyForUpdateByRegion(region: Region): List<AuctionHouseDomain> =
+    override fun findReadyForUpdateByRegionAndAutoUpdate(region: Region): List<AuctionHouseDomain> =
         auctionHouseRepository
-            .findAllByRegionAndNextUpdateLessThanEqualOrderByNextUpdateAsc(
+            .findAllByRegionAndNextUpdateLessThanEqualAndAutoUpdateOrderByNextUpdateAsc(
                 region,
                 java.time.Instant.now(),
+                true,
                 PageRequest.of(0, 50),
             ).map { it.toDomain() }
 
@@ -70,11 +77,6 @@ class AuctionHouseStateRepositoryImpl(
             }
 
         return saved.toDomain()
-    }
-
-    private fun resolveRealms(connectedId: Int): List<RealmDomain> {
-        val connectedRealm = connectedRealmRepository.findById(connectedId).orElse(null) ?: return emptyList()
-        return connectedRealm.realms.map { it -> it.toDomain() }
     }
 }
 

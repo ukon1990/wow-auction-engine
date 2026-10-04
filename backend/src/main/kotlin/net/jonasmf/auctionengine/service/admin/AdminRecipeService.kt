@@ -1,15 +1,15 @@
 package net.jonasmf.auctionengine.service.admin
 
 import net.jonasmf.auctionengine.generated.model.AdminItemCompareField
-import net.jonasmf.auctionengine.generated.model.AdminRecipe1
+import net.jonasmf.auctionengine.generated.model.AdminRecipe
 import net.jonasmf.auctionengine.generated.model.AdminRecipeBulkOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminRecipeCompareResponse
 import net.jonasmf.auctionengine.generated.model.AdminRecipeFields
 import net.jonasmf.auctionengine.generated.model.AdminRecipeOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminRecipePage
 import net.jonasmf.auctionengine.integration.blizzard.RecipeApiLookup
-import net.jonasmf.auctionengine.repository.rds.AdminExpansionRepository
-import net.jonasmf.auctionengine.repository.rds.AdminRecipeRepositoryPort
+import net.jonasmf.auctionengine.repository.rds.admin.AdminExpansionRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminRecipeRepositoryPort
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -67,7 +67,7 @@ class AdminRecipeService(
         locale: String?,
         includeBase: Boolean,
         includeOverride: Boolean,
-    ): AdminRecipe1 =
+    ): AdminRecipe =
         findRecipe(id, locale)
             .toAdminRecipe(includeBase = includeBase, includeOverride = includeOverride)
 
@@ -75,7 +75,7 @@ class AdminRecipeService(
     fun upsertOverride(
         id: Int,
         request: AdminRecipeOverrideRequest,
-    ): AdminRecipe1 {
+    ): AdminRecipe {
         if (!adminRecipeRepository.hasBaseRecipe(id)) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Base recipe not found: $id")
         }
@@ -85,7 +85,7 @@ class AdminRecipeService(
     }
 
     @Transactional
-    fun bulkUpsertOverrides(request: AdminRecipeBulkOverrideRequest): List<AdminRecipe1> {
+    fun bulkUpsertOverrides(request: AdminRecipeBulkOverrideRequest): List<AdminRecipe> {
         if (request.overrides.size > MAX_ADMIN_RECIPE_PAGE_SIZE) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Bulk override request cannot exceed 100 recipes")
         }
@@ -178,7 +178,10 @@ class AdminRecipeService(
             val sortOrders = mutableSetOf<Int>()
             outputs.forEach { output ->
                 if (!sortOrders.add(output.sortOrder)) {
-                    throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Duplicate output sortOrder: ${output.sortOrder}")
+                    throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Duplicate output sortOrder: ${output.sortOrder}",
+                    )
                 }
                 validatePositive("output.craftedQuantity", output.craftedQuantity)
                 validateNonNegative("output.sortOrder", output.sortOrder)
@@ -189,7 +192,10 @@ class AdminRecipeService(
             val sortOrders = mutableSetOf<Int>()
             reagents.forEach { reagent ->
                 if (!sortOrders.add(reagent.sortOrder)) {
-                    throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Duplicate reagent sortOrder: ${reagent.sortOrder}")
+                    throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Duplicate reagent sortOrder: ${reagent.sortOrder}",
+                    )
                 }
                 validatePositive("reagent.quantity", reagent.quantity)
                 validateNonNegative("reagent.sortOrder", reagent.sortOrder)

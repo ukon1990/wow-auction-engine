@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AdminItem1 } from '@api/generated';
+import { AdminItem } from '@api/generated';
 import { injectFlexRenderContext } from '@tanstack/angular-table';
 import type { CellContext } from '@tanstack/table-core';
 import { ItemQuality, QualityBadgeComponent } from '@ui';
@@ -25,7 +25,7 @@ const supportedQualities = new Set<ItemQuality>([
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminItemQualityCellComponent {
-  private readonly ctx = injectFlexRenderContext<CellContext<AdminItem1, unknown>>();
+  private readonly ctx = injectFlexRenderContext<CellContext<AdminItem, unknown>>();
 
   protected quality(): ItemQuality | null {
     const raw =

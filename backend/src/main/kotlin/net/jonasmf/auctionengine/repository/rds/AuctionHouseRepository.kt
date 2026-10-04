@@ -20,9 +20,10 @@ interface AuctionHouseRepository : JpaRepository<AuctionHouse, Int> {
 
     fun findAllByRegion(region: Region): List<AuctionHouse>
 
-    fun findAllByRegionAndNextUpdateLessThanEqualOrderByNextUpdateAsc(
+    fun findAllByRegionAndNextUpdateLessThanEqualAndAutoUpdateOrderByNextUpdateAsc(
         region: Region,
         nextUpdate: Instant,
+        autoUpdate: Boolean,
         pageable: Pageable,
     ): List<AuctionHouse>
 

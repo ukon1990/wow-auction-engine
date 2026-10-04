@@ -10,7 +10,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import {
   AdminExpansion,
-  AdminItem1,
+  AdminItem,
   AdminItemFields,
   AdminItemOverrideRequest,
   GameLocale,
@@ -403,7 +403,7 @@ export class AdminItemOverrideFormComponent {
     { id: 'false', label: $localize`:@@common.no:No` },
   ];
 
-  readonly item = input.required<AdminItem1>();
+  readonly item = input.required<AdminItem>();
   readonly expansions = input<readonly AdminExpansion[]>([]);
   readonly submitting = input(false);
   readonly submitError = input<string | null>(null);

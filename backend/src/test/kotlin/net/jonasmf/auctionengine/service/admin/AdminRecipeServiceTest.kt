@@ -11,9 +11,9 @@ import net.jonasmf.auctionengine.generated.model.AdminRecipeReagent
 import net.jonasmf.auctionengine.generated.model.AdminRecipeReagentRank
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.integration.blizzard.RecipeApiLookup
-import net.jonasmf.auctionengine.repository.rds.AdminRecipeRepositoryPort
-import net.jonasmf.auctionengine.repository.rds.AdminRecipeRows
-import net.jonasmf.auctionengine.repository.rds.AdminRecipeSearchRows
+import net.jonasmf.auctionengine.repository.rds.admin.AdminRecipeRepositoryPort
+import net.jonasmf.auctionengine.repository.rds.admin.AdminRecipeRows
+import net.jonasmf.auctionengine.repository.rds.admin.AdminRecipeSearchRows
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test

@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, InjectionToken, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, ParamMap, Params, Router } from '@angular/router';
-import { combineLatest, filter, map, startWith } from 'rxjs';
+import { filter, map, startWith } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RealmSelectionService } from '@core/services/realm-selection.service';
 
@@ -33,32 +33,31 @@ export class QueryService<QueryParam> {
   private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
-    combineLatest([
-      this.router.events.pipe(
+    this.router.events
+      .pipe(
         takeUntilDestroyed(this.destroyRef),
         startWith(null),
         filter((event) => event === null || event instanceof NavigationEnd),
         map(() => this.findRegionAndRealmSlug(this.router.routerState.root)),
-        filter((data) => data?.region !== undefined && data?.realmSlug !== undefined),
-      ),
-    ]).subscribe(([data]) =>
-      // already filtered away if not set
-      this.updateStateFromQuery(data!.region, data!.realmSlug, data!.queryParamMap),
-    );
+      )
+      .subscribe(({ region, realmSlug, queryParamMap }) =>
+        this.updateStateFromQuery(region, realmSlug, queryParamMap),
+      );
   }
 
-  navigateWithState(state: QueryParam): void {
-    if (!this.router || !this.region() || !this.realmSlug()) return;
+  navigateWithState(state: QueryParam, replaceUrl = true): void {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: this.toQueryParamsMapper(state!),
-      replaceUrl: true,
+      replaceUrl,
     });
   }
 
-  findRegionAndRealmSlug(
-    route: ActivatedRoute,
-  ): { region: Region; realmSlug: string; queryParamMap: ParamMap } | undefined {
+  findRegionAndRealmSlug(route: ActivatedRoute): {
+    region?: Region;
+    realmSlug?: string;
+    queryParamMap: ParamMap;
+  } {
     let current: ActivatedRoute | null = route;
     let region: Region | undefined;
     let realmSlug: string | undefined;
@@ -76,13 +75,15 @@ export class QueryService<QueryParam> {
       current = current.firstChild;
     }
 
-    if (!region || !realmSlug) return undefined;
-
     return { region, realmSlug, queryParamMap: queryRoute.snapshot.queryParamMap };
   }
 
-  private updateStateFromQuery(region: Region, realmSlug: string, queryParamMap: ParamMap) {
-    this.region.set(region);
+  private updateStateFromQuery(
+    region: Region | undefined,
+    realmSlug: string | undefined,
+    queryParamMap: ParamMap,
+  ) {
+    if (region) this.region.set(region);
     this.realmSlug.set(realmSlug);
     this.queryParams.set(this.paramMapper(queryParamMap));
   }

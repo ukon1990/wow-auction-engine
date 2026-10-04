@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import {
   AdminApiService,
-  AdminItem1,
+  AdminItem,
   AdminItemOverrideRequest,
   AdminItemPage,
 } from '@api/generated';
@@ -11,7 +11,7 @@ import { ToastService } from '@core/services/toast.service';
 import { defaultAdminItemFilters } from './item-filters';
 import { AdminItemService } from './admin-item.service';
 
-const itemFixture: AdminItem1 = {
+const itemFixture: AdminItem = {
   id: 19019,
   hasBase: true,
   hasOverride: true,

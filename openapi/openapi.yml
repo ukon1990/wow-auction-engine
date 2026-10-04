@@ -29,6 +29,10 @@ tags:
 paths:
   /health:
     $ref: ./paths/health.yml#/health
+  /admin/auction-houses:
+    $ref: ./paths/admin.yml#/searchAuctionHouses
+  /admin/auction-houses/{id}:
+    $ref: ./paths/admin.yml#/auctionHouseById
   /admin/users:
     $ref: ./paths/admin.yml#/getUsers
   /admin/status:
@@ -125,6 +129,12 @@ components:
   schemas:
     User:
       $ref: ./components/schemas/admin/user.yml
+    AdminAuctionHousePage:
+        $ref: "./components/schemas/admin/auction-house/auction-house-page.yml"
+    AdminUpdateAuctionHouse:
+        $ref: "./components/schemas/admin/auction-house/update-auction-house.yml"
+    AdminAuctionHousePageSortBy:
+        $ref: ./components/schemas/admin/auction-house/auction-house-page-sort-by.yml
     AdminStatus:
       $ref: ./components/schemas/admin/admin-status.yml
     AdminConnectionStatus:
@@ -213,6 +223,8 @@ components:
       $ref: ./components/schemas/admin/admin-recipe-reagent-rank.yml
     AdminItemOverrideRequest:
       $ref: ./components/schemas/admin/admin-item-override-request.yml
+    AuctionHouse:
+      $ref: ./components/schemas/auction-house.yml
     AuctionHouseStatus:
       $ref: ./components/schemas/auction-house-status.yml
     AuctionListingKey:
@@ -259,8 +271,6 @@ components:
       $ref: ./components/schemas/auction-market-search-page.yml
     AuctionMarketSearchRow:
       $ref: ./components/schemas/auction-market-search-row.yml
-    AuctionMarketSort:
-      $ref: ./components/schemas/auction-market-sort.yml
     CraftingMarketFilterResponse:
       $ref: ./components/schemas/crafting-market-filter-response.yml
     CraftingMarketSearchPage:
@@ -311,3 +321,5 @@ components:
       $ref: ./components/schemas/profession-skill-tree-entry.yml
     ProfessionSkillTreePrerequisite:
       $ref: ./components/schemas/profession-skill-tree-prerequisite.yml
+    Sorting:
+      $ref: ./components/schemas/sorting.yml

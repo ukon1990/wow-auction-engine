@@ -1,24 +1,17 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.repository.rds.admin
 
 import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
-import net.jonasmf.auctionengine.generated.model.AdminExpansion1
-import net.jonasmf.auctionengine.generated.model.AdminItem1
+import net.jonasmf.auctionengine.generated.model.AdminItem
 import net.jonasmf.auctionengine.generated.model.AdminItemCreateRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
-import net.jonasmf.auctionengine.generated.model.AdminItemReference
 import net.jonasmf.auctionengine.generated.model.AdminItemRecipe
 import net.jonasmf.auctionengine.generated.model.AdminRecipeSearchResult
-import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.generated.model.PageMetadata
-import net.jonasmf.auctionengine.mapper.toGameLocale
 import net.jonasmf.auctionengine.mapper.toLocaleDTO
+import net.jonasmf.auctionengine.repository.rds.LocaleJdbcRepository
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import java.sql.ResultSet
-import java.sql.Timestamp
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import kotlin.math.ceil
 
 @Repository
@@ -78,7 +71,7 @@ class AdminItemRepository(
                 LIMIT ? OFFSET ?
                 """.trimIndent(),
                 { rs, _ ->
-                    AdminItem1(
+                    AdminItem(
                         id = rs.getInt("id"),
                         hasBase = rs.getBoolean("has_base"),
                         hasOverride = rs.getBoolean("has_override"),
@@ -382,13 +375,13 @@ class AdminItemRepository(
                 WHERE $whereSql
                 """.trimIndent(),
                 { rs, _ -> rs.toAdminItemFields() },
-            *params,
-        ).firstOrNull()
+                *params,
+            ).firstOrNull()
 
     private fun AdminItemFields.withRecipes(localeColumnSuffix: String): AdminItemFields =
         copy(recipes = recipesByItemId(listOf(id ?: return this), localeColumnSuffix)[id].orEmpty())
 
-    private fun List<AdminItem1>.withRecipes(localeColumnSuffix: String): List<AdminItem1> {
+    private fun List<AdminItem>.withRecipes(localeColumnSuffix: String): List<AdminItem> {
         val recipesByItemId = recipesByItemId(map { it.id }, localeColumnSuffix)
         return map { item ->
             item.copy(effective = item.effective.copy(recipes = recipesByItemId[item.id].orEmpty()))
@@ -522,7 +515,7 @@ class AdminItemRepository(
                 OR r_l.en_gb LIKE ?
                 OR r_l.en_us LIKE ?
             )
-        """.trimIndent()
+            """.trimIndent()
     }
 
     private fun itemSelectSql(

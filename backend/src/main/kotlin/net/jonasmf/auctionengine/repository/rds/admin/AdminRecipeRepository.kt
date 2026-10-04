@@ -1,7 +1,6 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.repository.rds.admin
 
-import net.jonasmf.auctionengine.generated.model.AdminItemCompareField
-import net.jonasmf.auctionengine.generated.model.AdminRecipe1
+import net.jonasmf.auctionengine.generated.model.AdminRecipe
 import net.jonasmf.auctionengine.generated.model.AdminRecipeFields
 import net.jonasmf.auctionengine.generated.model.AdminRecipeOutput
 import net.jonasmf.auctionengine.generated.model.AdminRecipeOverrideRequest
@@ -14,10 +13,11 @@ import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
+import kotlin.collections.get
 import kotlin.math.ceil
 
 data class AdminRecipeSearchRows(
-    val recipes: List<AdminRecipe1>,
+    val recipes: List<AdminRecipe>,
     val totalItems: Long,
 )
 
@@ -29,8 +29,8 @@ data class AdminRecipeRows(
     fun toAdminRecipe(
         includeBase: Boolean,
         includeOverride: Boolean,
-    ): AdminRecipe1 =
-        AdminRecipe1(
+    ): AdminRecipe =
+        AdminRecipe(
             id = effective.id ?: error("Effective recipe id is missing"),
             hasBase = base != null,
             hasOverride = override != null,
@@ -131,7 +131,7 @@ class AdminRecipeRepository(
                 LIMIT ? OFFSET ?
                 """.trimIndent(),
                 { rs, _ ->
-                    AdminRecipe1(
+                    AdminRecipe(
                         id = rs.getInt("id"),
                         hasBase = rs.getBoolean("has_base"),
                         hasOverride = rs.getBoolean("has_override"),
@@ -222,8 +222,16 @@ class AdminRecipeRepository(
     }
 
     override fun deleteOverride(id: Int): Boolean {
-        val deletedOutputs = jdbcTemplate.update("DELETE FROM recipe_crafted_output WHERE recipe_id = ? AND is_override = TRUE", id)
-        val deletedReagents = jdbcTemplate.update("DELETE FROM recipe_reagent WHERE recipe_id = ? AND is_override = TRUE", id)
+        val deletedOutputs =
+            jdbcTemplate.update(
+                "DELETE FROM recipe_crafted_output WHERE recipe_id = ? AND is_override = TRUE",
+                id,
+            )
+        val deletedReagents =
+            jdbcTemplate.update(
+                "DELETE FROM recipe_reagent WHERE recipe_id = ? AND is_override = TRUE",
+                id,
+            )
         val deletedRecipe = jdbcTemplate.update("DELETE FROM recipe WHERE id = ? AND is_override = TRUE", id)
         return deletedRecipe + deletedOutputs + deletedReagents > 0
     }
@@ -479,7 +487,9 @@ private fun recipeWhereSql(
 ): String {
     val clauses = mutableListOf<String>()
     appendRecipeBaseFilters(clauses, params, query, hasOverride, professionId, localeColumnSuffix)
-    if (listOf(itemClassId, itemSubclassId, expansionId, associatedItemId).any { it != null } || associationType != null) {
+    if (listOf(itemClassId, itemSubclassId, expansionId, associatedItemId).any { it != null } ||
+        associationType != null
+    ) {
         clauses +=
             recipeAssociationClause(
                 itemClassId,
@@ -546,14 +556,17 @@ private fun recipeAssociationClause(
                 params += it
             }
             itemSubclassId?.let {
-                predicates += "EXISTS (SELECT 1 FROM item_subclass associated_subclass WHERE associated_subclass.internal_id = associated_item.item_subclass_id AND associated_subclass.subclass_id = ?)"
+                predicates +=
+                    "EXISTS (SELECT 1 FROM item_subclass associated_subclass WHERE associated_subclass.internal_id = associated_item.item_subclass_id AND associated_subclass.subclass_id = ?)"
                 params += it
             }
             expansionId?.let {
                 predicates += "associated_item.expansion_id = ?"
                 params += it
             }
-            "EXISTS (SELECT 1 FROM $source association JOIN v_item associated_item ON associated_item.id = $itemIdExpression WHERE ${predicates.joinToString(" AND ")})"
+            "EXISTS (SELECT 1 FROM $source association JOIN v_item associated_item ON associated_item.id = $itemIdExpression WHERE ${predicates.joinToString(
+                " AND ",
+            )})"
         }
     return "(${associationClauses.joinToString(" OR ")})"
 }

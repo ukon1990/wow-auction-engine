@@ -15,9 +15,9 @@ import net.jonasmf.auctionengine.generated.model.AdminRecipeSearchResult
 import net.jonasmf.auctionengine.generated.model.GameLocale
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.integration.blizzard.ItemApiLookup
-import net.jonasmf.auctionengine.repository.rds.AdminItemRepositoryPort
-import net.jonasmf.auctionengine.repository.rds.AdminItemRows
-import net.jonasmf.auctionengine.repository.rds.AdminItemSearchResult
+import net.jonasmf.auctionengine.repository.rds.admin.AdminItemRepositoryPort
+import net.jonasmf.auctionengine.repository.rds.admin.AdminItemRows
+import net.jonasmf.auctionengine.repository.rds.admin.AdminItemSearchResult
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test

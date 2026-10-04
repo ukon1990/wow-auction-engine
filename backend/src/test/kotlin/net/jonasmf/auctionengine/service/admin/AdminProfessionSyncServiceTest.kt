@@ -5,14 +5,14 @@ import io.mockk.mockk
 import io.mockk.verify
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.generated.model.AdminJob
-import net.jonasmf.auctionengine.repository.rds.AdminJobRepository
+import net.jonasmf.auctionengine.repository.rds.admin.AdminJobRepository
 import net.jonasmf.auctionengine.service.ProfessionRecipePersistenceSummary
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncGuard
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncLock
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncResult
 import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.slf4j.MDC
 import org.springframework.http.HttpStatus
@@ -82,7 +82,8 @@ class AdminProfessionSyncServiceTest {
 
     @Test
     fun `marks job failed and releases guard after top-level failure`() {
-        every { professionRecipeSyncService.syncConfiguredStaticDataRegion(any(), any()) } throws IllegalStateException("private upstream detail")
+        every { professionRecipeSyncService.syncConfiguredStaticDataRegion(any(), any()) } throws
+            IllegalStateException("private upstream detail")
         service.runSyncJob(42, syncLock)
 
         verify { adminJobRepository.failJob(42, "Profession/recipe sync failed") }

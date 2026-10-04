@@ -1,5 +1,5 @@
 import { ColumnDef, createColumnHelper, flexRenderComponent } from '@tanstack/angular-table';
-import { AdminItem1 } from '@api/generated';
+import { AdminItem } from '@api/generated';
 import { AdminItemActionsCellComponent } from './admin-item-actions-cell.component';
 import { AdminItemNameCellComponent } from './admin-item-name-cell.component';
 import { AdminItemQualityCellComponent } from './admin-item-quality-cell.component';
@@ -14,14 +14,14 @@ type AdminItemColumnMeta = {
 } & AdminItemTableActions;
 
 export type AdminItemTableActions = {
-  readonly onEdit: (item: AdminItem1) => void;
-  readonly onAssociateRecipe: (item: AdminItem1) => void;
-  readonly onCompare: (item: AdminItem1) => void;
-  readonly onDeleteOverride: (item: AdminItem1) => void;
+  readonly onEdit: (item: AdminItem) => void;
+  readonly onAssociateRecipe: (item: AdminItem) => void;
+  readonly onCompare: (item: AdminItem) => void;
+  readonly onDeleteOverride: (item: AdminItem) => void;
 };
 
 export const createAdminItemColumns = (actions: AdminItemTableActions) => {
-  const helper = createColumnHelper<AdminItem1>();
+  const helper = createColumnHelper<AdminItem>();
   return [
     helper.accessor('id', {
       header: $localize`:@@admin.items.table.id:Item ID`,
@@ -98,5 +98,5 @@ export const createAdminItemColumns = (actions: AdminItemTableActions) => {
       } satisfies AdminItemColumnMeta,
       cell: () => flexRenderComponent(AdminItemActionsCellComponent),
     }),
-  ] as ColumnDef<AdminItem1, unknown>[];
+  ] as ColumnDef<AdminItem, unknown>[];
 };

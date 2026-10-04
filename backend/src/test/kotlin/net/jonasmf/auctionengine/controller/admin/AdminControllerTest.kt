@@ -1,26 +1,27 @@
-package net.jonasmf.auctionengine.controller
+package net.jonasmf.auctionengine.controller.admin
 
 import kotlinx.coroutines.runBlocking
-import net.jonasmf.auctionengine.config.SecurityConfig
-import net.jonasmf.auctionengine.generated.model.AdminExpansion1
-import net.jonasmf.auctionengine.generated.model.GameLocale
-import net.jonasmf.auctionengine.generated.model.AdminJob
+import net.jonasmf.auctionengine.config.MVCIntegrationTest
 import net.jonasmf.auctionengine.generated.model.AdminConnectionStatus
-import net.jonasmf.auctionengine.generated.model.AdminServerStatus
-import net.jonasmf.auctionengine.generated.model.AdminItem1
+import net.jonasmf.auctionengine.generated.model.AdminExpansion
+import net.jonasmf.auctionengine.generated.model.AdminItem
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemPage
+import net.jonasmf.auctionengine.generated.model.AdminJob
+import net.jonasmf.auctionengine.generated.model.AdminServerStatus
 import net.jonasmf.auctionengine.generated.model.AdminSqlColumn
 import net.jonasmf.auctionengine.generated.model.AdminSqlExecuteRequest
 import net.jonasmf.auctionengine.generated.model.AdminSqlIndex
 import net.jonasmf.auctionengine.generated.model.AdminSqlMetadata
 import net.jonasmf.auctionengine.generated.model.AdminSqlResult
-import net.jonasmf.auctionengine.generated.model.AdminStatus
 import net.jonasmf.auctionengine.generated.model.AdminSqlTable
+import net.jonasmf.auctionengine.generated.model.AdminStatus
+import net.jonasmf.auctionengine.generated.model.GameLocale
+import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.User
-import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
+import net.jonasmf.auctionengine.service.AuctionHouseService
 import net.jonasmf.auctionengine.service.admin.AdminExpansionService
 import net.jonasmf.auctionengine.service.admin.AdminItemService
 import net.jonasmf.auctionengine.service.admin.AdminJobService
@@ -28,26 +29,19 @@ import net.jonasmf.auctionengine.service.admin.AdminProfessionSyncService
 import net.jonasmf.auctionengine.service.admin.AdminRecipeService
 import net.jonasmf.auctionengine.service.admin.AdminSqlService
 import net.jonasmf.auctionengine.service.admin.AdminStatusService
-import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
 import net.jonasmf.auctionengine.service.admin.NormalizedAuctionHelperProfessionInspectionService
+import net.jonasmf.auctionengine.service.admin.ProfessionTalentTreeImportService
 import net.jonasmf.auctionengine.service.admin.UserService
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
-import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
-import org.springframework.context.annotation.Import
-import org.springframework.core.convert.converter.Converter
 import org.springframework.http.HttpStatus
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.oauth2.jwt.Jwt
-import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
@@ -55,7 +49,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delet
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -75,23 +68,12 @@ private val normalizedProfessionJson =
     }
     """.trimIndent()
 
-@WebMvcTest(AdminController::class)
-@ImportAutoConfiguration(
-    ServletWebSecurityAutoConfiguration::class,
-    SecurityFilterAutoConfiguration::class,
-)
-@Import(SecurityConfig::class)
-@TestPropertySource(
-    properties = [
-        "spring.security.oauth2.resourceserver.jwt.issuer-uri=https://issuer.example.test",
-    ],
-)
-class AdminControllerTest {
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
+class AdminControllerTest : MVCIntegrationTest() {
     @MockitoBean
     private lateinit var userService: UserService
+
+    @MockitoBean
+    private lateinit var auctionHouseService: AuctionHouseService
 
     @MockitoBean
     private lateinit var adminStatusService: AdminStatusService
@@ -118,13 +100,8 @@ class AdminControllerTest {
     private lateinit var professionTalentTreeImportService: ProfessionTalentTreeImportService
 
     @MockitoBean
-    private lateinit var normalizedAuctionHelperProfessionInspectionService: NormalizedAuctionHelperProfessionInspectionService
-
-    @MockitoBean
-    private lateinit var jwtDecoder: JwtDecoder
-
-    @Autowired
-    private lateinit var cognitoGroupsGrantedAuthoritiesConverter: Converter<Jwt, Collection<GrantedAuthority>>
+    private lateinit var normalizedAuctionHelperProfessionInspectionService:
+        NormalizedAuctionHelperProfessionInspectionService
 
     @Nested
     inner class GetAdminStatus {
@@ -292,8 +269,8 @@ class AdminControllerTest {
                                 .authorities(cognitoGroupsGrantedAuthoritiesConverter),
                         ),
                 ).andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("validation failed")))
-                .andExpect(jsonPath("$.errorCount").value(org.hamcrest.Matchers.greaterThan(0)))
+                .andExpect(jsonPath("$.detail").value(Matchers.containsString("validation failed")))
+                .andExpect(jsonPath("$.errorCount").value(Matchers.greaterThan(0)))
         }
 
         @Test
@@ -438,7 +415,12 @@ class AdminControllerTest {
                         rowLimit = null,
                     ),
                 ),
-            ).thenThrow(ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "DELETE statements are not allowed"))
+            ).thenThrow(
+                ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "DELETE statements are not allowed",
+                ),
+            )
 
             val result =
                 mockMvc
@@ -482,7 +464,7 @@ class AdminControllerTest {
                 ),
             ).thenThrow(
                 ResponseStatusException(
-                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
                     "Table 'dbo.items' doesn't exist",
                 ),
             )
@@ -609,7 +591,7 @@ class AdminControllerTest {
         fun `should list expansions if Cognito Admin group`() {
             `when`(adminExpansionService.listExpansions(null)).thenReturn(
                 listOf(
-                    AdminExpansion1(
+                    AdminExpansion(
                         id = 1,
                         slug = "vanilla",
                         name = "Vanilla",
@@ -815,7 +797,7 @@ class AdminControllerTest {
                 AdminItemPage(
                     items =
                         listOf(
-                            AdminItem1(
+                            AdminItem(
                                 id = 171374,
                                 hasBase = true,
                                 hasOverride = true,
@@ -858,7 +840,7 @@ class AdminControllerTest {
         @Test
         fun `should upsert sparse item override if Cognito Admin group`() {
             val response =
-                AdminItem1(
+                AdminItem(
                     id = 171374,
                     hasBase = true,
                     hasOverride = true,
