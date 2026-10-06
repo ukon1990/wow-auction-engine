@@ -115,7 +115,7 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
         @Test
         fun `should be able to update an auction house, and get the updated version back with reset updateAttempts`() {
             val connectedRealmId = 509
-            val nextUpdate = OffsetDateTime.now()
+            val nextUpdate = OffsetDateTime.parse("2026-01-15T12:34:56.123456Z")
 
             auctionHouseService.updateTimes(
                 id = connectedRealmId,

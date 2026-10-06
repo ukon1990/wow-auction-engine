@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import java.time.ZoneOffset
 
 @Repository
 class AdminAuctionHouseJdbcRepository(
@@ -27,7 +28,7 @@ class AdminAuctionHouseJdbcRepository(
 
         auctionHouse.nextUpdate?.let {
             setSql += "next_update = ?"
-            params += it
+            params += it.withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime()
 
             setSql += "update_attempts = ?"
             params += 0
