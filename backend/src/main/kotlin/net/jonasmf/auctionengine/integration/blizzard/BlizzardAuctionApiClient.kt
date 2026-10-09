@@ -1,8 +1,6 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
-import com.fasterxml.jackson.core.JsonFactory
-import com.fasterxml.jackson.core.JsonToken
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dto.auction.AuctionDTO
@@ -15,6 +13,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
+import tools.jackson.core.JsonToken
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.time.Duration
@@ -156,20 +155,19 @@ class BlizzardAuctionApiClient(
             }
 
     private fun validateDownloadedPayload(payload: DownloadedAuctionPayload) {
-        val mapper = jacksonObjectMapper()
-        val jsonFactory = JsonFactory(mapper)
+        val mapper = JsonMappers.storage
         payload.path.toFile().inputStream().use { input ->
-            jsonFactory.createParser(input).use { parser ->
+            mapper.createParser(input).use { parser ->
                 require(parser.nextToken() == JsonToken.START_OBJECT) {
                     "Auction payload root must be a JSON object"
                 }
                 var foundAuctionsArray = false
                 while (parser.nextToken() != JsonToken.END_OBJECT) {
-                    val fieldName = parser.currentName
+                    val fieldName = parser.currentName()
                     parser.nextToken()
                     if (fieldName == "auctions") {
                         foundAuctionsArray = true
-                        require(parser.currentToken == JsonToken.START_ARRAY) {
+                        require(parser.currentToken() == JsonToken.START_ARRAY) {
                             "Auction payload field 'auctions' must be an array"
                         }
                         while (parser.nextToken() != JsonToken.END_ARRAY) {

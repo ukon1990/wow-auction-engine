@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.domain.profession.ProfessionSkillTreeNodeEffectParser
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperRecipe
@@ -18,7 +18,7 @@ class NormalizedProfessionImportRepository(
     private val professionSkillTreeNodeEffectRepository: ProfessionSkillTreeNodeEffectRepository,
     private val addonRecipeOverrideSyncService: AddonRecipeOverrideSyncService,
 ) {
-    private val objectMapper = jacksonObjectMapper()
+    private val objectMapper = JsonMappers.storage
 
     fun save(
         payload: NormalizedAuctionHelperProfessionData,

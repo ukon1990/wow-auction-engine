@@ -1,11 +1,11 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperMaxQualityReagent
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperRecipe
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import tools.jackson.module.kotlin.readValue
 import java.math.BigDecimal
 
 data class RecipeCraftingRule(
@@ -22,7 +22,7 @@ data class RecipeCraftingRule(
 class RecipeCraftingRuleRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) {
-    private val objectMapper = jacksonObjectMapper()
+    private val objectMapper = JsonMappers.storage
 
     fun upsert(
         recipe: NormalizedAuctionHelperRecipe,

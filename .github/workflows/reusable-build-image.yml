@@ -55,12 +55,7 @@ jobs:
 
       - name: Set up Java 25
         if: ${{ inputs.service == 'backend' }}
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: "25"
-          cache: maven
-          cache-dependency-path: backend/pom.xml
+        uses: ./.github/actions/setup-backend-java
 
       - name: Set up Node.js
         if: ${{ inputs.service == 'frontend' }}
@@ -128,6 +123,14 @@ jobs:
           IMAGE_TAG: ${{ inputs.image_tag }}
           IMAGE_PLATFORM: ${{ inputs.image_platform }}
           SERVICE: ${{ inputs.service }}
+
+      - name: Verify backend image Java runtime
+        if: ${{ inputs.service == 'backend' }}
+        shell: bash
+        run: ./scripts/ci/check-java-runtime.sh docker run --rm --platform "${IMAGE_PLATFORM}" --entrypoint java "localbuild:backend-${IMAGE_TAG}"
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          IMAGE_PLATFORM: ${{ inputs.image_platform }}
 
       - name: Export Docker image artifact
         shell: bash

@@ -7,9 +7,9 @@ import aws.sdk.kotlin.services.s3.model.NotFound
 import aws.sdk.kotlin.services.s3.model.PutObjectRequest
 import aws.smithy.kotlin.runtime.content.asByteStream
 import aws.smithy.kotlin.runtime.content.writeToFile
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.runBlocking
 import net.jonasmf.auctionengine.config.AmazonS3ClientFactory
+import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.config.WaeS3Properties
 import net.jonasmf.auctionengine.constant.Region
 import org.slf4j.Logger
@@ -44,7 +44,7 @@ class AmazonS3Service(
         path: String,
         data: Any,
     ): File {
-        val mapper = jacksonObjectMapper() // ObjectMapper for JSON serialization
+        val mapper = JsonMappers.storage
         val filePath = Paths.get("/tmp/$path.gz")
         // Ensure directories for the file path exist
         Files.createDirectories(filePath.parent)

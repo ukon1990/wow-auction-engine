@@ -16,10 +16,10 @@ The Ethereal Exchange is a Kotlin + Spring Boot and Angular application that:
 
 ## Stack
 
-- Java 25
-- Kotlin 2.3
-- Spring Boot 4
-- Maven Wrapper (`backend/mvnw`)
+- Java 25 (Temurin 25.0.4.1, pinned in [`backend/.sdkmanrc`](backend/.sdkmanrc))
+- Kotlin 2.4
+- Spring Boot 4.1
+- Maven 3.10 through the Maven Wrapper (`backend/mvnw`)
 - Angular SSR frontend in `frontend/`
 - Bun 1.3 for frontend package management
 - MariaDB
@@ -30,10 +30,10 @@ The Ethereal Exchange is a Kotlin + Spring Boot and Angular application that:
 
 ### 1. Install prerequisites
 
-- Java 25
+- Java 25: the Temurin release pinned in [`backend/.sdkmanrc`](backend/.sdkmanrc). With SDKMAN, run `sdk env install` in `backend/`. CI and the backend image use the same release; check yours with `./scripts/ci/check-java-runtime.sh`.
 - Docker
 
-You do not need a separate Maven install. Use the checked-in Maven wrapper.
+You do not need a separate Maven install. Use the checked-in Maven wrapper; it downloads Maven 3.10.0 and verifies its checksum.
 
 ### 2. Create local environment variables
 

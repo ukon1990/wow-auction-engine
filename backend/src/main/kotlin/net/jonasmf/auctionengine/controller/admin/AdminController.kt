@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.controller.admin
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.generated.api.AdminApi
 import net.jonasmf.auctionengine.generated.model.AdminExpansion
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
@@ -56,7 +56,7 @@ class AdminController(
     private val professionTalentTreeImportService: ProfessionTalentTreeImportService,
     private val normalizedAuctionHelperProfessionInspectionService: NormalizedAuctionHelperProfessionInspectionService,
 ) : AdminApi {
-    private val objectMapper = jacksonObjectMapper()
+    private val objectMapper = JsonMappers.storage
 
     @PreAuthorize("hasAuthority('admin')")
     override suspend fun getAdminStatus(): ResponseEntity<AdminStatus> =

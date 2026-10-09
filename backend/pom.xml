@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>net.jonasmf</groupId>
@@ -29,55 +29,61 @@
     </scm>
     <properties>
         <java.version>25</java.version>
-        <aws.sdk.kotlin.version>1.6.71</aws.sdk.kotlin.version>
-        <spring.cloud.aws.version>4.0.2</spring.cloud.aws.version>
-        <spring-framework.version>7.0.7</spring-framework.version>
-        <spring-security.version>7.0.4</spring-security.version>
-        <tomcat.version>11.0.22</tomcat.version>
-        <netty.version>4.2.12.Final</netty.version>
-        <logback.version>1.5.32</logback.version>
-        <jackson-2-bom.version>2.21.3</jackson-2-bom.version>
-        <assertj.version>3.27.6</assertj.version>
-        <commons-compress.version>1.28.0</commons-compress.version>
-        <kotlin.version>2.3.20</kotlin.version>
-        <kotlinx.coroutines.version>1.10.2</kotlinx.coroutines.version>
-        <junit.version>6.0.3</junit.version>
-        <junit4.version>4.13.2</junit4.version>
-        <jacoco.version>0.8.14</jacoco.version>
-        <byte-buddy.version>1.17.8</byte-buddy.version>
-        <mariadb.version>3.5.8</mariadb.version>
-        <mockkVersion>1.14.9</mockkVersion>
-        <ktlint.version>3.5.0</ktlint.version>
-        <ktlint.plugin.version>3.5.0</ktlint.plugin.version>
-        <testcontainers.version>2.0.5</testcontainers.version>
-        <exec.maven.plugin.version>3.6.3</exec.maven.plugin.version>
-        <maven.antrun.plugin.version>3.2.0</maven.antrun.plugin.version>
-        <detekt.version>2.0.0-alpha.5</detekt.version>
+
+        <!-- Overrides of versions managed by spring-boot-dependencies 4.1.1. -->
+        <kotlin.version>2.4.21</kotlin.version>
+        <kotlin-coroutines.version>1.11.0</kotlin-coroutines.version>
+        <tomcat.version>11.0.26</tomcat.version>
+        <netty.version>4.2.19.Final</netty.version>
+        <logback.version>1.6.5</logback.version>
+        <jackson-bom.version>3.2.3</jackson-bom.version>
+        <!-- Jackson 3.2 shares jackson-annotations 2.22 with Jackson 2.22; Flyway 13 needs it too. -->
+        <jackson-2-bom.version>2.22.3</jackson-2-bom.version>
+        <hibernate.version>7.4.12.Final</hibernate.version>
+        <hibernate-validator.version>9.1.4.Final</hibernate-validator.version>
+        <flyway.version>13.10.0</flyway.version>
+        <junit-jupiter.version>6.1.3</junit-jupiter.version>
+        <byte-buddy.version>1.18.14</byte-buddy.version>
+        <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
+
+        <!-- Versions not managed by Spring Boot. -->
+        <aws.sdk.java.version>2.55.13</aws.sdk.java.version>
+        <aws.sdk.kotlin.version>1.9.16</aws.sdk.kotlin.version>
+        <spring.cloud.aws.version>4.2.0</spring.cloud.aws.version>
+        <mockk.version>1.14.11</mockk.version>
+        <jacoco.version>0.8.15</jacoco.version>
+        <ktlint.plugin.version>3.7.1</ktlint.plugin.version>
+        <exec.maven.plugin.version>3.6.4</exec.maven.plugin.version>
+        <detekt.version>2.0.0-alpha.6</detekt.version>
+        <openapi.generator.version>7.26.0</openapi.generator.version>
+
         <detekt.input>${project.basedir}/src/main/kotlin:${project.basedir}/src/test/kotlin</detekt.input>
-        <openapi.generator.version>7.22.0</openapi.generator.version>
         <node.executable>node</node.executable>
         <refresh.fixtures.args/>
     </properties>
     <dependencyManagement>
         <dependencies>
+            <!-- AWS Java SDK BOM must come before the Spring Cloud AWS BOM so it wins over the SDK version Spring Cloud AWS imports. -->
             <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit.version}</version>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${aws.sdk.java.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers-bom</artifactId>
-                <version>${testcontainers.version}</version>
+                <groupId>io.awspring.cloud</groupId>
+                <artifactId>spring-cloud-aws-dependencies</artifactId>
+                <version>${spring.cloud.aws.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit4.version}</version>
+                <groupId>aws.sdk.kotlin</groupId>
+                <artifactId>bom</artifactId>
+                <version>${aws.sdk.kotlin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -125,28 +131,24 @@
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
+            <groupId>tools.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core-jvm</artifactId>
-            <version>${kotlinx.coroutines.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-reactor</artifactId>
-            <version>${kotlinx.coroutines.version}</version>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -168,17 +170,14 @@
         <dependency>
             <groupId>aws.sdk.kotlin</groupId>
             <artifactId>s3-jvm</artifactId>
-            <version>${aws.sdk.kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>aws.sdk.kotlin</groupId>
             <artifactId>cognitoidentityprovider-jvm</artifactId>
-            <version>${aws.sdk.kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>io.awspring.cloud</groupId>
             <artifactId>spring-cloud-aws-starter-dynamodb</artifactId>
-            <version>${spring.cloud.aws.version}</version>
         </dependency>
 
         <!-- Testing -->
@@ -201,22 +200,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit4.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -232,13 +219,12 @@
         <dependency>
             <groupId>io.mockk</groupId>
             <artifactId>mockk-jvm</artifactId>
-            <version>${mockkVersion}</version>
+            <version>${mockk.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy-agent</artifactId>
-            <version>${byte-buddy.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -252,11 +238,9 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
                 <configuration>
                     <args>
                         <arg>-Xjsr305=strict</arg>
-                        <arg>-Xannotation-default-target=param-property</arg>
                     </args>
                     <jvmTarget>${java.version}</jvmTarget>
                     <compilerPlugins>
@@ -366,7 +350,10 @@
                                 <enumPropertyNaming>UPPERCASE</enumPropertyNaming>
                                 <interfaceOnly>true</interfaceOnly>
                                 <sourceFolder>src/main/kotlin</sourceFolder>
-                                <useSpringBoot3>true</useSpringBoot3>
+                                <useSpringBoot4>true</useSpringBoot4>
+                                <!-- Pinned to the pre-7.24 output; property inclusion and null handling stay with the global mapper. -->
+                                <generateJsonIncludeAnnotations>false</generateJsonIncludeAnnotations>
+                                <generateJsonSetterNullsAnnotations>false</generateJsonSetterNullsAnnotations>
                                 <reactive>true</reactive>
                                 <useFlowForArrayReturnType>false</useFlowForArrayReturnType>
                                 <useTags>true</useTags>
@@ -378,7 +365,7 @@
             <plugin>
                 <groupId>com.github.gantsign.maven</groupId>
                 <artifactId>ktlint-maven-plugin</artifactId>
-                <version>${ktlint.version}</version>
+                <version>${ktlint.plugin.version}</version>
                 <configuration>
                     <verbose>true</verbose>
                     <!-- OpenAPI generator output does not match project ktlint rules; lint hand-written sources only. -->
@@ -400,7 +387,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>${maven.antrun.plugin.version}</version>
                 <executions>
                     <execution>
                         <!-- Intentionally not bound to verify; CI invokes this execution through the root lint command. -->

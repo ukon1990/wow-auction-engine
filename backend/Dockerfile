@@ -1,4 +1,6 @@
-FROM eclipse-temurin:25-jre-jammy
+# Temurin 25.0.4.1+1 JRE (Ubuntu 24.04), pinned to the multi-arch index digest verified on 2026-10-09.
+# Keep in sync with .github/actions/setup-backend-java/action.yml and backend/.sdkmanrc.
+FROM eclipse-temurin:25.0.4.1_1-jre-noble@sha256:d9a39a23634650173f1e2bbc176227af9728587ecf0f4b62d53e9355cd7a19ab
 
 WORKDIR /app
 

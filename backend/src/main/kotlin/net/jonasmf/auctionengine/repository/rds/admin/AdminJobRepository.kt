@@ -1,11 +1,11 @@
 package net.jonasmf.auctionengine.repository.rds.admin
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.generated.model.AdminJob
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.ObjectMapper
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.OffsetDateTime
@@ -15,7 +15,7 @@ import java.time.ZoneOffset
 class AdminJobRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) {
-    private val objectMapper = jacksonObjectMapper()
+    private val objectMapper = JsonMappers.storage
 
     fun createJob(
         domain: String,

@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.service
 
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import tools.jackson.databind.node.ObjectNode
+import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.repository.rds.RecipeRepository
 import net.jonasmf.auctionengine.testsupport.container.SharedTestContainers
@@ -278,7 +278,7 @@ class ProfessionRecipeSyncServiceIntegrationTest {
             )
 
         private fun trimmedSkillTier(): String {
-            val mapper = jacksonObjectMapper()
+            val mapper = JsonMappers.storage
             val root = mapper.readTree(fixture("/blizzard/profession/164/skill-tier/2751-response.json")) as ObjectNode
             val categories = root.withArray("categories")
             val filteredCategories = mapper.createArrayNode()
@@ -296,13 +296,13 @@ class ProfessionRecipeSyncServiceIntegrationTest {
                 }
                 if (!filteredRecipes.isEmpty) {
                     val categoryCopy: ObjectNode = categoryNode.deepCopy()
-                    categoryCopy.set<com.fasterxml.jackson.databind.JsonNode>("recipes", filteredRecipes)
+                    categoryCopy.set("recipes", filteredRecipes)
                     filteredCategories.add(categoryCopy)
                 }
             }
 
             val copy: ObjectNode = root.deepCopy()
-            copy.set<com.fasterxml.jackson.databind.JsonNode>("categories", filteredCategories)
+            copy.set("categories", filteredCategories)
             return mapper.writeValueAsString(copy)
         }
 
@@ -311,7 +311,7 @@ class ProfessionRecipeSyncServiceIntegrationTest {
             arrayField: String,
             allowedIds: Set<Int>,
         ): String {
-            val mapper = jacksonObjectMapper()
+            val mapper = JsonMappers.storage
             val root = mapper.readTree(fixture(fixturePath)) as ObjectNode
             val filtered = mapper.createArrayNode()
             val originalArray = root.withArray(arrayField)
@@ -322,7 +322,7 @@ class ProfessionRecipeSyncServiceIntegrationTest {
                 }
             }
             val copy: ObjectNode = root.deepCopy()
-            copy.set<com.fasterxml.jackson.databind.JsonNode>(arrayField, filtered)
+            copy.set(arrayField, filtered)
             return mapper.writeValueAsString(copy)
         }
     }

@@ -1,13 +1,13 @@
 package net.jonasmf.auctionengine.dto
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import net.jonasmf.auctionengine.config.JsonMappers
+import tools.jackson.module.kotlin.readValue
 import net.jonasmf.auctionengine.dto.realm.ConnectedRealmIndex
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class HrefDeserializationTest {
-    private val mapper = jacksonObjectMapper()
+    private val mapper = JsonMappers.storage
 
     @Test
     fun `deserializes connected realm index href`() {

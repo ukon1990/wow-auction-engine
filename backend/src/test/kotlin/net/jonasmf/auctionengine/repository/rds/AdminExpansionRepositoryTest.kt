@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import net.jonasmf.auctionengine.config.JsonMappers
+import tools.jackson.module.kotlin.readValue
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.dto.item.ItemDTO
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
@@ -28,7 +28,7 @@ class AdminExpansionRepositoryTest : IntegrationTestBase() {
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
 
-    private val mapper = jacksonObjectMapper()
+    private val mapper = JsonMappers.storage
 
     @BeforeEach
     fun seedExpansions() {

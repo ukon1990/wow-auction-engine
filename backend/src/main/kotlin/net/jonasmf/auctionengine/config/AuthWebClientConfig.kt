@@ -11,8 +11,7 @@ class AuthWebClientConfig(
 ) {
     @Bean
     fun authWebClient(): WebClient =
-        WebClient
-            .builder()
+        blizzardWebClientBuilder()
             .baseUrl(blizzardApiProperties.tokenUrl) // You can set a base URL specific to auth if needed
             .filter(correlationHeadersFilter())
             .build()

@@ -1,9 +1,7 @@
 package net.jonasmf.auctionengine.service
 
-import com.fasterxml.jackson.core.JsonFactory
-import com.fasterxml.jackson.core.JsonToken
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.transaction.Transactional
+import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionPrice
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
@@ -18,6 +16,9 @@ import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import tools.jackson.core.JsonParser
+import tools.jackson.core.JsonToken
+import tools.jackson.databind.ObjectMapper
 import java.nio.file.Path
 import java.time.ZonedDateTime
 import kotlin.collections.mutableListOf
@@ -153,15 +154,14 @@ class AuctionSnapshotPersistenceService(
     ): Pair<MutableMap<String, MutableList<FlatAuction>>, Int> {
         val groupedAuctions = mutableMapOf<String, MutableList<FlatAuction>>()
         var auctionCount = 0
-        val mapper = jacksonObjectMapper()
-        val jsonFactory = JsonFactory(mapper)
+        val mapper = JsonMappers.storage
         payloadPath.toFile().inputStream().use { input ->
-            jsonFactory.createParser(input).use { parser ->
+            mapper.createParser(input).use { parser ->
                 require(parser.nextToken() == JsonToken.START_OBJECT) {
                     "Auction payload root must be a JSON object"
                 }
                 while (parser.nextToken() != JsonToken.END_OBJECT) {
-                    val fieldName = parser.currentName
+                    val fieldName = parser.currentName()
                     parser.nextToken()
                     if (fieldName == "auctions") {
                         auctionCount += readAuctions(parser, mapper, connectedRealmId, groupedAuctions)
@@ -175,12 +175,12 @@ class AuctionSnapshotPersistenceService(
     }
 
     private fun readAuctions(
-        parser: com.fasterxml.jackson.core.JsonParser,
-        mapper: com.fasterxml.jackson.databind.ObjectMapper,
+        parser: JsonParser,
+        mapper: ObjectMapper,
         connectedRealmId: Int,
         groupedAuctions: MutableMap<String, MutableList<FlatAuction>>,
     ): Int {
-        require(parser.currentToken == JsonToken.START_ARRAY) {
+        require(parser.currentToken() == JsonToken.START_ARRAY) {
             "Auction payload field 'auctions' must be an array"
         }
         var auctionCount = 0

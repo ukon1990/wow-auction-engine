@@ -1,9 +1,9 @@
 package net.jonasmf.auctionengine.service.admin
 
-import com.fasterxml.jackson.databind.JsonNode
 import net.jonasmf.auctionengine.repository.rds.ProfessionTalentTreeImportRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.JsonNode
 
 @Service
 class ProfessionTalentTreeImportService(
@@ -18,4 +18,4 @@ class ProfessionTalentTreeImportService(
 }
 
 private fun JsonNode.intOrNull(name: String): Int? = get(name)?.takeIf { it.isInt }?.intValue()
-private fun JsonNode.textOrNull(name: String): String? = get(name)?.takeIf { it.isTextual }?.textValue()
+private fun JsonNode.textOrNull(name: String): String? = get(name)?.takeIf { it.isString }?.stringValue()

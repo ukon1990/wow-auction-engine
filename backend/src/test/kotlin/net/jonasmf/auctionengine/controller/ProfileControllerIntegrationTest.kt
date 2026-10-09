@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.controller
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.testsupport.ProfessionProfileTestFixtures
 import org.hamcrest.Matchers.hasSize
@@ -35,7 +35,7 @@ class ProfileControllerIntegrationTest : IntegrationTestBase() {
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
 
-    private val objectMapper = jacksonObjectMapper()
+    private val objectMapper = JsonMappers.storage
 
     @MockitoBean
     private lateinit var jwtDecoder: JwtDecoder
