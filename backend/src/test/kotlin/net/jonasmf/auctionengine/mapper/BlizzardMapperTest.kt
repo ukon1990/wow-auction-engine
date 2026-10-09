@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.mapper
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import net.jonasmf.auctionengine.config.JsonMappers
+import tools.jackson.module.kotlin.readValue
 import net.jonasmf.auctionengine.dto.item.ItemDTO
 import net.jonasmf.auctionengine.dto.itemappearance.ItemAppearanceDTO
 import net.jonasmf.auctionengine.dto.itemclass.ItemClassDTO
@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class BlizzardMapperTest {
-    private val mapper = jacksonObjectMapper()
+    private val mapper = JsonMappers.storage
 
     @Test
     fun `should map skill tier dto to domain with recipe stubs`() {

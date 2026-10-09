@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.service.admin
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import net.jonasmf.auctionengine.config.JsonMappers
+import tools.jackson.module.kotlin.readValue
 import jakarta.validation.Validation
 import io.mockk.mockk
 import io.mockk.verify
@@ -20,7 +20,7 @@ import org.springframework.web.server.ResponseStatusException
 import java.math.BigDecimal
 
 class NormalizedAuctionHelperProfessionInspectionServiceTest {
-    private val objectMapper = jacksonObjectMapper()
+    private val objectMapper = JsonMappers.storage
     private val validator = Validation.buildDefaultValidatorFactory().validator
     private val repository = mockk<NormalizedProfessionImportRepository>(relaxed = true)
     private val service = NormalizedAuctionHelperProfessionInspectionService(validator, repository)

@@ -1,6 +1,8 @@
 package net.jonasmf.auctionengine.testsupport
 
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
+import net.jonasmf.auctionengine.config.blizzardWebClientBuilder
+import net.jonasmf.auctionengine.config.blizzardExchangeStrategies
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiSupport
 import org.springframework.http.HttpHeaders
@@ -33,7 +35,7 @@ class BlizzardApiCallSupport {
         ) =
             Mono.just(
                 ClientResponse
-                    .create(HttpStatus.OK)
+                    .create(HttpStatus.OK, blizzardExchangeStrategies())
                     .header(HttpHeaders.CONTENT_TYPE, mediaType)
                     .apply {
                         if (lastModified != null) {
@@ -60,8 +62,7 @@ class BlizzardApiCallSupport {
 
         @JvmStatic
         fun buildWebClient(handler: (ClientRequest) -> Mono<ClientResponse>): WebClient =
-            WebClient
-                .builder()
+            blizzardWebClientBuilder()
                 .exchangeFunction(ExchangeFunction(handler))
                 .build()
 
@@ -71,7 +72,7 @@ class BlizzardApiCallSupport {
             vararg filters: ExchangeFilterFunction,
         ): WebClient =
             filters
-                .fold(WebClient.builder()) { builder, filter -> builder.filter(filter) }
+                .fold(blizzardWebClientBuilder()) { builder, filter -> builder.filter(filter) }
                 .exchangeFunction(ExchangeFunction(handler))
                 .build()
     }

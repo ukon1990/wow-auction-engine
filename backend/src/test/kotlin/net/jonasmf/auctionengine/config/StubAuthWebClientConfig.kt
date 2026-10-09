@@ -20,7 +20,7 @@ class StubAuthWebClientConfig {
             ExchangeFunction { _ ->
                 Mono.just(
                     ClientResponse
-                        .create(HttpStatus.OK)
+                        .create(HttpStatus.OK, blizzardExchangeStrategies())
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .body("""{"access_token":"stub-token","expires_in":3600,"token_type":"Bearer"}""")
                         .build(),

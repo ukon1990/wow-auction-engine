@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import net.jonasmf.auctionengine.config.JsonMappers
+import tools.jackson.module.kotlin.readValue
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
@@ -32,7 +32,7 @@ class ItemJdbcRepositoryTest : IntegrationTestBase() {
     @Autowired
     lateinit var connectedRealmRepository: ConnectedRealmRepository
 
-    private val mapper = jacksonObjectMapper()
+    private val mapper = JsonMappers.storage
 
     @Test
     fun `syncItems upserts grouped item graph without duplicates on rerun`() {

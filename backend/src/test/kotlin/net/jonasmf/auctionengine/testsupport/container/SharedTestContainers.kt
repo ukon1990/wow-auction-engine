@@ -2,7 +2,7 @@ package net.jonasmf.auctionengine.testsupport.container
 
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.testcontainers.containers.GenericContainer
-import org.testcontainers.containers.MariaDBContainer
+import org.testcontainers.mariadb.MariaDBContainer
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.utility.DockerImageName
 import java.time.Duration
@@ -12,7 +12,7 @@ object SharedTestContainers {
     private val flociImage = DockerImageName.parse("hectorvent/floci:latest")
 
     @JvmField
-    val mariaDbContainer: MariaDBContainer<*> =
+    val mariaDbContainer: MariaDBContainer =
         MariaDBContainer(mariaDbImage)
             .withDatabaseName("test")
             .withUsername("test")
