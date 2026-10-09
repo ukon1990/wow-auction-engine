@@ -1,6 +1,9 @@
 spring:
   application:
     name: auction-engine
+  jackson:
+    # Keeps jackson-module-kotlin out of the HTTP mapper, so missing required fields are still rejected.
+    find-and-add-modules: false
   cloud:
     aws:
       region:

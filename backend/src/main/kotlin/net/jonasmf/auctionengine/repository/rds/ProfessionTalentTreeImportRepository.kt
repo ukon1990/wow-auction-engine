@@ -1,8 +1,8 @@
 package net.jonasmf.auctionengine.repository.rds
 
-import com.fasterxml.jackson.databind.JsonNode
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import tools.jackson.databind.JsonNode
 import java.security.MessageDigest
 
 @Repository
@@ -96,8 +96,10 @@ class ProfessionTalentTreeImportRepository(
 }
 
 private fun JsonNode.required(name: String): JsonNode = get(name) ?: throw IllegalArgumentException("Missing $name")
-private fun JsonNode.requiredText(name: String): String = required(name).asText().takeIf { it.isNotBlank() } ?: throw IllegalArgumentException("Missing $name")
+// Jackson 3 asString() throws for objects and arrays where Jackson 2 asText() returned "", so only scalars are read.
+private fun JsonNode.requiredText(name: String): String =
+    required(name).takeIf { it.isValueNode }?.asString()?.takeIf { it.isNotBlank() } ?: throw IllegalArgumentException("Missing $name")
 private fun JsonNode.requiredInt(name: String): Int = required(name).takeIf { it.isInt }?.intValue() ?: throw IllegalArgumentException("$name must be an integer")
-private fun JsonNode.textOrNull(name: String): String? = get(name)?.takeIf { it.isTextual }?.textValue()
+private fun JsonNode.textOrNull(name: String): String? = get(name)?.takeIf { it.isString }?.stringValue()
 private fun JsonNode.intOrNull(name: String): Int? = get(name)?.takeIf { it.isInt }?.intValue()
 private fun String.sha256(): String = MessageDigest.getInstance("SHA-256").digest(toByteArray()).joinToString("") { "%02x".format(it) }
