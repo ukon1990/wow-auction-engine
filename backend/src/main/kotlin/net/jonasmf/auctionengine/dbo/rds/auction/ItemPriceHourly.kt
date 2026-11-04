@@ -8,13 +8,14 @@ import org.hibernate.annotations.Immutable
 import org.hibernate.annotations.Subselect
 import org.hibernate.annotations.Synchronize
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Entity
 @Immutable
-@IdClass(AuctionHousePriceDailyId::class)
-@Subselect("SELECT * FROM v_auction_house_daily_prices")
-@Synchronize("auction_stats_daily")
-class AuctionHousePriceDaily(
+@IdClass(ItemPriceHourlyId::class)
+@Subselect("SELECT * FROM v_auction_house_prices")
+@Synchronize("auction_stats_hourly")
+class ItemPriceHourly(
     @Id
     @Column(name = "connected_realm_id")
     var connectedRealmId: Int = 0,
@@ -33,20 +34,13 @@ class AuctionHousePriceDaily(
     @Id
     @Column(name = "bonus_key")
     var bonusKey: String = "",
-    @Column(name = "min_price")
-    var minPrice: Long = 0,
-    @Column(name = "avg_price")
-    var avgPrice: Double = 0.0,
-    @Column(name = "median_price_25")
-    var medianPrice25: Long = 0,
-    @Column(name = "median_price_75")
-    var medianPrice75: Long = 0,
-    @Column(name = "max_price")
-    var maxPrice: Long = 0,
-    @Column(name = "min_quantity")
-    var minQuantity: Long = 0,
-    @Column(name = "avg_quantity")
-    var avgQuantity: Double = 0.0,
-    @Column(name = "max_quantity")
-    var maxQuantity: Long = 0,
+    @Id
+    @Column(name = "hour_of_day")
+    var hourOfDay: Int = 0,
+    @Column(name = "timestamp")
+    var timestamp: LocalDateTime? = null,
+    @Column(name = "price")
+    var price: Long? = null,
+    @Column(name = "quantity")
+    var quantity: Long? = null,
 )

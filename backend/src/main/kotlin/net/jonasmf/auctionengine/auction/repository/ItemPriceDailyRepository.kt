@@ -1,16 +1,16 @@
 package net.jonasmf.auctionengine.auction.repository
 
-import net.jonasmf.auctionengine.dbo.rds.auction.AuctionHousePriceDaily
-import net.jonasmf.auctionengine.dbo.rds.auction.AuctionHousePriceDailyId
+import net.jonasmf.auctionengine.dbo.rds.auction.ItemPriceDaily
+import net.jonasmf.auctionengine.dbo.rds.auction.ItemPriceDailyId
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface AuctionHousePriceDailyRepository : JpaRepository<AuctionHousePriceDaily, AuctionHousePriceDailyId> {
+interface ItemPriceDailyRepository : JpaRepository<ItemPriceDaily, ItemPriceDailyId> {
     fun findAllByConnectedRealmIdAndItemId(
         connectedRealmId: Int,
         itemId: Int,
-    ): List<AuctionHousePriceDaily>
+    ): List<ItemPriceDaily>
 
     fun findAllByConnectedRealmIdAndItemIdAndPetSpeciesIdAndModifierKeyAndBonusKey(
         connectedRealmId: Int,
@@ -18,5 +18,5 @@ interface AuctionHousePriceDailyRepository : JpaRepository<AuctionHousePriceDail
         petSpeciesId: Int,
         modifierKey: String,
         bonusKey: String,
-    ): List<AuctionHousePriceDaily>
+    ): List<ItemPriceDaily>
 }
