@@ -1,0 +1,655 @@
+package net.jonasmf.auctionengine.auction.repository
+
+import net.jonasmf.auctionengine.utility.ItemQualityOrder
+import org.slf4j.LoggerFactory
+import org.slf4j.MDC
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Repository
+
+@Repository
+class AuctionMarketSearchRepository(
+    private val jdbcTemplate: JdbcTemplate,
+) {
+    private val logger = LoggerFactory.getLogger(AuctionMarketSearchRepository::class.java)
+
+    fun search(request: AuctionMarketSearchRequest): AuctionMarketSearchResult {
+        val totalStartNanos = System.nanoTime()
+        val result =
+            if (canUseLightweightMetricSortPath(request)) {
+                searchLightweightMetric(request)
+            } else {
+                searchFullProjection(request)
+            }
+
+        logger.info(
+            "Auction market search repository completed in {}ms (correlationId={} query={}ms selectedRealm={} selectedDate={} selectedHour={} commodityRealm={} commodityDate={} commodityHour={} totalItems={} returnedRows={})",
+            elapsedMs(totalStartNanos),
+            correlationId(),
+            result.queryMs,
+            request.selectedConnectedRealmId,
+            request.selectedDate,
+            request.selectedHour,
+            request.commodityConnectedRealmId,
+            request.commodityDate,
+            request.commodityHour,
+            result.totalItems,
+            result.rows.size,
+        )
+
+        return AuctionMarketSearchResult(rows = result.rows, totalItems = result.totalItems)
+    }
+
+    private data class TimedSearchResult(
+        val rows: List<AuctionMarketRow>,
+        val totalItems: Long,
+        val queryMs: Long,
+    )
+
+    private fun searchFullProjection(request: AuctionMarketSearchRequest): TimedSearchResult {
+        val countParams = ArrayList<Any?>()
+        val (withSql, fromSql) = buildWithAndFromSql(request, countParams)
+        val whereSql = buildWhereSql(request, countParams)
+        val countSql = buildCountSql(withSql, fromSql, whereSql)
+
+        val queryStartNanos = System.nanoTime()
+        val totalItems =
+            jdbcTemplate.queryForObject(countSql, Long::class.java, *countParams.toTypedArray()) ?: 0L
+
+        val dataParams = ArrayList<Any?>()
+        val (dataWithSql, dataFromSql) = buildWithAndFromSql(request, dataParams)
+        val dataWhereSql = buildWhereSql(request, dataParams)
+        val offset = request.page * request.pageSize
+        dataParams.add(request.pageSize)
+        dataParams.add(offset)
+        val dataSql = buildMarketSearchPagedSql(request, dataWithSql, dataFromSql, dataWhereSql, buildOrderBySql(request), false)
+
+        val rows =
+            jdbcTemplate.query(
+                dataSql,
+                auctionMarketRowMapper,
+                *dataParams.toTypedArray(),
+            )
+        val queryMs = elapsedMs(queryStartNanos)
+        return TimedSearchResult(rows = rows, totalItems = totalItems, queryMs = queryMs)
+    }
+
+    private fun searchLightweightMetric(request: AuctionMarketSearchRequest): TimedSearchResult {
+        val countParams = ArrayList<Any?>()
+        val withSql = buildCurrentAuctionSnapshotCtes(request, countParams)
+        val countWhereParams = ArrayList<Any?>()
+        val countWhereSql = buildWhereSql(request, countWhereParams)
+        countParams.add(request.region.name)
+        countParams.addAll(countWhereParams)
+        val countSql = buildLightweightCountSql(withSql, countWhereSql)
+
+        val queryStartNanos = System.nanoTime()
+        val totalItems =
+            jdbcTemplate.queryForObject(countSql, Long::class.java, *countParams.toTypedArray()) ?: 0L
+
+        val dataParams = ArrayList<Any?>()
+        val dataWithSql = buildCurrentAuctionSnapshotCtes(request, dataParams)
+        val dataWhereParams = ArrayList<Any?>()
+        val dataWhereSql = buildWhereSql(request, dataWhereParams)
+        dataParams.add(request.region.name)
+        dataParams.addAll(dataWhereParams)
+        dataParams.add(request.pageSize)
+        dataParams.add(request.page * request.pageSize)
+        val dataSql = buildLightweightPagedSql(request, dataWithSql, dataWhereSql)
+
+        val rows =
+            jdbcTemplate.query(
+                dataSql,
+                auctionMarketRowMapper,
+                *dataParams.toTypedArray(),
+            )
+        val queryMs = elapsedMs(queryStartNanos)
+        return TimedSearchResult(rows = rows, totalItems = totalItems, queryMs = queryMs)
+    }
+
+    private fun canUseLightweightMetricSortPath(request: AuctionMarketSearchRequest): Boolean =
+        request.query.isNullOrBlank() &&
+            request.qualityIds.isEmpty() &&
+            request.itemClassIds.isEmpty() &&
+            request.itemSubclassIds.isEmpty() &&
+            request.expansionIds.isEmpty() &&
+            request.recipeOnly != true &&
+            request.minPrice == null &&
+            request.maxPrice == null &&
+            request.minQuantity == null &&
+            request.maxQuantity == null &&
+            request.minSaleRatePercent == null &&
+            request.maxSaleRatePercent == null &&
+            request.minSoldPerDay == null &&
+            request.maxSoldPerDay == null &&
+            request.sortBy in AUCTION_MARKET_LIGHTWEIGHT_SORT_COLUMNS
+
+    fun qualityOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
+        qualityOptions(request.localeColumnSuffix)
+
+    fun qualityOptions(localeColumnSuffix: String): List<AuctionMarketFilterOptionRow> {
+        val qualityOrderSql = ItemQualityOrder.sqlOrderByCase("iq.type")
+        val rows =
+            jdbcTemplate.query(
+                """
+                SELECT
+                    CAST(iq.internal_id AS CHAR) AS id,
+                    COALESCE(l.$localeColumnSuffix, l.en_gb, l.en_us, iq.type, CAST(iq.internal_id AS CHAR)) AS label,
+                    NULL AS parent_id,
+                    iq.type AS quality_type
+                FROM item_quality iq
+                    LEFT JOIN locale l ON l.id = iq.name_id
+                WHERE iq.type IS NOT NULL
+                ORDER BY $qualityOrderSql, iq.internal_id
+                """.trimIndent(),
+                auctionMarketQualityOptionRowMapper,
+            )
+        return rows
+            .groupBy { it.qualityType?.uppercase() }
+            .values
+            .mapNotNull { group -> group.minByOrNull { ItemQualityOrder.rank(it.qualityType) } }
+            .sortedBy { ItemQualityOrder.rank(it.qualityType) }
+    }
+
+    fun itemClassOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
+        jdbcTemplate.query(
+            """
+            SELECT
+                CAST(ic.id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, CAST(ic.id AS CHAR)) AS label,
+                NULL AS parent_id
+            FROM item_class ic
+                LEFT JOIN locale l ON l.id = ic.name_id
+            ORDER BY label
+            """.trimIndent(),
+            auctionMarketOptionRowMapper,
+        )
+
+    fun itemSubclassOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
+        jdbcTemplate.query(
+            """
+            SELECT
+                CAST(isc.subclass_id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, CAST(isc.subclass_id AS CHAR)) AS label,
+                CAST(isc.class_id AS CHAR) AS parent_id
+            FROM item_subclass isc
+                LEFT JOIN locale l ON l.id = isc.display_name_id
+            ORDER BY label
+            """.trimIndent(),
+            auctionMarketOptionRowMapper,
+        )
+
+    fun expansionOptions(request: AuctionMarketSearchRequest): List<AuctionMarketFilterOptionRow> =
+        jdbcTemplate.query(
+            """
+            SELECT
+                CAST(e.id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, e.slug) AS label,
+                NULL AS parent_id
+            FROM expansion e
+                LEFT JOIN locale l ON l.id = e.name_id
+            ORDER BY e.display_order, e.id
+            """.trimIndent(),
+            auctionMarketOptionRowMapper,
+        )
+
+    private fun buildCountSql(
+        withSql: String,
+        fromSql: String,
+        whereSql: String,
+    ): String =
+        """
+        $withSql
+        SELECT COUNT(*)
+        $fromSql
+        $whereSql
+        """.trimIndent()
+
+    private fun buildLightweightCountSql(
+        withSql: String,
+        whereSql: String,
+    ): String =
+        """
+        $withSql
+        SELECT COUNT(*)
+        FROM market_prices p
+            LEFT JOIN tsm_region_metric tsm
+                ON tsm.region = ?
+                AND tsm.subject_type = 'ITEM'
+                AND tsm.subject_id = p.item_id
+        $whereSql
+        """.trimIndent()
+
+    private fun buildLightweightPagedSql(
+        request: AuctionMarketSearchRequest,
+        withSql: String,
+        whereSql: String,
+    ): String {
+        val orderBy = buildLightweightOrderBySql(request, "p")
+        return """
+        $withSql
+        SELECT
+            d.item_id,
+            COALESCE(d.item_name_${request.localeColumnSuffix}, d.item_name_en_gb, d.item_name_en_us) AS item_name,
+            d.item_media_url,
+            d.quality_id,
+            d.quality_type,
+            COALESCE(d.quality_name_${request.localeColumnSuffix}, d.quality_name_en_gb, d.quality_name_en_us) AS quality_name,
+            d.item_class_id,
+            COALESCE(d.item_class_name_${request.localeColumnSuffix}, d.item_class_name_en_gb, d.item_class_name_en_us) AS item_class_name,
+            d.item_subclass_id,
+            COALESCE(d.item_subclass_name_${request.localeColumnSuffix}, d.item_subclass_name_en_gb, d.item_subclass_name_en_us) AS item_subclass_name,
+            d.recipe_id,
+            d.recipe_rank,
+            COALESCE(d.recipe_name_${request.localeColumnSuffix}, d.recipe_name_en_gb, d.recipe_name_en_us) AS recipe_name,
+            d.recipe_media_url,
+            page.selected_bonus_key,
+            page.selected_modifier_key,
+            page.selected_pet_species_id,
+            page.selected_price,
+            page.selected_p25_price,
+            page.selected_p75_price,
+            page.selected_quantity,
+            page.commodity_price,
+            page.commodity_p25_price,
+            page.commodity_p75_price,
+            page.commodity_quantity,
+            page.sale_rate,
+            page.sold_per_day
+        FROM (
+            SELECT
+                p.item_id,
+                p.selected_bonus_key,
+                p.selected_modifier_key,
+                p.selected_pet_species_id,
+                p.selected_price,
+                p.selected_p25_price,
+                p.selected_p75_price,
+                p.selected_quantity,
+                p.commodity_price,
+                p.commodity_p25_price,
+                p.commodity_p75_price,
+                p.commodity_quantity,
+                tsm.sale_rate,
+                tsm.sold_per_day
+            FROM market_prices p
+                LEFT JOIN tsm_region_metric tsm
+                    ON tsm.region = ?
+                    AND tsm.subject_type = 'ITEM'
+                    AND tsm.subject_id = p.item_id
+            $whereSql
+            $orderBy
+            LIMIT ? OFFSET ?
+        ) page
+            STRAIGHT_JOIN v_auction_market_item_details d ON d.item_id = page.item_id
+        ${buildLightweightOrderBySql(request, "page")}
+        """.trimIndent()
+    }
+
+    private fun buildLightweightOrderBySql(
+        request: AuctionMarketSearchRequest,
+        alias: String,
+    ): String {
+        val dir = if (request.sortDirection.equals("desc", ignoreCase = true)) "DESC" else "ASC"
+        val primary =
+            when (request.sortBy) {
+                "selectedPrice", "commodityPrice" -> {
+                    val expr = "COALESCE($alias.selected_price, $alias.commodity_price)"
+                    "(($expr) IS NULL) ASC, $expr $dir"
+                }
+                "selectedQuantity", "commodityQuantity" -> {
+                    val expr = "COALESCE($alias.selected_quantity, $alias.commodity_quantity)"
+                    "(($expr) IS NULL) ASC, $expr $dir"
+                }
+                "saleRate", "soldPerDay" -> {
+                    val col = AUCTION_MARKET_SORT_COLUMNS.getValue(request.sortBy)
+                    "(($alias.$col) IS NULL) ASC, $alias.$col $dir"
+                }
+                else -> {
+                    val col = AUCTION_MARKET_SORT_COLUMNS[request.sortBy] ?: AUCTION_MARKET_SORT_COLUMNS.getValue("itemName")
+                    "$alias.$col $dir"
+                }
+            }
+        return "ORDER BY $primary, $alias.item_id ASC"
+    }
+
+    /**
+     * Single listing price/quantity for sort: realm and commodity are mutually exclusive in the UI,
+     * so `selectedPrice` / `commodityPrice` (and quantity counterparts) share the same ORDER BY.
+     */
+    private fun buildOrderBySql(request: AuctionMarketSearchRequest): String {
+        val dir = if (request.sortDirection.equals("desc", ignoreCase = true)) "DESC" else "ASC"
+        val primary =
+            when (request.sortBy) {
+                "selectedPrice", "commodityPrice" -> {
+                    val expr = "COALESCE(wrapped.selected_price, wrapped.commodity_price)"
+                    // MariaDB does not support NULLS LAST; put nulls last via IS NULL sort key.
+                    "(($expr) IS NULL) ASC, $expr $dir"
+                }
+                "selectedQuantity", "commodityQuantity" -> {
+                    val expr = "COALESCE(wrapped.selected_quantity, wrapped.commodity_quantity)"
+                    "(($expr) IS NULL) ASC, $expr $dir"
+                }
+                "saleRate", "soldPerDay" -> {
+                    val col = AUCTION_MARKET_SORT_COLUMNS.getValue(request.sortBy)
+                    "((wrapped.$col) IS NULL) ASC, wrapped.$col $dir"
+                }
+                else -> {
+                    val col = AUCTION_MARKET_SORT_COLUMNS[request.sortBy] ?: AUCTION_MARKET_SORT_COLUMNS.getValue("itemName")
+                    "wrapped.$col $dir"
+                }
+            }
+        return "ORDER BY $primary, wrapped.item_name ASC, wrapped.item_id ASC"
+    }
+
+    /**
+     * Rank selected and commodity current snapshots together, then pivot to one row per item.
+     * This keeps commodity-only listings visible without making MariaDB expand the same CTEs
+     * once for the item union and again for the selected/commodity joins.
+     */
+    private fun buildWithAndFromSql(
+        request: AuctionMarketSearchRequest,
+        params: MutableList<Any?>,
+    ): Pair<String, String> {
+        val withSql = buildCurrentAuctionSnapshotCtes(request, params)
+        params.add(request.region.name)
+        val fromSql =
+            """
+            FROM market_prices p
+                     STRAIGHT_JOIN v_auction_market_item_details d ON d.item_id = p.item_id
+                     LEFT JOIN tsm_region_metric tsm
+                         ON tsm.region = ?
+                         AND tsm.subject_type = 'ITEM'
+                         AND tsm.subject_id = p.item_id
+            """.trimIndent()
+        return Pair(withSql, fromSql)
+    }
+
+    /**
+     * When set, quality/class/subclass/recipe filters are applied inside this subquery (via `v_item`)
+     * so ranking touches fewer auction rows before joining the heavy view.
+     */
+    private fun pushesItemDimensionFiltersIntoAuctionSnapshot(request: AuctionMarketSearchRequest): Boolean =
+        request.qualityIds.isNotEmpty() ||
+            request.itemClassIds.isNotEmpty() ||
+            request.itemSubclassIds.isNotEmpty() ||
+            request.expansionIds.isNotEmpty() ||
+            request.recipeOnly == true
+
+    private fun buildCurrentAuctionSnapshotCtes(
+        request: AuctionMarketSearchRequest,
+        params: MutableList<Any?>,
+    ): String {
+        val useItemJoin = pushesItemDimensionFiltersIntoAuctionSnapshot(request)
+        val itemJoin =
+            if (useItemJoin) {
+                "INNER JOIN v_item i ON i.id = a.item_id\n                "
+            } else {
+                ""
+            }
+        val itemFilterSql = if (useItemJoin) buildItemDimensionFilterSql(request) else ""
+        params.add(request.selectedConnectedRealmId)
+        params.add(request.commodityConnectedRealmId)
+        if (useItemJoin) {
+            appendItemDimensionFilterParams(params, request)
+        }
+        return """
+            WITH
+            latest_history AS (
+                SELECT 'sel' AS side, connected_realm_id, MAX(id) AS update_history_id
+                FROM connected_realm_update_history
+                WHERE connected_realm_id = ?
+                GROUP BY connected_realm_id
+                UNION ALL
+                SELECT 'com' AS side, connected_realm_id, MAX(id) AS update_history_id
+                FROM connected_realm_update_history
+                WHERE connected_realm_id = ?
+                GROUP BY connected_realm_id
+            ),
+            auction_base AS (
+                SELECT
+                    lh.side,
+                    a.item_id,
+                    a.bonus_key,
+                    a.modifier_key,
+                    COALESCE(a.pet_species_id, -1) AS pet_species_id,
+                    a.buyout AS price,
+                    a.p25 AS p25_price,
+                    a.p75 AS p75_price,
+                    a.quantity AS quantity
+                FROM auction a
+                    INNER JOIN latest_history lh
+                        ON lh.connected_realm_id = a.connected_realm_id
+                        AND lh.update_history_id = a.update_history_id
+                $itemJoin
+                WHERE a.buyout IS NOT NULL
+                $itemFilterSql
+            ),
+            auction_ranked AS (
+                SELECT
+                    side,
+                    item_id,
+                    bonus_key,
+                    modifier_key,
+                    pet_species_id,
+                    price,
+                    p25_price,
+                    p75_price,
+                    quantity,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY side, item_id
+                        ORDER BY price ASC, bonus_key, modifier_key, pet_species_id
+                    ) AS rn
+                FROM auction_base
+            ),
+            current_auction AS (
+                SELECT side, item_id, bonus_key, modifier_key, pet_species_id, price, p25_price, p75_price, quantity
+                FROM auction_ranked
+                WHERE rn = 1
+            ),
+            market_prices AS (
+                SELECT
+                    item_id,
+                    COALESCE(
+                        MAX(CASE WHEN side = 'sel' THEN bonus_key END),
+                        MAX(CASE WHEN side = 'com' THEN bonus_key END),
+                        ''
+                    ) AS selected_bonus_key,
+                    COALESCE(
+                        MAX(CASE WHEN side = 'sel' THEN modifier_key END),
+                        MAX(CASE WHEN side = 'com' THEN modifier_key END),
+                        ''
+                    ) AS selected_modifier_key,
+                    COALESCE(
+                        MAX(CASE WHEN side = 'sel' THEN pet_species_id END),
+                        MAX(CASE WHEN side = 'com' THEN pet_species_id END),
+                        -1
+                    ) AS selected_pet_species_id,
+                    MAX(CASE WHEN side = 'sel' THEN price END) AS selected_price,
+                    MAX(CASE WHEN side = 'sel' THEN p25_price END) AS selected_p25_price,
+                    MAX(CASE WHEN side = 'sel' THEN p75_price END) AS selected_p75_price,
+                    MAX(CASE WHEN side = 'sel' THEN quantity END) AS selected_quantity,
+                    MAX(CASE WHEN side = 'com' THEN price END) AS commodity_price,
+                    MAX(CASE WHEN side = 'com' THEN p25_price END) AS commodity_p25_price,
+                    MAX(CASE WHEN side = 'com' THEN p75_price END) AS commodity_p75_price,
+                    MAX(CASE WHEN side = 'com' THEN quantity END) AS commodity_quantity
+                FROM current_auction
+                GROUP BY item_id
+            )
+            """.trimIndent()
+    }
+
+    /** IDs match `d.item_subclass_id` (subclass_id), not `item.item_subclass_id` (internal_id). */
+    private fun buildItemDimensionFilterSql(request: AuctionMarketSearchRequest): String {
+        val parts = mutableListOf<String>()
+        if (request.qualityIds.isNotEmpty()) {
+            parts.add("i.quality_id IN (${request.qualityIds.joinToString(",") { "?" }})")
+        }
+        if (request.itemClassIds.isNotEmpty()) {
+            parts.add("i.item_class_id IN (${request.itemClassIds.joinToString(",") { "?" }})")
+        }
+        if (request.itemSubclassIds.isNotEmpty()) {
+            val placeholders = request.itemSubclassIds.joinToString(",") { "?" }
+            parts.add(
+                "EXISTS (SELECT 1 FROM item_subclass isc WHERE isc.internal_id = i.item_subclass_id AND isc.class_id <=> i.item_class_id AND isc.subclass_id IN ($placeholders))",
+            )
+        }
+        if (request.expansionIds.isNotEmpty()) {
+            parts.add("i.expansion_id IN (${request.expansionIds.joinToString(",") { "?" }})")
+        }
+        if (request.recipeOnly == true) {
+            parts.add("EXISTS (SELECT 1 FROM v_recipe_crafted_output r WHERE r.crafted_item_id = i.id)")
+        }
+        return if (parts.isEmpty()) "" else "  AND " + parts.joinToString(" AND ")
+    }
+
+    private fun appendItemDimensionFilterParams(
+        params: MutableList<Any?>,
+        request: AuctionMarketSearchRequest,
+    ) {
+        if (request.qualityIds.isNotEmpty()) params.addAll(request.qualityIds)
+        if (request.itemClassIds.isNotEmpty()) params.addAll(request.itemClassIds)
+        if (request.itemSubclassIds.isNotEmpty()) params.addAll(request.itemSubclassIds)
+        if (request.expansionIds.isNotEmpty()) params.addAll(request.expansionIds)
+    }
+
+    private fun buildWhereSql(
+        request: AuctionMarketSearchRequest,
+        params: MutableList<Any?>,
+    ): String {
+        val predicates = mutableListOf<String>()
+        val itemNameColumn =
+            "COALESCE(d.item_name_${request.localeColumnSuffix}, d.item_name_en_gb, d.item_name_en_us)"
+        val recipeNameColumn =
+            "COALESCE(d.recipe_name_${request.localeColumnSuffix}, d.recipe_name_en_gb, d.recipe_name_en_us)"
+
+        request.query?.trim()?.takeIf { it.isNotEmpty() }?.let {
+            predicates.add("($itemNameColumn LIKE ? ESCAPE '!' OR $recipeNameColumn LIKE ? ESCAPE '!')")
+            val like = "%${it.escapeLike()}%"
+            params.add(like)
+            params.add(like)
+        }
+        if (!pushesItemDimensionFiltersIntoAuctionSnapshot(request)) {
+            addInPredicate("d.quality_id", request.qualityIds, predicates, params)
+            addInPredicate("d.item_class_id", request.itemClassIds, predicates, params)
+            addInPredicate("d.item_subclass_id", request.itemSubclassIds, predicates, params)
+            addInPredicate("d.expansion_id", request.expansionIds, predicates, params)
+            if (request.recipeOnly == true) {
+                predicates.add("d.recipe_id IS NOT NULL")
+            }
+        }
+        request.minPrice?.let {
+            predicates.add("COALESCE(p.selected_price, p.commodity_price) >= ?")
+            params.add(it)
+        }
+        request.maxPrice?.let {
+            predicates.add("COALESCE(p.selected_price, p.commodity_price) <= ?")
+            params.add(it)
+        }
+        request.minQuantity?.let {
+            predicates.add("COALESCE(p.selected_quantity, p.commodity_quantity) >= ?")
+            params.add(it)
+        }
+        request.maxQuantity?.let {
+            predicates.add("COALESCE(p.selected_quantity, p.commodity_quantity) <= ?")
+            params.add(it)
+        }
+        request.minSaleRatePercent?.let {
+            predicates.add("tsm.sale_rate IS NOT NULL AND tsm.sale_rate >= ?")
+            params.add(it / 100.0)
+        }
+        request.maxSaleRatePercent?.let {
+            predicates.add("tsm.sale_rate IS NOT NULL AND tsm.sale_rate <= ?")
+            params.add(it / 100.0)
+        }
+        request.minSoldPerDay?.let {
+            predicates.add("tsm.sold_per_day IS NOT NULL AND tsm.sold_per_day >= ?")
+            params.add(it)
+        }
+        request.maxSoldPerDay?.let {
+            predicates.add("tsm.sold_per_day IS NOT NULL AND tsm.sold_per_day <= ?")
+            params.add(it)
+        }
+
+        return if (predicates.isEmpty()) "" else predicates.joinToString(prefix = "WHERE ", separator = " AND ")
+    }
+
+    private fun addInPredicate(
+        column: String,
+        values: List<Int>,
+        predicates: MutableList<String>,
+        params: MutableList<Any?>,
+    ) {
+        if (values.isEmpty()) return
+        predicates.add("$column IN (${values.joinToString(",") { "?" }})")
+        params.addAll(values)
+    }
+
+    private fun String.escapeLike(): String =
+        replace("!", "!!")
+            .replace("%", "!%")
+            .replace("_", "!_")
+
+    private fun elapsedMs(startNanos: Long): Long = (System.nanoTime() - startNanos) / 1_000_000
+
+    private fun correlationId(): String = MDC.get("correlationId") ?: "-"
+
+    /** For integration tests: `EXPLAIN` / `EXPLAIN ANALYZE` against real MariaDB. */
+    internal fun buildMarketSearchPagedSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> {
+        val params = ArrayList<Any?>()
+        val (withSql, fromSql) = buildWithAndFromSql(request, params)
+        val whereSql = buildWhereSql(request, params)
+        val offset = request.page * request.pageSize
+        params.add(request.pageSize)
+        params.add(offset)
+        return Pair(
+            buildMarketSearchPagedSql(request, withSql, fromSql, whereSql, buildOrderBySql(request)),
+            params.toTypedArray(),
+        )
+    }
+
+    internal fun buildQualityOptionsSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> {
+        val qualityOrderSql = ItemQualityOrder.sqlOrderByCase("iq.type")
+        return Pair(
+            """
+            SELECT
+                CAST(iq.internal_id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, iq.type, CAST(iq.internal_id AS CHAR)) AS label,
+                NULL AS parent_id,
+                iq.type AS quality_type
+            FROM item_quality iq
+                LEFT JOIN locale l ON l.id = iq.name_id
+            WHERE iq.type IS NOT NULL
+            ORDER BY $qualityOrderSql, iq.internal_id ASC
+            """.trimIndent(),
+            emptyArray(),
+        )
+    }
+
+    internal fun buildItemClassOptionsSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> =
+        Pair(
+            """
+            SELECT
+                CAST(ic.id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, CAST(ic.id AS CHAR)) AS label,
+                NULL AS parent_id
+            FROM item_class ic
+                LEFT JOIN locale l ON l.id = ic.name_id
+            ORDER BY label ASC
+            """.trimIndent(),
+            emptyArray(),
+        )
+
+    internal fun buildItemSubclassOptionsSqlForExplain(request: AuctionMarketSearchRequest): Pair<String, Array<Any?>> =
+        Pair(
+            """
+            SELECT
+                CAST(isc.subclass_id AS CHAR) AS id,
+                COALESCE(l.${request.localeColumnSuffix}, l.en_gb, l.en_us, CAST(isc.subclass_id AS CHAR)) AS label,
+                CAST(isc.class_id AS CHAR) AS parent_id
+            FROM item_subclass isc
+                LEFT JOIN locale l ON l.id = isc.display_name_id
+            ORDER BY label ASC
+            """.trimIndent(),
+            emptyArray(),
+        )
+}
