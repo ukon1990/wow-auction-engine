@@ -1,33 +1,33 @@
 package net.jonasmf.auctionengine.auction.repository
 
-import net.jonasmf.auctionengine.dbo.rds.auction.AuctionHousePrice
-import net.jonasmf.auctionengine.dbo.rds.auction.AuctionHousePriceId
+import net.jonasmf.auctionengine.dbo.rds.auction.ItemPriceHourly
+import net.jonasmf.auctionengine.dbo.rds.auction.ItemPriceHourlyId
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
 @Repository
-interface AuctionHousePriceRepository : JpaRepository<AuctionHousePrice, AuctionHousePriceId> {
+interface ItemPriceHourlyRepository : JpaRepository<ItemPriceHourly, ItemPriceHourlyId> {
     fun findAllByConnectedRealmIdAndItemIdOrderByTimestampAsc(
         connectedRealmId: Int,
         itemId: Int,
-    ): List<AuctionHousePrice>
+    ): List<ItemPriceHourly>
 
     fun findAllByConnectedRealmIdAndItemIdAndModifierKeyOrderByTimestampAsc(
         connectedRealmId: Int,
         itemId: Int,
         modifierKey: String,
-    ): List<AuctionHousePrice>
+    ): List<ItemPriceHourly>
 
     fun findAllByConnectedRealmIdAndItemIdAndModifierKeyAndBonusKeyOrderByTimestampAsc(
         connectedRealmId: Int,
         itemId: Int,
         modifierKey: String,
         bonusKey: String,
-    ): List<AuctionHousePrice>
+    ): List<ItemPriceHourly>
 
     fun findAllByTimestampBetweenOrderByTimestampAsc(
         from: LocalDateTime,
         to: LocalDateTime,
-    ): List<AuctionHousePrice>
+    ): List<ItemPriceHourly>
 }

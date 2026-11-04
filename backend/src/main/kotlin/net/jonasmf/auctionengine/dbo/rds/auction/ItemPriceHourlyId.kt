@@ -3,7 +3,7 @@ package net.jonasmf.auctionengine.dbo.rds.auction
 import java.io.Serializable
 import java.time.LocalDate
 
-data class AuctionHousePriceId(
+data class ItemPriceHourlyId(
     var connectedRealmId: Int = 0,
     var date: LocalDate? = null,
     var itemId: Int = 0,

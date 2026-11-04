@@ -18,7 +18,7 @@ class AuctionStatsDailyJDBCRepositoryTest : IntegrationTestBase() {
     lateinit var auctionStatsDailyJDBCRepository: AuctionStatsDailyJDBCRepository
 
     @Autowired
-    lateinit var dailyPriceRepository: AuctionHousePriceDailyRepository
+    lateinit var dailyPriceRepository: ItemPriceDailyRepository
 
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate

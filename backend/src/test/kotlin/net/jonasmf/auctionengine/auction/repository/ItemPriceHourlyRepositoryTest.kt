@@ -15,9 +15,9 @@ import org.springframework.jdbc.core.JdbcTemplate
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class AuctionHousePriceRepositoryTest : IntegrationTestBase() {
+class ItemPriceHourlyRepositoryTest : IntegrationTestBase() {
     @Autowired
-    lateinit var repository: AuctionHousePriceRepository
+    lateinit var repository: ItemPriceHourlyRepository
 
     @Autowired
     lateinit var auctionStatsHourlyJDBCRepository: AuctionStatsHourlyJDBCRepository
