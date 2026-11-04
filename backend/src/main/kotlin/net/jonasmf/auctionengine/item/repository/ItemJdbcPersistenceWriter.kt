@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.item.repository
 
 import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
 import net.jonasmf.auctionengine.dbo.rds.localeSourceKey

@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.item.repository
 
 import net.jonasmf.auctionengine.domain.item.Item
 import org.springframework.jdbc.core.JdbcTemplate

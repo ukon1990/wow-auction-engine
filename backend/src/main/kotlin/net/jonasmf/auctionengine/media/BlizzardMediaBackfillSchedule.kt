@@ -1,7 +1,8 @@
-package net.jonasmf.auctionengine.schedules
+package net.jonasmf.auctionengine.media
 
+import net.jonasmf.auctionengine.schedules.BackgroundWorkLauncher
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.service.BlizzardMediaBackfillService
+import net.jonasmf.auctionengine.media.BlizzardMediaBackfillService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled

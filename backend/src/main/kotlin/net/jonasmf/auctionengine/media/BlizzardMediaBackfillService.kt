@@ -1,12 +1,12 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.media
 
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.repository.rds.BlizzardMediaFetchEntityKind
-import net.jonasmf.auctionengine.repository.rds.BlizzardMediaFetchFailureRepository
-import net.jonasmf.auctionengine.repository.rds.ItemFetchFailureState
-import net.jonasmf.auctionengine.repository.rds.ItemJdbcRepository
-import net.jonasmf.auctionengine.repository.rds.MediaFetchFailureState
+import net.jonasmf.auctionengine.media.repository.BlizzardMediaFetchEntityKind
+import net.jonasmf.auctionengine.media.repository.BlizzardMediaFetchFailureRepository
+import net.jonasmf.auctionengine.item.repository.ItemFetchFailureState
+import net.jonasmf.auctionengine.item.repository.ItemJdbcRepository
+import net.jonasmf.auctionengine.media.repository.MediaFetchFailureState
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.core.JdbcTemplate
