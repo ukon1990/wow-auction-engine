@@ -1,5 +1,6 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.item
 
+import net.jonasmf.auctionengine.media.BlizzardMediaService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -13,11 +14,11 @@ import net.jonasmf.auctionengine.domain.item.ItemQuality
 import net.jonasmf.auctionengine.domain.item.ItemSubclass
 import net.jonasmf.auctionengine.dto.LocaleDTO
 import net.jonasmf.auctionengine.integration.blizzard.ItemApiClient
-import net.jonasmf.auctionengine.repository.rds.ExpansionRangeItemDiscovery
-import net.jonasmf.auctionengine.repository.rds.ItemJdbcRepository
-import net.jonasmf.auctionengine.repository.rds.ItemPersistenceSummary
-import net.jonasmf.auctionengine.repository.rds.ItemRetryEligibility
-import net.jonasmf.auctionengine.repository.rds.ItemSourceDiscovery
+import net.jonasmf.auctionengine.item.repository.ExpansionRangeItemDiscovery
+import net.jonasmf.auctionengine.item.repository.ItemJdbcRepository
+import net.jonasmf.auctionengine.item.repository.ItemPersistenceSummary
+import net.jonasmf.auctionengine.item.repository.ItemRetryEligibility
+import net.jonasmf.auctionengine.item.repository.ItemSourceDiscovery
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.Clock

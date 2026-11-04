@@ -1,12 +1,13 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.item
 
+import net.jonasmf.auctionengine.media.BlizzardMediaService
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.domain.item.Item
 import net.jonasmf.auctionengine.integration.blizzard.ItemApiClient
-import net.jonasmf.auctionengine.repository.rds.ItemFetchFailureState
-import net.jonasmf.auctionengine.repository.rds.ItemJdbcRepository
-import net.jonasmf.auctionengine.repository.rds.ItemPersistenceSummary
+import net.jonasmf.auctionengine.item.repository.ItemFetchFailureState
+import net.jonasmf.auctionengine.item.repository.ItemJdbcRepository
+import net.jonasmf.auctionengine.item.repository.ItemPersistenceSummary
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux

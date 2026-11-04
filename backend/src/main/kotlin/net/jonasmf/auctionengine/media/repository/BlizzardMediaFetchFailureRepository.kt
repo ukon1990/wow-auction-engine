@@ -1,5 +1,6 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.media.repository
 
+import net.jonasmf.auctionengine.item.repository.ItemRetryEligibility
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.time.OffsetDateTime
