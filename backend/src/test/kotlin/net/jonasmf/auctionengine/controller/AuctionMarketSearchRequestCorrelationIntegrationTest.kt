@@ -1,15 +1,13 @@
 package net.jonasmf.auctionengine.controller
 
-import net.jonasmf.auctionengine.config.IntegrationTestBase
+import net.jonasmf.auctionengine.config.MVCIntegrationTest
 import net.jonasmf.auctionengine.interceptor.CLIENT_SESSION_ID_HEADER
 import net.jonasmf.auctionengine.interceptor.CORRELATION_ID_HEADER
 import net.jonasmf.auctionengine.testsupport.MarketSearchTestFixtures
 import org.hamcrest.Matchers.contains
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -17,15 +15,23 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@AutoConfigureMockMvc
-class AuctionMarketSearchRequestCorrelationIntegrationTest : IntegrationTestBase() {
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
+class AuctionMarketSearchRequestCorrelationIntegrationTest : MVCIntegrationTest() {
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
 
     private fun performAsync(result: MvcResult) = mockMvc.perform(asyncDispatch(result))
+
+    @Test
+    fun `health is public and echoes the correlation id`() {
+        val correlationId = "30bc30e8-ace7-47dc-b94a-34df764d6c13"
+
+        performAsync(
+            mockMvc
+                .perform(get("/api/health").contextPath("/api").header(CORRELATION_ID_HEADER, correlationId))
+                .andReturn(),
+        ).andExpect(status().isNoContent)
+            .andExpect(header().string(CORRELATION_ID_HEADER, correlationId))
+    }
 
     @Test
     fun `market search echoes correlation and client session identifiers`() {

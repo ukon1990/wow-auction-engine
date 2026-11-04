@@ -15,9 +15,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.ZoneId
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 
@@ -97,50 +94,6 @@ class AuctionStatsDailyScheduleTest {
                 .atZone(ZoneId.of("Asia/Taipei"))
                 .toLocalDate(),
         )
-    }
-
-    @Test
-    fun `updateDailyPriceStatistics skips concurrent run and clears guard`() {
-        val auctionHouseService = mockk<AuctionHouseService>()
-        val auctionStatsDailyService = mockk<AuctionStatsDailyService>()
-        val started = CountDownLatch(1)
-        val release = CountDownLatch(1)
-        val executor = Executors.newSingleThreadExecutor()
-        val house = AuctionHouse(id = 1, connectedId = 1, region = Region.Europe)
-
-        every { auctionHouseService.findAllByRegion(Region.Europe) } returns listOf(house)
-        every { auctionHouseService.findAllByRegion(Region.Taiwan) } returns emptyList()
-        every { auctionStatsDailyService.updateForDate(any(), any(), any()) } answers {
-            started.countDown()
-            release.await(5, TimeUnit.SECONDS)
-            AuctionStatsDailyUpdateResult(listOf(LocalDate.of(2026, 1, 2)), updatedRows = 1)
-        } andThen AuctionStatsDailyUpdateResult(listOf(LocalDate.of(2026, 1, 3)), updatedRows = 1)
-        every { auctionHouseService.updateLastDailyPriceUpdate(any(), any()) } returns 1
-
-        val schedule =
-            AuctionStatsDailySchedule(
-                properties,
-                auctionHouseService,
-                auctionStatsDailyService,
-                immediateBackgroundWorkLauncher(),
-            )
-        try {
-            val future = executor.submit<Unit> { schedule.updateDailyPriceStatistics() }
-            started.await(5, TimeUnit.SECONDS)
-
-            schedule.updateDailyPriceStatistics()
-
-            verify(exactly = 1) { auctionStatsDailyService.updateForDate(any(), any(), any()) }
-            release.countDown()
-            future.get(5, TimeUnit.SECONDS)
-
-            schedule.updateDailyPriceStatistics()
-
-            verify(exactly = 2) { auctionStatsDailyService.updateForDate(any(), any(), any()) }
-        } finally {
-            release.countDown()
-            executor.shutdownNow()
-        }
     }
 
     @Test

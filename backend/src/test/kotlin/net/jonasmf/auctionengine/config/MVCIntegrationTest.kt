@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.config
 
+import net.jonasmf.auctionengine.service.admin.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
@@ -47,6 +48,10 @@ abstract class MVCIntegrationTest : IntegrationTestBase() {
 
     @MockitoBean
     protected lateinit var jwtDecoder: JwtDecoder
+
+    /** Cognito is an external boundary; mocked here so every MVC test shares one Spring context. */
+    @MockitoBean
+    protected lateinit var userService: UserService
 
     @Autowired
     protected lateinit var cognitoGroupsGrantedAuthoritiesConverter: Converter<Jwt, Collection<GrantedAuthority>>
