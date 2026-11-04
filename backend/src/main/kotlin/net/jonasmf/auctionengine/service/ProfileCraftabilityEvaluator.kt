@@ -1,11 +1,11 @@
 package net.jonasmf.auctionengine.service
 
 import net.jonasmf.auctionengine.repository.rds.CraftingProfileCandidate
-import net.jonasmf.auctionengine.repository.rds.ProfessionSkillTreeNodeEffect
-import net.jonasmf.auctionengine.repository.rds.ProfessionSkillTreeNodeEffectRepository
+import net.jonasmf.auctionengine.profession.repository.ProfessionSkillTreeNodeEffect
+import net.jonasmf.auctionengine.profession.repository.ProfessionSkillTreeNodeEffectRepository
 import net.jonasmf.auctionengine.repository.rds.ProfileRepository
-import net.jonasmf.auctionengine.repository.rds.RecipeCraftingRule
-import net.jonasmf.auctionengine.repository.rds.RecipeCraftingRuleRepository
+import net.jonasmf.auctionengine.profession.repository.RecipeCraftingRule
+import net.jonasmf.auctionengine.profession.repository.RecipeCraftingRuleRepository
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 

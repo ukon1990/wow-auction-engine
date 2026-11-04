@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.profession
 
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import org.assertj.core.api.Assertions.assertThat

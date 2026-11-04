@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.profession
 
 data class ProfessionRecipeSyncProgress(
     val phase: String,

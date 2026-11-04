@@ -5,7 +5,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.repository.rds.admin.AdminJobRepository
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncGuard
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncGuard
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus

@@ -2,10 +2,10 @@ package net.jonasmf.auctionengine.service.admin
 
 import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.repository.rds.admin.AdminJobRepository
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncGuard
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncLock
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncResult
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncGuard
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncLock
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncResult
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncService
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Qualifier

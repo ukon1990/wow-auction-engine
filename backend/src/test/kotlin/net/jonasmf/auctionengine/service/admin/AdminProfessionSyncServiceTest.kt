@@ -6,11 +6,11 @@ import io.mockk.verify
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.generated.model.AdminJob
 import net.jonasmf.auctionengine.repository.rds.admin.AdminJobRepository
-import net.jonasmf.auctionengine.service.ProfessionRecipePersistenceSummary
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncGuard
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncLock
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncResult
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
+import net.jonasmf.auctionengine.profession.ProfessionRecipePersistenceSummary
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncGuard
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncLock
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncResult
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test

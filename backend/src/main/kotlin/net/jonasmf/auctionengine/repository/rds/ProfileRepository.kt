@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.repository.rds
 
+import net.jonasmf.auctionengine.profession.repository.NormalizedProfessionImportRepository
 import net.jonasmf.auctionengine.generated.model.ProfessionAllocation
 import net.jonasmf.auctionengine.generated.model.ProfessionProfile
 import net.jonasmf.auctionengine.generated.model.ProfessionSkillTree

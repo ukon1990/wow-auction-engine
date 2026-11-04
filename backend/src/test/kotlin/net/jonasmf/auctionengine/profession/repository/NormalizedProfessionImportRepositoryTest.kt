@@ -1,5 +1,6 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.profession.repository
 
+import net.jonasmf.auctionengine.repository.rds.ProfileRepository
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionData
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperCharacter

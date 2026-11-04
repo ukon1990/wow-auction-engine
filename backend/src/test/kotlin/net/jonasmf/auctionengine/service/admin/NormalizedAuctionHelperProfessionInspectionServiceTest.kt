@@ -12,7 +12,7 @@ import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentNo
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalents
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTab
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTree
-import net.jonasmf.auctionengine.repository.rds.NormalizedProfessionImportRepository
+import net.jonasmf.auctionengine.profession.repository.NormalizedProfessionImportRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
