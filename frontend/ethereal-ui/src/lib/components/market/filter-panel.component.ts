@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
-import { FilterOption, FilterSection } from '../../models/ui-models';
-import { QualityBadgeComponent } from '../primitives/quality-badge.component';
-import { SymbolIconComponent } from '../primitives/symbol-icon.component';
+import { qualityDotClass } from '../../helpers/quality';
+import { FilterOption, FilterSection, ItemQuality } from '../../models/ui-models';
 
 export type FilterRangeChanged = {
   sectionId: string;
@@ -16,102 +15,122 @@ export type FilterOptionChanged = {
 
 @Component({
   selector: 'ee-filter-panel',
-  imports: [QualityBadgeComponent, SymbolIconComponent],
   template: `
-    <aside [class]="panelClass()" aria-label="Market filters" i18n-aria-label="@@filters.aria">
-      <div class="border-b border-white/10 bg-surface-container-high p-inner-padding">
-        <h2 class="ee-section-heading flex items-center gap-2 text-primary">
-          <ee-symbol-icon class="text-lg" name="filter_alt" />
-          <ng-container i18n="@@filters.title">Deep Filters</ng-container>
-        </h2>
+    <aside [class]="panelClass()" aria-label="Filters" i18n-aria-label="@@filters.aria">
+      <div class="flex items-center justify-between gap-3 px-inner-padding pb-2 pt-inner-padding">
+        <h2 class="text-base font-semibold text-on-surface" i18n="@@filters.title">Filters</h2>
+        <button
+          type="button"
+          class="rounded px-1 text-sm font-medium text-primary transition hover:text-on-surface disabled:text-outline"
+          [disabled]="!hasActiveFilters()"
+          (click)="reset.emit()"
+          i18n="@@filters.clearAll"
+        >
+          Clear all
+        </button>
       </div>
-      <div class="min-h-0 flex-1 flex flex-col gap-6 overflow-y-auto p-inner-padding">
-        @for (section of sections(); track section.id) {
+      <div
+        class="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-inner-padding pb-inner-padding"
+      >
+        @for (section of orderedSections(); track section.id) {
           <section>
-            <h3 class="mb-3 ee-label text-on-surface-variant">{{ section.label }}</h3>
-            @if (section.type === 'range') {
-              <div class="grid grid-cols-2 gap-2 pl-2">
-                <input
-                  type="number"
-                  class="min-w-0 rounded border border-white/10 bg-surface px-2 py-2 text-sm text-on-surface"
-                  placeholder="Min"
-                  i18n-placeholder="@@filters.min"
-                  [value]="section.selectedMin ?? ''"
-                  [attr.min]="section.min ?? null"
-                  [attr.max]="section.max ?? null"
-                  (change)="
-                    rangeChanged.emit({
-                      sectionId: section.id,
-                      bound: 'min',
-                      value: rangeValue($event),
-                    })
-                  "
-                />
-                <input
-                  type="number"
-                  class="min-w-0 rounded border border-white/10 bg-surface px-2 py-2 text-sm text-on-surface"
-                  placeholder="Max"
-                  i18n-placeholder="@@filters.max"
-                  [value]="section.selectedMax ?? ''"
-                  [attr.min]="section.min ?? null"
-                  [attr.max]="section.max ?? null"
-                  (change)="
-                    rangeChanged.emit({
-                      sectionId: section.id,
-                      bound: 'max',
-                      value: rangeValue($event),
-                    })
-                  "
-                />
-              </div>
-            } @else {
-              @if (section.type === 'select') {
+            @if (section.type === 'boolean') {
+              @for (option of section.options; track option.id) {
+                <label class="flex cursor-pointer items-center justify-between gap-3 py-1">
+                  <span class="text-sm text-on-surface">{{ section.label }}</span>
+                  <input
+                    type="checkbox"
+                    class="h-4 w-4 accent-primary"
+                    [checked]="option.selected"
+                    (change)="optionToggled.emit(option.id)"
+                  />
+                </label>
+              }
+            } @else if (section.type === 'range') {
+              <fieldset>
+                <legend class="mb-1.5 ee-label text-outline">{{ section.label }}</legend>
+                <div class="grid grid-cols-2 gap-2">
+                  <label class="flex min-w-0 flex-col gap-1 text-xs text-outline">
+                    <span i18n="@@filters.from">From</span>
+                    <input
+                      type="number"
+                      class="h-10 min-w-0 rounded-md border border-white/10 bg-surface-container-lowest px-3 text-sm text-on-surface"
+                      [value]="section.selectedMin ?? ''"
+                      [attr.min]="section.min ?? null"
+                      [attr.max]="section.max ?? null"
+                      (change)="
+                        rangeChanged.emit({
+                          sectionId: section.id,
+                          bound: 'min',
+                          value: rangeValue($event),
+                        })
+                      "
+                    />
+                  </label>
+                  <label class="flex min-w-0 flex-col gap-1 text-xs text-outline">
+                    <span i18n="@@filters.to">To</span>
+                    <input
+                      type="number"
+                      class="h-10 min-w-0 rounded-md border border-white/10 bg-surface-container-lowest px-3 text-sm text-on-surface"
+                      [value]="section.selectedMax ?? ''"
+                      [attr.min]="section.min ?? null"
+                      [attr.max]="section.max ?? null"
+                      (change)="
+                        rangeChanged.emit({
+                          sectionId: section.id,
+                          bound: 'max',
+                          value: rangeValue($event),
+                        })
+                      "
+                    />
+                  </label>
+                </div>
+              </fieldset>
+            } @else if (section.type === 'select') {
+              <label class="flex flex-col gap-1.5">
+                <span class="ee-label text-outline">{{ section.label }}</span>
                 <select
-                  class="w-full rounded-lg border border-white/10 bg-surface-container-highest px-3 py-2 font-inter text-sm text-on-surface transition focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                  [attr.aria-label]="section.label"
+                  class="h-10 w-full rounded-md border border-white/10 bg-surface-container-lowest px-3 text-sm text-on-surface"
                   [value]="selectedOptionId(section)"
                   (change)="
                     optionSelected.emit({ sectionId: section.id, optionId: selectedValue($event) })
                   "
                 >
-                  <option value="" i18n="@@filters.allOption">All {{ section.label }}</option>
+                  <option value="" i18n="@@filters.anyOption">Any</option>
                   @for (option of section.options; track option.id) {
-                    <option [value]="option.id">{{ option.label }}</option>
+                    <option [value]="option.id" [selected]="option.selected">
+                      {{ option.label }}
+                    </option>
                   }
                 </select>
-              } @else {
-                <div class="flex flex-col gap-2 pl-2">
+              </label>
+            } @else {
+              <fieldset>
+                <legend class="mb-1.5 ee-label text-outline">{{ section.label }}</legend>
+                <div class="flex flex-col">
                   @for (option of section.options; track option.id) {
-                    <label class="flex cursor-pointer items-center gap-3">
+                    <label class="flex cursor-pointer items-center gap-3 py-1">
                       <input
                         type="checkbox"
-                        class="h-4 w-4 rounded border-white/20 bg-surface text-primary accent-primary"
+                        class="h-4 w-4 shrink-0 accent-primary"
                         [checked]="option.selected"
                         (change)="optionToggled.emit(option.id)"
                       />
                       @if (option.quality) {
-                        <ee-quality-badge [quality]="option.quality" />
-                      } @else {
-                        <span class="text-sm text-outline transition hover:text-on-surface">{{
-                          option.label
-                        }}</span>
+                        <span
+                          class="h-2 w-2 shrink-0 rounded-full"
+                          [class]="dotClass(option.quality)"
+                          aria-hidden="true"
+                        ></span>
                       }
+                      <span class="text-sm text-on-surface">{{ option.label }}</span>
                     </label>
                   }
                 </div>
-              }
+              </fieldset>
             }
           </section>
         }
-      </div>
-      <div class="mt-auto border-t border-white/10 bg-surface-container-low p-inner-padding">
-        <button
-          type="button"
-          class="w-full rounded border border-white/10 bg-surface py-2 ee-label text-outline transition hover:bg-surface-container-high hover:text-on-surface"
-          (click)="reset.emit()"
-        >
-          <ng-container i18n="@@filters.reset">Reset Filters</ng-container>
-        </button>
       </div>
     </aside>
   `,
@@ -119,11 +138,33 @@ export type FilterOptionChanged = {
 })
 export class FilterPanelComponent {
   readonly sections = input.required<readonly FilterSection[]>();
-  readonly panelClass = input('ee-glass flex w-72 shrink-0 flex-col overflow-hidden rounded-lg');
+  readonly panelClass = input(
+    'flex w-64 shrink-0 flex-col overflow-hidden rounded-lg border border-white/10 bg-surface-container-low',
+  );
   readonly optionToggled = output<string>();
   readonly optionSelected = output<FilterOptionChanged>();
   readonly rangeChanged = output<FilterRangeChanged>();
   readonly reset = output<void>();
+
+  /** Lists first, then ranges, then yes/no switches. */
+  protected readonly orderedSections = computed(() => {
+    const rank = (section: FilterSection) =>
+      section.type === 'range' ? 1 : section.type === 'boolean' ? 2 : 0;
+    return [...this.sections()].sort((left, right) => rank(left) - rank(right));
+  });
+
+  protected hasActiveFilters(): boolean {
+    return this.sections().some(
+      (section) =>
+        section.options.some((option) => option.selected) ||
+        section.selectedMin != null ||
+        section.selectedMax != null,
+    );
+  }
+
+  protected dotClass(quality: ItemQuality): string {
+    return `h-2 w-2 shrink-0 rounded-full ${qualityDotClass(quality)}`;
+  }
 
   protected selectedOptionId(section: FilterSection): string {
     return section.options.find((option: FilterOption) => option.selected)?.id ?? '';

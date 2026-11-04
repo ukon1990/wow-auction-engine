@@ -82,7 +82,7 @@ export const createAdminItemColumns = (actions: AdminItemTableActions) => {
       header: $localize`:@@admin.items.table.state:State`,
       meta: {
         align: 'left',
-        gridTrack: 'minmax(10rem, 1fr)',
+        gridTrack: 'minmax(7rem, 0.8fr)',
         cardRole: 'detail',
         ...actions,
       } satisfies AdminItemColumnMeta,
@@ -93,7 +93,7 @@ export const createAdminItemColumns = (actions: AdminItemTableActions) => {
       header: $localize`:@@admin.items.table.actions:Actions`,
       meta: {
         align: 'right',
-        gridTrack: 'minmax(11rem, 0.9fr)',
+        gridTrack: 'minmax(7rem, 0.6fr)',
         ...actions,
       } satisfies AdminItemColumnMeta,
       cell: () => flexRenderComponent(AdminItemActionsCellComponent),

@@ -95,15 +95,11 @@ describe('MarketBrowserPage', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.textContent).toContain('Market Browser');
+    expect(compiled.textContent).toContain('Market');
     expect(compiled.textContent).toContain('Item');
-    expect(compiled.textContent).toContain('Class');
-    expect(compiled.textContent).toContain('Subclass');
-    expect(compiled.textContent).toContain('Quality');
     expect(compiled.textContent).toContain('Price');
     expect(compiled.textContent).toContain('Quantity');
-    expect(compiled.textContent).toContain('p25');
-    expect(compiled.textContent).toContain('p75');
+    expect(compiled.textContent).toContain('Consumable · Potion');
     expect(compiled.textContent).toContain('Healing Potion');
     expect(compiled.textContent).toContain('Consumable');
     expect(compiled.textContent).toContain('Potion');
@@ -156,7 +152,7 @@ describe('MarketBrowserPage', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.textContent).toContain('No market items available.');
+    expect(compiled.textContent).toContain('No items match these filters.');
   });
 
   it('delegates selected page events to the market service', () => {

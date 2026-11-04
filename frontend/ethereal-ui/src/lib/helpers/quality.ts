@@ -9,6 +9,20 @@ const qualityClasses: Record<ItemQuality, string> = {
   artifact: 'text-amber-200 border-amber-400/40 bg-amber-400/10',
 };
 
+const qualityDotClasses: Record<ItemQuality, string> = {
+  common: 'bg-gray-300',
+  uncommon: 'bg-green-300',
+  rare: 'bg-blue-300',
+  epic: 'bg-purple-300',
+  legendary: 'bg-orange-300',
+  artifact: 'bg-amber-200',
+};
+
+/** Background class for the small quality dot next to a label. */
+export function qualityDotClass(quality: ItemQuality): string {
+  return qualityDotClasses[quality];
+}
+
 export function qualityToneClasses(quality: ItemQuality): string {
   return qualityClasses[quality];
 }

@@ -1,6 +1,5 @@
 <ee-page-frame
   [title]="pageTitle"
-  [eyebrow]="pageEyebrow"
   [loading]="loading() && recipes().length === 0"
   titleId="admin-recipes-title"
 >
@@ -15,23 +14,24 @@
 
   <section class="grid gap-4" [attr.aria-label]="pageHeading">
     <div class="grid gap-1">
-      <h2 class="font-cinzel text-xl font-bold text-primary-container">{{ pageHeading }}</h2>
-      <p class="ee-data text-outline">{{ pageDescription }}</p>
+      <h2 class="text-base font-semibold text-on-surface">{{ pageHeading }}</h2>
+      <p class="text-sm text-on-surface-variant">{{ pageDescription }}</p>
     </div>
 
     <section
-      class="grid gap-3 rounded-md border border-primary/30 bg-primary/10 px-4 py-3"
+      class="grid gap-3 rounded-lg border border-white/10 bg-surface-container-low p-inner-padding"
       [attr.aria-busy]="professionSyncBusy()"
       [attr.aria-label]="professionSyncHeading"
     >
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="grid gap-1">
           <h3 class="font-semibold text-on-surface">{{ professionSyncHeading }}</h3>
-          <p class="ee-data text-outline">{{ professionSyncDescription }}</p>
+          <p class="text-sm text-on-surface-variant">{{ professionSyncDescription }}</p>
         </div>
         <button
           type="button"
-          class="admin-primary-button"
+          eeButton
+          variant="primary"
           [disabled]="professionSyncBusy()"
           (click)="syncProfessionRecipes()"
         >
@@ -86,11 +86,7 @@
             }
           </div>
           @if (!professionJobRunning()) {
-            <button
-              type="button"
-              class="admin-secondary-button h-11 px-3 text-sm"
-              (click)="dismissProfessionSync()"
-            >
+            <button type="button" eeButton variant="ghost" (click)="dismissProfessionSync()">
               {{ dismissProfessionSyncLabel }}
             </button>
           }
@@ -98,7 +94,10 @@
       }
     </section>
 
-    <form class="grid gap-4" (ngSubmit)="applyFilters()">
+    <form
+      class="grid gap-4 rounded-lg border border-white/10 bg-surface-container-low p-inner-padding"
+      (ngSubmit)="applyFilters()"
+    >
       <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <ee-search-input
           [label]="filterNameLabel"
@@ -167,10 +166,10 @@
         />
       </div>
       <div class="flex flex-wrap gap-3">
-        <button type="submit" class="admin-primary-button" [disabled]="loading()">
+        <button type="submit" eeButton variant="primary" [disabled]="loading()">
           {{ applyFiltersLabel }}
         </button>
-        <button type="button" class="admin-secondary-button" (click)="resetFilters()">
+        <button type="button" eeButton variant="ghost" (click)="resetFilters()">
           {{ resetFiltersLabel }}
         </button>
       </div>

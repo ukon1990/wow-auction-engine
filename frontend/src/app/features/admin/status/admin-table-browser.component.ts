@@ -9,7 +9,12 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTreeModule } from '@angular/material/tree';
 import { AdminSqlColumn, AdminSqlIndex, AdminSqlMetadata, AdminSqlTable } from '@api/generated';
-import { SlideOverPanelComponent, SkeletonDirective, SymbolIconComponent } from '@ui';
+import {
+  SlideOverPanelComponent,
+  SkeletonDirective,
+  SymbolIconComponent,
+  ButtonDirective,
+} from '@ui';
 import { AdminSqlService, readAdminSqlError } from './admin-sql.service';
 
 type TableTreeNode = TableNode | GroupNode | DetailNode;
@@ -35,15 +40,15 @@ interface DetailNode {
 
 @Component({
   selector: 'app-admin-table-browser',
-  imports: [MatTreeModule, SlideOverPanelComponent, SkeletonDirective, SymbolIconComponent],
+  imports: [
+    ButtonDirective,
+    MatTreeModule,
+    SlideOverPanelComponent,
+    SkeletonDirective,
+    SymbolIconComponent,
+  ],
   template: `
-    <button
-      type="button"
-      class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-      (click)="openPanel()"
-    >
-      Tables
-    </button>
+    <button type="button" eeButton (click)="openPanel()">Tables</button>
 
     <ee-slide-over [open]="open()" title="Tables" (closed)="open.set(false)">
       @if (error()) {

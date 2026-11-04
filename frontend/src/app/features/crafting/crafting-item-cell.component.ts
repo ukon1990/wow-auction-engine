@@ -20,17 +20,15 @@ import { profileFitSummary } from './crafting-profile-fit';
       [recipeId]="recipeId()"
       [buyoutCopper]="row().minBuyoutCopper"
       [showIcon]="true"
-      [stacked]="true"
-      [layoutClass]="'flex min-w-0 flex-col gap-0.5 rounded no-underline text-inherit outline-none transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-primary/60'"
     >
       @if (recipeSubtext(); as recipeSubtext) {
-        <span class="truncate pl-11 text-xs text-outline">{{ recipeSubtext }}</span>
+        <span class="block truncate text-xs text-outline">{{ recipeSubtext }}</span>
       }
       @if (row().variantSummary) {
-        <span class="truncate pl-11 text-xs text-outline">{{ row().variantSummary }}</span>
+        <span class="block truncate text-xs text-outline">{{ row().variantSummary }}</span>
       }
       @if (row().profileFit; as profileFit) {
-        <span class="pl-11 text-xs text-primary-container">{{ profileFitText(profileFit) }}</span>
+        <span class="block truncate text-xs text-primary">{{ profileFitText(profileFit) }}</span>
       }
     </app-item-link>
   `,
@@ -61,9 +59,11 @@ export class CraftingItemCellComponent {
     const rankLabel =
       rank == null ? null : $localize`:@@admin.recipes.form.rankNumber:Rank ${rank}:INTERPOLATION:`;
 
-    if (recipeName && recipeName !== itemName) {
-      return rankLabel ? `${recipeName} · ${rankLabel}` : recipeName;
-    }
-    return rankLabel;
+    const parts = [
+      row.professionName?.trim() || null,
+      recipeName && recipeName !== itemName ? recipeName : null,
+      rankLabel,
+    ].filter((part): part is string => Boolean(part));
+    return parts.length ? parts.join(' · ') : null;
   }
 }

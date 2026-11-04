@@ -69,6 +69,8 @@ export const routes: TitledRoutes = [
     icon: 'admin_panel_settings',
     canActivate: [userHasRoleGuard(UserRole.Admin)],
     runGuardsAndResolvers: 'always',
+    loadComponent: () =>
+      import('@features/admin/admin-shell.page').then((module) => module.AdminShellPage),
     children: [
       {
         path: '',
@@ -96,7 +98,7 @@ export const routes: TitledRoutes = [
       {
         path: 'auction-houses',
         title: $localize`:@@route.admin.auction-house:Auction houses`,
-        icon: 'manage_accounts',
+        icon: 'storefront',
         loadComponent: () =>
           import('@features/admin/auction-house/auction-house.page').then(
             (module) => module.AuctionHousePage,
@@ -167,7 +169,7 @@ export const routes: TitledRoutes = [
       },
       {
         path: 'auctions',
-        title: $localize`:@@route.auctions:Auctions`,
+        title: $localize`:@@route.auctions:Market`,
         icon: 'travel_explore',
         loadComponent: () =>
           import('./features/auctions/auctions-shell.page').then(

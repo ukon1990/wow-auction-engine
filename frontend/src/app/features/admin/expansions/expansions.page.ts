@@ -47,6 +47,7 @@ import {
   SelectInputComponent,
   SlideOverPanelComponent,
   TableComponent,
+  ButtonDirective,
 } from '@ui';
 import { firstValueFrom } from 'rxjs';
 
@@ -55,6 +56,7 @@ const PAGE_SIZE = 50;
 @Component({
   selector: 'app-expansions-page',
   imports: [
+    ButtonDirective,
     FormsModule,
     PageFrameComponent,
     TableComponent,

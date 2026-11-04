@@ -14,6 +14,8 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, fromEvent, map, startWith } from 'rxjs';
 
 import {
+  ActiveFilterChipsComponent,
+  ButtonDirective,
   FilterOptionChanged,
   FilterPanelComponent,
   FilterRangeChanged,
@@ -22,7 +24,12 @@ import {
   SortingState,
   SymbolIconComponent,
   TableComponent,
+  TabOption,
+  TabsComponent,
 } from '@ui';
+import { DecimalPipe } from '@angular/common';
+import { LocaleService } from '@core/services/locale.service';
+import { parseActiveFilterChipId, toActiveFilterChips } from '@core/utils/active-filter-chips';
 
 import { CraftingItemService } from '@core/services/crafting-item.service';
 
@@ -45,6 +52,9 @@ const CARD_VIEW_MAX_WIDTH = 1023;
     class: 'flex min-h-0 flex-1 overflow-hidden',
   },
   imports: [
+    ActiveFilterChipsComponent,
+    ButtonDirective,
+    TabsComponent,
     FilterPanelComponent,
     PageFrameComponent,
     SearchInputComponent,
@@ -78,16 +88,48 @@ export class CraftingBrowserPage {
   protected readonly skeletonRowClass = craftingBrowserSkeletonRowClass();
   protected readonly mobileSortOptions = [
     { id: 'itemName', label: $localize`:@@crafting.column.item:Item` },
-    { id: 'outputPrice', label: $localize`:@@crafting.column.buyout:Buyout` },
+    { id: 'outputPrice', label: $localize`:@@crafting.column.buyout:Price` },
     { id: 'profit', label: $localize`:@@crafting.column.profit:Profit` },
-    { id: 'reagentCost', label: $localize`:@@crafting.column.materialCost:Mat. cost` },
+    { id: 'reagentCost', label: $localize`:@@crafting.column.materialCost:Reagent cost` },
     { id: 'roiPercent', label: $localize`:@@crafting.column.roi:ROI` },
     { id: 'saleRate', label: $localize`:@@crafting.column.saleRate:Sale rate` },
-    { id: 'soldPerDay', label: $localize`:@@crafting.column.soldPerDay:Avg sold/day` },
+    { id: 'soldPerDay', label: $localize`:@@crafting.column.soldPerDay:Sold/day` },
     { id: 'outputPriceChangePercent', label: $localize`:@@crafting.column.trend:Trend` },
     { id: 'professionName', label: $localize`:@@crafting.column.profession:Profession` },
   ];
   private readonly craftingService = inject(CraftingItemService);
+  private readonly locale = inject(LocaleService);
+  private readonly professionSection = computed(() =>
+    this.craftingService.filterSections().find((section) => section.id === 'professionIds'),
+  );
+  /** All filters except profession, which has its own tabs. */
+  protected readonly panelSections = computed(() =>
+    this.craftingService.filterSections().filter((section) => section.id !== 'professionIds'),
+  );
+  protected readonly professionTabs = computed<TabOption[]>(() => [
+    { id: 'all', label: $localize`:@@crafting.professions.all:All` },
+    ...(this.professionSection()?.options ?? []).map((option) => ({
+      id: option.id.split(':').pop() ?? option.id,
+      label: option.label,
+    })),
+  ]);
+  protected readonly activeProfessionTab = computed(() => {
+    const ids = this.craftingService.queryParams()?.professionIds ?? [];
+    return ids.length === 1 ? String(ids[0]) : ids.length === 0 ? 'all' : '';
+  });
+  protected readonly activeFilterChips = computed(() => {
+    const ids = this.craftingService.queryParams()?.professionIds ?? [];
+    // One profession is shown by the tabs; several (from an old link) are shown as chips.
+    const sections = ids.length > 1 ? this.craftingService.filterSections() : this.panelSections();
+    return toActiveFilterChips(sections);
+  });
+  protected readonly resultSummary = computed(() => {
+    const total = this.paginationState()?.totalItems;
+    if (total == null) return '';
+    const count =
+      new DecimalPipe(this.locale.formatLocale()).transform(total, '1.0-0') ?? String(total);
+    return $localize`:@@crafting.resultSummary:${count}:count: recipes`;
+  });
   protected readonly tableSorting = computed<SortingState>(() => {
     const params = this.craftingService.queryParams();
     if (!params) return [];
@@ -138,8 +180,8 @@ export class CraftingBrowserPage {
     return $localize`:@@route.crafting:Crafting`;
   }
 
-  protected pageEyebrow(): string {
-    return $localize`:@@crafting.eyebrow:Recipe economics`;
+  protected pageDescription(): string {
+    return $localize`:@@crafting.description:Profit per recipe at current prices`;
   }
 
   protected filterOptionsLabel(): string {
@@ -150,7 +192,20 @@ export class CraftingBrowserPage {
     this.craftingService.toggleFilter(optionId);
   }
 
-  protected onFilterSelected(_change: FilterOptionChanged): void {}
+  protected onFilterSelected(change: FilterOptionChanged): void {
+    if (change.optionId) this.craftingService.toggleFilter(change.optionId);
+  }
+
+  protected onProfessionTab(tabId: string): void {
+    this.craftingService.setProfession(tabId === 'all' ? null : Number(tabId));
+  }
+
+  protected onChipRemoved(chipId: string): void {
+    const chip = parseActiveFilterChipId(chipId);
+    if (!chip) return;
+    if (chip.kind === 'range') this.craftingService.clearRangeFilter(chip.sectionId);
+    else if (chip.kind === 'option') this.craftingService.toggleFilter(chip.optionId);
+  }
 
   protected onRangeChanged(change: FilterRangeChanged): void {
     this.craftingService.setRangeFilter(change.sectionId, change.bound, change.value);

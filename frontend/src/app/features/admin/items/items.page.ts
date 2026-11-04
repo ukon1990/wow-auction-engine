@@ -40,6 +40,7 @@ import {
   SelectInputOption,
   SlideOverPanelComponent,
   TableComponent,
+  ButtonDirective,
 } from '@ui';
 import { firstValueFrom, fromEvent, map, startWith } from 'rxjs';
 
@@ -52,6 +53,7 @@ const standaloneModel = { standalone: true };
 @Component({
   selector: 'app-admin-items-page',
   imports: [
+    ButtonDirective,
     FormsModule,
     AdminItemComparePanelComponent,
     AdminItemCreateFormComponent,

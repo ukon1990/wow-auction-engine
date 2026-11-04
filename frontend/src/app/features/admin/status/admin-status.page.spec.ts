@@ -154,7 +154,13 @@ describe('AdminStatusPage', () => {
     expect(text).toContain('Running queries');
     expect(text).toContain('Show more');
     expect(text).toContain('Table and index sizes');
-    expect(text).toContain('auction');
+
+    const tablesTab = [...fixture.nativeElement.querySelectorAll('[role="tab"]')].find(
+      (candidate: HTMLElement) => candidate.textContent?.includes('Table and index sizes'),
+    ) as HTMLElement;
+    tablesTab.click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('auction');
   });
 
   it('opens a modal with the full SQL for truncated queries', () => {

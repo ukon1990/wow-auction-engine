@@ -16,7 +16,12 @@ import {
   GameLocale,
 } from '@api/generated';
 import { LocaleFieldsComponent } from '@features/admin/shared/locale-fields.component';
-import { CheckboxInputComponent, SelectInputComponent, TextInputComponent } from '@ui';
+import {
+  CheckboxInputComponent,
+  SelectInputComponent,
+  TextInputComponent,
+  ButtonDirective,
+} from '@ui';
 import {
   BINDING_TYPE_OPTIONS,
   expansionReferencesToOptions,
@@ -45,6 +50,7 @@ const standaloneModel = { standalone: true };
 @Component({
   selector: 'app-admin-item-override-form',
   imports: [
+    ButtonDirective,
     FormsModule,
     CheckboxInputComponent,
     LocaleFieldsComponent,
@@ -376,20 +382,10 @@ const standaloneModel = { standalone: true };
         }
 
         <div class="flex flex-wrap gap-3">
-          <button
-            type="submit"
-            class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
-            [disabled]="submitting()"
-          >
+          <button type="submit" eeButton variant="primary" [disabled]="submitting()">
             Save override
           </button>
-          <button
-            type="button"
-            class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-            (click)="cancelled.emit()"
-          >
-            Cancel
-          </button>
+          <button type="button" eeButton (click)="cancelled.emit()">Cancel</button>
         </div>
       }
     </form>

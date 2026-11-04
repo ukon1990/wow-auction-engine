@@ -59,7 +59,7 @@
         <target>Artefakt</target>
       </trans-unit>
       <trans-unit id="filters.hasRecipe" datatype="html">
-        <source>Has Recipe</source>
+        <source>Has recipe</source>
         <target>Hat Rezept</target>
       </trans-unit>
       <trans-unit id="filters.saleRatePercent" datatype="html">
@@ -76,16 +76,16 @@
         <target>Erweiterung</target>
       </trans-unit>
       <trans-unit id="filters.aria" datatype="html">
-        <source>Market filters</source>
-        <target>Marktfilter</target>
+        <source>Filters</source>
+        <target>Filter</target>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/components/market/filter-panel.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="filters.title" datatype="html">
-        <source>Deep Filters</source>
-        <target>Erweiterte Filter</target>
+        <source>Filters</source>
+        <target>Filter</target>
         <context-group purpose="location">
           <context context-type="sourcefile">ethereal-ui/src/lib/components/market/filter-panel.component.ts</context>
           <context context-type="linenumber">15,16</context>
@@ -332,8 +332,8 @@
         <target state="translated">Hinweis</target>
       </trans-unit>
       <trans-unit id="route.auctions" datatype="html">
-        <source>Auctions</source>
-        <target>Auktionen</target>
+        <source>Market</source>
+        <target>Markt</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.routes.ts</context>
           <context context-type="linenumber">39</context>
@@ -464,8 +464,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="market.pagination.empty" datatype="html">
-        <source>No market items available.</source>
-        <target>Keine Marktgegenstände verfügbar.</target>
+        <source>No items match these filters.</source>
+        <target>Keine Gegenstände entsprechen diesen Filtern.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/market-browser.service.ts</context>
           <context context-type="linenumber">257</context>
@@ -608,16 +608,16 @@
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.column.materialCost" datatype="html">
-        <source>Mat. cost</source>
-        <target>Mat.-Kosten</target>
+        <source>Reagent cost</source>
+        <target>Reagenzkosten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
           <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.column.buyout" datatype="html">
-        <source>Buyout</source>
-        <target>Sofortkauf</target>
+        <source>Price</source>
+        <target>Preis</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
           <context context-type="linenumber">79</context>
@@ -664,8 +664,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="crafting.column.soldPerDay" datatype="html">
-        <source>Avg sold/day</source>
-        <target>Verkauft/Tag (Ø)</target>
+        <source>Sold/day</source>
+        <target>Verkauft/Tag</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/crafting/crafting-browser-table.columns.ts</context>
           <context context-type="linenumber">159</context>
@@ -1056,8 +1056,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="market.title" datatype="html">
-        <source>Market Browser</source>
-        <target>Marktübersicht</target>
+        <source>Market</source>
+        <target>Markt</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/market-browser/market-browser.page.ts</context>
           <context context-type="linenumber">213</context>
@@ -2693,6 +2693,94 @@
       <trans-unit id="admin.auction-house.realmLocale" datatype="html"><source>Locale</source><target>Gebietsschema</target></trans-unit>
       <trans-unit id="admin.auction-house.realmTimezone" datatype="html"><source>Time zone</source><target>Zeitzone</target></trans-unit>
       <trans-unit id="admin.auction-house.defaultOrder" datatype="html"><source>Default order</source><target>Standardreihenfolge</target></trans-unit>
+      <trans-unit id="filters.clearAll" datatype="html">
+        <source> Clear all </source>
+        <target>Alle löschen</target>
+      </trans-unit>
+      <trans-unit id="filters.from" datatype="html">
+        <source>From</source>
+        <target>Von</target>
+      </trans-unit>
+      <trans-unit id="filters.to" datatype="html">
+        <source>To</source>
+        <target>Bis</target>
+      </trans-unit>
+      <trans-unit id="filters.anyOption" datatype="html">
+        <source>Any</source>
+        <target>Alle</target>
+      </trans-unit>
+      <trans-unit id="app.realmSwitcher.label" datatype="html">
+        <source>Change realm</source>
+        <target>Realm wechseln</target>
+      </trans-unit>
+      <trans-unit id="app.dataFreshness.label" datatype="html">
+        <source>Updated</source>
+        <target>Aktualisiert</target>
+      </trans-unit>
+      <trans-unit id="app.dataFreshness.realm" datatype="html">
+        <source>Realm auction house: <x id="time" equiv-text="realm"/></source>
+        <target>Realm-Auktionshaus: <x id="time" equiv-text="realm"/></target>
+      </trans-unit>
+      <trans-unit id="app.dataFreshness.commodity" datatype="html">
+        <source>Region commodities: <x id="time" equiv-text="commodity"/></source>
+        <target>Regionale Waren: <x id="time" equiv-text="commodity"/></target>
+      </trans-unit>
+      <trans-unit id="dataAge.justNow" datatype="html">
+        <source>just now</source>
+        <target>gerade eben</target>
+      </trans-unit>
+      <trans-unit id="dataAge.minutes" datatype="html">
+        <source><x id="count" equiv-text="minutes"/> min ago</source>
+        <target>vor <x id="count" equiv-text="minutes"/> Min.</target>
+      </trans-unit>
+      <trans-unit id="dataAge.hours" datatype="html">
+        <source><x id="count" equiv-text="hours"/> h ago</source>
+        <target>vor <x id="count" equiv-text="hours"/> Std.</target>
+      </trans-unit>
+      <trans-unit id="dataAge.days" datatype="html">
+        <source><x id="count" equiv-text="days"/> days ago</source>
+        <target>vor <x id="count" equiv-text="days"/> Tagen</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.actions.editButton" datatype="html">
+        <source>Edit</source>
+        <target>Bearbeiten</target>
+      </trans-unit>
+      <trans-unit id="admin.recipes.actions.compareMenu" datatype="html">
+        <source>Compare with Blizzard API</source>
+        <target>Mit Blizzard-API vergleichen</target>
+      </trans-unit>
+      <trans-unit id="filters.active" datatype="html">
+        <source>Active filters</source>
+        <target>Aktive Filter</target>
+      </trans-unit>
+      <trans-unit id="filters.remove" datatype="html">
+        <source>Remove filter</source>
+        <target>Filter entfernen</target>
+      </trans-unit>
+      <trans-unit id="crafting.professions.all" datatype="html">
+        <source>All</source>
+        <target>Alle</target>
+      </trans-unit>
+      <trans-unit id="crafting.resultSummary" datatype="html">
+        <source><x id="count" equiv-text="count"/> recipes</source>
+        <target><x id="count" equiv-text="count"/> Rezepte</target>
+      </trans-unit>
+      <trans-unit id="crafting.description" datatype="html">
+        <source>Profit per recipe at current prices</source>
+        <target>Gewinn pro Rezept zu aktuellen Preisen</target>
+      </trans-unit>
+      <trans-unit id="market.resultSummarySorted" datatype="html">
+        <source><x id="count" equiv-text="count"/> items · sorted by <x id="sort" equiv-text="sortLabel"/></source>
+        <target><x id="count" equiv-text="count"/> Gegenstände · sortiert nach <x id="sort" equiv-text="sortLabel"/></target>
+      </trans-unit>
+      <trans-unit id="market.resultSummary" datatype="html">
+        <source><x id="count" equiv-text="count"/> items</source>
+        <target><x id="count" equiv-text="count"/> Gegenstände</target>
+      </trans-unit>
+      <trans-unit id="market.description" datatype="html">
+        <source>Prices for <x id="realm" equiv-text="realm.name"/> (<x id="region" equiv-text="region"/>) and region commodities</source>
+        <target>Preise für <x id="realm" equiv-text="realm.name"/> (<x id="region" equiv-text="region"/>) und regionale Waren</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

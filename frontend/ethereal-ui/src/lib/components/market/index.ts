@@ -4,3 +4,4 @@ export * from './item-stat-card.component';
 export * from './item-tooltip-card.component';
 export * from './chart-panel.component';
 export * from './heatmap-grid.component';
+export * from './active-filter-chips.component';
