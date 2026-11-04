@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.realm
 
-import net.jonasmf.auctionengine.auctionhouse.CommodityRealms
-import net.jonasmf.auctionengine.auctionhouse.AuctionHouseService
+import net.jonasmf.auctionengine.auction.snapshot.CommodityRealms
+import net.jonasmf.auctionengine.auction.snapshot.AuctionHouseService
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
@@ -24,7 +24,7 @@ import java.time.Instant
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.emptyList
 import kotlin.text.get
-import net.jonasmf.auctionengine.auctionhouse.repository.AuctionHouseRepository as AuctionHouseEntityRepository
+import net.jonasmf.auctionengine.auction.repository.AuctionHouseRepository as AuctionHouseEntityRepository
 
 @Service
 class ConnectedRealmService(

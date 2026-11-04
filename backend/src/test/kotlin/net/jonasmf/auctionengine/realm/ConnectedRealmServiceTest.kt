@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.realm
 
-import net.jonasmf.auctionengine.auctionhouse.AuctionHouseService
+import net.jonasmf.auctionengine.auction.snapshot.AuctionHouseService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 import java.util.Optional
-import net.jonasmf.auctionengine.auctionhouse.repository.AuctionHouseRepository as AuctionHouseEntityRepository
+import net.jonasmf.auctionengine.auction.repository.AuctionHouseRepository as AuctionHouseEntityRepository
 
 class ConnectedRealmServiceTest {
     private val properties =

@@ -8,7 +8,7 @@ import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm
 import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
-import net.jonasmf.auctionengine.auctionhouse.CommodityRealms
+import net.jonasmf.auctionengine.auction.snapshot.CommodityRealms
 import net.jonasmf.auctionengine.realm.ConnectedRealmBulkSyncService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

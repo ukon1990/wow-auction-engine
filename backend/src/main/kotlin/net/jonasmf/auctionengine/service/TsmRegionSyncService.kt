@@ -1,14 +1,14 @@
 package net.jonasmf.auctionengine.service
 
-import net.jonasmf.auctionengine.auctionhouse.CommodityRealms
-import net.jonasmf.auctionengine.auctionhouse.AuctionHouseService
+import net.jonasmf.auctionengine.auction.snapshot.CommodityRealms
+import net.jonasmf.auctionengine.auction.snapshot.AuctionHouseService
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.constant.TsmSubjectType
 import net.jonasmf.auctionengine.dbo.rds.tsm.TsmRegionMetric
 import net.jonasmf.auctionengine.integration.tsm.TsmPublicDataClient
 import net.jonasmf.auctionengine.integration.tsm.TsmRegionCsvRow
-import net.jonasmf.auctionengine.auctionhouse.repository.AuctionHouseRepository
+import net.jonasmf.auctionengine.auction.repository.AuctionHouseRepository
 import net.jonasmf.auctionengine.repository.rds.TsmRegionMetricRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
