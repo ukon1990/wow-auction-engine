@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.service.admin
 
-import net.jonasmf.auctionengine.repository.rds.ProfessionTalentTreeImportRepository
+import net.jonasmf.auctionengine.profession.repository.ProfessionTalentTreeImportRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.JsonNode

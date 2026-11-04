@@ -1,8 +1,9 @@
-package net.jonasmf.auctionengine.schedules
+package net.jonasmf.auctionengine.profession
 
+import net.jonasmf.auctionengine.schedules.BackgroundWorkLauncher
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncGuard
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncGuard
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled

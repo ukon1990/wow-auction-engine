@@ -1,5 +1,6 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.profession
 
+import net.jonasmf.auctionengine.service.BlizzardMediaService
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.domain.profession.Recipe

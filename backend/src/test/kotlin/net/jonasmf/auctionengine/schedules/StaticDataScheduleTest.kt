@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.schedules
 
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSchedule
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -9,8 +10,8 @@ import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.service.BlizzardMediaBackfillService
 import net.jonasmf.auctionengine.service.ItemSyncService
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncGuard
-import net.jonasmf.auctionengine.service.ProfessionRecipeSyncService
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncGuard
+import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncService
 import net.jonasmf.auctionengine.service.TsmRegionSyncService
 import org.junit.jupiter.api.Test
 

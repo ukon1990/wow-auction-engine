@@ -1,9 +1,9 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.profession
 
 import tools.jackson.databind.node.ObjectNode
 import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.repository.rds.RecipeRepository
+import net.jonasmf.auctionengine.profession.repository.RecipeRepository
 import net.jonasmf.auctionengine.testsupport.container.SharedTestContainers
 import net.jonasmf.auctionengine.testsupport.database.TestDataCleaner
 import net.jonasmf.auctionengine.testsupport.loadFixture

@@ -1,5 +1,6 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.profession
 
+import net.jonasmf.auctionengine.service.BlizzardMediaService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot

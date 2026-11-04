@@ -5,7 +5,7 @@ import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessi
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionDiagnostic
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessionInspection
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperRecipe
-import net.jonasmf.auctionengine.repository.rds.NormalizedProfessionImportRepository
+import net.jonasmf.auctionengine.profession.repository.NormalizedProfessionImportRepository
 import jakarta.validation.Validator
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service

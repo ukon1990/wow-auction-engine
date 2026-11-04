@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.profession
 
 import org.springframework.stereotype.Component
 import java.sql.Connection

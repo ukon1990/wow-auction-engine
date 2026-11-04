@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.profession.repository
 
 import net.jonasmf.auctionengine.dbo.rds.profession.ModifiedCraftingCategoryMetadataDBO
 import net.jonasmf.auctionengine.dbo.rds.profession.ModifiedCraftingSlotMetadataDBO

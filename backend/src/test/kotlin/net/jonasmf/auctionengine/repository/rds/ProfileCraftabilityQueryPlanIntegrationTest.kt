@@ -1,5 +1,7 @@
 package net.jonasmf.auctionengine.repository.rds
 
+import net.jonasmf.auctionengine.profession.repository.RecipeCraftingRuleRepository
+import net.jonasmf.auctionengine.profession.repository.ProfessionSkillTreeNodeEffectRepository
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.testsupport.ProfessionProfileTestFixtures
 import org.assertj.core.api.Assertions.assertThat

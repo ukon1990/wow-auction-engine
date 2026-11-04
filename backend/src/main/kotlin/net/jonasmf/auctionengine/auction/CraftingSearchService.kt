@@ -19,7 +19,7 @@ import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.Sorting
 import net.jonasmf.auctionengine.repository.rds.CraftingProfileCandidate as StoredCraftingProfileCandidate
 import net.jonasmf.auctionengine.repository.rds.ProfileRepository
-import net.jonasmf.auctionengine.repository.rds.RecipeCraftingRuleRepository
+import net.jonasmf.auctionengine.profession.repository.RecipeCraftingRuleRepository
 import net.jonasmf.auctionengine.service.ProfileCraftabilityEvaluation
 import net.jonasmf.auctionengine.service.ProfileCraftabilityEvaluator
 import org.springframework.http.HttpStatus
@@ -249,7 +249,7 @@ class CraftingSearchService(
 
     private fun CraftingSqlRow.profileFit(
         candidatesByRecipeProfession: Map<Pair<Int, Int>, List<StoredCraftingProfileCandidate>>,
-        recipeRulesById: Map<Int, net.jonasmf.auctionengine.repository.rds.RecipeCraftingRule>,
+        recipeRulesById: Map<Int, net.jonasmf.auctionengine.profession.repository.RecipeCraftingRule>,
         authenticated: Boolean,
     ): CraftingProfileFit? {
         if (!authenticated) return null

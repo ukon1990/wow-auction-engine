@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.profession
 
 import net.jonasmf.auctionengine.dbo.rds.LocaleSourceType
 import net.jonasmf.auctionengine.dbo.rds.localeSourceKey
@@ -9,7 +9,7 @@ import net.jonasmf.auctionengine.domain.profession.ProfessionCategory
 import net.jonasmf.auctionengine.domain.profession.Recipe
 import net.jonasmf.auctionengine.domain.profession.SkillTier
 import net.jonasmf.auctionengine.dto.LocaleDTO
-import net.jonasmf.auctionengine.repository.rds.ProfessionRecipeJdbcRepository
+import net.jonasmf.auctionengine.profession.repository.ProfessionRecipeJdbcRepository
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
