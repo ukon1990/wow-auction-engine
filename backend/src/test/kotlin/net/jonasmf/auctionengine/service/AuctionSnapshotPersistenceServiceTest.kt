@@ -15,7 +15,7 @@ import net.jonasmf.auctionengine.dto.auction.AuctionDTO
 import net.jonasmf.auctionengine.dto.auction.AuctionData
 import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
 import net.jonasmf.auctionengine.repository.rds.AuctionRepository
-import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
 import net.jonasmf.auctionengine.testsupport.writeJsonToDisk
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

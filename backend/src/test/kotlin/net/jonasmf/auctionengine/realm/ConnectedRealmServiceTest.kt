@@ -1,5 +1,6 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.realm
 
+import net.jonasmf.auctionengine.service.AuctionHouseService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -12,8 +13,8 @@ import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm
 import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardConnectedRealmApiClient
-import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
-import net.jonasmf.auctionengine.repository.rds.RegionRepository
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
+import net.jonasmf.auctionengine.realm.repository.RegionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test

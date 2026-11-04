@@ -1,9 +1,9 @@
-package net.jonasmf.auctionengine.controller
+package net.jonasmf.auctionengine.realm
 
 import net.jonasmf.auctionengine.generated.api.RealmApi
 import net.jonasmf.auctionengine.generated.model.Realm
 import net.jonasmf.auctionengine.generated.model.RealmDetail
-import net.jonasmf.auctionengine.service.RealmQueryService
+import net.jonasmf.auctionengine.realm.RealmQueryService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController

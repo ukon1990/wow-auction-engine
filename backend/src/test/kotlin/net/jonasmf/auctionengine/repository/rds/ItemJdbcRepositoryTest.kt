@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.repository.rds
 
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
 import net.jonasmf.auctionengine.config.JsonMappers
 import tools.jackson.module.kotlin.readValue
 import net.jonasmf.auctionengine.config.IntegrationTestBase

@@ -1,7 +1,8 @@
-package net.jonasmf.auctionengine.schedules
+package net.jonasmf.auctionengine.realm
 
+import net.jonasmf.auctionengine.schedules.BackgroundWorkLauncher
 import net.jonasmf.auctionengine.service.AuthService
-import net.jonasmf.auctionengine.service.ConnectedRealmService
+import net.jonasmf.auctionengine.realm.ConnectedRealmService
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicBoolean

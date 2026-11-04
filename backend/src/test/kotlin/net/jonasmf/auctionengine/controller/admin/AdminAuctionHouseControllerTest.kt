@@ -4,7 +4,7 @@ import net.jonasmf.auctionengine.config.MVCIntegrationTest
 import net.jonasmf.auctionengine.generated.model.AuctionHousePageSortBy
 import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
 import net.jonasmf.auctionengine.service.AuctionHouseService
-import net.jonasmf.auctionengine.service.ConnectedRealmService
+import net.jonasmf.auctionengine.realm.ConnectedRealmService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

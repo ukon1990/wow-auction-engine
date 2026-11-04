@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.schedules
+package net.jonasmf.auctionengine.realm
 
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
@@ -7,7 +7,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import net.jonasmf.auctionengine.service.AuthService
-import net.jonasmf.auctionengine.service.ConnectedRealmService
+import net.jonasmf.auctionengine.realm.ConnectedRealmService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory

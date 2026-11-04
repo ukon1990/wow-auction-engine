@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.service
 
+import net.jonasmf.auctionengine.realm.ConnectedRealmService
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm

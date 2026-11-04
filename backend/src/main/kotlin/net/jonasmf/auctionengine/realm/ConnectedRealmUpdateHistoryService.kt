@@ -1,8 +1,8 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.realm
 
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
-import net.jonasmf.auctionengine.repository.rds.ConnectedRealmUpdateHistoryRepository
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmUpdateHistoryRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.ZonedDateTime

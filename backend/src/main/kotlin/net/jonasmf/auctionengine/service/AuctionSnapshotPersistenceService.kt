@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.service
 
+import net.jonasmf.auctionengine.realm.ConnectedRealmUpdateHistoryService
 import jakarta.transaction.Transactional
 import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction

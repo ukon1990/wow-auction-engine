@@ -1,10 +1,10 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.realm
 
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
-import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
