@@ -1,7 +1,7 @@
-package net.jonasmf.auctionengine.controller
+package net.jonasmf.auctionengine.realm
 
 import net.jonasmf.auctionengine.config.MVCIntegrationTest
-import net.jonasmf.auctionengine.service.ConnectedRealmService
+import net.jonasmf.auctionengine.realm.ConnectedRealmService
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.BeforeEach

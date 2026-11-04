@@ -3,7 +3,7 @@ package net.jonasmf.auctionengine.service
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.repository.AuctionHouseRepository
-import net.jonasmf.auctionengine.repository.rds.ConnectedRealmUpdateHistoryRepository
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmUpdateHistoryRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.jpa.domain.AbstractPersistable_.id

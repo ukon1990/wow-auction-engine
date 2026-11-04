@@ -2,7 +2,7 @@ package net.jonasmf.auctionengine.auction
 
 import net.jonasmf.auctionengine.constant.Locale
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.repository.rds.RealmCatalogJdbcRepository
+import net.jonasmf.auctionengine.realm.repository.RealmCatalogJdbcRepository
 import net.jonasmf.auctionengine.utility.defaultAuctionHouseZone
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service

@@ -1,11 +1,11 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.realm
 
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.generated.model.AuctionHouseStatus
 import net.jonasmf.auctionengine.generated.model.RealmDetail
-import net.jonasmf.auctionengine.repository.rds.RealmCatalogJdbcRepository
-import net.jonasmf.auctionengine.repository.rds.RealmCatalogRow
-import net.jonasmf.auctionengine.repository.rds.RealmDetailRow
+import net.jonasmf.auctionengine.realm.repository.RealmCatalogJdbcRepository
+import net.jonasmf.auctionengine.realm.repository.RealmCatalogRow
+import net.jonasmf.auctionengine.realm.repository.RealmDetailRow
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant

@@ -1,5 +1,7 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.realm
 
+import net.jonasmf.auctionengine.service.CommodityRealms
+import net.jonasmf.auctionengine.service.AuctionHouseService
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Locale
@@ -9,8 +11,8 @@ import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm
 import net.jonasmf.auctionengine.dto.Href
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardConnectedRealmApiClient
-import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
-import net.jonasmf.auctionengine.repository.rds.RegionRepository
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
+import net.jonasmf.auctionengine.realm.repository.RegionRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled

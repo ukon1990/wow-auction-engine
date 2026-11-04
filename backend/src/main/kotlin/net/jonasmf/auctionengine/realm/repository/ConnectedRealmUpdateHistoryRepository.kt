@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.realm.repository
 
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
 import org.springframework.data.jpa.repository.JpaRepository

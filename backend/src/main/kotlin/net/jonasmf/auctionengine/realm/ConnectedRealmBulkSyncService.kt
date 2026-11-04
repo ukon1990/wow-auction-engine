@@ -1,12 +1,12 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.realm
 
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.repository.rds.AuctionHouseRepository
-import net.jonasmf.auctionengine.repository.rds.ConnectedRealmJdbcRepository
-import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
-import net.jonasmf.auctionengine.repository.rds.ConnectedRealmUpsertRow
-import net.jonasmf.auctionengine.repository.rds.RealmSyncRow
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmJdbcRepository
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmUpsertRow
+import net.jonasmf.auctionengine.realm.repository.RealmSyncRow
 import org.slf4j.LoggerFactory
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service

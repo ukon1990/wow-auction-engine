@@ -1,8 +1,8 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.realm
 
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
-import net.jonasmf.auctionengine.repository.rds.RegionRepository
+import net.jonasmf.auctionengine.realm.repository.RegionRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

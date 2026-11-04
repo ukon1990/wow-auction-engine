@@ -1,5 +1,7 @@
 package net.jonasmf.auctionengine.service
 
+import net.jonasmf.auctionengine.realm.ConnectedRealmService
+import net.jonasmf.auctionengine.realm.ConnectedRealmUpdateHistoryService
 import aws.sdk.kotlin.services.s3.S3Client
 import net.jonasmf.auctionengine.config.IntegrationTestBase
 import net.jonasmf.auctionengine.constant.GameBuildVersion
@@ -11,8 +13,8 @@ import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
 import net.jonasmf.auctionengine.mapper.realm.toDbo
 import net.jonasmf.auctionengine.repository.AuctionHouseRepository
-import net.jonasmf.auctionengine.repository.rds.ConnectedRealmRepository
-import net.jonasmf.auctionengine.repository.rds.RegionRepository
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
+import net.jonasmf.auctionengine.realm.repository.RegionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue

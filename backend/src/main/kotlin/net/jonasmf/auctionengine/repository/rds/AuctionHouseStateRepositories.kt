@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.repository.rds
 
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.mapper.realm.toDomain
