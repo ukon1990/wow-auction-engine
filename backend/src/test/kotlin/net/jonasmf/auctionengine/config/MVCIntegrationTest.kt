@@ -15,15 +15,20 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import tools.jackson.databind.ObjectMapper
 
 /**
- * A helper for writing integration tests for MVC(controllers).
- * It uses test containers for storage.
- *
+ * Base class for controller integration tests: real filter chain, services and Testcontainers storage.
+ * The `mvc*` helpers send the request as [actor] (anonymous when null), complete async (suspend)
+ * handlers and return [ResultActions], so a test is just `mvcGet(path, admin).andExpect(...)`.
  */
 @AutoConfigureMockMvc
 @ImportAutoConfiguration(
@@ -49,39 +54,61 @@ abstract class MVCIntegrationTest : IntegrationTestBase() {
     @Autowired
     protected lateinit var objectMapper: ObjectMapper
 
+    /** A signed-in caller; [groups] are its Cognito groups. */
+    protected data class Actor(
+        val subject: String = "test-user",
+        val groups: List<String> = emptyList(),
+    )
+
+    protected val user = Actor()
+    protected val admin = Actor(subject = "test-admin", groups = listOf("admin"))
+
     protected fun mvcGet(
         path: String,
-        roles: List<String> = listOf(),
-    ) = mockMvc
-        .perform(
-            get(path)
-                .contextPath("/api")
-                .with(
-                    jwt()
-                        .jwt { token -> token.claim("cognito:groups", roles) }
-                        .authorities(cognitoGroupsGrantedAuthoritiesConverter),
-                ),
-        ).andExpect(request().asyncStarted())
-        .andReturn()
+        actor: Actor? = user,
+    ) = perform(get(path), actor)
+
+    protected fun mvcPost(
+        path: String,
+        body: Any? = null,
+        actor: Actor? = user,
+    ) = perform(post(path), actor, body)
+
+    protected fun mvcPut(
+        path: String,
+        body: Any? = null,
+        actor: Actor? = user,
+    ) = perform(put(path), actor, body)
 
     protected fun mvcPatch(
         path: String,
         body: Any? = null,
-        roles: List<String> = listOf(),
-    ) = mockMvc
-        .perform(
-            patch(path)
-                .apply {
-                    if (body != null) {
-                        content(objectMapper.writeValueAsString(body))
-                    }
-                }.contentType(MediaType.APPLICATION_JSON)
-                .contextPath("/api")
-                .with(
-                    jwt()
-                        .jwt { token -> token.claim("cognito:groups", roles) }
-                        .authorities(cognitoGroupsGrantedAuthoritiesConverter),
-                ),
-        ).andExpect(request().asyncStarted())
-        .andReturn()
+        actor: Actor? = user,
+    ) = perform(patch(path), actor, body)
+
+    protected fun mvcDelete(
+        path: String,
+        actor: Actor? = user,
+    ) = perform(delete(path), actor)
+
+    private fun perform(
+        request: MockHttpServletRequestBuilder,
+        actor: Actor?,
+        body: Any? = null,
+    ): ResultActions {
+        request.contextPath("/api")
+        if (body != null) {
+            request.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(body))
+        }
+        if (actor != null) {
+            request.with(
+                jwt()
+                    .jwt { token -> token.subject(actor.subject).claim("cognito:groups", actor.groups) }
+                    .authorities(cognitoGroupsGrantedAuthoritiesConverter),
+            )
+        }
+        val actions = mockMvc.perform(request)
+        val result = actions.andReturn()
+        return if (result.request.isAsyncStarted) mockMvc.perform(asyncDispatch(result)) else actions
+    }
 }
