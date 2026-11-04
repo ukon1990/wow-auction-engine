@@ -27,6 +27,7 @@ import {
   ITEM_SUBCLASS_OPTIONS,
 } from '@features/admin/items/admin-item-override-form.component';
 import {
+  ButtonDirective,
   PageFrameComponent,
   PaginationState,
   SearchInputComponent,
@@ -65,13 +66,13 @@ const standaloneModel = { standalone: true };
     AdminItemTypeaheadComponent,
     AdminRecipeComparePanelComponent,
     AdminRecipeOverrideFormComponent,
+    ButtonDirective,
     PageFrameComponent,
     SearchInputComponent,
     SelectInputComponent,
     TableComponent,
   ],
   templateUrl: './recipes.page.html',
-  styleUrl: './recipes.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecipesPage {
@@ -109,7 +110,6 @@ export class RecipesPage {
   protected readonly standaloneModel = standaloneModel;
 
   protected readonly pageTitle = $localize`:@@route.admin.recipes:Recipes`;
-  protected readonly pageEyebrow = $localize`:@@route.admin.title:Admin`;
   protected readonly pageHeading = $localize`:@@admin.recipes.page.heading:Recipe overrides`;
   protected readonly pageDescription = $localize`:@@admin.recipes.page.description:Search effective recipe rows and manage admin overrides that survive Blizzard sync.`;
   protected readonly filterNameLabel = $localize`:@@admin.recipes.filter.name:Name`;

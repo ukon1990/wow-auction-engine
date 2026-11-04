@@ -10,10 +10,7 @@
       class="grid min-w-0 content-start gap-5 rounded-lg border border-white/10 bg-surface-container-highest p-5"
     >
       <header>
-        <h2
-          class="font-cinzel text-xl font-bold text-primary-container"
-          i18n="@@professionProfiles.characters"
-        >
+        <h2 class="text-base font-semibold text-on-surface" i18n="@@professionProfiles.characters">
           Characters
         </h2>
         <p class="mt-1 text-sm text-outline" i18n="@@professionProfiles.charactersHint">
@@ -88,11 +85,7 @@
             (valueChanged)="characterName.set($event); clearPreview()"
             [required]="true"
           />
-          <button
-            type="submit"
-            class="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
-            [disabled]="lookingUpCharacter()"
-          >
+          <button type="submit" eeButton variant="primary" [disabled]="lookingUpCharacter()">
             @if (lookingUpCharacter()) {
               <ng-container i18n="@@professionProfiles.lookingUp">Looking up…</ng-container>
             } @else {
@@ -140,7 +133,8 @@
             </ul>
             <button
               type="button"
-              class="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+              eeButton
+              variant="primary"
               [disabled]="addingCharacter()"
               (click)="addCharacter()"
             >
@@ -162,7 +156,8 @@
           </p>
           <button
             type="button"
-            class="mt-3 min-h-11 rounded-md border border-white/20 px-4 font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+            eeButton
+            class="mt-3"
             [disabled]="addingCharacter()"
             (click)="addCharacterManually()"
           >
@@ -177,7 +172,8 @@
           </p>
           <button
             type="button"
-            class="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+            eeButton
+            variant="primary"
             [disabled]="syncingCharacter()"
             (click)="syncSelectedCharacter()"
           >
@@ -327,7 +323,8 @@
         <div class="flex justify-end">
           <button
             type="button"
-            class="min-h-11 rounded-md bg-primary px-5 font-semibold text-on-primary focus:outline-none focus:ring-2 focus:ring-primary-container disabled:opacity-70"
+            eeButton
+            variant="primary"
             [disabled]="saving() || !hasUnsavedChanges()"
             (click)="save()"
           >

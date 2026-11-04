@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminExpansion, AdminExpansionRequest } from '@api/generated';
 import { emptyGameLocale, hasEnglishGameLocale } from '@features/admin/shared/game-locale-fields';
 import { LocaleFieldsComponent } from '@features/admin/shared/locale-fields.component';
-import { TextInputComponent } from '@ui';
+import { TextInputComponent, ButtonDirective } from '@ui';
 
 export type ExpansionFormMode = 'create' | 'edit';
 
@@ -19,7 +19,7 @@ const standaloneModel = { standalone: true };
 
 @Component({
   selector: 'app-expansion-form',
-  imports: [FormsModule, TextInputComponent, LocaleFieldsComponent],
+  imports: [ButtonDirective, FormsModule, TextInputComponent, LocaleFieldsComponent],
   template: `
     <form class="grid gap-4" (submit)="onSubmit($event)">
       @if (mode() === 'create') {
@@ -81,20 +81,10 @@ const standaloneModel = { standalone: true };
       }
 
       <div class="flex flex-wrap gap-3">
-        <button
-          type="submit"
-          class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
-          [disabled]="submitting()"
-        >
+        <button type="submit" eeButton variant="primary" [disabled]="submitting()">
           {{ submitLabel() }}
         </button>
-        <button
-          type="button"
-          class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-          (click)="cancelled.emit()"
-        >
-          Cancel
-        </button>
+        <button type="button" eeButton (click)="cancelled.emit()">Cancel</button>
       </div>
     </form>
   `,

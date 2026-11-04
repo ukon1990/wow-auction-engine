@@ -57,7 +57,7 @@ export class DropdownComponent {
     'inline-flex items-center gap-1.5 rounded px-1 py-2 font-cinzel text-sm font-bold uppercase tracking-wide transition hover:bg-white/5',
   );
   readonly panelClass = input(
-    'absolute left-0 top-full z-[70] mt-2 min-w-52 overflow-hidden rounded border border-white/10 bg-slate-950/95 py-1 shadow-[0_12px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl',
+    'absolute left-0 top-full z-[70] mt-2 min-w-52 overflow-hidden rounded border border-white/10 bg-surface-container-high py-1 shadow-[0_12px_32px_rgba(0,0,0,0.55)]',
   );
   readonly ariaLabel = input('');
   readonly ariaHasPopup = input('menu');

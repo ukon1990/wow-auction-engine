@@ -20,7 +20,13 @@ import { QueryService } from '@core/services/query.service';
 import { ToastService } from '@core/services/toast.service';
 import { firstValueFrom, fromEvent, map, startWith } from 'rxjs';
 import type { SortingState } from '@tanstack/table-core';
-import { PageFrameComponent, PaginationState, SlideOverPanelComponent, TableComponent } from '@ui';
+import {
+  PageFrameComponent,
+  PaginationState,
+  SlideOverPanelComponent,
+  TableComponent,
+  ButtonDirective,
+} from '@ui';
 import { createAuctionHouseColumns } from './auction-house-table.columns';
 import {
   AuctionHouseQueryState,
@@ -30,7 +36,14 @@ import {
 
 @Component({
   selector: 'app-auction-house',
-  imports: [DatePipe, FormsModule, PageFrameComponent, SlideOverPanelComponent, TableComponent],
+  imports: [
+    ButtonDirective,
+    DatePipe,
+    FormsModule,
+    PageFrameComponent,
+    SlideOverPanelComponent,
+    TableComponent,
+  ],
   templateUrl: './auction-house.page.html',
   styleUrl: './auction-house.page.css',
 })

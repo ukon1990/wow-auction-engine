@@ -5,7 +5,6 @@ import { MarketItemRow } from '@ui';
 
 import { MarketItemCellComponent } from './market-item-cell.component';
 import { MarketMetricCellComponent } from './market-metric-cell.component';
-import { MarketQualityCellComponent } from './market-quality-cell.component';
 
 /** Per-column CSS grid tracks (inline `grid-template-columns`; commas are valid here). */
 type MarketColumnMeta = {
@@ -17,12 +16,12 @@ type MarketColumnMeta = {
 };
 
 const GRID_HEADER =
-  'grid w-full gap-4 border-b border-white/10 bg-surface-container-high px-container-padding py-4 ee-label text-outline';
+  'grid w-full gap-4 border-b border-white/10 bg-surface-container-high px-inner-padding py-3 ee-label text-outline';
 
 export const GRID_ROW =
-  'grid w-full items-center gap-4 px-container-padding py-3 text-left transition hover:bg-white/5 select-text';
+  'grid w-full items-center gap-4 px-inner-padding py-2.5 text-left transition hover:bg-white/5 select-text';
 
-const GRID_ROW_SKELETON = 'grid w-full items-center gap-4 px-container-padding py-3 text-left';
+const GRID_ROW_SKELETON = 'grid w-full items-center gap-4 px-inner-padding py-2.5 text-left';
 
 const SELECTED_ROW =
   'border-l-2 border-primary bg-primary/10 shadow-[inset_0_0_20px_rgba(236,185,19,0.05)]';
@@ -50,12 +49,6 @@ export function marketBrowserRowGridTemplateColumns(
   return columns.map((column) => (column.meta as MarketColumnMeta).gridTrack).join(' ');
 }
 
-function textCell(value: unknown): string {
-  if (value === null || value === undefined) return '—';
-  const text = String(value).trim();
-  return text.length > 0 ? text : '—';
-}
-
 export function createMarketBrowserTableColumns(): ColumnDef<MarketItemRow, unknown>[] {
   return [
     {
@@ -64,50 +57,11 @@ export function createMarketBrowserTableColumns(): ColumnDef<MarketItemRow, unkn
       header: $localize`:@@market.column.item:Item`,
       meta: {
         align: 'left',
-        gridTrack: 'minmax(14rem, 2fr)',
+        gridTrack: 'minmax(14rem, 3fr)',
         cardRole: 'primary',
         cardPriority: 0,
       } satisfies MarketColumnMeta,
       cell: () => flexRenderComponent(MarketItemCellComponent),
-    },
-    {
-      id: 'itemClass',
-      accessorKey: 'itemClassName',
-      header: $localize`:@@market.column.class:Class`,
-      meta: {
-        align: 'left',
-        gridTrack: 'minmax(5rem, 1fr)',
-        cardRole: 'detail',
-        cardLabel: $localize`:@@market.column.class:Class`,
-        cardPriority: 20,
-      } satisfies MarketColumnMeta,
-      cell: (info) => textCell(info.getValue()),
-    },
-    {
-      id: 'itemSubclass',
-      accessorKey: 'itemSubclassName',
-      header: $localize`:@@market.column.subclass:Subclass`,
-      meta: {
-        align: 'left',
-        gridTrack: 'minmax(5rem, 1fr)',
-        cardRole: 'detail',
-        cardLabel: $localize`:@@market.column.subclass:Subclass`,
-        cardPriority: 30,
-      } satisfies MarketColumnMeta,
-      cell: (info) => textCell(info.getValue()),
-    },
-    {
-      id: 'quality',
-      accessorKey: 'quality',
-      header: $localize`:@@market.column.quality:Quality`,
-      meta: {
-        align: 'left',
-        gridTrack: '7rem',
-        cardRole: 'detail',
-        cardLabel: $localize`:@@market.column.quality:Quality`,
-        cardPriority: 40,
-      } satisfies MarketColumnMeta,
-      cell: () => flexRenderComponent(MarketQualityCellComponent),
     },
     {
       id: 'selectedPrice',

@@ -52,6 +52,24 @@ export class CraftingItemService extends BaseSearchService<
     });
   }
 
+  /** Shows one profession, or all when `professionId` is null. */
+  setProfession(professionId: number | null): void {
+    this.navigateQueryState({
+      ...this.currentQueryState(),
+      professionIds: professionId === null ? [] : [professionId],
+      page: defaultCraftingBrowserQueryState.page,
+    });
+  }
+
+  /** Removes both bounds of a range filter in one navigation. */
+  clearRangeFilter(sectionId: string): void {
+    const withoutMin = applyCraftingRangeFilter(this.currentQueryState(), sectionId, 'min', null);
+    this.navigateQueryState({
+      ...applyCraftingRangeFilter(withoutMin, sectionId, 'max', null),
+      page: defaultCraftingBrowserQueryState.page,
+    });
+  }
+
   setRangeFilter(sectionId: string, bound: 'min' | 'max', value: number | null): void {
     this.navigateQueryState({
       ...applyCraftingRangeFilter(this.currentQueryState(), sectionId, bound, value),

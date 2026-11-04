@@ -1,29 +1,45 @@
 <div class="flex min-h-0 flex-1 overflow-hidden">
-  <ee-page-frame [title]="pageTitle()" [eyebrow]="pageEyebrow()" bodyLayout="fill">
-    <div class="flex items-center gap-2">
-      <ee-search-input [formControl]="searchField" class="min-w-0 flex-1" />
-      <button
-        (click)="openMobileFilters()"
-        [attr.aria-expanded]="mobileFiltersOpen()"
-        aria-haspopup="dialog"
-        aria-label="Open filters"
-        class="inline-flex shrink-0 items-center gap-2 rounded border border-white/10 bg-surface-container-high px-4 py-2 ee-label text-on-surface transition hover:bg-surface-container-highest lg:hidden"
-        i18n-aria-label="@@filters.open"
-        type="button"
+  <ee-page-frame [title]="pageTitle()" [description]="pageDescription()" bodyLayout="fill">
+    <ee-tabs
+      [tabs]="professionTabs()"
+      [activeId]="activeProfessionTab()"
+      label="Profession"
+      i18n-label="@@crafting.column.profession"
+      (selected)="onProfessionTab($event)"
+    />
+    <div class="flex flex-col gap-3">
+      <div class="flex flex-wrap items-center gap-2">
+        <ee-search-input [formControl]="searchField" class="min-w-0 flex-1 sm:max-w-md" />
+        <button
+          eeButton
+          (click)="openMobileFilters()"
+          [attr.aria-expanded]="mobileFiltersOpen()"
+          aria-haspopup="dialog"
+          type="button"
+        >
+          <ee-symbol-icon aria-hidden="true" class="text-base" name="filter_alt" />
+          <ng-container i18n="@@filters.titleShort">Filters</ng-container>
+          @if (activeFilterChips().length; as count) {
+            <span
+              class="rounded-full bg-primary px-1.5 text-xs font-bold leading-5 text-on-primary"
+              >{{ count }}</span
+            >
+          }
+        </button>
+      </div>
+      <ee-active-filter-chips
+        [chips]="activeFilterChips()"
+        label="Active filters"
+        i18n-label="@@filters.active"
+        removeLabel="Remove filter"
+        i18n-removeLabel="@@filters.remove"
+        (removed)="onChipRemoved($event)"
+        (clearAll)="onFiltersReset()"
       >
-        <ee-symbol-icon aria-hidden="true" class="text-base" name="filter_alt" />
-        <ng-container i18n="@@filters.titleShort">Filters</ng-container>
-      </button>
+        {{ resultSummary() }}
+      </ee-active-filter-chips>
     </div>
-    <div class="flex min-h-0 min-w-0 flex-1 gap-element-gap overflow-hidden">
-      <ee-filter-panel
-        (optionSelected)="onFilterSelected($event)"
-        (optionToggled)="onFilterToggled($event)"
-        (rangeChanged)="onRangeChanged($event)"
-        (reset)="onFiltersReset()"
-        [sections]="filterSections()"
-        class="hidden lg:flex"
-      />
+    <div class="flex min-h-0 min-w-0 flex-1 overflow-hidden">
       <ee-table
         (pageChange)="onPageChange($event)"
         (sortingChange)="onTableSortingChange($event)"
@@ -62,7 +78,7 @@
       [class.opacity-0]="!mobileFiltersOpen()"
       [class.opacity-100]="mobileFiltersOpen()"
       [class.pointer-events-none]="!mobileFiltersOpen()"
-      class="fixed inset-0 z-50 flex transition-opacity duration-300 lg:hidden"
+      class="fixed inset-0 z-50 flex transition-opacity duration-300"
       (keydown.escape)="closeMobileFilters()"
     >
       <button
@@ -75,15 +91,11 @@
       <div
         [class.translate-x-0]="mobileFiltersOpen()"
         [class.translate-x-full]="!mobileFiltersOpen()"
-        class="flex h-full min-h-0 w-[min(22rem,90vw)] flex-col overflow-hidden border-l border-white/10 bg-surface p-4 transition-transform duration-300 ease-out"
+        class="flex h-full min-h-0 w-[min(22rem,90vw)] flex-col overflow-hidden border-l border-white/10 bg-surface-container-lowest p-3 transition-transform duration-300 ease-out"
       >
         <div class="mb-3 flex items-center justify-between gap-2">
-          <h2 class="ee-section-heading text-primary" i18n="@@filters.titleShort">Filters</h2>
-          <button
-            (click)="closeMobileFilters()"
-            class="rounded border border-white/10 bg-surface-container-high px-3 py-1.5 ee-label text-on-surface transition hover:bg-surface-container-highest"
-            type="button"
-          >
+          <span></span>
+          <button eeButton size="sm" (click)="closeMobileFilters()" type="button">
             <ng-container i18n="@@common.close">Close</ng-container>
           </button>
         </div>
@@ -92,9 +104,9 @@
           (optionToggled)="onFilterToggled($event)"
           (rangeChanged)="onRangeChanged($event)"
           (reset)="onFiltersReset(); closeMobileFilters()"
-          [sections]="filterSections()"
+          [sections]="panelSections()"
           class="flex min-h-0 flex-1"
-          panelClass="ee-glass flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-lg"
+          panelClass="flex min-h-0 w-full flex-1 flex-col overflow-hidden"
         />
       </div>
     </div>

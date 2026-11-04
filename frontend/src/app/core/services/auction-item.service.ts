@@ -56,6 +56,15 @@ export class AuctionItemService extends BaseSearchService<
     });
   }
 
+  /** Removes both bounds of a range filter in one navigation. */
+  clearRangeFilter(sectionId: string): void {
+    const withoutMin = applyMarketRangeFilter(this.currentQueryState(), sectionId, 'min', null);
+    this.navigateQueryState({
+      ...applyMarketRangeFilter(withoutMin, sectionId, 'max', null),
+      page: defaultMarketBrowserQueryState.page,
+    });
+  }
+
   setRangeFilter(sectionId: string, bound: 'min' | 'max', value: number | null): void {
     this.navigateQueryState({
       ...applyMarketRangeFilter(this.currentQueryState(), sectionId, bound, value),

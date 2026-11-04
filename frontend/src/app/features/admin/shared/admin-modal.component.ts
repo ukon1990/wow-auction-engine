@@ -44,10 +44,7 @@ import { SymbolIconComponent } from '@ui';
             <header
               class="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-4"
             >
-              <h2
-                [id]="resolvedTitleId()"
-                class="font-cinzel text-xl font-bold text-primary-container"
-              >
+              <h2 [id]="resolvedTitleId()" class="text-base font-semibold text-on-surface">
                 {{ title() }}
               </h2>
               <button

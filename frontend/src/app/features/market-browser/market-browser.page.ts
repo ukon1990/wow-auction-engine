@@ -14,6 +14,8 @@ import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged, fromEvent, map, startWith } from 'rxjs';
 
 import {
+  ActiveFilterChipsComponent,
+  ButtonDirective,
   FilterOptionChanged,
   FilterPanelComponent,
   FilterRangeChanged,
@@ -34,12 +36,13 @@ import {
 } from './market-browser-table.columns';
 import { AuctionItemService } from '@core/services/auction-item.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
+import { LocaleService } from '@core/services/locale.service';
+import { RealmSelectionService } from '@core/services/realm-selection.service';
+import { parseActiveFilterChipId, toActiveFilterChips } from '@core/utils/active-filter-chips';
 
 const DEFAULT_VIEWPORT_WIDTH = 1280;
 const CARD_VIEW_MAX_WIDTH = 1023;
-const CLASS_MIN_WIDTH = 860;
-const SUBCLASS_MIN_WIDTH = 1040;
-const QUALITY_MIN_WIDTH = 1200;
 
 @Component({
   selector: 'app-market-browser-page',
@@ -47,6 +50,8 @@ const QUALITY_MIN_WIDTH = 1200;
     class: 'flex min-h-0 flex-1 overflow-hidden',
   },
   imports: [
+    ActiveFilterChipsComponent,
+    ButtonDirective,
     FilterPanelComponent,
     PageFrameComponent,
     SearchInputComponent,
@@ -98,11 +103,25 @@ export class MarketBrowserPage {
   });
   readonly currentRows = this.auctionService.currentRows;
   readonly filterSections = this.auctionService.filterSections;
+  protected readonly activeFilterChips = computed(() => toActiveFilterChips(this.filterSections()));
+  private readonly realmSelection = inject(RealmSelectionService);
+  private readonly locale = inject(LocaleService);
+  protected readonly resultSummary = computed(() => {
+    const total = this.paginationState()?.totalItems;
+    if (total == null) return '';
+    const count =
+      new DecimalPipe(this.locale.formatLocale()).transform(total, '1.0-0') ?? String(total);
+    const sortBy = this.auctionService.queryParams()?.sortBy;
+    const sortLabel = this.marketMobileSortOptions.find((option) => option.id === sortBy)?.label;
+    return sortLabel
+      ? $localize`:@@market.resultSummarySorted:${count}:count: items · sorted by ${sortLabel}:sort:`
+      : $localize`:@@market.resultSummary:${count}:count: items`;
+  });
   readonly pageSize = computed(() => this.auctionService.pageData()?.page?.pageSize ?? 25);
   readonly paginationState = this.auctionService.paginationState;
   readonly isLoading = this.auctionService.isLoading;
   readonly loadingPaginationSummary = $localize`:@@market.loadingItems:Loading market items...`;
-  readonly emptyPaginationSummary = $localize`:@@market.pagination.empty:No market items available.`;
+  readonly emptyPaginationSummary = $localize`:@@market.pagination.empty:No items match these filters.`;
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
@@ -138,11 +157,14 @@ export class MarketBrowserPage {
   protected readonly marketRowId = (row: MarketItemRow) => row.id;
 
   protected pageTitle(): string {
-    return $localize`:@@market.title:Market Browser`;
+    return $localize`:@@market.title:Market`;
   }
 
-  protected pageEyebrow(): string {
-    return $localize`:@@market.eyebrow:Search the auction house`;
+  protected pageDescription(): string {
+    const realm = this.realmSelection.selected();
+    if (!realm?.name) return '';
+    const region = realm.region.toUpperCase();
+    return $localize`:@@market.description:Prices for ${realm.name}:realm: (${region}:region:) and region commodities`;
   }
 
   protected filterOptionsLabel(): string {
@@ -159,6 +181,14 @@ export class MarketBrowserPage {
 
   protected onRangeChanged(change: FilterRangeChanged): void {
     this.auctionService.setRangeFilter(change.sectionId, change.bound, change.value);
+  }
+
+  protected onChipRemoved(chipId: string): void {
+    const chip = parseActiveFilterChipId(chipId);
+    if (!chip) return;
+    if (chip.kind === 'range') this.auctionService.clearRangeFilter(chip.sectionId);
+    else if (chip.kind === 'select') this.auctionService.selectFilter(chip.sectionId, null);
+    else this.auctionService.toggleFilter(chip.optionId);
   }
 
   protected onFiltersReset(): void {
@@ -182,16 +212,12 @@ export class MarketBrowserPage {
   }
 }
 
-function activeColumnIdsForViewport(width: number): Set<string> {
-  const active = new Set<string>([
+function activeColumnIdsForViewport(_width: number): Set<string> {
+  return new Set<string>([
     'itemName',
     'selectedPrice',
     'selectedQuantity',
     'saleRate',
     'soldPerDay',
   ]);
-  if (width >= CLASS_MIN_WIDTH) active.add('itemClass');
-  if (width >= SUBCLASS_MIN_WIDTH) active.add('itemSubclass');
-  if (width >= QUALITY_MIN_WIDTH) active.add('quality');
-  return active;
 }

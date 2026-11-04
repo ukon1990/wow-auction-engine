@@ -1,29 +1,17 @@
-<ee-page-frame
-  title="Status"
-  eyebrow="Admin"
-  [loading]="loading() && !status()"
-  titleId="admin-status-title"
->
+<ee-page-frame title="Status" [loading]="loading() && !status()" titleId="admin-status-title">
   <div class="flex flex-wrap items-center justify-between gap-3">
-    <p class="ee-data text-outline">Last updated: {{ lastUpdatedLabel() }}</p>
+    <p class="text-sm text-on-surface-variant">Last updated {{ lastUpdatedLabel() }}</p>
     <div class="flex flex-wrap items-center gap-3">
-      <label class="ee-label flex items-center gap-2 text-on-surface">
+      <label class="flex items-center gap-2 text-sm text-on-surface">
         <input
           type="checkbox"
-          class="h-4 w-4 rounded border-white/20 bg-surface-container text-primary accent-primary"
+          class="h-4 w-4 accent-primary"
           [checked]="backgroundUpdates()"
           (change)="updateBackgroundUpdates($event)"
         />
         Update in the background
       </label>
-      <button
-        type="button"
-        class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
-        [disabled]="loading()"
-        (click)="refresh()"
-      >
-        Refresh
-      </button>
+      <button eeButton type="button" [disabled]="loading()" (click)="refresh()">Refresh</button>
     </div>
   </div>
 
@@ -33,194 +21,262 @@
     </p>
   } @else {
     <section
-      class="grid gap-4 md:grid-cols-2 xl:grid-cols-4"
+      class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
       aria-label="Status metrics"
       [eeSkeleton]="contentLoading()"
     >
-      <ee-item-stat-card
-        label="Threads connected"
-        icon="settings"
-        [value]="status()?.connections?.threadsConnected ?? 0"
-        [caption]="'Max used: ' + (status()?.connections?.maxUsedConnections ?? '—')"
-      />
-      <ee-item-stat-card
-        label="Database uptime"
-        icon="query_stats"
-        [value]="status() ? uptimeLabel(status()!.connections.uptimeSeconds) : '—'"
-        caption="From MariaDB global status"
-      />
-      <ee-item-stat-card
-        label="JVM memory"
-        icon="schema"
-        [value]="status()?.server?.usedMemoryMb ?? 0"
-        unit="MB"
-        [caption]="
-          status()?.server
-            ? 'Total: ' +
-              status()!.server.totalMemoryMb +
-              ' MB / Max: ' +
-              status()!.server.maxMemoryMb +
-              ' MB'
-            : 'Total: — MB / Max: — MB'
-        "
-      />
-      <ee-item-stat-card
-        label="CPU"
-        icon="show_chart"
-        [value]="status()?.server ? percentLabel(status()!.server.processCpuLoad) : '—'"
-        [caption]="
-          'System: ' + (status()?.server ? percentLabel(status()!.server.systemCpuLoad) : '—')
-        "
-      />
-    </section>
-
-    <section class="grid gap-4" aria-label="Status history">
-      <header>
-        <h2 class="font-cinzel text-xl font-bold text-primary-container">Status history</h2>
-        <p class="ee-data text-outline">
-          {{ history().length }} samples from this browser session.
-        </p>
-      </header>
-
-      <div class="grid gap-4 xl:grid-cols-2">
-        <div class="ee-glass min-w-0 rounded-lg p-inner-padding" [eeSkeleton]="contentLoading()">
-          <h3 class="ee-label mb-3 text-on-surface">Memory usage</h3>
-          <ee-chart [options]="memoryGaugeOptions()" [minHeightPx]="260"></ee-chart>
-        </div>
-        <div class="ee-glass min-w-0 rounded-lg p-inner-padding" [eeSkeleton]="contentLoading()">
-          <h3 class="ee-label mb-3 text-on-surface">Threads connected</h3>
-          <ee-chart [options]="threadsGaugeOptions()" [minHeightPx]="260"></ee-chart>
-        </div>
-      </div>
-
-      <div class="grid gap-4 xl:grid-cols-3">
-        <div class="ee-glass min-w-0 rounded-lg p-inner-padding" [eeSkeleton]="contentLoading()">
-          <h3 class="ee-label mb-3 text-on-surface">CPU over time</h3>
-          <ee-chart [options]="cpuHistoryOptions()" [minHeightPx]="280"></ee-chart>
-        </div>
-        <div class="ee-glass min-w-0 rounded-lg p-inner-padding" [eeSkeleton]="contentLoading()">
-          <h3 class="ee-label mb-3 text-on-surface">Memory over time</h3>
-          <ee-chart [options]="memoryHistoryOptions()" [minHeightPx]="280"></ee-chart>
-        </div>
-        <div class="ee-glass min-w-0 rounded-lg p-inner-padding" [eeSkeleton]="contentLoading()">
-          <h3 class="ee-label mb-3 text-on-surface">Threads over time</h3>
-          <ee-chart [options]="threadsHistoryOptions()" [minHeightPx]="280"></ee-chart>
-        </div>
-      </div>
-    </section>
-
-    <div [eeSkeleton]="contentLoading()">
-      <app-admin-sql-editor />
-    </div>
-
-    <section class="flex min-h-[22rem] flex-col gap-3">
-      <header class="flex flex-wrap items-center justify-between gap-3">
-        <h2 class="font-cinzel text-xl font-bold text-primary-container">Running queries</h2>
-        <label class="min-w-[16rem] max-w-full">
-          <span class="sr-only">Search running queries</span>
-          <input
-            type="search"
-            class="h-10 w-full rounded-md border border-white/10 bg-surface-container px-3 text-sm text-on-surface outline-none transition placeholder:text-outline focus:border-primary-container focus:ring-2 focus:ring-primary-container/40"
-            placeholder="Search running queries"
-            [value]="runningQuerySearch()"
-            (input)="updateRunningQuerySearch($event)"
-          />
-        </label>
-      </header>
-      <section
-        class="ee-glass flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg"
-        aria-label="Running queries"
+      <div
+        class="flex min-w-0 flex-col gap-1 rounded-lg border border-white/10 bg-surface-container-low p-inner-padding"
       >
-        <div class="overflow-x-auto">
-          <div class="min-w-[72rem]">
-            <div
-              class="grid grid-cols-[7rem_5.5rem_6.5rem_5.5rem_5.5rem_1fr] gap-4 border-b border-white/10 bg-surface-container-high px-container-padding py-4 ee-label text-outline"
-              role="row"
-            >
-              <div role="columnheader">Started</div>
-              <div role="columnheader">Command</div>
-              <div role="columnheader">State</div>
-              <div class="text-right" role="columnheader">Duration</div>
-              <div class="text-right" role="columnheader">Memory</div>
-              <div role="columnheader">SQL</div>
-            </div>
-
-            <div
-              class="max-h-[28rem] overflow-y-auto divide-y divide-white/5"
-              [eeSkeleton]="runningQueriesLoading()"
-            >
-              @if (runningQueriesLoading()) {
-                @for (row of runningQuerySkeletonRows; track row) {
-                  <div
-                    class="grid grid-cols-[7rem_5.5rem_6.5rem_5.5rem_5.5rem_1fr] items-start gap-4 px-container-padding py-3 text-sm text-on-surface"
-                    role="row"
-                  >
-                    <div class="ee-data text-outline">00:00:00</div>
-                    <div class="truncate">Query</div>
-                    <div class="truncate">Sending data</div>
-                    <div class="text-right ee-data">0 ms</div>
-                    <div class="text-right ee-data">—</div>
-                    <div class="min-w-0">
-                      <code class="block max-w-full truncate font-mono text-xs text-on-surface">
-                        SELECT column_name FROM table_name WHERE id = 1
-                      </code>
-                    </div>
-                  </div>
-                }
-              } @else {
-                @for (query of filteredRunningQueries(); track query.id + '-' + query.queryId) {
-                  <div
-                    class="grid grid-cols-[7rem_5.5rem_6.5rem_5.5rem_5.5rem_1fr] items-start gap-4 px-container-padding py-3 text-sm text-on-surface transition hover:bg-white/5"
-                    role="row"
-                  >
-                    <div class="ee-data text-outline">{{ startedAtLabel(query.startedAt) }}</div>
-                    <div class="truncate">{{ query.command }}</div>
-                    <div class="truncate">{{ nullableLabel(query.state) }}</div>
-                    <div class="text-right ee-data">{{ durationLabel(query.timeMs) }}</div>
-                    <div class="text-right ee-data">
-                      {{ nullableNumberLabel(query.memoryUsed) }}
-                    </div>
-                    <div class="min-w-0">
-                      <code class="block max-w-full truncate font-mono text-xs text-on-surface">
-                        {{ queryPreview(query) }}
-                      </code>
-                      <button
-                        type="button"
-                        class="mt-2 rounded border border-white/10 px-2 py-1 ee-label text-primary-container transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-                        (click)="showQuery(query)"
-                      >
-                        Show more
-                      </button>
-                    </div>
-                  </div>
-                } @empty {
-                  <div class="p-8 text-center text-on-surface-variant">
-                    {{
-                      runningQuerySearch().trim()
-                        ? 'No running queries match the search.'
-                        : 'No running queries.'
-                    }}
-                  </div>
-                }
-              }
-            </div>
-          </div>
+        <p class="ee-label text-outline">Threads connected</p>
+        <p class="ee-data text-2xl font-bold text-on-surface">
+          {{ status()?.connections?.threadsConnected ?? '—' }}
+          <span class="text-sm font-normal text-outline"
+            >/ {{ status()?.connections?.maxUsedConnections ?? '—' }} max used</span
+          >
+        </p>
+      </div>
+      <div
+        class="flex min-w-0 flex-col gap-1 rounded-lg border border-white/10 bg-surface-container-low p-inner-padding"
+      >
+        <p class="ee-label text-outline">Database uptime</p>
+        <p class="ee-data text-2xl font-bold text-on-surface">
+          {{ status() ? uptimeLabel(status()!.connections.uptimeSeconds) : '—' }}
+        </p>
+      </div>
+      <div
+        class="flex min-w-0 flex-col gap-1 rounded-lg border border-white/10 bg-surface-container-low p-inner-padding"
+      >
+        <p class="ee-label text-outline">JVM memory</p>
+        <p class="ee-data text-2xl font-bold text-on-surface">
+          {{ status()?.server?.usedMemoryMb ?? '—' }}
+          <span class="text-sm font-normal text-outline"
+            >/ {{ status()?.server?.maxMemoryMb ?? '—' }} MB</span
+          >
+        </p>
+        <div
+          class="mt-1 h-1.5 overflow-hidden rounded-full bg-surface-container-highest"
+          role="meter"
+          aria-label="JVM memory used"
+          [attr.aria-valuenow]="memoryPercent()"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div class="h-full rounded-full bg-primary" [style.width.%]="memoryPercent()"></div>
         </div>
-      </section>
+      </div>
+      <div
+        class="flex min-w-0 flex-col gap-1 rounded-lg border border-white/10 bg-surface-container-low p-inner-padding"
+      >
+        <p class="ee-label text-outline">CPU</p>
+        <p class="ee-data text-2xl font-bold text-on-surface">
+          {{ status()?.server ? percentLabel(status()!.server.processCpuLoad) : '—' }}
+          <span class="text-sm font-normal text-outline"
+            >system
+            {{ status()?.server ? percentLabel(status()!.server.systemCpuLoad) : '—' }}</span
+          >
+        </p>
+        <div
+          class="mt-1 h-1.5 overflow-hidden rounded-full bg-surface-container-highest"
+          role="meter"
+          aria-label="Process CPU"
+          [attr.aria-valuenow]="status()?.server?.processCpuLoad ?? 0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div
+            class="h-full rounded-full bg-primary"
+            [style.width.%]="status()?.server?.processCpuLoad ?? 0"
+          ></div>
+        </div>
+      </div>
     </section>
 
-    <section class="grid min-h-[28rem] gap-3">
-      <header>
-        <h2 class="font-cinzel text-xl font-bold text-primary-container">Table and index sizes</h2>
+    <section class="flex flex-col gap-3" aria-label="Status history">
+      <header class="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 class="text-base font-semibold text-on-surface">Status history</h2>
+        <p class="text-xs text-outline">{{ history().length }} samples from this browser session</p>
       </header>
-      <ee-table
-        [columns]="tableSizeColumns()"
-        [data]="status()?.tableSizes ?? []"
-        [loading]="contentLoading() || (loading() && (status()?.tableSizes?.length ?? 0) === 0)"
-        [skeletonRowCount]="10"
-        emptyMessage="No table size metrics available."
-        sectionAriaLabel="Table and index sizes"
+      <div class="grid gap-3 xl:grid-cols-3">
+        <div
+          class="min-w-0 rounded-lg border border-white/10 bg-surface-container-low p-inner-padding"
+          [eeSkeleton]="contentLoading()"
+        >
+          <h3 class="text-sm font-semibold text-on-surface">CPU over time</h3>
+          <p class="mb-2 text-xs text-outline">Load in %, by time (HH:MM)</p>
+          <ee-chart [options]="cpuHistoryOptions()" [minHeightPx]="240"></ee-chart>
+        </div>
+        <div
+          class="min-w-0 rounded-lg border border-white/10 bg-surface-container-low p-inner-padding"
+          [eeSkeleton]="contentLoading()"
+        >
+          <h3 class="text-sm font-semibold text-on-surface">Memory over time</h3>
+          <p class="mb-2 text-xs text-outline">Memory in MB, by time (HH:MM)</p>
+          <ee-chart [options]="memoryHistoryOptions()" [minHeightPx]="240"></ee-chart>
+        </div>
+        <div
+          class="min-w-0 rounded-lg border border-white/10 bg-surface-container-low p-inner-padding"
+          [eeSkeleton]="contentLoading()"
+        >
+          <h3 class="text-sm font-semibold text-on-surface">Threads over time</h3>
+          <p class="mb-2 text-xs text-outline">Database connections, by time (HH:MM)</p>
+          <ee-chart [options]="threadsHistoryOptions()" [minHeightPx]="240"></ee-chart>
+        </div>
+      </div>
+    </section>
+
+    <section class="flex min-h-[24rem] flex-col gap-3">
+      <ee-tabs
+        variant="underline"
+        label="Database tools"
+        idPrefix="admin-status-tab"
+        [tabs]="toolTabs"
+        [activeId]="activeToolTab()"
+        (selected)="activeToolTab.set($event)"
       />
+      @switch (activeToolTab()) {
+        @case ('queries') {
+          <div
+            class="flex min-h-0 flex-1 flex-col gap-3"
+            role="tabpanel"
+            aria-labelledby="admin-status-tab-queries"
+          >
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <label class="w-full max-w-sm">
+                <span class="sr-only">Search running queries</span>
+                <input
+                  type="search"
+                  class="h-10 w-full rounded-md border border-white/10 bg-surface-container-lowest px-3 text-sm text-on-surface outline-none transition placeholder:text-outline focus:border-primary"
+                  placeholder="Search running queries"
+                  [value]="runningQuerySearch()"
+                  (input)="updateRunningQuerySearch($event)"
+                />
+              </label>
+              <p class="text-sm text-on-surface-variant">
+                {{ filteredRunningQueries().length }} running
+              </p>
+            </div>
+            <section
+              class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg border border-white/10 bg-surface-container-low"
+              aria-label="Running queries"
+            >
+              <div class="overflow-x-auto">
+                <div class="min-w-[72rem]">
+                  <div
+                    class="grid grid-cols-[7rem_5.5rem_6.5rem_5.5rem_5.5rem_1fr] gap-4 border-b border-white/10 bg-surface-container-high px-inner-padding py-4 ee-label text-outline"
+                    role="row"
+                  >
+                    <div role="columnheader">Started</div>
+                    <div role="columnheader">Command</div>
+                    <div role="columnheader">State</div>
+                    <div class="text-right" role="columnheader">Duration</div>
+                    <div class="text-right" role="columnheader">Memory</div>
+                    <div role="columnheader">SQL</div>
+                  </div>
+
+                  <div
+                    class="max-h-[28rem] overflow-y-auto divide-y divide-white/5"
+                    [eeSkeleton]="runningQueriesLoading()"
+                  >
+                    @if (runningQueriesLoading()) {
+                      @for (row of runningQuerySkeletonRows; track row) {
+                        <div
+                          class="grid grid-cols-[7rem_5.5rem_6.5rem_5.5rem_5.5rem_1fr] items-start gap-4 px-inner-padding py-3 text-sm text-on-surface"
+                          role="row"
+                        >
+                          <div class="ee-data text-outline">00:00:00</div>
+                          <div class="truncate">Query</div>
+                          <div class="truncate">Sending data</div>
+                          <div class="text-right ee-data">0 ms</div>
+                          <div class="text-right ee-data">—</div>
+                          <div class="min-w-0">
+                            <code
+                              class="block max-w-full truncate font-mono text-xs text-on-surface"
+                            >
+                              SELECT column_name FROM table_name WHERE id = 1
+                            </code>
+                          </div>
+                        </div>
+                      }
+                    } @else {
+                      @for (
+                        query of filteredRunningQueries();
+                        track query.id + '-' + query.queryId
+                      ) {
+                        <div
+                          class="grid grid-cols-[7rem_5.5rem_6.5rem_5.5rem_5.5rem_1fr] items-start gap-4 px-inner-padding py-3 text-sm text-on-surface transition hover:bg-white/5"
+                          role="row"
+                        >
+                          <div class="ee-data text-outline">
+                            {{ startedAtLabel(query.startedAt) }}
+                          </div>
+                          <div class="truncate">{{ query.command }}</div>
+                          <div class="truncate">{{ nullableLabel(query.state) }}</div>
+                          <div class="text-right ee-data">{{ durationLabel(query.timeMs) }}</div>
+                          <div class="text-right ee-data">
+                            {{ nullableNumberLabel(query.memoryUsed) }}
+                          </div>
+                          <div class="min-w-0">
+                            <code
+                              class="block max-w-full truncate font-mono text-xs text-on-surface"
+                            >
+                              {{ queryPreview(query) }}
+                            </code>
+                            <button
+                              eeButton
+                              size="sm"
+                              type="button"
+                              class="mt-2"
+                              (click)="showQuery(query)"
+                            >
+                              Show more
+                            </button>
+                          </div>
+                        </div>
+                      } @empty {
+                        <div class="p-8 text-center text-on-surface-variant">
+                          {{
+                            runningQuerySearch().trim()
+                              ? 'No running queries match the search.'
+                              : 'No running queries.'
+                          }}
+                        </div>
+                      }
+                    }
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        }
+        @case ('tables') {
+          <div
+            class="flex min-h-[28rem] flex-col"
+            role="tabpanel"
+            aria-labelledby="admin-status-tab-tables"
+          >
+            <ee-table
+              [columns]="tableSizeColumns()"
+              [data]="status()?.tableSizes ?? []"
+              [loading]="
+                contentLoading() || (loading() && (status()?.tableSizes?.length ?? 0) === 0)
+              "
+              [skeletonRowCount]="10"
+              emptyMessage="No table size metrics available."
+              sectionAriaLabel="Table and index sizes"
+            />
+          </div>
+        }
+        @case ('sql') {
+          <div
+            role="tabpanel"
+            aria-labelledby="admin-status-tab-sql"
+            [eeSkeleton]="contentLoading()"
+          >
+            <app-admin-sql-editor />
+          </div>
+        }
+      }
     </section>
   }
 

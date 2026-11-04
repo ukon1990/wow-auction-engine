@@ -10,7 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AdminRunningQuery, AdminSqlExecuteRequest, AdminSqlResult } from '@api/generated';
-import { CopyButtonComponent } from '@ui';
+import { CopyButtonComponent, ButtonDirective } from '@ui';
 import {
   AdminSqlService,
   DEFAULT_ADMIN_SQL_ROW_LIMIT,
@@ -24,7 +24,13 @@ const standaloneModel = { standalone: true };
 
 @Component({
   selector: 'app-admin-query-dialog',
-  imports: [AdminSqlCodeEditorComponent, CopyButtonComponent, FormsModule, AdminSqlResultComponent],
+  imports: [
+    ButtonDirective,
+    AdminSqlCodeEditorComponent,
+    CopyButtonComponent,
+    FormsModule,
+    AdminSqlResultComponent,
+  ],
   template: `
     @if (query(); as query) {
       <div
@@ -42,10 +48,7 @@ const standaloneModel = { standalone: true };
             class="flex items-center justify-between gap-3 border-b border-white/10 p-inner-padding"
           >
             <div>
-              <h2
-                id="query-sql-dialog-title"
-                class="font-cinzel text-xl font-bold text-primary-container"
-              >
+              <h2 id="query-sql-dialog-title" class="text-base font-semibold text-on-surface">
                 SQL query
               </h2>
               <p class="ee-data text-outline">
@@ -53,13 +56,7 @@ const standaloneModel = { standalone: true };
                 {{ durationLabel()(query.timeMs) }}
               </p>
             </div>
-            <button
-              type="button"
-              class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-              (click)="closed.emit()"
-            >
-              Close
-            </button>
+            <button type="button" eeButton (click)="closed.emit()">Close</button>
           </header>
 
           <div class="min-h-0 overflow-y-auto p-inner-padding">
@@ -92,7 +89,7 @@ const standaloneModel = { standalone: true };
                 <div class="flex flex-wrap gap-3">
                   <button
                     type="button"
-                    class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-not-allowed disabled:opacity-60"
+                    eeButton
                     [disabled]="!canExplain(query.info) || loading()"
                     (click)="execute(query.info, modeEnum.Explain)"
                   >
@@ -100,7 +97,7 @@ const standaloneModel = { standalone: true };
                   </button>
                   <button
                     type="button"
-                    class="h-10 rounded-md border border-tertiary-container/50 px-4 font-semibold text-tertiary-container transition hover:bg-tertiary-container/10 focus:outline-none focus:ring-2 focus:ring-tertiary-container disabled:cursor-not-allowed disabled:opacity-60"
+                    eeButton
                     [disabled]="!canExplain(query.info) || loading()"
                     (click)="execute(query.info, modeEnum.Analyze)"
                   >

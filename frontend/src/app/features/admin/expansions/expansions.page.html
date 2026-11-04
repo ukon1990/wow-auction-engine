@@ -1,6 +1,5 @@
 <ee-page-frame
   title="Expansions"
-  eyebrow="Admin"
   [loading]="loading() && expansions().length === 0"
   titleId="admin-expansions-title"
 >
@@ -15,13 +14,13 @@
 
   <section class="grid gap-4" aria-label="Expansion job actions">
     <div class="flex flex-wrap items-center justify-between gap-3">
-      <p class="ee-data text-outline">
+      <p class="text-sm text-on-surface-variant">
         Apply enabled ranges to items or fetch missing item records covered by enabled ranges.
       </p>
       <div class="flex flex-wrap gap-3">
         <button
           type="button"
-          class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+          eeButton
           [disabled]="mutationLoading() || jobIsRunning()"
           (click)="applyRanges()"
         >
@@ -29,7 +28,7 @@
         </button>
         <button
           type="button"
-          class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+          eeButton
           [disabled]="mutationLoading() || jobIsRunning()"
           (click)="fetchMissingItems()"
         >
@@ -51,13 +50,7 @@
           }
         </div>
         @if (!jobIsRunning()) {
-          <button
-            type="button"
-            class="h-9 rounded-md border border-white/10 px-3 text-sm font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-            (click)="dismissJobBanner()"
-          >
-            Dismiss
-          </button>
+          <button type="button" eeButton (click)="dismissJobBanner()">Dismiss</button>
         }
       </div>
     }
@@ -66,12 +59,13 @@
   <section class="grid gap-4" aria-label="Expansion catalog">
     <header class="flex flex-wrap items-end justify-between gap-3">
       <div class="grid gap-1">
-        <h2 class="font-cinzel text-xl font-bold text-primary-container">Expansion catalog</h2>
-        <p class="ee-data text-outline">Manage expansions and their localized names.</p>
+        <h2 class="text-base font-semibold text-on-surface">Expansion catalog</h2>
+        <p class="text-sm text-on-surface-variant">Manage expansions and their localized names.</p>
       </div>
       <button
         type="button"
-        class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+        eeButton
+        variant="primary"
         [disabled]="mutationLoading()"
         (click)="openCreateExpansionForm()"
       >
@@ -90,14 +84,15 @@
   <section class="grid min-h-0 flex-1 gap-4" aria-label="Expansion item ranges">
     <header class="flex flex-wrap items-end justify-between gap-3">
       <div class="grid gap-1">
-        <h2 class="font-cinzel text-xl font-bold text-primary-container">Item ranges</h2>
-        <p class="ee-data text-outline">
+        <h2 class="text-base font-semibold text-on-surface">Item ranges</h2>
+        <p class="text-sm text-on-surface-variant">
           Filter and manage item ID ranges that map items to expansions.
         </p>
       </div>
       <button
         type="button"
-        class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+        eeButton
+        variant="primary"
         [disabled]="mutationLoading()"
         (click)="openCreateRangeForm()"
       >

@@ -8,11 +8,13 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
+  ButtonDirective,
   ChartComponent,
-  ItemStatCardComponent,
   PageFrameComponent,
   SkeletonDirective,
   TableComponent,
+  TabOption,
+  TabsComponent,
 } from '@ui';
 import { AdminRunningQuery } from '@api/generated';
 import type Highcharts from 'highcharts/esm/highcharts';
@@ -28,11 +30,12 @@ const QUERY_PREVIEW_LIMIT = 220;
   imports: [
     AdminQueryDialogComponent,
     AdminSqlEditorComponent,
+    ButtonDirective,
     ChartComponent,
-    ItemStatCardComponent,
     PageFrameComponent,
     SkeletonDirective,
     TableComponent,
+    TabsComponent,
   ],
   templateUrl: './admin-status.page.html',
   host: {
@@ -66,29 +69,23 @@ export class AdminStatusPage {
     () => this.loading() && this.filteredRunningQueries().length === 0,
   );
   protected readonly runningQuerySkeletonRows = [0, 1, 2, 3, 4] as const;
-  protected readonly memoryGaugeOptions = computed<Highcharts.Options>(() => {
-    const status = this.status();
-    return this.gaugeOptions({
-      title: 'Memory',
-      value: status?.server.usedMemoryMb ?? 0,
-      max: Math.max(status?.server.maxMemoryMb ?? 1, 1),
-      unit: 'MB',
-    });
-  });
-  protected readonly threadsGaugeOptions = computed<Highcharts.Options>(() => {
-    const status = this.status();
-    const threadsConnected = status?.connections.threadsConnected ?? 0;
-    return this.gaugeOptions({
-      title: 'Threads',
-      value: threadsConnected,
-      max: Math.max(status?.connections.maxUsedConnections ?? 1, threadsConnected, 1),
-      unit: '',
-    });
+  protected readonly toolTabs: readonly TabOption[] = [
+    { id: 'queries', label: 'Running queries' },
+    { id: 'tables', label: 'Table and index sizes' },
+    { id: 'sql', label: 'SQL editor' },
+  ];
+  protected readonly activeToolTab = signal('queries');
+  protected readonly memoryPercent = computed(() => {
+    const server = this.status()?.server;
+    if (!server?.maxMemoryMb) return 0;
+    return Math.min(100, Math.round((server.usedMemoryMb / server.maxMemoryMb) * 100));
   });
   protected readonly cpuHistoryOptions = computed<Highcharts.Options>(() => {
     const points = this.history();
     return this.lineOptions({
       suffix: '%',
+      yTitle: 'Load (%)',
+      max: 100,
       series: [
         {
           name: 'Process CPU',
@@ -113,6 +110,7 @@ export class AdminStatusPage {
     const points = this.history();
     return this.lineOptions({
       suffix: ' MB',
+      yTitle: 'Memory (MB)',
       series: [
         {
           name: 'Used memory',
@@ -131,6 +129,7 @@ export class AdminStatusPage {
     const points = this.history();
     return this.lineOptions({
       suffix: '',
+      yTitle: 'Connections',
       series: [
         {
           name: 'Connected threads',
@@ -193,75 +192,10 @@ export class AdminStatusPage {
     return value ? value.toLocaleTimeString() : '-';
   }
 
-  private gaugeOptions(config: {
-    readonly title: string;
-    readonly value: number;
-    readonly max: number;
-    readonly unit: string;
-  }): Highcharts.Options {
-    const value = Math.min(Math.max(config.value, 0), config.max);
-    const remaining = Math.max(config.max - value, 0);
-    return {
-      chart: {
-        type: 'pie',
-        height: 260,
-        spacing: [0, 0, 0, 0],
-      },
-      plotOptions: {
-        pie: {
-          animation: false,
-          borderWidth: 0,
-          center: ['50%', '78%'],
-          dataLabels: { enabled: false },
-          enableMouseTracking: false,
-          innerSize: '72%',
-          size: '140%',
-          startAngle: -90,
-          endAngle: 90,
-          states: {
-            inactive: { opacity: 1 },
-            hover: { enabled: false },
-          },
-        },
-      },
-      subtitle: {
-        text: `${value}${config.unit ? ` ${config.unit}` : ''}`,
-        align: 'center',
-        verticalAlign: 'middle',
-        y: 42,
-        style: {
-          color: 'var(--color-on-surface)',
-          fontSize: '1rem',
-          fontWeight: '600',
-        },
-      },
-      yAxis: undefined,
-      series: [
-        {
-          type: 'pie',
-          name: config.title,
-          data: [
-            {
-              name: config.title,
-              y: value,
-              color: gaugeColor(value / config.max),
-            },
-            {
-              name: 'Available',
-              y: remaining,
-              color: 'rgba(255,255,255,0.08)',
-            },
-          ],
-          dataLabels: {
-            enabled: false,
-          },
-        },
-      ],
-    };
-  }
-
   private lineOptions(config: {
     readonly suffix: string;
+    readonly yTitle: string;
+    readonly max?: number;
     readonly series: readonly {
       readonly name: string;
       readonly data: readonly (readonly [number, number | null])[];
@@ -283,6 +217,8 @@ export class AdminStatusPage {
       },
       xAxis: {
         type: 'datetime',
+        title: { text: 'Time (HH:MM)', style: { color: 'var(--color-outline)' } },
+        tickPixelInterval: 90,
         labels: {
           format: '{value:%H:%M}',
           style: { color: 'var(--color-outline)' },
@@ -290,7 +226,8 @@ export class AdminStatusPage {
       },
       yAxis: {
         min: 0,
-        title: { text: undefined },
+        max: config.max,
+        title: { text: config.yTitle, style: { color: 'var(--color-outline)' } },
         labels: {
           format: `{value}${config.suffix}`,
           style: { color: 'var(--color-outline)' },
@@ -370,14 +307,4 @@ export class AdminStatusPage {
       .join(' ')
       .toLowerCase();
   }
-}
-
-function gaugeColor(fraction: number): string {
-  if (fraction >= 0.9) {
-    return 'var(--color-error)';
-  }
-  if (fraction >= 0.7) {
-    return 'var(--color-tertiary-container)';
-  }
-  return 'var(--color-primary)';
 }

@@ -21,7 +21,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { fromEvent } from 'rxjs';
-import { SymbolIconComponent } from '@ui';
+import { ButtonDirective, SymbolIconComponent } from '@ui';
 
 import { ItemDetailModalService } from '@core/services/item-detail-modal.service';
 import {
@@ -35,12 +35,12 @@ import type { RegionCode } from '@features/market-browser/market-item-detail.hel
 
 @Component({
   selector: 'app-item-detail-modal-host',
-  imports: [CdkTrapFocus, MarketItemDetailPanelComponent, SymbolIconComponent],
+  imports: [ButtonDirective, CdkTrapFocus, MarketItemDetailPanelComponent, SymbolIconComponent],
   template: `
     @if (modal.state(); as open) {
       <div #portalRoot>
         <div
-          class="fixed inset-0 z-[60] grid place-items-center bg-black/75 p-3 sm:p-5"
+          class="fixed inset-0 z-[60] flex justify-end bg-black/50"
           role="dialog"
           aria-modal="true"
           [attr.aria-labelledby]="titleId"
@@ -49,32 +49,21 @@ import type { RegionCode } from '@features/market-browser/market-item-detail.hel
         >
           <div class="fixed inset-0" aria-hidden="true" (click)="close()"></div>
           <section
-            class="ee-glass relative z-[1] grid max-h-[92vh] w-full max-w-6xl grid-rows-[auto_1fr] overflow-hidden rounded-lg"
+            class="relative z-[1] grid h-full w-full max-w-5xl grid-rows-[auto_1fr] overflow-hidden border-l border-white/10 bg-surface-container-lowest shadow-[-12px_0_40px_rgba(0,0,0,0.5)]"
             (click)="$event.stopPropagation()"
           >
             <header
-              class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4"
+              class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-surface-container-low px-5 py-3"
             >
-              <h2
-                [id]="titleId"
-                class="min-w-0 truncate font-cinzel text-xl font-bold text-primary-container"
-              >
+              <h2 [id]="titleId" class="min-w-0 truncate text-lg font-semibold text-on-surface">
                 {{ modalTitle() }}
               </h2>
               <div class="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-2 rounded border border-white/10 bg-surface-container-high px-3 py-2 ee-label text-on-surface transition hover:bg-surface-container-highest focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-                  (click)="copyShareLink()"
-                >
+                <button type="button" eeButton size="sm" (click)="copyShareLink()">
                   <ee-symbol-icon class="text-base" name="link" aria-hidden="true" />
                   <ng-container i18n="@@itemDetail.copyLink">Copy link</ng-container>
                 </button>
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-2 rounded border border-white/10 bg-surface-container-high px-3 py-2 ee-label text-on-surface transition hover:bg-surface-container-highest focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-                  (click)="openSharePage()"
-                >
+                <button type="button" eeButton size="sm" (click)="openSharePage()">
                   <ee-symbol-icon class="text-base" name="open_in_new" aria-hidden="true" />
                   <ng-container i18n="@@itemDetail.openPage">Open page</ng-container>
                 </button>
