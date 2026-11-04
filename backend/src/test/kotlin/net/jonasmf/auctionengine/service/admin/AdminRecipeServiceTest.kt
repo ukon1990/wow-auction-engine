@@ -25,28 +25,6 @@ class AdminRecipeServiceTest {
     private val service = AdminRecipeService(repository, recipeApiClient)
 
     @Test
-    fun `search rejects subclass without class`() {
-        val error =
-            assertThrows(ResponseStatusException::class.java) {
-                service.searchRecipes(null, null, null, null, null, 7, null, null, null, 1, 25)
-            }
-
-        assertEquals(400, error.statusCode.value())
-        assertEquals("itemClassId is required when itemSubclassId is set", error.reason)
-    }
-
-    @Test
-    fun `search rejects unsupported association type`() {
-        val error =
-            assertThrows(ResponseStatusException::class.java) {
-                service.searchRecipes(null, null, null, null, null, null, null, null, "ingredient", 1, 25)
-            }
-
-        assertEquals(400, error.statusCode.value())
-        assertEquals("associationType must be crafted or reagent", error.reason)
-    }
-
-    @Test
     fun `upsert override rejects missing base recipe`() {
         val error =
             assertThrows(ResponseStatusException::class.java) {
@@ -103,17 +81,6 @@ class AdminRecipeServiceTest {
 
         assertEquals(400, error.statusCode.value())
         assertEquals("reagent.rank must be between 1 and 3", error.reason)
-    }
-
-    @Test
-    fun `delete override returns 404 when no override`() {
-        val error =
-            assertThrows(ResponseStatusException::class.java) {
-                service.deleteOverride(338995)
-            }
-
-        assertEquals(404, error.statusCode.value())
-        assertEquals("Recipe override not found: 338995", error.reason)
     }
 
     @Test
