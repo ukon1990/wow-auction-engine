@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import java.time.Instant
-import net.jonasmf.auctionengine.repository.rds.AuctionHouseRepository as AuctionHouseEntityRepository
+import net.jonasmf.auctionengine.auctionhouse.repository.AuctionHouseRepository as AuctionHouseEntityRepository
 
 class ConnectedRealmBulkSyncServiceTest : IntegrationTestBase() {
     @Autowired

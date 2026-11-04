@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.realm.repository
 
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.service.CommodityRealms
+import net.jonasmf.auctionengine.auctionhouse.CommodityRealms
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
