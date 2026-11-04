@@ -3,7 +3,7 @@ package net.jonasmf.auctionengine.auction
 import net.jonasmf.auctionengine.generated.api.CraftingMarketApi
 import net.jonasmf.auctionengine.generated.model.AuctionMarketFilterResponse
 import net.jonasmf.auctionengine.generated.model.CraftingMarketSearchPage
-import net.jonasmf.auctionengine.auction.CraftingMarketSearchService
+import net.jonasmf.auctionengine.auction.CraftingSearchService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class CraftingController(
-    private val craftingMarketSearchService: CraftingMarketSearchService,
+    private val craftingSearchService: CraftingSearchService,
 ) : CraftingMarketApi {
     override suspend fun filters(
         region: String,
@@ -19,7 +19,7 @@ class CraftingController(
         locale: String?,
     ): ResponseEntity<AuctionMarketFilterResponse> =
         ResponseEntity.ok(
-            craftingMarketSearchService.filters(
+            craftingSearchService.filters(
                 regionCode = region,
                 realmSlug = realmSlug,
                 localeOverride = locale,
@@ -55,7 +55,7 @@ class CraftingController(
         requireCompleteReagentPricing: Boolean,
     ): ResponseEntity<CraftingMarketSearchPage> =
         ResponseEntity.ok(
-            craftingMarketSearchService.search(
+            craftingSearchService.search(
                 regionCode = region,
                 realmSlug = realmSlug,
                 localeOverride = locale,

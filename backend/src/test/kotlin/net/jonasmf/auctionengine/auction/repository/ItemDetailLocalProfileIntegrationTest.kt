@@ -22,7 +22,7 @@ import java.time.ZoneId
 @ActiveProfiles("default")
 class ItemDetailLocalProfileIntegrationTest {
     @Autowired
-    private lateinit var repository: AuctionMarketItemDetailRepository
+    private lateinit var repository: AuctionItemDetailRepository
 
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
