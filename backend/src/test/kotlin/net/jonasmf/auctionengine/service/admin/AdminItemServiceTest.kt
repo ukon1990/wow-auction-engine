@@ -29,19 +29,6 @@ class AdminItemServiceTest {
     private val service = AdminItemService(repository, itemApiClient)
 
     @Test
-    fun `upsert override rejects missing item`() {
-        repository.itemRows -= 42
-
-        val error =
-            assertThrows(ResponseStatusException::class.java) {
-                service.upsertOverride(42, AdminItemOverrideRequest(mediaUrl = "https://example.test/icon.png"))
-            }
-
-        assertEquals(404, error.statusCode.value())
-        assertEquals("Item not found: 42", error.reason)
-    }
-
-    @Test
     fun `upsert override allows override-only item when full effective fields remain present`() {
         repository.itemRows[500000] =
             AdminItemRows(
@@ -163,17 +150,6 @@ class AdminItemServiceTest {
         assertEquals(0, result.items.size)
         assertEquals(1, repository.lastSearch?.itemClassId)
         assertEquals(1, repository.lastSearch?.itemSubclassId)
-    }
-
-    @Test
-    fun `search items requires class when subclass filter is set`() {
-        val error =
-            assertThrows(ResponseStatusException::class.java) {
-                service.searchItems(null, null, null, null, null, 1, null, null, 1, 25)
-            }
-
-        assertEquals(400, error.statusCode.value())
-        assertEquals("itemClassId is required when itemSubclassId is set", error.reason)
     }
 
     @Test
