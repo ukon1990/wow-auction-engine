@@ -1,0 +1,120 @@
+package net.jonasmf.auctionengine.auction.stats
+
+import net.jonasmf.auctionengine.schedules.immediateBackgroundWorkLauncher
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
+import net.jonasmf.auctionengine.config.BlizzardApiProperties
+import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.domain.realm.AuctionHouse
+import net.jonasmf.auctionengine.auction.snapshot.AuctionHouseService
+import net.jonasmf.auctionengine.auction.stats.AuctionStatsDailyService
+import net.jonasmf.auctionengine.auction.stats.AuctionStatsDailyUpdateResult
+import net.jonasmf.auctionengine.testsupport.builder.buildRealm
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.time.ZoneId
+import kotlin.time.Instant
+import kotlin.time.toJavaInstant
+
+class AuctionStatsDailyScheduleTest {
+    private val properties =
+        BlizzardApiProperties(
+            baseUrl = "https://example.test/",
+            tokenUrl = "https://example.test/token",
+            clientId = "id",
+            clientSecret = "secret",
+            regions = listOf(Region.Europe, Region.Taiwan),
+        )
+
+    @Test
+    fun `updateDailyPriceStatistics uses timezone and starts null markers at 2026`() {
+        val auctionHouseService = mockk<AuctionHouseService>()
+        val auctionStatsDailyService = mockk<AuctionStatsDailyService>()
+        val europeMarker = slot<Instant>()
+        val taiwanMarker = slot<Instant>()
+        val europeHouse =
+            AuctionHouse(
+                id = 1,
+                connectedId = 1,
+                region = Region.Europe,
+                lastDailyPriceUpdate = Instant.parse("2026-01-01T11:00:00Z"),
+                realms = listOf(buildRealm(timezone = "Pacific/Auckland")),
+            )
+        val taiwanHouse =
+            AuctionHouse(
+                id = 2,
+                connectedId = 2,
+                region = Region.Taiwan,
+                lastDailyPriceUpdate = null,
+                realms = listOf(buildRealm(timezone = "Asia/Taipei")),
+            )
+
+        every { auctionHouseService.findAllByRegion(Region.Europe) } returns listOf(europeHouse)
+        every { auctionHouseService.findAllByRegion(Region.Taiwan) } returns listOf(taiwanHouse)
+        every { auctionStatsDailyService.updateForDate(any(), any(), any()) } returns
+            AuctionStatsDailyUpdateResult(listOf(LocalDate.of(2026, 1, 3)), updatedRows = 7)
+        every { auctionHouseService.updateLastDailyPriceUpdate(1, capture(europeMarker)) } returns 1
+        every { auctionHouseService.updateLastDailyPriceUpdate(2, capture(taiwanMarker)) } returns 1
+
+        AuctionStatsDailySchedule(
+            properties,
+            auctionHouseService,
+            auctionStatsDailyService,
+            immediateBackgroundWorkLauncher(),
+        )
+            .updateDailyPriceStatistics()
+
+        verify(exactly = 1) {
+            auctionStatsDailyService.updateForDate(
+                connectedRealmId = 1,
+                lastUpdated = LocalDate.of(2026, 1, 2),
+                endDate = any(),
+            )
+        }
+        verify(exactly = 1) {
+            auctionStatsDailyService.updateForDate(
+                connectedRealmId = 2,
+                lastUpdated = LocalDate.of(2025, 12, 31),
+                endDate = any(),
+            )
+        }
+        assertEquals(
+            LocalDate.of(2026, 1, 3),
+            europeMarker.captured
+                .toJavaInstant()
+                .atZone(ZoneId.of("Pacific/Auckland"))
+                .toLocalDate(),
+        )
+        assertEquals(
+            LocalDate.of(2026, 1, 3),
+            taiwanMarker.captured
+                .toJavaInstant()
+                .atZone(ZoneId.of("Asia/Taipei"))
+                .toLocalDate(),
+        )
+    }
+
+    @Test
+    fun `updateDailyPriceStatistics does not update marker when house update fails`() {
+        val auctionHouseService = mockk<AuctionHouseService>()
+        val auctionStatsDailyService = mockk<AuctionStatsDailyService>()
+        val house = AuctionHouse(id = 1, connectedId = 1, region = Region.Europe)
+
+        every { auctionHouseService.findAllByRegion(Region.Europe) } returns listOf(house)
+        every { auctionHouseService.findAllByRegion(Region.Taiwan) } returns emptyList()
+        every { auctionStatsDailyService.updateForDate(any(), any(), any()) } throws RuntimeException("boom")
+
+        AuctionStatsDailySchedule(
+            properties,
+            auctionHouseService,
+            auctionStatsDailyService,
+            immediateBackgroundWorkLauncher(),
+        )
+            .updateDailyPriceStatistics()
+
+        verify(exactly = 0) { auctionHouseService.updateLastDailyPriceUpdate(any(), any()) }
+    }
+}

@@ -2,7 +2,7 @@ package net.jonasmf.auctionengine.realm
 
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
-import net.jonasmf.auctionengine.repository.rds.AuctionHouseRepository
+import net.jonasmf.auctionengine.auction.repository.AuctionHouseRepository
 import net.jonasmf.auctionengine.realm.repository.ConnectedRealmJdbcRepository
 import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
 import net.jonasmf.auctionengine.realm.repository.ConnectedRealmUpsertRow

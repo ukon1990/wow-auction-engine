@@ -1,0 +1,21 @@
+package net.jonasmf.auctionengine.auction.repository
+
+import net.jonasmf.auctionengine.constant.Region
+import net.jonasmf.auctionengine.domain.realm.AuctionHouse
+import java.time.OffsetDateTime
+
+interface AuctionHouseStateRepository {
+    fun findById(id: Int?): AuctionHouse?
+
+    fun findAll(): List<AuctionHouse>
+
+    fun findAllByRegion(region: Region): List<AuctionHouse>
+
+    fun findReadyForUpdateByRegionAndAutoUpdate(region: Region): List<AuctionHouse>
+
+    fun findAllByLastHistoryDeleteEventBefore(hourlyTTL: OffsetDateTime): List<AuctionHouse>
+
+    fun findAllByLastHistoryDeleteEventDailyBefore(dailyTTL: OffsetDateTime): List<AuctionHouse>
+
+    fun save(auctionHouse: AuctionHouse): AuctionHouse
+}
