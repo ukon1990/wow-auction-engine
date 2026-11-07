@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.profile
 
 import net.jonasmf.auctionengine.generated.model.ProfessionProfile
 import net.jonasmf.auctionengine.generated.model.ProfessionProfileRequest
@@ -12,8 +12,8 @@ import net.jonasmf.auctionengine.generated.model.ProfileCharacterProfession
 import net.jonasmf.auctionengine.generated.model.ProfileCharacterRequest
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.integration.blizzard.CharacterProfessionApiClient
-import net.jonasmf.auctionengine.repository.rds.ProfileRepository
-import net.jonasmf.auctionengine.repository.rds.AllocationRule
+import net.jonasmf.auctionengine.profile.repository.ProfileRepository
+import net.jonasmf.auctionengine.profile.repository.AllocationRule
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service

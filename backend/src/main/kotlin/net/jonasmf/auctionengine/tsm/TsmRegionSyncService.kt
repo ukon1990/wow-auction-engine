@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.tsm
 
 import net.jonasmf.auctionengine.auction.snapshot.CommodityRealms
 import net.jonasmf.auctionengine.auction.snapshot.AuctionHouseService
@@ -9,7 +9,7 @@ import net.jonasmf.auctionengine.dbo.rds.tsm.TsmRegionMetric
 import net.jonasmf.auctionengine.integration.tsm.TsmPublicDataClient
 import net.jonasmf.auctionengine.integration.tsm.TsmRegionCsvRow
 import net.jonasmf.auctionengine.auction.repository.AuctionHouseRepository
-import net.jonasmf.auctionengine.repository.rds.TsmRegionMetricRepository
+import net.jonasmf.auctionengine.tsm.repository.TsmRegionMetricRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

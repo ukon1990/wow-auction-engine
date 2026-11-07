@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.controller
+package net.jonasmf.auctionengine.profile
 
 import net.jonasmf.auctionengine.config.MVCIntegrationTest
 import net.jonasmf.auctionengine.testsupport.ProfessionProfileTestFixtures

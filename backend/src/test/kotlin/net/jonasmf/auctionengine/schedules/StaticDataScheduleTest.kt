@@ -1,5 +1,6 @@
 package net.jonasmf.auctionengine.schedules
 
+import net.jonasmf.auctionengine.tsm.TsmRegionSyncSchedule
 import net.jonasmf.auctionengine.item.ItemSchedule
 import net.jonasmf.auctionengine.media.BlizzardMediaBackfillSchedule
 import net.jonasmf.auctionengine.profession.ProfessionRecipeSchedule
@@ -14,7 +15,7 @@ import net.jonasmf.auctionengine.media.BlizzardMediaBackfillService
 import net.jonasmf.auctionengine.item.ItemSyncService
 import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncGuard
 import net.jonasmf.auctionengine.profession.ProfessionRecipeSyncService
-import net.jonasmf.auctionengine.service.TsmRegionSyncService
+import net.jonasmf.auctionengine.tsm.TsmRegionSyncService
 import org.junit.jupiter.api.Test
 
 /** Single-flight guarding is covered by [BackgroundWorkLauncherTest]; this covers the static data toggle. */

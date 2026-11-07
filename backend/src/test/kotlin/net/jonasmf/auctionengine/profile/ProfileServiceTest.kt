@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.profile
 
 import net.jonasmf.auctionengine.generated.model.ProfessionAllocation
 import net.jonasmf.auctionengine.generated.model.ProfessionProfileRequest
@@ -9,7 +9,7 @@ import net.jonasmf.auctionengine.dto.profession.CharacterProfessionReferenceDTO
 import net.jonasmf.auctionengine.dto.profession.CharacterProfessionTierDTO
 import net.jonasmf.auctionengine.dto.profession.CharacterProfessionsDTO
 import net.jonasmf.auctionengine.integration.blizzard.CharacterProfessionApiClient
-import net.jonasmf.auctionengine.repository.rds.ProfileRepository
+import net.jonasmf.auctionengine.profile.repository.ProfileRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test

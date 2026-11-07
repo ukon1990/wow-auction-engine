@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.tsm
 
 import net.jonasmf.auctionengine.auction.snapshot.CommodityRealms
 import net.jonasmf.auctionengine.auction.snapshot.AuctionHouseService
@@ -11,7 +11,7 @@ import net.jonasmf.auctionengine.constant.TsmSubjectType
 import net.jonasmf.auctionengine.integration.tsm.TsmPublicDataClient
 import net.jonasmf.auctionengine.integration.tsm.TsmRegionCsvRow
 import net.jonasmf.auctionengine.auction.repository.AuctionHouseRepository
-import net.jonasmf.auctionengine.repository.rds.TsmRegionMetricRepository
+import net.jonasmf.auctionengine.tsm.repository.TsmRegionMetricRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal

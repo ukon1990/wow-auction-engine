@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.tsm.repository
 
 import net.jonasmf.auctionengine.dbo.rds.tsm.TsmRegionMetric
 import net.jonasmf.auctionengine.repository.rds.JdbcBatchSupport.maxRowsPerStatement
