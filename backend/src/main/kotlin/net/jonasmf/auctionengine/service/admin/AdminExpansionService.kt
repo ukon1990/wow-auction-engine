@@ -9,8 +9,8 @@ import net.jonasmf.auctionengine.mapper.hasEnglishName
 import net.jonasmf.auctionengine.mapper.toLocaleDTO
 import net.jonasmf.auctionengine.repository.rds.admin.AdminExpansionRepository
 import net.jonasmf.auctionengine.repository.rds.admin.AdminJobRepository
-import net.jonasmf.auctionengine.service.ItemSyncResult
-import net.jonasmf.auctionengine.service.ItemSyncService
+import net.jonasmf.auctionengine.item.ItemSyncResult
+import net.jonasmf.auctionengine.item.ItemSyncService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus

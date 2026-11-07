@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.item.repository
 
 import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
 import net.jonasmf.auctionengine.config.JsonMappers
