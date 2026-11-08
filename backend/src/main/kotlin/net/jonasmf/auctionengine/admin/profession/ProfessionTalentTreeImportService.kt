@@ -1,0 +1,21 @@
+package net.jonasmf.auctionengine.admin.profession
+
+import net.jonasmf.auctionengine.profession.repository.ProfessionTalentTreeImportRepository
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.JsonNode
+
+@Service
+class ProfessionTalentTreeImportService(
+    private val repository: ProfessionTalentTreeImportRepository,
+) {
+    @Transactional
+    fun import(payload: JsonNode): Int {
+        require(payload.intOrNull("formatVersion") == 1) { "Unsupported professions_talents formatVersion; expected 1" }
+        require(payload.textOrNull("sourceVersion") != null) { "sourceVersion is required" }
+        return repository.replace(payload)
+    }
+}
+
+private fun JsonNode.intOrNull(name: String): Int? = get(name)?.takeIf { it.isInt }?.intValue()
+private fun JsonNode.textOrNull(name: String): String? = get(name)?.takeIf { it.isString }?.stringValue()

@@ -6,7 +6,7 @@ import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperProfessi
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperRecipe
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentNode
 import net.jonasmf.auctionengine.generated.model.NormalizedAuctionHelperTalentTree
-import net.jonasmf.auctionengine.service.admin.AddonRecipeOverrideSyncService
+import net.jonasmf.auctionengine.admin.recipe.AddonRecipeOverrideSyncService
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.security.MessageDigest
