@@ -2,7 +2,7 @@ package net.jonasmf.auctionengine.auction.snapshot
 
 import net.jonasmf.auctionengine.auction.stats.HourlyPriceStatisticsSummary
 import net.jonasmf.auctionengine.auction.stats.AuctionStatsHourlyService
-import net.jonasmf.auctionengine.service.RuntimeHealthTracker
+import net.jonasmf.auctionengine.health.RuntimeHealthTracker
 import net.jonasmf.auctionengine.realm.ConnectedRealmService
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger

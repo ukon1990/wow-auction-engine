@@ -3,8 +3,8 @@ package net.jonasmf.auctionengine.auction.repository
 import net.jonasmf.auctionengine.dbo.rds.auction.Auction
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionPrice
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
-import net.jonasmf.auctionengine.repository.rds.JdbcBatchSupport.maxRowsPerStatement
-import net.jonasmf.auctionengine.repository.rds.JdbcBatchSupport.rowPlaceholders
+import net.jonasmf.auctionengine.repository.JdbcBatchSupport.maxRowsPerStatement
+import net.jonasmf.auctionengine.repository.JdbcBatchSupport.rowPlaceholders
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional

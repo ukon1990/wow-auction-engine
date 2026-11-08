@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.repository
 
 import net.jonasmf.auctionengine.dto.LocaleDTO
 import org.springframework.jdbc.core.JdbcTemplate

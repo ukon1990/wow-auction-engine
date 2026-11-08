@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.integration.aws
 
 import net.jonasmf.auctionengine.config.S3IntegrationTestBase
 import net.jonasmf.auctionengine.constant.Region

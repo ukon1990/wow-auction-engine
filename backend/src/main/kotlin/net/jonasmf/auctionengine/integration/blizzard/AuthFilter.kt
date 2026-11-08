@@ -1,7 +1,7 @@
-package net.jonasmf.auctionengine.interceptor
+package net.jonasmf.auctionengine.integration.blizzard
 
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.service.AuthService
+import net.jonasmf.auctionengine.integration.blizzard.AuthService
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 

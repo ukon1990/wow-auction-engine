@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.interceptor
+package net.jonasmf.auctionengine.admin.profession
 
 import jakarta.servlet.FilterChain
 import org.assertj.core.api.Assertions.assertThat

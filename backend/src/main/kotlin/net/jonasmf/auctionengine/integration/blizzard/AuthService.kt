@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.integration.blizzard
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import net.jonasmf.auctionengine.config.BlizzardApiProperties

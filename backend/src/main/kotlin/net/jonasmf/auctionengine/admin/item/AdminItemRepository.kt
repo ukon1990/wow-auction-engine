@@ -9,7 +9,7 @@ import net.jonasmf.auctionengine.generated.model.AdminItemRecipe
 import net.jonasmf.auctionengine.generated.model.AdminRecipeSearchResult
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.mapper.toLocaleDTO
-import net.jonasmf.auctionengine.repository.rds.LocaleJdbcRepository
+import net.jonasmf.auctionengine.repository.LocaleJdbcRepository
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import kotlin.math.ceil

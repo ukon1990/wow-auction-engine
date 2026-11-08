@@ -1,8 +1,8 @@
 package net.jonasmf.auctionengine.config
 
-import net.jonasmf.auctionengine.interceptor.authHeaderFilterFunction
+import net.jonasmf.auctionengine.integration.blizzard.authHeaderFilterFunction
 import net.jonasmf.auctionengine.interceptor.correlationHeadersFilter
-import net.jonasmf.auctionengine.service.AuthService
+import net.jonasmf.auctionengine.integration.blizzard.AuthService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.codec.json.JacksonJsonDecoder

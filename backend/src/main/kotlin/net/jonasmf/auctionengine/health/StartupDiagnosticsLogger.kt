@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.health
 
 import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
 import org.slf4j.LoggerFactory

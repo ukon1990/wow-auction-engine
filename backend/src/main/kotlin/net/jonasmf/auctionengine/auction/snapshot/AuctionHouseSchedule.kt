@@ -4,7 +4,7 @@ import net.jonasmf.auctionengine.schedules.BackgroundWorkLauncher
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.auction.snapshot.AuctionHouseService
 import net.jonasmf.auctionengine.auction.snapshot.BlizzardAuctionService
-import net.jonasmf.auctionengine.service.RuntimeHealthTracker
+import net.jonasmf.auctionengine.health.RuntimeHealthTracker
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled

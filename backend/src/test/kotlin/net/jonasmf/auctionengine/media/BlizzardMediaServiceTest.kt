@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.media
 
-import net.jonasmf.auctionengine.service.AmazonS3Service
+import net.jonasmf.auctionengine.integration.aws.AmazonS3Service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
