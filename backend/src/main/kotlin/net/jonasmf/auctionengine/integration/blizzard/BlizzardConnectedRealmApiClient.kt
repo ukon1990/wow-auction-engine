@@ -1,9 +1,9 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dto.Href
-import net.jonasmf.auctionengine.dto.realm.ConnectedRealmDTO
-import net.jonasmf.auctionengine.dto.realm.ConnectedRealmIndex
+import net.jonasmf.auctionengine.integration.blizzard.dto.Href
+import net.jonasmf.auctionengine.realm.dto.ConnectedRealmDTO
+import net.jonasmf.auctionengine.realm.dto.ConnectedRealmIndex
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 

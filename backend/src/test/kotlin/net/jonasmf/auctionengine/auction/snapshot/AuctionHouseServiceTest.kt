@@ -11,7 +11,7 @@ import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm
 import net.jonasmf.auctionengine.dbo.rds.realm.RegionDBO
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
-import net.jonasmf.auctionengine.mapper.realm.toDbo
+import net.jonasmf.auctionengine.realm.toDbo
 import net.jonasmf.auctionengine.auction.repository.AuctionHouseStateRepository
 import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
 import net.jonasmf.auctionengine.realm.repository.RegionRepository

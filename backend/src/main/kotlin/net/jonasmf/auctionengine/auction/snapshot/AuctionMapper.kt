@@ -1,0 +1,104 @@
+package net.jonasmf.auctionengine.auction.snapshot
+
+import net.jonasmf.auctionengine.dbo.rds.auction.Auction
+import net.jonasmf.auctionengine.dbo.rds.auction.AuctionPrice
+import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
+import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
+import net.jonasmf.auctionengine.auction.dto.AuctionDTO
+import net.jonasmf.auctionengine.auction.snapshot.AuctionVariantKeyUtility
+import java.time.Instant
+
+/**
+ * Used when reading from the JSON, to flatten it to save memory
+ */
+class FlatAuction(
+    val id: String,
+    val auctionId: Long,
+    val itemId: Int,
+    var context: Int? = null,
+    var petBreedId: Int? = null,
+    var petSpeciesId: Int? = null,
+    var petQualityId: Int? = null,
+    var petLevel: Byte? = null,
+    var modifierKey: String? = null,
+    var bonusList: String? = null,
+    var buyout: Long?,
+    var bid: Long?,
+    var quantity: Int,
+)
+
+fun AuctionDTO.toFlatObject(connectedRealmId: Int) =
+    FlatAuction(
+        id =
+            AuctionVariantKeyUtility.variantHash(
+                connectedRealmId,
+                item.id,
+                AuctionVariantKeyUtility.canonicalBonusKey(item.bonusLists),
+                AuctionVariantKeyUtility.canonicalModifierKey(item.modifiers),
+                item.context,
+                item.petBreedId,
+                item.petLevel,
+                item.petQualityId,
+                item.petSpeciesId,
+            ),
+        auctionId = id,
+        itemId = item.id,
+        context = item.context,
+        petBreedId = item.petBreedId,
+        petSpeciesId = item.petSpeciesId,
+        petQualityId = item.petQualityId,
+        petLevel = item.petLevel,
+        modifierKey = AuctionVariantKeyUtility.canonicalModifierKey(item.modifiers),
+        bonusList = AuctionVariantKeyUtility.canonicalBonusKey(item.bonusLists),
+        buyout = buyout ?: unit_price,
+        bid = bid,
+        quantity = quantity,
+    )
+
+fun FlatAuction.toDBO(
+    connectedRealm: ConnectedRealm,
+    updateHistory: ConnectedRealmUpdateHistory,
+): Auction =
+    Auction(
+        id = "${connectedRealm.id}-$id",
+        connectedRealm = connectedRealm,
+        itemId = itemId,
+        context = context,
+        petBreedId = petBreedId,
+        petSpeciesId = petSpeciesId,
+        petQualityId = petQualityId,
+        petLevel = petLevel,
+        modifierKey = modifierKey,
+        bonusKey = bonusList,
+        prices =
+            mutableListOf(
+                toAuctionPriceDBO(updateHistory.lastModified?.toInstant()),
+            ),
+        quantity = quantity,
+        buyout = buyout,
+        bid = bid,
+        p25 = null,
+        p75 = null,
+        firstSeen = updateHistory.lastModified,
+        lastSeen = updateHistory.lastModified,
+        updateHistory = updateHistory,
+    )
+
+fun FlatAuction.toAuctionPriceDBO(lastModified: Instant?): AuctionPrice =
+    AuctionPrice(
+        id = auctionId,
+        buyout = buyout,
+        bid = bid,
+        quantity = quantity,
+        lastModified = lastModified,
+    )
+
+/**
+ * Generates a unique id for this auction
+ */
+fun AuctionDTO.getUniqueId(): String =
+    "${item.id}-${item.context}-${item.petBreedId}-${item.petSpeciesId}-${item.petQualityId}-${item.petLevel}-${
+        AuctionVariantKeyUtility.canonicalBonusKey(item.bonusLists)
+    }-${
+        AuctionVariantKeyUtility.canonicalModifierKey(item.modifiers)
+    }"

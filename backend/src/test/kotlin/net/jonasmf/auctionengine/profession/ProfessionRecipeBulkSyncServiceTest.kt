@@ -8,7 +8,7 @@ import net.jonasmf.auctionengine.domain.profession.ProfessionCategory
 import net.jonasmf.auctionengine.domain.profession.Recipe
 import net.jonasmf.auctionengine.domain.profession.RecipeReagent
 import net.jonasmf.auctionengine.domain.profession.SkillTier
-import net.jonasmf.auctionengine.dto.LocaleDTO
+import net.jonasmf.auctionengine.locale.LocaleDTO
 import net.jonasmf.auctionengine.profession.repository.RecipeRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

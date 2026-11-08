@@ -5,7 +5,7 @@ import net.jonasmf.auctionengine.domain.item.Item
 import net.jonasmf.auctionengine.domain.item.ItemClass
 import net.jonasmf.auctionengine.domain.item.ItemQuality
 import net.jonasmf.auctionengine.domain.item.ItemSubclass
-import net.jonasmf.auctionengine.dto.LocaleDTO
+import net.jonasmf.auctionengine.locale.LocaleDTO
 import net.jonasmf.auctionengine.generated.model.AdminItemCreateRequest
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemOverrideRequest

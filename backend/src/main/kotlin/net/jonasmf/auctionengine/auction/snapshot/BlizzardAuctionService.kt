@@ -10,7 +10,7 @@ import net.jonasmf.auctionengine.domain.realm.AuctionHouse
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiClientException
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardAuctionApiClient
 import net.jonasmf.auctionengine.auction.repository.AuctionStatsHourlyJDBCRepository
-import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
+import net.jonasmf.auctionengine.health.JvmRuntimeDiagnostics
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.NestedRuntimeException

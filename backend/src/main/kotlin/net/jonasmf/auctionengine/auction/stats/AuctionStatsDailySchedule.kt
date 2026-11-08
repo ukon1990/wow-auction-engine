@@ -5,7 +5,7 @@ import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
 import net.jonasmf.auctionengine.auction.snapshot.AuctionHouseService
 import net.jonasmf.auctionengine.auction.stats.AuctionStatsDailyService
-import net.jonasmf.auctionengine.utility.resolveZone
+import net.jonasmf.auctionengine.auction.resolveZone
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component

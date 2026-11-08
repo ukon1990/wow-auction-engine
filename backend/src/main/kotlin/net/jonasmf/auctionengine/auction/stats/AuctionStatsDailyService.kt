@@ -2,7 +2,7 @@ package net.jonasmf.auctionengine.auction.stats
 
 import net.jonasmf.auctionengine.dbo.rds.auction.AuctionStatsDaily
 import net.jonasmf.auctionengine.auction.repository.AuctionStatsDailyJDBCRepository
-import net.jonasmf.auctionengine.utility.datesBetween
+import net.jonasmf.auctionengine.auction.stats.datesBetween
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate

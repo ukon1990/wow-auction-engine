@@ -7,8 +7,8 @@ import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
 import net.jonasmf.auctionengine.generated.model.AdminJob
-import net.jonasmf.auctionengine.mapper.hasEnglishName
-import net.jonasmf.auctionengine.mapper.toLocaleDTO
+import net.jonasmf.auctionengine.locale.hasEnglishName
+import net.jonasmf.auctionengine.locale.toLocaleDTO
 import net.jonasmf.auctionengine.admin.expansion.AdminExpansionRepository
 import net.jonasmf.auctionengine.admin.AdminJobRepository
 import net.jonasmf.auctionengine.item.ItemSyncResult

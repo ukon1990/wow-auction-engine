@@ -3,8 +3,8 @@ package net.jonasmf.auctionengine.integration.blizzard
 import net.jonasmf.auctionengine.config.JsonMappers
 import net.jonasmf.auctionengine.constant.GameBuildVersion
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dto.auction.AuctionDTO
-import net.jonasmf.auctionengine.dto.auction.AuctionDataResponse
+import net.jonasmf.auctionengine.auction.dto.AuctionDTO
+import net.jonasmf.auctionengine.auction.dto.AuctionDataResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.buffer.DataBuffer

@@ -4,11 +4,12 @@ import net.jonasmf.auctionengine.item.repository.ItemJdbcRepository
 import net.jonasmf.auctionengine.config.JsonMappers
 import tools.jackson.module.kotlin.readValue
 import net.jonasmf.auctionengine.config.IntegrationTestBase
-import net.jonasmf.auctionengine.dto.item.ItemDTO
+import net.jonasmf.auctionengine.item.dto.ItemDTO
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
 import net.jonasmf.auctionengine.generated.model.GameLocale
-import net.jonasmf.auctionengine.mapper.toDomain
+import net.jonasmf.auctionengine.item.toDomain
+import net.jonasmf.auctionengine.profession.toDomain
 import net.jonasmf.auctionengine.admin.expansion.AdminExpansionRepository
 import net.jonasmf.auctionengine.testsupport.loadFixture
 import org.junit.jupiter.api.Assertions.assertEquals

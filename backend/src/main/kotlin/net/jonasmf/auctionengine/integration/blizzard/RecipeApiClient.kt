@@ -2,8 +2,9 @@ package net.jonasmf.auctionengine.integration.blizzard
 
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.domain.profession.Recipe
-import net.jonasmf.auctionengine.dto.recipe.RecipeDTO
-import net.jonasmf.auctionengine.mapper.toDomain
+import net.jonasmf.auctionengine.profession.dto.RecipeDTO
+import net.jonasmf.auctionengine.item.toDomain
+import net.jonasmf.auctionengine.profession.toDomain
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

@@ -3,7 +3,7 @@ package net.jonasmf.auctionengine.auction.repository
 import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
-import net.jonasmf.auctionengine.mapper.realm.toDomain
+import net.jonasmf.auctionengine.realm.toDomain
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
 import java.time.OffsetDateTime
