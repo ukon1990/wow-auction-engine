@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.controller
+package net.jonasmf.auctionengine.profile
 
 import net.jonasmf.auctionengine.generated.api.ProfileApi
 import net.jonasmf.auctionengine.generated.model.ProfessionProfile
@@ -8,7 +8,7 @@ import net.jonasmf.auctionengine.generated.model.CharacterProfessionPreview
 import net.jonasmf.auctionengine.generated.model.ProfileCharacter
 import net.jonasmf.auctionengine.generated.model.ProfileCharacterProfession
 import net.jonasmf.auctionengine.generated.model.ProfileCharacterRequest
-import net.jonasmf.auctionengine.service.ProfileService
+import net.jonasmf.auctionengine.profile.ProfileService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder

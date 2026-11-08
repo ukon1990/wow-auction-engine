@@ -17,11 +17,11 @@ import net.jonasmf.auctionengine.generated.model.CraftingProfileCandidate
 import net.jonasmf.auctionengine.generated.model.CraftingProfileFit
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.Sorting
-import net.jonasmf.auctionengine.repository.rds.CraftingProfileCandidate as StoredCraftingProfileCandidate
-import net.jonasmf.auctionengine.repository.rds.ProfileRepository
+import net.jonasmf.auctionengine.profile.repository.CraftingProfileCandidate as StoredCraftingProfileCandidate
+import net.jonasmf.auctionengine.profile.repository.ProfileRepository
 import net.jonasmf.auctionengine.profession.repository.RecipeCraftingRuleRepository
-import net.jonasmf.auctionengine.service.ProfileCraftabilityEvaluation
-import net.jonasmf.auctionengine.service.ProfileCraftabilityEvaluator
+import net.jonasmf.auctionengine.profile.ProfileCraftabilityEvaluation
+import net.jonasmf.auctionengine.profile.ProfileCraftabilityEvaluator
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException

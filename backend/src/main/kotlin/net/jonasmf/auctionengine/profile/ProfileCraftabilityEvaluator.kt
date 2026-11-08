@@ -1,9 +1,9 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.profile
 
-import net.jonasmf.auctionengine.repository.rds.CraftingProfileCandidate
+import net.jonasmf.auctionengine.profile.repository.CraftingProfileCandidate
 import net.jonasmf.auctionengine.profession.repository.ProfessionSkillTreeNodeEffect
 import net.jonasmf.auctionengine.profession.repository.ProfessionSkillTreeNodeEffectRepository
-import net.jonasmf.auctionengine.repository.rds.ProfileRepository
+import net.jonasmf.auctionengine.profile.repository.ProfileRepository
 import net.jonasmf.auctionengine.profession.repository.RecipeCraftingRule
 import net.jonasmf.auctionengine.profession.repository.RecipeCraftingRuleRepository
 import org.springframework.stereotype.Service

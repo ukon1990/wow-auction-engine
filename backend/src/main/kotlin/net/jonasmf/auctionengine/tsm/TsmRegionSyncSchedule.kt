@@ -1,7 +1,8 @@
-package net.jonasmf.auctionengine.schedules
+package net.jonasmf.auctionengine.tsm
 
+import net.jonasmf.auctionengine.schedules.BackgroundWorkLauncher
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
-import net.jonasmf.auctionengine.service.TsmRegionSyncService
+import net.jonasmf.auctionengine.tsm.TsmRegionSyncService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
