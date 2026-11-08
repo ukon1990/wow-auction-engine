@@ -1,7 +1,7 @@
-package net.jonasmf.auctionengine.controller
+package net.jonasmf.auctionengine.health
 
 import net.jonasmf.auctionengine.generated.api.HealthApi
-import net.jonasmf.auctionengine.service.RuntimeHealthTracker
+import net.jonasmf.auctionengine.health.RuntimeHealthTracker
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController

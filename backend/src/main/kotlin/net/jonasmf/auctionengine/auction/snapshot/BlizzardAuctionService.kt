@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.auction.snapshot
 
 import net.jonasmf.auctionengine.auction.stats.AuctionStatsHourlyService
-import net.jonasmf.auctionengine.service.RuntimeHealthTracker
+import net.jonasmf.auctionengine.health.RuntimeHealthTracker
 import net.jonasmf.auctionengine.realm.ConnectedRealmService
 import net.jonasmf.auctionengine.config.BlizzardApiProperties
 import net.jonasmf.auctionengine.constant.Region

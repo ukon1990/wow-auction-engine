@@ -1,8 +1,8 @@
 package net.jonasmf.auctionengine.tsm.repository
 
 import net.jonasmf.auctionengine.dbo.rds.tsm.TsmRegionMetric
-import net.jonasmf.auctionengine.repository.rds.JdbcBatchSupport.maxRowsPerStatement
-import net.jonasmf.auctionengine.repository.rds.JdbcBatchSupport.rowPlaceholders
+import net.jonasmf.auctionengine.repository.JdbcBatchSupport.maxRowsPerStatement
+import net.jonasmf.auctionengine.repository.JdbcBatchSupport.rowPlaceholders
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional

@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.media
 
-import net.jonasmf.auctionengine.service.AmazonS3Service
+import net.jonasmf.auctionengine.integration.aws.AmazonS3Service
 import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.domain.item.Item
 import net.jonasmf.auctionengine.domain.item.ItemAppearance

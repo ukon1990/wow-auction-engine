@@ -1,8 +1,8 @@
 package net.jonasmf.auctionengine.config
 
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardApiSupport
-import net.jonasmf.auctionengine.interceptor.authHeaderFilterFunction
-import net.jonasmf.auctionengine.service.AuthService
+import net.jonasmf.auctionengine.integration.blizzard.authHeaderFilterFunction
+import net.jonasmf.auctionengine.integration.blizzard.AuthService
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.buildFilteredWebClient
 import net.jonasmf.auctionengine.testsupport.BlizzardFixtures
 import org.springframework.boot.test.context.TestConfiguration

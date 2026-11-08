@@ -1,10 +1,10 @@
-package net.jonasmf.auctionengine.controller
+package net.jonasmf.auctionengine.health
 
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import net.jonasmf.auctionengine.service.RuntimeHealthSnapshot
-import net.jonasmf.auctionengine.service.RuntimeHealthTracker
+import net.jonasmf.auctionengine.health.RuntimeHealthSnapshot
+import net.jonasmf.auctionengine.health.RuntimeHealthTracker
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus

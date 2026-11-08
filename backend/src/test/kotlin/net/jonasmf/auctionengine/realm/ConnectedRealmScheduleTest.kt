@@ -6,7 +6,7 @@ import ch.qos.logback.core.read.ListAppender
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import net.jonasmf.auctionengine.service.AuthService
+import net.jonasmf.auctionengine.integration.blizzard.AuthService
 import net.jonasmf.auctionengine.realm.ConnectedRealmService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

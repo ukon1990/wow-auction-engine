@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.repository.rds
+package net.jonasmf.auctionengine.repository
 
 /** Shared helpers for chunked multi-row JDBC UPSERT / INSERT statements. */
 internal object JdbcBatchSupport {

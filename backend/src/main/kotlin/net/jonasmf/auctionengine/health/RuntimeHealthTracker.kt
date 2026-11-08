@@ -1,4 +1,4 @@
-package net.jonasmf.auctionengine.service
+package net.jonasmf.auctionengine.health
 
 import net.jonasmf.auctionengine.constant.Region
 import org.springframework.beans.factory.annotation.Value
