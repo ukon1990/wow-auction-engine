@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import {
-  AdminApiService,
+  AdminItemApiService,
   AdminItem,
   AdminItemCompareResponse,
   AdminItemCreateRequest,
@@ -9,6 +9,7 @@ import {
   AdminRecipeAssociationRequest,
   AdminRecipeSearchResult,
   PageMetadata,
+  AdminRecipeApiService,
 } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
 import { ToastService } from '@core/services/toast.service';
@@ -38,7 +39,8 @@ export class AdminItemService {
   readonly detailError = signal<string | null>(null);
   readonly compareError = signal<string | null>(null);
 
-  private readonly api = inject(AdminApiService);
+  private readonly api = inject(AdminItemApiService);
+  private readonly recipeApi = inject(AdminRecipeApiService);
   private readonly localeService = inject(LocaleService);
   private readonly toast = inject(ToastService);
 
@@ -130,7 +132,7 @@ export class AdminItemService {
 
   searchRecipes(query: string, limit = 20): Observable<readonly AdminRecipeSearchResult[]> {
     const locale = this.localeService.apiLocaleOverride();
-    return this.api
+    return this.recipeApi
       .searchAdminRecipes(
         query,
         locale,

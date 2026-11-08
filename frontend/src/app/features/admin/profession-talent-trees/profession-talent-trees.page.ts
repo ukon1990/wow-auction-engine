@@ -11,7 +11,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 import {
-  AdminApiService,
+  AdminProfessionApiService,
   NormalizedAuctionHelperProfessionInspection,
   NormalizedAuctionHelperTalentTree,
   NormalizedAuctionHelperTalents,
@@ -79,7 +79,7 @@ export type ProfessionRecipeOverview = Readonly<{
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfessionTalentTreesPage {
-  private readonly adminApi = inject(AdminApiService);
+  private readonly adminApi = inject(AdminProfessionApiService);
   private readonly toast = inject(ToastService);
   private readonly folderInput = viewChild<ElementRef<HTMLInputElement>>('folderInput');
   private readonly auctionHelperInput =

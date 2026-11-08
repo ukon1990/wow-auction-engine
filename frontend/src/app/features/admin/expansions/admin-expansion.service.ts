@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import {
-  AdminApiService,
+  AdminExpansionApiService,
   AdminExpansion,
   AdminExpansionItemRange,
   AdminExpansionItemRangeRequest,
@@ -23,7 +23,7 @@ export class AdminExpansionService {
   readonly ranges = signal<AdminExpansionItemRange[]>([]);
   readonly error = signal<string | null>(null);
 
-  private readonly api = inject(AdminApiService);
+  private readonly api = inject(AdminExpansionApiService);
   private readonly jobs = inject(AdminJobService);
   private readonly toast = inject(ToastService);
   private readonly localeService = inject(LocaleService);

@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
-import { AdminApiService, AdminJob } from '@api/generated';
+import { AdminItemApiService, AdminJob } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
 import { AdminExpansionService } from '@features/admin/expansions/admin-expansion.service';
 import { AdminJobService } from '@features/admin/shared/admin-job.service';
@@ -53,7 +53,7 @@ describe('RecipesPage', () => {
           },
         },
         { provide: AdminJobService, useValue: jobService },
-        { provide: AdminApiService, useValue: { searchAdminItems: vitest.fn() } },
+        { provide: AdminItemApiService, useValue: { searchAdminItems: vitest.fn() } },
         {
           provide: LocaleService,
           useValue: { apiLocaleOverride: vitest.fn().mockReturnValue('en_US') },

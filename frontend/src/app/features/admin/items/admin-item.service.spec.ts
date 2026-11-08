@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import {
-  AdminApiService,
+  AdminItemApiService,
   AdminItem,
   AdminItemOverrideRequest,
   AdminItemPage,
+  AdminRecipeApiService,
 } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
 import { ToastService } from '@core/services/toast.service';
@@ -94,7 +95,8 @@ describe('AdminItemService', () => {
     TestBed.configureTestingModule({
       providers: [
         AdminItemService,
-        { provide: AdminApiService, useValue: api },
+        { provide: AdminItemApiService, useValue: api },
+        { provide: AdminRecipeApiService, useValue: api },
         { provide: ToastService, useValue: toast },
         { provide: LocaleService, useValue: { apiLocaleOverride: () => 'en_US' } },
       ],

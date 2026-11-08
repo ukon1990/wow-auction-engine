@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import {
-  AdminApiService,
+  AdminProfessionApiService,
+  AdminRecipeApiService,
   AdminRecipe,
   AdminRecipeCompareResponse,
   AdminRecipeOverrideRequest,
@@ -34,7 +35,8 @@ export class AdminRecipeService {
   readonly detailError = signal<string | null>(null);
   readonly compareError = signal<string | null>(null);
 
-  private readonly api = inject(AdminApiService);
+  private readonly api = inject(AdminRecipeApiService);
+  private readonly professionApi = inject(AdminProfessionApiService);
   private readonly localeService = inject(LocaleService);
   private readonly toast = inject(ToastService);
 
@@ -138,11 +140,11 @@ export class AdminRecipeService {
   }
 
   syncProfessionRecipes(): Observable<AdminJob> {
-    return this.api.syncProfessionRecipes();
+    return this.professionApi.syncProfessionRecipes();
   }
 
   getActiveProfessionSyncJob(): Observable<AdminJob | null> {
-    return this.api.getActiveProfessionSyncJob().pipe(
+    return this.professionApi.getActiveProfessionSyncJob().pipe(
       catchError((error: unknown) => {
         if (error instanceof HttpErrorResponse && error.status === 404) {
           return of(null);

@@ -9,7 +9,7 @@ import {
   selectSavedVariablesFiles,
 } from './profession-talent-trees.page';
 import { TestBed } from '@angular/core/testing';
-import { AdminApiService, type NormalizedAuctionHelperProfession } from '@api/generated';
+import { AdminProfessionApiService, type NormalizedAuctionHelperProfession } from '@api/generated';
 import { ToastService } from '@core/services/toast.service';
 import { of, throwError } from 'rxjs';
 
@@ -58,7 +58,7 @@ describe('SavedVariables folder selection', () => {
     TestBed.configureTestingModule({
       imports: [ProfessionTalentTreesPage],
       providers: [
-        { provide: AdminApiService, useValue: api },
+        { provide: AdminProfessionApiService, useValue: api },
         { provide: ToastService, useValue: toast },
       ],
     }).overrideComponent(ProfessionTalentTreesPage, { set: { template: '' } });
@@ -93,7 +93,7 @@ describe('SavedVariables folder selection', () => {
     TestBed.configureTestingModule({
       imports: [ProfessionTalentTreesPage],
       providers: [
-        { provide: AdminApiService, useValue: {} },
+        { provide: AdminProfessionApiService, useValue: {} },
         { provide: ToastService, useValue: toast },
       ],
     }).overrideComponent(ProfessionTalentTreesPage, { set: { template: '' } });
@@ -186,7 +186,7 @@ describe('SavedVariables folder selection', () => {
     TestBed.configureTestingModule({
       imports: [ProfessionTalentTreesPage],
       providers: [
-        { provide: AdminApiService, useValue: {} },
+        { provide: AdminProfessionApiService, useValue: {} },
         { provide: ToastService, useValue: { success: vi.fn(), error: vi.fn() } },
       ],
     });

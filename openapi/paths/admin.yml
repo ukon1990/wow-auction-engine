@@ -163,7 +163,7 @@ getAdminSqlMetadata:
 listExpansions:
     get:
         tags:
-            - Admin
+            - AdminExpansion
         operationId: listExpansions
         summary: Lists configured item expansions
         parameters:
@@ -184,7 +184,7 @@ listExpansions:
                                 $ref: "../openapi.yml#/components/schemas/AdminExpansion"
     post:
         tags:
-            - Admin
+            - AdminExpansion
         operationId: createExpansion
         summary: Creates an expansion
         requestBody:
@@ -207,7 +207,7 @@ listExpansions:
 expansionById:
     put:
         tags:
-            - Admin
+            - AdminExpansion
         operationId: updateExpansion
         summary: Updates an expansion
         parameters:
@@ -237,7 +237,7 @@ expansionById:
                 description: Slug or major version already exists
     delete:
         tags:
-            - Admin
+            - AdminExpansion
         operationId: deleteExpansion
         summary: Deletes an expansion
         parameters:
@@ -256,7 +256,7 @@ expansionById:
 expansionRanges:
     get:
         tags:
-            - Admin
+            - AdminExpansion
         operationId: listExpansionRanges
         summary: Lists configured item expansion ranges
         parameters:
@@ -277,7 +277,7 @@ expansionRanges:
                                 $ref: "../openapi.yml#/components/schemas/AdminExpansionItemRange"
     post:
         tags:
-            - Admin
+            - AdminExpansion
         operationId: createExpansionRange
         summary: Creates an item expansion range
         requestBody:
@@ -298,7 +298,7 @@ expansionRanges:
 expansionRangeById:
     put:
         tags:
-            - Admin
+            - AdminExpansion
         operationId: updateExpansionRange
         summary: Updates an item expansion range
         parameters:
@@ -327,7 +327,7 @@ expansionRangeById:
                 description: Range not found
     delete:
         tags:
-            - Admin
+            - AdminExpansion
         operationId: deleteExpansionRange
         summary: Deletes an item expansion range
         parameters:
@@ -345,7 +345,7 @@ expansionRangeById:
 applyExpansionRanges:
     post:
         tags:
-            - Admin
+            - AdminExpansion
         operationId: applyExpansionRanges
         summary: Starts a job that applies enabled expansion ranges to existing items
         responses:
@@ -360,7 +360,7 @@ applyExpansionRanges:
 fetchMissingExpansionRangeItems:
     post:
         tags:
-            - Admin
+            - AdminExpansion
         operationId: fetchMissingExpansionRangeItems
         summary: Starts a job that fetches missing items covered by enabled expansion ranges
         responses:
@@ -375,7 +375,7 @@ fetchMissingExpansionRangeItems:
 syncProfessionRecipes:
     post:
         tags:
-            - Admin
+            - AdminProfession
         operationId: syncProfessionRecipes
         summary: Starts a profession and recipe synchronization job
         responses:
@@ -390,7 +390,7 @@ syncProfessionRecipes:
 getActiveProfessionSyncJob:
     get:
         tags:
-            - Admin
+            - AdminProfession
         operationId: getActiveProfessionSyncJob
         summary: Gets the running profession and recipe synchronization job
         responses:
@@ -404,7 +404,7 @@ getActiveProfessionSyncJob:
                 description: No profession and recipe synchronization job is running
 importProfessionTalentTrees:
     post:
-        tags: [ Admin ]
+        tags: [ AdminProfession ]
         operationId: importProfessionTalentTrees
         summary: Replace versioned profession talent tree definitions
         requestBody:
@@ -419,7 +419,7 @@ importProfessionTalentTrees:
             "403": { description: Administrator role required. }
 inspectNormalizedAuctionHelperProfessionData:
     post:
-        tags: [ Admin ]
+        tags: [ AdminProfession ]
         operationId: inspectNormalizedAuctionHelperProfessionData
         summary: Import locally normalized AuctionHelper profession data
         description: >-
@@ -469,7 +469,7 @@ getAdminJob:
 adminItems:
     get:
         tags:
-            - Admin
+            - AdminItem
         operationId: searchAdminItems
         summary: Searches effective item rows for admin editing
         parameters:
@@ -547,7 +547,7 @@ adminItems:
                 description: Invalid search or pagination request
     post:
         tags:
-            - Admin
+            - AdminItem
         operationId: createAdminItem
         summary: Creates an override-only manual item
         requestBody:
@@ -570,7 +570,7 @@ adminItems:
 adminItemById:
     get:
         tags:
-            - Admin
+            - AdminItem
         operationId: getAdminItem
         summary: Gets an effective admin item row
         parameters:
@@ -611,7 +611,7 @@ adminItemById:
 adminItemOverride:
     put:
         tags:
-            - Admin
+            - AdminItem
         operationId: upsertAdminItemOverride
         summary: Upserts a sparse admin override for an existing item
         parameters:
@@ -639,7 +639,7 @@ adminItemOverride:
                 description: Base item not found
     delete:
         tags:
-            - Admin
+            - AdminItem
         operationId: deleteAdminItemOverride
         summary: Deletes the sparse admin override row
         parameters:
@@ -656,7 +656,7 @@ adminItemOverride:
 adminItemRecipeAssociation:
     put:
         tags:
-            - Admin
+            - AdminItem
         operationId: upsertAdminItemRecipeAssociation
         summary: Associates a recipe with an item by updating recipe crafted output fields
         parameters:
@@ -690,7 +690,7 @@ adminItemRecipeAssociation:
 adminItemCompareApi:
     post:
         tags:
-            - Admin
+            - AdminItem
         operationId: compareAdminItemWithApi
         summary: Fetches the Blizzard API item and compares it to base, override, and effective fields
         parameters:
@@ -711,7 +711,7 @@ adminItemCompareApi:
 adminItemBulkOverrides:
     put:
         tags:
-            - Admin
+            - AdminItem
         operationId: bulkUpsertAdminItemOverrides
         summary: Upserts sparse admin overrides in bulk
         requestBody:
@@ -736,7 +736,7 @@ adminItemBulkOverrides:
 adminRecipes:
     get:
         tags:
-            - Admin
+            - AdminRecipe
         operationId: searchAdminRecipes
         summary: Searches effective recipe rows for admin editing
         parameters:
@@ -822,7 +822,7 @@ adminRecipes:
 adminRecipeById:
     get:
         tags:
-            - Admin
+            - AdminRecipe
         operationId: getAdminRecipe
         summary: Gets an effective admin recipe row
         parameters:
@@ -860,7 +860,7 @@ adminRecipeById:
 adminRecipeOverride:
     put:
         tags:
-            - Admin
+            - AdminRecipe
         operationId: upsertAdminRecipeOverride
         summary: Upserts sparse scalar and optional collection overrides for an existing recipe
         parameters:
@@ -888,7 +888,7 @@ adminRecipeOverride:
                 description: Base recipe not found
     delete:
         tags:
-            - Admin
+            - AdminRecipe
         operationId: deleteAdminRecipeOverride
         summary: Deletes all admin overrides for the recipe
         parameters:
@@ -905,7 +905,7 @@ adminRecipeOverride:
 adminRecipeCompareApi:
     post:
         tags:
-            - Admin
+            - AdminRecipe
         operationId: compareAdminRecipeWithApi
         summary: Fetches the Blizzard API recipe and compares it to base, override, and effective fields
         parameters:
@@ -926,7 +926,7 @@ adminRecipeCompareApi:
 adminRecipeBulkOverrides:
     put:
         tags:
-            - Admin
+            - AdminRecipe
         operationId: bulkUpsertAdminRecipeOverrides
         summary: Upserts sparse admin recipe overrides in bulk
         requestBody:

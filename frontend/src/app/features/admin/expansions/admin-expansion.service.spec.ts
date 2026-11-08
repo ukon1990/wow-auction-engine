@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { AdminApiService, AdminExpansion, AdminExpansionItemRange } from '@api/generated';
+import { AdminExpansionApiService, AdminExpansion, AdminExpansionItemRange } from '@api/generated';
 import { englishGameLocale } from '@features/admin/shared/game-locale-test-fixtures';
 import { ToastService } from '@core/services/toast.service';
 import { LocaleService } from '@core/services/locale.service';
@@ -49,7 +49,7 @@ describe('AdminExpansionService', () => {
     TestBed.configureTestingModule({
       providers: [
         AdminExpansionService,
-        { provide: AdminApiService, useValue: api },
+        { provide: AdminExpansionApiService, useValue: api },
         { provide: ToastService, useValue: toast },
         { provide: LocaleService, useValue: { apiLocaleOverride: () => undefined } },
         {

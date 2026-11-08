@@ -18,6 +18,14 @@ tags:
     description: Runtime health endpoints.
   - name: Admin
     description: Endpoints for administrating users and data.
+  - name: AdminExpansion
+    description: Admin endpoints for expansions and their item id ranges.
+  - name: AdminProfession
+    description: Admin endpoints for profession sync and imports.
+  - name: AdminItem
+    description: Admin endpoints for items and item overrides.
+  - name: AdminRecipe
+    description: Admin endpoints for recipes and recipe overrides.
   - name: Realm
     description: Realm catalog and per-realm auction house status.
   - name: AuctionMarket
