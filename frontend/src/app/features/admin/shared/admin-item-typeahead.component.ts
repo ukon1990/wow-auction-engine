@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AdminApiService, AdminItem } from '@api/generated';
+import { AdminItemApiService, AdminItem } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
 import {
   catchError,
@@ -111,7 +111,7 @@ export class AdminItemTypeaheadComponent {
   protected readonly noResultsLabel = $localize`:@@admin.recipes.itemTypeahead.empty:No items found`;
   protected readonly rankLabel = $localize`:@@admin.recipes.itemTypeahead.rank:Rank`;
 
-  private readonly api = inject(AdminApiService);
+  private readonly api = inject(AdminItemApiService);
   private readonly locale = inject(LocaleService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchQueries = new Subject<string>();

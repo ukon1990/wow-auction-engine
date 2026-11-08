@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AdminApiService } from '@api/generated';
+import { AdminItemApiService } from '@api/generated';
 import { LocaleService } from '@core/services/locale.service';
 import { of } from 'rxjs';
 import { AdminItemSelection, AdminItemTypeaheadComponent } from './admin-item-typeahead.component';
@@ -34,7 +34,7 @@ describe('AdminItemTypeaheadComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AdminItemTypeaheadComponent],
       providers: [
-        { provide: AdminApiService, useValue: api },
+        { provide: AdminItemApiService, useValue: api },
         { provide: LocaleService, useValue: { apiLocaleOverride: () => 'en_US' } },
       ],
     }).compileComponents();
