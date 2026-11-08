@@ -5,6 +5,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @Configuration
-@EnableJpaRepositories(basePackages = ["net.jonasmf.auctionengine.repository.rds", "net.jonasmf.auctionengine.realm.repository", "net.jonasmf.auctionengine.auction.repository", "net.jonasmf.auctionengine.profession.repository"])
+@EnableJpaRepositories(basePackages = ["net.jonasmf.auctionengine.repository.rds", "net.jonasmf.auctionengine.realm.repository", "net.jonasmf.auctionengine.auction.repository", "net.jonasmf.auctionengine.profession.repository", "net.jonasmf.auctionengine.admin.auctionhouse"])
 @EntityScan(basePackages = ["net.jonasmf.auctionengine.dbo.rds"])
 class JpaConfig
