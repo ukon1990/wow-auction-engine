@@ -2,8 +2,8 @@ package net.jonasmf.auctionengine.auction.stats
 
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.auction.repository.AuctionStatsHourlyJDBCRepository
-import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
-import net.jonasmf.auctionengine.utility.resolveZone
+import net.jonasmf.auctionengine.health.JvmRuntimeDiagnostics
+import net.jonasmf.auctionengine.auction.resolveZone
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

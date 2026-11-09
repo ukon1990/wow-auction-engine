@@ -2,10 +2,11 @@ package net.jonasmf.auctionengine.integration.blizzard
 
 import net.jonasmf.auctionengine.domain.profession.Profession
 import net.jonasmf.auctionengine.domain.profession.SkillTier
-import net.jonasmf.auctionengine.dto.profession.ProfessionDTO
-import net.jonasmf.auctionengine.dto.profession.ProfessionIndexDTO
-import net.jonasmf.auctionengine.dto.profession.SkillTierDTO
-import net.jonasmf.auctionengine.mapper.toDomain
+import net.jonasmf.auctionengine.profession.dto.ProfessionDTO
+import net.jonasmf.auctionengine.profession.dto.ProfessionIndexDTO
+import net.jonasmf.auctionengine.profession.dto.SkillTierDTO
+import net.jonasmf.auctionengine.item.toDomain
+import net.jonasmf.auctionengine.profession.toDomain
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

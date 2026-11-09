@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.domain.profession
 
-import net.jonasmf.auctionengine.dto.LocaleDTO
+import net.jonasmf.auctionengine.locale.LocaleDTO
 
 data class ProfessionCategory(
     val name: LocaleDTO,

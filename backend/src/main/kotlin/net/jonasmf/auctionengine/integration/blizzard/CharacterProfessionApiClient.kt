@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dto.profession.CharacterProfessionsDTO
+import net.jonasmf.auctionengine.profession.dto.CharacterProfessionsDTO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

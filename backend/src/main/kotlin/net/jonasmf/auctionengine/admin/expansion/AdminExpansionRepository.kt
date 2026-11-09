@@ -6,8 +6,8 @@ import net.jonasmf.auctionengine.generated.model.AdminExpansion
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRange
 import net.jonasmf.auctionengine.generated.model.AdminExpansionItemRangeRequest
 import net.jonasmf.auctionengine.generated.model.AdminExpansionRequest
-import net.jonasmf.auctionengine.mapper.toGameLocale
-import net.jonasmf.auctionengine.mapper.toLocaleDTO
+import net.jonasmf.auctionengine.locale.toGameLocale
+import net.jonasmf.auctionengine.locale.toLocaleDTO
 import net.jonasmf.auctionengine.repository.LocaleJdbcRepository
 import net.jonasmf.auctionengine.repository.toLocaleDTO
 import org.springframework.jdbc.core.JdbcTemplate

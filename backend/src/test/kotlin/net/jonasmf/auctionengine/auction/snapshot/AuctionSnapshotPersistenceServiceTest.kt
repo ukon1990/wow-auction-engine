@@ -9,11 +9,11 @@ import net.jonasmf.auctionengine.dbo.rds.auction.AuctionPrice
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealmUpdateHistory
-import net.jonasmf.auctionengine.dto.Link
-import net.jonasmf.auctionengine.dto.Links
-import net.jonasmf.auctionengine.dto.auction.AuctionDTO
-import net.jonasmf.auctionengine.dto.auction.AuctionData
-import net.jonasmf.auctionengine.dto.auction.AuctionItemDTO
+import net.jonasmf.auctionengine.integration.blizzard.dto.Link
+import net.jonasmf.auctionengine.integration.blizzard.dto.Links
+import net.jonasmf.auctionengine.auction.dto.AuctionDTO
+import net.jonasmf.auctionengine.auction.dto.AuctionData
+import net.jonasmf.auctionengine.auction.dto.AuctionItemDTO
 import net.jonasmf.auctionengine.auction.repository.AuctionRepository
 import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
 import net.jonasmf.auctionengine.testsupport.writeJsonToDisk

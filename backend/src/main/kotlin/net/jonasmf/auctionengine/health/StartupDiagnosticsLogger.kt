@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.health
 
-import net.jonasmf.auctionengine.utility.JvmRuntimeDiagnostics
+import net.jonasmf.auctionengine.health.JvmRuntimeDiagnostics
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener

@@ -12,9 +12,9 @@ import net.jonasmf.auctionengine.generated.model.AdminItemPage
 import net.jonasmf.auctionengine.generated.model.AdminRecipeAssociationRequest
 import net.jonasmf.auctionengine.generated.model.AdminRecipeSearchResult
 import net.jonasmf.auctionengine.integration.blizzard.ItemApiLookup
-import net.jonasmf.auctionengine.mapper.hasEnglishName
-import net.jonasmf.auctionengine.mapper.toGameLocale
-import net.jonasmf.auctionengine.mapper.toLocaleDTO
+import net.jonasmf.auctionengine.locale.hasEnglishName
+import net.jonasmf.auctionengine.locale.toGameLocale
+import net.jonasmf.auctionengine.locale.toLocaleDTO
 import net.jonasmf.auctionengine.admin.expansion.AdminExpansionRepository
 import net.jonasmf.auctionengine.admin.item.AdminItemRepositoryPort
 import org.springframework.http.HttpStatus

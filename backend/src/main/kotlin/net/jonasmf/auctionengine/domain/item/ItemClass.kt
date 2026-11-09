@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.domain.item
 
-import net.jonasmf.auctionengine.dto.LocaleDTO
+import net.jonasmf.auctionengine.locale.LocaleDTO
 
 data class ItemClass(
     val id: Int,

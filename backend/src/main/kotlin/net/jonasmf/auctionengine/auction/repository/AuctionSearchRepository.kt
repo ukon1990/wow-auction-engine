@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.auction.repository
 
-import net.jonasmf.auctionengine.utility.ItemQualityOrder
+import net.jonasmf.auctionengine.auction.ItemQualityOrder
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.jdbc.core.JdbcTemplate

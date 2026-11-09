@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dto.Href
+import net.jonasmf.auctionengine.integration.blizzard.dto.Href
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.buildWebClient
 import net.jonasmf.auctionengine.testsupport.BlizzardApiCallSupport.Companion.createSupport
 import net.jonasmf.auctionengine.testsupport.loadFixture

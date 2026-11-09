@@ -5,10 +5,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dto.BlizzardMediaAssetDTO
-import net.jonasmf.auctionengine.dto.BlizzardMediaDTO
-import net.jonasmf.auctionengine.dto.Link
-import net.jonasmf.auctionengine.dto.Links
+import net.jonasmf.auctionengine.media.BlizzardMediaAssetDTO
+import net.jonasmf.auctionengine.media.BlizzardMediaDTO
+import net.jonasmf.auctionengine.integration.blizzard.dto.Link
+import net.jonasmf.auctionengine.integration.blizzard.dto.Links
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardMediaApiClient
 import net.jonasmf.auctionengine.integration.blizzard.DownloadedMediaAsset
 import org.junit.jupiter.api.Assertions.assertEquals

@@ -1,7 +1,7 @@
 package net.jonasmf.auctionengine.integration.blizzard
 
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dto.BlizzardMediaDTO
+import net.jonasmf.auctionengine.media.BlizzardMediaDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component

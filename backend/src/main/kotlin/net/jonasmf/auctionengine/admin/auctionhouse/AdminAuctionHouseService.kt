@@ -4,7 +4,7 @@ import net.jonasmf.auctionengine.admin.auctionhouse.AdminAuctionHousePageSortBy
 import net.jonasmf.auctionengine.admin.auctionhouse.toAuctionHouseDomain
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
 import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
-import net.jonasmf.auctionengine.mapper.realm.toDomain
+import net.jonasmf.auctionengine.realm.toDomain
 import net.jonasmf.auctionengine.admin.auctionhouse.AdminAuctionHouseJdbcRepository
 import net.jonasmf.auctionengine.admin.auctionhouse.AdminAuctionHouseRepository
 import org.slf4j.LoggerFactory

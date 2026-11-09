@@ -9,7 +9,7 @@ import net.jonasmf.auctionengine.generated.model.AuctionHousePageSortBy
 import net.jonasmf.auctionengine.generated.model.PageMetadata
 import net.jonasmf.auctionengine.generated.model.Sorting
 import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
-import net.jonasmf.auctionengine.mapper.realm.toDto
+import net.jonasmf.auctionengine.realm.toDto
 import net.jonasmf.auctionengine.admin.auctionhouse.AdminAuctionHouseService
 import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity

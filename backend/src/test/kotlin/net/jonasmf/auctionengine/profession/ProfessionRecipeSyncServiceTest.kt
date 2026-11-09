@@ -13,7 +13,7 @@ import net.jonasmf.auctionengine.domain.profession.Profession
 import net.jonasmf.auctionengine.domain.profession.ProfessionCategory
 import net.jonasmf.auctionengine.domain.profession.Recipe
 import net.jonasmf.auctionengine.domain.profession.SkillTier
-import net.jonasmf.auctionengine.dto.LocaleDTO
+import net.jonasmf.auctionengine.locale.LocaleDTO
 import net.jonasmf.auctionengine.integration.blizzard.ModifiedCraftingApiClient
 import net.jonasmf.auctionengine.integration.blizzard.ProfessionApiClient
 import net.jonasmf.auctionengine.integration.blizzard.RecipeApiClient

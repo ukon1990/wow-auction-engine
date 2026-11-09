@@ -4,7 +4,7 @@ import net.jonasmf.auctionengine.generated.model.AdminExpansion
 import net.jonasmf.auctionengine.generated.model.AdminItemFields
 import net.jonasmf.auctionengine.generated.model.AdminItemReference
 import net.jonasmf.auctionengine.generated.model.GameLocale
-import net.jonasmf.auctionengine.mapper.toGameLocale
+import net.jonasmf.auctionengine.locale.toGameLocale
 import net.jonasmf.auctionengine.repository.toLocaleDTO
 import java.sql.ResultSet
 import java.sql.Timestamp

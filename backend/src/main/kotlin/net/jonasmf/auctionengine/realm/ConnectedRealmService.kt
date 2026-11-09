@@ -9,7 +9,7 @@ import net.jonasmf.auctionengine.constant.Region
 import net.jonasmf.auctionengine.dbo.rds.realm.AuctionHouse
 import net.jonasmf.auctionengine.dbo.rds.realm.ConnectedRealm
 import net.jonasmf.auctionengine.dbo.rds.realm.Realm
-import net.jonasmf.auctionengine.dto.Href
+import net.jonasmf.auctionengine.integration.blizzard.dto.Href
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardConnectedRealmApiClient
 import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
 import net.jonasmf.auctionengine.realm.repository.RegionRepository

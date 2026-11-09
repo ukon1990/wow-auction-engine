@@ -2,7 +2,7 @@ package net.jonasmf.auctionengine.admin.recipe
 
 import net.jonasmf.auctionengine.domain.profession.Recipe
 import net.jonasmf.auctionengine.domain.profession.RecipeReagent
-import net.jonasmf.auctionengine.dto.LocaleDTO
+import net.jonasmf.auctionengine.locale.LocaleDTO
 import net.jonasmf.auctionengine.generated.model.AdminRecipeBulkOverride
 import net.jonasmf.auctionengine.generated.model.AdminRecipeBulkOverrideRequest
 import net.jonasmf.auctionengine.generated.model.AdminRecipeFields

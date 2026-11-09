@@ -6,7 +6,7 @@ import net.jonasmf.auctionengine.domain.item.Item
 import net.jonasmf.auctionengine.domain.item.ItemAppearance
 import net.jonasmf.auctionengine.domain.profession.Profession
 import net.jonasmf.auctionengine.domain.profession.Recipe
-import net.jonasmf.auctionengine.dto.BlizzardMediaAssetDTO
+import net.jonasmf.auctionengine.media.BlizzardMediaAssetDTO
 import net.jonasmf.auctionengine.integration.blizzard.BlizzardMediaApiClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

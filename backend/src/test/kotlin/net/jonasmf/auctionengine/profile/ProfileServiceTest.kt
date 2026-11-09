@@ -4,10 +4,10 @@ import net.jonasmf.auctionengine.generated.model.ProfessionAllocation
 import net.jonasmf.auctionengine.generated.model.ProfessionProfileRequest
 import net.jonasmf.auctionengine.generated.model.ProfileCharacter
 import net.jonasmf.auctionengine.constant.Region
-import net.jonasmf.auctionengine.dto.profession.CharacterProfessionDTO
-import net.jonasmf.auctionengine.dto.profession.CharacterProfessionReferenceDTO
-import net.jonasmf.auctionengine.dto.profession.CharacterProfessionTierDTO
-import net.jonasmf.auctionengine.dto.profession.CharacterProfessionsDTO
+import net.jonasmf.auctionengine.profession.dto.CharacterProfessionDTO
+import net.jonasmf.auctionengine.profession.dto.CharacterProfessionReferenceDTO
+import net.jonasmf.auctionengine.profession.dto.CharacterProfessionTierDTO
+import net.jonasmf.auctionengine.profession.dto.CharacterProfessionsDTO
 import net.jonasmf.auctionengine.integration.blizzard.CharacterProfessionApiClient
 import net.jonasmf.auctionengine.profile.repository.ProfileRepository
 import org.assertj.core.api.Assertions.assertThat

@@ -1,6 +1,6 @@
 package net.jonasmf.auctionengine.domain.profession
 
-import net.jonasmf.auctionengine.dto.LocaleDTO
+import net.jonasmf.auctionengine.locale.LocaleDTO
 import java.time.Instant
 
 data class Profession(
