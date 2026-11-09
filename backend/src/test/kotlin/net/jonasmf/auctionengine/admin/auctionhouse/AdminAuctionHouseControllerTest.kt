@@ -34,6 +34,7 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
             mvcGet("$basePath/509", admin)
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.id").value(509))
+                .andExpect(jsonPath("$.realms").isNotEmpty)
         }
 
         @Test
@@ -80,7 +81,8 @@ class AdminAuctionHouseControllerTest : MVCIntegrationTest() {
             mvcPatch("$basePath/509", UpdateAuctionHouse(nextUpdate = nextUpdate), admin)
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.id").value(509))
-                .andExpect(jsonPath("$.nextUpdate").value("${nextUpdate.toLocalDateTime()}Z"))
+                // Times are returned in the realm's time zone (Europe/Paris for realm 509).
+                .andExpect(jsonPath("$.nextUpdate").value("2026-01-15T13:34:56.123456+01:00"))
                 .andExpect(jsonPath("$.updateAttempts").value(0))
         }
     }
