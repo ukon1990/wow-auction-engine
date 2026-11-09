@@ -4,6 +4,7 @@ import net.jonasmf.auctionengine.admin.auctionhouse.AdminAuctionHousePageSortBy
 import net.jonasmf.auctionengine.admin.auctionhouse.toAuctionHouseDomain
 import net.jonasmf.auctionengine.domain.realm.AuctionHouse
 import net.jonasmf.auctionengine.generated.model.UpdateAuctionHouse
+import net.jonasmf.auctionengine.realm.repository.ConnectedRealmRepository
 import net.jonasmf.auctionengine.realm.toDomain
 import net.jonasmf.auctionengine.admin.auctionhouse.AdminAuctionHouseJdbcRepository
 import net.jonasmf.auctionengine.admin.auctionhouse.AdminAuctionHouseRepository
@@ -15,12 +16,18 @@ import org.springframework.stereotype.Service
 class AdminAuctionHouseService(
     val repository: AdminAuctionHouseRepository,
     val jdbcRepository: AdminAuctionHouseJdbcRepository,
+    val connectedRealmRepository: ConnectedRealmRepository,
 ) {
     val logger = LoggerFactory.getLogger(AdminAuctionHouseService::class.java)
 
     fun getById(id: Int): AuctionHouse? {
-        val house = repository.findByConnectedRealmId(id)
-        return house?.toDomain()
+        val house = repository.findByConnectedRealmId(id) ?: return null
+        val realms =
+            connectedRealmRepository
+                .findById(id)
+                .map { connectedRealm -> connectedRealm.realms.map { it.toDomain() } }
+                .orElse(emptyList())
+        return house.toDomain(realms)
     }
 
     fun update(
