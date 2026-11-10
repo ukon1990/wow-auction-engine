@@ -9,7 +9,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
-import { PageFrameComponent, SkeletonDirective } from '@ui';
+import { PageFrameComponent, SkeletonDirective, ButtonDirective } from '@ui';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '@core/services/auth.service';
@@ -21,7 +21,7 @@ import {
 
 @Component({
   selector: 'app-profile-page',
-  imports: [FormsModule, PageFrameComponent, RouterLink, SkeletonDirective],
+  imports: [ButtonDirective, FormsModule, PageFrameComponent, RouterLink, SkeletonDirective],
   templateUrl: './profile.page.html',
   host: {
     class: 'flex min-h-0 flex-1 flex-col',

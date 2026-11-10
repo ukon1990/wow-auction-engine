@@ -15,12 +15,12 @@ type ColumnMeta = {
 };
 
 const GRID_HEADER =
-  'grid w-full gap-4 border-b border-white/10 bg-surface-container-high px-container-padding py-4 ee-label text-outline';
+  'grid w-full gap-4 border-b border-white/10 bg-surface-container-high px-inner-padding py-3 ee-label text-outline';
 
 const GRID_ROW =
-  'grid w-full items-center gap-4 px-container-padding py-3 text-left transition hover:bg-white/5 select-text';
+  'grid w-full items-center gap-4 px-inner-padding py-2.5 text-left transition hover:bg-white/5 select-text';
 
-const GRID_ROW_SKELETON = 'grid w-full items-center gap-4 px-container-padding py-3 text-left';
+const GRID_ROW_SKELETON = 'grid w-full items-center gap-4 px-inner-padding py-2.5 text-left';
 
 export function craftingBrowserHeaderRowClass(): string {
   return GRID_HEADER;
@@ -40,12 +40,6 @@ export function craftingBrowserRowGridTemplateColumns(
   return columns.map((column) => (column.meta as ColumnMeta).gridTrack).join(' ');
 }
 
-function textCell(value: unknown): string {
-  if (value === null || value === undefined) return '—';
-  const text = String(value).trim();
-  return text.length > 0 ? text : '—';
-}
-
 export function createCraftingBrowserTableColumns(): ColumnDef<CraftingTableRow, unknown>[] {
   return [
     {
@@ -61,45 +55,6 @@ export function createCraftingBrowserTableColumns(): ColumnDef<CraftingTableRow,
       cell: () => flexRenderComponent(CraftingItemCellComponent),
     },
     {
-      id: 'professionName',
-      accessorKey: 'professionName',
-      header: $localize`:@@crafting.column.profession:Profession`,
-      meta: {
-        align: 'left',
-        gridTrack: 'minmax(6rem, 1fr)',
-        cardRole: 'detail',
-        cardLabel: $localize`:@@crafting.column.profession:Profession`,
-        cardPriority: 20,
-      } satisfies ColumnMeta,
-      cell: (info) => textCell(info.getValue()),
-    },
-    {
-      id: 'reagentCost',
-      accessorKey: 'reagentCostCopper',
-      header: $localize`:@@crafting.column.materialCost:Mat. cost`,
-      meta: {
-        align: 'right',
-        gridTrack: 'minmax(5.5rem, max-content)',
-        cardRole: 'metric',
-        cardLabel: $localize`:@@crafting.column.materialCost:Mat. cost`,
-        cardPriority: 30,
-      } satisfies ColumnMeta,
-      cell: () => flexRenderComponent(CraftingCurrencyCellComponent),
-    },
-    {
-      id: 'outputPrice',
-      accessorKey: 'outputPriceCopper',
-      header: $localize`:@@crafting.column.buyout:Buyout`,
-      meta: {
-        align: 'right',
-        gridTrack: 'minmax(5.5rem, max-content)',
-        cardRole: 'metric',
-        cardLabel: $localize`:@@crafting.column.buyout:Buyout`,
-        cardPriority: 10,
-      } satisfies ColumnMeta,
-      cell: () => flexRenderComponent(CraftingCurrencyCellComponent),
-    },
-    {
       id: 'profit',
       accessorKey: 'profitCopper',
       header: $localize`:@@crafting.column.profit:Profit`,
@@ -108,7 +63,33 @@ export function createCraftingBrowserTableColumns(): ColumnDef<CraftingTableRow,
         gridTrack: 'minmax(5.5rem, max-content)',
         cardRole: 'metric',
         cardLabel: $localize`:@@crafting.column.profit:Profit`,
-        cardPriority: 20,
+        cardPriority: 5,
+      } satisfies ColumnMeta,
+      cell: () => flexRenderComponent(CraftingCurrencyCellComponent),
+    },
+    {
+      id: 'reagentCost',
+      accessorKey: 'reagentCostCopper',
+      header: $localize`:@@crafting.column.materialCost:Reagent cost`,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(5.5rem, max-content)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@crafting.column.materialCost:Reagent cost`,
+        cardPriority: 30,
+      } satisfies ColumnMeta,
+      cell: () => flexRenderComponent(CraftingCurrencyCellComponent),
+    },
+    {
+      id: 'outputPrice',
+      accessorKey: 'outputPriceCopper',
+      header: $localize`:@@crafting.column.buyout:Price`,
+      meta: {
+        align: 'right',
+        gridTrack: 'minmax(5.5rem, max-content)',
+        cardRole: 'metric',
+        cardLabel: $localize`:@@crafting.column.buyout:Price`,
+        cardPriority: 10,
       } satisfies ColumnMeta,
       cell: () => flexRenderComponent(CraftingCurrencyCellComponent),
     },
@@ -154,12 +135,12 @@ export function createCraftingBrowserTableColumns(): ColumnDef<CraftingTableRow,
     {
       id: 'soldPerDay',
       accessorKey: 'soldPerDay',
-      header: $localize`:@@crafting.column.soldPerDay:Avg sold/day`,
+      header: $localize`:@@crafting.column.soldPerDay:Sold/day`,
       meta: {
         align: 'right',
         gridTrack: 'minmax(5rem, max-content)',
         cardRole: 'metric',
-        cardLabel: $localize`:@@crafting.column.soldPerDay:Avg sold/day`,
+        cardLabel: $localize`:@@crafting.column.soldPerDay:Sold/day`,
         cardPriority: 56,
       } satisfies ColumnMeta,
       cell: () => flexRenderComponent(CraftingPercentCellComponent),

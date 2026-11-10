@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AdminItem, AdminRecipeAssociationRequest, AdminRecipeSearchResult } from '@api/generated';
-import { SearchInputComponent, TextInputComponent } from '@ui';
+import { SearchInputComponent, TextInputComponent, ButtonDirective } from '@ui';
 
 const standaloneModel = { standalone: true };
 
 @Component({
   selector: 'app-admin-item-recipe-association-panel',
-  imports: [FormsModule, SearchInputComponent, TextInputComponent],
+  imports: [ButtonDirective, FormsModule, SearchInputComponent, TextInputComponent],
   template: `
     <div class="grid gap-5">
       @if (item(); as currentItem) {
@@ -43,7 +43,7 @@ const standaloneModel = { standalone: true };
               }
             </div>
           } @else {
-            <p class="ee-data text-outline">No recipes are associated with this item.</p>
+            <p class="text-sm text-on-surface-variant">No recipes are associated with this item.</p>
           }
         </section>
 
@@ -104,7 +104,7 @@ const standaloneModel = { standalone: true };
               }
             </div>
           } @else if (query().trim().length >= 2) {
-            <p class="ee-data text-outline">No recipes match this search.</p>
+            <p class="text-sm text-on-surface-variant">No recipes match this search.</p>
           }
 
           <ee-text-input
@@ -126,7 +126,8 @@ const standaloneModel = { standalone: true };
             </button>
             <button
               type="submit"
-              class="rounded-md bg-primary px-4 py-2 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+              eeButton
+              variant="primary"
               [disabled]="!selectedRecipe() || submitting()"
             >
               Associate recipe

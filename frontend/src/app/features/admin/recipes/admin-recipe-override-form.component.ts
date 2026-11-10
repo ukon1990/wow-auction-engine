@@ -11,13 +11,14 @@ import {
   AdminItemSelection,
   AdminItemTypeaheadComponent,
 } from '@features/admin/shared/admin-item-typeahead.component';
+import { ButtonDirective } from '@ui';
 
 const standaloneModel = { standalone: true };
 const REAGENT_RANKS = [1, 2, 3] as const;
 
 @Component({
   selector: 'app-admin-recipe-override-form',
-  imports: [FormsModule, AdminItemTypeaheadComponent],
+  imports: [FormsModule, AdminItemTypeaheadComponent, ButtonDirective],
   template: `
     <form class="grid gap-6" (submit)="onSubmit($event)">
       @if (recipe(); as currentRecipe) {
@@ -87,7 +88,7 @@ const REAGENT_RANKS = [1, 2, 3] as const;
         <section class="grid gap-3" [attr.aria-label]="outputsSectionLabel">
           <div class="flex items-center justify-between gap-3">
             <h4 class="font-semibold text-primary-container">{{ outputsSectionLabel }}</h4>
-            <button type="button" class="admin-secondary-button" (click)="addOutput()">
+            <button type="button" eeButton variant="ghost" (click)="addOutput()">
               {{ addOutputLabel }}
             </button>
           </div>
@@ -122,7 +123,9 @@ const REAGENT_RANKS = [1, 2, 3] as const;
               </label>
               <button
                 type="button"
-                class="admin-secondary-button self-end"
+                eeButton
+                variant="ghost"
+                class="self-end"
                 [attr.aria-label]="removeOutputAriaLabel($index)"
                 (click)="removeOutput($index)"
               >
@@ -137,7 +140,7 @@ const REAGENT_RANKS = [1, 2, 3] as const;
         <section class="grid gap-3" [attr.aria-label]="reagentsSectionLabel">
           <div class="flex items-center justify-between gap-3">
             <h4 class="font-semibold text-primary-container">{{ reagentsSectionLabel }}</h4>
-            <button type="button" class="admin-secondary-button" (click)="addReagent()">
+            <button type="button" eeButton variant="ghost" (click)="addReagent()">
               {{ addReagentLabel }}
             </button>
           </div>
@@ -172,7 +175,9 @@ const REAGENT_RANKS = [1, 2, 3] as const;
               </label>
               <button
                 type="button"
-                class="admin-secondary-button self-end"
+                eeButton
+                variant="ghost"
+                class="self-end"
                 [attr.aria-label]="removeReagentAriaLabel($index)"
                 (click)="removeReagent($index)"
               >
@@ -233,10 +238,10 @@ const REAGENT_RANKS = [1, 2, 3] as const;
         }
 
         <div class="flex flex-wrap justify-end gap-3">
-          <button type="button" class="admin-secondary-button" (click)="cancelled.emit()">
+          <button type="button" eeButton variant="ghost" (click)="cancelled.emit()">
             {{ cancelLabel }}
           </button>
-          <button type="submit" class="admin-primary-button" [disabled]="submitting()">
+          <button type="submit" eeButton variant="primary" [disabled]="submitting()">
             {{ saveLabel }}
           </button>
         </div>

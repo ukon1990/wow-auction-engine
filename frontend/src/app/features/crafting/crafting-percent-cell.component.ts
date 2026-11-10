@@ -32,8 +32,16 @@ import type { CraftingTableRow } from './crafting-browser.models';
       }
       @default {
         @if (value() != null) {
-          <div class="ee-data text-on-surface">
-            {{ value()! | number: '1.1-1' : selectedLocaleForNumberPipe() }}%
+          <div
+            class="ee-data"
+            [class.text-status-ok]="value()! > 0"
+            [class.text-error]="value()! < 0"
+            [class.text-on-surface]="value() === 0"
+          >
+            {{
+              (value()! > 0 ? '+' : '') +
+                (value()! | number: '1.1-1' : selectedLocaleForNumberPipe())
+            }}%
           </div>
         } @else {
           <span class="text-outline">—</span>

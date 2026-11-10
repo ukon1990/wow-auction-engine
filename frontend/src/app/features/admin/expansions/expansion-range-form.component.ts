@@ -14,7 +14,12 @@ import {
   AdminExpansionItemRangeRequest,
 } from '@api/generated';
 import { type CreateExpansionRangeDefaults } from '@features/admin/expansions/expansion-range-filters';
-import { CheckboxInputComponent, SelectInputComponent, TextInputComponent } from '@ui';
+import {
+  CheckboxInputComponent,
+  SelectInputComponent,
+  TextInputComponent,
+  ButtonDirective,
+} from '@ui';
 
 export type ExpansionRangeFormMode = 'create' | 'edit';
 
@@ -22,7 +27,13 @@ const standaloneModel = { standalone: true };
 
 @Component({
   selector: 'app-expansion-range-form',
-  imports: [FormsModule, SelectInputComponent, TextInputComponent, CheckboxInputComponent],
+  imports: [
+    ButtonDirective,
+    FormsModule,
+    SelectInputComponent,
+    TextInputComponent,
+    CheckboxInputComponent,
+  ],
   template: `
     <form class="grid gap-4" (submit)="onSubmit($event)">
       <ee-select-input
@@ -87,20 +98,10 @@ const standaloneModel = { standalone: true };
       }
 
       <div class="flex flex-wrap gap-3">
-        <button
-          type="submit"
-          class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
-          [disabled]="submitting()"
-        >
+        <button type="submit" eeButton variant="primary" [disabled]="submitting()">
           {{ submitLabel() }}
         </button>
-        <button
-          type="button"
-          class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-          (click)="cancelled.emit()"
-        >
-          Cancel
-        </button>
+        <button type="button" eeButton (click)="cancelled.emit()">Cancel</button>
       </div>
     </form>
   `,

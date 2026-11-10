@@ -11,19 +11,7 @@ import type { CraftingTableRow } from './crafting-browser.models';
   imports: [CurrencyAmountComponent],
   template: `
     @if (copper() != null) {
-      <div class="space-y-1">
-        <ee-currency-amount [amount]="amount()" />
-        @if (columnId() === 'outputPrice' && hasPercentileRange()) {
-          <div
-            class="inline-flex flex-wrap items-center gap-x-1 text-[11px] leading-none text-outline"
-          >
-            <span>p25</span>
-            <ee-currency-amount [amount]="p25Amount()" />
-            <span>/ p75</span>
-            <ee-currency-amount [amount]="p75Amount()" />
-          </div>
-        }
-      </div>
+      <ee-currency-amount [amount]="amount()" [signed]="columnId() === 'profit'" />
     } @else {
       <span class="text-outline">—</span>
     }
@@ -57,18 +45,5 @@ export class CraftingCurrencyCellComponent {
 
   protected amount() {
     return copperToCurrencyAmount(this.copper() ?? 0);
-  }
-
-  protected hasPercentileRange(): boolean {
-    const row = this.row();
-    return row.outputP25PriceCopper !== null && row.outputP75PriceCopper !== null;
-  }
-
-  protected p25Amount() {
-    return copperToCurrencyAmount(this.row().outputP25PriceCopper ?? 0);
-  }
-
-  protected p75Amount() {
-    return copperToCurrencyAmount(this.row().outputP75PriceCopper ?? 0);
   }
 }

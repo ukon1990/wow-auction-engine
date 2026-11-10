@@ -58,7 +58,9 @@ type CompareRow = {
           </table>
         </div>
       } @else {
-        <p class="ee-data text-outline">Run compare to inspect Blizzard API differences.</p>
+        <p class="text-sm text-on-surface-variant">
+          Run compare to inspect Blizzard API differences.
+        </p>
       }
     </div>
   `,

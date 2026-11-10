@@ -14,21 +14,32 @@ export type PageFrameBodyLayout = 'scroll' | 'fill';
   template: `
     <main id="page-main" [class]="mainClass()" tabindex="-1">
       <div [class]="innerClass()">
-        <header class="flex flex-col gap-2" [eeSkeleton]="loading()">
-          <p
-            class="ee-label text-outline"
-            [attr.id]="titleId() ? titleId() + '-eyebrow' : null"
-            i18n="@@pageFrame.eyebrow"
-          >
-            {{ eyebrow() }}
-          </p>
-          <h1
-            class="font-cinzel text-3xl font-bold text-primary sm:text-4xl"
-            [attr.id]="titleId()"
-            i18n="@@pageFrame.title"
-          >
-            {{ title() }}
-          </h1>
+        <header
+          class="flex flex-wrap items-start justify-between gap-x-4 gap-y-3"
+          [eeSkeleton]="loading()"
+        >
+          <div class="flex min-w-0 flex-col gap-1">
+            @if (eyebrow()) {
+              <p
+                class="ee-label text-outline"
+                [attr.id]="titleId() ? titleId() + '-eyebrow' : null"
+                i18n="@@pageFrame.eyebrow"
+              >
+                {{ eyebrow() }}
+              </p>
+            }
+            <h1
+              class="font-cinzel text-2xl font-bold text-primary sm:text-3xl"
+              [attr.id]="titleId()"
+              i18n="@@pageFrame.title"
+            >
+              {{ title() }}
+            </h1>
+            @if (description()) {
+              <p class="text-sm text-on-surface-variant">{{ description() }}</p>
+            }
+          </div>
+          <ng-content select="[eePageActions]" />
         </header>
         <ng-content />
       </div>
@@ -39,6 +50,8 @@ export type PageFrameBodyLayout = 'scroll' | 'fill';
 export class PageFrameComponent {
   readonly title = input.required<string>();
   readonly eyebrow = input('');
+  /** One line under the title that says what the page is for. */
+  readonly description = input('');
   readonly loading = input(false);
   /**
    * `scroll` (default): this frame is the vertical scroll container for long pages (Codex, docs).

@@ -9,7 +9,9 @@ import { CurrencyAmount } from '../../models/ui-models';
     <span [class]="hostClass()" [attr.aria-label]="ariaLabel()">
       @if (hasValue()) {
         @if (amount().negative) {
-          <span aria-hidden="true">-</span>
+          <span class="-mr-1" aria-hidden="true">−</span>
+        } @else if (signed()) {
+          <span class="-mr-1" aria-hidden="true">+</span>
         }
         @if (amount().gold) {
           <span>{{ format(amount().gold) }}</span>
@@ -33,12 +35,18 @@ import { CurrencyAmount } from '../../models/ui-models';
 export class CurrencyAmountComponent {
   readonly amount = input.required<CurrencyAmount>();
   readonly emphasis = input(false);
+  /** Profit style: a + or − sign, green when positive and red when negative. */
+  readonly signed = input(false);
 
   protected hasValue(): boolean {
     return hasCurrencyValue(this.amount());
   }
 
   protected hostClass(): string {
+    if (this.signed() && this.hasValue()) {
+      const tone = this.amount().negative ? 'text-error' : 'text-status-ok';
+      return `ee-data inline-flex items-center justify-end gap-1 font-bold ${tone}`;
+    }
     return this.emphasis()
       ? 'ee-data inline-flex items-center justify-end gap-1 font-bold text-primary'
       : 'ee-data inline-flex items-center justify-end gap-1 text-on-surface';

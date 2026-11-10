@@ -3,13 +3,19 @@ import { FormsModule } from '@angular/forms';
 import { AdminItemCreateRequest, GameLocale } from '@api/generated';
 import { emptyGameLocale, hasEnglishGameLocale } from '@features/admin/shared/game-locale-fields';
 import { LocaleFieldsComponent } from '@features/admin/shared/locale-fields.component';
-import { SelectInputComponent, TextInputComponent } from '@ui';
+import { SelectInputComponent, TextInputComponent, ButtonDirective } from '@ui';
 
 const standaloneModel = { standalone: true };
 
 @Component({
   selector: 'app-admin-item-create-form',
-  imports: [FormsModule, LocaleFieldsComponent, SelectInputComponent, TextInputComponent],
+  imports: [
+    ButtonDirective,
+    FormsModule,
+    LocaleFieldsComponent,
+    SelectInputComponent,
+    TextInputComponent,
+  ],
   template: `
     <form class="grid gap-5" (submit)="onSubmit($event)">
       <fieldset class="grid gap-4">
@@ -181,20 +187,10 @@ const standaloneModel = { standalone: true };
       }
 
       <div class="flex flex-wrap gap-3">
-        <button
-          type="submit"
-          class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container"
-          [disabled]="submitting()"
-        >
+        <button type="submit" eeButton variant="primary" [disabled]="submitting()">
           Create item
         </button>
-        <button
-          type="button"
-          class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-          (click)="cancelled.emit()"
-        >
-          Cancel
-        </button>
+        <button type="button" eeButton (click)="cancelled.emit()">Cancel</button>
       </div>
     </form>
   `,

@@ -526,15 +526,7 @@ export class ReactiveFormStoryHostComponent {
 @Component({
   selector: 'story-top-navigation-host',
   imports: [TopNavComponent],
-  template: `
-    <ee-top-nav
-      [items]="items"
-      activeId="market-browser"
-      [character]="character"
-      [mobileDrawerOpen]="mobileNavOpen()"
-      (toggleMobileDrawer)="toggleMobileNav()"
-    />
-  `,
+  template: ` <ee-top-nav [items]="items" /> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopNavigationStoryHostComponent {
@@ -551,15 +543,7 @@ export class TopNavigationStoryHostComponent {
   selector: 'story-top-navigation-child-routes-host',
   imports: [TopNavComponent],
   template: `
-    <ee-top-nav
-      [items]="items"
-      activeId="admin/users"
-      [character]="character"
-      accountRouterLink="/profile"
-      accountLabel="Open profile"
-      [mobileDrawerOpen]="mobileNavOpen()"
-      (toggleMobileDrawer)="toggleMobileNav()"
-    />
+    <ee-top-nav [items]="items" accountRouterLink="/profile" accountLabel="Open profile" />
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

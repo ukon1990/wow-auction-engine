@@ -12,21 +12,21 @@ import type { AuctionHouseActions } from './auction-house-table.columns';
   template: `
     <button
       type="button"
-      class="flex h-10 w-10 items-center justify-center rounded border border-white/10 hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-primary"
+      class="inline-grid h-8 w-8 place-items-center rounded-md border border-white/10 text-on-surface-variant transition hover:bg-surface-container-high hover:text-on-surface"
       [cdkMenuTriggerFor]="menu"
       [attr.aria-label]="menuLabel"
     >
-      <ee-symbol-icon name="more_vert" />
+      <ee-symbol-icon class="text-[18px]" name="more_horiz" />
     </button>
     <ng-template #menu>
       <div
         cdkMenu
-        class="min-w-52 rounded border border-white/10 bg-slate-950 p-1 text-on-surface shadow-xl"
+        class="min-w-52 rounded-lg border border-white/10 bg-surface-container-high p-1 text-sm text-on-surface shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
       >
         <button
           cdkMenuItem
           type="button"
-          class="block w-full rounded px-3 py-2 text-left hover:bg-white/10"
+          class="block w-full rounded-md px-3 py-2 text-left hover:bg-white/10"
           (cdkMenuItemTriggered)="actions().onDetails(house())"
           i18n="@@admin.auction-house.viewEdit"
         >
@@ -35,7 +35,7 @@ import type { AuctionHouseActions } from './auction-house-table.columns';
         <button
           cdkMenuItem
           type="button"
-          class="block w-full rounded px-3 py-2 text-left hover:bg-white/10 disabled:opacity-40"
+          class="block w-full rounded-md px-3 py-2 text-left hover:bg-white/10 disabled:opacity-40"
           [disabled]="!house().autoUpdate || actions().isSaving(house())"
           (cdkMenuItemTriggered)="actions().onUpdateNow(house())"
           i18n="@@admin.auction-house.updateNow"
@@ -45,7 +45,7 @@ import type { AuctionHouseActions } from './auction-house-table.columns';
         <button
           cdkMenuItem
           type="button"
-          class="block w-full rounded px-3 py-2 text-left hover:bg-white/10 disabled:opacity-40"
+          class="block w-full rounded-md px-3 py-2 text-left hover:bg-white/10 disabled:opacity-40"
           [disabled]="actions().isSaving(house())"
           (cdkMenuItemTriggered)="actions().onToggleAutoUpdate(house())"
         >

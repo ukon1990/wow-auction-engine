@@ -89,8 +89,7 @@ describe('CraftingBrowserPage', () => {
     expect(compiled.textContent).toContain('Healing Potion');
     expect(compiled.textContent).toContain('Alchemy');
     expect(compiled.querySelector('[role="columnheader"]')?.textContent).not.toContain('Recipe');
-    expect(compiled.textContent).toContain('p25');
-    expect(compiled.textContent).toContain('p75');
+    expect(compiled.textContent).toContain('Profit');
   });
 
   it('delegates selected page events to the crafting service', () => {
@@ -120,9 +119,9 @@ describe('CraftingBrowserPage', () => {
     expect(sortSelect?.value).toBe('itemName');
     expect(compiled.querySelector('[role="columnheader"]')).toBeNull();
     expect(compiled.textContent).toContain('Healing Potion');
-    expect(compiled.textContent).toContain('Buyout');
+    expect(compiled.textContent).toContain('Price');
     expect(compiled.textContent).toContain('Profit');
-    expect(compiled.textContent).toContain('Mat. cost');
+    expect(compiled.textContent).toContain('Reagent cost');
     expect(compiled.textContent).toContain('Profession');
     expect(compiled.textContent).toContain('Alchemy');
   });

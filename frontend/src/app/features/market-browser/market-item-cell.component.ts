@@ -20,8 +20,8 @@ import { MarketItemRow } from '@ui';
       [buyout]="row().minBuyout"
       [showIcon]="true"
     >
-      @if (row().recipeRank; as rank) {
-        <span class="ee-label text-outline">{{ rankLabel(rank) }}</span>
+      @if (details(); as text) {
+        <span class="block truncate text-xs text-outline">{{ text }}</span>
       }
     </app-item-link>
   `,
@@ -37,6 +37,18 @@ export class MarketItemCellComponent {
   protected itemId(): number {
     const itemId = Number.parseInt(this.row().id, 10);
     return Number.isFinite(itemId) ? itemId : 0;
+  }
+
+  /** Class · subclass · rank, shown under the item name. */
+  protected details(): string {
+    const row = this.row();
+    return [
+      row.itemClassName,
+      row.itemSubclassName,
+      row.recipeRank ? this.rankLabel(row.recipeRank) : undefined,
+    ]
+      .filter((part): part is string => Boolean(part?.trim()))
+      .join(' · ');
   }
 
   protected rankLabel(rank: number): string {

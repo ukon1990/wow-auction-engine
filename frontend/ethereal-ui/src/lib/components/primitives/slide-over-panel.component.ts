@@ -32,18 +32,17 @@ import { SymbolIconComponent } from './symbol-icon.component';
         <div class="fixed inset-0 z-[60] bg-black/50" aria-hidden="true" (click)="close()"></div>
 
         <div
-          class="fixed top-16 right-0 z-[60] flex h-[calc(100vh-4rem)] w-[min(28rem,90vw)] translate-x-0 flex-col border-l border-white/10 bg-slate-950/95 shadow-xl backdrop-blur-2xl transition-transform duration-200 ease-out"
+          class="fixed top-16 right-0 z-[60] flex h-[calc(100vh-4rem)] w-[min(28rem,90vw)] translate-x-0 flex-col border-l border-white/10 bg-surface-container-lowest shadow-[-12px_0_40px_rgba(0,0,0,0.5)] transition-transform duration-200 ease-out"
           role="dialog"
           aria-modal="true"
           [attr.aria-labelledby]="resolvedTitleId()"
           cdkTrapFocus
           [cdkTrapFocusAutoCapture]="true"
         >
-          <header class="flex items-center justify-between border-b border-white/10 px-5 py-4">
-            <h2
-              [id]="resolvedTitleId()"
-              class="font-cinzel text-xl font-bold text-primary-container"
-            >
+          <header
+            class="flex items-center justify-between border-b border-white/10 bg-surface-container-low px-5 py-3"
+          >
+            <h2 [id]="resolvedTitleId()" class="text-lg font-semibold text-on-surface">
               {{ title() }}
             </h2>
             <button

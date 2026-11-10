@@ -15,7 +15,7 @@ import {
   ProfileCharacterRequest,
   CharacterProfessionPreview,
 } from '@api/generated';
-import { PageFrameComponent, SelectInputComponent, TextInputComponent } from '@ui';
+import { PageFrameComponent, SelectInputComponent, TextInputComponent, ButtonDirective } from '@ui';
 import { UserRole } from '@api/auth/auth.model';
 import { AuthService } from '@core/services/auth.service';
 import { CharacterProfessionPreviewStorageService } from './character-profession-preview-storage.service';
@@ -46,6 +46,7 @@ const professions = [
 @Component({
   selector: 'app-profession-profiles-page',
   imports: [
+    ButtonDirective,
     FormsModule,
     RouterLink,
     PageFrameComponent,

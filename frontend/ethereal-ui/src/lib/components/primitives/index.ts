@@ -8,3 +8,6 @@ export * from './quality-badge.component';
 export * from './symbol-icon.component';
 export * from './tooltip-card.component';
 export * from './badge.component';
+export * from './button.directive';
+export * from './tabs.component';
+export * from './row-actions-menu.component';

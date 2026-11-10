@@ -25,7 +25,7 @@ export const filterLabel = (filter: AuctionMarketFilter): string => {
     case 'expansionIds':
       return $localize`:@@filters.expansion:Expansion`;
     case 'recipeOnly':
-      return $localize`:@@filters.hasRecipe:Has Recipe`;
+      return $localize`:@@filters.hasRecipe:Has recipe`;
     default:
       return filter.label;
   }

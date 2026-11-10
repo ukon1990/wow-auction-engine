@@ -13,7 +13,7 @@ import type { ValidationError } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-import { TextInputComponent } from '@ui';
+import { TextInputComponent, ButtonDirective } from '@ui';
 import { AuthErrorResponse } from '@api/auth/auth.model';
 import { AuthService } from '@core/services/auth.service';
 import { validatePasswordRules } from '@core/utils/auth-validation';
@@ -21,7 +21,7 @@ import { LoginAndRegistrationModel, LoginMode } from '@features/login/login.mode
 
 @Component({
   selector: 'app-login-page',
-  imports: [FormsModule, FormField, TextInputComponent],
+  imports: [ButtonDirective, FormsModule, FormField, TextInputComponent],
   templateUrl: './login.page.html',
   host: {
     class: 'flex min-h-0 flex-1 flex-col',

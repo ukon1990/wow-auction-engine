@@ -9,7 +9,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AdminSqlExecuteRequest, AdminSqlResult } from '@api/generated';
-import { CopyButtonComponent } from '@ui';
+import { CopyButtonComponent, ButtonDirective } from '@ui';
 import {
   AdminSqlService,
   DEFAULT_ADMIN_SQL_ROW_LIMIT,
@@ -29,6 +29,7 @@ const standaloneModel = { standalone: true };
 @Component({
   selector: 'app-admin-sql-editor',
   imports: [
+    ButtonDirective,
     AdminSqlCodeEditorComponent,
     AdminTableBrowserComponent,
     CopyButtonComponent,
@@ -41,14 +42,12 @@ const standaloneModel = { standalone: true };
       aria-label="Admin SQL editor"
     >
       <div>
-        <h2 class="font-cinzel text-xl font-bold text-primary-container">SQL editor</h2>
-        <p class="ee-data text-outline">Run read-only diagnostics in a dedicated workspace.</p>
+        <h2 class="text-base font-semibold text-on-surface">SQL editor</h2>
+        <p class="text-sm text-on-surface-variant">
+          Run read-only diagnostics in a dedicated workspace.
+        </p>
       </div>
-      <button
-        type="button"
-        class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container"
-        (click)="openEditor()"
-      >
+      <button type="button" eeButton variant="primary" (click)="openEditor()">
         Open SQL editor
       </button>
     </section>
@@ -69,25 +68,16 @@ const standaloneModel = { standalone: true };
             class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-container-padding py-4"
           >
             <div>
-              <h2
-                id="admin-sql-editor-title"
-                class="font-cinzel text-xl font-bold text-primary-container"
-              >
+              <h2 id="admin-sql-editor-title" class="text-base font-semibold text-on-surface">
                 SQL editor
               </h2>
-              <p class="ee-data text-outline">
+              <p class="text-sm text-on-surface-variant">
                 Read-only query, explain, and confirmed analyze tools.
               </p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
               <app-admin-table-browser />
-              <button
-                type="button"
-                class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-                (click)="closeEditor()"
-              >
-                Close
-              </button>
+              <button type="button" eeButton (click)="closeEditor()">Close</button>
             </div>
           </header>
 
@@ -97,7 +87,8 @@ const standaloneModel = { standalone: true };
                 <div class="flex flex-wrap items-center justify-end gap-2">
                   <button
                     type="button"
-                    class="h-8 rounded border border-white/10 px-3 ee-label font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-not-allowed disabled:opacity-60"
+                    eeButton
+                    size="sm"
                     [disabled]="!sql().trim()"
                     (click)="formatSql()"
                   >
@@ -129,7 +120,8 @@ const standaloneModel = { standalone: true };
                 <div class="flex flex-wrap gap-3">
                   <button
                     type="button"
-                    class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+                    eeButton
+                    variant="primary"
                     [disabled]="loading()"
                     (click)="execute(modeEnum.Query)"
                   >
@@ -137,7 +129,7 @@ const standaloneModel = { standalone: true };
                   </button>
                   <button
                     type="button"
-                    class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
+                    eeButton
                     [disabled]="loading()"
                     (click)="execute(modeEnum.Explain)"
                   >
@@ -145,7 +137,7 @@ const standaloneModel = { standalone: true };
                   </button>
                   <button
                     type="button"
-                    class="h-10 rounded-md border border-tertiary-container/50 px-4 font-semibold text-tertiary-container transition hover:bg-tertiary-container/10 focus:outline-none focus:ring-2 focus:ring-tertiary-container disabled:cursor-wait disabled:opacity-70"
+                    eeButton
                     [disabled]="loading()"
                     (click)="execute(modeEnum.Analyze)"
                   >
@@ -171,7 +163,8 @@ const standaloneModel = { standalone: true };
                     @if (activeSavedQueryId()) {
                       <button
                         type="button"
-                        class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-not-allowed disabled:opacity-60"
+                        eeButton
+                        variant="primary"
                         [disabled]="!sql().trim()"
                         (click)="saveQuery()"
                       >
@@ -179,7 +172,7 @@ const standaloneModel = { standalone: true };
                       </button>
                       <button
                         type="button"
-                        class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-not-allowed disabled:opacity-60"
+                        eeButton
                         [disabled]="!sql().trim()"
                         (click)="saveQuery(true)"
                       >
@@ -188,7 +181,7 @@ const standaloneModel = { standalone: true };
                     } @else {
                       <button
                         type="button"
-                        class="h-10 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-not-allowed disabled:opacity-60"
+                        eeButton
                         [disabled]="!sql().trim()"
                         (click)="saveQuery()"
                       >

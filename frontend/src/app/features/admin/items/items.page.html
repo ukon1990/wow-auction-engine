@@ -1,9 +1,19 @@
 <ee-page-frame
   title="Items"
-  eyebrow="Admin"
+  description="Search items and edit overrides."
   [loading]="loading() && items().length === 0"
   titleId="admin-items-title"
 >
+  <button
+    eePageActions
+    eeButton
+    variant="primary"
+    type="button"
+    [disabled]="mutationLoading()"
+    (click)="openCreatePanel()"
+  >
+    Create manual item
+  </button>
   @if (error()) {
     <p
       class="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-sm text-error"
@@ -14,24 +24,10 @@
   }
 
   <section class="grid gap-4" aria-label="Item search filters">
-    <div class="flex flex-wrap items-end justify-between gap-3">
-      <div class="grid gap-1">
-        <h2 class="font-cinzel text-xl font-bold text-primary-container">Item overrides</h2>
-        <p class="ee-data text-outline">
-          Search effective item rows and manage sparse admin overrides.
-        </p>
-      </div>
-      <button
-        type="button"
-        class="h-10 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
-        [disabled]="mutationLoading()"
-        (click)="openCreatePanel()"
-      >
-        Create manual item
-      </button>
-    </div>
-
-    <form class="grid gap-4" (ngSubmit)="applyFilters()">
+    <form
+      class="grid gap-4 rounded-lg border border-white/10 bg-surface-container-low p-inner-padding"
+      (ngSubmit)="applyFilters()"
+    >
       <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <ee-search-input
           label="Name"
@@ -86,7 +82,7 @@
           (ngModelChange)="updateFilter('hasOverride', $event)"
         />
         <ee-select-input
-          label="Page size"
+          label="Per page"
           [options]="pageSizeOptions"
           [ngModel]="pageSizeValue()"
           [ngModelOptions]="standaloneModel"
@@ -94,20 +90,8 @@
         />
       </div>
       <div class="flex flex-wrap gap-3">
-        <button
-          type="submit"
-          class="h-12 rounded-md bg-primary px-4 font-semibold text-on-primary transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-container disabled:cursor-wait disabled:opacity-70"
-          [disabled]="loading()"
-        >
-          Apply
-        </button>
-        <button
-          type="button"
-          class="h-12 rounded-md border border-white/10 px-4 font-semibold text-on-surface transition hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary-container"
-          (click)="resetFilters()"
-        >
-          Reset
-        </button>
+        <button eeButton variant="primary" type="submit" [disabled]="loading()">Search</button>
+        <button eeButton variant="ghost" type="button" (click)="resetFilters()">Reset</button>
       </div>
     </form>
   </section>

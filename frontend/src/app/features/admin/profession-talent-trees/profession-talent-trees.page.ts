@@ -23,6 +23,7 @@ import {
   SearchInputComponent,
   SelectInputComponent,
   TableComponent,
+  ButtonDirective,
 } from '@ui';
 import {
   ProfessionSkillTreeEditor,
@@ -68,6 +69,7 @@ export type ProfessionRecipeOverview = Readonly<{
 @Component({
   selector: 'app-profession-talent-trees-page',
   imports: [
+    ButtonDirective,
     PageFrameComponent,
     SearchInputComponent,
     SelectInputComponent,

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { AdminRecipe } from '@api/generated';
 import { injectFlexRenderContext } from '@tanstack/angular-table';
 import type { CellContext } from '@tanstack/table-core';
-import { IconButtonComponent } from '@ui';
+import { RowAction, RowActionsMenuComponent } from '@ui';
 
 type AdminRecipeActionsMeta = {
   readonly onEdit?: (recipe: AdminRecipe) => void;
@@ -12,39 +12,42 @@ type AdminRecipeActionsMeta = {
 
 @Component({
   selector: 'app-admin-recipe-actions-cell',
-  imports: [IconButtonComponent],
+  imports: [RowActionsMenuComponent],
   template: `
-    <div class="flex items-center justify-end gap-1">
-      <ee-icon-button icon="edit" [label]="editLabel" [tooltip]="editTooltip" (pressed)="edit()" />
-      <ee-icon-button
-        icon="import_export"
-        [label]="compareLabel"
-        [tooltip]="compareTooltip"
-        (pressed)="compare()"
-      />
-      <ee-icon-button
-        icon="delete"
-        [label]="deleteLabel"
-        [tooltip]="deleteTooltip"
-        [disabled]="!recipe().hasOverride"
-        (pressed)="deleteOverride()"
-      />
-    </div>
+    <ee-row-actions-menu
+      [primaryLabel]="editButtonLabel"
+      [primaryAriaLabel]="editLabel"
+      [actions]="menuActions()"
+      (primary)="edit()"
+      (actionSelected)="onAction($event)"
+    />
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminRecipeActionsCellComponent {
+  protected readonly editButtonLabel = $localize`:@@admin.recipes.actions.editButton:Edit`;
   protected readonly editLabel = $localize`:@@admin.recipes.actions.edit:Edit recipe override`;
-  protected readonly editTooltip = $localize`:@@admin.recipes.actions.editTooltip:Open the recipe override editor.`;
-  protected readonly compareLabel = $localize`:@@admin.recipes.actions.compare:Compare Blizzard API`;
-  protected readonly compareTooltip = $localize`:@@admin.recipes.actions.compareTooltip:Compare the local recipe data with the current Blizzard API response.`;
   protected readonly deleteLabel = $localize`:@@admin.recipes.actions.delete:Delete override`;
-  protected readonly deleteTooltip = $localize`:@@admin.recipes.actions.deleteTooltip:Remove this recipe override and inherit base recipe data again.`;
 
   private readonly ctx = injectFlexRenderContext<CellContext<AdminRecipe, unknown>>();
 
   protected recipe(): AdminRecipe {
     return this.ctx.row.original;
+  }
+
+  protected menuActions(): RowAction[] {
+    return [
+      {
+        id: 'compare',
+        label: $localize`:@@admin.recipes.actions.compareMenu:Compare with Blizzard API`,
+      },
+      { id: 'delete', label: this.deleteLabel, danger: true, disabled: !this.recipe().hasOverride },
+    ];
+  }
+
+  protected onAction(id: string): void {
+    if (id === 'compare') this.compare();
+    else if (id === 'delete') this.deleteOverride();
   }
 
   protected edit(): void {

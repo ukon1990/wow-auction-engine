@@ -20,7 +20,7 @@ export function highchartsThemeOptions(): Highcharts.Options {
     chart: {
       backgroundColor: 'transparent',
       style: {
-        fontFamily: 'var(--font-space-grotesk)',
+        fontFamily: 'var(--font-inter)',
       },
     },
     credits: { enabled: false },

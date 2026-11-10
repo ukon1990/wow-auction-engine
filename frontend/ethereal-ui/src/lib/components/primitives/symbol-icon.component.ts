@@ -32,7 +32,18 @@ export type SymbolIconName =
   | 'show_chart'
   | 'swords'
   | 'travel_explore'
-  | 'water_medium';
+  | 'water_medium'
+  | 'account_tree'
+  | 'category'
+  | 'expand_more'
+  | 'handyman'
+  | 'info'
+  | 'link'
+  | 'menu_book'
+  | 'more_horiz'
+  | 'more_vert'
+  | 'open_in_new'
+  | 'storefront';
 
 @Component({
   selector: 'ee-symbol-icon',
@@ -182,6 +193,61 @@ export type SymbolIconName =
         @case ('water_medium') {
           <path d="M12 3s6 6.2 6 11a6 6 0 0 1-12 0c0-4.8 6-11 6-11Z" />
           <path d="M9 14a3 3 0 0 0 3 3" />
+        }
+        @case ('account_tree') {
+          <rect x="3" y="4" width="6" height="5" rx="1" />
+          <rect x="15" y="4" width="6" height="5" rx="1" />
+          <rect x="15" y="15" width="6" height="5" rx="1" />
+          <path d="M9 6.5h6M12 6.5v11h3" />
+        }
+        @case ('category') {
+          <path d="M12 3 7 11h10l-5-8Z" />
+          <circle cx="17" cy="17" r="3.5" />
+          <rect x="3.5" y="13.5" width="7" height="7" rx="1" />
+        }
+        @case ('expand_more') {
+          <path d="m6 9 6 6 6-6" />
+        }
+        @case ('handyman') {
+          <path
+            d="M14.5 6.5a4 4 0 0 1 5-3.5l-2.5 2.5.5 2 2 .5L22 5.5a4 4 0 0 1-5.4 4.6L8 18.7a2 2 0 0 1-2.8-2.8l8.6-8.6a4 4 0 0 1 .7-.8Z"
+          />
+          <path d="m3 3 6 6M3 3l1.5 3.5L7 7" />
+        }
+        @case ('info') {
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 11v6M12 7.5v.5" />
+        }
+        @case ('link') {
+          <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" />
+          <path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" />
+        }
+        @case ('menu_book') {
+          <path
+            d="M3 5.5C5.5 4.5 8.5 4.5 12 6.5c3.5-2 6.5-2 9-1V19c-2.5-1-5.5-1-9 1-3.5-2-6.5-2-9-1V5.5Z"
+          />
+          <path d="M12 6.5V20" />
+        }
+        @case ('more_horiz') {
+          <circle cx="6" cy="12" r="1.2" fill="currentColor" />
+          <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+          <circle cx="18" cy="12" r="1.2" fill="currentColor" />
+        }
+        @case ('more_vert') {
+          <circle cx="12" cy="6" r="1.2" fill="currentColor" />
+          <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+          <circle cx="12" cy="18" r="1.2" fill="currentColor" />
+        }
+        @case ('open_in_new') {
+          <path d="M14 4h6v6M20 4l-9 9" />
+          <path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+        }
+        @case ('storefront') {
+          <path d="M4 9.5V20h16V9.5" />
+          <path
+            d="M3 9.5 5 4h14l2 5.5a2.5 2.5 0 0 1-4.5 1.5 2.5 2.5 0 0 1-4.5 0 2.5 2.5 0 0 1-4.5 0A2.5 2.5 0 0 1 3 9.5Z"
+          />
+          <path d="M10 20v-5h4v5" />
         }
         @default {
           <circle cx="12" cy="12" r="9" />
