@@ -24,13 +24,20 @@ SELECT
     override_item.override_note,
     COALESCE(override_item.created_at, base_item.created_at) AS created_at,
     COALESCE(override_item.updated_at, base_item.updated_at) AS updated_at
-FROM (
-    SELECT DISTINCT id
-    FROM `item`
-) item_ids
+FROM `item` item_ids
     LEFT JOIN `item` base_item
         ON base_item.id = item_ids.id
         AND base_item.is_override = FALSE
     LEFT JOIN `item` override_item
         ON override_item.id = item_ids.id
-        AND override_item.is_override = TRUE;
+        AND override_item.is_override = TRUE
+-- One row per id: the base row, or the override row when there is no base row.
+-- No DISTINCT, so MariaDB can merge the view and look items up by id instead of
+-- building the full id list on every query.
+WHERE item_ids.is_override = FALSE
+   OR NOT EXISTS (
+       SELECT 1
+       FROM `item` base_only
+       WHERE base_only.id = item_ids.id
+         AND base_only.is_override = FALSE
+   );

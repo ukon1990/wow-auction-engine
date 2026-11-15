@@ -184,6 +184,35 @@ class AuctionSearchServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `search sorts by soldPerDay without filters`() {
+        seedAuctionData()
+        AuctionSearchTestFixtures.seedTsmItemMetric(jdbcTemplate)
+
+        val result =
+            service.search(
+                regionCode = "eu",
+                realmSlug = "argent-dawn",
+                localeOverride = null,
+                page = 0,
+                pageSize = 10,
+                sortBy = "soldPerDay",
+                sortDirection = "desc",
+                query = null,
+                qualityIds = null,
+                itemClassIds = null,
+                itemSubclassIds = null,
+                expansionIds = null,
+                recipeOnly = null,
+                minPrice = null,
+                maxPrice = null,
+                minQuantity = null,
+                maxQuantity = null,
+            )
+
+        assertEquals(1.5, result.items.first().soldPerDay!!, 0.0000001)
+    }
+
+    @Test
     fun `search filters by minSaleRatePercent excluding rows below threshold`() {
         seedAuctionData()
         AuctionSearchTestFixtures.seedTsmItemMetric(jdbcTemplate, saleRate = "0.25000000")
