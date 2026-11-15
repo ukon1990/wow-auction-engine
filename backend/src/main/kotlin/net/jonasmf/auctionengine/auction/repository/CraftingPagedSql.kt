@@ -7,6 +7,7 @@ internal fun buildCraftingPagedSql(
     includeTotalItems: Boolean = true,
 ): String {
     val totalItemsSql = if (includeTotalItems) ",\n                COUNT(*) OVER () AS total_items" else ""
+    val outerTotalItemsSql = if (includeTotalItems) ", wrapped.total_items" else ""
     return """
         $withSql
         SELECT
@@ -19,7 +20,7 @@ internal fun buildCraftingPagedSql(
             wrapped.profession_name, wrapped.expansion_id, wrapped.skill_tier_name, wrapped.profession_category_name,
             wrapped.item_name, wrapped.item_media_url, wrapped.quality_id, wrapped.quality_type, wrapped.quality_name,
             wrapped.item_class_id, wrapped.item_class_name, wrapped.item_subclass_id, wrapped.item_subclass_name,
-            wrapped.sale_rate, wrapped.sold_per_day
+            wrapped.sale_rate, wrapped.sold_per_day$outerTotalItemsSql
         FROM (
             SELECT
                 c.recipe_id, c.crafted_item_id, c.bonus_key, c.modifier_key, c.pet_species_id, c.crafted_quantity,

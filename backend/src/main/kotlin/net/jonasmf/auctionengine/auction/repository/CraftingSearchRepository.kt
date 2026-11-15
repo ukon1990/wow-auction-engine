@@ -31,17 +31,6 @@ class CraftingSearchRepository(
         )
 
     fun search(request: CraftingSearchRequest): CraftingSearchResult {
-        val countParams = ArrayList<Any?>()
-        val withSql = buildWithSql(request, countParams)
-        val countWhereParams = ArrayList<Any?>()
-        val countWhereSql = buildWhereSql(request, countWhereParams)
-        countParams.addAll(countWhereParams)
-        val countSql = buildCountSql(withSql, countWhereSql)
-
-        val queryStart = System.nanoTime()
-        val totalItems =
-            jdbcTemplate.queryForObject(countSql, Long::class.java, *countParams.toTypedArray()) ?: 0L
-
         val dataParams = ArrayList<Any?>()
         val dataWithSql = buildWithSql(request, dataParams)
         val dataWhereParams = ArrayList<Any?>()
@@ -49,14 +38,27 @@ class CraftingSearchRepository(
         dataParams.addAll(dataWhereParams)
         dataParams.add(request.pageSize)
         dataParams.add(request.page * request.pageSize)
-        val dataSql = buildCraftingPagedSql(dataWithSql, dataWhereSql, buildOrderBySql(request), false)
+        val dataSql = buildCraftingPagedSql(dataWithSql, dataWhereSql, buildOrderBySql(request))
 
+        val queryStart = System.nanoTime()
+        var totalItems = 0L
         val rows =
             jdbcTemplate.query(
                 dataSql,
-                craftingSearchRowMapper,
+                { rs, rowNum ->
+                    if (rowNum == 0) totalItems = rs.getLong("total_items")
+                    craftingSearchRowMapper.mapRow(rs, rowNum)
+                },
                 *dataParams.toTypedArray(),
             )
+        if (rows.isEmpty() && request.page > 0) {
+            // Page past the end: the window count is not available without rows.
+            val countParams = ArrayList<Any?>()
+            val withSql = buildWithSql(request, countParams)
+            val countWhereSql = buildWhereSql(request, countParams)
+            totalItems =
+                jdbcTemplate.queryForObject(buildCountSql(withSql, countWhereSql), Long::class.java, *countParams.toTypedArray()) ?: 0L
+        }
         logger.debug(
             "Crafting market search queryMs={} totalItems={} rows={}",
             (System.nanoTime() - queryStart) / 1_000_000,
@@ -120,9 +122,6 @@ class CraftingSearchRepository(
 
         return """
             WITH
-            pricing_item_ids AS (
-                ${RecipeReagentPricingSql.allPricingItemIdsSql()}
-            ),
             sel_latest_history AS (
                 SELECT MAX(id) AS update_history_id
                 FROM connected_realm_update_history
@@ -133,78 +132,33 @@ class CraftingSearchRepository(
                 FROM connected_realm_update_history
                 WHERE connected_realm_id = ?
             ),
-            reagent_sel_base AS (
-                SELECT
-                    a.item_id,
-                    a.buyout AS price,
-                    a.bonus_key,
-                    a.modifier_key,
-                    COALESCE(a.pet_species_id, -1) AS pet_species_id
-                FROM auction a
-                    INNER JOIN sel_latest_history lh ON lh.update_history_id = a.update_history_id
-                WHERE a.connected_realm_id = ?
-                  AND a.buyout IS NOT NULL
-                  AND EXISTS (SELECT 1 FROM pricing_item_ids pi WHERE pi.item_id = a.item_id)
-            ),
-            reagent_sel_ranked AS (
-                SELECT
-                    item_id,
-                    price,
-                    ROW_NUMBER() OVER (
-                        PARTITION BY item_id
-                        ORDER BY price ASC, bonus_key, modifier_key, pet_species_id
-                    ) AS rn
-                FROM reagent_sel_base
-            ),
-            reagent_sel AS (
-                SELECT item_id, price FROM reagent_sel_ranked WHERE rn = 1
-            ),
-            reagent_com_base AS (
-                SELECT
-                    a.item_id,
-                    a.buyout AS price,
-                    a.bonus_key,
-                    a.modifier_key,
-                    COALESCE(a.pet_species_id, -1) AS pet_species_id
-                FROM auction a
-                    INNER JOIN com_latest_history lh ON lh.update_history_id = a.update_history_id
-                WHERE a.connected_realm_id = ?
-                  AND a.buyout IS NOT NULL
-                  AND EXISTS (SELECT 1 FROM pricing_item_ids pi WHERE pi.item_id = a.item_id)
-            ),
-            reagent_com_ranked AS (
-                SELECT
-                    item_id,
-                    price,
-                    ROW_NUMBER() OVER (
-                        PARTITION BY item_id
-                        ORDER BY price ASC, bonus_key, modifier_key, pet_species_id
-                    ) AS rn
-                FROM reagent_com_base
-            ),
-            reagent_com AS (
-                SELECT item_id, price FROM reagent_com_ranked WHERE rn = 1
-            ),
-            reagent_items AS (
-                SELECT item_id FROM pricing_item_ids
-            ),
             reagent_unit AS (
-                SELECT
-                    i.item_id,
-                    COALESCE(rs.price, rc.price) AS price
-                FROM reagent_items i
-                    LEFT JOIN reagent_sel rs ON rs.item_id = i.item_id
-                    LEFT JOIN reagent_com rc ON rc.item_id = i.item_id
+                SELECT item_id, COALESCE(MIN(sel_price), MIN(com_price)) AS price
+                FROM (
+                    SELECT a.item_id, a.buyout AS sel_price, NULL AS com_price
+                    FROM auction a
+                        INNER JOIN sel_latest_history lh ON lh.update_history_id = a.update_history_id
+                    WHERE a.connected_realm_id = ?
+                      AND a.buyout IS NOT NULL
+                    UNION ALL
+                    SELECT a.item_id, NULL AS sel_price, a.buyout AS com_price
+                    FROM auction a
+                        INNER JOIN com_latest_history lh ON lh.update_history_id = a.update_history_id
+                    WHERE a.connected_realm_id = ?
+                      AND a.buyout IS NOT NULL
+                ) listing
+                GROUP BY item_id
             ),
             recipe_outputs AS (
                 SELECT
                     ro.recipe_id,
                     ro.crafted_item_id,
                     ro.sort_order,
-                    COALESCE(NULLIF(ro.crafted_quantity, 0), 1) AS crafted_qty
+                    COALESCE(NULLIF(ro.crafted_quantity, 0), 1) AS crafted_qty,
+                    COUNT(*) OVER (PARTITION BY ro.recipe_id) AS output_count
                 FROM v_recipe_crafted_output ro
             ),
-            ${RecipeReagentPricingSql.recipeReagentLinesCte(rankExpr = RecipeReagentPricingSql.craftingTargetRankExpr(), priceCte = "reagent_unit")},
+            ${RecipeReagentPricingSql.recipeReagentLinesCte(rankExpr = targetRankExpr("r"), priceCte = "reagent_unit")},
             ${RecipeReagentPricingSql.recipeReagentCostCte()},
             realm_outputs AS (
                 SELECT
@@ -331,7 +285,7 @@ class CraftingSearchRepository(
                     ro.crafted_item_id,
                     ro.crafted_qty AS crafted_quantity,
                     reci.media_url AS recipe_media_url,
-                    ${RecipeReagentPricingSql.craftingTargetRankExpr(recipeAlias = "reci")} AS recipe_rank,
+                    ${targetRankExpr("reci")} AS recipe_rank,
                     COALESCE(reci_l.$loc, reci_l.en_gb, reci_l.en_us) AS recipe_name,
                     p.id AS profession_id,
                     COALESCE(p_l.$loc, p_l.en_gb, p_l.en_us) AS profession_name,
@@ -481,6 +435,10 @@ class CraftingSearchRepository(
         appendCraftingRangePredicates(predicates, params, request)
         return if (predicates.isEmpty()) "" else "WHERE " + predicates.joinToString(" AND ")
     }
+
+    /** Same as [RecipeReagentPricingSql.craftingTargetRankExpr], using the precomputed output count of `recipe_outputs ro`. */
+    private fun targetRankExpr(recipeAlias: String): String =
+        "CASE WHEN ro.output_count > 1 THEN ro.sort_order + 1 ELSE ${RecipeReagentPricingSql.targetRankExpr(recipeAlias)} END"
 
     private fun hourColumnSuffix(hour: Int): String {
         require(hour in 0..23) { "Hour must be between 0 and 23: $hour" }
